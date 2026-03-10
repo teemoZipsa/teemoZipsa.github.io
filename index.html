@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>teemoZipsa 유용한 웹 도구 모음</title>
+    <!-- 네이버 서치어드바이저 인증 메타태그 -->
+    <meta name="naver-site-verification" content="1240f9c95aabdaaf2a61568437d1a8cbc1749a0c" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+            background-color: #f8fafc;
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-6 text-slate-800">
+
+    <div class="max-w-4xl w-full space-y-12 py-10">
+        <!-- Header -->
+        <header class="text-center space-y-4">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">teemoZipsa 유용한 웹 도구 모음</h1>
+            <p class="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto">일상과 업무의 효율을 높여주는 간단하고 유용한 웹 도구들을 한곳에 모았습니다.</p>
+        </header>
+
+        <!-- Tool Cards Grid -->
+        <main class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+            <!-- 특수문자 도구 -->
+            <a href="https://teemozipsa.github.io/special-chars/" class="card-hover bg-white rounded-2xl p-8 border border-slate-200 shadow-sm flex flex-col h-full">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="bg-indigo-50 p-4 rounded-xl text-3xl flex-shrink-0">
+                        🛠️
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800">특수문자 도구</h2>
+                </div>
+                <p class="text-slate-600 flex-grow text-lg mb-6 leading-relaxed">자주 사용하는 특수문자, 이모지, 기호들을 카테고리별로 쉽게 찾고 클릭 한 번으로 복사할 수 있는 도구입니다.</p>
+                <div class="mt-auto flex items-center justify-end text-indigo-600 font-semibold text-lg group">
+                    사용해보기 
+                    <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </div>
+            </a>
+
+            <!-- 빠른 답장 도구 -->
+            <a href="https://teemozipsa.github.io/quick-reply/" class="card-hover bg-white rounded-2xl p-8 border border-slate-200 shadow-sm flex flex-col h-full">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="bg-emerald-50 p-4 rounded-xl text-3xl flex-shrink-0">
+                        💬
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800">빠른 답장 도구</h2>
+                </div>
+                <p class="text-slate-600 flex-grow text-lg mb-6 leading-relaxed">업무용 이메일, 메신저 등에서 자주 쓰는 문구나 템플릿 답변을 저장해두고 빠르게 복사하여 사용할 수 있습니다.</p>
+                <div class="mt-auto flex items-center justify-end text-emerald-600 font-semibold text-lg group">
+                    사용해보기 
+                    <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </div>
+            </a>
+        </main>
+        
+        <footer class="text-center text-slate-500 text-sm pt-8 border-t border-slate-200">
+            &copy; 2024 teemoZipsa. All rights reserved.
+        </footer>
+    </div>
+
+</body>
+</html>
