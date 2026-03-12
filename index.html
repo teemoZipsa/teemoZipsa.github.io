@@ -76,25 +76,25 @@
 
         /* === 카드 그리드 === */
         .tools-grid {
-            max-width: 720px;
+            max-width: 960px;
             margin: 0 auto;
             padding: 0 20px 48px;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 14px;
         }
 
         .tool-card {
             background: #fff;
             border: 1px solid #e2e8f0;
             border-radius: 16px;
-            padding: 24px 20px;
+            padding: 18px 20px;
             text-decoration: none;
             color: inherit;
             cursor: pointer;
             transition: all 0.25s ease;
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             gap: 14px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
         }
@@ -108,32 +108,38 @@
         }
 
         .tool-icon {
-            font-size: 28px;
+            font-size: 26px;
             line-height: 1;
             flex-shrink: 0;
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: #f1f5f9;
-            border-radius: 12px;
+            border-radius: 10px;
         }
         .tool-info {
             flex: 1;
             min-width: 0;
         }
         .tool-name {
-            font-size: 15px;
+            font-size: 17px;
             font-weight: 700;
             color: #1e293b;
-            margin-bottom: 4px;
-            line-height: 1.3;
+            margin-bottom: 2px;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .tool-desc {
             font-size: 12px;
             color: #94a3b8;
-            line-height: 1.4;
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .tool-card:hover .tool-name {
             color: #4338ca;
@@ -155,7 +161,7 @@
             font-size: 12px;
             padding: 24px 20px 40px;
             border-top: 1px solid #e2e8f0;
-            max-width: 720px;
+            max-width: 960px;
             margin: 0 auto;
         }
         footer a {
@@ -173,14 +179,16 @@
         }
 
         /* === 반응형 === */
-        @media (max-width: 520px) {
+        @media (max-width: 640px) {
             .hero { padding-top: 40px; }
             .hero h1 { font-size: 24px; }
             .hero p { font-size: 13px; margin-bottom: 24px; }
             .tools-grid {
                 grid-template-columns: 1fr;
-                gap: 12px;
+                gap: 10px;
+                padding: 0 16px 40px;
             }
+            .tool-name { font-size: 15px; }
         }
     </style>
 </head>
@@ -235,6 +243,14 @@
         <div class="tool-info">
             <div class="tool-name">빠른 답장 도구</div>
             <div class="tool-desc">자주 쓰는 답장 문구 저장 & 빠른 복사</div>
+        </div>
+    </a>
+
+    <a href="https://teemozipsa.github.io/special-chars/calculator/" class="tool-card" data-keywords="계산기 사칙연산 더하기 빼기 곱하기 나누기 calculator">
+        <div class="tool-icon">🧮</div>
+        <div class="tool-info">
+            <div class="tool-name">일반 계산기</div>
+            <div class="tool-desc">사칙연산·퍼센트·키보드 입력 지원</div>
         </div>
     </a>
 
