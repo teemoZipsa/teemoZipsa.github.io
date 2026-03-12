@@ -97,6 +97,7 @@
             display: flex;
             align-items: center;
             gap: 14px;
+            user-select: none;
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
         }
         .tool-card:hover {
@@ -106,6 +107,14 @@
         }
         .tool-card:active {
             transform: translateY(-1px);
+        }
+        .tool-card.dragging {
+            opacity: 0.4;
+            transform: scale(0.95);
+        }
+        .tool-card.drag-over {
+            border-color: #a78bfa;
+            box-shadow: 0 0 0 2px rgba(167,139,250,0.3);
         }
 
         .tool-icon {
@@ -279,6 +288,30 @@
         </div>
     </a>
 
+    <a href="https://teemozipsa.github.io/special-chars/qr-code/" class="tool-card" data-keywords="QR 코드 생성기 큐알 바코드 URL 링크 qr code">
+        <div class="tool-icon">📷</div>
+        <div class="tool-info">
+            <div class="tool-name">QR 코드 생성기</div>
+            <div class="tool-desc">텍스트·URL을 QR 코드로 즉시 생성</div>
+        </div>
+    </a>
+
+    <a href="https://teemozipsa.github.io/special-chars/image-compress/" class="tool-card" data-keywords="이미지 용량 줄이기 사진 압축 리사이즈 jpg png 최적화">
+        <div class="tool-icon">🗜️</div>
+        <div class="tool-info">
+            <div class="tool-name">이미지 용량 줄이기</div>
+            <div class="tool-desc">브라우저에서 바로 사진 용량 압축</div>
+        </div>
+    </a>
+
+    <a href="https://teemozipsa.github.io/special-chars/wage-calc/" class="tool-card" data-keywords="시급 월급 연봉 환산기 급여 계산기 최저시급 알바 wage salary">
+        <div class="tool-icon">💵</div>
+        <div class="tool-info">
+            <div class="tool-name">시급 ↔ 월급/연봉</div>
+            <div class="tool-desc">시급·월급·연봉 자유롭게 환산</div>
+        </div>
+    </a>
+
 </div>
 
 <div class="no-results" id="noResults">
@@ -329,6 +362,69 @@ function handleSearchEnter(e) {
         }
     }
 }
+// === 드래그 앤 드롭 카드 재정렬 ===
+(function initDragDrop() {
+    const grid = document.getElementById('toolsGrid');
+    let dragEl = null;
+
+    // 저장된 순서 복원
+    const saved = JSON.parse(localStorage.getItem('toolOrder') || '[]');
+    if (saved.length) {
+        const cards = [...grid.querySelectorAll('.tool-card')];
+        const map = {};
+        cards.forEach(c => { map[c.href] = c; });
+        saved.forEach(href => {
+            if (map[href]) grid.appendChild(map[href]);
+        });
+        // 새로 추가된 카드는 뒤에 남음
+        cards.forEach(c => { if (!saved.includes(c.href)) grid.appendChild(c); });
+    }
+
+    grid.addEventListener('dragstart', e => {
+        const card = e.target.closest('.tool-card');
+        if (!card) return;
+        dragEl = card;
+        card.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+    });
+    grid.addEventListener('dragend', e => {
+        const card = e.target.closest('.tool-card');
+        if (card) card.classList.remove('dragging');
+        grid.querySelectorAll('.drag-over').forEach(c => c.classList.remove('drag-over'));
+        dragEl = null;
+        saveOrder();
+    });
+    grid.addEventListener('dragover', e => {
+        e.preventDefault();
+        const card = e.target.closest('.tool-card');
+        if (!card || card === dragEl) return;
+        e.dataTransfer.dropEffect = 'move';
+        card.classList.add('drag-over');
+    });
+    grid.addEventListener('dragleave', e => {
+        const card = e.target.closest('.tool-card');
+        if (card) card.classList.remove('drag-over');
+    });
+    grid.addEventListener('drop', e => {
+        e.preventDefault();
+        const target = e.target.closest('.tool-card');
+        if (!target || !dragEl || target === dragEl) return;
+        target.classList.remove('drag-over');
+        const cards = [...grid.querySelectorAll('.tool-card')];
+        const fromIdx = cards.indexOf(dragEl);
+        const toIdx = cards.indexOf(target);
+        if (fromIdx < toIdx) target.after(dragEl);
+        else target.before(dragEl);
+    });
+
+    // 모든 카드에 draggable 속성 추가
+    grid.querySelectorAll('.tool-card').forEach(c => c.setAttribute('draggable', 'true'));
+
+    function saveOrder() {
+        const order = [...grid.querySelectorAll('.tool-card')].map(c => c.href);
+        localStorage.setItem('toolOrder', JSON.stringify(order));
+    }
+})();
 </script>
 
 </body>
