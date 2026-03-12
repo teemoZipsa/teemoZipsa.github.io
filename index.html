@@ -4,78 +4,291 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>티모집사의 유용한 웹 도구 모음😺</title>
+    <meta name="description" content="특수 문자, 글자 수 계산기, 날짜 계산기, 단위 변환기, 빠른 답장 등 일상과 업무에 필요한 무료 웹 도구 모음입니다.">
     <!-- 네이버 서치어드바이저 인증 메타태그 -->
     <meta name="naver-site-verification" content="1240f9c95aabdaaf2a61568437d1a8cbc1749a0c" />
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
-            background-color: #f8fafc;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+            background: #f8fafc;
+            color: #334155;
+            min-height: 100vh;
         }
-        .card-hover {
-            transition: all 0.3s ease;
+
+        /* === 헤더 === */
+        .hero {
+            text-align: center;
+            padding: 56px 20px 0;
+            max-width: 720px;
+            margin: 0 auto;
         }
-        .card-hover:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        .hero h1 {
+            font-size: 34px;
+            font-weight: 800;
+            color: #1e293b;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+        .hero p {
+            font-size: 15px;
+            color: #64748b;
+            margin-bottom: 32px;
+        }
+
+        /* === 검색창 === */
+        .search-wrap {
+            max-width: 480px;
+            margin: 0 auto 40px;
+            position: relative;
+        }
+        .search-wrap svg {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            fill: #94a3b8;
+            pointer-events: none;
+        }
+        .search-wrap input {
+            width: 100%;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px 16px 14px 46px;
+            font-size: 15px;
+            color: #334155;
+            outline: none;
+            font-family: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .search-wrap input::placeholder { color: #94a3b8; }
+        .search-wrap input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        /* === 카드 그리드 === */
+        .tools-grid {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 20px 48px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .tool-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px 20px;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .tool-card:hover {
+            transform: translateY(-3px);
+            border-color: #c7d2fe;
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.12);
+        }
+        .tool-card:active {
+            transform: translateY(-1px);
+        }
+
+        .tool-icon {
+            font-size: 28px;
+            line-height: 1;
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            border-radius: 12px;
+        }
+        .tool-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .tool-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+        .tool-desc {
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+        .tool-card:hover .tool-name {
+            color: #4338ca;
+        }
+
+        /* 검색 결과 없음 */
+        .no-results {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 14px;
+            padding: 40px 20px;
+            display: none;
+        }
+
+        /* === 푸터 === */
+        footer {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 12px;
+            padding: 24px 20px 40px;
+            border-top: 1px solid #e2e8f0;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+        footer a {
+            color: #64748b;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        footer a:hover { color: #6366f1; }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        /* === 반응형 === */
+        @media (max-width: 520px) {
+            .hero { padding-top: 40px; }
+            .hero h1 { font-size: 24px; }
+            .hero p { font-size: 13px; margin-bottom: 24px; }
+            .tools-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-6 text-slate-800">
+<body>
 
-    <div class="max-w-4xl w-full space-y-12 py-10">
-        <!-- Header -->
-        <header class="text-center space-y-4">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">티모집사의 유용한 웹 도구 모음😺</h1>
-            <p class="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto">일상과 업무의 효율을 높여주는 간단하고 유용한 웹 도구들을 한곳에 모았습니다.</p>
-        </header>
+<div class="hero">
+    <h1>티모집사의 유용한 웹 도구 모음😺</h1>
+    <p>일상과 업무에 필요한 도구들을 한곳에 모았습니다.</p>
+</div>
 
-        <!-- Tool Cards Grid -->
-        <main class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
-            <!-- 특수문자 도구 -->
-            <a href="https://teemozipsa.github.io/special-chars/" class="card-hover bg-white rounded-2xl p-8 border border-slate-200 shadow-sm flex flex-col h-full">
-                <div class="flex items-center space-x-4 mb-4">
-                    <div class="bg-indigo-50 p-4 rounded-xl text-3xl flex-shrink-0">
-                        🛠️
-                    </div>
-                    <h2 class="text-2xl font-bold text-slate-800">종합 웹 툴 모음</h2>
-                </div>
-                <p class="text-slate-600 flex-grow text-lg mb-6 leading-relaxed">특수 문자 &amp; 이모지, 글자 수 계산기, 날짜/D-Day 계산기, 생활 단위 변환기 등 여러 기능을 한 곳에서 이용할 수 있는 종합 웹 도구입니다.</p>
-                <div class="mt-auto flex items-center justify-end text-indigo-600 font-semibold text-lg group">
-                    사용해보기 
-                    <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </div>
-            </a>
+<div class="search-wrap">
+    <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+    <input type="text" id="searchInput" placeholder="도구 검색... (예: 글자, 날짜, 특수문자)" oninput="filterTools()" onkeydown="handleSearchEnter(event)">
+</div>
 
-            <!-- 빠른 답장 도구 -->
-            <a href="https://teemozipsa.github.io/quick-reply/" class="card-hover bg-white rounded-2xl p-8 border border-slate-200 shadow-sm flex flex-col h-full">
-                <div class="flex items-center space-x-4 mb-4">
-                    <div class="bg-emerald-50 p-4 rounded-xl text-3xl flex-shrink-0">
-                        💬
-                    </div>
-                    <h2 class="text-2xl font-bold text-slate-800">빠른 답장 도구</h2>
-                </div>
-                <p class="text-slate-600 flex-grow text-lg mb-6 leading-relaxed">업무용 이메일, 메신저 등에서 자주 쓰는 문구나 템플릿 답변을 저장해두고 빠르게 복사하여 사용할 수 있습니다.</p>
-                <div class="mt-auto flex items-center justify-end text-emerald-600 font-semibold text-lg group">
-                    사용해보기 
-                    <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </div>
-            </a>
-        </main>
-        
-        <footer class="text-center text-slate-500 text-sm pt-8 border-t border-slate-200">
-            <div class="mb-3">
-                <a href="https://www.instagram.com/seon_7yu/" target="_blank" class="hover:text-indigo-600 transition-colors inline-flex items-center space-x-1">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd" />
-                    </svg>
-                    <span>Instagram: @seon_7yu</span>
-                </a>
-            </div>
-            &copy; 2026 teemoZipsa. All rights reserved.
-        </footer>
+<div class="tools-grid" id="toolsGrid">
+
+    <a href="https://teemozipsa.github.io/special-chars/" class="tool-card" data-keywords="특수 문자 이모지 특수기호 유니코드 기호 복사">
+        <div class="tool-icon">⌨️</div>
+        <div class="tool-info">
+            <div class="tool-name">특수문자 & 이모지</div>
+            <div class="tool-desc">클릭 한 번으로 특수 문자·이모지 복사</div>
+        </div>
+    </a>
+
+    <a href="https://teemozipsa.github.io/special-chars/#counter" class="tool-card" data-keywords="글자 수 계산기 바이트 텍스트 카운터 단어 문자수">
+        <div class="tool-icon">📏</div>
+        <div class="tool-info">
+            <div class="tool-name">글자 수 계산기</div>
+            <div class="tool-desc">글자·바이트·단어 수 실시간 계산</div>
+        </div>
+    </a>
+
+    <a href="https://teemozipsa.github.io/special-chars/#date" class="tool-card" data-keywords="날짜 계산기 디데이 D-Day 기념일 만일 일수">
+        <div class="tool-icon">📅</div>
+        <div class="tool-info">
+            <div class="tool-name">날짜 / D-Day 계산기</div>
+            <div class="tool-desc">D-Day 계산, 날짜 더하기·빼기</div>
+        </div>
+    </a>
+
+    <a href="https://teemozipsa.github.io/special-chars/#unit" class="tool-card" data-keywords="단위 변환기 평 제곱미터 온도 근 그램 신발 사이즈 직구">
+        <div class="tool-icon">📐</div>
+        <div class="tool-info">
+            <div class="tool-name">생활 단위 변환기</div>
+            <div class="tool-desc">부동산·요리·직구·디지털·여행 단위 변환</div>
+        </div>
+    </a>
+
+    <a href="https://teemozipsa.github.io/quick-reply/" class="tool-card" data-keywords="빠른 답장 메신저 이메일 템플릿 복사 문구">
+        <div class="tool-icon">💬</div>
+        <div class="tool-info">
+            <div class="tool-name">빠른 답장 도구</div>
+            <div class="tool-desc">자주 쓰는 답장 문구 저장 & 빠른 복사</div>
+        </div>
+    </a>
+
+</div>
+
+<div class="no-results" id="noResults">
+    🔍 검색 결과가 없습니다
+</div>
+
+<footer>
+    <div class="footer-links">
+        <a href="https://www.instagram.com/seon_7yu/" target="_blank" rel="noopener">
+            <svg style="width:14px;height:14px;vertical-align:middle;margin-right:2px;" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd"/></svg>
+            @seon_7yu
+        </a>
     </div>
+    &copy; 2026 teemoZipsa. All rights reserved.
+</footer>
+
+<script>
+function filterTools() {
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    const cards = document.querySelectorAll('.tool-card');
+    const noResults = document.getElementById('noResults');
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+        const keywords = (card.getAttribute('data-keywords') || '').toLowerCase();
+        const name = (card.querySelector('.tool-name')?.textContent || '').toLowerCase();
+        const desc = (card.querySelector('.tool-desc')?.textContent || '').toLowerCase();
+        const match = !q || keywords.includes(q) || name.includes(q) || desc.includes(q);
+        card.style.display = match ? '' : 'none';
+        if (match) visibleCount++;
+    });
+
+    noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+}
+
+function handleSearchEnter(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        const q = document.getElementById('searchInput').value.trim().toLowerCase();
+        if (!q) return;
+        // 첫 번째 보이는 카드로 바로 이동
+        const cards = document.querySelectorAll('.tool-card');
+        for (const card of cards) {
+            if (card.style.display !== 'none' && card.href) {
+                window.location.href = card.href;
+                return;
+            }
+        }
+    }
+}
+</script>
 
 </body>
 </html>
