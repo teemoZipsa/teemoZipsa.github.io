@@ -102,6 +102,63 @@
 
         .no-results { text-align: center; color: #94a3b8; font-size: 14px; padding: 40px 20px; display: none; }
 
+        /* === 검색 자동완성 드롭다운 === */
+        .search-dropdown {
+            position: absolute; top: 100%; left: 0; right: 0; background: #fff;
+            border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,.08); z-index: 10; display: none;
+            max-height: 320px; overflow-y: auto;
+        }
+        .search-dropdown.open { display: block; }
+        .search-dropdown-item {
+            display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+            text-decoration: none; color: inherit; cursor: pointer; transition: background .15s;
+        }
+        .search-dropdown-item:hover, .search-dropdown-item.active { background: #f1f5f9; }
+        .search-dropdown-item .sdi-icon { font-size: 18px; width: 28px; text-align: center; flex-shrink: 0; }
+        .search-dropdown-item .sdi-name { font-size: 14px; font-weight: 600; color: #1e293b; }
+        .search-dropdown-item .sdi-desc { font-size: 11px; color: #94a3b8; }
+        .search-wrap input.dropdown-open { border-radius: 12px 12px 0 0; }
+
+        /* === 뷰 전환 토글 === */
+        .view-controls {
+            max-width: 960px; margin: 0 auto; padding: 0 20px 8px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .view-toggle { display: flex; gap: 4px; }
+        .view-toggle button {
+            background: #e2e8f0; border: none; padding: 6px 12px; font-size: 12px;
+            border-radius: 6px; cursor: pointer; color: #64748b; font-family: inherit; transition: all .2s;
+        }
+        .view-toggle button.active { background: #6366f1; color: #fff; }
+
+        /* === 카테고리 뷰 === */
+        .category-group { max-width: 960px; margin: 0 auto; padding: 0 20px 16px; display: none; }
+        .category-group.visible { display: block; }
+        .category-title {
+            font-size: 14px; font-weight: 700; color: #475569; margin-bottom: 10px;
+            padding-bottom: 6px; border-bottom: 2px solid #e2e8f0;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .category-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* === FAQ 섹션 === */
+        .faq-section { max-width: 960px; margin: 0 auto; padding: 0 20px 32px; }
+        .faq-title { font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .faq-item { border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+        .faq-item summary {
+            padding: 12px 16px; cursor: pointer; font-size: 14px; font-weight: 600;
+            color: #334155; list-style: none; display: flex; align-items: center; gap: 8px;
+            transition: background .2s;
+        }
+        .faq-item summary:hover { background: #f8fafc; }
+        .faq-item summary::before { content: 'Q.'; color: #6366f1; font-weight: 800; flex-shrink: 0; }
+        .faq-item[open] summary { background: #f1f5f9; }
+        .faq-answer { padding: 12px 16px 14px 38px; font-size: 13px; color: #64748b; line-height: 1.7; }
+
         /* === 팁 섹션 === */
         .tip-section {
             max-width: 960px; margin: 0 auto; padding: 0 20px 32px;
@@ -158,7 +215,8 @@
 
 <div class="search-wrap">
     <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-    <input type="text" id="searchInput" placeholder="도구 검색... (예: 글자, 날짜, 특수문자)" oninput="filterTools()" onkeydown="handleSearchEnter(event)">
+    <input type="text" id="searchInput" placeholder="도구 검색... (예: 글자, 날짜, 특수문자)" oninput="onSearchInput()" onkeydown="onSearchKeydown(event)" onfocus="onSearchFocus()" autocomplete="off">
+    <div class="search-dropdown" id="searchDropdown"></div>
 </div>
 
 <!-- 즐겨찾기 섹션 -->
@@ -170,85 +228,79 @@
 <div class="tools-grid" id="recentGrid"></div>
 
 <!-- 전체 도구 -->
-<div class="section-label visible" style="margin-top:8px">📦 전체 도구</div>
-<div class="tools-grid" id="toolsGrid">
+<div class="view-controls">
+    <div class="section-label visible" style="margin:0;padding:0">📦 전체 도구</div>
+    <div class="view-toggle">
+        <button id="viewCard" class="active" onclick="switchView('card')">카드</button>
+        <button id="viewCat" onclick="switchView('category')">카테고리</button>
+    </div>
+</div>
 
-    <a href="https://teemozipsa.github.io/special-chars/" class="tool-card" data-keywords="특수 문자 이모지 특수기호 유니코드 기호 복사">
+<div class="tools-grid" id="toolsGrid">
+    <a href="https://teemozipsa.github.io/special-chars/" class="tool-card" data-keywords="특수 문자 이모지 특수기호 유니코드 기호 복사" data-category="utility">
         <div class="tool-icon">⌨️</div>
         <div class="tool-info"><div class="tool-name">특수문자 & 이모지</div><div class="tool-desc">클릭 한 번으로 특수 문자·이모지 복사</div></div>
     </a>
-
-    <a href="https://teemozipsa.github.io/special-chars/char-counter/" class="tool-card" data-keywords="글자 수 계산기 바이트 텍스트 카운터 단어 문자수">
+    <a href="https://teemozipsa.github.io/special-chars/char-counter/" class="tool-card" data-keywords="글자 수 계산기 바이트 텍스트 카운터 단어 문자수" data-category="convert">
         <div class="tool-icon">📏</div>
         <div class="tool-info"><div class="tool-name">글자 수 계산기</div><div class="tool-desc">글자·바이트·단어 수 실시간 계산</div></div>
     </a>
-
-    <a href="https://teemozipsa.github.io/special-chars/date-calc/" class="tool-card" data-keywords="날짜 계산기 디데이 D-Day 기념일 만일 일수">
+    <a href="https://teemozipsa.github.io/special-chars/date-calc/" class="tool-card" data-keywords="날짜 계산기 디데이 D-Day 기념일 만일 일수" data-category="date">
         <div class="tool-icon">📅</div>
         <div class="tool-info"><div class="tool-name">날짜 / D-Day 계산기</div><div class="tool-desc">D-Day 계산, 날짜 더하기·빼기</div></div>
     </a>
-
-    <a href="https://teemozipsa.github.io/special-chars/unit-conv/" class="tool-card" data-keywords="단위 변환기 평 제곱미터 온도 근 그램 신발 사이즈 직구">
+    <a href="https://teemozipsa.github.io/special-chars/unit-conv/" class="tool-card" data-keywords="단위 변환기 평 제곱미터 온도 근 그램 신발 사이즈 직구" data-category="convert">
         <div class="tool-icon">📐</div>
         <div class="tool-info"><div class="tool-name">생활 단위 변환기</div><div class="tool-desc">부동산·요리·직구·디지털·여행 단위 변환</div></div>
     </a>
-
-    <a href="https://teemozipsa.github.io/quick-reply/" class="tool-card" data-keywords="빠른 답장 메신저 이메일 템플릿 복사 문구">
+    <a href="https://teemozipsa.github.io/quick-reply/" class="tool-card" data-keywords="빠른 답장 메신저 이메일 템플릿 복사 문구" data-category="utility">
         <div class="tool-icon">💬</div>
         <div class="tool-info"><div class="tool-name">빠른 답장 도구</div><div class="tool-desc">자주 쓰는 답장 문구 저장 & 빠른 복사</div></div>
     </a>
-
-    <a href="https://teemozipsa.github.io/special-chars/calculator/" class="tool-card" data-keywords="계산기 사칙연산 더하기 빼기 곱하기 나누기 calculator">
+    <a href="https://teemozipsa.github.io/special-chars/calculator/" class="tool-card" data-keywords="계산기 사칙연산 더하기 빼기 곱하기 나누기 calculator" data-category="calc">
         <div class="tool-icon">🧮</div>
         <div class="tool-info"><div class="tool-name">일반 계산기</div><div class="tool-desc">사칙연산·퍼센트·키보드 입력 지원</div></div>
     </a>
-
-    <a href="https://teemozipsa.github.io/special-chars/compound-interest/" class="tool-card" data-keywords="복리 계산기 이자 주식 코인 투자 수익률 원금 compound interest">
+    <a href="https://teemozipsa.github.io/special-chars/compound-interest/" class="tool-card" data-keywords="복리 계산기 이자 주식 코인 투자 수익률 원금 compound interest" data-category="calc">
         <div class="tool-icon">💰</div>
         <div class="tool-info"><div class="tool-name">복리 계산기</div><div class="tool-desc">복리의 마법을 차트로 한눈에 확인</div></div>
     </a>
-
-    <a href="https://teemozipsa.github.io/special-chars/speech-timer/" class="tool-card" data-keywords="발표시간 계산기 스크립트 프레젠테이션 발표 시간 말하기 속도 speech">
+    <a href="https://teemozipsa.github.io/special-chars/speech-timer/" class="tool-card" data-keywords="발표시간 계산기 스크립트 프레젠테이션 발표 시간 말하기 속도 speech" data-category="convert">
         <div class="tool-icon">🎤</div>
         <div class="tool-info"><div class="tool-name">발표시간 계산기</div><div class="tool-desc">스크립트 붙여넣기 → 예상 발표 시간 자동 계산</div></div>
     </a>
-
-    <a href="https://teemozipsa.github.io/special-chars/avg-price/" class="tool-card" data-keywords="물타기 불타기 평단가 계산기 코인 주식 추가매수 평균단가 averaging">
+    <a href="https://teemozipsa.github.io/special-chars/avg-price/" class="tool-card" data-keywords="물타기 불타기 평단가 계산기 코인 주식 추가매수 평균단가 averaging" data-category="calc">
         <div class="tool-icon">📉</div>
         <div class="tool-info"><div class="tool-name">물타기/불타기 계산기</div><div class="tool-desc">추가 매수 시 평단가 실시간 계산</div></div>
     </a>
-
-    <a href="https://teemozipsa.github.io/special-chars/qr-code/" class="tool-card" data-keywords="QR 코드 생성기 큐알 바코드 URL 링크 qr code">
+    <a href="https://teemozipsa.github.io/special-chars/qr-code/" class="tool-card" data-keywords="QR 코드 생성기 큐알 바코드 URL 링크 qr code" data-category="utility">
         <div class="tool-icon">📷</div>
         <div class="tool-info"><div class="tool-name">QR 코드 생성기</div><div class="tool-desc">텍스트·URL을 QR 코드로 즉시 생성</div></div>
     </a>
-
-    <a href="https://teemozipsa.github.io/special-chars/image-compress/" class="tool-card" data-keywords="이미지 용량 줄이기 사진 압축 리사이즈 jpg png 최적화">
+    <a href="https://teemozipsa.github.io/special-chars/image-compress/" class="tool-card" data-keywords="이미지 용량 줄이기 사진 압축 리사이즈 jpg png 최적화" data-category="utility">
         <div class="tool-icon">🗜️</div>
         <div class="tool-info"><div class="tool-name">이미지 용량 줄이기</div><div class="tool-desc">브라우저에서 바로 사진 용량 압축</div></div>
     </a>
-
-    <a href="https://teemozipsa.github.io/special-chars/wage-calc/" class="tool-card" data-keywords="시급 월급 연봉 환산기 급여 계산기 최저시급 알바 wage salary">
+    <a href="https://teemozipsa.github.io/special-chars/wage-calc/" class="tool-card" data-keywords="시급 월급 연봉 환산기 급여 계산기 최저시급 알바 wage salary" data-category="calc">
         <div class="tool-icon">💵</div>
         <div class="tool-info"><div class="tool-name">시급 환산기</div><div class="tool-desc">시급·월급·연봉 자유롭게 환산</div></div>
     </a>
-
-    <a href="https://teemozipsa.github.io/special-chars/prompt-gen/" class="tool-card" data-keywords="AI 프롬프트 자판기 생성기 ChatGPT Claude 질문 템플릿 prompt">
+    <a href="https://teemozipsa.github.io/special-chars/prompt-gen/" class="tool-card" data-keywords="AI 프롬프트 자판기 생성기 ChatGPT Claude 질문 템플릿 prompt" data-category="utility">
         <div class="tool-icon">🤖</div>
         <div class="tool-info"><div class="tool-name">AI 프롬프트 자판기</div><div class="tool-desc">빈칸만 채우면 AI용 프롬프트 완성</div></div>
     </a>
-
-    <a href="https://teemozipsa.github.io/special-chars/sub-calc/" class="tool-card" data-keywords="구독료 계산기 넷플릭스 유튜브 구독 지출 subscription 가랑비">
+    <a href="https://teemozipsa.github.io/special-chars/sub-calc/" class="tool-card" data-keywords="구독료 계산기 넷플릭스 유튜브 구독 지출 subscription 가랑비" data-category="calc">
         <div class="tool-icon">💸</div>
         <div class="tool-info"><div class="tool-name">구독료 팩폭 계산기</div><div class="tool-desc">매달 나가는 구독료, 모이면 얼마?</div></div>
     </a>
-
-    <a href="https://teemozipsa.github.io/special-chars/calorie-calc/" class="tool-card" data-keywords="칼로리 계산기 다이어트 기초대사량 탄단지 BMR 식단">
+    <a href="https://teemozipsa.github.io/special-chars/calorie-calc/" class="tool-card" data-keywords="칼로리 계산기 다이어트 기초대사량 탄단지 BMR 식단" data-category="calc">
         <div class="tool-icon">🔥</div>
         <div class="tool-info"><div class="tool-name">칼로리 계산기</div><div class="tool-desc">다이어트 목표 칼로리 및 탄단지 비율 계산</div></div>
     </a>
-
 </div>
+
+<!-- 카테고리 뷰 (기본 숨김) -->
+<div id="categoryView"></div>
 
 <div class="no-results" id="noResults">🔍 검색 결과가 없습니다</div>
 
@@ -258,6 +310,39 @@
         <div class="tip-icon">💡</div>
         <div class="tip-text"><span class="tip-label">알고 계셨나요?</span> <span id="tipContent"></span></div>
     </div>
+</div>
+
+<!-- FAQ 섹션 -->
+<div class="faq-section">
+    <div class="faq-title">❓ 자주 묻는 질문</div>
+    <details class="faq-item">
+        <summary>D-Day 계산에서 "초일 산입"이 뭔가요?</summary>
+        <div class="faq-answer">초일 산입은 시작일을 1일째로 포함하는 계산 방식입니다. 예를 들어 1월 1일~1월 3일을 계산하면, 초일 산입 시 3일, 미적용 시 2일이 됩니다. 기념일·만일 계산(예: 100일 기념일)에는 초일 산입을 체크하고, 업무 마감 D-Day에는 체크 해제를 권장합니다.</div>
+    </details>
+    <details class="faq-item">
+        <summary>고기 1근과 채소 1근이 왜 다른가요?</summary>
+        <div class="faq-answer">한국에서 "근"은 고기와 채소에 따라 다른 무게를 뜻합니다. 고기 1근은 600g, 채소 1근은 400g입니다. 이는 일제강점기부터 내려온 관행으로, 정육점과 시장에서 서로 다른 기준을 사용합니다. 단위 변환기의 "요리" 카테고리에서 자동 변환할 수 있어요.</div>
+    </details>
+    <details class="faq-item">
+        <summary>UTF-8과 EUC-KR 바이트 차이는 무엇인가요?</summary>
+        <div class="faq-answer">UTF-8은 전 세계 문자를 지원하는 유니코드 인코딩으로, 한글 1자가 3바이트입니다. EUC-KR은 한국어 전용 인코딩으로 한글 1자가 2바이트입니다. 글자 수 계산기에서 두 방식 모두 확인 가능합니다. 웹에서는 UTF-8이 표준이지만, 일부 오래된 시스템이나 SMS 발송 시 EUC-KR 바이트를 기준으로 합니다.</div>
+    </details>
+    <details class="faq-item">
+        <summary>아파트 전용면적과 공급면적의 차이는?</summary>
+        <div class="faq-answer">전용면적은 현관문 안쪽의 실제 사용 가능한 면적(벽 안쪽)이고, 공급면적은 전용면적에 주거 공용면적(복도, 계단, 엘리베이터 등)을 더한 것입니다. 보통 "25평 아파트"라고 하면 전용면적 84㎡를 의미합니다. 단위 변환기에서 평↔㎡ 변환이 가능합니다.</div>
+    </details>
+    <details class="faq-item">
+        <summary>복리의 72법칙이란?</summary>
+        <div class="faq-answer">72를 연 수익률(%)로 나누면 원금이 2배가 되는 대략적인 햇수를 알 수 있는 법칙입니다. 예를 들어 연 6% 수익률이면 72÷6 = 12년에 원금이 2배가 됩니다. 정확한 계산은 복리 계산기에서 확인하세요.</div>
+    </details>
+    <details class="faq-item">
+        <summary>해외 직구 시 무게 단위는 어떻게 변환하나요?</summary>
+        <div class="faq-answer">미국은 파운드(lb)와 온스(oz)를 사용합니다. 1파운드 = 약 453g, 1온스 = 약 28.3g입니다. 관세 기준은 대부분 kg이므로, 단위 변환기 "직구" 카테고리에서 빠르게 변환할 수 있습니다. 참고로 부피무게 계산은 가로×세로×높이(cm) ÷ 6,000입니다.</div>
+    </details>
+    <details class="faq-item">
+        <summary>물타기와 불타기의 차이는?</summary>
+        <div class="faq-answer">물타기는 주가가 하락했을 때 추가 매수하여 평균 단가를 낮추는 전략이고, 불타기는 주가가 상승할 때 추가 매수하여 수익을 늘리는 전략입니다. 물타기/불타기 계산기에서 추가 매수 후 변경되는 평단가를 실시간으로 확인할 수 있습니다.</div>
+    </details>
 </div>
 
 <footer>
@@ -284,7 +369,9 @@ function updateToday() {
     const totalDays = isLeap ? 366 : 365;
     const remaining = totalDays - dayOfYear;
     document.getElementById('todaySub').textContent = `${y}년의 ${dayOfYear}번째 날`;
-    document.getElementById('todayRemain').textContent = `올해 ${remaining}일 남음`;
+    const visits = parseInt(localStorage.getItem('visitCount') || '0') + (window._visitCounted ? 0 : 1);
+    if (!window._visitCounted) { localStorage.setItem('visitCount', visits); window._visitCounted = true; }
+    document.getElementById('todayRemain').textContent = `올해 ${remaining}일 남음 · 방문 ${visits}회째`;
 
     const hh = String(now.getHours()).padStart(2, '0');
     const mm2 = String(now.getMinutes()).padStart(2, '0');
@@ -296,21 +383,57 @@ setInterval(updateToday, 1000);
 
 // === 팁 로테이션 ===
 const TIPS = [
+    // 단위 변환
     '1평은 약 3.3㎡입니다. 방 크기를 ㎡로 환산할 때 유용해요!',
     '1마일은 약 1.6km입니다. 미국 도로 표지판 읽을 때 기억하세요.',
     '100℃는 212℉입니다. 미국 레시피를 따라 할 때 참고하세요.',
     '1파운드(lb)는 약 453g입니다. 해외 직구 시 무게 계산에 활용하세요.',
-    '한글 1글자는 UTF-8로 3바이트, EUC-KR로 2바이트입니다.',
-    'D-Day 계산 시 "초일 산입"을 체크하면 시작일도 1일로 포함됩니다.',
-    '복리의 72법칙: 수익률로 72를 나누면 원금이 2배가 되는 햇수를 알 수 있어요.',
-    '한국 신발 270mm = 미국 남성 US 8 = 유럽 EU 42입니다.',
-    '1큰술(T)은 15ml, 1컵은 200ml입니다. 요리할 때 기억하세요!',
-    '고기 1근은 600g, 채소 1근은 400g으로 서로 다릅니다.',
-    'QR 코드는 최대 4,296자의 영숫자를 담을 수 있습니다.',
-    '2026년 최저시급은 10,030원입니다.',
     '1oz(온스)는 약 29.6ml입니다. 해외 음료 용량 환산에 유용해요.',
+    '1인치는 2.54cm입니다. TV·모니터 크기 비교할 때 유용해요.',
+    '1갤런은 약 3.79리터입니다. 미국 주유소에서 참고하세요.',
+    '1에이커는 약 4,047㎡, 약 1,224평입니다.',
+    '1해리(nautical mile)는 약 1.852km입니다. 항공·해상 거리 단위예요.',
+    '1피트(ft)는 약 30.5cm입니다. 키를 피트로 환산할 때 참고하세요.',
+    '1야드는 약 91.4cm입니다. 골프에서 자주 쓰이는 단위예요.',
+    // 무게·부피
+    '고기 1근은 600g, 채소 1근은 400g으로 서로 다릅니다.',
+    '1큰술(T)은 15ml, 1컵은 200ml입니다. 요리할 때 기억하세요!',
+    '밀가루 1컵은 약 110g, 설탕 1컵은 약 200g으로 재료마다 다릅니다.',
+    '버터 1스틱은 약 113g(미국 기준)입니다.',
+    '1톤은 1,000kg, 미국의 1숏톤(short ton)은 약 907kg입니다.',
+    // 신발·의류
+    '한국 신발 270mm = 미국 남성 US 8 = 유럽 EU 42입니다.',
+    '미국 여성 신발 US 7 = 한국 240mm = 유럽 EU 38입니다.',
+    // 금융·경제
+    '복리의 72법칙: 수익률로 72를 나누면 원금이 2배가 되는 햇수를 알 수 있어요.',
+    '2026년 최저시급은 10,320원입니다.',
+    '2026년 최저시급 기준 월급(209시간)은 약 215만 원입니다.',
+    '연봉 3,000만 원의 실수령액은 월 약 220만 원 내외입니다 (4대보험·세금 공제 후).',
+    '주식 물타기: 평단가 = (총 매수금액) ÷ (총 수량)으로 계산합니다.',
+    '적금 이자에도 15.4%의 이자소득세가 붙습니다.',
+    '1달러 ≈ 약 1,450원 (2026년 초 기준, 환율은 수시 변동).',
+    // IT·디지털
+    '한글 1글자는 UTF-8로 3바이트, EUC-KR로 2바이트입니다.',
+    'QR 코드는 최대 4,296자의 영숫자를 담을 수 있습니다.',
+    '72DPI에서 1인치(72px)는 정확히 25.4mm입니다.',
+    'Full HD(1920×1080)와 4K(3840×2160)는 해상도가 정확히 4배 차이입니다.',
+    '1GB = 1,024MB이지만, 저장장치 제조사는 1,000MB로 계산해서 실제 용량이 적어 보여요.',
+    'RGB #000000은 검정, #FFFFFF는 흰색입니다. 16진수 색상 코드의 기본이에요.',
+    'Wi-Fi 주파수 2.4GHz는 범위가 넓고, 5GHz는 속도가 빠릅니다.',
+    'PDF 용량이 크다면 이미지 해상도를 150DPI로 낮추면 크게 줄어듭니다.',
+    // 생활 상식
+    'D-Day 계산 시 "초일 산입"을 체크하면 시작일도 1일로 포함됩니다.',
+    '카페인 하루 권장 섭취량은 성인 기준 400mg 이하입니다 (커피 약 3~4잔).',
+    '성인 하루 권장 수분 섭취량은 약 2리터(8잔)입니다.',
+    '비행기 기내 반입 액체류는 개당 100ml, 총 1리터까지 가능합니다.',
+    '국제전화 국가번호: 한국 +82, 미국 +1, 일본 +81, 중국 +86입니다.',
+    '택배 부피무게 계산: 가로×세로×높이(cm) ÷ 6,000 = kg입니다.',
+    // 한국 특화
+    '전용면적 25평(약 84㎡)은 아파트 국민평형이라 불립니다.',
     '1psi는 약 0.069bar입니다. 타이어 공기압 확인 시 참고하세요.',
-    '72DPI에서 1인치(72px)는 정확히 25.4mm입니다.'
+    '한국 표준시(KST)는 UTC+9로, 일본과 같은 시간대입니다.',
+    '대한민국 법정 공휴일은 연 15일이지만, 대체공휴일로 늘어날 수 있어요.',
+    '아파트 전용면적은 벽 안쪽, 공급면적은 복도·계단 등을 포함한 넓이입니다.'
 ];
 document.getElementById('tipContent').textContent = TIPS[Math.floor(Math.random() * TIPS.length)];
 
@@ -411,9 +534,64 @@ document.getElementById('toolsGrid').addEventListener('click', e => {
     }
 });
 
-// === 검색 ===
-function filterTools() {
+// === 검색 자동완성 ===
+let ddIdx = -1;
+function getToolList() {
+    return [...document.querySelectorAll('#toolsGrid .tool-card')].map(c => ({
+        href: c.href,
+        icon: c.querySelector('.tool-icon')?.textContent || '',
+        name: c.querySelector('.tool-name')?.textContent || '',
+        desc: c.querySelector('.tool-desc')?.textContent || '',
+        keywords: (c.getAttribute('data-keywords') || '').toLowerCase()
+    }));
+}
+
+function onSearchInput() {
     const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    const dd = document.getElementById('searchDropdown');
+    const input = document.getElementById('searchInput');
+    ddIdx = -1;
+    if (!q) { dd.classList.remove('open'); input.classList.remove('dropdown-open'); filterCards(''); return; }
+    const tools = getToolList();
+    const matches = tools.filter(t => t.name.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q) || t.keywords.includes(q));
+    if (matches.length === 0) { dd.classList.remove('open'); input.classList.remove('dropdown-open'); filterCards(q); return; }
+    dd.innerHTML = matches.map((t, i) => `<a class="search-dropdown-item" href="${t.href}" data-idx="${i}" onmousedown="trackRecent('${t.href}')"><span class="sdi-icon">${t.icon}</span><span><span class="sdi-name">${t.name}</span><br><span class="sdi-desc">${t.desc}</span></span></a>`).join('');
+    dd.classList.add('open');
+    input.classList.add('dropdown-open');
+    filterCards(q);
+}
+
+function onSearchFocus() {
+    const q = document.getElementById('searchInput').value.trim();
+    if (q) onSearchInput();
+}
+
+function onSearchKeydown(e) {
+    const dd = document.getElementById('searchDropdown');
+    const items = dd.querySelectorAll('.search-dropdown-item');
+    if (!dd.classList.contains('open') || items.length === 0) {
+        if (e.key === 'Enter') { e.preventDefault(); navigateFirstVisible(); }
+        return;
+    }
+    if (e.key === 'ArrowDown') { e.preventDefault(); ddIdx = Math.min(ddIdx + 1, items.length - 1); highlightDD(items); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); ddIdx = Math.max(ddIdx - 1, -1); highlightDD(items); }
+    else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (ddIdx >= 0 && items[ddIdx]) { trackRecent(items[ddIdx].href); window.location.href = items[ddIdx].href; }
+        else navigateFirstVisible();
+    } else if (e.key === 'Escape') { dd.classList.remove('open'); document.getElementById('searchInput').classList.remove('dropdown-open'); }
+}
+
+function highlightDD(items) {
+    items.forEach((el, i) => el.classList.toggle('active', i === ddIdx));
+}
+
+function navigateFirstVisible() {
+    const cards = document.querySelectorAll('#toolsGrid .tool-card');
+    for (const c of cards) { if (c.style.display !== 'none' && c.href) { trackRecent(c.href); window.location.href = c.href; return; } }
+}
+
+function filterCards(q) {
     const cards = document.querySelectorAll('#toolsGrid .tool-card');
     let visibleCount = 0;
     cards.forEach(card => {
@@ -425,7 +603,6 @@ function filterTools() {
         if (match) visibleCount++;
     });
     document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
-    // 검색 중에는 즐겨찾기/최근 숨기기
     document.getElementById('favLabel').style.display = q ? 'none' : '';
     document.getElementById('favGrid').style.display = q ? 'none' : '';
     document.getElementById('recentLabel').style.display = q ? 'none' : '';
@@ -433,18 +610,53 @@ function filterTools() {
     if (!q) { renderFavGrid(); renderRecentGrid(); }
 }
 
-function handleSearchEnter(e) {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        const cards = document.querySelectorAll('#toolsGrid .tool-card');
-        for (const card of cards) {
-            if (card.style.display !== 'none' && card.href) {
-                trackRecent(card.href);
-                window.location.href = card.href;
-                return;
-            }
-        }
+// 검색창 외부 클릭 시 드롭다운 닫기
+document.addEventListener('click', e => {
+    if (!e.target.closest('.search-wrap')) {
+        document.getElementById('searchDropdown').classList.remove('open');
+        document.getElementById('searchInput').classList.remove('dropdown-open');
     }
+});
+
+// === 카테고리 뷰 전환 ===
+const CATEGORIES = [
+    { id: 'calc', label: '🧮 계산기' },
+    { id: 'convert', label: '📐 변환 / 측정' },
+    { id: 'date', label: '📅 날짜 / 시간' },
+    { id: 'utility', label: '🛠️ 유틸리티' }
+];
+
+let currentView = localStorage.getItem('viewMode') || 'card';
+
+function switchView(mode) {
+    currentView = mode;
+    localStorage.setItem('viewMode', mode);
+    document.getElementById('viewCard').classList.toggle('active', mode === 'card');
+    document.getElementById('viewCat').classList.toggle('active', mode === 'category');
+    document.getElementById('toolsGrid').style.display = mode === 'card' ? '' : 'none';
+    document.getElementById('categoryView').style.display = mode === 'category' ? '' : 'none';
+    if (mode === 'category') renderCategoryView();
+}
+
+function renderCategoryView() {
+    const cv = document.getElementById('categoryView');
+    const cards = [...document.querySelectorAll('#toolsGrid .tool-card')];
+    cv.innerHTML = '';
+    CATEGORIES.forEach(cat => {
+        const matching = cards.filter(c => c.getAttribute('data-category') === cat.id);
+        if (matching.length === 0) return;
+        const group = document.createElement('div');
+        group.className = 'category-group visible';
+        group.innerHTML = `<div class="category-title">${cat.label}</div><div class="category-grid"></div>`;
+        const grid = group.querySelector('.category-grid');
+        matching.forEach(c => {
+            const clone = c.cloneNode(true);
+            clone.querySelector('.fav-btn')?.remove();
+            clone.onclick = () => trackRecent(c.href);
+            grid.appendChild(clone);
+        });
+        cv.appendChild(group);
+    });
 }
 
 // === 드래그 앤 드롭 ===
@@ -472,6 +684,7 @@ function handleSearchEnter(e) {
 renderFavButtons();
 renderFavGrid();
 renderRecentGrid();
+if (currentView === 'category') switchView('category');
 </script>
 </body>
 </html>
