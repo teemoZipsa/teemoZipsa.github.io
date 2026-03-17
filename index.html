@@ -14,203 +14,146 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, 'Noto Sans KR', 'Malgun Gothic', sans-serif;
-            background: #f8fafc;
-            color: #334155;
-            min-height: 100vh;
+            background: #f8fafc; color: #334155; min-height: 100vh;
         }
+
+        /* === 업데이트 배너 === */
+        .update-banner {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff; text-align: center; padding: 10px 40px 10px 20px;
+            font-size: 13px; font-weight: 500; position: relative;
+        }
+        .update-banner a { color: #e0e7ff; }
+        .banner-close {
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; color: rgba(255,255,255,.7); font-size: 18px;
+            cursor: pointer; padding: 4px; line-height: 1;
+        }
+        .banner-close:hover { color: #fff; }
 
         /* === 헤더 === */
-        .hero {
-            text-align: center;
-            padding: 56px 20px 0;
-            max-width: 720px;
-            margin: 0 auto;
+        .hero { text-align: center; padding: 40px 20px 0; max-width: 720px; margin: 0 auto; }
+        .hero h1 { font-size: 34px; font-weight: 800; color: #1e293b; letter-spacing: -0.5px; margin-bottom: 8px; }
+        .hero p { font-size: 15px; color: #64748b; margin-bottom: 24px; }
+
+        /* === 오늘의 정보 위젯 === */
+        .today-widget {
+            max-width: 480px; margin: 0 auto 24px; background: #fff;
+            border: 1px solid #e2e8f0; border-radius: 14px; padding: 16px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,.04); gap: 12px; flex-wrap: wrap;
         }
-        .hero h1 {
-            font-size: 34px;
-            font-weight: 800;
-            color: #1e293b;
-            letter-spacing: -0.5px;
-            margin-bottom: 8px;
-        }
-        .hero p {
-            font-size: 15px;
-            color: #64748b;
-            margin-bottom: 32px;
-        }
+        .today-date { font-size: 15px; font-weight: 700; color: #1e293b; }
+        .today-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+        .today-clock { font-size: 22px; font-weight: 700; color: #6366f1; font-variant-numeric: tabular-nums; }
+        .today-remain { font-size: 11px; color: #94a3b8; text-align: right; }
 
         /* === 검색창 === */
-        .search-wrap {
-            max-width: 480px;
-            margin: 0 auto 40px;
-            position: relative;
-        }
-        .search-wrap svg {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            fill: #94a3b8;
-            pointer-events: none;
-        }
+        .search-wrap { max-width: 480px; margin: 0 auto 20px; position: relative; }
+        .search-wrap svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; fill: #94a3b8; pointer-events: none; }
         .search-wrap input {
-            width: 100%;
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 14px 16px 14px 46px;
-            font-size: 15px;
-            color: #334155;
-            outline: none;
-            font-family: inherit;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            width: 100%; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
+            padding: 14px 16px 14px 46px; font-size: 15px; color: #334155; outline: none;
+            font-family: inherit; transition: border-color .2s, box-shadow .2s; box-shadow: 0 1px 3px rgba(0,0,0,.04);
         }
         .search-wrap input::placeholder { color: #94a3b8; }
-        .search-wrap input:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        .search-wrap input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,.15); }
+
+        /* === 즐겨찾기 / 최근 사용 섹션 === */
+        .section-label {
+            max-width: 960px; margin: 0 auto; padding: 0 20px 8px;
+            font-size: 13px; font-weight: 700; color: #64748b;
+            display: none; align-items: center; gap: 6px;
         }
+        .section-label.visible { display: flex; }
 
         /* === 카드 그리드 === */
         .tools-grid {
-            max-width: 960px;
-            margin: 0 auto;
-            padding: 0 20px 48px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 14px;
+            max-width: 960px; margin: 0 auto; padding: 0 20px 16px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;
         }
-
         .tool-card {
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 18px 20px;
-            text-decoration: none;
-            color: inherit;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            user-select: none;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            background: #fff; border: 1px solid #e2e8f0; border-radius: 16px;
+            padding: 18px 20px; text-decoration: none; color: inherit; cursor: pointer;
+            transition: all .25s ease; display: flex; align-items: center; gap: 14px;
+            user-select: none; box-shadow: 0 1px 3px rgba(0,0,0,.04); position: relative;
         }
-        .tool-card:hover {
-            transform: translateY(-3px);
-            border-color: #c7d2fe;
-            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.12);
-        }
-        .tool-card:active {
-            transform: translateY(-1px);
-        }
-        .tool-card.dragging {
-            opacity: 0.4;
-            transform: scale(0.95);
-        }
-        .tool-card.drag-over {
-            border-color: #a78bfa;
-            box-shadow: 0 0 0 2px rgba(167,139,250,0.3);
-        }
+        .tool-card:hover { transform: translateY(-3px); border-color: #c7d2fe; box-shadow: 0 8px 24px rgba(99,102,241,.12); }
+        .tool-card:active { transform: translateY(-1px); }
+        .tool-card.dragging { opacity: .4; transform: scale(.95); }
+        .tool-card.drag-over { border-color: #a78bfa; box-shadow: 0 0 0 2px rgba(167,139,250,.3); }
+        .tool-icon { font-size: 26px; line-height: 1; flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; border-radius: 10px; }
+        .tool-info { flex: 1; min-width: 0; }
+        .tool-name { font-size: 17px; font-weight: 700; color: #1e293b; margin-bottom: 2px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .tool-desc { font-size: 12px; color: #94a3b8; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .tool-card:hover .tool-name { color: #4338ca; }
 
-        .tool-icon {
-            font-size: 26px;
-            line-height: 1;
-            flex-shrink: 0;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f1f5f9;
-            border-radius: 10px;
+        /* 즐겨찾기 버튼 */
+        .fav-btn {
+            position: absolute; top: 8px; right: 8px; background: none; border: none;
+            font-size: 16px; cursor: pointer; color: #cbd5e1; transition: color .2s;
+            padding: 4px; line-height: 1; z-index: 2;
         }
-        .tool-info {
-            flex: 1;
-            min-width: 0;
-        }
-        .tool-name {
-            font-size: 17px;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 2px;
-            line-height: 1.2;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .tool-desc {
-            font-size: 12px;
-            color: #94a3b8;
-            line-height: 1.3;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .tool-card:hover .tool-name {
-            color: #4338ca;
-        }
+        .fav-btn:hover { color: #f59e0b; }
+        .fav-btn.active { color: #f59e0b; }
 
-        /* 검색 결과 없음 */
-        .no-results {
-            text-align: center;
-            color: #94a3b8;
-            font-size: 14px;
-            padding: 40px 20px;
-            display: none;
+        .no-results { text-align: center; color: #94a3b8; font-size: 14px; padding: 40px 20px; display: none; }
+
+        /* === 팁 섹션 === */
+        .tip-section {
+            max-width: 960px; margin: 0 auto; padding: 0 20px 32px;
         }
+        .tip-card {
+            background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px;
+            padding: 14px 18px; font-size: 14px; color: #92400e; display: flex; align-items: center; gap: 10px;
+        }
+        .tip-icon { font-size: 20px; flex-shrink: 0; }
+        .tip-text { line-height: 1.5; }
+        .tip-label { font-weight: 700; color: #b45309; }
 
         /* === 푸터 === */
-        footer {
-            text-align: center;
-            color: #94a3b8;
-            font-size: 12px;
-            padding: 24px 20px 40px;
-            border-top: 1px solid #e2e8f0;
-            max-width: 960px;
-            margin: 0 auto;
-        }
-        footer a {
-            color: #64748b;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
+        footer { text-align: center; color: #94a3b8; font-size: 12px; padding: 24px 20px 40px; border-top: 1px solid #e2e8f0; max-width: 960px; margin: 0 auto; }
+        footer a { color: #64748b; text-decoration: none; transition: color .2s; }
         footer a:hover { color: #6366f1; }
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 8px;
-        }
+        .footer-links { display: flex; justify-content: center; align-items: center; gap: 6px; margin-bottom: 8px; }
 
-        /* === 반응형 === */
         @media (max-width: 640px) {
-            .hero { padding-top: 40px; }
+            .hero { padding-top: 32px; }
             .hero h1 { font-size: 24px; }
-            .hero p { font-size: 13px; margin-bottom: 24px; }
-            .tools-grid {
-                grid-template-columns: 1fr;
-                gap: 10px;
-                padding: 0 16px 40px;
-            }
+            .hero p { font-size: 13px; margin-bottom: 16px; }
+            .tools-grid { grid-template-columns: 1fr; gap: 10px; padding: 0 16px 16px; }
             .tool-name { font-size: 15px; }
+            .today-widget { flex-direction: column; text-align: center; gap: 8px; }
+            .today-remain { text-align: center; }
         }
     </style>
 </head>
 <body>
 
+<!-- 업데이트 배너 -->
+<div class="update-banner" id="updateBanner" style="display:none">
+    🆕 새 도구: <strong>칼로리 계산기</strong>가 추가되었습니다! 다이어트 목표 칼로리와 탄단지 비율을 계산해 보세요.
+    <button class="banner-close" onclick="dismissBanner()" aria-label="닫기">&times;</button>
+</div>
+
 <div class="hero">
     <h1>티모집사의 유용한 웹 도구 모음😺</h1>
     <p>일상과 업무에 필요한 도구들을 한곳에 모았습니다.</p>
+</div>
+
+<!-- 오늘의 정보 위젯 -->
+<div class="today-widget">
+    <div>
+        <div class="today-date" id="todayDate"></div>
+        <div class="today-sub" id="todaySub"></div>
+    </div>
+    <div style="text-align:right">
+        <div class="today-clock" id="todayClock"></div>
+        <div class="today-remain" id="todayRemain"></div>
+    </div>
 </div>
 
 <div class="search-wrap">
@@ -218,132 +161,103 @@
     <input type="text" id="searchInput" placeholder="도구 검색... (예: 글자, 날짜, 특수문자)" oninput="filterTools()" onkeydown="handleSearchEnter(event)">
 </div>
 
+<!-- 즐겨찾기 섹션 -->
+<div class="section-label" id="favLabel">⭐ 즐겨찾기</div>
+<div class="tools-grid" id="favGrid"></div>
+
+<!-- 최근 사용 섹션 -->
+<div class="section-label" id="recentLabel">🕐 최근 사용</div>
+<div class="tools-grid" id="recentGrid"></div>
+
+<!-- 전체 도구 -->
+<div class="section-label visible" style="margin-top:8px">📦 전체 도구</div>
 <div class="tools-grid" id="toolsGrid">
 
     <a href="https://teemozipsa.github.io/special-chars/" class="tool-card" data-keywords="특수 문자 이모지 특수기호 유니코드 기호 복사">
         <div class="tool-icon">⌨️</div>
-        <div class="tool-info">
-            <div class="tool-name">특수문자 & 이모지</div>
-            <div class="tool-desc">클릭 한 번으로 특수 문자·이모지 복사</div>
-        </div>
+        <div class="tool-info"><div class="tool-name">특수문자 & 이모지</div><div class="tool-desc">클릭 한 번으로 특수 문자·이모지 복사</div></div>
     </a>
 
-    <a href="https://teemozipsa.github.io/special-chars/#counter" class="tool-card" data-keywords="글자 수 계산기 바이트 텍스트 카운터 단어 문자수">
+    <a href="https://teemozipsa.github.io/special-chars/char-counter/" class="tool-card" data-keywords="글자 수 계산기 바이트 텍스트 카운터 단어 문자수">
         <div class="tool-icon">📏</div>
-        <div class="tool-info">
-            <div class="tool-name">글자 수 계산기</div>
-            <div class="tool-desc">글자·바이트·단어 수 실시간 계산</div>
-        </div>
+        <div class="tool-info"><div class="tool-name">글자 수 계산기</div><div class="tool-desc">글자·바이트·단어 수 실시간 계산</div></div>
     </a>
 
-    <a href="https://teemozipsa.github.io/special-chars/#date" class="tool-card" data-keywords="날짜 계산기 디데이 D-Day 기념일 만일 일수">
+    <a href="https://teemozipsa.github.io/special-chars/date-calc/" class="tool-card" data-keywords="날짜 계산기 디데이 D-Day 기념일 만일 일수">
         <div class="tool-icon">📅</div>
-        <div class="tool-info">
-            <div class="tool-name">날짜 / D-Day 계산기</div>
-            <div class="tool-desc">D-Day 계산, 날짜 더하기·빼기</div>
-        </div>
+        <div class="tool-info"><div class="tool-name">날짜 / D-Day 계산기</div><div class="tool-desc">D-Day 계산, 날짜 더하기·빼기</div></div>
     </a>
 
-    <a href="https://teemozipsa.github.io/special-chars/#unit" class="tool-card" data-keywords="단위 변환기 평 제곱미터 온도 근 그램 신발 사이즈 직구">
+    <a href="https://teemozipsa.github.io/special-chars/unit-conv/" class="tool-card" data-keywords="단위 변환기 평 제곱미터 온도 근 그램 신발 사이즈 직구">
         <div class="tool-icon">📐</div>
-        <div class="tool-info">
-            <div class="tool-name">생활 단위 변환기</div>
-            <div class="tool-desc">부동산·요리·직구·디지털·여행 단위 변환</div>
-        </div>
+        <div class="tool-info"><div class="tool-name">생활 단위 변환기</div><div class="tool-desc">부동산·요리·직구·디지털·여행 단위 변환</div></div>
     </a>
 
     <a href="https://teemozipsa.github.io/quick-reply/" class="tool-card" data-keywords="빠른 답장 메신저 이메일 템플릿 복사 문구">
         <div class="tool-icon">💬</div>
-        <div class="tool-info">
-            <div class="tool-name">빠른 답장 도구</div>
-            <div class="tool-desc">자주 쓰는 답장 문구 저장 & 빠른 복사</div>
-        </div>
+        <div class="tool-info"><div class="tool-name">빠른 답장 도구</div><div class="tool-desc">자주 쓰는 답장 문구 저장 & 빠른 복사</div></div>
     </a>
 
     <a href="https://teemozipsa.github.io/special-chars/calculator/" class="tool-card" data-keywords="계산기 사칙연산 더하기 빼기 곱하기 나누기 calculator">
         <div class="tool-icon">🧮</div>
-        <div class="tool-info">
-            <div class="tool-name">일반 계산기</div>
-            <div class="tool-desc">사칙연산·퍼센트·키보드 입력 지원</div>
-        </div>
+        <div class="tool-info"><div class="tool-name">일반 계산기</div><div class="tool-desc">사칙연산·퍼센트·키보드 입력 지원</div></div>
     </a>
 
     <a href="https://teemozipsa.github.io/special-chars/compound-interest/" class="tool-card" data-keywords="복리 계산기 이자 주식 코인 투자 수익률 원금 compound interest">
         <div class="tool-icon">💰</div>
-        <div class="tool-info">
-            <div class="tool-name">복리 계산기</div>
-            <div class="tool-desc">복리의 마법을 차트로 한눈에 확인</div>
-        </div>
+        <div class="tool-info"><div class="tool-name">복리 계산기</div><div class="tool-desc">복리의 마법을 차트로 한눈에 확인</div></div>
     </a>
 
     <a href="https://teemozipsa.github.io/special-chars/speech-timer/" class="tool-card" data-keywords="발표시간 계산기 스크립트 프레젠테이션 발표 시간 말하기 속도 speech">
         <div class="tool-icon">🎤</div>
-        <div class="tool-info">
-            <div class="tool-name">발표시간 계산기</div>
-            <div class="tool-desc">스크립트 붙여넣기 → 예상 발표 시간 자동 계산</div>
-        </div>
+        <div class="tool-info"><div class="tool-name">발표시간 계산기</div><div class="tool-desc">스크립트 붙여넣기 → 예상 발표 시간 자동 계산</div></div>
     </a>
 
     <a href="https://teemozipsa.github.io/special-chars/avg-price/" class="tool-card" data-keywords="물타기 불타기 평단가 계산기 코인 주식 추가매수 평균단가 averaging">
         <div class="tool-icon">📉</div>
-        <div class="tool-info">
-            <div class="tool-name">물타기/불타기 계산기</div>
-            <div class="tool-desc">추가 매수 시 평단가 실시간 계산</div>
-        </div>
+        <div class="tool-info"><div class="tool-name">물타기/불타기 계산기</div><div class="tool-desc">추가 매수 시 평단가 실시간 계산</div></div>
     </a>
 
     <a href="https://teemozipsa.github.io/special-chars/qr-code/" class="tool-card" data-keywords="QR 코드 생성기 큐알 바코드 URL 링크 qr code">
         <div class="tool-icon">📷</div>
-        <div class="tool-info">
-            <div class="tool-name">QR 코드 생성기</div>
-            <div class="tool-desc">텍스트·URL을 QR 코드로 즉시 생성</div>
-        </div>
+        <div class="tool-info"><div class="tool-name">QR 코드 생성기</div><div class="tool-desc">텍스트·URL을 QR 코드로 즉시 생성</div></div>
     </a>
 
     <a href="https://teemozipsa.github.io/special-chars/image-compress/" class="tool-card" data-keywords="이미지 용량 줄이기 사진 압축 리사이즈 jpg png 최적화">
         <div class="tool-icon">🗜️</div>
-        <div class="tool-info">
-            <div class="tool-name">이미지 용량 줄이기</div>
-            <div class="tool-desc">브라우저에서 바로 사진 용량 압축</div>
-        </div>
+        <div class="tool-info"><div class="tool-name">이미지 용량 줄이기</div><div class="tool-desc">브라우저에서 바로 사진 용량 압축</div></div>
     </a>
 
     <a href="https://teemozipsa.github.io/special-chars/wage-calc/" class="tool-card" data-keywords="시급 월급 연봉 환산기 급여 계산기 최저시급 알바 wage salary">
         <div class="tool-icon">💵</div>
-        <div class="tool-info">
-            <div class="tool-name">시급 환산기</div>
-            <div class="tool-desc">시급·월급·연봉 자유롭게 환산</div>
-        </div>
+        <div class="tool-info"><div class="tool-name">시급 환산기</div><div class="tool-desc">시급·월급·연봉 자유롭게 환산</div></div>
     </a>
 
     <a href="https://teemozipsa.github.io/special-chars/prompt-gen/" class="tool-card" data-keywords="AI 프롬프트 자판기 생성기 ChatGPT Claude 질문 템플릿 prompt">
         <div class="tool-icon">🤖</div>
-        <div class="tool-info">
-            <div class="tool-name">AI 프롬프트 자판기</div>
-            <div class="tool-desc">빈칸만 채우면 AI용 프롬프트 완성</div>
-        </div>
+        <div class="tool-info"><div class="tool-name">AI 프롬프트 자판기</div><div class="tool-desc">빈칸만 채우면 AI용 프롬프트 완성</div></div>
     </a>
 
     <a href="https://teemozipsa.github.io/special-chars/sub-calc/" class="tool-card" data-keywords="구독료 계산기 넷플릭스 유튜브 구독 지출 subscription 가랑비">
         <div class="tool-icon">💸</div>
-        <div class="tool-info">
-            <div class="tool-name">구독료 팩폭 계산기</div>
-            <div class="tool-desc">매달 나가는 구독료, 모이면 얼마?</div>
-        </div>
+        <div class="tool-info"><div class="tool-name">구독료 팩폭 계산기</div><div class="tool-desc">매달 나가는 구독료, 모이면 얼마?</div></div>
     </a>
 
     <a href="https://teemozipsa.github.io/special-chars/calorie-calc/" class="tool-card" data-keywords="칼로리 계산기 다이어트 기초대사량 탄단지 BMR 식단">
         <div class="tool-icon">🔥</div>
-        <div class="tool-info">
-            <div class="tool-name">칼로리 계산기</div>
-            <div class="tool-desc">다이어트 목표 칼로리 및 탄단지 비율 계산</div>
-        </div>
+        <div class="tool-info"><div class="tool-name">칼로리 계산기</div><div class="tool-desc">다이어트 목표 칼로리 및 탄단지 비율 계산</div></div>
     </a>
 
 </div>
 
-<div class="no-results" id="noResults">
-    🔍 검색 결과가 없습니다
+<div class="no-results" id="noResults">🔍 검색 결과가 없습니다</div>
+
+<!-- 팁 섹션 -->
+<div class="tip-section">
+    <div class="tip-card">
+        <div class="tip-icon">💡</div>
+        <div class="tip-text"><span class="tip-label">알고 계셨나요?</span> <span id="tipContent"></span></div>
+    </div>
 </div>
 
 <footer>
@@ -357,12 +271,151 @@
 </footer>
 
 <script>
+// === 오늘의 정보 위젯 ===
+function updateToday() {
+    const now = new Date();
+    const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+    const y = now.getFullYear(), m = now.getMonth() + 1, d = now.getDate();
+    document.getElementById('todayDate').textContent = `${y}년 ${m}월 ${d}일 ${weekdays[now.getDay()]}요일`;
+
+    const startOfYear = new Date(y, 0, 1);
+    const dayOfYear = Math.ceil((now - startOfYear) / 86400000);
+    const isLeap = (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+    const totalDays = isLeap ? 366 : 365;
+    const remaining = totalDays - dayOfYear;
+    document.getElementById('todaySub').textContent = `${y}년의 ${dayOfYear}번째 날`;
+    document.getElementById('todayRemain').textContent = `올해 ${remaining}일 남음`;
+
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm2 = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+    document.getElementById('todayClock').textContent = `${hh}:${mm2}:${ss}`;
+}
+updateToday();
+setInterval(updateToday, 1000);
+
+// === 팁 로테이션 ===
+const TIPS = [
+    '1평은 약 3.3㎡입니다. 방 크기를 ㎡로 환산할 때 유용해요!',
+    '1마일은 약 1.6km입니다. 미국 도로 표지판 읽을 때 기억하세요.',
+    '100℃는 212℉입니다. 미국 레시피를 따라 할 때 참고하세요.',
+    '1파운드(lb)는 약 453g입니다. 해외 직구 시 무게 계산에 활용하세요.',
+    '한글 1글자는 UTF-8로 3바이트, EUC-KR로 2바이트입니다.',
+    'D-Day 계산 시 "초일 산입"을 체크하면 시작일도 1일로 포함됩니다.',
+    '복리의 72법칙: 수익률로 72를 나누면 원금이 2배가 되는 햇수를 알 수 있어요.',
+    '한국 신발 270mm = 미국 남성 US 8 = 유럽 EU 42입니다.',
+    '1큰술(T)은 15ml, 1컵은 200ml입니다. 요리할 때 기억하세요!',
+    '고기 1근은 600g, 채소 1근은 400g으로 서로 다릅니다.',
+    'QR 코드는 최대 4,296자의 영숫자를 담을 수 있습니다.',
+    '2026년 최저시급은 10,030원입니다.',
+    '1oz(온스)는 약 29.6ml입니다. 해외 음료 용량 환산에 유용해요.',
+    '1psi는 약 0.069bar입니다. 타이어 공기압 확인 시 참고하세요.',
+    '72DPI에서 1인치(72px)는 정확히 25.4mm입니다.'
+];
+document.getElementById('tipContent').textContent = TIPS[Math.floor(Math.random() * TIPS.length)];
+
+// === 업데이트 배너 ===
+const BANNER_ID = 'calorie-calc-v1';
+if (!localStorage.getItem('banner_dismissed_' + BANNER_ID)) {
+    document.getElementById('updateBanner').style.display = '';
+}
+function dismissBanner() {
+    document.getElementById('updateBanner').style.display = 'none';
+    localStorage.setItem('banner_dismissed_' + BANNER_ID, '1');
+}
+
+// === 즐겨찾기 ===
+let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+
+function toggleFav(href, e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const idx = favorites.indexOf(href);
+    if (idx >= 0) favorites.splice(idx, 1);
+    else favorites.push(href);
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    renderFavButtons();
+    renderFavGrid();
+}
+
+function renderFavButtons() {
+    document.querySelectorAll('#toolsGrid .tool-card').forEach(card => {
+        let btn = card.querySelector('.fav-btn');
+        if (!btn) {
+            btn = document.createElement('button');
+            btn.className = 'fav-btn';
+            btn.setAttribute('aria-label', '즐겨찾기');
+            btn.onclick = (e) => toggleFav(card.href, e);
+            card.appendChild(btn);
+        }
+        const isFav = favorites.includes(card.href);
+        btn.textContent = isFav ? '★' : '☆';
+        btn.classList.toggle('active', isFav);
+    });
+}
+
+function renderFavGrid() {
+    const grid = document.getElementById('favGrid');
+    const label = document.getElementById('favLabel');
+    grid.innerHTML = '';
+    if (favorites.length === 0) { label.classList.remove('visible'); return; }
+    label.classList.add('visible');
+    const allCards = document.querySelectorAll('#toolsGrid .tool-card');
+    favorites.forEach(href => {
+        for (const card of allCards) {
+            if (card.href === href) {
+                const clone = card.cloneNode(true);
+                clone.querySelector('.fav-btn')?.remove();
+                clone.onclick = (e) => { trackRecent(href); };
+                grid.appendChild(clone);
+                break;
+            }
+        }
+    });
+}
+
+// === 최근 사용 ===
+let recentTools = JSON.parse(localStorage.getItem('recentTools') || '[]');
+
+function trackRecent(href) {
+    recentTools = recentTools.filter(h => h !== href);
+    recentTools.unshift(href);
+    if (recentTools.length > 3) recentTools = recentTools.slice(0, 3);
+    localStorage.setItem('recentTools', JSON.stringify(recentTools));
+}
+
+function renderRecentGrid() {
+    const grid = document.getElementById('recentGrid');
+    const label = document.getElementById('recentLabel');
+    grid.innerHTML = '';
+    if (recentTools.length === 0) { label.classList.remove('visible'); return; }
+    label.classList.add('visible');
+    const allCards = document.querySelectorAll('#toolsGrid .tool-card');
+    recentTools.forEach(href => {
+        for (const card of allCards) {
+            if (card.href === href) {
+                const clone = card.cloneNode(true);
+                clone.querySelector('.fav-btn')?.remove();
+                grid.appendChild(clone);
+                break;
+            }
+        }
+    });
+}
+
+// 카드 클릭 시 최근 사용 기록
+document.getElementById('toolsGrid').addEventListener('click', e => {
+    const card = e.target.closest('.tool-card');
+    if (card && !e.target.closest('.fav-btn')) {
+        trackRecent(card.href);
+    }
+});
+
+// === 검색 ===
 function filterTools() {
     const q = document.getElementById('searchInput').value.trim().toLowerCase();
-    const cards = document.querySelectorAll('.tool-card');
-    const noResults = document.getElementById('noResults');
+    const cards = document.querySelectorAll('#toolsGrid .tool-card');
     let visibleCount = 0;
-
     cards.forEach(card => {
         const keywords = (card.getAttribute('data-keywords') || '').toLowerCase();
         const name = (card.querySelector('.tool-name')?.textContent || '').toLowerCase();
@@ -371,89 +424,54 @@ function filterTools() {
         card.style.display = match ? '' : 'none';
         if (match) visibleCount++;
     });
-
-    noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+    document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+    // 검색 중에는 즐겨찾기/최근 숨기기
+    document.getElementById('favLabel').style.display = q ? 'none' : '';
+    document.getElementById('favGrid').style.display = q ? 'none' : '';
+    document.getElementById('recentLabel').style.display = q ? 'none' : '';
+    document.getElementById('recentGrid').style.display = q ? 'none' : '';
+    if (!q) { renderFavGrid(); renderRecentGrid(); }
 }
 
 function handleSearchEnter(e) {
     if (e.key === 'Enter') {
         e.preventDefault();
-        const q = document.getElementById('searchInput').value.trim().toLowerCase();
-        if (!q) return;
-        // 첫 번째 보이는 카드로 바로 이동
-        const cards = document.querySelectorAll('.tool-card');
+        const cards = document.querySelectorAll('#toolsGrid .tool-card');
         for (const card of cards) {
             if (card.style.display !== 'none' && card.href) {
+                trackRecent(card.href);
                 window.location.href = card.href;
                 return;
             }
         }
     }
 }
-// === 드래그 앤 드롭 카드 재정렬 ===
+
+// === 드래그 앤 드롭 ===
 (function initDragDrop() {
     const grid = document.getElementById('toolsGrid');
     let dragEl = null;
-
-    // 저장된 순서 복원
     const saved = JSON.parse(localStorage.getItem('toolOrder') || '[]');
     if (saved.length) {
         const cards = [...grid.querySelectorAll('.tool-card')];
         const map = {};
         cards.forEach(c => { map[c.href] = c; });
-        saved.forEach(href => {
-            if (map[href]) grid.appendChild(map[href]);
-        });
-        // 새로 추가된 카드는 뒤에 남음
+        saved.forEach(href => { if (map[href]) grid.appendChild(map[href]); });
         cards.forEach(c => { if (!saved.includes(c.href)) grid.appendChild(c); });
     }
-
-    grid.addEventListener('dragstart', e => {
-        const card = e.target.closest('.tool-card');
-        if (!card) return;
-        dragEl = card;
-        card.classList.add('dragging');
-        e.dataTransfer.effectAllowed = 'move';
-    });
-    grid.addEventListener('dragend', e => {
-        const card = e.target.closest('.tool-card');
-        if (card) card.classList.remove('dragging');
-        grid.querySelectorAll('.drag-over').forEach(c => c.classList.remove('drag-over'));
-        dragEl = null;
-        saveOrder();
-    });
-    grid.addEventListener('dragover', e => {
-        e.preventDefault();
-        const card = e.target.closest('.tool-card');
-        if (!card || card === dragEl) return;
-        e.dataTransfer.dropEffect = 'move';
-        card.classList.add('drag-over');
-    });
-    grid.addEventListener('dragleave', e => {
-        const card = e.target.closest('.tool-card');
-        if (card) card.classList.remove('drag-over');
-    });
-    grid.addEventListener('drop', e => {
-        e.preventDefault();
-        const target = e.target.closest('.tool-card');
-        if (!target || !dragEl || target === dragEl) return;
-        target.classList.remove('drag-over');
-        const cards = [...grid.querySelectorAll('.tool-card')];
-        const fromIdx = cards.indexOf(dragEl);
-        const toIdx = cards.indexOf(target);
-        if (fromIdx < toIdx) target.after(dragEl);
-        else target.before(dragEl);
-    });
-
-    // 모든 카드에 draggable 속성 추가
+    grid.addEventListener('dragstart', e => { const card = e.target.closest('.tool-card'); if (!card) return; dragEl = card; card.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+    grid.addEventListener('dragend', e => { const card = e.target.closest('.tool-card'); if (card) card.classList.remove('dragging'); grid.querySelectorAll('.drag-over').forEach(c => c.classList.remove('drag-over')); dragEl = null; saveOrder(); });
+    grid.addEventListener('dragover', e => { e.preventDefault(); const card = e.target.closest('.tool-card'); if (!card || card === dragEl) return; e.dataTransfer.dropEffect = 'move'; card.classList.add('drag-over'); });
+    grid.addEventListener('dragleave', e => { const card = e.target.closest('.tool-card'); if (card) card.classList.remove('drag-over'); });
+    grid.addEventListener('drop', e => { e.preventDefault(); const target = e.target.closest('.tool-card'); if (!target || !dragEl || target === dragEl) return; target.classList.remove('drag-over'); const cards = [...grid.querySelectorAll('.tool-card')]; const fromIdx = cards.indexOf(dragEl); const toIdx = cards.indexOf(target); if (fromIdx < toIdx) target.after(dragEl); else target.before(dragEl); });
     grid.querySelectorAll('.tool-card').forEach(c => c.setAttribute('draggable', 'true'));
-
-    function saveOrder() {
-        const order = [...grid.querySelectorAll('.tool-card')].map(c => c.href);
-        localStorage.setItem('toolOrder', JSON.stringify(order));
-    }
+    function saveOrder() { localStorage.setItem('toolOrder', JSON.stringify([...grid.querySelectorAll('.tool-card')].map(c => c.href))); }
 })();
-</script>
 
+// === 초기화 ===
+renderFavButtons();
+renderFavGrid();
+renderRecentGrid();
+</script>
 </body>
 </html>
