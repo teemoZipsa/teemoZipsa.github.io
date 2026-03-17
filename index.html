@@ -159,6 +159,7 @@
         .faq-item[open] summary { background: #f1f5f9; }
         .faq-answer { padding: 12px 16px 14px 38px; font-size: 13px; color: #64748b; line-height: 1.7; }
         .faq-item.faq-hidden { display: none; }
+        .faq-item.faq-hidden.faq-show { display: block; }
         .faq-toggle-btn { display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 13px; font-weight: 600; color: #6366f1; cursor: pointer; transition: all .2s; font-family: inherit; margin-top: 4px; }
         .faq-toggle-btn:hover { background: #eef2ff; border-color: #c7d2fe; }
 
@@ -406,16 +407,16 @@
 <script>
 // === FAQ 더보기/접기 ===
 let faqExpanded = false;
+const FAQ_EXTRA_COUNT = document.querySelectorAll('.faq-item.faq-hidden').length;
 function toggleFaqAll() {
     faqExpanded = !faqExpanded;
     document.querySelectorAll('.faq-item.faq-hidden').forEach(el => {
-        el.style.display = faqExpanded ? '' : 'none';
+        el.classList.toggle('faq-show', faqExpanded);
     });
     const btn = document.getElementById('faqToggle');
-    const hiddenCount = document.querySelectorAll('.faq-item.faq-hidden').length;
     btn.innerHTML = faqExpanded
         ? '접기 ▲'
-        : `더보기 ▼ <span style="font-weight:400;color:#94a3b8">(+${hiddenCount}개)</span>`;
+        : `더보기 ▼ <span style="font-weight:400;color:#94a3b8">(+${FAQ_EXTRA_COUNT}개)</span>`;
 }
 
 // === 오늘의 정보 위젯 ===
