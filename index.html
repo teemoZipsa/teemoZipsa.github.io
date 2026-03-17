@@ -194,9 +194,9 @@
 </head>
 <body>
 
-<!-- 업데이트 배너 -->
+<!-- 문의 배너 -->
 <div class="update-banner" id="updateBanner" style="display:none">
-    🆕 새 도구: <strong>칼로리 계산기</strong>가 추가되었습니다! 다이어트 목표 칼로리와 탄단지 비율을 계산해 보세요.
+    💡 필요한 기능이나 개선 사항이 있으시면 <a href="https://www.instagram.com/seon_7yu/" target="_blank" rel="noopener"><strong>인스타그램 DM</strong></a>으로 편하게 알려주세요!
     <button class="banner-close" onclick="dismissBanner()" aria-label="닫기">&times;</button>
 </div>
 
@@ -501,7 +501,7 @@ const TIPS = [
 document.getElementById('tipContent').textContent = TIPS[Math.floor(Math.random() * TIPS.length)];
 
 // === 업데이트 배너 ===
-const BANNER_ID = 'calorie-calc-v1';
+const BANNER_ID = 'feedback-v1';
 if (!localStorage.getItem('banner_dismissed_' + BANNER_ID)) {
     document.getElementById('updateBanner').style.display = '';
 }
