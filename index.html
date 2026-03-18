@@ -190,6 +190,12 @@
             .today-widget { flex-direction: column; text-align: center; gap: 8px; }
             .today-remain { text-align: center; }
         }
+
+        /* === 맨 위로 버튼 === */
+        .scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:#6366f1;color:#fff;border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(99,102,241,.35);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+        .scroll-top-btn.visible{opacity:1;visibility:visible}
+        .scroll-top-btn:hover{transform:scale(1.1);background:#4f46e5}
+        @media(max-width:640px){.scroll-top-btn{bottom:24px;right:16px;width:40px;height:40px;font-size:18px}}
     </style>
 </head>
 <body>
@@ -324,6 +330,14 @@
     <a href="https://teemozipsa.github.io/special-chars/utm-builder/" class="tool-card" data-keywords="UTM 파라미터 구글 애널리틱스 마케팅 캠페인 추적 링크 utm_source utm_medium" data-category="utility">
         <div class="tool-icon">🔗</div>
         <div class="tool-info"><div class="tool-name">UTM 생성기</div><div class="tool-desc">마케팅 캠페인 URL에 UTM 추적 파라미터 추가</div></div>
+    </a>
+    <a href="https://teemozipsa.github.io/special-chars/pdf-tool/" class="tool-card" data-keywords="PDF 합치기 나누기 회전 순서 워터마크 문서 페이지 merge split" data-category="utility">
+        <div class="tool-icon">📄</div>
+        <div class="tool-info"><div class="tool-name">PDF 도구</div><div class="tool-desc">PDF 합치기·나누기·회전·워터마크</div></div>
+    </a>
+    <a href="https://teemozipsa.github.io/special-chars/emoji-mixer/" class="tool-card" data-keywords="이모지 합치기 믹서 이모티콘 짤 조합 emoji kitchen mixer 스티커" data-category="utility">
+        <div class="tool-icon">🎨</div>
+        <div class="tool-info"><div class="tool-name">이모지 합치기</div><div class="tool-desc">이모지 두 개를 합쳐 새로운 이모지 만들기</div></div>
     </a>
 </div>
 
@@ -752,6 +766,10 @@ renderFavButtons();
 renderFavGrid();
 renderRecentGrid();
 if (currentView === 'category') switchView('category');
+
+// === 맨 위로 버튼 ===
+(function(){const b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',()=>{b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',()=>{window.scrollTo({top:0,behavior:'smooth'})})})();
 </script>
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 </body>
 </html>
