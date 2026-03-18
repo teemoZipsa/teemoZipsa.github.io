@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사이트 소개 — 티모집사</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="description" content="티모집사는 일상과 업무에 필요한 다양한 무료 웹 도구를 제공하는 사이트입니다.">
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Pretendard', -apple-system, sans-serif; background: #f8fafc; color: #334155; min-height: 100vh; }
+        .hero { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); padding: 32px 20px; text-align: center; }
+        .hero h1 { color: #fff; font-size: 22px; font-weight: 700; }
+        .hero p { color: #e0e7ff; font-size: 14px; margin-top: 8px; line-height: 1.6; }
+        .back-link { display: inline-flex; align-items: center; gap: 4px; color: #e0e7ff; text-decoration: none; font-size: 13px; margin-bottom: 8px; }
+        .back-link:hover { text-decoration: underline; }
+        .content { max-width: 720px; margin: 0 auto; padding: 32px 20px 60px; }
+        h2 { font-size: 17px; font-weight: 700; color: #1e293b; margin: 28px 0 12px; padding-bottom: 8px; border-bottom: 2px solid #e2e8f0; }
+        h2:first-of-type { margin-top: 0; }
+        p { font-size: 14px; line-height: 1.8; color: #475569; margin-bottom: 12px; }
+        .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin: 16px 0; }
+        .tool-chip { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #f1f5f9; border-radius: 10px; font-size: 13px; color: #334155; font-weight: 500; }
+        .tool-chip .icon { font-size: 18px; }
+        .value-card { background: linear-gradient(135deg, #f8fafc, #eef2ff); border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin: 16px 0; }
+        .value-card h3 { font-size: 15px; font-weight: 600; color: #4f46e5; margin-bottom: 8px; }
+        .value-card p { font-size: 13px; margin-bottom: 0; }
+        .contact-box { background: #f1f5f9; border-left: 3px solid #6366f1; padding: 16px; border-radius: 0 8px 8px 0; margin: 16px 0; }
+        .contact-box a { color: #6366f1; text-decoration: none; font-weight: 500; }
+        .contact-box a:hover { text-decoration: underline; }
+        footer { text-align: center; padding: 20px; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; }
+        footer a { color: #6366f1; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+<div class="hero">
+    <a href="/" class="back-link">← 도구 모음으로 돌아가기</a>
+    <h1>티모집사의 유용한 웹 도구 모음 😺</h1>
+    <p>일상과 업무에 필요한 도구를 빠르고 편리하게</p>
+</div>
+
+<div class="content">
+    <h2>소개</h2>
+    <p>티모집사는 계산기, 변환기, 생성기 등 <strong>일상과 업무에 자주 필요한 웹 도구</strong>를 모아 제공하는 무료 서비스입니다. 복잡한 앱 설치 없이 브라우저에서 바로 사용할 수 있도록 만들었습니다.</p>
+    <p>회원가입 없이, 광고 최소화로, 누구나 편하게 쓸 수 있는 도구를 지향합니다.</p>
+
+    <h2>제공 도구</h2>
+    <p>현재 21개 이상의 웹 도구를 운영하고 있으며, 지속적으로 새로운 도구를 추가하고 있습니다.</p>
+
+    <div class="tool-grid">
+        <div class="tool-chip"><span class="icon">🔤</span> 특수문자·이모지</div>
+        <div class="tool-chip"><span class="icon">📝</span> 글자 수 계산기</div>
+        <div class="tool-chip"><span class="icon">📅</span> 날짜/D-Day 계산기</div>
+        <div class="tool-chip"><span class="icon">🏢</span> 영업일 계산기</div>
+        <div class="tool-chip"><span class="icon">📐</span> 단위 변환기</div>
+        <div class="tool-chip"><span class="icon">🖼️</span> 이미지 압축</div>
+        <div class="tool-chip"><span class="icon">📊</span> QR 코드 생성기</div>
+        <div class="tool-chip"><span class="icon">🧮</span> 계산기</div>
+        <div class="tool-chip"><span class="icon">💰</span> 시급 계산기</div>
+        <div class="tool-chip"><span class="icon">📈</span> 복리 계산기</div>
+        <div class="tool-chip"><span class="icon">💵</span> 적금 계산기</div>
+        <div class="tool-chip"><span class="icon">📉</span> 물타기 계산기</div>
+        <div class="tool-chip"><span class="icon">🔥</span> 칼로리 계산기</div>
+        <div class="tool-chip"><span class="icon">⏱️</span> 스피치 타이머</div>
+        <div class="tool-chip"><span class="icon">🤖</span> 프롬프트 생성기</div>
+        <div class="tool-chip"><span class="icon">💬</span> 빠른 답장</div>
+        <div class="tool-chip"><span class="icon">🎨</span> 색상 코드 변환기</div>
+        <div class="tool-chip"><span class="icon">🕐</span> 타임존 변환기</div>
+        <div class="tool-chip"><span class="icon">⭐</span> 별자리 계산기</div>
+        <div class="tool-chip"><span class="icon">🐉</span> 띠(십이지신) 계산기</div>
+        <div class="tool-chip"><span class="icon">🔗</span> UTM 생성기</div>
+    </div>
+
+    <h2>특징</h2>
+    <div class="value-card">
+        <h3>무료 & 회원가입 불필요</h3>
+        <p>모든 도구는 무료로 사용할 수 있으며, 별도의 회원가입이나 로그인 없이 바로 이용 가능합니다.</p>
+    </div>
+    <div class="value-card">
+        <h3>개인정보 걱정 없는 로컬 처리</h3>
+        <p>대부분의 도구는 브라우저 내에서 계산이 이루어지며, 입력한 데이터가 외부 서버로 전송되지 않습니다.</p>
+    </div>
+    <div class="value-card">
+        <h3>모바일 최적화</h3>
+        <p>PC와 모바일 어디서든 편리하게 사용할 수 있도록 반응형 디자인을 적용했습니다.</p>
+    </div>
+
+    <h2>문의 및 피드백</h2>
+    <p>새로운 도구 요청, 버그 신고, 개선 의견 등 어떤 피드백이든 환영합니다!</p>
+    <div class="contact-box">
+        <p style="margin-bottom:8px"><strong>Instagram DM:</strong> <a href="https://www.instagram.com/seon_7yu/" target="_blank" rel="noopener">@seon_7yu</a></p>
+        <p style="margin-bottom:0"><strong>후원하기:</strong> <a href="https://ctee.kr/place/teemozipsa" target="_blank" rel="noopener">ctee.kr/place/teemozipsa</a></p>
+    </div>
+</div>
+
+<footer>
+    <a href="/">도구 모음</a> · <a href="/about.html">사이트 소개</a> · <a href="/privacy.html">개인정보처리방침</a>
+    <br>&copy; 2026 teemoZipsa. All rights reserved.
+</footer>
+</body>
+</html>
