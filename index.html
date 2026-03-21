@@ -257,7 +257,7 @@
     </a>
     <a href="https://teemozipsa.github.io/special-chars/date-calc/" class="tool-card" data-keywords="날짜 계산기 디데이 D-Day 기념일 만일 일수" data-category="date">
         <div class="tool-icon">📅</div>
-        <div class="tool-info"><div class="tool-name">날짜 / D-Day 계산기</div><div class="tool-desc">D-Day 계산, 날짜 더하기·빼기</div></div>
+        <div class="tool-info"><div class="tool-name">날짜/D-Day 계산기</div><div class="tool-desc">D-Day 계산, 날짜 더하기·빼기</div></div>
     </a>
     <a href="https://teemozipsa.github.io/special-chars/zodiac-calc/" class="tool-card" data-keywords="별자리 운세 성격 궁합 탄생 star zodiac 양자리 황소 쌍둥이 게 사자 처녀 천칭 전갈 사수 염소 물병 물고기" data-category="date">
         <div class="tool-icon">⭐</div>
@@ -345,7 +345,11 @@
     </a>
     <a href="https://teemozipsa.github.io/special-chars/timer/" class="tool-card" data-keywords="타이머 스톱워치 카운트다운 랩 알람 timer stopwatch 뽀모도로 시간 측정" data-category="utility">
         <div class="tool-icon">⏱️</div>
-        <div class="tool-info"><div class="tool-name">타이머 / 스톱워치</div><div class="tool-desc">카운트다운 타이머 + 랩 기록 스톱워치</div></div>
+        <div class="tool-info"><div class="tool-name">타이머/스톱워치</div><div class="tool-desc">카운트다운 타이머 + 랩 기록 스톱워치</div></div>
+    </a>
+    <a href="https://teemozipsa.github.io/special-chars/password-gen/" class="tool-card" data-keywords="비밀번호 생성기 패스워드 암호 보안 password generator 랜덤" data-category="utility">
+        <div class="tool-icon">🔐</div>
+        <div class="tool-info"><div class="tool-name">비밀번호 생성기</div><div class="tool-desc">안전한 랜덤 비밀번호 즉시 생성</div></div>
     </a>
 </div>
 
@@ -409,7 +413,19 @@
         <summary>HEX, RGB, HSL 색상 코드의 차이는?</summary>
         <div class="faq-answer">HEX는 #FF5733처럼 16진수 6자리로 표현하며 웹 개발에서 가장 흔합니다. RGB는 빨강·초록·파랑 각 0~255 값으로, CSS에서 rgb(255, 87, 51)처럼 씁니다. HSL은 색상(0~360°)·채도·명도로 표현해 색을 직관적으로 조절하기 좋습니다. 색상 코드 변환기에서 세 형식을 실시간으로 변환할 수 있습니다.</div>
     </details>
-    <button class="faq-toggle-btn" id="faqToggle" onclick="toggleFaqAll()">더보기 ▼ <span style="font-weight:400;color:#94a3b8">(+6개)</span></button>
+    <details class="faq-item faq-hidden">
+        <summary>비밀번호 생성기는 안전한가요?</summary>
+        <div class="faq-answer">네, 안전합니다. 비밀번호는 브라우저의 crypto.getRandomValues() API를 사용해 100% 로컬에서 생성되며, 서버로 전송되지 않습니다. 페이지를 닫으면 생성 기록도 완전히 사라집니다. 대문자·소문자·숫자·특수문자를 모두 포함하고 12자 이상으로 설정하면 가장 안전합니다.</div>
+    </details>
+    <details class="faq-item faq-hidden">
+        <summary>타이머/스톱워치에서 알림음이 안 들려요</summary>
+        <div class="faq-answer">브라우저 보안 정책상, 페이지에서 처음 소리를 재생하려면 사용자의 클릭(상호작용)이 필요합니다. 타이머 시작 버튼을 클릭하면 오디오가 활성화되므로 이후 알림음이 정상 재생됩니다. 그래도 안 들린다면 브라우저 탭의 음소거 해제 여부와 기기 볼륨을 확인해 주세요.</div>
+    </details>
+    <details class="faq-item faq-hidden">
+        <summary>할인/세금 계산기에서 부가세 역산은 어떻게 하나요?</summary>
+        <div class="faq-answer">"입력 가격이 세전 금액" 토글을 꺼 주세요. 그러면 입력한 금액을 세후(VAT 포함) 금액으로 간주하여, 세전 금액과 부가세를 역산합니다. 예를 들어 11,000원을 입력하고 부가세 10%를 적용하면 세전 10,000원 + 부가세 1,000원으로 분리해서 보여줍니다.</div>
+    </details>
+    <button class="faq-toggle-btn" id="faqToggle" onclick="toggleFaqAll()">더보기 ▼ <span style="font-weight:400;color:#94a3b8">(+9개)</span></button>
 </div>
 
 <footer>
