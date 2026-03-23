@@ -125,12 +125,7 @@
             max-width: 960px; margin: 0 auto; padding: 0 20px 8px;
             display: flex; align-items: center; justify-content: space-between;
         }
-        .tools-toggle-btn {
-            background: none; border: none; cursor: pointer; font-size: 16px;
-            color: #94a3b8; transition: transform .3s; padding: 2px 6px; line-height: 1;
-        }
-        .tools-toggle-btn.collapsed { transform: rotate(-90deg); }
-        .section-label-row { display: flex; align-items: center; gap: 4px; margin: 0; padding: 0; }
+
         .view-toggle { display: flex; gap: 4px; }
         .view-toggle button {
             background: #e2e8f0; border: none; padding: 6px 12px; font-size: 12px;
@@ -245,10 +240,7 @@
 
 <!-- 전체 도구 -->
 <div class="view-controls">
-    <div class="section-label-row">
-        <div class="section-label visible" style="margin:0;padding:0">📦 전체 도구</div>
-        <button class="tools-toggle-btn" id="toolsToggleBtn" onclick="toggleToolsSection()" title="접기/펼치기">▼</button>
-    </div>
+    <div class="section-label visible" style="margin:0;padding:0">📦 전체 도구</div>
     <div class="view-toggle" id="viewToggle">
         <button id="viewCard" class="active" onclick="switchView('card')">카드</button>
         <button id="viewCat" onclick="switchView('category')">카테고리</button>
@@ -376,6 +368,9 @@
 
 <!-- 카테고리 뷰 (기본 숨김) -->
 <div id="categoryView"></div>
+<div style="max-width:960px;margin:0 auto;padding:0 20px 16px;">
+<button class="faq-toggle-btn" id="toolsToggleBtn" onclick="toggleToolsSection()">전체 도구 접기 ▲</button>
+</div>
 
 <div class="no-results" id="noResults">🔍 검색 결과가 없습니다</div>
 
@@ -837,14 +832,16 @@ function applyToolsCollapsed() {
     const catView = document.getElementById('categoryView');
     const toggleBtn = document.getElementById('toolsToggleBtn');
     const viewToggle = document.getElementById('viewToggle');
+    const viewControls = document.querySelector('.view-controls');
     if (toolsCollapsed) {
         grid.style.display = 'none';
         catView.style.display = 'none';
-        viewToggle.style.display = 'none';
-        toggleBtn.classList.add('collapsed');
+        viewControls.style.display = 'none';
+        toggleBtn.innerHTML = '전체 도구 펼치기 ▼';
     } else {
+        viewControls.style.display = '';
         viewToggle.style.display = '';
-        toggleBtn.classList.remove('collapsed');
+        toggleBtn.innerHTML = '전체 도구 접기 ▲';
         if (currentView === 'category') { grid.style.display = 'none'; catView.style.display = ''; }
         else { grid.style.display = ''; catView.style.display = 'none'; }
     }
