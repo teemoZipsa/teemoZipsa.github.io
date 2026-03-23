@@ -616,6 +616,7 @@ function renderFavGrid() {
         for (const card of allCards) {
             if (card.href === href) {
                 const clone = card.cloneNode(true);
+                clone.style.display = ''; // cloneNode가 display:none도 복사하므로 리셋
                 clone.querySelector('.fav-btn')?.remove();
                 // 즐겨찾기 카드에 별 해제 버튼 추가
                 const unfavBtn = document.createElement('button');
@@ -653,6 +654,7 @@ function renderRecentGrid() {
         for (const card of allCards) {
             if (card.href === href) {
                 const clone = card.cloneNode(true);
+                clone.style.display = ''; // cloneNode가 display:none도 복사하므로 리셋
                 clone.querySelector('.fav-btn')?.remove();
                 grid.appendChild(clone);
                 break;
