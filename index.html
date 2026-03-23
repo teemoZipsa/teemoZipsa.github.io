@@ -463,6 +463,10 @@
 </footer>
 
 <script>
+// === localStorage 안전 래퍼 ===
+function safeGet(key, fallback) { try { return localStorage.getItem(key); } catch(e) { return fallback !== undefined ? fallback : null; } }
+function safeSet(key, val) { try { localStorage.setItem(key, val); } catch(e) {} }
+
 // === FAQ 더보기/접기 ===
 let faqExpanded = false;
 const FAQ_EXTRA_COUNT = document.querySelectorAll('.faq-item.faq-hidden').length;
@@ -490,8 +494,8 @@ function updateToday() {
     const totalDays = isLeap ? 366 : 365;
     const remaining = totalDays - dayOfYear;
     document.getElementById('todaySub').textContent = `${y}년의 ${dayOfYear}번째 날`;
-    const visits = parseInt(localStorage.getItem('visitCount') || '0') + (window._visitCounted ? 0 : 1);
-    if (!window._visitCounted) { localStorage.setItem('visitCount', visits); window._visitCounted = true; }
+    const visits = parseInt(safeGet('visitCount') || '0') + (window._visitCounted ? 0 : 1);
+    if (!window._visitCounted) { safeSet('visitCount', visits); window._visitCounted = true; }
     document.getElementById('todayRemain').textContent = `올해 ${remaining}일 남음 · 방문 ${visits}회째`;
 
     const hh = String(now.getHours()).padStart(2, '0');
@@ -560,16 +564,16 @@ document.getElementById('tipContent').textContent = TIPS[Math.floor(Math.random(
 
 // === 업데이트 배너 ===
 const BANNER_ID = 'feedback-v1';
-if (!localStorage.getItem('banner_dismissed_' + BANNER_ID)) {
+if (!safeGet('banner_dismissed_' + BANNER_ID)) {
     document.getElementById('updateBanner').style.display = '';
 }
 function dismissBanner() {
     document.getElementById('updateBanner').style.display = 'none';
-    localStorage.setItem('banner_dismissed_' + BANNER_ID, '1');
+    safeSet('banner_dismissed_' + BANNER_ID, '1');
 }
 
 // === 즐겨찾기 ===
-let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+let favorites = JSON.parse(safeGet('favorites') || '[]');
 
 function toggleFav(href, e) {
     e.preventDefault();
@@ -577,7 +581,7 @@ function toggleFav(href, e) {
     const idx = favorites.indexOf(href);
     if (idx >= 0) favorites.splice(idx, 1);
     else favorites.push(href);
-    localStorage.setItem('favorites', JSON.stringify(favorites));
+    safeSet('favorites', JSON.stringify(favorites));
     renderFavButtons();
     renderFavGrid();
 }
@@ -629,13 +633,13 @@ function renderFavGrid() {
 }
 
 // === 최근 사용 ===
-let recentTools = JSON.parse(localStorage.getItem('recentTools') || '[]');
+let recentTools = JSON.parse(safeGet('recentTools') || '[]');
 
 function trackRecent(href) {
     recentTools = recentTools.filter(h => h !== href);
     recentTools.unshift(href);
     if (recentTools.length > 3) recentTools = recentTools.slice(0, 3);
-    localStorage.setItem('recentTools', JSON.stringify(recentTools));
+    safeSet('recentTools', JSON.stringify(recentTools));
 }
 
 function renderRecentGrid() {
@@ -764,11 +768,11 @@ const CATEGORIES = [
     { id: 'utility', label: '🛠️ 유틸리티' }
 ];
 
-let currentView = localStorage.getItem('viewMode') || 'card';
+let currentView = safeGet('viewMode') || 'card';
 
 function switchView(mode) {
     currentView = mode;
-    localStorage.setItem('viewMode', mode);
+    safeSet('viewMode', mode);
     document.getElementById('viewCard').classList.toggle('active', mode === 'card');
     document.getElementById('viewCat').classList.toggle('active', mode === 'category');
     document.getElementById('toolsGrid').style.display = mode === 'card' ? '' : 'none';
@@ -801,7 +805,7 @@ function renderCategoryView() {
 (function initDragDrop() {
     const grid = document.getElementById('toolsGrid');
     let dragEl = null;
-    const saved = JSON.parse(localStorage.getItem('toolOrder') || '[]');
+    const saved = JSON.parse(safeGet('toolOrder') || '[]');
     if (saved.length) {
         const cards = [...grid.querySelectorAll('.tool-card')];
         const map = {};
@@ -815,15 +819,15 @@ function renderCategoryView() {
     grid.addEventListener('dragleave', e => { const card = e.target.closest('.tool-card'); if (card) card.classList.remove('drag-over'); });
     grid.addEventListener('drop', e => { e.preventDefault(); const target = e.target.closest('.tool-card'); if (!target || !dragEl || target === dragEl) return; target.classList.remove('drag-over'); const cards = [...grid.querySelectorAll('.tool-card')]; const fromIdx = cards.indexOf(dragEl); const toIdx = cards.indexOf(target); if (fromIdx < toIdx) target.after(dragEl); else target.before(dragEl); });
     grid.querySelectorAll('.tool-card').forEach(c => c.setAttribute('draggable', 'true'));
-    function saveOrder() { localStorage.setItem('toolOrder', JSON.stringify([...grid.querySelectorAll('.tool-card')].map(c => c.href))); }
+    function saveOrder() { safeSet('toolOrder', JSON.stringify([...grid.querySelectorAll('.tool-card')].map(c => c.href))); }
 })();
 
 // === 전체 도구 접기/펼치기 ===
-let toolsCollapsed = localStorage.getItem('toolsCollapsed') === 'true';
+let toolsCollapsed = safeGet('toolsCollapsed') === 'true';
 
 function toggleToolsSection() {
     toolsCollapsed = !toolsCollapsed;
-    localStorage.setItem('toolsCollapsed', toolsCollapsed);
+    safeSet('toolsCollapsed', toolsCollapsed);
     applyToolsCollapsed();
 }
 
