@@ -125,6 +125,12 @@
             max-width: 960px; margin: 0 auto; padding: 0 20px 8px;
             display: flex; align-items: center; justify-content: space-between;
         }
+        .tools-toggle-btn {
+            background: none; border: none; cursor: pointer; font-size: 16px;
+            color: #94a3b8; transition: transform .3s; padding: 2px 6px; line-height: 1;
+        }
+        .tools-toggle-btn.collapsed { transform: rotate(-90deg); }
+        .section-label-row { display: flex; align-items: center; gap: 4px; margin: 0; padding: 0; }
         .view-toggle { display: flex; gap: 4px; }
         .view-toggle button {
             background: #e2e8f0; border: none; padding: 6px 12px; font-size: 12px;
@@ -239,8 +245,11 @@
 
 <!-- 전체 도구 -->
 <div class="view-controls">
-    <div class="section-label visible" style="margin:0;padding:0">📦 전체 도구</div>
-    <div class="view-toggle">
+    <div class="section-label-row">
+        <div class="section-label visible" style="margin:0;padding:0">📦 전체 도구</div>
+        <button class="tools-toggle-btn" id="toolsToggleBtn" onclick="toggleToolsSection()" title="접기/펼치기">▼</button>
+    </div>
+    <div class="view-toggle" id="viewToggle">
         <button id="viewCard" class="active" onclick="switchView('card')">카드</button>
         <button id="viewCat" onclick="switchView('category')">카테고리</button>
     </div>
@@ -591,6 +600,8 @@ function renderFavButtons() {
         const isFav = favorites.includes(card.href);
         btn.textContent = isFav ? '★' : '☆';
         btn.classList.toggle('active', isFav);
+        // 즐겨찾기된 도구는 전체 도구에서 숨기기
+        card.style.display = isFav ? 'none' : '';
     });
 }
 
@@ -606,7 +617,14 @@ function renderFavGrid() {
             if (card.href === href) {
                 const clone = card.cloneNode(true);
                 clone.querySelector('.fav-btn')?.remove();
-                clone.onclick = (e) => { trackRecent(href); };
+                // 즐겨찾기 카드에 별 해제 버튼 추가
+                const unfavBtn = document.createElement('button');
+                unfavBtn.className = 'fav-btn active';
+                unfavBtn.textContent = '★';
+                unfavBtn.setAttribute('aria-label', '즐겨찾기 해제');
+                unfavBtn.onclick = (e) => toggleFav(href, e);
+                clone.appendChild(unfavBtn);
+                clone.onclick = (e) => { if (!e.target.closest('.fav-btn')) trackRecent(href); };
                 grid.appendChild(clone);
                 break;
             }
@@ -715,8 +733,14 @@ function filterCards(q) {
         const keywords = (card.getAttribute('data-keywords') || '').toLowerCase();
         const name = (card.querySelector('.tool-name')?.textContent || '').toLowerCase();
         const desc = (card.querySelector('.tool-desc')?.textContent || '').toLowerCase();
+        const isFav = favorites.includes(card.href);
         const match = !q || keywords.includes(q) || name.includes(q) || desc.includes(q);
-        card.style.display = match ? '' : 'none';
+        // 즐겨찾기된 도구는 전체 도구에서 항상 숨김 (검색 중 아닐 때)
+        if (!q) {
+            card.style.display = isFav ? 'none' : '';
+        } else {
+            card.style.display = match ? '' : 'none';
+        }
         if (match) visibleCount++;
     });
     document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
@@ -760,7 +784,7 @@ function renderCategoryView() {
     const cards = [...document.querySelectorAll('#toolsGrid .tool-card')];
     cv.innerHTML = '';
     CATEGORIES.forEach(cat => {
-        const matching = cards.filter(c => c.getAttribute('data-category') === cat.id);
+        const matching = cards.filter(c => c.getAttribute('data-category') === cat.id && !favorites.includes(c.href));
         if (matching.length === 0) return;
         const group = document.createElement('div');
         group.className = 'category-group visible';
@@ -797,10 +821,38 @@ function renderCategoryView() {
     function saveOrder() { localStorage.setItem('toolOrder', JSON.stringify([...grid.querySelectorAll('.tool-card')].map(c => c.href))); }
 })();
 
+// === 전체 도구 접기/펼치기 ===
+let toolsCollapsed = localStorage.getItem('toolsCollapsed') === 'true';
+
+function toggleToolsSection() {
+    toolsCollapsed = !toolsCollapsed;
+    localStorage.setItem('toolsCollapsed', toolsCollapsed);
+    applyToolsCollapsed();
+}
+
+function applyToolsCollapsed() {
+    const grid = document.getElementById('toolsGrid');
+    const catView = document.getElementById('categoryView');
+    const toggleBtn = document.getElementById('toolsToggleBtn');
+    const viewToggle = document.getElementById('viewToggle');
+    if (toolsCollapsed) {
+        grid.style.display = 'none';
+        catView.style.display = 'none';
+        viewToggle.style.display = 'none';
+        toggleBtn.classList.add('collapsed');
+    } else {
+        viewToggle.style.display = '';
+        toggleBtn.classList.remove('collapsed');
+        if (currentView === 'category') { grid.style.display = 'none'; catView.style.display = ''; }
+        else { grid.style.display = ''; catView.style.display = 'none'; }
+    }
+}
+
 // === 초기화 ===
 renderFavButtons();
 renderFavGrid();
 renderRecentGrid();
+applyToolsCollapsed();
 if (currentView === 'category') switchView('category');
 
 // === 맨 위로 버튼 ===
