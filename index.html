@@ -933,9 +933,11 @@ applyToolsCollapsed();
 if (currentView === 'category') switchView('category');
 
 // === 맨 위로 버튼 ===
-(function(){const b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',()=>{b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',()=>{window.scrollTo({top:0,behavior:'smooth'})})})();
 </script>
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+<script>
+(function(){const b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',()=>{b.classList.toggle('visible',window.scrollY>300)});b.addEventListener('click',()=>{window.scrollTo({top:0,behavior:'smooth'})})})();
+</script>
 <script src="/special-chars/theme-toggle.js"></script>
 <script>
 if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}
