@@ -89,10 +89,7 @@
         .tool-card:hover { transform: translateY(-3px); border-color: var(--border-hover); box-shadow: var(--shadow-accent); }
         .tool-card:active { transform: translateY(-1px); }
         .tool-card.dragging { opacity: .4; transform: scale(.95); }
-        .tool-card.drag-over { border-color: var(--border-hover); box-shadow: 0 0 0 2px rgba(167,139,250,.3); }
-        .fav-drop-zone { position: relative; transition: all .3s; border-radius: 16px; }
-        .fav-drop-zone.drag-highlight { background: rgba(167,139,250,.06); outline: 2px dashed var(--accent); outline-offset: 4px; }
-        #toolsGrid.drag-highlight { background: rgba(167,139,250,.04); border-radius: 16px; outline: 2px dashed rgba(167,139,250,.3); outline-offset: 4px; }
+        .fav-drop-zone { position: relative; }
         .tool-icon { font-size: 26px; line-height: 1; flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--bg-input); border-radius: 10px; }
         .tool-info { flex: 1; min-width: 0; }
         .tool-name { font-size: 17px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -782,21 +779,15 @@ function renderFavGrid() {
 
     if (card.closest('#favGrid')) {
       dragSource = 'fav';
-      setTimeout(function() { toolsGrid.classList.add('drag-highlight'); }, 50);
     } else {
       dragSource = 'tools';
-      setTimeout(function() {
-        favLabel.classList.add('visible');
-        favDropZone.classList.add('drag-highlight');
-      }, 50);
+      setTimeout(function() { favLabel.classList.add('visible'); }, 50);
     }
   });
 
   // --- dragend ---
   document.addEventListener('dragend', function(e) {
     document.querySelectorAll('.dragging').forEach(function(c) { c.classList.remove('dragging'); });
-    favDropZone.classList.remove('drag-highlight');
-    toolsGrid.classList.remove('drag-highlight');
     if (favorites.length === 0) favLabel.classList.remove('visible');
     dragSource = null;
     dragHref = null;
