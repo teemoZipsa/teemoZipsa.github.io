@@ -808,10 +808,11 @@ function renderFavGrid() {
 
   favDropZone.addEventListener('drop', function(e) {
     e.preventDefault();
-    if (dragSource !== 'tools') return;
-    var href = e.dataTransfer.getData('text/plain') || dragHref;
-    addFav(href);
-    moved = true;
+    if (dragSource === 'tools') {
+      var href = e.dataTransfer.getData('text/plain') || dragHref;
+      addFav(href);
+      moved = true;
+    }
   });
   favLabel.addEventListener('drop', function(e) {
     e.preventDefault();
@@ -833,6 +834,65 @@ function renderFavGrid() {
     if (dragSource !== 'fav') return;
     var href = e.dataTransfer.getData('text/plain') || dragHref;
     removeFav(href);
+    moved = true;
+  });
+
+  // --- favGrid: reorder within favorites ---
+  var favGrid = document.getElementById('favGrid');
+
+  favGrid.addEventListener('dragover', function(e) {
+    if (dragSource !== 'fav') return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    // Find closest card for visual indicator
+    var target = e.target.closest('.tool-card');
+    favGrid.querySelectorAll('.tool-card').forEach(function(c) { c.style.borderLeft = ''; c.style.borderRight = ''; });
+    if (target && target.href !== dragHref) {
+      var rect = target.getBoundingClientRect();
+      var mid = rect.left + rect.width / 2;
+      if (e.clientX < mid) {
+        target.style.borderLeft = '3px solid var(--accent)';
+      } else {
+        target.style.borderRight = '3px solid var(--accent)';
+      }
+    }
+  });
+
+  favGrid.addEventListener('dragleave', function(e) {
+    if (!favGrid.contains(e.relatedTarget)) {
+      favGrid.querySelectorAll('.tool-card').forEach(function(c) { c.style.borderLeft = ''; c.style.borderRight = ''; });
+    }
+  });
+
+  favGrid.addEventListener('drop', function(e) {
+    e.preventDefault();
+    favGrid.querySelectorAll('.tool-card').forEach(function(c) { c.style.borderLeft = ''; c.style.borderRight = ''; });
+    if (dragSource !== 'fav') return;
+    var fromHref = e.dataTransfer.getData('text/plain') || dragHref;
+    var target = e.target.closest('.tool-card');
+    if (!target || !fromHref) return;
+    var toHref = target.href;
+    if (fromHref === toHref) return;
+
+    var fromIdx = favorites.indexOf(fromHref);
+    var toIdx = favorites.indexOf(toHref);
+    if (fromIdx < 0 || toIdx < 0) return;
+
+    // Determine insert before or after based on mouse position
+    var rect = target.getBoundingClientRect();
+    var insertAfter = e.clientX > (rect.left + rect.width / 2);
+
+    // Remove from old position
+    favorites.splice(fromIdx, 1);
+    // Find new target index (may have shifted)
+    var newToIdx = favorites.indexOf(toHref);
+    if (insertAfter) newToIdx++;
+    favorites.splice(newToIdx, 0, fromHref);
+
+    safeSet('favorites', JSON.stringify(favorites));
+    renderFavButtons();
+    renderFavGrid();
+    makeDraggable();
     moved = true;
   });
 })();
