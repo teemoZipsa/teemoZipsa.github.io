@@ -1101,11 +1101,29 @@ function saveCatOrder(grid, catId) {
         saved.forEach(href => { if (map[href]) grid.appendChild(map[href]); });
         cards.forEach(c => { if (!saved.includes(c.href)) grid.appendChild(c); });
     }
+    function clearIndicators() { grid.querySelectorAll('.tool-card').forEach(c => { c.style.borderLeft = ''; c.style.borderRight = ''; }); }
     grid.addEventListener('dragstart', e => { const card = e.target.closest('.tool-card'); if (!card) return; dragEl = card; card.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
-    grid.addEventListener('dragend', e => { const card = e.target.closest('.tool-card'); if (card) card.classList.remove('dragging'); grid.querySelectorAll('.drag-over').forEach(c => c.classList.remove('drag-over')); dragEl = null; saveOrder(); });
-    grid.addEventListener('dragover', e => { e.preventDefault(); const card = e.target.closest('.tool-card'); if (!card || card === dragEl) return; e.dataTransfer.dropEffect = 'move'; card.classList.add('drag-over'); });
-    grid.addEventListener('dragleave', e => { const card = e.target.closest('.tool-card'); if (card) card.classList.remove('drag-over'); });
-    grid.addEventListener('drop', e => { e.preventDefault(); const target = e.target.closest('.tool-card'); if (!target || !dragEl || target === dragEl) return; target.classList.remove('drag-over'); const cards = [...grid.querySelectorAll('.tool-card')]; const fromIdx = cards.indexOf(dragEl); const toIdx = cards.indexOf(target); if (fromIdx < toIdx) target.after(dragEl); else target.before(dragEl); });
+    grid.addEventListener('dragend', e => { const card = e.target.closest('.tool-card'); if (card) card.classList.remove('dragging'); clearIndicators(); dragEl = null; saveOrder(); });
+    grid.addEventListener('dragover', e => {
+        e.preventDefault();
+        const card = e.target.closest('.tool-card');
+        if (!card || card === dragEl) return;
+        e.dataTransfer.dropEffect = 'move';
+        clearIndicators();
+        var rect = card.getBoundingClientRect();
+        var mid = rect.left + rect.width / 2;
+        if (e.clientX < mid) { card.style.borderLeft = '3px solid var(--accent)'; }
+        else { card.style.borderRight = '3px solid var(--accent)'; }
+    });
+    grid.addEventListener('dragleave', e => { const card = e.target.closest('.tool-card'); if (card) { card.style.borderLeft = ''; card.style.borderRight = ''; } });
+    grid.addEventListener('drop', e => {
+        e.preventDefault(); clearIndicators();
+        const target = e.target.closest('.tool-card');
+        if (!target || !dragEl || target === dragEl) return;
+        var rect = target.getBoundingClientRect();
+        var insertAfter = e.clientX > (rect.left + rect.width / 2);
+        if (insertAfter) target.after(dragEl); else target.before(dragEl);
+    });
     grid.querySelectorAll('.tool-card').forEach(c => c.setAttribute('draggable', 'true'));
     function saveOrder() { safeSet('toolOrder', JSON.stringify([...grid.querySelectorAll('.tool-card')].map(c => c.href))); }
 })();
