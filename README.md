@@ -5,7 +5,7 @@
 **일상과 업무에 필요한 도구들을 한곳에 모았습니다.**
 
 [![Website](https://img.shields.io/badge/🌐_사이트_바로가기-teemoZipsa.github.io-FF6B6B?style=for-the-badge)](https://teemozipsa.github.io)
-[![Tools](https://img.shields.io/badge/도구_개수-33개-6C5CE7?style=for-the-badge)](#-도구-목록)
+[![Tools](https://img.shields.io/badge/도구_개수-36개-6C5CE7?style=for-the-badge)](#-도구-목록)
 [![PWA](https://img.shields.io/badge/PWA-오프라인_지원-00C853?style=for-the-badge)](#-주요-기능)
 [![CI](https://github.com/teemoZipsa/special-chars/actions/workflows/audit.yml/badge.svg)](https://github.com/teemoZipsa/special-chars/actions)
 
@@ -87,6 +87,12 @@
 |------|------|
 | [🤖 AI 프롬프트 자판기](https://teemozipsa.github.io/special-chars/prompt-gen/) | 빈칸만 채우면 AI용 프롬프트 완성 |
 | [🔗 UTM 생성기](https://teemozipsa.github.io/special-chars/utm-builder/) | 마케팅 캠페인 URL에 UTM 추적 파라미터 추가 |
+### 🐾 반려동물
+| 도구 | 설명 |
+|------|------|
+| [🐾 반려동물 나이 계산기](https://teemozipsa.github.io/special-chars/pet-age-calc/) | 강아지·고양이 → 사람 나이 환산 (체형별) |
+| [🍖 사료 급여량 계산기](https://teemozipsa.github.io/special-chars/pet-food-calc/) | 체중·활동량 기반 하루 사료량·칼로리 계산 |
+| [⚖️ 반려동물 체중 관리](https://teemozipsa.github.io/special-chars/pet-bmi-calc/) | BCS 체형 평가 · 품종별 표준 체중 비교 |
 
 <br>
 
