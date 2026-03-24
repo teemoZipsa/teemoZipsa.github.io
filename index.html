@@ -790,20 +790,43 @@ function renderCategoryView() {
     const cards = [...document.querySelectorAll('#toolsGrid .tool-card')];
     cv.innerHTML = '';
     CATEGORIES.forEach(cat => {
-        const matching = cards.filter(c => c.getAttribute('data-category') === cat.id && !favorites.includes(c.href));
+        let matching = cards.filter(c => c.getAttribute('data-category') === cat.id && !favorites.includes(c.href));
         if (matching.length === 0) return;
+        // 저장된 카테고리 내 순서 적용
+        const savedOrder = JSON.parse(safeGet('catOrder_' + cat.id) || '[]');
+        if (savedOrder.length) {
+            const map = {}; matching.forEach(c => { map[c.href] = c; });
+            const ordered = [];
+            savedOrder.forEach(href => { if (map[href]) { ordered.push(map[href]); delete map[href]; } });
+            Object.values(map).forEach(c => ordered.push(c));
+            matching = ordered;
+        }
         const group = document.createElement('div');
         group.className = 'category-group visible';
-        group.innerHTML = `<div class="category-title">${cat.label}</div><div class="category-grid"></div>`;
+        group.innerHTML = `<div class="category-title">${cat.label}</div><div class="category-grid" data-cat="${cat.id}"></div>`;
         const grid = group.querySelector('.category-grid');
         matching.forEach(c => {
             const clone = c.cloneNode(true);
             clone.querySelector('.fav-btn')?.remove();
+            clone.setAttribute('draggable', 'true');
+            clone.setAttribute('data-href', c.href);
             clone.onclick = () => trackRecent(c.href);
             grid.appendChild(clone);
         });
+        // 카테고리 내 드래그 앤 드롭
+        let dragEl = null;
+        grid.addEventListener('dragstart', e => { const card = e.target.closest('.tool-card'); if (!card) return; dragEl = card; card.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+        grid.addEventListener('dragend', e => { const card = e.target.closest('.tool-card'); if (card) card.classList.remove('dragging'); grid.querySelectorAll('.drag-over').forEach(c => c.classList.remove('drag-over')); dragEl = null; saveCatOrder(grid, cat.id); });
+        grid.addEventListener('dragover', e => { e.preventDefault(); const card = e.target.closest('.tool-card'); if (!card || card === dragEl) return; e.dataTransfer.dropEffect = 'move'; card.classList.add('drag-over'); });
+        grid.addEventListener('dragleave', e => { const card = e.target.closest('.tool-card'); if (card) card.classList.remove('drag-over'); });
+        grid.addEventListener('drop', e => { e.preventDefault(); const target = e.target.closest('.tool-card'); if (!target || !dragEl || target === dragEl) return; target.classList.remove('drag-over'); const items = [...grid.querySelectorAll('.tool-card')]; const fromIdx = items.indexOf(dragEl); const toIdx = items.indexOf(target); if (fromIdx < toIdx) target.after(dragEl); else target.before(dragEl); });
         cv.appendChild(group);
     });
+}
+
+function saveCatOrder(grid, catId) {
+    const hrefs = [...grid.querySelectorAll('.tool-card')].map(c => c.getAttribute('data-href') || c.href);
+    safeSet('catOrder_' + catId, JSON.stringify(hrefs));
 }
 
 // === 드래그 앤 드롭 ===
