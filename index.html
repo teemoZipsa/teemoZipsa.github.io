@@ -168,6 +168,8 @@
         .faq-item.faq-hidden.faq-show { display: block; }
         .faq-toggle-btn { display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%; padding: 10px; background: var(--bg-hover); border: 1px solid var(--border); border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--accent); cursor: pointer; transition: all .2s; font-family: inherit; margin-top: 4px; }
         .faq-toggle-btn:hover { background: var(--accent-light); border-color: var(--border-hover); }
+        .faq-item.faq-read summary { opacity: .5; }
+        .faq-item.faq-read summary::before { color: var(--text-muted); }
 
         /* === 팁 섹션 === */
         .tip-section {
@@ -517,6 +519,24 @@ function toggleFaqAll() {
         ? '접기 ▲'
         : `더보기 ▼ <span style="font-weight:400;color:#94a3b8">(+${FAQ_EXTRA_COUNT}개)</span>`;
 }
+
+// === FAQ 읽음 표시 ===
+(function(){
+  var key = 'faq_read';
+  var read = {};
+  try { read = JSON.parse(localStorage.getItem(key)) || {}; } catch(e) {}
+  var items = document.querySelectorAll('.faq-item');
+  items.forEach(function(el, i) {
+    if (read[i]) el.classList.add('faq-read');
+    el.addEventListener('toggle', function() {
+      if (el.open) {
+        el.classList.add('faq-read');
+        read[i] = 1;
+        try { localStorage.setItem(key, JSON.stringify(read)); } catch(e) {}
+      }
+    });
+  });
+})();
 
 // === 오늘의 정보 위젯 ===
 const FB_DB = 'https://teemozipsa-default-rtdb.firebaseio.com';
