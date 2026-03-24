@@ -90,10 +90,9 @@
         .tool-card:active { transform: translateY(-1px); }
         .tool-card.dragging { opacity: .4; transform: scale(.95); }
         .tool-card.drag-over { border-color: var(--border-hover); box-shadow: 0 0 0 2px rgba(167,139,250,.3); }
-        .fav-drop-zone { position: relative; }
-        .fav-drop-hint { display: none; border: 2px dashed var(--accent); border-radius: 16px; padding: 24px; text-align: center; color: var(--accent); font-size: 13px; font-weight: 600; background: rgba(167,139,250,.06); transition: all .2s; }
-        .fav-drop-hint.active { display: block; animation: dropPulse .8s ease infinite alternate; }
-        @keyframes dropPulse { from { border-color: var(--accent); background: rgba(167,139,250,.06); } to { border-color: #a78bfa; background: rgba(167,139,250,.12); } }
+        .fav-drop-zone { position: relative; transition: all .3s; border-radius: 16px; }
+        .fav-drop-zone.drag-highlight { background: rgba(167,139,250,.06); outline: 2px dashed var(--accent); outline-offset: 4px; }
+        #toolsGrid.drag-highlight { background: rgba(167,139,250,.04); border-radius: 16px; outline: 2px dashed rgba(167,139,250,.3); outline-offset: 4px; }
         .tool-icon { font-size: 26px; line-height: 1; flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--bg-input); border-radius: 10px; }
         .tool-info { flex: 1; min-width: 0; }
         .tool-name { font-size: 17px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -249,7 +248,6 @@
 <div class="section-label" id="favLabel">⭐ 즐겨찾기</div>
 <div class="fav-drop-zone" id="favDropZone">
 <div class="tools-grid" id="favGrid"></div>
-<div class="fav-drop-hint" id="favDropHint">⭐ 여기에 놓으면 즐겨찾기에 추가됩니다</div>
 </div>
 
 <!-- 전체 도구 -->
@@ -736,80 +734,114 @@ function renderFavGrid() {
 
 // === 드래그 앤 드롭 즐겨찾기 ===
 (function() {
-  const toolsGrid = document.getElementById('toolsGrid');
-  const favDropZone = document.getElementById('favDropZone');
-  const favDropHint = document.getElementById('favDropHint');
-  const favLabel = document.getElementById('favLabel');
-  let draggedHref = null;
+  var toolsGrid = document.getElementById('toolsGrid');
+  var favDropZone = document.getElementById('favDropZone');
+  var favLabel = document.getElementById('favLabel');
+  var dragSource = null; // 'tools' or 'fav'
+  var dragHref = null;
+  var moved = false;
 
-  // Make tool cards draggable
-  toolsGrid.addEventListener('dragstart', function(e) {
-    const card = e.target.closest('.tool-card');
-    if (!card) return;
-    draggedHref = card.href;
-    card.classList.add('dragging');
-    e.dataTransfer.effectAllowed = 'copy';
-    e.dataTransfer.setData('text/plain', card.href);
-    // Show drop zone
-    setTimeout(function() {
-      favLabel.classList.add('visible');
-      favDropHint.classList.add('active');
-    }, 50);
-  });
-
-  toolsGrid.addEventListener('dragend', function(e) {
-    const card = e.target.closest('.tool-card');
-    if (card) card.classList.remove('dragging');
-    draggedHref = null;
-    favDropHint.classList.remove('active');
-    // Re-hide label if no favorites
-    if (favorites.length === 0) favLabel.classList.remove('visible');
-  });
-
-  // Set draggable on cards
-  function setDraggable() {
-    toolsGrid.querySelectorAll('.tool-card').forEach(function(card) {
-      card.setAttribute('draggable', 'true');
-    });
+  function addFav(href) {
+    if (!href || favorites.includes(href)) return;
+    favorites.push(href);
+    safeSet('favorites', JSON.stringify(favorites));
+    renderFavButtons();
+    renderFavGrid();
+    makeDraggable();
   }
-  setDraggable();
 
-  // Drop zone events
-  favDropZone.addEventListener('dragover', function(e) {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
-    favDropHint.style.borderColor = '#a78bfa';
-    favDropHint.style.background = 'rgba(167,139,250,.15)';
+  function removeFav(href) {
+    var idx = favorites.indexOf(href);
+    if (idx < 0) return;
+    favorites.splice(idx, 1);
+    safeSet('favorites', JSON.stringify(favorites));
+    renderFavButtons();
+    renderFavGrid();
+    makeDraggable();
+  }
+
+  function makeDraggable() {
+    toolsGrid.querySelectorAll('.tool-card').forEach(function(c) { c.setAttribute('draggable', 'true'); });
+    document.querySelectorAll('#favGrid .tool-card').forEach(function(c) { c.setAttribute('draggable', 'true'); });
+  }
+  makeDraggable();
+
+  // Observe favGrid changes to re-apply draggable
+  var obs = new MutationObserver(makeDraggable);
+  obs.observe(document.getElementById('favGrid'), { childList: true });
+
+  // --- dragstart ---
+  document.addEventListener('dragstart', function(e) {
+    var card = e.target.closest('.tool-card');
+    if (!card) return;
+    moved = false;
+    dragHref = card.href;
+    card.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', card.href);
+
+    if (card.closest('#favGrid')) {
+      dragSource = 'fav';
+      setTimeout(function() { toolsGrid.classList.add('drag-highlight'); }, 50);
+    } else {
+      dragSource = 'tools';
+      setTimeout(function() {
+        favLabel.classList.add('visible');
+        favDropZone.classList.add('drag-highlight');
+      }, 50);
+    }
   });
 
-  favDropZone.addEventListener('dragleave', function(e) {
-    if (!favDropZone.contains(e.relatedTarget)) {
-      favDropHint.style.borderColor = '';
-      favDropHint.style.background = '';
-    }
+  // --- dragend ---
+  document.addEventListener('dragend', function(e) {
+    document.querySelectorAll('.dragging').forEach(function(c) { c.classList.remove('dragging'); });
+    favDropZone.classList.remove('drag-highlight');
+    toolsGrid.classList.remove('drag-highlight');
+    if (favorites.length === 0) favLabel.classList.remove('visible');
+    dragSource = null;
+    dragHref = null;
+  });
+
+  // --- favDropZone: accept cards from tools ---
+  favDropZone.addEventListener('dragover', function(e) {
+    if (dragSource !== 'tools') return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  });
+  favLabel.addEventListener('dragover', function(e) {
+    if (dragSource !== 'tools') return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
   });
 
   favDropZone.addEventListener('drop', function(e) {
     e.preventDefault();
-    const href = e.dataTransfer.getData('text/plain') || draggedHref;
-    if (href && !favorites.includes(href)) {
-      favorites.push(href);
-      safeSet('favorites', JSON.stringify(favorites));
-      renderFavButtons();
-      renderFavGrid();
-    }
-    favDropHint.classList.remove('active');
-    favDropHint.style.borderColor = '';
-    favDropHint.style.background = '';
-    draggedHref = null;
-    document.querySelectorAll('.tool-card.dragging').forEach(function(c) { c.classList.remove('dragging'); });
+    if (dragSource !== 'tools') return;
+    var href = e.dataTransfer.getData('text/plain') || dragHref;
+    addFav(href);
+    moved = true;
   });
-
-  // Also allow drop on favLabel
-  favLabel.addEventListener('dragover', function(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; });
   favLabel.addEventListener('drop', function(e) {
     e.preventDefault();
-    favDropZone.dispatchEvent(new DragEvent('drop', { dataTransfer: e.dataTransfer }));
+    if (dragSource !== 'tools') return;
+    var href = e.dataTransfer.getData('text/plain') || dragHref;
+    addFav(href);
+    moved = true;
+  });
+
+  // --- toolsGrid: accept cards from fav ---
+  toolsGrid.addEventListener('dragover', function(e) {
+    if (dragSource !== 'fav') return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  });
+
+  toolsGrid.addEventListener('drop', function(e) {
+    e.preventDefault();
+    if (dragSource !== 'fav') return;
+    var href = e.dataTransfer.getData('text/plain') || dragHref;
+    removeFav(href);
+    moved = true;
   });
 })();
 
