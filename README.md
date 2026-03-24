@@ -5,7 +5,8 @@
 **일상과 업무에 필요한 도구들을 한곳에 모았습니다.**
 
 [![Website](https://img.shields.io/badge/🌐_사이트_바로가기-teemoZipsa.github.io-FF6B6B?style=for-the-badge)](https://teemozipsa.github.io)
-[![Tools](https://img.shields.io/badge/도구_개수-22개-6C5CE7?style=for-the-badge)](#-도구-목록)
+[![Tools](https://img.shields.io/badge/도구_개수-25개-6C5CE7?style=for-the-badge)](#-도구-목록)
+[![PWA](https://img.shields.io/badge/PWA-오프라인_지원-00C853?style=for-the-badge)](#-주요-기능)
 
 </div>
 
@@ -13,10 +14,19 @@
 
 ## ✨ 소개
 
-광고 없이, 회원가입 없이, **브라우저에서 바로 사용**할 수 있는 웹 도구 모음입니다.  
+회원가입 없이, **브라우저에서 바로 사용**할 수 있는 웹 도구 모음입니다.  
 모든 도구는 **클라이언트 사이드**에서 동작하여 개인정보가 서버로 전송되지 않습니다.
 
 > 🔒 **개인정보 보호** — 모든 처리가 브라우저에서 이루어집니다
+
+<br>
+
+## 🎯 주요 기능
+
+- 🌓 **다크/라이트 모드** — 메인 포털에서 원클릭 테마 전환, 전체 사이트 일관 적용
+- 📱 **PWA 지원** — 모바일 홈 화면에 앱처럼 추가, 오프라인에서도 도구 사용 가능
+- 💾 **자동 저장** — 입력 내용이 브라우저에 자동 저장되어 새로고침해도 유지
+- 🔐 **100% 클라이언트** — 모든 처리가 브라우저 내에서 완료, 서버 전송 없음
 
 <br>
 
@@ -42,6 +52,8 @@
 | [🔥 칼로리 계산기](https://teemozipsa.github.io/special-chars/calorie-calc/) | 다이어트 목표 칼로리 및 탄단지 비율 계산 |
 | [💸 구독료 팩폭 계산기](https://teemozipsa.github.io/special-chars/sub-calc/) | 매달 나가는 구독료, 모이면 얼마? |
 | [🎤 발표시간 계산기](https://teemozipsa.github.io/special-chars/speech-timer/) | 스크립트 → 예상 발표 시간 자동 계산 |
+| [🏷️ 할인 계산기](https://teemozipsa.github.io/special-chars/discount-calc/) | 할인율·할인 금액 바로 계산 |
+| [⏱️ 타이머](https://teemozipsa.github.io/special-chars/timer/) | 심플 타이머 & 스톱워치 |
 
 ### 🔧 변환 & 유틸
 | 도구 | 설명 |
@@ -58,6 +70,7 @@
 | [📷 QR 코드 생성기](https://teemozipsa.github.io/special-chars/qr-code/) | 텍스트·URL을 QR 코드로 즉시 생성 |
 | [🗜️ 이미지 용량 줄이기](https://teemozipsa.github.io/special-chars/image-compress/) | 브라우저에서 바로 사진 용량 압축 |
 | [📄 PDF 도구](https://teemozipsa.github.io/special-chars/pdf-tool/) | PDF 합치기·나누기·회전·워터마크 |
+| [🔑 비밀번호 생성기](https://teemozipsa.github.io/special-chars/password-gen/) | 안전한 랜덤 비밀번호 즉시 생성 |
 
 ### 🤖 AI & 마케팅
 | 도구 | 설명 |
@@ -82,7 +95,7 @@
 
 ## 📜 라이선스
 
-Copyright © 2025 teemoZipsa. All Rights Reserved.
+Copyright © 2026 teemoZipsa. All Rights Reserved.
 
 ---
 
