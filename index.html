@@ -87,6 +87,7 @@
             user-select: none; box-shadow: var(--shadow-sm); position: relative;
         }
         .tool-card:hover { transform: translateY(-3px); border-color: var(--border-hover); box-shadow: var(--shadow-accent); }
+        .tool-card::after { content: ''; position: absolute; left: 0; right: 0; bottom: -4px; height: 4px; }
         .tool-card:active { transform: translateY(-1px); }
         .tool-card.dragging { opacity: .4; transform: scale(.95); }
         .fav-drop-zone { position: relative; }
