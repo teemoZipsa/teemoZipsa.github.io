@@ -557,10 +557,15 @@ function toggleFaqAll() {
 const FB_DB = 'https://teemozipsa-default-rtdb.firebaseio.com';
 let globalVisitCount = null;
 
-// Firebase에서 방문 수 가져오기 + 세션당 1회 증가
+// Firebase에서 방문 수 가져오기 + 1시간당 1회 증가 (localStorage 기반)
 (function initVisitCounter() {
-    const counted = sessionStorage.getItem('visit_counted');
-    if (!counted) {
+    const lastVisitKey = 'last_visit_timestamp';
+    const lastVisit = localStorage.getItem(lastVisitKey);
+    const now = Date.now();
+    const oneHour = 60 * 60 * 1000; // 1시간 (밀리초)
+
+    // 마지막 방문 접속 기록이 없거나, 1시간 이상 지난 경우에만 카운트 증가
+    if (!lastVisit || (now - parseInt(lastVisit, 10)) > oneHour) {
         // 현재 값 읽고 +1 증가 (REST API)
         fetch(FB_DB + '/stats/visitCount.json')
             .then(r => r.json())
@@ -570,12 +575,13 @@ let globalVisitCount = null;
                     method: 'PUT',
                     body: JSON.stringify(globalVisitCount)
                 });
-                sessionStorage.setItem('visit_counted', '1');
+                // localStorage에 현재 접속 시간을 도장처럼 찍어둡니다
+                localStorage.setItem(lastVisitKey, now.toString());
                 updateVisitDisplay();
             })
             .catch(() => { globalVisitCount = null; updateVisitDisplay(); });
     } else {
-        // 이미 카운트한 세션: 읽기만
+        // 1시간 이내에 이미 방문했던 브라우저: 카운트를 올리지 않고 값만 읽어옴
         fetch(FB_DB + '/stats/visitCount.json')
             .then(r => r.json())
             .then(count => { globalVisitCount = count || 0; updateVisitDisplay(); })
