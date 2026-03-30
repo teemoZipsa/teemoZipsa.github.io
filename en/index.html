@@ -4,20 +4,18 @@
     <meta charset="UTF-8">
     <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TeemoZipsa — Free Online Tools for Everyone 😺</title>
-    <link rel="icon" type="image/png" href="/favicon.png">
+    <title>TeemoZipsa's Free Online Tools 😺</title>
+    <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="/special-chars/theme.css">
-    <link rel="apple-touch-icon" href="/favicon.png">
+    <link rel="manifest" href="/special-chars/manifest.json">
+    <link rel="apple-touch-icon" href="favicon.png">
     <meta name="theme-color" content="#6366f1">
     <meta name="description" content="Free online tools: Music Calculator, Color Converter, Password Generator, QR Code, Image Compressor, PDF Tools, and more. No sign-up required.">
-    <meta property="og:title" content="TeemoZipsa — Free Online Tools">
-    <meta property="og:description" content="Music calculator, color converter, password generator, and 40+ free web tools. No login required.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://teemozipsa.github.io/en/">
-    <link rel="canonical" href="https://teemozipsa.github.io/en/">
-    <link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/">
-    <link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/en/">
+    
+    
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+    <link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/">
+    <link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -27,30 +25,17 @@
             position: relative; overflow-x: hidden;
         }
 
-        /* === Blob Background === */
-        .blob-bg{position:fixed;top:0;left:0;width:100%;height:100%;overflow:hidden;z-index:0;pointer-events:none;filter:blur(90px);opacity:.5}
-        .blob-bg .blob{position:absolute;border-radius:50%}
-        .blob-bg .b1{width:420px;height:420px;top:-8%;left:-5%;animation:bFloat1 14s ease-in-out infinite}
-        .blob-bg .b2{width:350px;height:350px;bottom:-8%;right:-3%;animation:bFloat2 18s ease-in-out infinite}
-        .blob-bg .b3{width:300px;height:300px;top:45%;left:55%;animation:bFloat3 20s ease-in-out infinite}
-        html[data-theme="dark"] .b1{background:radial-gradient(circle,rgba(124,58,237,.6) 0%,transparent 70%)}
-        html[data-theme="dark"] .b2{background:radial-gradient(circle,rgba(59,130,246,.5) 0%,transparent 70%)}
-        html[data-theme="dark"] .b3{background:radial-gradient(circle,rgba(167,139,250,.4) 0%,transparent 70%)}
-        html[data-theme="light"] .b1{background:radial-gradient(circle,rgba(99,102,241,.8) 0%,transparent 70%)}
-        html[data-theme="light"] .b2{background:radial-gradient(circle,rgba(59,130,246,.7) 0%,transparent 70%)}
-        html[data-theme="light"] .b3{background:radial-gradient(circle,rgba(139,92,246,.75) 0%,transparent 70%)}
-        @keyframes bFloat1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(80px,60px) scale(1.08)}66%{transform:translate(-40px,100px) scale(.95)}}
-        @keyframes bFloat2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-100px,-50px) scale(1.12)}66%{transform:translate(50px,-80px) scale(.92)}}
+        
 
-        /* === Header === */
-        .hero { text-align: center; padding: 40px 20px 0; max-width: 720px; margin: 0 auto; position: relative; z-index: 1; }
-        .hero h1 { font-size: 32px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; margin-bottom: 8px; }
+        
+        .hero { text-align: center; padding: 40px 20px 0; max-width: 720px; margin: 0 auto; }
+        .hero h1 { font-size: 34px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; margin-bottom: 8px; }
         .hero p { font-size: 15px; color: var(--text-muted); margin-bottom: 24px; }
-        .lang-switch { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; font-size: 13px; font-weight: 600; color: var(--accent); text-decoration: none; transition: all .2s; margin-bottom: 16px; }
-        .lang-switch:hover { border-color: var(--accent); background: var(--accent-light); }
 
-        /* === Search === */
-        .search-wrap { max-width: 480px; margin: 0 auto 24px; position: relative; z-index: 2; }
+        
+
+        
+        .search-wrap { max-width: 480px; margin: 0 auto 20px; position: relative; }
         .search-wrap svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; fill: var(--text-muted); pointer-events: none; }
         .search-wrap input {
             width: 100%; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
@@ -60,12 +45,18 @@
         .search-wrap input::placeholder { color: var(--text-muted); }
         .search-wrap input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,.15); }
 
-        /* === Tool Grid === */
-        .section-label { max-width: 960px; margin: 0 auto; padding: 0 20px 8px; font-size: 13px; font-weight: 700; color: var(--text-muted); display: flex; align-items: center; gap: 6px; position: relative; z-index: 1; }
+        
+        .section-label {
+            max-width: 960px; margin: 0 auto; padding: 0 20px 8px;
+            font-size: 13px; font-weight: 700; color: var(--text-muted);
+            display: none; align-items: center; gap: 6px;
+        }
+        .section-label.visible { display: flex; }
+
+        
         .tools-grid {
             max-width: 960px; margin: 0 auto; padding: 0 20px 16px;
             display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;
-            position: relative; z-index: 1;
         }
         .tool-card {
             background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
@@ -74,18 +65,101 @@
             user-select: none; box-shadow: var(--shadow-sm); position: relative;
         }
         .tool-card:hover { transform: translateY(-3px); border-color: var(--border-hover); box-shadow: var(--shadow-accent); }
+        .tool-card::after { content: ''; position: absolute; inset: -10px; }
         .tool-card:active { transform: translateY(-1px); }
+        .tool-card.dragging { opacity: .4; transform: scale(.95); }
+        .fav-drop-zone { position: relative; }
         .tool-icon { font-size: 26px; line-height: 1; flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--bg-input); border-radius: 10px; }
         .tool-info { flex: 1; min-width: 0; }
         .tool-name { font-size: 17px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .tool-desc { font-size: 12px; color: var(--text-muted); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .tool-card:hover .tool-name { color: var(--accent); }
-        .badge { display: inline-block; background: var(--accent); color: var(--text-on-accent); font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-left: 6px; vertical-align: middle; letter-spacing: .3px; }
 
-        .no-results { text-align: center; color: var(--text-muted); font-size: 14px; padding: 40px 20px; display: none; position: relative; z-index: 1; }
+        /* Fav button */
+        .fav-btn {
+            position: absolute; top: 8px; right: 8px; background: none; border: none;
+            font-size: 16px; cursor: pointer; color: var(--text-muted); transition: color .2s;
+            padding: 4px; line-height: 1; z-index: 2;
+        }
+        .fav-btn:hover { color: #f59e0b; }
+        .fav-btn.active { color: #f59e0b; }
 
-        /* === Footer === */
-        footer { text-align: center; color: var(--text-muted); font-size: 12px; padding: 24px 20px 40px; border-top: 1px solid var(--border); max-width: 960px; margin: 0 auto; position: relative; z-index: 1; }
+        .no-results { text-align: center; color: var(--text-muted); font-size: 14px; padding: 40px 20px; display: none; }
+
+        
+        .search-dropdown {
+            position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-card);
+            border: 1px solid var(--border); border-top: none; border-radius: 0 0 12px 12px;
+            box-shadow: var(--shadow-lg); z-index: 10; display: none;
+            max-height: 320px; overflow-y: auto;
+        }
+        .search-dropdown.open { display: block; }
+        .search-dropdown-item {
+            display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+            text-decoration: none; color: inherit; cursor: pointer; transition: background .15s;
+        }
+        .search-dropdown-item:hover, .search-dropdown-item.active { background: var(--bg-hover); }
+        .search-dropdown-item .sdi-icon { font-size: 18px; width: 28px; text-align: center; flex-shrink: 0; }
+        .search-dropdown-item .sdi-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+        .search-dropdown-item .sdi-desc { font-size: 11px; color: var(--text-muted); }
+        .search-wrap input.dropdown-open { border-radius: 12px 12px 0 0; }
+
+        
+        .view-controls {
+            max-width: 960px; margin: 0 auto; padding: 0 20px 8px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .view-toggle { display: flex; gap: 8px; }
+
+        
+        .category-group { max-width: 960px; margin: 0 auto; padding: 0 20px 16px; display: none; }
+        .category-group.visible { display: block; }
+        .category-title {
+            font-size: 14px; font-weight: 700; color: var(--text-secondary); margin-bottom: 10px;
+            padding-bottom: 6px; border-bottom: 2px solid var(--border);
+            display: flex; align-items: center; gap: 6px;
+        }
+        .category-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* FAQ */
+        .faq-section { max-width: 960px; margin: 0 auto; padding: 0 20px 32px; }
+        .faq-title { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .faq-item { border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+        .faq-item summary {
+            padding: 12px 16px; cursor: pointer; font-size: 14px; font-weight: 600;
+            color: var(--text-secondary); list-style: none; display: flex; align-items: center; gap: 8px;
+            transition: background .2s;
+        }
+        .faq-item summary:hover { background: var(--bg-hover); }
+        .faq-item summary::before { content: 'Q.'; color: var(--accent); font-weight: 800; flex-shrink: 0; }
+        .faq-item[open] summary { background: var(--bg-input); }
+        .faq-answer { padding: 12px 16px 14px 38px; font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+        .faq-item.faq-hidden { display: none; }
+        .faq-item.faq-hidden.faq-show { display: block; }
+        .faq-toggle-btn { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%; padding: 10px; background: var(--bg-hover); border: 1px solid var(--border); border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--accent); cursor: pointer; transition: all .2s; font-family: inherit; margin-top: 4px; }
+        .faq-toggle-btn::before { content: ""; position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: radial-gradient(circle 100px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(124, 58, 237, 0.2), transparent 100%); opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 0; }
+        .faq-toggle-btn:hover::before { opacity: 1; }
+        .faq-toggle-btn:hover { background: var(--accent-light); border-color: var(--border-hover); }
+        .faq-item.faq-read summary { opacity: .5; }
+        .faq-item.faq-read summary::before { color: var(--text-muted); }
+
+        
+        .tip-section {
+            max-width: 960px; margin: 0 auto; padding: 0 20px 32px;
+        }
+        .tip-card {
+            background: var(--accent-light); border: 1px solid var(--border); border-radius: 12px;
+            padding: 14px 18px; font-size: 14px; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;
+        }
+        .tip-icon { font-size: 20px; flex-shrink: 0; }
+        .tip-text { line-height: 1.5; }
+        .tip-label { font-weight: 700; color: var(--accent); }
+
+        
+        footer { text-align: center; color: var(--text-muted); font-size: 12px; padding: 24px 20px 40px; border-top: 1px solid var(--border); max-width: 960px; margin: 0 auto; }
         footer a { color: var(--text-secondary); text-decoration: none; transition: color .2s; display: inline-flex; align-items: center; gap: 3px; }
         footer a:hover { color: var(--accent); }
         .footer-links { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px; margin-bottom: 8px; }
@@ -96,105 +170,328 @@
             .hero p { font-size: 13px; margin-bottom: 16px; }
             .tools-grid { grid-template-columns: 1fr; gap: 10px; padding: 0 16px 16px; }
             .tool-name { font-size: 15px; }
+            .today-widget { flex-direction: column; text-align: center; gap: 8px; }
+            .today-remain { text-align: center; }
         }
 
-        .hero,.search-wrap,.section-label,.tools-grid,.no-results,footer{position:relative;z-index:1}
+        
+        .scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:var(--shadow-accent);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+        .scroll-top-btn.visible{opacity:1;visibility:visible}
+        .scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+        @media(max-width:640px){.scroll-top-btn{bottom:24px;right:16px;width:40px;height:40px;font-size:18px}}
+
+        /* Blob BG */
+        .blob-bg{position:fixed;top:0;left:0;width:100%;height:100%;overflow:hidden;z-index:0;pointer-events:none;filter:blur(90px);opacity:.5}
+        .blob-bg .blob{position:absolute;border-radius:50%}
+        .blob-bg .b1{width:420px;height:420px;top:-8%;left:-5%;animation:bFloat1 14s ease-in-out infinite}
+        .blob-bg .b2{width:350px;height:350px;bottom:-8%;right:-3%;animation:bFloat2 18s ease-in-out infinite}
+        .blob-bg .b3{width:300px;height:300px;top:45%;left:55%;animation:bFloat3 20s ease-in-out infinite}
+        /* dark blob */
+        html[data-theme="dark"] .b1{background:radial-gradient(circle,rgba(124,58,237,.6) 0%,transparent 70%)}
+        html[data-theme="dark"] .b2{background:radial-gradient(circle,rgba(59,130,246,.5) 0%,transparent 70%)}
+        html[data-theme="dark"] .b3{background:radial-gradient(circle,rgba(167,139,250,.4) 0%,transparent 70%)}
+        /* light blob */
+        html[data-theme="light"] .b1{background:radial-gradient(circle,rgba(99,102,241,.8) 0%,transparent 70%)}
+        html[data-theme="light"] .b2{background:radial-gradient(circle,rgba(59,130,246,.7) 0%,transparent 70%)}
+        html[data-theme="light"] .b3{background:radial-gradient(circle,rgba(139,92,246,.75) 0%,transparent 70%)}
+        @keyframes bFloat1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(80px,60px) scale(1.08)}66%{transform:translate(-40px,100px) scale(.95)}}
+        @keyframes bFloat2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-100px,-50px) scale(1.12)}66%{transform:translate(50px,-80px) scale(.92)}}
+        
+        .view-toggle button {
+            position: relative; overflow: hidden;
+            background: var(--bg-btn); border: 1px solid var(--border); padding: 8px 14px; font-size: 13px; font-weight: 600;
+            border-radius: 8px; cursor: pointer; color: var(--text-muted); font-family: inherit; transition: all .2s;
+        }
+        .view-toggle button::before {
+            content: ""; position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle 40px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(124, 58, 237, 0.35), transparent 100%);
+            opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 0;
+        }
+        .view-toggle button:hover::before { opacity: 1; }
+        .view-toggle button.active { background: var(--accent); color: var(--text-on-accent); border-color: var(--accent-hover); }
+        .view-toggle button.active::before { display: none; }
+        .view-toggle span { position: relative; z-index: 1; pointer-events: none; }
+
+        .tool-card::after { content: ''; position: absolute; inset: -15px; z-index: -1; pointer-events: auto; }
+        .tool-card>*{position:relative;z-index:1}
+
+        
+        .update-banner,.hero,.search-wrap,.section-label,.view-controls,.tools-grid,.fav-drop-zone,.category-group,.faq-section,.tip-section,footer,.no-results{position:relative;z-index:1}
     </style>
 </head>
 <body>
 
-<!-- Blob Background -->
-<div class="blob-bg" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<!-- Blob BG -->
+<div class="blob-bg" id="blobBg" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+
 
 <div class="hero">
-    <a href="https://teemozipsa.github.io/" class="lang-switch">🌐 한국어로 보기</a>
     <h1>TeemoZipsa's Free Online Tools 😺</h1>
     <p>Handy web tools for everyday life — no sign-up required.</p>
 </div>
 
-<div class="search-wrap">
-    <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-    <input type="text" id="searchInput" placeholder="Search tools... (e.g. music, color, password)" oninput="filterTools()" autocomplete="off">
+
+    <div style="text-align:right">
+        <div class="today-clock" id="todayClock"></div>
+        <div class="today-remain" id="todayRemain"></div>
+    </div>
 </div>
 
-<div class="section-label">📦 All Tools</div>
+<div class="search-wrap">
+    <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+    <input type="text" id="searchInput" placeholder="Search tools... (e.g. music, color, password)" oninput="onSearchInput()" onkeydown="onSearchKeydown(event)" onfocus="onSearchFocus()" autocomplete="off">
+    <div class="search-dropdown" id="searchDropdown"></div>
+</div>
+
+<!-- Recent -->
+<div class="section-label" id="recentLabel">🕐 Recently Used</div>
+<div class="tools-grid" id="recentGrid"></div>
+
+<!-- Favorites -->
+<div class="section-label" id="favLabel">⭐ Favorites</div>
+<div class="fav-drop-zone" id="favDropZone">
+<div class="tools-grid" id="favGrid"></div>
+</div>
+
+<!-- All Tools -->
+<div class="view-controls">
+    <div class="section-label visible" style="margin:0;padding:0">📦 All Tools</div>
+    <div class="view-toggle" id="viewToggle">
+        <button id="viewCard" class="active" onclick="switchView('card')"><span>Card</span></button>
+        <button id="viewCat" onclick="switchView('category')"><span>Category</span></button>
+    </div>
+</div>
 
 <div class="tools-grid" id="toolsGrid">
-    <a href="/special-chars/en/music-calc/" class="tool-card" data-keywords="music calculator BPM tap tempo metronome delay timing song length bar note Hz frequency key transpose DAW producer">
-        <div class="tool-icon">🎵</div>
-        <div class="tool-info"><div class="tool-name">Music Calculator</div><div class="tool-desc">BPM · Metronome · Delay · Note/Hz · Transpose</div></div>
+    <a href="/special-chars/en/char-counter/" class="tool-card" data-keywords="character counter word count text bytes" data-category="convert">
+        <div class="tool-icon">📏</div>
+        <div class="tool-info"><div class="tool-name">Character Counter</div><div class="tool-desc">Characters · Words · Bytes · Real-time count</div></div>
     </a>
-    <a href="/special-chars/en/color-conv/" class="tool-card" data-keywords="color converter HEX RGB HSL picker palette code">
-        <div class="tool-icon">🎨</div>
-        <div class="tool-info"><div class="tool-name">Color Converter</div><div class="tool-desc">HEX · RGB · HSL real-time conversion</div></div>
-    </a>
-    <a href="/special-chars/en/password-gen/" class="tool-card" data-keywords="password generator secure random strong safe">
-        <div class="tool-icon">🔐</div>
-        <div class="tool-info"><div class="tool-name">Password Generator</div><div class="tool-desc">Generate secure random passwords instantly</div></div>
-    </a>
-    <a href="/special-chars/en/qr-code/" class="tool-card" data-keywords="QR code generator barcode URL link scan">
-        <div class="tool-icon">📷</div>
-        <div class="tool-info"><div class="tool-name">QR Code Generator</div><div class="tool-desc">Create QR codes from text or URLs</div></div>
-    </a>
-    <a href="/special-chars/en/image-compress/" class="tool-card" data-keywords="image compress resize photo reduce size optimize jpg png">
-        <div class="tool-icon">🗜️</div>
-        <div class="tool-info"><div class="tool-name">Image Compressor</div><div class="tool-desc">Compress images right in your browser</div></div>
-    </a>
-    <a href="/special-chars/en/bg-remover/" class="tool-card" data-keywords="background remover image transparent png AI remove">
-        <div class="tool-icon">✂️</div>
-        <div class="tool-info"><div class="tool-name">Background Remover</div><div class="tool-desc">AI-powered background removal · 100% local</div></div>
-    </a>
-    <a href="/special-chars/en/pdf-tool/" class="tool-card" data-keywords="PDF merge split rotate watermark document page">
-        <div class="tool-icon">📄</div>
-        <div class="tool-info"><div class="tool-name">PDF Tools</div><div class="tool-desc">Merge · Split · Rotate · Watermark</div></div>
-    </a>
-    <a href="/special-chars/en/timezone-conv/" class="tool-card" data-keywords="timezone converter world clock time difference city">
-        <div class="tool-icon">🌍</div>
-        <div class="tool-info"><div class="tool-name">Timezone Converter</div><div class="tool-desc">Convert time across cities worldwide</div></div>
-    </a>
-    <a href="/special-chars/en/unit-conv/" class="tool-card" data-keywords="unit converter length weight temperature area volume">
-        <div class="tool-icon">📐</div>
-        <div class="tool-info"><div class="tool-name">Unit Converter</div><div class="tool-desc">Length · Weight · Temperature · Area · Volume</div></div>
-    </a>
-    <a href="/special-chars/en/calculator/" class="tool-card" data-keywords="calculator basic arithmetic math add subtract multiply divide">
-        <div class="tool-icon">🧮</div>
-        <div class="tool-info"><div class="tool-name">Calculator</div><div class="tool-desc">Basic arithmetic · Percentage · Keyboard support</div></div>
-    </a>
-    <a href="/special-chars/en/compound-interest/" class="tool-card" data-keywords="compound interest calculator investment return rate savings">
-        <div class="tool-icon">💰</div>
-        <div class="tool-info"><div class="tool-name">Compound Interest</div><div class="tool-desc">Visualize the power of compound growth</div></div>
-    </a>
-    <a href="/special-chars/en/date-calc/" class="tool-card" data-keywords="date calculator D-Day anniversary days between dates">
+    <a href="/special-chars/en/date-calc/" class="tool-card" data-keywords="date calculator D-Day anniversary days between" data-category="date">
         <div class="tool-icon">📅</div>
         <div class="tool-info"><div class="tool-name">Date / D-Day Calculator</div><div class="tool-desc">D-Day countdown · Add/subtract days</div></div>
     </a>
-    <a href="/special-chars/en/bmi-calc/" class="tool-card" data-keywords="BMI calculator body mass index weight height obesity">
-        <div class="tool-icon">📊</div>
-        <div class="tool-info"><div class="tool-name">BMI Calculator</div><div class="tool-desc">Body Mass Index · Weight category</div></div>
+    <a href="/special-chars/en/zodiac-calc/" class="tool-card" data-keywords="zodiac calculator horoscope star sign birthday" data-category="date">
+        <div class="tool-icon">⭐</div>
+        <div class="tool-info"><div class="tool-name">Zodiac Calculator</div><div class="tool-desc">Find your zodiac sign from your birthday</div></div>
     </a>
-    <a href="/special-chars/en/timer/" class="tool-card" data-keywords="timer stopwatch countdown lap alarm pomodoro">
-        <div class="tool-icon">⏱️</div>
-        <div class="tool-info"><div class="tool-name">Timer / Stopwatch</div><div class="tool-desc">Countdown timer + Lap-recording stopwatch</div></div>
+    <a href="/special-chars/en/timezone-conv/" class="tool-card" data-keywords="timezone converter world clock time difference" data-category="date">
+        <div class="tool-icon">🌍</div>
+        <div class="tool-info"><div class="tool-name">Timezone Converter</div><div class="tool-desc">Convert time across cities worldwide</div></div>
     </a>
-    <a href="/special-chars/en/base64-tool/" class="tool-card" data-keywords="base64 encoder decoder encode decode text image">
-        <div class="tool-icon">🔣</div>
-        <div class="tool-info"><div class="tool-name">Base64 Encoder/Decoder</div><div class="tool-desc">Encode/decode text & images to Base64</div></div>
+    <a href="/special-chars/en/color-conv/" class="tool-card" data-keywords="color converter HEX RGB HSL picker" data-category="convert">
+        <div class="tool-icon">🎨</div>
+        <div class="tool-info"><div class="tool-name">Color Converter</div><div class="tool-desc">HEX · RGB · HSL real-time conversion</div></div>
     </a>
-    <a href="/special-chars/en/image-format-converter/" class="tool-card" data-keywords="image format converter JPG PNG WebP GIF convert">
-        <div class="tool-icon">🖼️</div>
-        <div class="tool-info"><div class="tool-name">Image Format Converter</div><div class="tool-desc">Convert between JPG, PNG, WebP, GIF</div></div>
+    <a href="/special-chars/en/unit-conv/" class="tool-card" data-keywords="unit converter length weight temperature" data-category="convert">
+        <div class="tool-icon">📐</div>
+        <div class="tool-info"><div class="tool-name">Unit Converter</div><div class="tool-desc">Length · Weight · Temperature · Area · Volume</div></div>
     </a>
-    <a href="/special-chars/en/calorie-calc/" class="tool-card" data-keywords="calorie calculator diet BMR TDEE macro nutrition">
+    <a href="/special-chars/en/calculator/" class="tool-card" data-keywords="calculator basic arithmetic add subtract" data-category="calc">
+        <div class="tool-icon">🧮</div>
+        <div class="tool-info"><div class="tool-name">Calculator</div><div class="tool-desc">Basic arithmetic · Percentage · Keyboard support</div></div>
+    </a>
+    <a href="/special-chars/en/compound-interest/" class="tool-card" data-keywords="compound interest calculator investment return" data-category="calc">
+        <div class="tool-icon">💰</div>
+        <div class="tool-info"><div class="tool-name">Compound Interest</div><div class="tool-desc">Visualize the power of compound growth</div></div>
+    </a>
+    <a href="/special-chars/en/speech-timer/" class="tool-card" data-keywords="speech timer presentation time estimate" data-category="convert">
+        <div class="tool-icon">🎤</div>
+        <div class="tool-info"><div class="tool-name">Speech Timer</div><div class="tool-desc">Estimate presentation time from your script</div></div>
+    </a>
+    <a href="/special-chars/en/avg-price/" class="tool-card" data-keywords="average cost calculator stock DCA" data-category="calc">
+        <div class="tool-icon">📉</div>
+        <div class="tool-info"><div class="tool-name">Average Cost Calculator</div><div class="tool-desc">Calculate your new average cost basis</div></div>
+    </a>
+    <a href="/special-chars/en/qr-code/" class="tool-card" data-keywords="QR code generator barcode URL" data-category="utility">
+        <div class="tool-icon">📷</div>
+        <div class="tool-info"><div class="tool-name">QR Code Generator</div><div class="tool-desc">Create QR codes from text or URLs</div></div>
+    </a>
+    <a href="/special-chars/en/image-compress/" class="tool-card" data-keywords="image compress resize photo reduce optimize" data-category="utility">
+        <div class="tool-icon">🗜️</div>
+        <div class="tool-info"><div class="tool-name">Image Compressor</div><div class="tool-desc">Compress images right in your browser</div></div>
+    </a>
+    <a href="/special-chars/en/wage-calc/" class="tool-card" data-keywords="wage converter hourly salary annual" data-category="calc">
+        <div class="tool-icon">💵</div>
+        <div class="tool-info"><div class="tool-name">Wage Converter</div><div class="tool-desc">Hourly ↔ Monthly ↔ Annual pay conversion</div></div>
+    </a>
+    <a href="/special-chars/en/prompt-gen/" class="tool-card" data-keywords="AI prompt generator ChatGPT Claude template" data-category="utility">
+        <div class="tool-icon">🤖</div>
+        <div class="tool-info"><div class="tool-name">AI Prompt Generator</div><div class="tool-desc">Build structured prompts for ChatGPT, Claude</div></div>
+    </a>
+    <a href="/special-chars/en/sub-calc/" class="tool-card" data-keywords="subscription cost calculator monthly spending" data-category="calc">
+        <div class="tool-icon">💸</div>
+        <div class="tool-info"><div class="tool-name">Subscription Cost Calculator</div><div class="tool-desc">See how much your subscriptions really cost</div></div>
+    </a>
+    <a href="/special-chars/en/calorie-calc/" class="tool-card" data-keywords="calorie calculator diet BMR TDEE macro" data-category="calc">
         <div class="tool-icon">🔥</div>
         <div class="tool-info"><div class="tool-name">Calorie Calculator</div><div class="tool-desc">Daily calorie needs · Macro ratio</div></div>
     </a>
-    <a href="/special-chars/en/percent-calc/" class="tool-card" data-keywords="percent calculator percentage change ratio increase decrease">
+    <a href="/special-chars/en/utm-builder/" class="tool-card" data-keywords="UTM builder URL tracking marketing campaign" data-category="utility">
+        <div class="tool-icon">🔗</div>
+        <div class="tool-info"><div class="tool-name">UTM Builder</div><div class="tool-desc">Add UTM tracking parameters to campaign URLs</div></div>
+    </a>
+    <a href="/special-chars/en/pdf-tool/" class="tool-card" data-keywords="PDF merge split rotate watermark" data-category="utility">
+        <div class="tool-icon">📄</div>
+        <div class="tool-info"><div class="tool-name">PDF Tools</div><div class="tool-desc">Merge · Split · Rotate · Watermark</div></div>
+    </a>
+    <a href="/special-chars/en/emoji-mixer/" class="tool-card" data-keywords="emoji mixer kitchen combine merge mashup" data-category="utility">
+        <div class="tool-icon">🎨</div>
+        <div class="tool-info"><div class="tool-name">Emoji Mixer</div><div class="tool-desc">Combine two emojis into a new creation</div></div>
+    </a>
+    <a href="/special-chars/en/discount-calc/" class="tool-card" data-keywords="discount tax calculator sale price VAT" data-category="calc">
+        <div class="tool-icon">🏷️</div>
+        <div class="tool-info"><div class="tool-name">Discount & Tax Calculator</div><div class="tool-desc">Discount · Sales tax · Final price</div></div>
+    </a>
+    <a href="/special-chars/en/percent-calc/" class="tool-card" data-keywords="percent calculator percentage change ratio" data-category="calc">
         <div class="tool-icon">🔢</div>
         <div class="tool-info"><div class="tool-name">Percent Calculator</div><div class="tool-desc">Percentage · Change rate · Ratio</div></div>
     </a>
+    <a href="/special-chars/en/gpa-calc/" class="tool-card" data-keywords="GPA calculator grade point average university" data-category="calc">
+        <div class="tool-icon">🎓</div>
+        <div class="tool-info"><div class="tool-name">GPA Calculator</div><div class="tool-desc">Calculate your grade point average</div></div>
+    </a>
+    <a href="/special-chars/en/loan-calc/" class="tool-card" data-keywords="loan calculator interest mortgage repayment" data-category="calc">
+        <div class="tool-icon">🏦</div>
+        <div class="tool-info"><div class="tool-name">Loan Calculator</div><div class="tool-desc">Fixed Payment · Fixed Principal · Interest Only</div></div>
+    </a>
+    <a href="/special-chars/en/bmi-calc/" class="tool-card" data-keywords="BMI calculator body mass index weight" data-category="calc">
+        <div class="tool-icon">📊</div>
+        <div class="tool-info"><div class="tool-name">BMI Calculator</div><div class="tool-desc">Body Mass Index · Weight category</div></div>
+    </a>
+    <a href="/special-chars/en/timer/" class="tool-card" data-keywords="timer stopwatch countdown lap alarm" data-category="utility">
+        <div class="tool-icon">⏱️</div>
+        <div class="tool-info"><div class="tool-name">Timer / Stopwatch</div><div class="tool-desc">Countdown timer + Lap-recording stopwatch</div></div>
+    </a>
+    <a href="/special-chars/en/password-gen/" class="tool-card" data-keywords="password generator secure random strong" data-category="utility">
+        <div class="tool-icon">🔐</div>
+        <div class="tool-info"><div class="tool-name">Password Generator</div><div class="tool-desc">Generate secure random passwords instantly</div></div>
+    </a>
+    <a href="/special-chars/en/base64-tool/" class="tool-card" data-keywords="Base64 encoder decoder encode decode" data-category="utility">
+        <div class="tool-icon">🔣</div>
+        <div class="tool-info"><div class="tool-name">Base64 Encoder/Decoder</div><div class="tool-desc">Encode/decode text & images to Base64</div></div>
+    </a>
+    <a href="/special-chars/en/image-format-converter/" class="tool-card" data-keywords="image format converter JPG PNG WebP GIF" data-category="convert">
+        <div class="tool-icon">🖼️</div>
+        <div class="tool-info"><div class="tool-name">Image Format Converter</div><div class="tool-desc">Convert between JPG, PNG, WebP, GIF</div></div>
+    </a>
+    <a href="/special-chars/en/pet-age-calc/" class="tool-card" data-keywords="pet age calculator dog cat human years" data-category="pet">
+        <div class="tool-icon">🐾</div>
+        <div class="tool-info"><div class="tool-name">Pet Age Calculator</div><div class="tool-desc">Convert your pet's age to human years</div></div>
+    </a>
+    <a href="/special-chars/en/pet-food-calc/" class="tool-card" data-keywords="pet food calculator dog cat daily calories" data-category="pet">
+        <div class="tool-icon">🍖</div>
+        <div class="tool-info"><div class="tool-name">Pet Food Calculator</div><div class="tool-desc">Daily food portions & calories for your pet</div></div>
+    </a>
+    <a href="/special-chars/en/pet-bmi-calc/" class="tool-card" data-keywords="pet weight manager dog cat breed BMI BCS" data-category="pet">
+        <div class="tool-icon">⚖️</div>
+        <div class="tool-info"><div class="tool-name">Pet Weight Manager</div><div class="tool-desc">Breed-specific weight assessment & comparison</div></div>
+    </a>
+    <a href="/special-chars/en/bg-remover/" class="tool-card" data-keywords="background remover image transparent AI" data-category="utility">
+        <div class="tool-icon">✂️</div>
+        <div class="tool-info"><div class="tool-name">Background Remover</div><div class="tool-desc">AI-powered background removal · 100% local</div></div>
+    </a>
+    <a href="/special-chars/en/music-calc/" class="tool-card" data-keywords="music calculator BPM tap tempo metronome delay" data-category="calc">
+        <div class="tool-icon">🎵</div>
+        <div class="tool-info"><div class="tool-name">Music Calculator</div><div class="tool-desc">BPM · Metronome · Delay · Note/Hz · Transpose</div></div>
+    </a>
+    </a>
+</div>
+
+<!-- Category View -->
+<div id="categoryView"></div>
+<div style="max-width:960px;margin:0 auto;padding:0 20px 16px;">
+<button class="faq-toggle-btn" id="toolsToggleBtn" onclick="toggleToolsSection()">Collapse All Tools ▲</button>
 </div>
 
 <div class="no-results" id="noResults">🔍 No results found</div>
+
+<!-- Tips -->
+<div class="tip-section">
+    <div class="tip-card">
+        <div class="tip-icon">💡</div>
+        <div class="tip-text"><span class="tip-label">Did You Know?</span> <span id="tipContent"></span></div>
+    </div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+    <div class="faq-title">❓ Frequently Asked Questions</div>
+    <details class="faq-item">
+        <summary>What is "include start day" in D-Day calculations?</summary>
+        <div class="faq-answer">"Include start day" counts the start date as day 1. For example, Jan 1 to Jan 3 would be 3 days with it enabled, or 2 days without. Use it for anniversaries (e.g., 100-day anniversary) and disable for work deadlines.</div>
+    </details>
+    <details class="faq-item">
+        <summary>What are common weight unit confusions internationally?</summary>
+        <div class="faq-answer">Weight units vary across countries. The US uses pounds and ounces, while most of the world uses kilograms. 1 lb ≈ 453g, 1 oz ≈ 28.3g. Use the Unit Converter to quickly convert between systems.</div>
+    </details>
+    <details class="faq-item">
+        <summary>What is the difference in text encoding byte sizes?</summary>
+        <div class="faq-answer">UTF-8 is the universal encoding standard. ASCII characters take 1 byte, while characters from other languages can take 2-4 bytes. The Character Counter shows byte counts in real-time. UTF-8 is the web standard, but some legacy systems use different encodings.</div>
+    </details>
+    <details class="faq-item faq-hidden">
+        <summary>How do I convert between square feet and square meters?</summary>
+        <div class="faq-answer">1 square meter = 10.764 square feet. 1 square foot = 0.0929 m². Use the Unit Converter for quick conversions between area units including acres, hectares, and more.</div>
+    </details>
+    <details class="faq-item faq-hidden">
+        <summary>What is the Rule of 72?</summary>
+        <div class="faq-answer">Divide 72 by your annual rate of return to estimate how many years it takes to double your money. For example, at 6% return: 72 ÷ 6 = 12 years. Use the Compound Interest Calculator for exact figures.</div>
+    </details>
+    <details class="faq-item faq-hidden">
+        <summary>How do I convert weight units for international shopping?</summary>
+        <div class="faq-answer">The US uses pounds (lb) and ounces (oz). 1 lb ≈ 453g, 1 oz ≈ 28.3g. For dimensional weight: Length × Width × Height (cm) ÷ 6,000. Use the Unit Converter for quick conversions.</div>
+    </details>
+    <details class="faq-item faq-hidden">
+        <summary>What is Dollar Cost Averaging (DCA)?</summary>
+        <div class="faq-answer">DCA means buying at regular intervals regardless of price, lowering your average cost over time. Buying more when prices drop ("averaging down") reduces your cost basis. Use the Average Cost Calculator to see how additional purchases change your average.</div>
+    </details>
+    <details class="faq-item faq-hidden">
+        <summary>What if I was born on a zodiac cusp date?</summary>
+        <div class="faq-answer">A cusp is when the sun transitions between zodiac signs, which can vary by 1-2 days each year. For example, someone born on January 20 could be Capricorn or Aquarius. The Zodiac Calculator uses standard boundary dates. If you were born on a cusp, consider traits of both signs.</div>
+    </details>
+    <details class="faq-item faq-hidden">
+        <summary>How accurate are online color codes?</summary>
+        <div class="faq-answer">Online color codes (HEX, RGB, HSL) are mathematically precise, but actual appearance depends on your monitor calibration, brightness, and color profile. The Color Converter shows all three formats in real-time for accurate cross-format conversion.</div>
+    </details>
+    <details class="faq-item faq-hidden">
+        <summary>Does the Timezone Converter handle Daylight Saving Time?</summary>
+        <div class="faq-answer">Yes, automatically. It uses your browser's built-in IANA Time Zone database, so DST changes in the US, Europe, etc. are applied correctly. For example, New York uses EDT (UTC-4) from March-November and EST (UTC-5) the rest of the year.</div>
+    </details>
+    <details class="faq-item faq-hidden">
+        <summary>What is the difference between HEX, RGB, and HSL?</summary>
+        <div class="faq-answer">HEX uses 6 hexadecimal digits like #FF5733 — most common in web development. RGB specifies Red, Green, Blue values from 0-255 like rgb(255, 87, 51). HSL uses Hue (0-360°), Saturation, and Lightness — more intuitive for color adjustments. The Color Converter converts between all three in real-time.</div>
+    </details>
+    <details class="faq-item faq-hidden">
+        <summary>Is the Password Generator safe?</summary>
+        <div class="faq-answer">Yes, completely safe. Passwords are generated 100% locally using your browser's crypto.getRandomValues() API — nothing is sent to any server. All records are cleared when you close the page. For best security, use 12+ characters with uppercase, lowercase, numbers, and symbols.</div>
+    </details>
+    <details class="faq-item faq-hidden">
+        <summary>Timer/Stopwatch alarm sound not playing?</summary>
+        <div class="faq-answer">Browser security requires user interaction before playing audio. Click the Start button to activate audio — alarm sounds will play normally after that. If still silent, check that the browser tab is not muted and your device volume is turned up.</div>
+    </details>
+    <details class="faq-item faq-hidden">
+        <summary>How do I reverse-calculate tax in the Discount Calculator?</summary>
+        <div class="faq-answer">Toggle off "Input is pre-tax amount." The calculator will treat your input as a post-tax price and reverse-calculate the pre-tax amount and tax. For example, enter $110 with 10% tax, and it shows $100 pre-tax + $10 tax.</div>
+    </details>
+    <details class="faq-item faq-hidden">
+        <summary>Fixed Payment vs Fixed Principal repayment — which is better?</summary>
+        <div class="faq-answer">Fixed Principal always results in less total interest since you pay down principal faster early on. However, initial monthly payments are higher. If you can afford higher early payments, choose Fixed Principal. If you prefer stable monthly payments, Fixed Payment is better. Compare all three methods in the Loan Calculator.</div>
+    </details>
+    <details class="faq-item faq-hidden">
+        <summary>Why do BMI standards differ between regions?</summary>
+        <div class="faq-answer">WHO classifies BMI 25+ as overweight, but Asia-Pacific guidelines use BMI 23+. This is because Asian populations tend to have higher body fat percentage and elevated health risks at lower BMI values. The BMI Calculator applies both WHO and Asian standards for comparison.</div>
+    </details>
+    <details class="faq-item faq-hidden">
+        <summary>What is reverse percentage calculation?</summary>
+        <div class="faq-answer">Finding the original value from a percentage-applied result. For example: "If the 20% discounted price is $40, what was the original?" → $40 ÷ 0.8 = $50. Use the Percent Calculator's "Reverse" tab for both discounts and increases.</div>
+    </details>
+    <details class="faq-item faq-hidden">
+        <summary>How are Pass/Fail courses handled in the GPA Calculator?</summary>
+        <div class="faq-answer">Pass (P) courses are completely excluded from the GPA calculation, including credit hours. This matches how most universities handle P/F grading. Simply select "P" as the grade and it will be automatically excluded.</div>
+    </details>
+    <button class="faq-toggle-btn" id="faqToggle" onclick="toggleFaqAll()">Show More ▼ <span style="font-weight:400;color:#94a3b8">(+15)</span></button>
+</div>
 
 <footer>
     <div class="footer-links">
@@ -207,31 +504,611 @@
             <span style="line-height:1;margin-bottom:2px">☕</span> <span>Support</span>
         </a>
         <span style="color:#475569;">·</span>
-        <a href="/about.html">About</a>
+        <a href="/en/about.html">About</a>
         <span style="color:#475569;">·</span>
-        <a href="/privacy.html">Privacy Policy</a>
+        <a href="/en/privacy.html">Privacy Policy</a>
         <span style="color:#475569;">·</span>
-        <a href="/"><span style="font-size:13px;line-height:1;margin-bottom:1px">🌐</span> <span>Korean</span></a>
+        <a href="/"><span style="font-size:13px;line-height:1;margin-bottom:1px">🌐</span> <span>한국어</span></a>
     </div>
-    &copy; 2026 TeemoZipsa. All rights reserved. · All tools run locally in your browser.
+    &copy; 2026 teemoZipsa. All rights reserved.
 </footer>
 
 <script>
-function filterTools() {
-    const q = document.getElementById('searchInput').value.toLowerCase().trim();
-    const cards = document.querySelectorAll('#toolsGrid .tool-card');
-    let found = 0;
-    cards.forEach(card => {
-        const name = card.querySelector('.tool-name').textContent.toLowerCase();
-        const desc = card.querySelector('.tool-desc').textContent.toLowerCase();
-        const kw = (card.dataset.keywords || '').toLowerCase();
-        const match = !q || name.includes(q) || desc.includes(q) || kw.includes(q);
-        card.style.display = match ? '' : 'none';
-        if (match) found++;
+// === localStorage wrapper ===
+function safeGet(key, fallback) { try { return localStorage.getItem(key); } catch(e) { return fallback !== undefined ? fallback : null; } }
+function safeSet(key, val) { try { localStorage.setItem(key, val); } catch(e) {} }
+
+// === FAQ toggle ===
+let faqExpanded = false;
+const FAQ_EXTRA_COUNT = document.querySelectorAll('.faq-item.faq-hidden').length;
+function toggleFaqAll() {
+    faqExpanded = !faqExpanded;
+    document.querySelectorAll('.faq-item.faq-hidden').forEach(el => {
+        el.classList.toggle('faq-show', faqExpanded);
     });
-    document.getElementById('noResults').style.display = found === 0 ? 'block' : 'none';
+    const btn = document.getElementById('faqToggle');
+    btn.innerHTML = faqExpanded
+        ? 'Show Less ▲'
+        : `Show More ▼ <span style="font-weight:400;color:#94a3b8">(+${FAQ_EXTRA_COUNT})</span>`;
 }
+
+// === FAQ read state ===
+(function(){
+  var key = 'faq_read';
+  var read = {};
+  try { read = JSON.parse(localStorage.getItem(key)) || {}; } catch(e) {}
+  var items = document.querySelectorAll('.faq-item');
+  items.forEach(function(el, i) {
+    if (read[i]) el.classList.add('faq-read');
+    el.addEventListener('toggle', function() {
+      if (el.open) {
+        el.classList.add('faq-read');
+        read[i] = 1;
+        try { localStorage.setItem(key, JSON.stringify(read)); } catch(e) {}
+      }
+    });
+  });
+})();
+
+
+
+const TIPS = [
+    '1 mile is approximately 1.6 km. Remember this when reading US road signs.',
+    '100°C equals 212°F. Handy for following US recipes.',
+    '1 pound (lb) is approximately 453g. Useful for international shipping weight.',
+    '1 inch is 2.54 cm. Helpful when comparing TV and monitor sizes.',
+    '1 gallon is approximately 3.79 liters.',
+    '1 acre is approximately 4,047 m² (about 43,560 sq ft).',
+    '1 nautical mile is approximately 1.852 km — used in aviation and maritime.',
+    '1 foot is approximately 30.5 cm. Useful for height conversions.',
+    '1 yard is approximately 91.4 cm — commonly used in golf.',
+    '1 tablespoon (T) is 15ml, 1 cup is ~240ml. Remember this when cooking!',
+    'The Rule of 72: Divide 72 by your rate of return to find how many years to double your money.',
+    'A Unicode (UTF-8) character can take 1 to 4 bytes depending on the language.',
+    'QR codes can hold up to 4,296 alphanumeric characters.',
+    'Full HD (1920×1080) and 4K (3840×2160) differ by exactly 4x in resolution.',
+    '1 GB = 1,024 MB, but storage manufacturers use 1,000 MB, so actual capacity looks less.',
+    'RGB #000000 is black, #FFFFFF is white — the basics of hex color codes.',
+    'Wi-Fi 2.4GHz has wider range, while 5GHz offers faster speeds.',
+    'If a PDF is too large, reducing image resolution to 150 DPI can shrink it significantly.',
+    'The recommended daily caffeine intake for adults is 400mg or less (about 3-4 cups of coffee).',
+    'The recommended daily water intake for adults is about 2 liters (8 glasses).',
+    'Carry-on liquids on flights: max 100ml per container, 1 liter total.',
+    '1 oz (ounce) is approximately 29.6ml — useful for converting drink sizes.',
+    '1 psi is approximately 0.069 bar. Useful when checking tire pressure.',
+];
+document.getElementById('tipContent').textContent = TIPS[Math.floor(Math.random() * TIPS.length)];
+
+
+
+let favorites = JSON.parse(safeGet('favorites') || '[]');
+
+function toggleFav(href, e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const idx = favorites.indexOf(href);
+    if (idx >= 0) favorites.splice(idx, 1);
+    else favorites.push(href);
+    safeSet('favorites', JSON.stringify(favorites));
+    renderFavButtons();
+    renderFavGrid();
+}
+
+function renderFavButtons() {
+    document.querySelectorAll('#toolsGrid .tool-card').forEach(card => {
+        let btn = card.querySelector('.fav-btn');
+        if (!btn) {
+            btn = document.createElement('button');
+            btn.className = 'fav-btn';
+            btn.setAttribute('aria-label', 'Favorites');
+            btn.onclick = (e) => toggleFav(card.href, e);
+            card.appendChild(btn);
+        }
+        const isFav = favorites.includes(card.href);
+        btn.textContent = isFav ? '★' : '☆';
+        btn.classList.toggle('active', isFav);
+        
+        card.style.display = isFav ? 'none' : '';
+    });
+}
+
+function renderFavGrid() {
+    const grid = document.getElementById('favGrid');
+    const label = document.getElementById('favLabel');
+    grid.innerHTML = '';
+    if (favorites.length === 0) { label.classList.remove('visible'); return; }
+    label.classList.add('visible');
+    const allCards = document.querySelectorAll('#toolsGrid .tool-card');
+    favorites.forEach(href => {
+        for (const card of allCards) {
+            if (card.href === href) {
+                const clone = card.cloneNode(true);
+                clone.style.display = ''; // reset display
+                clone.querySelector('.fav-btn')?.remove();
+                
+                const unfavBtn = document.createElement('button');
+                unfavBtn.className = 'fav-btn active';
+                unfavBtn.textContent = '★';
+                unfavBtn.setAttribute('aria-label', 'Remove Favorite');
+                unfavBtn.onclick = (e) => toggleFav(href, e);
+                clone.appendChild(unfavBtn);
+                clone.onclick = (e) => { if (!e.target.closest('.fav-btn')) trackRecent(href); };
+                grid.appendChild(clone);
+                break;
+            }
+        }
+    });
+}
+
+(function() {
+  var toolsGrid = document.getElementById('toolsGrid');
+  var favDropZone = document.getElementById('favDropZone');
+  var favLabel = document.getElementById('favLabel');
+  var dragSource = null; // 'tools' or 'fav'
+  var dragHref = null;
+  var moved = false;
+
+  function addFav(href) {
+    if (!href || favorites.includes(href)) return;
+    favorites.push(href);
+    safeSet('favorites', JSON.stringify(favorites));
+    renderFavButtons();
+    renderFavGrid();
+    makeDraggable();
+  }
+
+  function removeFav(href) {
+    var idx = favorites.indexOf(href);
+    if (idx < 0) return;
+    favorites.splice(idx, 1);
+    safeSet('favorites', JSON.stringify(favorites));
+    renderFavButtons();
+    renderFavGrid();
+    makeDraggable();
+  }
+
+  function makeDraggable() {
+    toolsGrid.querySelectorAll('.tool-card').forEach(function(c) { c.setAttribute('draggable', 'true'); });
+    document.querySelectorAll('#favGrid .tool-card').forEach(function(c) { c.setAttribute('draggable', 'true'); });
+  }
+  makeDraggable();
+
+  
+  var obs = new MutationObserver(makeDraggable);
+  obs.observe(document.getElementById('favGrid'), { childList: true });
+
+  // --- dragstart ---
+  document.addEventListener('dragstart', function(e) {
+    var card = e.target.closest('.tool-card');
+    if (!card) return;
+    moved = false;
+    dragHref = card.href;
+    card.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', card.href);
+
+    if (card.closest('#favGrid')) {
+      dragSource = 'fav';
+    } else {
+      dragSource = 'tools';
+      setTimeout(function() { favLabel.classList.add('visible'); }, 50);
+    }
+  });
+
+  // --- dragend ---
+  document.addEventListener('dragend', function(e) {
+    document.querySelectorAll('.dragging').forEach(function(c) { c.classList.remove('dragging'); });
+    if (favorites.length === 0) favLabel.classList.remove('visible');
+    dragSource = null;
+    dragHref = null;
+  });
+
+  // --- favDropZone: accept cards from tools ---
+  favDropZone.addEventListener('dragover', function(e) {
+    if (dragSource !== 'tools') return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  });
+  favLabel.addEventListener('dragover', function(e) {
+    if (dragSource !== 'tools') return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  });
+
+  favDropZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    if (dragSource === 'tools') {
+      var href = e.dataTransfer.getData('text/plain') || dragHref;
+      addFav(href);
+      moved = true;
+    }
+  });
+  favLabel.addEventListener('drop', function(e) {
+    e.preventDefault();
+    if (dragSource !== 'tools') return;
+    var href = e.dataTransfer.getData('text/plain') || dragHref;
+    addFav(href);
+    moved = true;
+  });
+
+  // --- toolsGrid: accept cards from fav ---
+  toolsGrid.addEventListener('dragover', function(e) {
+    if (dragSource !== 'fav') return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  });
+
+  toolsGrid.addEventListener('drop', function(e) {
+    e.preventDefault();
+    if (dragSource !== 'fav') return;
+    var href = e.dataTransfer.getData('text/plain') || dragHref;
+    removeFav(href);
+    moved = true;
+  });
+
+  // --- favGrid: reorder within favorites ---
+  var favGrid = document.getElementById('favGrid');
+
+  favGrid.addEventListener('dragover', function(e) {
+    if (dragSource !== 'fav') return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    // Find closest card for visual indicator
+    var target = e.target.closest('.tool-card');
+    favGrid.querySelectorAll('.tool-card').forEach(function(c) { c.style.borderLeft = ''; c.style.borderRight = ''; });
+    if (target && target.href !== dragHref) {
+      var rect = target.getBoundingClientRect();
+      var mid = rect.left + rect.width / 2;
+      if (e.clientX < mid) {
+        target.style.borderLeft = '3px solid var(--accent)';
+      } else {
+        target.style.borderRight = '3px solid var(--accent)';
+      }
+    }
+  });
+
+  favGrid.addEventListener('dragleave', function(e) {
+    if (!favGrid.contains(e.relatedTarget)) {
+      favGrid.querySelectorAll('.tool-card').forEach(function(c) { c.style.borderLeft = ''; c.style.borderRight = ''; });
+    }
+  });
+
+  favGrid.addEventListener('drop', function(e) {
+    e.preventDefault();
+    favGrid.querySelectorAll('.tool-card').forEach(function(c) { c.style.borderLeft = ''; c.style.borderRight = ''; });
+    if (dragSource !== 'fav') return;
+    var fromHref = e.dataTransfer.getData('text/plain') || dragHref;
+    var target = e.target.closest('.tool-card');
+    if (!target || !fromHref) return;
+    var toHref = target.href;
+    if (fromHref === toHref) return;
+
+    var fromIdx = favorites.indexOf(fromHref);
+    var toIdx = favorites.indexOf(toHref);
+    if (fromIdx < 0 || toIdx < 0) return;
+
+    // Determine insert before or after based on mouse position
+    var rect = target.getBoundingClientRect();
+    var insertAfter = e.clientX > (rect.left + rect.width / 2);
+
+    // Remove from old position
+    favorites.splice(fromIdx, 1);
+    // Find new target index (may have shifted)
+    var newToIdx = favorites.indexOf(toHref);
+    if (insertAfter) newToIdx++;
+    favorites.splice(newToIdx, 0, fromHref);
+
+    safeSet('favorites', JSON.stringify(favorites));
+    renderFavButtons();
+    renderFavGrid();
+    makeDraggable();
+    moved = true;
+  });
+})();
+
+let recentTools = JSON.parse(safeGet('recentTools') || '[]');
+
+function trackRecent(href) {
+    recentTools = recentTools.filter(h => h !== href);
+    recentTools.unshift(href);
+    if (recentTools.length > 3) recentTools = recentTools.slice(0, 3);
+    safeSet('recentTools', JSON.stringify(recentTools));
+}
+
+function renderRecentGrid() {
+    const grid = document.getElementById('recentGrid');
+    const label = document.getElementById('recentLabel');
+    grid.innerHTML = '';
+    if (recentTools.length === 0) { label.classList.remove('visible'); return; }
+    label.classList.add('visible');
+    const allCards = document.querySelectorAll('#toolsGrid .tool-card');
+    recentTools.forEach(href => {
+        for (const card of allCards) {
+            if (card.href === href) {
+                const clone = card.cloneNode(true);
+                clone.style.display = '';
+                clone.removeAttribute('draggable');
+                clone.addEventListener('dragstart', function(e) { e.preventDefault(); });
+                clone.querySelector('.fav-btn')?.remove();
+                grid.appendChild(clone);
+                break;
+            }
+        }
+    });
+}
+
+
+document.getElementById('toolsGrid').addEventListener('click', e => {
+    const card = e.target.closest('.tool-card');
+    if (card && !e.target.closest('.fav-btn')) {
+        trackRecent(card.href);
+    }
+});
+
+let ddIdx = -1;
+function getToolList() {
+    return [...document.querySelectorAll('#toolsGrid .tool-card')].map(c => ({
+        href: c.href,
+        icon: c.querySelector('.tool-icon')?.textContent || '',
+        name: c.querySelector('.tool-name')?.textContent || '',
+        desc: c.querySelector('.tool-desc')?.textContent || '',
+        keywords: (c.getAttribute('data-keywords') || '').toLowerCase()
+    }));
+}
+
+function onSearchInput() {
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    const dd = document.getElementById('searchDropdown');
+    const input = document.getElementById('searchInput');
+    ddIdx = -1;
+    if (!q) { dd.classList.remove('open'); input.classList.remove('dropdown-open'); filterCards(''); return; }
+    const tools = getToolList();
+    const matches = tools.filter(t => t.name.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q) || t.keywords.includes(q));
+    if (matches.length === 0) { dd.classList.remove('open'); input.classList.remove('dropdown-open'); filterCards(q); return; }
+    dd.innerHTML = matches.map((t, i) => `<a class="search-dropdown-item" href="${t.href}" data-idx="${i}" onmousedown="trackRecent('${t.href}')"><span class="sdi-icon">${t.icon}</span><span><span class="sdi-name">${t.name}</span><br><span class="sdi-desc">${t.desc}</span></span></a>`).join('');
+    dd.classList.add('open');
+    input.classList.add('dropdown-open');
+    filterCards(q);
+}
+
+function onSearchFocus() {
+    const q = document.getElementById('searchInput').value.trim();
+    if (q) onSearchInput();
+}
+
+function onSearchKeydown(e) {
+    const dd = document.getElementById('searchDropdown');
+    const items = dd.querySelectorAll('.search-dropdown-item');
+    if (!dd.classList.contains('open') || items.length === 0) {
+        if (e.key === 'Enter') { e.preventDefault(); navigateFirstVisible(); }
+        return;
+    }
+    if (e.key === 'ArrowDown') { e.preventDefault(); ddIdx = Math.min(ddIdx + 1, items.length - 1); highlightDD(items); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); ddIdx = Math.max(ddIdx - 1, -1); highlightDD(items); }
+    else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (ddIdx >= 0 && items[ddIdx]) { trackRecent(items[ddIdx].href); window.location.href = items[ddIdx].href; }
+        else navigateFirstVisible();
+    } else if (e.key === 'Escape') { dd.classList.remove('open'); document.getElementById('searchInput').classList.remove('dropdown-open'); }
+}
+
+function highlightDD(items) {
+    items.forEach((el, i) => el.classList.toggle('active', i === ddIdx));
+}
+
+function navigateFirstVisible() {
+    const cards = document.querySelectorAll('#toolsGrid .tool-card');
+    for (const c of cards) { if (c.style.display !== 'none' && c.href) { trackRecent(c.href); window.location.href = c.href; return; } }
+}
+
+function filterCards(q) {
+    const cards = document.querySelectorAll('#toolsGrid .tool-card');
+    let visibleCount = 0;
+    cards.forEach(card => {
+        const keywords = (card.getAttribute('data-keywords') || '').toLowerCase();
+        const name = (card.querySelector('.tool-name')?.textContent || '').toLowerCase();
+        const desc = (card.querySelector('.tool-desc')?.textContent || '').toLowerCase();
+        const isFav = favorites.includes(card.href);
+        const match = !q || keywords.includes(q) || name.includes(q) || desc.includes(q);
+        
+        if (!q) {
+            card.style.display = isFav ? 'none' : '';
+        } else {
+            card.style.display = match ? '' : 'none';
+        }
+        if (match) visibleCount++;
+    });
+    document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+    document.getElementById('favLabel').style.display = q ? 'none' : '';
+    document.getElementById('favGrid').style.display = q ? 'none' : '';
+    document.getElementById('recentLabel').style.display = q ? 'none' : '';
+    document.getElementById('recentGrid').style.display = q ? 'none' : '';
+    if (!q) { renderFavGrid(); renderRecentGrid(); }
+}
+
+
+document.addEventListener('click', e => {
+    if (!e.target.closest('.search-wrap')) {
+        document.getElementById('searchDropdown').classList.remove('open');
+        document.getElementById('searchInput').classList.remove('dropdown-open');
+    }
+});
+
+const CATEGORIES = [
+    { id: 'calc', label: '🧮 Calculators' },
+    { id: 'convert', label: '📐 Convert / Measure' },
+    { id: 'date', label: '📅 Date / Time' },
+    { id: 'utility', label: '🛠️ Utilities' },
+    { id: 'pet', label: '🐾 Pets' }
+];
+
+let currentView = safeGet('viewMode') || 'card';
+
+function switchView(mode) {
+    currentView = mode;
+    safeSet('viewMode', mode);
+    document.getElementById('viewCard').classList.toggle('active', mode === 'card');
+    document.getElementById('viewCat').classList.toggle('active', mode === 'category');
+    document.getElementById('toolsGrid').style.display = mode === 'card' ? '' : 'none';
+    document.getElementById('categoryView').style.display = mode === 'category' ? '' : 'none';
+    if (mode === 'category') renderCategoryView();
+}
+
+function renderCategoryView() {
+    const cv = document.getElementById('categoryView');
+    const cards = [...document.querySelectorAll('#toolsGrid .tool-card')];
+    cv.innerHTML = '';
+    CATEGORIES.forEach(cat => {
+        let matching = cards.filter(c => c.getAttribute('data-category') === cat.id && !favorites.includes(c.href));
+        if (matching.length === 0) return;
+        
+        const savedOrder = JSON.parse(safeGet('catOrder_' + cat.id) || '[]');
+        if (savedOrder.length) {
+            const map = {}; matching.forEach(c => { map[c.href] = c; });
+            const ordered = [];
+            savedOrder.forEach(href => { if (map[href]) { ordered.push(map[href]); delete map[href]; } });
+            Object.values(map).forEach(c => ordered.push(c));
+            matching = ordered;
+        }
+        const group = document.createElement('div');
+        group.className = 'category-group visible';
+        group.innerHTML = `<div class="category-title">${cat.label}</div><div class="category-grid" data-cat="${cat.id}"></div>`;
+        const grid = group.querySelector('.category-grid');
+        matching.forEach(c => {
+            const clone = c.cloneNode(true);
+            clone.querySelector('.fav-btn')?.remove();
+            clone.setAttribute('draggable', 'true');
+            clone.setAttribute('data-href', c.href);
+            clone.onclick = () => trackRecent(c.href);
+            grid.appendChild(clone);
+        });
+        
+        let dragEl = null;
+        grid.addEventListener('dragstart', e => { const card = e.target.closest('.tool-card'); if (!card) return; dragEl = card; card.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+        grid.addEventListener('dragend', e => { const card = e.target.closest('.tool-card'); if (card) card.classList.remove('dragging'); grid.querySelectorAll('.drag-over').forEach(c => c.classList.remove('drag-over')); dragEl = null; saveCatOrder(grid, cat.id); });
+        grid.addEventListener('dragover', e => { e.preventDefault(); const card = e.target.closest('.tool-card'); if (!card || card === dragEl) return; e.dataTransfer.dropEffect = 'move'; card.classList.add('drag-over'); });
+        grid.addEventListener('dragleave', e => { const card = e.target.closest('.tool-card'); if (card) card.classList.remove('drag-over'); });
+        grid.addEventListener('drop', e => { e.preventDefault(); const target = e.target.closest('.tool-card'); if (!target || !dragEl || target === dragEl) return; target.classList.remove('drag-over'); const items = [...grid.querySelectorAll('.tool-card')]; const fromIdx = items.indexOf(dragEl); const toIdx = items.indexOf(target); if (fromIdx < toIdx) target.after(dragEl); else target.before(dragEl); });
+        cv.appendChild(group);
+    });
+}
+
+function saveCatOrder(grid, catId) {
+    const hrefs = [...grid.querySelectorAll('.tool-card')].map(c => c.getAttribute('data-href') || c.href);
+    safeSet('catOrder_' + catId, JSON.stringify(hrefs));
+}
+
+(function initDragDrop() {
+    const grid = document.getElementById('toolsGrid');
+    let dragEl = null;
+    const saved = JSON.parse(safeGet('toolOrder') || '[]');
+    if (saved.length) {
+        const cards = [...grid.querySelectorAll('.tool-card')];
+        const map = {};
+        cards.forEach(c => { map[c.href] = c; });
+        saved.forEach(href => { if (map[href]) grid.appendChild(map[href]); });
+        cards.forEach(c => { if (!saved.includes(c.href)) grid.appendChild(c); });
+    }
+    function clearIndicators() { grid.querySelectorAll('.tool-card').forEach(c => { c.style.borderLeft = ''; c.style.borderRight = ''; }); }
+    grid.addEventListener('dragstart', e => { const card = e.target.closest('.tool-card'); if (!card) return; dragEl = card; card.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+    grid.addEventListener('dragend', e => { const card = e.target.closest('.tool-card'); if (card) card.classList.remove('dragging'); clearIndicators(); dragEl = null; saveOrder(); });
+    grid.addEventListener('dragover', e => {
+        e.preventDefault();
+        const card = e.target.closest('.tool-card');
+        if (!card || card === dragEl) return;
+        e.dataTransfer.dropEffect = 'move';
+        clearIndicators();
+        var rect = card.getBoundingClientRect();
+        var mid = rect.left + rect.width / 2;
+        if (e.clientX < mid) { card.style.borderLeft = '3px solid var(--accent)'; }
+        else { card.style.borderRight = '3px solid var(--accent)'; }
+    });
+    grid.addEventListener('dragleave', e => { const card = e.target.closest('.tool-card'); if (card) { card.style.borderLeft = ''; card.style.borderRight = ''; } });
+    grid.addEventListener('drop', e => {
+        e.preventDefault(); clearIndicators();
+        const target = e.target.closest('.tool-card');
+        if (!target || !dragEl || target === dragEl) return;
+        var rect = target.getBoundingClientRect();
+        var insertAfter = e.clientX > (rect.left + rect.width / 2);
+        if (insertAfter) target.after(dragEl); else target.before(dragEl);
+    });
+    grid.querySelectorAll('.tool-card').forEach(c => c.setAttribute('draggable', 'true'));
+    function saveOrder() { safeSet('toolOrder', JSON.stringify([...grid.querySelectorAll('.tool-card')].map(c => c.href))); }
+})();
+
+let toolsCollapsed = safeGet('toolsCollapsed') === 'true';
+
+function toggleToolsSection() {
+    toolsCollapsed = !toolsCollapsed;
+    safeSet('toolsCollapsed', toolsCollapsed);
+    applyToolsCollapsed();
+}
+
+function applyToolsCollapsed() {
+    const grid = document.getElementById('toolsGrid');
+    const catView = document.getElementById('categoryView');
+    const toggleBtn = document.getElementById('toolsToggleBtn');
+    const viewToggle = document.getElementById('viewToggle');
+    const viewControls = document.querySelector('.view-controls');
+    if (toolsCollapsed) {
+        grid.style.display = 'none';
+        catView.style.display = 'none';
+        viewControls.style.display = 'none';
+        toggleBtn.innerHTML = 'Expand All Tools ▼';
+    } else {
+        viewControls.style.display = '';
+        viewToggle.style.display = '';
+        toggleBtn.innerHTML = 'Collapse All Tools ▲';
+        if (currentView === 'category') { grid.style.display = 'none'; catView.style.display = ''; }
+        else { grid.style.display = ''; catView.style.display = 'none'; }
+    }
+}
+
+renderFavButtons();
+renderFavGrid();
+renderRecentGrid();
+applyToolsCollapsed();
+if (currentView === 'category') switchView('category');
+
+</script>
+<button class="scroll-top-btn" aria-label="Back to Top">↑</button>
+<script>
+(function(){const b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',()=>{b.classList.toggle('visible',window.scrollY>300)});b.addEventListener('click',()=>{window.scrollTo({top:0,behavior:'smooth'})})})();
+
+// === Parallax & Glow ===
+(function(){
+  const bg = document.getElementById('blobBg');
+  const btns = document.querySelectorAll('.view-toggle button, .faq-toggle-btn');
+  
+  document.addEventListener('mousemove', e => {
+    // 1. Subtle parallax
+    if (bg) {
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      const moveX = (e.clientX - cx) / 50; 
+      const moveY = (e.clientY - cy) / 50;
+      requestAnimationFrame(() => {
+        bg.style.transform = `translate(${-moveX}px, ${-moveY}px)`;
+      });
+    }
+
+    // 2. Button spotlight
+    btns.forEach(btn => {
+      const rect = btn.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      if (x > -30 && x < rect.width + 30 && y > -30 && y < rect.height + 30) {
+        btn.style.setProperty('--mouse-x', `${x}px`);
+        btn.style.setProperty('--mouse-y', `${y}px`);
+      }
+    });
+  });
+})();
 </script>
 <script src="/special-chars/theme-toggle.js"></script>
+<script>
+if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}
+</script>
 </body>
 </html>
