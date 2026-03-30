@@ -867,9 +867,13 @@ function renderFavGrid() {
     }
   });
 
-  // --- dragend ---
+  // --- dragend: if dragged from fav and not dropped back into fav, unfavorite ---
   document.addEventListener('dragend', function(e) {
     document.querySelectorAll('.dragging').forEach(function(c) { c.classList.remove('dragging'); });
+    // If dragged from favorites and not reordered within fav, remove from favorites
+    if (dragSource === 'fav' && !moved && dragHref) {
+      removeFav(dragHref);
+    }
     if (favorites.length === 0) favLabel.classList.remove('visible');
     dragSource = null;
     dragHref = null;

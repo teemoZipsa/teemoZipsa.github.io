@@ -15,7 +15,7 @@
     
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
     <link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/">
-    <link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/">
+    <link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/en/">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -75,7 +75,7 @@
         .tool-desc { font-size: 12px; color: var(--text-muted); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .tool-card:hover .tool-name { color: var(--accent); }
 
-        /* Fav button */
+        
         .fav-btn {
             position: absolute; top: 8px; right: 8px; background: none; border: none;
             font-size: 16px; cursor: pointer; color: var(--text-muted); transition: color .2s;
@@ -186,11 +186,11 @@
         .blob-bg .b1{width:420px;height:420px;top:-8%;left:-5%;animation:bFloat1 14s ease-in-out infinite}
         .blob-bg .b2{width:350px;height:350px;bottom:-8%;right:-3%;animation:bFloat2 18s ease-in-out infinite}
         .blob-bg .b3{width:300px;height:300px;top:45%;left:55%;animation:bFloat3 20s ease-in-out infinite}
-        /* dark blob */
+        
         html[data-theme="dark"] .b1{background:radial-gradient(circle,rgba(124,58,237,.6) 0%,transparent 70%)}
         html[data-theme="dark"] .b2{background:radial-gradient(circle,rgba(59,130,246,.5) 0%,transparent 70%)}
         html[data-theme="dark"] .b3{background:radial-gradient(circle,rgba(167,139,250,.4) 0%,transparent 70%)}
-        /* light blob */
+        
         html[data-theme="light"] .b1{background:radial-gradient(circle,rgba(99,102,241,.8) 0%,transparent 70%)}
         html[data-theme="light"] .b2{background:radial-gradient(circle,rgba(59,130,246,.7) 0%,transparent 70%)}
         html[data-theme="light"] .b3{background:radial-gradient(circle,rgba(139,92,246,.75) 0%,transparent 70%)}
@@ -244,17 +244,17 @@
     <div class="search-dropdown" id="searchDropdown"></div>
 </div>
 
-<!-- Recent -->
+
 <div class="section-label" id="recentLabel">🕐 Recently Used</div>
 <div class="tools-grid" id="recentGrid"></div>
 
-<!-- Favorites -->
+
 <div class="section-label" id="favLabel">⭐ Favorites</div>
 <div class="fav-drop-zone" id="favDropZone">
 <div class="tools-grid" id="favGrid"></div>
 </div>
 
-<!-- All Tools -->
+
 <div class="view-controls">
     <div class="section-label visible" style="margin:0;padding:0">📦 All Tools</div>
     <div class="view-toggle" id="viewToggle">
@@ -399,7 +399,7 @@
     </a>
 </div>
 
-<!-- Category View -->
+
 <div id="categoryView"></div>
 <div style="max-width:960px;margin:0 auto;padding:0 20px 16px;">
 <button class="faq-toggle-btn" id="toolsToggleBtn" onclick="toggleToolsSection()">Collapse All Tools ▲</button>
@@ -407,7 +407,7 @@
 
 <div class="no-results" id="noResults">🔍 No results found</div>
 
-<!-- Tips -->
+
 <div class="tip-section">
     <div class="tip-card">
         <div class="tip-icon">💡</div>
@@ -415,7 +415,7 @@
     </div>
 </div>
 
-<!-- FAQ -->
+
 <div class="faq-section">
     <div class="faq-title">❓ Frequently Asked Questions</div>
     <details class="faq-item">
@@ -673,7 +673,7 @@ function renderFavGrid() {
   }
   makeDraggable();
 
-  
+  // Observe favGrid changes to re-apply draggable
   var obs = new MutationObserver(makeDraggable);
   obs.observe(document.getElementById('favGrid'), { childList: true });
 
@@ -695,9 +695,13 @@ function renderFavGrid() {
     }
   });
 
-  // --- dragend ---
+  // --- dragend: if dragged from fav and not dropped back into fav, unfavorite ---
   document.addEventListener('dragend', function(e) {
     document.querySelectorAll('.dragging').forEach(function(c) { c.classList.remove('dragging'); });
+    // If dragged from favorites and not reordered within fav, remove from favorites
+    if (dragSource === 'fav' && !moved && dragHref) {
+      removeFav(dragHref);
+    }
     if (favorites.length === 0) favLabel.classList.remove('visible');
     dragSource = null;
     dragHref = null;
