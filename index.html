@@ -226,19 +226,29 @@
         @keyframes bFloat3{0%,100%{transform:translate(-50%,-50%) scale(1)}33%{transform:translate(-35%,-55%) scale(1.15)}66%{transform:translate(-65%,-45%) scale(.88)}}
         @media(max-width:640px){.blob-bg .b1{width:250px;height:250px}.blob-bg .b2{width:200px;height:200px}.blob-bg .b3{width:180px;height:180px}}
 
-        /* 카드 글로우 효과 - 너무 연해서 기존 섀도우랑 혼동되지 않도록 대폭 진하게 */
+        /* 전체 배경 마우스 글로우 효과 */
+        .site-glow {
+            position: fixed; top: 0; left: 0;
+            width: 600px; height: 600px; border-radius: 50%;
+            pointer-events: none; z-index: 0;
+            filter: blur(80px); transition: opacity .3s; opacity: 0;
+            will-change: transform;
+        }
+        html[data-theme="dark"] .site-glow { background: radial-gradient(circle, rgba(167,139,250, 0.25) 0%, transparent 70%); }
+        html[data-theme="light"] .site-glow { background: radial-gradient(circle, rgba(99,102,241, 0.4) 0%, transparent 70%); }
+        body:hover .site-glow { opacity: 1; }
+
         .tool-card{overflow:hidden}
-        .tool-card .card-glow{position:absolute;width:240px;height:240px;border-radius:50%;pointer-events:none;opacity:0;transition:opacity .3s;z-index:0;mix-blend-mode:screen}
-        html[data-theme="dark"] .tool-card .card-glow{background:radial-gradient(circle,rgba(167,139,250,.4) 0%,transparent 70%)}
-        html[data-theme="light"] .tool-card .card-glow{background:radial-gradient(circle,rgba(99,102,241,.25) 0%,transparent 70%); mix-blend-mode:multiply}
-        .tool-card:hover .card-glow{opacity:1}
-        .tool-card>*:not(.card-glow){position:relative;z-index:1}
+        .tool-card>*:not(.site-glow){position:relative;z-index:1}
 
         /* 콘텐츠를 블롭 위에 */
         .update-banner,.hero,.today-widget,.search-wrap,.section-label,.view-controls,.tools-grid,.fav-drop-zone,.category-group,.faq-section,.tip-section,footer,.no-results{position:relative;z-index:1}
     </style>
 </head>
 <body>
+
+<!-- 전체 사이트 마우스 글로우 -->
+<div class="site-glow" id="siteGlow"></div>
 
 <!-- Blob 배경 -->
 <div class="blob-bg" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
@@ -1239,26 +1249,18 @@ if (currentView === 'category') switchView('category');
 <script>
 (function(){const b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',()=>{b.classList.toggle('visible',window.scrollY>300)});b.addEventListener('click',()=>{window.scrollTo({top:0,behavior:'smooth'})})})();
 
-// === 카드 마우스 글로우 효과 ===
+// === 전체 사이트 마우스 글로우 효과 ===
 (function(){
-  function initGlow(){
-    document.querySelectorAll('.tool-card').forEach(card=>{
-      if(card.querySelector('.card-glow'))return;
-      const g=document.createElement('div');
-      g.className='card-glow';
-      card.appendChild(g);
-      card.addEventListener('mousemove',e=>{
-        const r=card.getBoundingClientRect();
-        // 원의 크기가 240px이므로 절반인 120을 빼야 커서 가운데 위치
-        g.style.left=(e.clientX-r.left-120)+'px';
-        g.style.top=(e.clientY-r.top-120)+'px';
-      });
+  const g = document.getElementById('siteGlow');
+  if(!g) return;
+  // 초기 상태에선 숨김 (js 로드 전후 깜빡임 방지용)
+  document.addEventListener('mousemove', e => {
+    // 600px 원이므로 마우스 중앙에 오도록 300px씩 뺌
+    // fixed 포지션이므로 clientX/Y 로 transform (성능 이점)
+    requestAnimationFrame(() => {
+      g.style.transform = `translate(${e.clientX - 300}px, ${e.clientY - 300}px)`;
     });
-  }
-  initGlow();
-  // MutationObserver로 동적으로 추가되는 카드도 처리
-  const obs=new MutationObserver(()=>initGlow());
-  obs.observe(document.body,{childList:true,subtree:true});
+  });
 })();
 </script>
 <script src="/special-chars/theme-toggle.js"></script>
