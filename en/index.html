@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeemoZipsa — Free Online Tools for Everyone 😺</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="/special-chars/theme.css">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="description" content="Free online tools: Music Calculator, Color Converter, Password Generator, QR Code, Image Compressor, PDF Tools, and more. No sign-up required.">
+    <meta property="og:title" content="TeemoZipsa — Free Online Tools">
+    <meta property="og:description" content="Music calculator, color converter, password generator, and 40+ free web tools. No login required.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://teemozipsa.github.io/en/">
+    <link rel="canonical" href="https://teemozipsa.github.io/en/">
+    <link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/">
+    <link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/en/">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background: var(--bg-body); color: var(--text-secondary); min-height: 100vh;
+            position: relative; overflow-x: hidden;
+        }
+
+        /* === Blob Background === */
+        .blob-bg{position:fixed;top:0;left:0;width:100%;height:100%;overflow:hidden;z-index:0;pointer-events:none;filter:blur(90px);opacity:.5}
+        .blob-bg .blob{position:absolute;border-radius:50%}
+        .blob-bg .b1{width:420px;height:420px;top:-8%;left:-5%;animation:bFloat1 14s ease-in-out infinite}
+        .blob-bg .b2{width:350px;height:350px;bottom:-8%;right:-3%;animation:bFloat2 18s ease-in-out infinite}
+        .blob-bg .b3{width:300px;height:300px;top:45%;left:55%;animation:bFloat3 20s ease-in-out infinite}
+        html[data-theme="dark"] .b1{background:radial-gradient(circle,rgba(124,58,237,.6) 0%,transparent 70%)}
+        html[data-theme="dark"] .b2{background:radial-gradient(circle,rgba(59,130,246,.5) 0%,transparent 70%)}
+        html[data-theme="dark"] .b3{background:radial-gradient(circle,rgba(167,139,250,.4) 0%,transparent 70%)}
+        html[data-theme="light"] .b1{background:radial-gradient(circle,rgba(99,102,241,.8) 0%,transparent 70%)}
+        html[data-theme="light"] .b2{background:radial-gradient(circle,rgba(59,130,246,.7) 0%,transparent 70%)}
+        html[data-theme="light"] .b3{background:radial-gradient(circle,rgba(139,92,246,.75) 0%,transparent 70%)}
+        @keyframes bFloat1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(80px,60px) scale(1.08)}66%{transform:translate(-40px,100px) scale(.95)}}
+        @keyframes bFloat2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-100px,-50px) scale(1.12)}66%{transform:translate(50px,-80px) scale(.92)}}
+
+        /* === Header === */
+        .hero { text-align: center; padding: 40px 20px 0; max-width: 720px; margin: 0 auto; position: relative; z-index: 1; }
+        .hero h1 { font-size: 32px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; margin-bottom: 8px; }
+        .hero p { font-size: 15px; color: var(--text-muted); margin-bottom: 24px; }
+        .lang-switch { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; font-size: 13px; font-weight: 600; color: var(--accent); text-decoration: none; transition: all .2s; margin-bottom: 16px; }
+        .lang-switch:hover { border-color: var(--accent); background: var(--accent-light); }
+
+        /* === Search === */
+        .search-wrap { max-width: 480px; margin: 0 auto 24px; position: relative; z-index: 2; }
+        .search-wrap svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; fill: var(--text-muted); pointer-events: none; }
+        .search-wrap input {
+            width: 100%; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+            padding: 14px 16px 14px 46px; font-size: 15px; color: var(--text-primary); outline: none;
+            font-family: inherit; transition: border-color .2s, box-shadow .2s; box-shadow: var(--shadow-sm);
+        }
+        .search-wrap input::placeholder { color: var(--text-muted); }
+        .search-wrap input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,.15); }
+
+        /* === Tool Grid === */
+        .section-label { max-width: 960px; margin: 0 auto; padding: 0 20px 8px; font-size: 13px; font-weight: 700; color: var(--text-muted); display: flex; align-items: center; gap: 6px; position: relative; z-index: 1; }
+        .tools-grid {
+            max-width: 960px; margin: 0 auto; padding: 0 20px 16px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;
+            position: relative; z-index: 1;
+        }
+        .tool-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+            padding: 18px 20px; text-decoration: none; color: inherit; cursor: pointer;
+            transition: all .25s ease; display: flex; align-items: center; gap: 14px;
+            user-select: none; box-shadow: var(--shadow-sm); position: relative;
+        }
+        .tool-card:hover { transform: translateY(-3px); border-color: var(--border-hover); box-shadow: var(--shadow-accent); }
+        .tool-card:active { transform: translateY(-1px); }
+        .tool-icon { font-size: 26px; line-height: 1; flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--bg-input); border-radius: 10px; }
+        .tool-info { flex: 1; min-width: 0; }
+        .tool-name { font-size: 17px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .tool-desc { font-size: 12px; color: var(--text-muted); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .tool-card:hover .tool-name { color: var(--accent); }
+        .badge { display: inline-block; background: var(--accent); color: var(--text-on-accent); font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-left: 6px; vertical-align: middle; letter-spacing: .3px; }
+
+        .no-results { text-align: center; color: var(--text-muted); font-size: 14px; padding: 40px 20px; display: none; position: relative; z-index: 1; }
+
+        /* === Footer === */
+        footer { text-align: center; color: var(--text-muted); font-size: 12px; padding: 24px 20px 40px; border-top: 1px solid var(--border); max-width: 960px; margin: 0 auto; position: relative; z-index: 1; }
+        footer a { color: var(--text-secondary); text-decoration: none; transition: color .2s; }
+        footer a:hover { color: var(--accent); }
+
+        @media (max-width: 640px) {
+            .hero { padding-top: 32px; }
+            .hero h1 { font-size: 24px; }
+            .hero p { font-size: 13px; margin-bottom: 16px; }
+            .tools-grid { grid-template-columns: 1fr; gap: 10px; padding: 0 16px 16px; }
+            .tool-name { font-size: 15px; }
+        }
+
+        .hero,.search-wrap,.section-label,.tools-grid,.no-results,footer{position:relative;z-index:1}
+    </style>
+</head>
+<body>
+
+<!-- Blob Background -->
+<div class="blob-bg" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<div class="hero">
+    <a href="https://teemozipsa.github.io/" class="lang-switch">🌐 한국어로 보기</a>
+    <h1>Free Online Tools 😺</h1>
+    <p>Handy web tools for everyday life — no sign-up required.</p>
+</div>
+
+<div class="search-wrap">
+    <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+    <input type="text" id="searchInput" placeholder="Search tools... (e.g. music, color, password)" oninput="filterTools()" autocomplete="off">
+</div>
+
+<div class="section-label">📦 All Tools</div>
+
+<div class="tools-grid" id="toolsGrid">
+    <a href="/special-chars/en/music-calc/" class="tool-card" data-keywords="music calculator BPM tap tempo metronome delay timing song length bar note Hz frequency key transpose DAW producer">
+        <div class="tool-icon">🎵</div>
+        <div class="tool-info"><div class="tool-name">Music Calculator</div><div class="tool-desc">BPM · Metronome · Delay · Note/Hz · Transpose</div></div>
+    </a>
+    <a href="/special-chars/color-conv/" class="tool-card" data-keywords="color converter HEX RGB HSL picker palette code">
+        <div class="tool-icon">🎨</div>
+        <div class="tool-info"><div class="tool-name">Color Converter</div><div class="tool-desc">HEX · RGB · HSL real-time conversion</div></div>
+    </a>
+    <a href="/special-chars/password-gen/" class="tool-card" data-keywords="password generator secure random strong safe">
+        <div class="tool-icon">🔐</div>
+        <div class="tool-info"><div class="tool-name">Password Generator</div><div class="tool-desc">Generate secure random passwords instantly</div></div>
+    </a>
+    <a href="/special-chars/qr-code/" class="tool-card" data-keywords="QR code generator barcode URL link scan">
+        <div class="tool-icon">📷</div>
+        <div class="tool-info"><div class="tool-name">QR Code Generator</div><div class="tool-desc">Create QR codes from text or URLs</div></div>
+    </a>
+    <a href="/special-chars/image-compress/" class="tool-card" data-keywords="image compress resize photo reduce size optimize jpg png">
+        <div class="tool-icon">🗜️</div>
+        <div class="tool-info"><div class="tool-name">Image Compressor</div><div class="tool-desc">Compress images right in your browser</div></div>
+    </a>
+    <a href="/special-chars/bg-remover/" class="tool-card" data-keywords="background remover image transparent png AI remove">
+        <div class="tool-icon">✂️</div>
+        <div class="tool-info"><div class="tool-name">Background Remover</div><div class="tool-desc">AI-powered background removal · 100% local</div></div>
+    </a>
+    <a href="/special-chars/pdf-tool/" class="tool-card" data-keywords="PDF merge split rotate watermark document page">
+        <div class="tool-icon">📄</div>
+        <div class="tool-info"><div class="tool-name">PDF Tools</div><div class="tool-desc">Merge · Split · Rotate · Watermark</div></div>
+    </a>
+    <a href="/special-chars/timezone-conv/" class="tool-card" data-keywords="timezone converter world clock time difference city">
+        <div class="tool-icon">🌍</div>
+        <div class="tool-info"><div class="tool-name">Timezone Converter</div><div class="tool-desc">Convert time across cities worldwide</div></div>
+    </a>
+    <a href="/special-chars/unit-conv/" class="tool-card" data-keywords="unit converter length weight temperature area volume">
+        <div class="tool-icon">📐</div>
+        <div class="tool-info"><div class="tool-name">Unit Converter</div><div class="tool-desc">Length · Weight · Temperature · Area · Volume</div></div>
+    </a>
+    <a href="/special-chars/calculator/" class="tool-card" data-keywords="calculator basic arithmetic math add subtract multiply divide">
+        <div class="tool-icon">🧮</div>
+        <div class="tool-info"><div class="tool-name">Calculator</div><div class="tool-desc">Basic arithmetic · Percentage · Keyboard support</div></div>
+    </a>
+    <a href="/special-chars/compound-interest/" class="tool-card" data-keywords="compound interest calculator investment return rate savings">
+        <div class="tool-icon">💰</div>
+        <div class="tool-info"><div class="tool-name">Compound Interest</div><div class="tool-desc">Visualize the power of compound growth</div></div>
+    </a>
+    <a href="/special-chars/date-calc/" class="tool-card" data-keywords="date calculator D-Day anniversary days between dates">
+        <div class="tool-icon">📅</div>
+        <div class="tool-info"><div class="tool-name">Date / D-Day Calculator</div><div class="tool-desc">D-Day countdown · Add/subtract days</div></div>
+    </a>
+    <a href="/special-chars/bmi-calc/" class="tool-card" data-keywords="BMI calculator body mass index weight height obesity">
+        <div class="tool-icon">📊</div>
+        <div class="tool-info"><div class="tool-name">BMI Calculator</div><div class="tool-desc">Body Mass Index · Weight category</div></div>
+    </a>
+    <a href="/special-chars/timer/" class="tool-card" data-keywords="timer stopwatch countdown lap alarm pomodoro">
+        <div class="tool-icon">⏱️</div>
+        <div class="tool-info"><div class="tool-name">Timer / Stopwatch</div><div class="tool-desc">Countdown timer + Lap-recording stopwatch</div></div>
+    </a>
+    <a href="/special-chars/base64-tool/" class="tool-card" data-keywords="base64 encoder decoder encode decode text image">
+        <div class="tool-icon">🔣</div>
+        <div class="tool-info"><div class="tool-name">Base64 Encoder/Decoder</div><div class="tool-desc">Encode/decode text & images to Base64</div></div>
+    </a>
+    <a href="/special-chars/image-format-converter/" class="tool-card" data-keywords="image format converter JPG PNG WebP GIF convert">
+        <div class="tool-icon">🖼️</div>
+        <div class="tool-info"><div class="tool-name">Image Format Converter</div><div class="tool-desc">Convert between JPG, PNG, WebP, GIF</div></div>
+    </a>
+    <a href="/special-chars/calorie-calc/" class="tool-card" data-keywords="calorie calculator diet BMR TDEE macro nutrition">
+        <div class="tool-icon">🔥</div>
+        <div class="tool-info"><div class="tool-name">Calorie Calculator</div><div class="tool-desc">Daily calorie needs · Macro ratio</div></div>
+    </a>
+    <a href="/special-chars/percent-calc/" class="tool-card" data-keywords="percent calculator percentage change ratio increase decrease">
+        <div class="tool-icon">🔢</div>
+        <div class="tool-info"><div class="tool-name">Percent Calculator</div><div class="tool-desc">Percentage · Change rate · Ratio</div></div>
+    </a>
+</div>
+
+<div class="no-results" id="noResults">🔍 No results found</div>
+
+<footer>
+    <div style="margin-bottom:8px">
+        <a href="https://teemozipsa.github.io/">한국어</a> · <a href="/en/">English</a> · <a href="/about.html">About</a>
+    </div>
+    &copy; 2026 TeemoZipsa. All rights reserved. · All tools run locally in your browser.
+</footer>
+
+<script>
+function filterTools() {
+    const q = document.getElementById('searchInput').value.toLowerCase().trim();
+    const cards = document.querySelectorAll('#toolsGrid .tool-card');
+    let found = 0;
+    cards.forEach(card => {
+        const name = card.querySelector('.tool-name').textContent.toLowerCase();
+        const desc = card.querySelector('.tool-desc').textContent.toLowerCase();
+        const kw = (card.dataset.keywords || '').toLowerCase();
+        const match = !q || name.includes(q) || desc.includes(q) || kw.includes(q);
+        card.style.display = match ? '' : 'none';
+        if (match) found++;
+    });
+    document.getElementById('noResults').style.display = found === 0 ? 'block' : 'none';
+}
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+</body>
+</html>
