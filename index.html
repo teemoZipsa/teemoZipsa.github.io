@@ -132,13 +132,7 @@
             max-width: 960px; margin: 0 auto; padding: 0 20px 8px;
             display: flex; align-items: center; justify-content: space-between;
         }
-
-        .view-toggle { display: flex; gap: 4px; }
-        .view-toggle button {
-            background: var(--bg-btn); border: none; padding: 6px 12px; font-size: 12px;
-            border-radius: 6px; cursor: pointer; color: var(--text-muted); font-family: inherit; transition: all .2s;
-        }
-        .view-toggle button.active { background: var(--accent); color: var(--text-on-accent); }
+        .view-toggle { display: flex; gap: 8px; }
 
         /* === 카테고리 뷰 === */
         .category-group { max-width: 960px; margin: 0 auto; padding: 0 20px 16px; display: none; }
@@ -223,23 +217,24 @@
         html[data-theme="light"] .b3{background:radial-gradient(circle,rgba(139,92,246,.35) 0%,transparent 70%)}
         @keyframes bFloat1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(80px,60px) scale(1.08)}66%{transform:translate(-40px,100px) scale(.95)}}
         @keyframes bFloat2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-100px,-50px) scale(1.12)}66%{transform:translate(50px,-80px) scale(.92)}}
-        @keyframes bFloat3{0%,100%{transform:translate(-50%,-50%) scale(1)}33%{transform:translate(-35%,-55%) scale(1.15)}66%{transform:translate(-65%,-45%) scale(.88)}}
-        @media(max-width:640px){.blob-bg .b1{width:250px;height:250px}.blob-bg .b2{width:200px;height:200px}.blob-bg .b3{width:180px;height:180px}}
-
-        /* 전체 배경 마우스 글로우 효과 */
-        .site-glow {
-            position: fixed; top: 0; left: 0;
-            width: 600px; height: 600px; border-radius: 50%;
-            pointer-events: none; z-index: 0;
-            filter: blur(80px); transition: opacity .3s; opacity: 0;
-            will-change: transform;
+        /* 전체 사이트 뷰 토글 버튼용 고급 스포트라이트 (Glow) */
+        .view-toggle button {
+            position: relative; overflow: hidden;
+            background: var(--bg-btn); border: 1px solid var(--border); padding: 8px 14px; font-size: 13px; font-weight: 600;
+            border-radius: 8px; cursor: pointer; color: var(--text-muted); font-family: inherit; transition: all .2s;
         }
-        html[data-theme="dark"] .site-glow { background: radial-gradient(circle, rgba(167,139,250, 0.25) 0%, transparent 70%); }
-        html[data-theme="light"] .site-glow { background: radial-gradient(circle, rgba(99,102,241, 0.4) 0%, transparent 70%); }
-        body:hover .site-glow { opacity: 1; }
+        .view-toggle button::before {
+            content: ""; position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle 40px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(124, 58, 237, 0.35), transparent 100%);
+            opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 0;
+        }
+        .view-toggle button:hover::before { opacity: 1; }
+        .view-toggle button.active { background: var(--accent); color: var(--text-on-accent); border-color: var(--accent-hover); }
+        .view-toggle button.active::before { display: none; }
+        .view-toggle span { position: relative; z-index: 1; pointer-events: none; }
 
         .tool-card{overflow:hidden}
-        .tool-card>*:not(.site-glow){position:relative;z-index:1}
+        .tool-card>*{position:relative;z-index:1}
 
         /* 콘텐츠를 블롭 위에 */
         .update-banner,.hero,.today-widget,.search-wrap,.section-label,.view-controls,.tools-grid,.fav-drop-zone,.category-group,.faq-section,.tip-section,footer,.no-results{position:relative;z-index:1}
@@ -247,11 +242,8 @@
 </head>
 <body>
 
-<!-- 전체 사이트 마우스 글로우 -->
-<div class="site-glow" id="siteGlow"></div>
-
 <!-- Blob 배경 -->
-<div class="blob-bg" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="blob-bg" id="blobBg" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
 
 <!-- 문의 배너 -->
 <div class="update-banner" id="updateBanner" style="display:none">
@@ -296,8 +288,8 @@
 <div class="view-controls">
     <div class="section-label visible" style="margin:0;padding:0">📦 전체 도구</div>
     <div class="view-toggle" id="viewToggle">
-        <button id="viewCard" class="active" onclick="switchView('card')">카드</button>
-        <button id="viewCat" onclick="switchView('category')">카테고리</button>
+        <button id="viewCard" class="active" onclick="switchView('card')"><span>카드</span></button>
+        <button id="viewCat" onclick="switchView('category')"><span>카테고리</span></button>
     </div>
 </div>
 
@@ -1249,16 +1241,33 @@ if (currentView === 'category') switchView('category');
 <script>
 (function(){const b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',()=>{b.classList.toggle('visible',window.scrollY>300)});b.addEventListener('click',()=>{window.scrollTo({top:0,behavior:'smooth'})})})();
 
-// === 전체 사이트 마우스 글로우 효과 ===
+// === 배경 패럴랙스 & 버튼 빔(Glow) 효과 ===
 (function(){
-  const g = document.getElementById('siteGlow');
-  if(!g) return;
-  // 초기 상태에선 숨김 (js 로드 전후 깜빡임 방지용)
+  const bg = document.getElementById('blobBg');
+  const btns = document.querySelectorAll('.view-toggle button');
+  
   document.addEventListener('mousemove', e => {
-    // 600px 원이므로 마우스 중앙에 오도록 300px씩 뺌
-    // fixed 포지션이므로 clientX/Y 로 transform (성능 이점)
-    requestAnimationFrame(() => {
-      g.style.transform = `translate(${e.clientX - 300}px, ${e.clientY - 300}px)`;
+    // 1. 은은한 배경 패럴랙스 (화면 중앙 기준 반대로 약간씩 밀려남)
+    if (bg) {
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      const moveX = (e.clientX - cx) / 50; // 값이 클수록 조금 움직임
+      const moveY = (e.clientY - cy) / 50;
+      requestAnimationFrame(() => {
+        bg.style.transform = `translate(${-moveX}px, ${-moveY}px)`;
+      });
+    }
+
+    // 2. 버튼 스포트라이트 계산
+    btns.forEach(btn => {
+      const rect = btn.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      // 마우스가 버튼 근처에 있을 때만 CSS 변수 업데이트
+      if (x > -30 && x < rect.width + 30 && y > -30 && y < rect.height + 30) {
+        btn.style.setProperty('--mouse-x', `${x}px`);
+        btn.style.setProperty('--mouse-y', `${y}px`);
+      }
     });
   });
 })();
