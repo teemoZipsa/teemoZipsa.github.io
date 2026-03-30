@@ -23,6 +23,7 @@
         body {
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, 'Noto Sans KR', 'Malgun Gothic', sans-serif;
             background: var(--bg-body); color: var(--text-secondary); min-height: 100vh;
+            position: relative; overflow-x: hidden;
         }
 
         /* === 업데이트 배너 === */
@@ -205,9 +206,42 @@
         .scroll-top-btn.visible{opacity:1;visibility:visible}
         .scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
         @media(max-width:640px){.scroll-top-btn{bottom:24px;right:16px;width:40px;height:40px;font-size:18px}}
+
+        /* === Blob 배경 === */
+        .blob-bg{position:fixed;top:0;left:0;width:100%;height:100%;overflow:hidden;z-index:0;pointer-events:none;filter:blur(90px);opacity:.5}
+        .blob-bg .blob{position:absolute;border-radius:50%}
+        .blob-bg .b1{width:420px;height:420px;top:-8%;left:-5%;animation:bFloat1 14s ease-in-out infinite}
+        .blob-bg .b2{width:350px;height:350px;bottom:-8%;right:-3%;animation:bFloat2 18s ease-in-out infinite}
+        .blob-bg .b3{width:300px;height:300px;top:45%;left:55%;animation:bFloat3 20s ease-in-out infinite}
+        /* 다크모드 블롭 색상 */
+        html[data-theme="dark"] .b1{background:radial-gradient(circle,rgba(124,58,237,.6) 0%,transparent 70%)}
+        html[data-theme="dark"] .b2{background:radial-gradient(circle,rgba(59,130,246,.5) 0%,transparent 70%)}
+        html[data-theme="dark"] .b3{background:radial-gradient(circle,rgba(167,139,250,.4) 0%,transparent 70%)}
+        /* 라이트모드 블롭 색상 */
+        html[data-theme="light"] .b1{background:radial-gradient(circle,rgba(99,102,241,.15) 0%,transparent 70%)}
+        html[data-theme="light"] .b2{background:radial-gradient(circle,rgba(59,130,246,.12) 0%,transparent 70%)}
+        html[data-theme="light"] .b3{background:radial-gradient(circle,rgba(139,92,246,.1) 0%,transparent 70%)}
+        @keyframes bFloat1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(80px,60px) scale(1.08)}66%{transform:translate(-40px,100px) scale(.95)}}
+        @keyframes bFloat2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-100px,-50px) scale(1.12)}66%{transform:translate(50px,-80px) scale(.92)}}
+        @keyframes bFloat3{0%,100%{transform:translate(-50%,-50%) scale(1)}33%{transform:translate(-35%,-55%) scale(1.15)}66%{transform:translate(-65%,-45%) scale(.88)}}
+        @media(max-width:640px){.blob-bg .b1{width:250px;height:250px}.blob-bg .b2{width:200px;height:200px}.blob-bg .b3{width:180px;height:180px}}
+
+        /* 카드 글로우 효과 */
+        .tool-card{overflow:hidden}
+        .tool-card .card-glow{position:absolute;width:180px;height:180px;border-radius:50%;pointer-events:none;opacity:0;transition:opacity .3s;z-index:0}
+        html[data-theme="dark"] .tool-card .card-glow{background:radial-gradient(circle,rgba(167,139,250,.15) 0%,transparent 70%)}
+        html[data-theme="light"] .tool-card .card-glow{background:radial-gradient(circle,rgba(99,102,241,.08) 0%,transparent 70%)}
+        .tool-card:hover .card-glow{opacity:1}
+        .tool-card>*:not(.card-glow){position:relative;z-index:1}
+
+        /* 콘텐츠를 블롭 위에 */
+        .update-banner,.hero,.today-widget,.search-wrap,.section-label,.view-controls,.tools-grid,.fav-drop-zone,.category-group,.faq-section,.tip-section,footer,.no-results{position:relative;z-index:1}
     </style>
 </head>
 <body>
+
+<!-- Blob 배경 -->
+<div class="blob-bg" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
 
 <!-- 문의 배너 -->
 <div class="update-banner" id="updateBanner" style="display:none">
@@ -1204,6 +1238,27 @@ if (currentView === 'category') switchView('category');
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 <script>
 (function(){const b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',()=>{b.classList.toggle('visible',window.scrollY>300)});b.addEventListener('click',()=>{window.scrollTo({top:0,behavior:'smooth'})})})();
+
+// === 카드 마우스 글로우 효과 ===
+(function(){
+  function initGlow(){
+    document.querySelectorAll('.tool-card').forEach(card=>{
+      if(card.querySelector('.card-glow'))return;
+      const g=document.createElement('div');
+      g.className='card-glow';
+      card.appendChild(g);
+      card.addEventListener('mousemove',e=>{
+        const r=card.getBoundingClientRect();
+        g.style.left=(e.clientX-r.left-90)+'px';
+        g.style.top=(e.clientY-r.top-90)+'px';
+      });
+    });
+  }
+  initGlow();
+  // MutationObserver로 동적으로 추가되는 카드도 처리
+  const obs=new MutationObserver(()=>initGlow());
+  obs.observe(document.body,{childList:true,subtree:true});
+})();
 </script>
 <script src="/special-chars/theme-toggle.js"></script>
 <script>
