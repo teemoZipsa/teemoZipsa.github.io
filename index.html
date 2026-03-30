@@ -995,7 +995,9 @@ function renderRecentGrid() {
         for (const card of allCards) {
             if (card.href === href) {
                 const clone = card.cloneNode(true);
-                clone.style.display = ''; // cloneNode가 display:none도 복사하므로 리셋
+                clone.style.display = '';
+                clone.removeAttribute('draggable');
+                clone.addEventListener('dragstart', function(e) { e.preventDefault(); });
                 clone.querySelector('.fav-btn')?.remove();
                 grid.appendChild(clone);
                 break;
