@@ -233,7 +233,7 @@
         .view-toggle button.active::before { display: none; }
         .view-toggle span { position: relative; z-index: 1; pointer-events: none; }
 
-        .tool-card{overflow:hidden}
+        .tool-card::after { content: ''; position: absolute; inset: -15px; z-index: -1; pointer-events: auto; }
         .tool-card>*{position:relative;z-index:1}
 
         /* 콘텐츠를 블롭 위에 */
