@@ -532,6 +532,46 @@ function safeGet(key, fallback) { try { return localStorage.getItem(key); } catc
 function safeSet(key, val) { try { localStorage.setItem(key, val); } catch(e) {} }
 
 // === Today's Info Widget ===
+const FB_DB = 'https://teemozipsa-default-rtdb.firebaseio.com';
+let globalVisitCount = null;
+
+(function initVisitCounter() {
+    const lastVisitKey = 'last_visit_timestamp';
+    const lastVisit = localStorage.getItem(lastVisitKey);
+    const now = Date.now();
+    const oneDay = 24 * 60 * 60 * 1000;
+
+    if (!lastVisit || (now - parseInt(lastVisit, 10)) > oneDay) {
+        fetch(FB_DB + '/stats/visitCount.json')
+            .then(r => r.json())
+            .then(count => {
+                globalVisitCount = (count || 0) + 1;
+                fetch(FB_DB + '/stats/visitCount.json', { method: 'PUT', body: JSON.stringify(globalVisitCount) });
+                localStorage.setItem(lastVisitKey, now.toString());
+                updateVisitDisplay();
+            })
+            .catch(() => { globalVisitCount = null; updateVisitDisplay(); });
+    } else {
+        fetch(FB_DB + '/stats/visitCount.json')
+            .then(r => r.json())
+            .then(count => { globalVisitCount = count || 0; updateVisitDisplay(); })
+            .catch(() => { globalVisitCount = null; updateVisitDisplay(); });
+    }
+})();
+
+function updateVisitDisplay() {
+    const el = document.getElementById('todayRemain');
+    if (!el) return;
+    const now = new Date();
+    const y = now.getFullYear();
+    const startOfYear = new Date(y, 0, 1);
+    const dayOfYear = Math.ceil((now - startOfYear) / 86400000);
+    const isLeap = (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+    const remaining = (isLeap ? 366 : 365) - dayOfYear;
+    const visitText = globalVisitCount !== null ? ` · Total visits: ${globalVisitCount.toLocaleString()}` : '';
+    el.textContent = `${remaining} days left in the year${visitText}`;
+}
+
 function updateToday() {
     const now = new Date();
     const dateOpts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -554,9 +594,7 @@ function updateToday() {
     const ss = String(now.getSeconds()).padStart(2, '0');
     document.getElementById('todayClock').textContent = `${hh}:${mm2}:${ss}`;
 
-    const isLeap = (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
-    const remaining = (isLeap ? 366 : 365) - dayOfYear;
-    document.getElementById('todayRemain').textContent = `${remaining} days left in the year`;
+    updateVisitDisplay();
 }
 updateToday();
 setInterval(updateToday, 1000);
