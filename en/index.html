@@ -680,7 +680,7 @@ function renderFavGrid() {
   // --- dragstart ---
   document.addEventListener('dragstart', function(e) {
     var card = e.target.closest('.tool-card');
-    if (!card) return;
+    if (!card || card.getAttribute('draggable') !== 'true') return;
     moved = false;
     dragHref = card.href;
     card.classList.add('dragging');
@@ -832,7 +832,7 @@ function renderRecentGrid() {
                 const clone = card.cloneNode(true);
                 clone.style.display = '';
                 clone.removeAttribute('draggable');
-                clone.addEventListener('dragstart', function(e) { e.preventDefault(); });
+                clone.addEventListener('dragstart', function(e) { e.preventDefault(); e.stopPropagation(); });
                 clone.querySelector('.fav-btn')?.remove();
                 grid.appendChild(clone);
                 break;
