@@ -32,9 +32,17 @@
         .hero h1 { font-size: 34px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; margin-bottom: 8px; }
         .hero p { font-size: 15px; color: var(--text-muted); margin-bottom: 24px; }
 
-        
+        .today-widget {
+            max-width: 480px; margin: 0 auto 24px; background: var(--bg-card);
+            border: 1px solid var(--border); border-radius: 14px; padding: 16px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: var(--shadow-sm); gap: 12px; flex-wrap: wrap;
+        }
+        .today-date { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+        .today-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .today-clock { font-size: 22px; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+        .today-remain { font-size: 11px; color: var(--text-muted); text-align: right; }
 
-        
         .search-wrap { max-width: 480px; margin: 0 auto 20px; position: relative; }
         .search-wrap svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; fill: var(--text-muted); pointer-events: none; }
         .search-wrap input {
@@ -231,7 +239,12 @@
     <p>Handy web tools for everyday life — no sign-up required.</p>
 </div>
 
-
+<!-- Today's Info Widget -->
+<div class="today-widget">
+    <div>
+        <div class="today-date" id="todayDate"></div>
+        <div class="today-sub" id="todaySub"></div>
+    </div>
     <div style="text-align:right">
         <div class="today-clock" id="todayClock"></div>
         <div class="today-remain" id="todayRemain"></div>
@@ -517,6 +530,36 @@
 // === localStorage wrapper ===
 function safeGet(key, fallback) { try { return localStorage.getItem(key); } catch(e) { return fallback !== undefined ? fallback : null; } }
 function safeSet(key, val) { try { localStorage.setItem(key, val); } catch(e) {} }
+
+// === Today's Info Widget ===
+function updateToday() {
+    const now = new Date();
+    const dateOpts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('todayDate').textContent = now.toLocaleDateString('en-US', dateOpts);
+
+    const y = now.getFullYear();
+    const startOfYear = new Date(y, 0, 1);
+    const dayOfYear = Math.ceil((now - startOfYear) / 86400000);
+    
+    const j = dayOfYear % 10, k = dayOfYear % 100;
+    let suffix = 'th';
+    if (j == 1 && k != 11) { suffix = 'st'; }
+    else if (j == 2 && k != 12) { suffix = 'nd'; }
+    else if (j == 3 && k != 13) { suffix = 'rd'; }
+    
+    document.getElementById('todaySub').textContent = `The ${dayOfYear}${suffix} day of ${y}`;
+
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm2 = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+    document.getElementById('todayClock').textContent = `${hh}:${mm2}:${ss}`;
+
+    const isLeap = (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+    const remaining = (isLeap ? 366 : 365) - dayOfYear;
+    document.getElementById('todayRemain').textContent = `${remaining} days left in the year`;
+}
+updateToday();
+setInterval(updateToday, 1000);
 
 // === FAQ toggle ===
 let faqExpanded = false;
