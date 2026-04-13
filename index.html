@@ -111,6 +111,41 @@
 
         .no-results { text-align: center; color: var(--text-muted); font-size: 14px; padding: 40px 20px; display: none; }
 
+        /* === 마스터 뷰 스위치 === */
+        .master-tab-container {
+            max-width: 440px; margin: 0 auto; padding: 5px;
+            display: flex; background: var(--bg-btn); border: 1px solid var(--border);
+            border-radius: 14px; position: relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .master-tab {
+            flex: 1; text-align: center; padding: 12px 0; font-size: 15px; font-weight: 700;
+            color: var(--text-muted); cursor: pointer; border: none; background: transparent;
+            border-radius: 10px; transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .master-tab.active { color: var(--text-on-accent); background: var(--accent); box-shadow: 0 4px 12px var(--shadow-accent); }
+        .master-tab:hover:not(.active) { color: var(--text-primary); background: var(--bg-hover); }
+
+        /* === 매거진 아티클 그리드 === */
+        .magazine-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
+            padding: 0 20px 40px; max-width: 960px; margin: 0 auto;
+        }
+        .blog-card {
+            border: 1px solid var(--border); border-radius: 16px; background: var(--bg-card);
+            overflow: hidden; transition: all .2s; height: 100%; display: flex; flex-direction: column;
+            cursor: pointer; text-decoration: none; position: relative;
+        }
+        .blog-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
+        .blog-card-img { width: 100%; height: 180px; background: var(--bg-hover); position: relative; overflow: hidden; }
+        .blog-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s; }
+        .blog-card:hover .blog-card-img img { transform: scale(1.05); }
+        .blog-card-content { padding: 20px; display: flex; flex-direction: column; flex: 1; }
+        .blog-card-tag { font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 8px; text-transform: uppercase; }
+        .blog-card-title { font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; line-height: 1.4; }
+        .blog-card-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .blog-card-meta { margin-top: auto; display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--text-muted); }
+
         /* === 검색 자동완성 드롭다운 === */
         .search-dropdown {
             position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-card);
@@ -272,6 +307,19 @@
     </div>
 </div>
 
+<!-- 마스터 뷰 스위치 영역 (SPA 전환) -->
+<div style="position:relative; z-index:1; padding: 0 20px 24px;">
+    <div class="master-tab-container">
+        <button class="master-tab active" id="tab-tools" onclick="switchMasterView('tools')">
+            🛠️ 도구 허브
+        </button>
+        <button class="master-tab" id="tab-magazine" onclick="switchMasterView('magazine')">
+            🐾 티모 매거진
+            <span style="background:var(--text-on-accent);color:var(--accent);border-radius:10px;padding:2px 6px;font-size:10px;font-weight:800;box-shadow:0 2px 4px rgba(0,0,0,0.1)">New</span>
+        </button>
+    </div>
+</div>
+
 <div class="search-wrap">
     <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
     <input type="text" id="searchInput" placeholder="도구 검색... (예: 글자, 날짜, 특수문자)" oninput="onSearchInput()" onkeydown="onSearchKeydown(event)" onfocus="onSearchFocus()" autocomplete="off">
@@ -297,7 +345,9 @@
     </div>
 </div>
 
-<div class="tools-grid" id="toolsGrid">
+<div class="tools-grid" id="toolsGrid"></div>
+<div class="magazine-grid" id="magazineGrid" style="display:none; position:relative; z-index:1;"></div>
+
     <a href="/special-chars/server-time/" class="tool-card" data-keywords="서버 시간 확인 시간차 티켓팅 수강신청 예매 정각 시계" data-category="utility">
         <div class="tool-icon">⏳</div>
         <div class="tool-info"><div class="tool-name">서버 시간 확인기</div><div class="tool-desc">티켓팅/예매의 필수품 · 정각 알림음</div></div>
@@ -612,9 +662,113 @@
 </footer>
 
 <script>
+<script>
 // === localStorage 안전 래퍼 ===
 function safeGet(key, fallback) { try { return localStorage.getItem(key); } catch(e) { return fallback !== undefined ? fallback : null; } }
 function safeSet(key, val) { try { localStorage.setItem(key, val); } catch(e) {} }
+
+// === 매거진 데이터베이스 (Blog Articles) ===
+const MAGAZINE_ARTICLES = [
+    {
+        id: "cat-age-guide",
+        title: "우리 고양이 진짜 나이는? (사람 나이 환산표의 진실)",
+        desc: "고양이 1년은 무조건 사람 7살일까? 수의학 논문 기반으로 밝혀진 반려묘의 진짜 나이 계산법과 생애주기별 필수 케어 가이드.",
+        image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format&fit=crop",
+        tags: ["건강", "수명"],
+        date: "2026. 04. 13",
+        url: "/blog/cat-age-guide/"
+    },
+    {
+        id: "cat-bmi-guide",
+        title: "배가 축 처진 고양이, 비만일까 원시주머니일까?",
+        desc: "만져보기만 해도 비만을 확인할 수 있는 BCS (신체충실지수) 측정법 정리. 티모의 다이어트 일기와 함께 알아보는 건강 체크포인트.",
+        image: "https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=500&auto=format&fit=crop",
+        tags: ["다이어트", "BCS"],
+        date: "2026. 04. 14",
+        url: "/blog/cat-bmi-guide/"
+    },
+    {
+        id: "cat-food-guide",
+        title: "사료 뒷면의 진실: 탄수화물, 왜 고양이에게 적인가?",
+        desc: "건사료에 숨겨진 탄수화물 비율(DM) 직접 계산하는 방법. 냥이의 신장과 비만을 지키기 위한 필수 사료 분석 가이드.",
+        image: "https://images.unsplash.com/photo-1623387641168-d9803ddd3f35?w=500&auto=format&fit=crop",
+        tags: ["영양", "사료"],
+        date: "2026. 04. 15",
+        url: "/blog/cat-food-guide/"
+    }
+];
+
+// === 마스터 뷰 스위치 로직 ===
+function switchMasterView(mode) {
+    const isTools = (mode === 'tools');
+    
+    // 버튼 스타일 토글
+    document.getElementById('tab-tools').classList.toggle('active', isTools);
+    document.getElementById('tab-magazine').classList.toggle('active', !isTools);
+    
+    // Tools 요소 묶음 토글
+    const toolEls = [
+        document.getElementById('recentLabel'),
+        document.getElementById('recentGrid'),
+        document.getElementById('favLabel'),
+        document.getElementById('favDropZone'),
+        document.querySelector('.view-controls'),
+        document.getElementById('toolsGrid'),
+        document.querySelector('.category-group')
+    ];
+    
+    // Magazine 요소 토글
+    const magazineGrid = document.getElementById('magazineGrid');
+    
+    if (isTools) {
+        magazineGrid.style.display = 'none';
+        toolEls.forEach(el => {
+            if (el) {
+                // 원래 디스플레이 복구나 그냥 block/flex 지정, 단 category-group과 toolsGrid 처리는 view state에 따라 복잡하므로 
+                // 강제 빈값('')으로 초기화하고, 카테고리/카드 토글 상태를 다시 불러오는게 안전함
+                el.style.display = ''; 
+            }
+        });
+        // 툴스 허브 내부의 하위 뷰 상태(카드 or 카테고리) 재적용
+        const curView = safeGet('teemo_view_mode', 'card');
+        switchView(curView);
+        document.querySelector('.faq-section').style.display = ''; // FAQ도 보이기
+    } else {
+        // 매거진 뷰: 툴 관련 모두 숨김
+        toolEls.forEach(el => { if(el) el.style.display = 'none'; });
+        document.querySelector('.faq-section').style.display = 'none'; // FAQ 숨기기
+        
+        magazineGrid.style.display = 'grid';
+        renderMagazineConfig();
+    }
+}
+
+function renderMagazineConfig() {
+    const container = document.getElementById('magazineGrid');
+    if(container.innerHTML.trim() !== '') return; // 이미 렌더링된 경우 스킵
+    
+    let html = '';
+    MAGAZINE_ARTICLES.forEach(art => {
+        html += `
+            <a href="\${art.url}" class="blog-card">
+                <div class="blog-card-img">
+                    <img src="\${art.image}" alt="\${art.title}" loading="lazy">
+                </div>
+                <div class="blog-card-content">
+                    <div class="blog-card-tag">\${art.tags.join(' · ')}</div>
+                    <div class="blog-card-title">\${art.title}</div>
+                    <div class="blog-card-desc">\${art.desc}</div>
+                    <div class="blog-card-meta">
+                        <span>티모집사</span>
+                        <span>\${art.date}</span>
+                    </div>
+                </div>
+            </a>
+        `;
+    });
+    container.innerHTML = html;
+}
+
 
 // === FAQ 더보기/접기 ===
 let faqExpanded = false;
@@ -1063,13 +1217,26 @@ document.getElementById('toolsGrid').addEventListener('click', e => {
 // === 검색 자동완성 ===
 let ddIdx = -1;
 function getToolList() {
-    return [...document.querySelectorAll('#toolsGrid .tool-card')].map(c => ({
+    const tools = [...document.querySelectorAll('#toolsGrid .tool-card')].map(c => ({
         href: c.href,
         icon: c.querySelector('.tool-icon')?.textContent || '',
         name: c.querySelector('.tool-name')?.textContent || '',
         desc: c.querySelector('.tool-desc')?.textContent || '',
         keywords: (c.getAttribute('data-keywords') || '').toLowerCase()
     }));
+    
+    if (typeof MAGAZINE_ARTICLES !== 'undefined') {
+        MAGAZINE_ARTICLES.forEach(art => {
+            tools.push({
+                href: art.url,
+                icon: '🐾',
+                name: '[매거진] ' + art.title,
+                desc: art.desc,
+                keywords: art.tags.join(' ').toLowerCase() + ' 고양이 반려동물 블로그 매거진 article blog 티모'
+            });
+        });
+    }
+    return tools;
 }
 
 function onSearchInput() {
