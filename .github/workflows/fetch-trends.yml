@@ -1,0 +1,32 @@
+name: Fetch Realtime Trends
+
+on:
+  schedule:
+    - cron: '0 0,12 * * *' # 매일 자정과 정오(UTC 기준)에 실행 (KST 오전 9시, 오후 9시)
+  workflow_dispatch: # 수동 실행 버튼 허용
+
+permissions:
+  contents: write
+
+jobs:
+  fetch-and-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Run fetch script
+        run: python scripts/fetch_trends.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add blog/data/trends.json
+          git commit -m "chore: auto-update trending searches [skip ci]" || exit 0
+          git push

@@ -396,71 +396,27 @@
 
     <!-- Main Content -->
     <main class="news-grid">
-        <!-- Left: Hero Article -->
-        <article>
-            <a href="/blog/cat-age-guide/" class="hero-article">
-                <div class="hero-img-wrap">
-                    <img src="https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=1200&auto=format&fit=crop" class="hero-image" alt="Hero Cat">
-                </div>
-                <div class="hero-title-box">
-                    <h1>고양이 나이 계산의 새로운 기준:<br>1년이 7년이라는 거짓말</h1>
-                </div>
-                
-                <div class="article-tag tag-hero">FACT CHECK</div>
-                
-                <p class="hero-summary">고양이 1년은 사람 나이 7살과 같다는 공식은 완전히 틀렸습니다. AAFP 공식 가이드라인을 기반으로 진짜 고양이 나이를 계산하세요.</p>
-                
-                <span class="author">Teemo Studio</span>
-            </a>
+        <!-- Left: Hero Article Container -->
+        <article id="hero-container">
+            <!-- Dynamically injected via JS -->
+            <div style="text-align:center; padding: 100px; color: var(--text-muted); font-size: 14px; font-weight:800; font-style:italic;">
+                Fetching latest editorial...
+            </div>
         </article>
 
-        <!-- Right: Secondary Articles -->
-        <aside class="sidebar">
-            <a href="/blog/cat-bmi-guide/" class="side-article">
-                <div class="side-content">
-                    <h2 class="side-title">비만일까 원시주머니일까?<br>2025 최신 고양이 체중 관리</h2>
-                    <div class="side-tag">HEALTH CARE</div>
-                    <p class="side-author">Teemo AI Editor</p>
-                </div>
-                <div class="side-thumb-wrap">
-                    <img src="https://images.unsplash.com/photo-1574231164645-d6f0e8553590?w=800&auto=format&fit=crop" class="side-thumb" alt="Fat Cat Belly">
-                </div>
-            </a>
+        <!-- Right: Secondary Articles & Trends Container -->
+        <aside class="sidebar" id="sidebar-container">
+            <!-- Articles dynamically injected via JS -->
             
-            <a href="#" class="side-article" style="opacity: 0.7;">
-                <div class="side-content">
-                    <h2 class="side-title">고양이 양치질 거부 사태,<br>가장 피눈물 흘리는 보호자는?</h2>
-                    <div class="side-tag">DENTAL CRISIS</div>
-                    <p class="side-author">Guest Contributor</p>
+            <!-- Trending Now Widget Container -->
+            <div id="trending-widget" style="margin-top: 40px; padding: 25px; border: 3px double var(--text-primary); background: var(--bg-hover);">
+                <div style="font-weight: 900; font-family: 'Impact', sans-serif; font-size: 24px; color: #e60000; display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                    <span>🔥</span> TRENDING NOW
                 </div>
-                <div class="side-thumb-wrap">
-                    <img src="https://images.unsplash.com/photo-1511044568932-338cba0ad803?w=800&auto=format&fit=crop" class="side-thumb" alt="Cat Yawning">
-                </div>
-            </a>
-            
-            <a href="#" class="side-article" style="opacity: 0.7;">
-                <div class="side-content">
-                    <h2 class="side-title">츄르 1일 권장량 초과 위기:<br>신장 질환과의 숨겨진 연관성</h2>
-                    <div class="side-tag">NUTRITION ALERT</div>
-                    <p class="side-author">Dr. Teemo</p>
-                </div>
-                <div class="side-thumb-wrap">
-                    <img src="https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=800&auto=format&fit=crop" class="side-thumb" alt="Cat Treats">
-                </div>
-            </a>
-
-            <!-- AD Placeholders mimicking the screenshot -->
-            <a href="/special-chars/bmi-calc/" class="side-article">
-                <div class="side-content">
-                    <h2 class="side-title">Keep Your Cat Feeling and Looking Healthy With This Tool</h2>
-                    <div class="side-tag">SPONSORED</div>
-                    <p class="side-author">TeemoZipsa Tools</p>
-                </div>
-                <div class="side-thumb-wrap">
-                    <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&auto=format&fit=crop" class="side-thumb" alt="Ad Image">
-                </div>
-            </a>
-
+                <ul id="trending-list" style="list-style: none; padding: 0; margin: 0; font-size: 15px; font-weight: 800; display: flex; flex-direction: column; gap: 12px;">
+                    <li style="color: var(--text-muted);">Syncing live data...</li>
+                </ul>
+            </div>
         </aside>
     </main>
 
@@ -479,6 +435,104 @@
             headerWrap.classList.remove('is-sticky');
         }
     });
+
+    // Dynamic Article Rendering JSON Engine
+    async function loadMagazineData() {
+        try {
+            // 1. Fetch Articles
+            const res = await fetch('/blog/data/articles.json');
+            const articles = await res.json();
+            
+            const heroContainer = document.getElementById('hero-container');
+            const sidebarContainer = document.getElementById('sidebar-container');
+            const trendingWidget = document.getElementById('trending-widget');
+            
+            let heroHTML = '';
+            let sidebarHTML = '';
+
+            articles.forEach(article => {
+                const opacityStyle = article.opacity ? `style="opacity: ${article.opacity};"` : '';
+                
+                if (article.isHero) {
+                    // Render Hero
+                    heroHTML = `
+                        <a href="${article.url}" class="hero-article">
+                            <div class="hero-img-wrap">
+                                <img src="${article.thumbnail}" class="hero-image" alt="Hero Image">
+                            </div>
+                            <div class="hero-title-box">
+                                <h1>${article.title}</h1>
+                            </div>
+                            <div class="article-tag tag-hero">${article.tag}</div>
+                            ${article.summary ? `<p class="hero-summary">${article.summary}</p>` : ''}
+                            <span class="author">${article.author}</span>
+                        </a>
+                    `;
+                } else {
+                    // Render Sidebar
+                    sidebarHTML += `
+                        <a href="${article.url}" class="side-article" ${opacityStyle}>
+                            <div class="side-content">
+                                <h2 class="side-title">${article.title}</h2>
+                                <div class="side-tag">${article.tag}</div>
+                                <p class="side-author">${article.author}</p>
+                            </div>
+                            <div class="side-thumb-wrap">
+                                <img src="${article.thumbnail}" class="side-thumb" alt="Thumbnail">
+                            </div>
+                        </a>
+                    `;
+                }
+            });
+
+            if(heroHTML) heroContainer.innerHTML = heroHTML;
+            if(sidebarHTML) {
+                // Insert sidebar articles before the trending widget
+                sidebarContainer.insertAdjacentHTML('afterbegin', sidebarHTML);
+            }
+
+            // 2. Fetch Trends
+            try {
+                // Cache bust to avoid stale JSON on pure static pages
+                const trendRes = await fetch(`/blog/data/trends.json?t=${new Date().getTime()}`);
+                const trendsData = await trendRes.json();
+                
+                const trendingList = document.getElementById('trending-list');
+                if (trendsData && trendsData.items && trendsData.items.length > 0) {
+                    let trendHTML = '';
+                    trendsData.items.forEach((item, idx) => {
+                        trendHTML += `
+                            <li style="display: flex; gap: 10px; align-items: baseline;">
+                                <span style="color: #e60000; font-weight: 900; font-family: 'Playfair Display', serif; font-size: 18px; width: 24px;">${idx + 1}.</span>
+                                <a href="https://search.naver.com/search.naver?query=${encodeURIComponent(item.keyword + ' 고양이')}" target="_blank" style="color: var(--text-primary); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#e60000'" onmouseout="this.style.color='var(--text-primary)'">
+                                    <span style="font-weight: 800;">${item.keyword}</span>
+                                    <span style="font-size: 12px; color: var(--text-muted); font-weight: 600; margin-left: 6px;">${item.category || '웹검색'}</span>
+                                </a>
+                            </li>
+                        `;
+                    });
+                    trendingList.innerHTML = trendHTML;
+                }
+            } catch (err) {
+                console.warn('Trends data not yet available or failed to load:', err);
+                document.getElementById('trending-list').innerHTML = `
+                    <li style="color: var(--text-muted);">업데이트 준비 중... (매 12시간 갱신)</li>
+                `;
+            }
+
+        } catch (error) {
+            console.error('Failed to load magazine data:', error);
+            document.getElementById('hero-container').innerHTML = `
+                <div style="text-align:center; padding: 50px; color: red; font-weight:bold;">
+                    데이터를 불러오지 못했습니다. articles.json 파일을 확인해주세요.
+                </div>
+            `;
+        }
+    }
+
+    // Initialize
+    loadMagazineData();
+
 </script>
 
 </body>
