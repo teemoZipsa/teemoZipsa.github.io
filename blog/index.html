@@ -4,68 +4,372 @@
     <meta charset="UTF-8">
     <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>티모 매거진 | 프리미엄 펫케어 가이드</title>
+    <title>티모 매거진 | 프리미엄 펫케어 매거진</title>
     <link rel="icon" type="image/png" href="/favicon.png">
-    
     <link rel="stylesheet" href="/special-chars/theme.css">
-    <meta name="theme-color" content="#6366f1">
-    
+    <meta name="theme-color" content="#ffffff">
     <meta name="description" content="공식 데이터와 수의학 논문을 기반으로 한 프리미엄 펫케어 매거진입니다.">
     <link rel="canonical" href="https://teemozipsa.github.io/blog/">
     
     <style>
+        /* Fonts */
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Pretendard', sans-serif; background: var(--bg-body); color: var(--text-secondary); min-height: 100vh; line-height: 1.6; }
-        header { border-bottom: 1px solid var(--border); background: var(--bg-card); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); background: rgba(var(--bg-card-rgb), 0.85); }
-        .header-inner { max-width: 800px; margin: 0 auto; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
-        .back-link { font-weight: 700; color: var(--text-primary); text-decoration: none; display: flex; align-items: center; gap: 6px; font-size: 15px; }
-        .back-link:hover { color: var(--accent); }
-        .brand-logo { font-weight: 800; color: var(--accent); display: flex; align-items: center; gap: 4px; }
-        .wrap { max-width: 800px; margin: 60px auto 100px; padding: 0 20px; }
-        h1 { font-size: 32px; font-weight: 800; color: var(--text-primary); margin-bottom: 16px; text-align: center; }
-        p.desc { text-align: center; margin-bottom: 40px; }
+        @import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700;1,800&display=swap');
         
-        .static-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        .static-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; text-decoration: none; color: inherit; transition: transform 0.2s; }
-        .static-card:hover { transform: translateY(-4px); border-color: var(--accent); }
-        .sc-tag { display: inline-block; background: var(--bg-hover); color: var(--accent); padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 12px; margin-bottom: 12px; }
-        .sc-title { font-size: 20px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; }
-        .sc-desc { color: var(--text-muted); font-size: 15px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Pretendard', sans-serif; 
+            background: var(--bg-body); 
+            color: var(--text-primary); 
+            min-height: 100vh; 
+            line-height: 1.6; 
+        }
 
-        /* 자바스크립트가 동작할 경우 SPA 메인화면 매거진 탭으로 즉시 리다이렉트 */
+        /* Newspaper specific styles override standard dark/light vars to ensure contrast */
+        .page-wrap { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+        
+        /* Top Utility Bar */
+        .top-bar { 
+            display: flex; 
+            justify-content: center; 
+            gap: 20px; 
+            padding: 10px 0; 
+            font-size: 11px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+            align-items: center;
+        }
+        .top-bar a { color: var(--text-primary); text-decoration: none; }
+        .top-bar span { color: #e60000; }
+        
+        /* Logo Header */
+        .logo-header { 
+            text-align: center; 
+            padding: 20px 0 30px; 
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .brand-slogan { width: 170px; font-weight: 800; font-style: italic; border: 2px solid var(--text-primary); padding: 5px; font-size: 12px; transform: rotate(-3deg); line-height: 1.4; }
+        .logo-text { 
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: 64px; 
+            font-weight: 900; 
+            color: transparent; 
+            -webkit-text-stroke: 1px #e60000; 
+            text-shadow: 0px 0px 10px rgba(230,0,0,0.3);
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+        .logo-right { width: 170px; text-align: right; display: flex; flex-direction: column; gap: 8px; }
+        .logo-right a.btn-red { background: #e60000; color: white; padding: 6px 12px; font-weight: 800; font-size: 13px; text-decoration: none; display: inline-block; }
+        .logo-right a.btn-outline { border: 2px solid var(--text-primary); color: var(--text-primary); padding: 4px 12px; font-weight: 800; font-size: 13px; text-decoration: none; display: inline-block; }
+        
+        /* Category Nav */
+        .cat-nav {
+            border-top: 3px solid var(--text-primary);
+            border-bottom: 3px solid var(--text-primary);
+            display: flex;
+            align-items: center;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .cat-nav::-webkit-scrollbar { height: 0; }
+        .cat-nav a {
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-primary);
+            text-decoration: none;
+            text-transform: uppercase;
+            border-right: 1px solid var(--border);
+        }
+        .cat-nav a:last-child { border-right: none; }
+        .cat-nav a.active {
+            background: var(--text-primary);
+            color: var(--bg-body);
+        }
+        .cat-nav a:hover:not(.active) {
+            background: var(--bg-hover);
+        }
+
+        /* Search Icon Placeholder in Nav */
+        .cat-search { margin-left: auto; padding: 12px 16px; color: var(--text-primary); font-weight: 800; }
+        
+        /* Main Newspaper Layout */
+        .news-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+            margin-bottom: 60px;
+        }
+        
+        /* Hero Article (Left) */
+        .hero-article { position: relative; text-decoration: none; display: block; }
+        .hero-article:hover .hero-title-box h1 { text-decoration: underline; text-decoration-color: #e60000; text-decoration-thickness: 3px; }
+        .hero-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-bottom: 3px solid var(--text-primary);
+        }
+        .hero-title-box {
+            background: var(--bg-body);
+            border: 3px solid var(--text-primary);
+            margin: -60px 40px 0;
+            padding: 24px 30px;
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+        .hero-title-box h1 {
+            font-family: 'Playfair Display', 'Nanum Myeongjo', serif;
+            font-size: 42px;
+            font-weight: 800;
+            font-style: italic;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            color: var(--text-primary);
+            word-break: keep-all;
+        }
+        .article-tag {
+            color: #e60000;
+            font-size: 14px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 24px 0 12px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .article-tag.tag-hero::before, .article-tag.tag-hero::after {
+            content: ""; width: 2px; height: 16px; background: #e60000; display: inline-block;
+        }
+        .hero-summary {
+            text-align: center;
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            padding: 0 40px;
+            word-break: keep-all;
+        }
+        .author {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 800;
+            font-style: italic;
+            text-decoration: none;
+            color: var(--text-primary);
+            display: block;
+        }
+        
+        /* Sidebar (Right) */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid var(--border);
+            padding-left: 30px;
+        }
+        .side-article {
+            display: flex;
+            gap: 15px;
+            padding: 25px 0;
+            border-bottom: 2px dashed var(--border);
+            color: inherit;
+        }
+        .side-article:last-child { border-bottom: none; }
+        .side-article:hover .side-title { color: #e60000; }
+        .side-content { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .side-title {
+            font-family: 'Pretendard', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            line-height: 1.3;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            word-break: keep-all;
+            transition: color 0.2s;
+        }
+        .side-author { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: auto; }
+        .side-thumb {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 2px; /* strict, newspaper corner */
+            border: 1px solid var(--border);
+        }
+        .side-tag {
+            color: #e60000;
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+        .side-tag::before { content: ""; width: 2px; height: 12px; background: #e60000; display: inline-block; }
+
+        /* Links */
+        a { text-decoration: none; }
+        
+        /* Main Footer */
+        .mag-footer {
+            border-top: 4px solid var(--text-primary);
+            padding: 30px 0;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-top: 40px;
+            text-transform: uppercase;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 950px) {
+            .news-grid { grid-template-columns: 1fr; gap: 40px; }
+            .sidebar { border-left: none; padding-left: 0; border-top: 3px double var(--text-primary); padding-top: 20px; }
+            .logo-text { font-size: 48px; -webkit-text-stroke: 1px #e60000; }
+            .hero-title-box { margin: -30px 15px 0; padding: 15px; }
+            .hero-title-box h1 { font-size: 32px; }
+            .brand-slogan { display: none; }
+            .logo-header { justify-content: center; position: relative; }
+            .logo-right { position: absolute; right: 0; top: 20px; width: auto; align-items: flex-end; }
+            .logo-right a.btn-red { display: none; }
+        }
+        @media (max-width: 600px) {
+            .logo-text { font-size: 38px; }
+            .side-article { flex-direction: column-reverse; }
+            .side-thumb { width: 100%; height: auto; aspect-ratio: 16/9; margin-bottom: 15px; }
+            .hero-summary { padding: 0 10px; font-size: 16px; }
+        }
+        
+        /* Dark Mode Consistency */
+        html[data-theme="dark"] .logo-text {
+            -webkit-text-stroke: 1.5px #ff4d4d;
+            text-shadow: 0px 0px 10px rgba(255, 77, 77, 0.4);
+        }
+        html[data-theme="dark"] .cat-nav a.active {
+            background: #ffffff;
+            color: #000000;
+        }
+        html[data-theme="dark"] .hero-title-box {
+            border-color: #555577;
+        }
+        html[data-theme="dark"] .hero-image {
+            border-bottom-color: #555577;
+        }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="header-inner">
-        <a href="/" class="back-link">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-            티모집사 홈으로
-        </a>
-        <div class="brand-logo">🐾 티모 매거진 구조 색인</div>
+<div class="page-wrap">
+    <!-- Top Utility Bar -->
+    <div class="top-bar">
+        <a href="/">GO TO TOOLS</a>
+        <span>•</span>
+        <a href="/special-chars/bmi-calc/">PLAY CALCULATOR</a>
+        <span>•</span>
+        <a href="/">ABOUT TEEMO</a>
     </div>
-</header>
 
-<main class="wrap">
-    <h1>티모 매거진 아티클 목록</h1>
-    <p class="desc">Google 검색 로봇 수집용 정적(Static) 구조도입니다.</p>
+    <!-- Header Logo -->
+    <header class="logo-header">
+        <div class="brand-slogan">
+            We don't just write about cats, we're OBSESSED.
+        </div>
+        <div class="logo-text">TEEMO MAGAZINE</div>
+        <div class="logo-right">
+            <a href="https://teemozipsa.github.io/" class="btn-red">MAIN HOME</a>
+            <a href="https://teemozipsa.github.io/" class="btn-outline">LOG IN</a>
+        </div>
+    </header>
 
-    <div class="static-grid">
-        <a href="/blog/cat-age-guide/" class="static-card">
-            <span class="sc-tag">고양이 팩트체크</span>
-            <h2 class="sc-title">고양이 나이 계산의 새로운 기준: 1년이 7년이라는 거짓말</h2>
-            <p class="sc-desc">AAFP 공식 가이드라인을 기반으로 진짜 고양이 나이를 계산하고 노화 주기별 핵심 케어 방법을 알아봅니다.</p>
-        </a>
-        <!-- 추후 아티클이 추가되면 여기에 수동 혹은 정적 생성기로 추가합니다 -->
-    </div>
-</main>
+    <!-- Navigation -->
+    <nav class="cat-nav">
+        <a href="/blog/" class="active">≡ ALL</a>
+        <a href="#">FACT CHECK</a>
+        <a href="#">HEALTH CARE</a>
+        <a href="#">BEHAVIOR</a>
+        <a href="#">NUTRITION</a>
+        <a href="#">LIFESTYLE</a>
+        <a href="#">ROYALS</a>
+        <span class="cat-search">🔍</span>
+    </nav>
 
-<script>
-    // 일반 유저가 이 URL로 접근한 경우, 메인 페이지의 프리미엄 UI 매거진 탭으로 SPA 리다이렉트 시킨다.
-    // window.location.replace("/?tab=magazine");
-</script>
+    <!-- Main Content -->
+    <main class="news-grid">
+        <!-- Left: Hero Article -->
+        <article>
+            <a href="/blog/cat-age-guide/" class="hero-article">
+                <img src="https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=1200&auto=format&fit=crop" class="hero-image" alt="Hero Cat">
+                <div class="hero-title-box">
+                    <h1>고양이 나이 계산의 새로운 기준:<br>1년이 7년이라는 거짓말</h1>
+                </div>
+                
+                <div class="article-tag tag-hero">FACT CHECK</div>
+                
+                <p class="hero-summary">고양이 1년은 사람 나이 7살과 같다는 공식은 완전히 틀렸습니다. AAFP 공식 가이드라인을 기반으로 진짜 고양이 나이를 계산하세요.</p>
+                
+                <span class="author">Teemo Studio</span>
+            </a>
+        </article>
+
+        <!-- Right: Secondary Articles -->
+        <aside class="sidebar">
+            <a href="/blog/cat-bmi-guide/" class="side-article">
+                <div class="side-content">
+                    <h2 class="side-title">비만일까 원시주머니일까?<br>2025 최신 고양이 체중 관리</h2>
+                    <div class="side-tag">HEALTH CARE</div>
+                    <p class="side-author">Teemo AI Editor</p>
+                </div>
+                <img src="https://images.unsplash.com/photo-1574231164645-d6f0e8553590?w=800&auto=format&fit=crop" class="side-thumb" alt="Fat Cat Belly">
+            </a>
+            
+            <a href="#" class="side-article" style="opacity: 0.7;">
+                <div class="side-content">
+                    <h2 class="side-title">고양이 양치질 거부 사태,<br>가장 피눈물 흘리는 보호자는?</h2>
+                    <div class="side-tag">DENTAL CRISIS</div>
+                    <p class="side-author">Guest Contributor</p>
+                </div>
+                <img src="https://images.unsplash.com/photo-1511044568932-338cba0ad803?w=800&auto=format&fit=crop" class="side-thumb" alt="Cat Yawning">
+            </a>
+            
+            <a href="#" class="side-article" style="opacity: 0.7;">
+                <div class="side-content">
+                    <h2 class="side-title">츄르 1일 권장량 초과 위기:<br>신장 질환과의 숨겨진 연관성</h2>
+                    <div class="side-tag">NUTRITION ALERT</div>
+                    <p class="side-author">Dr. Teemo</p>
+                </div>
+                <img src="https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=800&auto=format&fit=crop" class="side-thumb" alt="Cat Treats">
+            </a>
+
+            <!-- AD Placeholders mimicking the screenshot -->
+            <a href="/special-chars/bmi-calc/" class="side-article">
+                <div class="side-content">
+                    <h2 class="side-title">Keep Your Cat Feeling and Looking Healthy With This Tool</h2>
+                    <div class="side-tag">SPONSORED</div>
+                    <p class="side-author">TeemoZipsa Tools</p>
+                </div>
+                <!-- using specific ad image -->
+                <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&auto=format&fit=crop" class="side-thumb" alt="Ad Image">
+            </a>
+
+        </aside>
+    </main>
+
+    <footer class="mag-footer">
+        &copy; 2026 TEEMO MAGAZINE. Daily dose of feline obsession.
+    </footer>
+</div>
 
 </body>
 </html>
