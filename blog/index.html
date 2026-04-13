@@ -25,8 +25,26 @@
             line-height: 1.6; 
         }
 
-        /* Newspaper specific styles override standard dark/light vars to ensure contrast */
-        .page-wrap { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+        /* === Blob 배경 === */
+        .blob-bg{position:fixed;top:0;left:0;width:100%;height:100%;overflow:hidden;z-index:0;pointer-events:none;filter:blur(90px);opacity:.5}
+        .blob-bg .blob{position:absolute;border-radius:50%}
+        .blob-bg .b1{width:420px;height:420px;top:-8%;left:-5%;animation:bFloat1 14s ease-in-out infinite}
+        .blob-bg .b2{width:350px;height:350px;bottom:-8%;right:-3%;animation:bFloat2 18s ease-in-out infinite}
+        .blob-bg .b3{width:300px;height:300px;top:45%;left:55%;animation:bFloat3 20s ease-in-out infinite}
+        /* 다크모드 블롭 색상 */
+        html[data-theme="dark"] .b1{background:radial-gradient(circle,rgba(124,58,237,.6) 0%,transparent 70%)}
+        html[data-theme="dark"] .b2{background:radial-gradient(circle,rgba(59,130,246,.5) 0%,transparent 70%)}
+        html[data-theme="dark"] .b3{background:radial-gradient(circle,rgba(167,139,250,.4) 0%,transparent 70%)}
+        /* 라이트모드 블롭 색상 */
+        html[data-theme="light"] .b1{background:radial-gradient(circle,rgba(99,102,241,.8) 0%,transparent 70%)}
+        html[data-theme="light"] .b2{background:radial-gradient(circle,rgba(59,130,246,.7) 0%,transparent 70%)}
+        html[data-theme="light"] .b3{background:radial-gradient(circle,rgba(139,92,246,.75) 0%,transparent 70%)}
+        @keyframes bFloat1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(80px,60px) scale(1.08)}66%{transform:translate(-40px,100px) scale(.95)}}
+        @keyframes bFloat2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-100px,-50px) scale(1.12)}66%{transform:translate(50px,-80px) scale(.92)}}
+        @keyframes bFloat3{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-60px,120px) scale(1.05)}66%{transform:translate(90px,-40px) scale(.95)}}
+
+        /* Content Wrapper on top of blobs */
+        .page-wrap { max-width: 1200px; margin: 0 auto; padding: 0 15px; position: relative; z-index: 1; }
         
         /* Top Utility Bar */
         .top-bar { 
@@ -43,15 +61,48 @@
         .top-bar a { color: var(--text-primary); text-decoration: none; }
         .top-bar span { color: #e60000; }
         
-        /* Logo Header */
+        /* Logo Header (Sticky Setup) */
+        .header-wrap {
+            position: sticky;
+            top: -1px; /* Avoids 1px gap bug */
+            z-index: 100;
+            background: rgba(248, 250, 252, 0.9); /* Default light */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            border-bottom: 0px solid var(--text-primary);
+        }
+        html[data-theme="dark"] .header-wrap {
+            background: rgba(26, 26, 46, 0.9); /* Default dark body color */
+        }
+        .header-wrap.is-sticky {
+            border-bottom-width: 3px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        html[data-theme="dark"] .header-wrap.is-sticky {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
         .logo-header { 
-            text-align: center; 
-            padding: 20px 0 30px; 
+            max-width: 1200px; margin: 0 auto; padding: 0 15px;
+            padding-top: 20px; padding-bottom: 30px; 
             display: flex;
             align-items: center;
             justify-content: space-between;
+            transition: padding 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        .brand-slogan { width: 170px; font-weight: 800; font-style: italic; border: 2px solid var(--text-primary); padding: 5px; font-size: 12px; transform: rotate(-3deg); line-height: 1.4; }
+        .is-sticky .logo-header {
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+
+        .brand-slogan { 
+            width: 170px; font-weight: 800; font-style: italic; border: 2px solid var(--text-primary); 
+            padding: 5px; font-size: 12px; transform: rotate(-3deg); line-height: 1.4; 
+            transition: opacity 0.3s;
+        }
+        .is-sticky .brand-slogan { opacity: 0; visibility: hidden; }
+
         .logo-text { 
             font-family: 'Impact', 'Arial Black', sans-serif;
             font-size: 64px; 
@@ -62,10 +113,15 @@
             letter-spacing: -2px;
             text-transform: uppercase;
             text-align: center;
+            transition: font-size 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        .logo-right { width: 170px; text-align: right; display: flex; flex-direction: column; gap: 8px; }
-        .logo-right a.btn-red { background: #e60000; color: white; padding: 6px 12px; font-weight: 800; font-size: 13px; text-decoration: none; display: inline-block; }
-        .logo-right a.btn-outline { border: 2px solid var(--text-primary); color: var(--text-primary); padding: 4px 12px; font-weight: 800; font-size: 13px; text-decoration: none; display: inline-block; }
+        .is-sticky .logo-text { font-size: 32px; }
+
+        .logo-right { width: 170px; text-align: right; display: flex; flex-direction: column; gap: 8px; transition: transform 0.3s; }
+        .is-sticky .logo-right { flex-direction: row; justify-content: flex-end; align-items: center; }
+        
+        .logo-right a.btn-red { background: #e60000; color: white; padding: 6px 12px; font-weight: 800; font-size: 13px; text-decoration: none; display: inline-block; white-space: nowrap; }
+        .logo-right a.btn-outline { border: 2px solid var(--text-primary); color: var(--text-primary); padding: 4px 12px; font-weight: 800; font-size: 13px; text-decoration: none; display: inline-block; white-space: nowrap; }
         
         /* Category Nav */
         .cat-nav {
@@ -95,7 +151,6 @@
             background: var(--bg-hover);
         }
 
-        /* Search Icon Placeholder in Nav */
         .cat-search { margin-left: auto; padding: 12px 16px; color: var(--text-primary); font-weight: 800; }
         
         /* Main Newspaper Layout */
@@ -110,12 +165,23 @@
         /* Hero Article (Left) */
         .hero-article { position: relative; text-decoration: none; display: block; }
         .hero-article:hover .hero-title-box h1 { text-decoration: underline; text-decoration-color: #e60000; text-decoration-thickness: 3px; }
+        
+        /* Image Micro-animation Prep */
+        .hero-img-wrap {
+            overflow: hidden;
+            display: block;
+            border-bottom: 3px solid var(--text-primary);
+        }
         .hero-image {
             width: 100%;
             height: auto;
             display: block;
-            border-bottom: 3px solid var(--text-primary);
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
+        .hero-article:hover .hero-image {
+            transform: scale(1.04);
+        }
+
         .hero-title-box {
             background: var(--bg-body);
             border: 3px solid var(--text-primary);
@@ -199,13 +265,26 @@
             transition: color 0.2s;
         }
         .side-author { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: auto; }
-        .side-thumb {
+        
+        /* Micro-animation Prep */
+        .side-thumb-wrap {
             width: 120px;
             height: 120px;
-            object-fit: cover;
-            border-radius: 2px; /* strict, newspaper corner */
+            flex-shrink: 0;
+            border-radius: 2px;
             border: 1px solid var(--border);
+            overflow: hidden;
         }
+        .side-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .side-article:hover .side-thumb {
+            transform: scale(1.08); /* slight zoom */
+        }
+        
         .side-tag {
             color: #e60000;
             font-size: 12px;
@@ -238,17 +317,19 @@
             .news-grid { grid-template-columns: 1fr; gap: 40px; }
             .sidebar { border-left: none; padding-left: 0; border-top: 3px double var(--text-primary); padding-top: 20px; }
             .logo-text { font-size: 48px; -webkit-text-stroke: 1px #e60000; }
+            .is-sticky .logo-text { font-size: 28px; }
             .hero-title-box { margin: -30px 15px 0; padding: 15px; }
             .hero-title-box h1 { font-size: 32px; }
             .brand-slogan { display: none; }
             .logo-header { justify-content: center; position: relative; }
-            .logo-right { position: absolute; right: 0; top: 20px; width: auto; align-items: flex-end; }
+            .logo-right { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); width: auto; align-items: flex-end; }
             .logo-right a.btn-red { display: none; }
         }
         @media (max-width: 600px) {
             .logo-text { font-size: 38px; }
+            .is-sticky .logo-text { font-size: 24px; }
             .side-article { flex-direction: column-reverse; }
-            .side-thumb { width: 100%; height: auto; aspect-ratio: 16/9; margin-bottom: 15px; }
+            .side-thumb-wrap { width: 100%; height: auto; aspect-ratio: 16/9; margin-bottom: 15px; }
             .hero-summary { padding: 0 10px; font-size: 16px; }
         }
         
@@ -264,12 +345,16 @@
         html[data-theme="dark"] .hero-title-box {
             border-color: #555577;
         }
-        html[data-theme="dark"] .hero-image {
-            border-bottom-color: #555577;
-        }
     </style>
 </head>
 <body>
+
+<!-- Blob Background -->
+<div class="blob-bg" id="blobBg" aria-hidden="true">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+</div>
 
 <div class="page-wrap">
     <!-- Top Utility Bar -->
@@ -280,8 +365,10 @@
         <span>•</span>
         <a href="/">ABOUT TEEMO</a>
     </div>
+</div>
 
-    <!-- Header Logo -->
+<!-- Header (Sticky) -->
+<div class="header-wrap" id="headerWrap">
     <header class="logo-header">
         <div class="brand-slogan">
             We don't just write about cats, we're OBSESSED.
@@ -292,7 +379,9 @@
             <a href="https://teemozipsa.github.io/" class="btn-outline">LOG IN</a>
         </div>
     </header>
+</div>
 
+<div class="page-wrap">
     <!-- Navigation -->
     <nav class="cat-nav">
         <a href="/blog/" class="active">≡ ALL</a>
@@ -310,7 +399,9 @@
         <!-- Left: Hero Article -->
         <article>
             <a href="/blog/cat-age-guide/" class="hero-article">
-                <img src="https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=1200&auto=format&fit=crop" class="hero-image" alt="Hero Cat">
+                <div class="hero-img-wrap">
+                    <img src="https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=1200&auto=format&fit=crop" class="hero-image" alt="Hero Cat">
+                </div>
                 <div class="hero-title-box">
                     <h1>고양이 나이 계산의 새로운 기준:<br>1년이 7년이라는 거짓말</h1>
                 </div>
@@ -331,7 +422,9 @@
                     <div class="side-tag">HEALTH CARE</div>
                     <p class="side-author">Teemo AI Editor</p>
                 </div>
-                <img src="https://images.unsplash.com/photo-1574231164645-d6f0e8553590?w=800&auto=format&fit=crop" class="side-thumb" alt="Fat Cat Belly">
+                <div class="side-thumb-wrap">
+                    <img src="https://images.unsplash.com/photo-1574231164645-d6f0e8553590?w=800&auto=format&fit=crop" class="side-thumb" alt="Fat Cat Belly">
+                </div>
             </a>
             
             <a href="#" class="side-article" style="opacity: 0.7;">
@@ -340,7 +433,9 @@
                     <div class="side-tag">DENTAL CRISIS</div>
                     <p class="side-author">Guest Contributor</p>
                 </div>
-                <img src="https://images.unsplash.com/photo-1511044568932-338cba0ad803?w=800&auto=format&fit=crop" class="side-thumb" alt="Cat Yawning">
+                <div class="side-thumb-wrap">
+                    <img src="https://images.unsplash.com/photo-1511044568932-338cba0ad803?w=800&auto=format&fit=crop" class="side-thumb" alt="Cat Yawning">
+                </div>
             </a>
             
             <a href="#" class="side-article" style="opacity: 0.7;">
@@ -349,7 +444,9 @@
                     <div class="side-tag">NUTRITION ALERT</div>
                     <p class="side-author">Dr. Teemo</p>
                 </div>
-                <img src="https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=800&auto=format&fit=crop" class="side-thumb" alt="Cat Treats">
+                <div class="side-thumb-wrap">
+                    <img src="https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=800&auto=format&fit=crop" class="side-thumb" alt="Cat Treats">
+                </div>
             </a>
 
             <!-- AD Placeholders mimicking the screenshot -->
@@ -359,8 +456,9 @@
                     <div class="side-tag">SPONSORED</div>
                     <p class="side-author">TeemoZipsa Tools</p>
                 </div>
-                <!-- using specific ad image -->
-                <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&auto=format&fit=crop" class="side-thumb" alt="Ad Image">
+                <div class="side-thumb-wrap">
+                    <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&auto=format&fit=crop" class="side-thumb" alt="Ad Image">
+                </div>
             </a>
 
         </aside>
@@ -370,6 +468,18 @@
         &copy; 2026 TEEMO MAGAZINE. Daily dose of feline obsession.
     </footer>
 </div>
+
+<script>
+    // Sticky Header Scroll Listener
+    const headerWrap = document.getElementById('headerWrap');
+    window.addEventListener('scroll', () => {
+        if(window.scrollY > 40) {
+            headerWrap.classList.add('is-sticky');
+        } else {
+            headerWrap.classList.remove('is-sticky');
+        }
+    });
+</script>
 
 </body>
 </html>
