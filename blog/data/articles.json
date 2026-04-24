@@ -1,0 +1,55 @@
+[
+  {
+    "id": "cat-age-guide",
+    "title": "고양이 나이 계산의 새로운 기준:<br>1년이 7년이라는 거짓말",
+    "url": "/blog/cat-age-guide/",
+    "thumbnail": "https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=1200&auto=format&fit=crop",
+    "tag": "팩트체크",
+    "summary": "고양이 1년은 사람 나이 7살과 같다는 공식은 완전히 틀렸습니다. AAFP 공식 가이드라인을 기반으로 진짜 고양이 나이를 계산하세요.",
+    "author": "티모 스튜디오",
+    "isHero": true
+  },
+  {
+    "id": "cat-bmi-guide",
+    "title": "비만일까 원시주머니일까?<br>2025 최신 고양이 체중 관리",
+    "url": "/blog/cat-bmi-guide/",
+    "thumbnail": "https://images.unsplash.com/photo-1574231164645-d6f0e8553590?w=800&auto=format&fit=crop",
+    "tag": "건강관리",
+    "summary": "",
+    "author": "티모 AI 에디터",
+    "isHero": false
+  },
+  {
+    "id": "dental-crisis",
+    "title": "고양이 양치질 거부 사태,<br>가장 피눈물 흘리는 보호자는?",
+    "url": "#",
+    "thumbnail": "https://images.unsplash.com/photo-1511044568932-338cba0ad803?w=800&auto=format&fit=crop",
+    "tag": "치아 건강",
+    "summary": "",
+    "author": "객원 에디터",
+    "isHero": false,
+    "opacity": 0.7
+  },
+  {
+    "id": "nutrition-alert",
+    "title": "츄르 1일 권장량 초과 위기:<br>신장 질환과의 숨겨진 연관성",
+    "url": "#",
+    "thumbnail": "https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=800&auto=format&fit=crop",
+    "tag": "영양 경고",
+    "summary": "",
+    "author": "닥터 티모",
+    "isHero": false,
+    "opacity": 0.7
+  },
+  {
+    "id": "sponsored-ad",
+    "title": "우리 고양이 정상 체중일까? 3분만에 확인하기",
+    "url": "/special-chars/bmi-calc/",
+    "thumbnail": "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&auto=format&fit=crop",
+    "tag": "추천 도구",
+    "summary": "",
+    "author": "티모집사 툴스",
+    "isHero": false,
+    "isAd": true
+  }
+]

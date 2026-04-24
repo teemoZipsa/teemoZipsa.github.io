@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>티모 매거진 | 프리미엄 펫케어 매거진</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="/special-chars/theme.css">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="description" content="공식 데이터와 수의학 논문을 기반으로 한 프리미엄 펫케어 매거진입니다.">
+    <link rel="canonical" href="https://teemozipsa.github.io/blog/">
+    
+    <style>
+        /* Fonts */
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        @import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700;1,800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Pretendard', sans-serif; 
+            background: var(--bg-body); 
+            color: var(--text-primary); 
+            min-height: 100vh; 
+            line-height: 1.6; 
+        }
+
+        /* === Blob 배경 === */
+        .blob-bg{position:fixed;top:0;left:0;width:100%;height:100%;overflow:hidden;z-index:0;pointer-events:none;filter:blur(90px);opacity:.5}
+        .blob-bg .blob{position:absolute;border-radius:50%}
+        .blob-bg .b1{width:420px;height:420px;top:-8%;left:-5%;animation:bFloat1 14s ease-in-out infinite}
+        .blob-bg .b2{width:350px;height:350px;bottom:-8%;right:-3%;animation:bFloat2 18s ease-in-out infinite}
+        .blob-bg .b3{width:300px;height:300px;top:45%;left:55%;animation:bFloat3 20s ease-in-out infinite}
+        /* 다크모드 블롭 색상 */
+        html[data-theme="dark"] .b1{background:radial-gradient(circle,rgba(124,58,237,.6) 0%,transparent 70%)}
+        html[data-theme="dark"] .b2{background:radial-gradient(circle,rgba(59,130,246,.5) 0%,transparent 70%)}
+        html[data-theme="dark"] .b3{background:radial-gradient(circle,rgba(167,139,250,.4) 0%,transparent 70%)}
+        /* 라이트모드 블롭 색상 */
+        html[data-theme="light"] .b1{background:radial-gradient(circle,rgba(99,102,241,.8) 0%,transparent 70%)}
+        html[data-theme="light"] .b2{background:radial-gradient(circle,rgba(59,130,246,.7) 0%,transparent 70%)}
+        html[data-theme="light"] .b3{background:radial-gradient(circle,rgba(139,92,246,.75) 0%,transparent 70%)}
+        @keyframes bFloat1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(80px,60px) scale(1.08)}66%{transform:translate(-40px,100px) scale(.95)}}
+        @keyframes bFloat2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-100px,-50px) scale(1.12)}66%{transform:translate(50px,-80px) scale(.92)}}
+        @keyframes bFloat3{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-60px,120px) scale(1.05)}66%{transform:translate(90px,-40px) scale(.95)}}
+
+        /* Content Wrapper on top of blobs */
+        .page-wrap { max-width: 1200px; margin: 0 auto; padding: 0 15px; position: relative; z-index: 1; }
+        
+        /* Top Utility Bar */
+        .top-bar { 
+            display: flex; 
+            justify-content: center; 
+            gap: 20px; 
+            padding: 10px 0; 
+            font-size: 11px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+            align-items: center;
+        }
+        .top-bar a { color: var(--text-primary); text-decoration: none; }
+        .top-bar span { color: #e60000; }
+        
+        /* Logo Header (Sticky Setup) */
+        .header-wrap {
+            position: sticky;
+            top: -1px; /* Avoids 1px gap bug */
+            z-index: 100;
+            background: rgba(248, 250, 252, 0.9); /* Default light */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            border-bottom: 0px solid var(--text-primary);
+        }
+        html[data-theme="dark"] .header-wrap {
+            background: rgba(26, 26, 46, 0.9); /* Default dark body color */
+        }
+        .header-wrap.is-sticky {
+            border-bottom-width: 3px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        html[data-theme="dark"] .header-wrap.is-sticky {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .logo-header { 
+            max-width: 1200px; margin: 0 auto; padding: 0 15px;
+            padding-top: 20px; padding-bottom: 30px; 
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: padding 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .is-sticky .logo-header {
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+
+        .brand-slogan { 
+            width: 170px; font-weight: 800; font-style: italic; border: 2px solid var(--text-primary); 
+            padding: 5px; font-size: 12px; transform: rotate(-3deg); line-height: 1.4; 
+            transition: opacity 0.3s;
+        }
+        .is-sticky .brand-slogan { opacity: 0; visibility: hidden; }
+
+        .logo-text { 
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: 64px; 
+            font-weight: 900; 
+            color: transparent; 
+            -webkit-text-stroke: 1px #e60000; 
+            text-shadow: 0px 0px 10px rgba(230,0,0,0.3);
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            text-align: center;
+            transition: font-size 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .is-sticky .logo-text { font-size: 32px; }
+
+        .logo-right { width: 170px; text-align: right; display: flex; flex-direction: column; gap: 8px; transition: transform 0.3s; }
+        .is-sticky .logo-right { flex-direction: row; justify-content: flex-end; align-items: center; }
+        
+        .logo-right a.btn-red { background: #e60000; color: white; padding: 6px 12px; font-weight: 800; font-size: 13px; text-decoration: none; display: inline-block; white-space: nowrap; }
+        .logo-right a.btn-outline { border: 2px solid var(--text-primary); color: var(--text-primary); padding: 4px 12px; font-weight: 800; font-size: 13px; text-decoration: none; display: inline-block; white-space: nowrap; }
+        
+        /* Category Nav */
+        .cat-nav {
+            border-top: 3px solid var(--text-primary);
+            border-bottom: 3px solid var(--text-primary);
+            display: flex;
+            align-items: center;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .cat-nav::-webkit-scrollbar { height: 0; }
+        .cat-nav a {
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-primary);
+            text-decoration: none;
+            text-transform: uppercase;
+            border-right: 1px solid var(--border);
+        }
+        .cat-nav a:last-child { border-right: none; }
+        .cat-nav a.active {
+            background: var(--text-primary);
+            color: var(--bg-body);
+        }
+        .cat-nav a:hover:not(.active) {
+            background: var(--bg-hover);
+        }
+
+        .cat-search { margin-left: auto; padding: 12px 16px; color: var(--text-primary); font-weight: 800; }
+        
+        /* Main Newspaper Layout */
+        .news-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+            margin-bottom: 60px;
+        }
+        
+        /* Hero Article (Left) */
+        .hero-article { position: relative; text-decoration: none; display: block; }
+        .hero-article:hover .hero-title-box h1 { text-decoration: underline; text-decoration-color: #e60000; text-decoration-thickness: 3px; }
+        
+        /* Image Micro-animation Prep */
+        .hero-img-wrap {
+            overflow: hidden;
+            display: block;
+            border-bottom: 3px solid var(--text-primary);
+        }
+        .hero-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .hero-article:hover .hero-image {
+            transform: scale(1.04);
+        }
+
+        .hero-title-box {
+            background: var(--bg-body);
+            border: 3px solid var(--text-primary);
+            margin: -60px 40px 0;
+            padding: 24px 30px;
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+        .hero-title-box h1 {
+            font-family: 'Playfair Display', 'Nanum Myeongjo', serif;
+            font-size: 42px;
+            font-weight: 800;
+            font-style: italic;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            color: var(--text-primary);
+            word-break: keep-all;
+        }
+        .article-tag {
+            color: #e60000;
+            font-size: 14px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 24px 0 12px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .article-tag.tag-hero::before, .article-tag.tag-hero::after {
+            content: ""; width: 2px; height: 16px; background: #e60000; display: inline-block;
+        }
+        .hero-summary {
+            text-align: center;
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            padding: 0 40px;
+            word-break: keep-all;
+        }
+        .author {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 800;
+            font-style: italic;
+            text-decoration: none;
+            color: var(--text-primary);
+            display: block;
+        }
+        
+        /* Sidebar (Right) */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid var(--border);
+            padding-left: 30px;
+        }
+        .side-article {
+            display: flex;
+            gap: 15px;
+            padding: 25px 0;
+            border-bottom: 2px dashed var(--border);
+            color: inherit;
+        }
+        .side-article:last-child { border-bottom: none; }
+        .side-article:hover .side-title { color: #e60000; }
+        .side-content { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .side-title {
+            font-family: 'Pretendard', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            line-height: 1.3;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            word-break: keep-all;
+            transition: color 0.2s;
+        }
+        .side-author { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: auto; }
+        
+        /* Micro-animation Prep */
+        .side-thumb-wrap {
+            width: 120px;
+            height: 120px;
+            flex-shrink: 0;
+            border-radius: 2px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .side-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .side-article:hover .side-thumb {
+            transform: scale(1.08); /* slight zoom */
+        }
+        
+        .side-tag {
+            color: #e60000;
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+        .side-tag::before { content: ""; width: 2px; height: 12px; background: #e60000; display: inline-block; }
+
+        /* Links */
+        a { text-decoration: none; }
+        
+        /* Main Footer */
+        .mag-footer {
+            border-top: 4px solid var(--text-primary);
+            padding: 30px 0;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-top: 40px;
+            text-transform: uppercase;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 950px) {
+            .news-grid { grid-template-columns: 1fr; gap: 40px; }
+            .sidebar { border-left: none; padding-left: 0; border-top: 3px double var(--text-primary); padding-top: 20px; }
+            .logo-text { font-size: 48px; -webkit-text-stroke: 1px #e60000; }
+            .is-sticky .logo-text { font-size: 28px; }
+            .hero-title-box { margin: -30px 15px 0; padding: 15px; }
+            .hero-title-box h1 { font-size: 32px; }
+            .brand-slogan { display: none; }
+            .logo-header { justify-content: center; position: relative; }
+            .logo-right { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); width: auto; align-items: flex-end; }
+            .logo-right a.btn-red { display: none; }
+        }
+        @media (max-width: 600px) {
+            .logo-text { font-size: 38px; }
+            .is-sticky .logo-text { font-size: 24px; }
+            .side-article { flex-direction: column-reverse; }
+            .side-thumb-wrap { width: 100%; height: auto; aspect-ratio: 16/9; margin-bottom: 15px; }
+            .hero-summary { padding: 0 10px; font-size: 16px; }
+        }
+        
+        /* Dark Mode Consistency */
+        html[data-theme="dark"] .logo-text {
+            -webkit-text-stroke: 1.5px #ff4d4d;
+            text-shadow: 0px 0px 10px rgba(255, 77, 77, 0.4);
+        }
+        html[data-theme="dark"] .cat-nav a.active {
+            background: #ffffff;
+            color: #000000;
+        }
+        html[data-theme="dark"] .hero-title-box {
+            border-color: #555577;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Blob Background -->
+<div class="blob-bg" id="blobBg" aria-hidden="true">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+</div>
+
+<div class="page-wrap">
+    <!-- Top Utility Bar -->
+    <div class="top-bar">
+        <a href="/">🛠️ 티모 도구웹 가기</a>
+        <span>•</span>
+        <a href="/special-chars/bmi-calc/">🐾 고양이 비만도 계산기</a>
+        <span>•</span>
+        <a href="/">티모 소개</a>
+    </div>
+</div>
+
+<!-- Header (Sticky) -->
+<div class="header-wrap" id="headerWrap">
+    <header class="logo-header">
+        <div class="brand-slogan">
+            수의학 논문 기반의<br>프리미엄 펫케어 매거진.
+        </div>
+        <div class="logo-text">티모 매거진</div>
+        <div class="logo-right">
+            <a href="https://teemozipsa.github.io/" class="btn-red">메인 홈</a>
+            <a href="https://teemozipsa.github.io/" class="btn-outline">로그인</a>
+        </div>
+    </header>
+</div>
+
+<div class="page-wrap">
+    <!-- Navigation -->
+    <nav class="cat-nav">
+        <a href="/blog/" class="active">≡ 전체</a>
+        <a href="#">팩트체크</a>
+        <a href="#">질병·건강</a>
+        <a href="#">행동·심리</a>
+        <a href="#">영양·사료</a>
+        <a href="#">라이프스타일</a>
+        <a href="#">묘종·가이드</a>
+        <span class="cat-search">🔍</span>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="news-grid">
+        <!-- Left: Hero Article Container -->
+        <article id="hero-container">
+            <!-- Dynamically injected via JS -->
+            <div style="text-align:center; padding: 100px; color: var(--text-muted); font-size: 14px; font-weight:800; font-style:italic;">
+                최신 기사를 불러오는 중입니다...
+            </div>
+        </article>
+
+        <!-- Right: Secondary Articles & Trends Container -->
+        <aside class="sidebar" id="sidebar-container">
+            <!-- Articles dynamically injected via JS -->
+            
+            <!-- Trending Now Widget Container -->
+            <div id="trending-widget" style="margin-top: 40px; padding: 25px; border: 3px double var(--text-primary); background: var(--bg-hover);">
+                <div style="font-weight: 900; font-family: 'Pretendard', sans-serif; font-size: 22px; color: #e60000; display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                    <span>🔥</span> 실시간 고양이 검색 랭킹
+                </div>
+                <ul id="trending-list" style="list-style: none; padding: 0; margin: 0; font-size: 15px; font-weight: 800; display: flex; flex-direction: column; gap: 12px;">
+                    <li style="color: var(--text-muted);">실시간 데이터를 동기화 중입니다...</li>
+                </ul>
+            </div>
+        </aside>
+    </main>
+
+    <footer class="mag-footer">
+        &copy; 2026 티모 매거진. 매일 업데이트되는 고양이 집사 백과사전.
+    </footer>
+</div>
+
+<script>
+    // Sticky Header Scroll Listener
+    const headerWrap = document.getElementById('headerWrap');
+    window.addEventListener('scroll', () => {
+        if(window.scrollY > 40) {
+            headerWrap.classList.add('is-sticky');
+        } else {
+            headerWrap.classList.remove('is-sticky');
+        }
+    });
+
+    // Dynamic Article Rendering JSON Engine
+    async function loadMagazineData() {
+        try {
+            // 1. Fetch Articles
+            const res = await fetch('/blog/data/articles.json');
+            const articles = await res.json();
+            
+            const heroContainer = document.getElementById('hero-container');
+            const sidebarContainer = document.getElementById('sidebar-container');
+            const trendingWidget = document.getElementById('trending-widget');
+            
+            let heroHTML = '';
+            let sidebarHTML = '';
+
+            articles.forEach(article => {
+                const opacityStyle = article.opacity ? `style="opacity: ${article.opacity};"` : '';
+                
+                if (article.isHero) {
+                    // Render Hero
+                    heroHTML = `
+                        <a href="${article.url}" class="hero-article">
+                            <div class="hero-img-wrap">
+                                <img src="${article.thumbnail}" class="hero-image" alt="Hero Image">
+                            </div>
+                            <div class="hero-title-box">
+                                <h1>${article.title}</h1>
+                            </div>
+                            <div class="article-tag tag-hero">${article.tag}</div>
+                            ${article.summary ? `<p class="hero-summary">${article.summary}</p>` : ''}
+                            <span class="author">${article.author}</span>
+                        </a>
+                    `;
+                } else {
+                    // Render Sidebar
+                    sidebarHTML += `
+                        <a href="${article.url}" class="side-article" ${opacityStyle}>
+                            <div class="side-content">
+                                <h2 class="side-title">${article.title}</h2>
+                                <div class="side-tag">${article.tag}</div>
+                                <p class="side-author">${article.author}</p>
+                            </div>
+                            <div class="side-thumb-wrap">
+                                <img src="${article.thumbnail}" class="side-thumb" alt="Thumbnail">
+                            </div>
+                        </a>
+                    `;
+                }
+            });
+
+            if(heroHTML) heroContainer.innerHTML = heroHTML;
+            if(sidebarHTML) {
+                // Insert sidebar articles before the trending widget
+                sidebarContainer.insertAdjacentHTML('afterbegin', sidebarHTML);
+            }
+
+            // 2. Fetch Trends
+            try {
+                // Cache bust to avoid stale JSON on pure static pages
+                const trendRes = await fetch(`/blog/data/trends.json?t=${new Date().getTime()}`);
+                const trendsData = await trendRes.json();
+                
+                const trendingList = document.getElementById('trending-list');
+                if (trendsData && trendsData.items && trendsData.items.length > 0) {
+                    let trendHTML = '';
+                    trendsData.items.forEach((item, idx) => {
+                        trendHTML += `
+                            <li style="display: flex; gap: 10px; align-items: baseline;">
+                                <span style="color: #e60000; font-weight: 900; font-family: 'Playfair Display', serif; font-size: 18px; width: 24px;">${idx + 1}.</span>
+                                <a href="https://search.naver.com/search.naver?query=${encodeURIComponent(item.keyword + ' 고양이')}" target="_blank" style="color: var(--text-primary); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#e60000'" onmouseout="this.style.color='var(--text-primary)'">
+                                    <span style="font-weight: 800;">${item.keyword}</span>
+                                    <span style="font-size: 12px; color: var(--text-muted); font-weight: 600; margin-left: 6px;">${item.category || '웹검색'}</span>
+                                </a>
+                            </li>
+                        `;
+                    });
+                    trendingList.innerHTML = trendHTML;
+                }
+            } catch (err) {
+                console.warn('Trends data not yet available or failed to load:', err);
+                document.getElementById('trending-list').innerHTML = `
+                    <li style="color: var(--text-muted);">업데이트 준비 중... (매 12시간 갱신)</li>
+                `;
+            }
+
+        } catch (error) {
+            console.error('Failed to load magazine data:', error);
+            document.getElementById('hero-container').innerHTML = `
+                <div style="text-align:center; padding: 50px; color: red; font-weight:bold;">
+                    데이터를 불러오지 못했습니다. articles.json 파일을 확인해주세요.
+                </div>
+            `;
+        }
+    }
+
+    // Initialize
+    loadMagazineData();
+
+</script>
+
+</body>
+</html>
