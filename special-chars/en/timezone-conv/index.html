@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+    <title>🌍 Timezone Converter — TeemoZipsa</title>
+    <meta name="description" content="Real-time time conversion across major cities worldwide. Automatic DST applied, check time differences easily.">
+    <meta property="og:title" content="🌍 Timezone Converter — TeemoZipsa">
+    <meta property="og:description" content="Real-time time conversion across major cities worldwide. Automatic DST applied, check time differences easily.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/timezone-conv/">
+    <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+    <link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/timezone-conv/">
+    <link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/timezone-conv/">
+    <link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/timezone-conv/">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:start;padding:20px}
+        .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
+        .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+        .header h1{font-size:15px;font-weight:600;color:#fff}
+        .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+        .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+        .counter-body{padding:16px;flex:1}
+
+        .tz-card{background:var(--bg-guide);border-radius:10px;padding:16px;margin-bottom:12px}
+        .tz-label{font-size:11px;color:var(--text-info);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+        .tz-select{width:100%;padding:10px 12px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:inherit;margin-bottom:10px;cursor:pointer}
+        .tz-select:focus{outline:none;border-color:var(--accent)}
+        .tz-datetime{display:flex;gap:8px}
+        .tz-datetime input{flex:1;padding:10px 12px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:inherit}
+        .tz-datetime input:focus{outline:none;border-color:var(--accent)}
+        .tz-result{font-size:28px;font-weight:700;color:var(--text-primary);text-align:center;padding:8px 0}
+        .tz-result-date{font-size:13px;color:var(--text-guide);text-align:center;margin-top:2px}
+        .tz-result-info{font-size:11px;color:var(--text-info);text-align:center;margin-top:4px}
+
+        .swap-row{display:flex;justify-content:center;gap:10px;margin-bottom:12px}
+        .btn-swap{padding:10px 20px;background:var(--bg-input);color:var(--text-guide);border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer;transition:all .2s;font-family:inherit;font-weight:600}
+        .btn-swap:hover{background:var(--bg-btn);border-color:var(--accent);color:var(--text-primary)}
+        .btn-now{padding:10px 20px;background:var(--accent);color:var(--text-on-accent);border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s;font-family:inherit}
+        .btn-now:hover{background:var(--accent-hover)}
+
+        .diff-banner{text-align:center;padding:12px;background:var(--bg-input);border-radius:10px;margin-bottom:12px;border:1px solid var(--border)}
+        .diff-text{font-size:14px;color:var(--text-primary);font-weight:600}
+        .diff-sub{font-size:11px;color:var(--text-info);margin-top:2px}
+
+        /* 가이드 & 관련 도구 (표준) */
+        .guide-section{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+        .guide-section h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+        .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
+        .guide:last-child{margin-bottom:0}
+        .guide summary{padding:12px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--bg-guide);transition:background .2s}
+        .guide summary::-webkit-details-marker{display:none}
+        .guide summary::after{content:'▼';font-size:10px;color:var(--text-muted);transition:transform .3s}
+        .guide[open] summary::after{transform:rotate(180deg)}
+        .guide summary:hover{background:var(--bg-guide-hover)}
+        .guide-content{padding:14px;font-size:13px;color:var(--text-info);line-height:1.6;border-top:1px solid var(--border);background:var(--bg-app)}
+        .related-tools{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+        .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+        .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+        .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
+        .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+
+        .bottom-bar{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
+        .bottom-bar .info{font-size:11px;color:var(--text-info)}
+        .action-btn{padding:8px 20px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+        .btn-clear{background:var(--bg-btn);color:var(--text-guide)}.btn-clear:hover{background:var(--bg-btn-hover)}
+        .btn-copy{background:var(--accent);color:var(--text-on-accent)}.btn-copy:hover{background:var(--accent-hover)}
+        .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.6);transition:transform .3s ease,opacity .3s ease;opacity:0;pointer-events:none;z-index:999}
+        .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+        @media(max-width:640px){.tz-datetime{flex-direction:column}}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+    .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+<div class="app">
+    <div class="header">
+        <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
+        <h1>🌍 Timezone Converter</h1>
+        <a href="/special-chars/timezone-conv/" class="back-btn">🌐 한국어</a>
+    </div>
+    <div class="counter-body">
+        <!-- FROM -->
+        <div class="tz-card">
+            <div class="tz-label">🔵 Source Time (FROM)</div>
+            <select class="tz-select" id="fromTz" onchange="convert()">
+            </select>
+            <div class="tz-datetime">
+                <input type="date" id="fromDate" onchange="convert()">
+                <input type="time" id="fromTime" step="60" onchange="convert()">
+            </div>
+        </div>
+
+        <div class="swap-row">
+            <button class="btn-now" onclick="setNow()">⏰ Current Time</button>
+            <button class="btn-swap" onclick="swapTz()">↕ Swap</button>
+        </div>
+
+        <!-- TO -->
+        <div class="tz-card">
+            <div class="tz-label">🔴 Converted Time (TO)</div>
+            <select class="tz-select" id="toTz" onchange="convert()">
+            </select>
+            <div class="tz-result" id="toResult">--:--</div>
+            <div class="tz-result-date" id="toResultDate"></div>
+            <div class="tz-result-info" id="toResultInfo"></div>
+        </div>
+
+        <!-- Diff -->
+        <div class="diff-banner" id="diffBanner" style="display:none">
+            <div class="diff-text" id="diffText"></div>
+            <div class="diff-sub" id="diffSub"></div>
+        </div>
+    </div>
+
+    <section class="guide-section">
+        <h2>💡 Timezone Converter Guide</h2>
+        <details class="guide" open>
+            <summary>How do I use this tool?</summary>
+            <div class="guide-content">
+                <ol style="padding-left: 20px;">
+                    <li>Click the <b>'Current Time'</b> button or enter the date and time manually.</li>
+                    <li>Select your starting timezone (FROM) and the destination timezone (TO).</li>
+                    <li>The converted time and the time difference will display automatically.</li>
+                    <li>Use the <b>'↕ Swap'</b> button to quickly reverse the conversion.</li>
+                </ol>
+            </div>
+        </details>
+        <details class="guide">
+            <summary>Does it handle Daylight Saving Time (DST)?</summary>
+            <div class="guide-content">
+                Yes! DST (Daylight Saving Time) is handled entirely automatically based on the browser's internal IANA timezone database. You don't need to worry about when the clocks change.
+            </div>
+        </details>
+    </section>
+
+    <section class="related-tools">
+        <h2>🔗 Related Tools</h2>
+        <div class="tools-grid">
+            <a href="/special-chars/en/server-time/" class="tool-card">⌚ Server Time</a>
+            <a href="/special-chars/en/timer/" class="tool-card">⏳ Timer</a>
+            <a href="/special-chars/en/dday-calc/" class="tool-card">📅 D-Day Calc</a>
+        </div>
+    </section>
+    <div class="footer"><span>Auto DST Detection</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const TIMEZONES = [
+    { id:'Asia/Seoul', label:'🇰🇷 Seoul', abbr:'KST' },
+    { id:'Asia/Tokyo', label:'🇯🇵 Tokyo', abbr:'JST' },
+    { id:'Asia/Shanghai', label:'🇨🇳 Beijing/Shanghai', abbr:'CST' },
+    { id:'Asia/Taipei', label:'🇹🇼 Taipei', abbr:'CST' },
+    { id:'Asia/Hong_Kong', label:'🇭🇰 Hong Kong', abbr:'HKT' },
+    { id:'Asia/Singapore', label:'🇸🇬 Singapore', abbr:'SGT' },
+    { id:'Asia/Bangkok', label:'🇹🇭 Bangkok', abbr:'ICT' },
+    { id:'Asia/Ho_Chi_Minh', label:'🇻🇳 Ho Chi Minh', abbr:'ICT' },
+    { id:'Asia/Kolkata', label:'🇮🇳 Mumbai/Delhi', abbr:'IST' },
+    { id:'Asia/Dubai', label:'🇦🇪 Dubai', abbr:'GST' },
+    { id:'Australia/Sydney', label:'🇦🇺 Sydney', abbr:'AEST/AEDT' },
+    { id:'Pacific/Auckland', label:'🇳🇿 Auckland', abbr:'NZST/NZDT' },
+    { id:'Europe/London', label:'🇬🇧 London', abbr:'GMT/BST' },
+    { id:'Europe/Paris', label:'🇫🇷 Paris', abbr:'CET/CEST' },
+    { id:'Europe/Berlin', label:'🇩🇪 Berlin', abbr:'CET/CEST' },
+    { id:'Europe/Moscow', label:'🇷🇺 Moscow', abbr:'MSK' },
+    { id:'America/New_York', label:'🇺🇸 New York', abbr:'EST/EDT' },
+    { id:'America/Chicago', label:'🇺🇸 Chicago', abbr:'CST/CDT' },
+    { id:'America/Denver', label:'🇺🇸 Denver', abbr:'MST/MDT' },
+    { id:'America/Los_Angeles', label:'🇺🇸 Los Angeles', abbr:'PST/PDT' },
+    { id:'America/Anchorage', label:'🇺🇸 Anchorage', abbr:'AKST/AKDT' },
+    { id:'Pacific/Honolulu', label:'🇺🇸 Honolulu', abbr:'HST' },
+    { id:'America/Sao_Paulo', label:'🇧🇷 Sao Paulo', abbr:'BRT' }
+];
+
+function initSelects() {
+    const fromSel = document.getElementById('fromTz');
+    const toSel = document.getElementById('toTz');
+    TIMEZONES.forEach((tz, i) => {
+        const opt1 = new Option(`${tz.label} (${tz.abbr})`, tz.id);
+        const opt2 = new Option(`${tz.label} (${tz.abbr})`, tz.id);
+        fromSel.add(opt1);
+        toSel.add(opt2);
+    });
+    fromSel.value = 'Asia/Seoul';
+    toSel.value = 'America/New_York';
+}
+
+function setNow() {
+    const now = new Date();
+    const fromTz = document.getElementById('fromTz').value;
+    const parts = getDateTimeInTz(now, fromTz);
+    document.getElementById('fromDate').value = parts.date;
+    document.getElementById('fromTime').value = parts.time;
+    convert();
+}
+
+function getDateTimeInTz(date, tz) {
+    const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hour12:false });
+    const parts = {};
+    fmt.formatToParts(date).forEach(p => { parts[p.type] = p.value; });
+    const h = parts.hour === '24' ? '00' : parts.hour;
+    return { date: `${parts.year}-${parts.month}-${parts.day}`, time: `${h}:${parts.minute}` };
+}
+
+function convert() {
+    const fromTz = document.getElementById('fromTz').value;
+    const toTz = document.getElementById('toTz').value;
+    const dateVal = document.getElementById('fromDate').value;
+    const timeVal = document.getElementById('fromTime').value;
+
+    if (!dateVal || !timeVal) {
+        document.getElementById('toResult').textContent = '--:--';
+        document.getElementById('toResultDate').textContent = '';
+        document.getElementById('toResultInfo').textContent = '';
+        document.getElementById('diffBanner').style.display = 'none';
+        return;
+    }
+
+    // Create date in fromTz
+    const fromStr = `${dateVal}T${timeVal}:00`;
+    // Get UTC offset for fromTz at this date
+    const tempDate = new Date(fromStr);
+    const fromParts = getDateTimeInTz(tempDate, fromTz);
+    const localParts = { date: dateVal, time: timeVal };
+
+    // Calculate offset difference
+    const fromOffset = getOffsetMinutes(tempDate, fromTz);
+    const utcMs = tempDate.getTime() + (tempDate.getTimezoneOffset() * 60000) - (fromOffset * 60000) + (tempDate.getTimezoneOffset() * 60000);
+
+    // Simpler approach: construct a UTC date from the "from" inputs
+    const localDate = new Date(`${dateVal}T${timeVal}:00`);
+    const fromOffsetMs = getOffsetMs(localDate, fromTz);
+    const utcDate = new Date(localDate.getTime() - fromOffsetMs);
+    const toOffsetMs = getOffsetMs(utcDate, toTz);
+    const toDate = new Date(utcDate.getTime() + toOffsetMs);
+
+    const toParts = getDateTimeInTz(toDate, toTz);
+
+    // Display
+    document.getElementById('toResult').textContent = toParts.time;
+
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const toD = new Date(toParts.date);
+    const dayName = days[toD.getDay()];
+    document.getElementById('toResultDate').textContent = `${toParts.date} (${dayName})`;
+
+    // DST info
+    const toTzInfo = TIMEZONES.find(t => t.id === toTz);
+    document.getElementById('toResultInfo').textContent = toTzInfo ? toTzInfo.label : '';
+
+    // Diff
+    const diffMin = Math.round((toOffsetMs - fromOffsetMs) / 60000);
+    const diffH = diffMin / 60;
+    const fromInfo = TIMEZONES.find(t => t.id === fromTz);
+    const absDiffH = Math.abs(diffH);
+    const diffLabel = diffH > 0 ? `${absDiffH}h ahead` : diffH < 0 ? `${absDiffH}h behind` : 'Same timezone';
+    document.getElementById('diffText').textContent = `Diff: ${diffH >= 0 ? '+' : ''}${diffH}h`;
+    document.getElementById('diffSub').textContent = `${diffLabel} compared to ${fromInfo ? fromInfo.label : fromTz}`;
+    document.getElementById('diffBanner').style.display = 'block';
+}
+
+function getOffsetMs(date, tz) {
+    const utcStr = date.toLocaleString('en-US', { timeZone: 'UTC' });
+    const tzStr = date.toLocaleString('en-US', { timeZone: tz });
+    return new Date(tzStr).getTime() - new Date(utcStr).getTime();
+}
+
+function getOffsetMinutes(date, tz) {
+    return getOffsetMs(date, tz) / 60000;
+}
+
+function swapTz() {
+    const fromSel = document.getElementById('fromTz');
+    const toSel = document.getElementById('toTz');
+    const tmp = fromSel.value;
+    fromSel.value = toSel.value;
+    toSel.value = tmp;
+    convert();
+    showToast('Timezones swapped');
+}
+
+function resetAll() {
+    document.getElementById('fromDate').value = '';
+    document.getElementById('fromTime').value = '';
+    document.getElementById('fromTz').value = 'Asia/Seoul';
+    document.getElementById('toTz').value = 'America/New_York';
+    document.getElementById('toResult').textContent = '--:--';
+    document.getElementById('toResultDate').textContent = '';
+    document.getElementById('toResultInfo').textContent = '';
+    document.getElementById('diffBanner').style.display = 'none';
+    showToast('Reset successful');
+}
+
+function copyResult() {
+    const result = document.getElementById('toResult').textContent;
+    if (result === '--:--') { showToast('Please enter a time first'); return; }
+    const fromTz = TIMEZONES.find(t => t.id === document.getElementById('fromTz').value);
+    const toTz = TIMEZONES.find(t => t.id === document.getElementById('toTz').value);
+    const fromDate = document.getElementById('fromDate').value;
+    const fromTime = document.getElementById('fromTime').value;
+    const toResultDate = document.getElementById('toResultDate').textContent;
+    const diff = document.getElementById('diffText').textContent;
+    const text = `${fromTz ? fromTz.label : ''} ${fromDate} ${fromTime}\n→ ${toTz ? toTz.label : ''} ${toResultDate} ${result}\n${diff}`;
+    navigator.clipboard.writeText(text).then(() => showToast('Result copied!'));
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+initSelects();
+</script>
+<button class="scroll-top-btn" aria-label="Top">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

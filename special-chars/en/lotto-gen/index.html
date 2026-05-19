@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<title>🎰 Lotto Number Generator — TeemoZipsa</title>
+<meta name="description" content="Generate random 6/45 lottery numbers with included/excluded number options. Try your luck!">
+<meta property="og:title" content="🎰 Lotto Number Generator — TeemoZipsa">
+<meta property="og:description" content="Smart lottery number generator with custom options.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/lotto-gen/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/lotto-gen/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/lotto-gen/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/lotto-gen/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+.app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:540px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+.content{padding:24px 20px}
+.main-display{background:var(--bg-btn);border:1px solid var(--border);border-radius:12px;padding:32px 20px;text-align:center;margin-bottom:20px;min-height:140px;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.balls-container{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
+.ball{width:48px;height:48px;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:20px;font-weight:800;color:#fff;box-shadow:0 4px 10px rgba(0,0,0,0.15), inset 0 -4px 8px rgba(0,0,0,0.2), inset 0 4px 8px rgba(255,255,255,0.4);transition:transform .3s;text-shadow:0 1px 2px rgba(0,0,0,0.5)}
+
+/* Colors */
+.b-yellow{background:radial-gradient(circle at 30% 30%, #fcd34d, #f59e0b)}
+.b-blue{background:radial-gradient(circle at 30% 30%, #60a5fa, #2563eb)}
+.b-red{background:radial-gradient(circle at 30% 30%, #f87171, #ef4444)}
+.b-gray{background:radial-gradient(circle at 30% 30%, #9ca3af, #4b5563)}
+.b-green{background:radial-gradient(circle at 30% 30%, #4ade80, #16a34a)}
+.b-empty{background:var(--bg-bar);border:2px dashed var(--border);color:var(--text-muted);box-shadow:none;text-shadow:none}
+
+.gen-btn{width:100%;background:linear-gradient(135deg, var(--accent), #4f46e5);color:#fff;border:none;border-radius:12px;padding:16px;font-size:18px;font-weight:700;cursor:pointer;transition:transform .1s, box-shadow .2s;font-family:inherit;margin-bottom:24px;box-shadow:0 4px 12px rgba(99,102,241,0.3)}
+.gen-btn:active{transform:scale(0.98)}
+.gen-btn:hover{box-shadow:0 6px 16px rgba(99,102,241,0.4)}
+
+.options-box{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px}
+.opt-title{font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.num-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(28px,1fr));gap:6px;margin-bottom:12px}
+.num-btn{width:100%;aspect-ratio:1;border-radius:6px;border:1px solid var(--border);background:var(--bg-btn);color:var(--text-secondary);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.num-btn:hover{border-color:var(--accent)}
+.num-btn.fixed{background:var(--accent);color:#fff;border-color:var(--accent)}
+.num-btn.excluded{background:#ef4444;color:#fff;border-color:#ef4444;text-decoration:line-through;opacity:0.8}
+
+.opt-controls{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-muted)}
+.reset-opt{background:none;border:none;color:var(--text-info);cursor:pointer;text-decoration:underline;font-family:inherit}
+.reset-opt:hover{color:var(--text-secondary)}
+
+.history{border-top:1px solid var(--border);padding-top:16px}
+.history-title{font-size:13px;font-weight:700;color:var(--text-secondary);margin-bottom:10px}
+.hist-list{max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.hist-list::-webkit-scrollbar{width:4px}
+.hist-list::-webkit-scrollbar-thumb{background:var(--bg-btn-hover);border-radius:2px}
+.hist-item{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-btn);border-radius:8px;font-size:14px;font-weight:600}
+.hist-nums{display:flex;gap:6px;font-variant-numeric:tabular-nums}
+.hist-num{color:var(--text-primary)}
+.copy-btn{background:var(--bg-bar);border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:11px;color:var(--text-muted);cursor:pointer}
+.copy-btn:hover{background:var(--bg-btn-hover)}
+
+/* Dynamic Report & Guide standard CSS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.report-box { margin: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
+.report-box strong { color: var(--accent); }
+.guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
+.guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
+.guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.guide summary { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; line-height: 1.4; background: var(--bg-guide); transition: background 0.2s; }
+.guide summary:hover { background: var(--bg-guide-hover); }
+.guide summary::-webkit-details-marker { display: none; }
+.guide summary::after { content: '▼'; font-size: 10px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
+.guide[open] summary { background: var(--bg-btn); border-bottom: 1px solid var(--border); }
+.guide[open] summary::after { transform: rotate(180deg); }
+.guide-content { padding: 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.guide-content h3 { font-size: 14px; color: var(--text-primary); margin: 12px 0 8px; }
+.guide-content p { margin-bottom: 12px; }
+.guide-content ul, .guide-content ol { padding-left: 20px; margin-bottom: 12px; }
+.guide-content li { margin-bottom: 4px; }
+.related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+.related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+.tool-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 10px; text-decoration: none; transition: all 0.2s; }
+.tool-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.tool-icon { font-size: 24px; margin-bottom: 8px; }
+.tool-name { font-size: 12px; font-weight: 600; color: var(--text-primary); line-height: 1.3; }
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+
+@keyframes pop{ 0%{transform:scale(0.5);opacity:0} 70%{transform:scale(1.2)} 100%{transform:scale(1);opacity:1} }
+.anim-pop{animation:pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
+    <h1>🎰 Lotto Generator</h1>
+    <a href="/special-chars/lotto-gen/" class="back-btn">🌐 한국어</a>
+  </div>
+  
+  <div class="content">
+    <div class="main-display">
+      <div class="balls-container" id="ballsView">
+        <div class="ball b-empty">?</div>
+        <div class="ball b-empty">?</div>
+        <div class="ball b-empty">?</div>
+        <div class="ball b-empty">?</div>
+        <div class="ball b-empty">?</div>
+        <div class="ball b-empty">?</div>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:4px" id="genStatus">Generate your lucky numbers!</div>
+    </div>
+
+    <button class="gen-btn" onclick="generate()">Generate Numbers</button>
+
+    <div class="options-box">
+      <div class="opt-title">
+        <span>⚙️ Options (Optional)</span>
+      </div>
+      <div style="font-size:11px;color:var(--text-info);margin-bottom:8px">Click to set <b>Include (Blue)</b> or <b>Exclude (Red)</b>.</div>
+      <div class="num-grid" id="numGrid"></div>
+      <div class="opt-controls">
+        <span id="optCountInfo">Fixed: 0 · Excluded: 0</span>
+        <button class="reset-opt" onclick="resetOptions()">Reset</button>
+      </div>
+    </div>
+
+    <div class="history" id="historyBox" style="display:none">
+      <div class="history-title">History (Up to 10)</div>
+      <div class="hist-list" id="histList"></div>
+    </div>
+  </div>
+
+  <section class="guide-section">
+    <h2>💡 Comprehensive Guide to Generating Lotto Numbers</h2>
+    
+    <details class="guide" open>
+      <summary>1. How do I generate my lucky lotto numbers?</summary>
+      <div class="guide-content">
+        <p>Using our lottery number generator is very straightforward:</p>
+        <ul>
+          <li><strong>Generate:</strong> Click the "Generate Numbers" button to instantly pick 6 completely random, unique numbers from 1 to 45.</li>
+          <li><strong>Include (Blue):</strong> Click a number once in the options grid. This number will be <em>guaranteed</em> to appear in your final combination (You can include up to 5 numbers).</li>
+          <li><strong>Exclude (Red):</strong> Click a number twice. This number gives you total control by being explicitly <em>excluded</em> from the drawing pool.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>2. Are these random lottery numbers truly random?</summary>
+      <div class="guide-content">
+        <p>Yes. We use a cryptographically strong mathematical formula (the Fisher-Yates shuffle algorithm) directly in your browser. This ensures that every possible combination of lottery numbers has an equal, mathematically fair chance of being generated.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>3. What do the different ball colors mean?</summary>
+      <div class="guide-content">
+        <p>We use standard Korean 6/45 lottery colors for better visualization:</p>
+        <ul>
+          <li><strong>Yellow:</strong> Numbers 1 to 10</li>
+          <li><strong>Blue:</strong> Numbers 11 to 20</li>
+          <li><strong>Red:</strong> Numbers 21 to 30</li>
+          <li><strong>Gray:</strong> Numbers 31 to 40</li>
+          <li><strong>Green:</strong> Numbers 41 to 45</li>
+        </ul>
+      </div>
+    </details>
+
+    <div class="related-tools">
+      <h3>🛠️ Recommended Utility Tools</h3>
+      <div class="tools-grid">
+        <a href="/special-chars/en/pet-bmi-calc/" class="tool-card">
+          <span class="tool-icon">🐈‍⬛</span>
+          <span class="tool-name">Pet BMI Calculator</span>
+        </a>
+        <a href="/special-chars/en/password-gen/" class="tool-card">
+          <span class="tool-icon">🔒</span>
+          <span class="tool-name">Password Gen</span>
+        </a>
+        <a href="/special-chars/en/prompt-gen/" class="tool-card">
+          <span class="tool-icon">✍️</span>
+          <span class="tool-name">AI Prompt Gen</span>
+        </a>
+        <a href="/special-chars/en/discount-calc/" class="tool-card">
+          <span class="tool-icon">🛍️</span>
+          <span class="tool-name">Discount Calc</span>
+        </a>
+      </div>
+    </div>
+  </section>
+  <div class="footer"><span>Good luck! 🍀</span><a href="https://teemozipsa.github.io/en/">😺 More tools</a></div>
+</div>
+
+<script>
+let fixedNums = new Set();
+let exNums = new Set();
+const maxFixed = 5;
+let historyRecs = [];
+
+function initGrid() {
+  const g = document.getElementById('numGrid');
+  g.innerHTML = '';
+  for(let i=1; i<=45; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'num-btn';
+    btn.textContent = i;
+    btn.onclick = () => toggleNum(i, btn);
+    g.appendChild(btn);
+  }
+}
+
+function toggleNum(n, btn) {
+  if (fixedNums.has(n)) {
+    // Fixed -> Exclude
+    fixedNums.delete(n);
+    exNums.add(n);
+    btn.className = 'num-btn excluded';
+  } else if (exNums.has(n)) {
+    // Exclude -> Normal
+    exNums.delete(n);
+    btn.className = 'num-btn';
+  } else {
+    // Normal -> Fixed
+    if (fixedNums.size >= maxFixed) {
+      alert(`You can only include up to ${maxFixed} numbers.`);
+      return;
+    }
+    fixedNums.add(n);
+    btn.className = 'num-btn fixed';
+  }
+  updateOptInfo();
+}
+
+function updateOptInfo() {
+  document.getElementById('optCountInfo').textContent = `Fixed: ${fixedNums.size} · Excluded: ${exNums.size}`;
+}
+
+function resetOptions() {
+  fixedNums.clear();
+  exNums.clear();
+  document.querySelectorAll('.num-btn').forEach(b => b.className = 'num-btn');
+  updateOptInfo();
+}
+
+function getBallClass(n) {
+  if(n<=10) return 'b-yellow';
+  if(n<=20) return 'b-blue';
+  if(n<=30) return 'b-red';
+  if(n<=40) return 'b-gray';
+  return 'b-green';
+}
+
+function generate() {
+  const pool = [];
+  for(let i=1; i<=45; i++) {
+    if(!fixedNums.has(i) && !exNums.has(i)) {
+      pool.push(i);
+    }
+  }
+  
+  if (fixedNums.size + pool.length < 6) {
+    alert("Too few numbers in the pool! Remove some excluded numbers.");
+    return;
+  }
+
+  // Shuffle pool (Fisher-Yates)
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  
+  const result = Array.from(fixedNums);
+  const needed = 6 - result.length;
+  for(let i=0; i<needed; i++) {
+    result.push(pool[i]);
+  }
+  
+  result.sort((a,b) => a - b);
+  
+  renderBalls(result);
+  addHistory(result);
+}
+
+function renderBalls(nums) {
+  const v = document.getElementById('ballsView');
+  v.innerHTML = '';
+  nums.forEach((n, i) => {
+    const b = document.createElement('div');
+    b.className = `ball ${getBallClass(n)} anim-pop`;
+    b.style.animationDelay = `${i * 0.08}s`;
+    b.textContent = n;
+    v.appendChild(b);
+  });
+  document.getElementById('genStatus').textContent = "Your lucky numbers are ready!";
+}
+
+function addHistory(nums) {
+  historyRecs.unshift(nums);
+  if(historyRecs.length > 10) historyRecs.pop();
+  
+  const hbox = document.getElementById('historyBox');
+  const hlist = document.getElementById('histList');
+  hbox.style.display = 'block';
+  hlist.innerHTML = '';
+  
+  historyRecs.forEach((r, idx) => {
+    const item = document.createElement('div');
+    item.className = 'hist-item';
+    
+    // Nums
+    const ncont = document.createElement('div');
+    ncont.className = 'hist-nums';
+    r.forEach(n => {
+      const sp = document.createElement('span');
+      sp.className = 'hist-num';
+      sp.style.color = `var(--text-primary)`;
+      sp.textContent = String(n).padStart(2,'0');
+      ncont.appendChild(sp);
+    });
+    
+    // Copy button
+    const cbtn = document.createElement('button');
+    cbtn.className = 'copy-btn';
+    cbtn.textContent = 'Copy';
+    cbtn.onclick = () => {
+      navigator.clipboard.writeText(r.join(', '));
+      cbtn.textContent = 'Done';
+      setTimeout(()=>cbtn.textContent='Copy', 1000);
+    };
+    
+    item.appendChild(ncont);
+    item.appendChild(cbtn);
+    hlist.appendChild(item);
+  });
+}
+
+initGrid();
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>📏 Character Counter — TeemoZipsa</title>
+<meta name="description" content="Count characters (with/without spaces), words, lines, and bytes (UTF-8/EUC-KR) in real time.">
+<meta property="og:title" content="📏 Character Counter — TeemoZipsa">
+<meta property="og:description" content="Count characters (with/without spaces), words, lines, and bytes (UTF-8/EUC-KR) in real time.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/char-counter/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/char-counter/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/char-counter/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/char-counter/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px}
+  .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
+  .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .header h1{font-size:15px;font-weight:600;color:#fff}
+  .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+  .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.6);transition:transform .3s ease,opacity .3s ease;opacity:0;pointer-events:none;z-index:999}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  .bottom-bar{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
+  .bottom-bar .info{font-size:11px;color:var(--text-info)}
+  .action-btn{padding:8px 20px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+  .btn-clear{background:var(--bg-btn);color:var(--btn-clear-text)}.btn-clear:hover{background:var(--bg-btn-hover)}
+  .btn-copy{background:var(--accent);color:var(--text-on-accent)}.btn-copy:hover{background:var(--accent-hover)}
+
+  .counter-body{padding:12px;flex:1}
+  #counterInput{width:100%;height:200px;resize:vertical;background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:14px;padding:12px;font-family:inherit;outline:none;line-height:1.6}
+  #counterInput:focus{border-color:var(--accent)}
+  #counterInput::placeholder{color:var(--text-muted)588}
+  .limit-bar{display:flex;gap:8px;margin-top:10px;align-items:center}
+  .limit-bar select,.limit-bar input{background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:6px 10px;font-size:12px;font-family:inherit;outline:none}
+  .limit-bar select{cursor:pointer}
+  .limit-bar input{width:100px}
+  .stat-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}
+  .stat-card{background:var(--bg-input);border:1px solid var(--border);border-radius:8px;padding:12px 8px;text-align:center}
+  .stat-value{font-size:24px;font-weight:700;color:var(--text-primary);font-variant-numeric:tabular-nums}
+  .stat-label{font-size:11px;color:var(--text-info);margin-top:4px}
+  .stat-sub{font-size:9px;color:var(--calc-expr-text);margin-top:2px}
+  .progress-wrap{margin-top:12px}
+  .progress-bar{height:8px;background:var(--bg-btn);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;background:var(--accent);border-radius:4px;transition:width .2s,background-color .3s}
+  .progress-fill.warn{background:#e67e22}
+  .progress-fill.over{background:#e74c3c}
+  .progress-text{font-size:11px;color:var(--text-info);text-align:right;margin-top:4px}
+  @media(max-width:600px){.stat-cards{grid-template-columns:repeat(3,1fr)}}
+  /* Dynamic Report & Guide standard CSS */
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .report-box { margin-top: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
+  .report-box strong { color: var(--accent); }
+  .guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
+  .guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
+  .guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .guide summary { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; line-height: 1.4; background: var(--bg-guide); transition: background 0.2s; }
+  .guide summary:hover { background: var(--bg-guide-hover); }
+  .guide summary::-webkit-details-marker { display: none; }
+  .guide summary::after { content: '▼'; font-size: 10px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
+  .guide[open] summary { background: var(--bg-btn); border-bottom: 1px solid var(--border); }
+  .guide[open] summary::after { transform: rotate(180deg); }
+  .guide-content { padding: 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .guide-content h3 { font-size: 14px; color: var(--text-primary); margin: 12px 0 8px; }
+  .guide-content p { margin-bottom: 12px; }
+  .guide-content ul, .guide-content ol { padding-left: 20px; margin-bottom: 12px; }
+  .guide-content li { margin-bottom: 4px; }
+  .related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+  .related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+  .tool-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; text-decoration: none; color: var(--text-secondary); transition: all 0.2s; text-align: center; gap: 6px; }
+  .tool-card:hover { background: var(--accent); color: var(--text-on-accent); border-color: var(--accent); transform: translateY(-2px); }
+  .tool-icon { font-size: 20px; }
+  .tool-name { font-size: 11px; font-weight: 600; }
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
+    <h1>📏 Character Counter</h1>
+    <a href="/special-chars/char-counter/" class="back-btn">🌐 한국어</a>
+  </div>
+
+  <div class="counter-body">
+    <textarea id="counterInput" placeholder="Type or paste your text here..." oninput="updateCounter()"></textarea>
+
+    <div class="limit-bar">
+      <select id="limitType" onchange="updateCounter()">
+        <option value="none">No Limit</option>
+        <option value="chars">Character Limit</option>
+        <option value="bytes-utf8">Byte Limit (UTF-8)</option>
+        <option value="bytes-euckr">Byte Limit (EUC-KR)</option>
+      </select>
+      <input type="number" id="limitValue" placeholder="e.g. 500" oninput="updateCounter()" style="display:none">
+    </div>
+
+    <div class="stat-cards">
+      <div class="stat-card"><div class="stat-value" id="statChars">0</div><div class="stat-label">Total Chars</div></div>
+      <div class="stat-card"><div class="stat-value" id="statNoSpace">0</div><div class="stat-label">Without spaces</div></div>
+      <div class="stat-card"><div class="stat-value" id="statWords">0</div><div class="stat-label">Words</div></div>
+      <div class="stat-card"><div class="stat-value" id="statLines">0</div><div class="stat-label">Lines</div></div>
+      <div class="stat-card"><div class="stat-value" id="statBytes">0</div><div class="stat-label">Bytes</div><div class="stat-sub" id="statBytesType">UTF-8</div></div>
+    </div>
+
+    <div class="progress-wrap" id="progressWrap" style="display:none">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-text" id="progressText">0 / 500</div>
+    </div>
+    
+    <div id="reportBox" class="report-box" style="display:none;"></div>
+  </div>
+
+  <section class="guide-section">
+    <h2>💡 Comprehensive Guide to Character Counter</h2>
+    
+    <details class="guide" open>
+      <summary>1. Why do EUC-KR and UTF-8 byte calculations differ?</summary>
+      <div class="guide-content">
+        <p>• <strong>EUC-KR:</strong> Counts 1 Korean/Chinese character as <strong>2 bytes</strong>. Often used by older corporate systems.</p>
+        <p>• <strong>UTF-8:</strong> Counts 1 Korean/Chinese character as <strong>3 bytes</strong>. This is the modern web standard used by platforms like Google, Naver, and Kakao.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>2. How are words counted?</summary>
+      <div class="guide-content">
+        <p>Words are counted based on whitespace or line breaks separating text chunks. This is an essential metric for English essays, academic papers, and SEO optimization (e.g., verifying a 1,000-word criteria).</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>3. Tips for using the limit feature</summary>
+      <div class="guide-content">
+        <p>Setting a target limit activates a visual progress bar and dynamic report, highlighting exactly how many characters or bytes you have left or exceeded. This makes precise editing and proofreading much more efficient.</p>
+      </div>
+    </details>
+
+    <div class="related-tools">
+      <h3>🛠️ Useful Writing & Productivity Tools</h3>
+      <div class="tools-grid">
+        <a href="/special-chars/en/base64-tool/" class="tool-card">
+          <span class="tool-icon">🔣</span>
+          <span class="tool-name">Base64 Encoder</span>
+        </a>
+        <a href="/special-chars/en/password-gen/" class="tool-card">
+          <span class="tool-icon">🔑</span>
+          <span class="tool-name">Password Gen</span>
+        </a>
+        <a href="/special-chars/en/pdf-tool/" class="tool-card">
+          <span class="tool-icon">📄</span>
+          <span class="tool-name">PDF Editor Tool</span>
+        </a>
+        <a href="/special-chars/en/timer/" class="tool-card">
+          <span class="tool-icon">⏱️</span>
+          <span class="tool-name">Online Timer</span>
+        </a>
+      </div>
+    </div>
+  </section>
+    <div class="footer"><span>Real-time Analysis</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),1500)}
+
+// Auto-restore saved text on page load
+(function(){const saved=localStorage.getItem('charCounter_text');if(saved){document.getElementById('counterInput').value=saved;updateCounter()}})();
+
+function updateCounter(){
+  const text=document.getElementById('counterInput').value;
+  // Auto-save text to localStorage
+  try{localStorage.setItem('charCounter_text',text)}catch(e){}
+  const chars=[...text].length;
+  const noSpace=[...text.replace(/\s/g,'')].length;
+  const words=text.trim()?text.trim().split(/\s+/).length:0;
+  const lines=text?text.split('\n').length:0;
+  const utf8Bytes=new TextEncoder().encode(text).length;
+  const euckrBytes=calcEuckrBytes(text);
+  document.getElementById('statChars').textContent=chars.toLocaleString();
+  document.getElementById('statNoSpace').textContent=noSpace.toLocaleString();
+  document.getElementById('statWords').textContent=words.toLocaleString();
+  document.getElementById('statLines').textContent=lines.toLocaleString();
+  const limitType=document.getElementById('limitType').value;
+  if(limitType==='bytes-euckr'){document.getElementById('statBytes').textContent=euckrBytes.toLocaleString();document.getElementById('statBytesType').textContent='EUC-KR'}
+  else{document.getElementById('statBytes').textContent=utf8Bytes.toLocaleString();document.getElementById('statBytesType').textContent='UTF-8'}
+  document.getElementById('limitValue').style.display=limitType==='none'?'none':'';
+  updateProgress(limitType,chars,utf8Bytes,euckrBytes);
+  updateReportBox(text, chars, noSpace, words, limitType, utf8Bytes, euckrBytes);
+}
+
+function updateReportBox(text, chars, noSpace, words, limitType, utf8, euckr) {
+  const reportBox = document.getElementById('reportBox');
+  if(!text) {
+    reportBox.style.display = 'none';
+    return;
+  }
+  
+  let reportHTML = `The entered text is <strong>${chars.toLocaleString()} characters</strong> long (<strong>${noSpace.toLocaleString()} characters</strong> without spaces), and consists of <strong>${words.toLocaleString()} words</strong>.<br>`;
+  reportHTML += `In terms of storage bytes, it takes up <strong>${euckr.toLocaleString()} Bytes in EUC-KR</strong> and <strong>${utf8.toLocaleString()} Bytes in UTF-8</strong>.`;
+  
+  const limit = parseInt(document.getElementById('limitValue').value)||0;
+  if(limitType !== 'none' && limit > 0) {
+    let current = limitType==='chars' ? chars : (limitType==='bytes-utf8' ? utf8 : euckr);
+    let unit = limitType==='chars' ? 'chars' : 'Bytes';
+    let diff = limit - current;
+    if(diff > 0) {
+       reportHTML += `<br><br>👉 You have <strong>${diff.toLocaleString()} ${unit} remaining</strong> to reach your limit.`;
+    } else if (diff < 0) {
+       reportHTML += `<br><br>👉 You have exceeded your limit by <strong style="color:#e74c3c">${Math.abs(diff).toLocaleString()} ${unit}</strong>. Please shorten your text.`;
+    } else {
+       reportHTML += `<br><br>👉 Perfect! You have exactly hit your limit of ${limit.toLocaleString()} ${unit}.`;
+    }
+  }
+  
+  reportBox.innerHTML = reportHTML;
+  reportBox.style.display = 'block';
+}
+
+function calcEuckrBytes(text){let bytes=0;for(const ch of text){bytes+=ch.codePointAt(0)<=0x7F?1:2}return bytes}
+
+function updateProgress(limitType,chars,utf8,euckr){
+  const wrap=document.getElementById('progressWrap');
+  if(limitType==='none'){wrap.style.display='none';return}
+  const limit=parseInt(document.getElementById('limitValue').value)||0;
+  if(!limit){wrap.style.display='none';return}
+  wrap.style.display='';
+  let current=limitType==='chars'?chars:limitType==='bytes-utf8'?utf8:euckr;
+  const pct=Math.min((current/limit)*100,100);
+  const fill=document.getElementById('progressFill');
+  fill.style.width=pct+'%';
+  fill.className='progress-fill'+(current>limit?' over':pct>80?' warn':'');
+  document.getElementById('progressText').textContent=current.toLocaleString()+' / '+limit.toLocaleString()+(current>limit?' ⚠ Over limit!':'');
+}
+
+function clearCounter(){document.getElementById('counterInput').value='';try{localStorage.removeItem('charCounter_text')}catch(e){}updateCounter();document.getElementById('reportBox').style.display='none';showToast('Cleared')}
+
+function copyStats(){
+  const text=document.getElementById('counterInput').value;
+  const chars=[...text].length;const noSpace=[...text.replace(/\s/g,'')].length;
+  const words=text.trim()?text.trim().split(/\s+/).length:0;const lines=text?text.split('\n').length:0;
+  const utf8=new TextEncoder().encode(text).length;const euckr=calcEuckrBytes(text);
+  const result=`Total Characters: ${chars}\nWithout Spaces: ${noSpace}\nWords: ${words}\nLines: ${lines}\nUTF-8 Bytes: ${utf8}\nEUC-KR Bytes: ${euckr}`;
+  navigator.clipboard.writeText(result).then(()=>showToast('Stats copied to clipboard!'));
+}
+</script>
+<button class="scroll-top-btn" aria-label="Top">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

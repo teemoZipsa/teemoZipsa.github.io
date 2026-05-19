@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>🗜️ Image Compressor — TeemoZipsa</title>
+<meta name="description" content="Compress image file size instantly in your browser. 100% local processing with zero server uploads.">
+<meta property="og:title" content="🗜️ Image Compressor — TeemoZipsa">
+<meta property="og:description" content="Compress image file size instantly in your browser. 100% local processing with zero server uploads.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/image-compress/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/image-compress/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/image-compress/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/image-compress/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+  .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:500px;max-width:100%;overflow:hidden}
+  .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+  .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+  .header h1{font-size:15px;font-weight:600;color:#fff}
+  .body{padding:16px;display:flex;flex-direction:column;gap:14px}
+
+  .drop-zone{
+    border:2px dashed var(--border);border-radius:12px;padding:40px 20px;
+    text-align:center;cursor:pointer;transition:all .2s;
+    background:var(--bg-bar);
+  }
+  .drop-zone:hover,.drop-zone.dragover{border-color:var(--accent);background:var(--bg-hover)}
+  .drop-zone .icon{font-size:36px;margin-bottom:8px}
+  .drop-zone .text{font-size:13px;color:var(--calc-expr-text)}
+  .drop-zone .sub{font-size:11px;color:var(--text-placeholder);margin-top:4px}
+  .drop-zone input{display:none}
+
+  .controls{display:none;gap:14px;flex-direction:column}
+  .control-row{display:flex;align-items:center;gap:12px;background:var(--bg-bar);border-radius:10px;padding:12px 16px}
+  .control-row label{font-size:12px;color:var(--text-info);font-weight:600;white-space:nowrap;min-width:60px}
+  .slider{flex:1;-webkit-appearance:none;appearance:none;height:6px;background:var(--bg-btn);border-radius:3px;outline:none}
+  .slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--accent);border-radius:50%;cursor:pointer;border:2px solid var(--border-hover)}
+  .slider::-moz-range-thumb{width:18px;height:18px;background:var(--accent);border-radius:50%;cursor:pointer;border:2px solid var(--border-hover)}
+  .val{font-size:14px;color:var(--text-amount);font-weight:700;min-width:48px;text-align:right}
+  .control-row input[type=number]{background:var(--bg-input);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:6px 8px;font-size:13px;width:80px;outline:none;font-family:inherit}
+
+  .preview{display:none;gap:12px}
+  .preview-card{flex:1;background:var(--bg-bar);border-radius:10px;padding:12px;text-align:center;min-width:0}
+  .preview-card img{max-width:100%;max-height:140px;border-radius:6px;margin-bottom:8px;object-fit:contain}
+  .preview-label{font-size:10px;color:var(--calc-expr-text);margin-bottom:2px}
+  .preview-size{font-size:14px;font-weight:700;color:var(--text-amount)}
+  .preview-dim{font-size:10px;color:var(--text-muted)}
+  .saved{font-size:14px;font-weight:700;color:var(--text-success);text-align:center;padding:4px}
+
+  .btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .2s}
+  .btn-dl{background:linear-gradient(135deg,#533483,#6b44a3);color:#fff}
+  .btn-dl:hover{opacity:.9}
+  .btn-reset{background:var(--bg-bar);border:1px solid var(--border);color:var(--text-info);margin-top:4px}
+
+  .privacy{font-size:10px;color:var(--text-placeholder);text-align:center}
+
+  .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text)}
+  .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+  .footer a:hover{color:var(--text-guide)}
+/* Dynamic Report & Guide standard CSS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.report-box { margin: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
+.report-box strong { color: var(--accent); }
+.guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
+.guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
+.guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.guide summary { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; line-height: 1.4; background: var(--bg-guide); transition: background 0.2s; }
+.guide summary:hover { background: var(--bg-guide-hover); }
+.guide summary::-webkit-details-marker { display: none; }
+.guide summary::after { content: '▼'; font-size: 10px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
+.guide[open] summary { background: var(--bg-btn); border-bottom: 1px solid var(--border); }
+.guide[open] summary::after { transform: rotate(180deg); }
+.guide-content { padding: 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.guide-content h3 { font-size: 14px; color: var(--text-primary); margin: 12px 0 8px; }
+.guide-content p { margin-bottom: 12px; }
+.guide-content ul, .guide-content ol { padding-left: 20px; margin-bottom: 12px; }
+.guide-content li { margin-bottom: 4px; }
+.related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+.related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+.tool-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 10px; text-decoration: none; transition: all 0.2s; }
+.tool-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.tool-icon { font-size: 24px; margin-bottom: 8px; }
+.tool-name { font-size: 12px; font-weight: 600; color: var(--text-primary); line-height: 1.3; }
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
+    <h1>🗜️ Image Compressor</h1>
+    <a href="/special-chars/image-compress/" class="back-btn">🌐 한국어</a>
+  </div>
+  <div class="body">
+    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+      <div class="icon">📁</div>
+      <div class="text">Click or Drag image here</div>
+      <div class="sub">Supports JPG, PNG, WebP · No server uploads</div>
+      <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" onchange="handleFile(this.files[0])">
+    </div>
+
+    <div class="controls" id="controls">
+      <div class="control-row">
+        <label>Quality</label>
+        <input type="range" class="slider" id="quality" min="10" max="100" value="70" oninput="updateQualLabel();compress()">
+        <span class="val" id="qualVal">70%</span>
+      </div>
+      <div class="control-row">
+        <label>Max Width</label>
+        <input type="number" id="maxWidth" value="1920" min="100" max="10000" onchange="compress()">
+        <span class="val" style="min-width:auto;font-size:11px;color:var(--calc-expr-text)">px</span>
+      </div>
+    </div>
+
+    <div class="preview" id="preview">
+      <div class="preview-card">
+        <div class="preview-label">Original</div>
+        <img id="origImg">
+        <div class="preview-size" id="origSize">-</div>
+        <div class="preview-dim" id="origDim">-</div>
+      </div>
+      <div class="preview-card">
+        <div class="preview-label">Compressed</div>
+        <img id="compImg">
+        <div class="preview-size" id="compSize">-</div>
+        <div class="preview-dim" id="compDim">-</div>
+      </div>
+    </div>
+    <div class="saved" id="saved"></div>
+
+    <button class="btn btn-dl" id="dlBtn" style="display:none" onclick="download()">📥 Download Compressed Image</button>
+    <button class="btn btn-reset" id="resetBtn" style="display:none" onclick="reset()">🔄 Choose another image</button>
+
+    <div class="privacy">🔒 Your images are processed entirely in your browser and are never uploaded.</div>
+  </div>
+  <section class="guide-section">
+    <h2>💡 Comprehensive Guide to Image Compression</h2>
+    
+    <details class="guide" open>
+      <summary>1. How do I compress images in my browser?</summary>
+      <div class="guide-content">
+        <p>Our image compressor works entirely within your web browser. Follow these simple steps:</p>
+        <ol>
+          <li>Drag and drop your image (JPG, PNG, WebP) into the drop zone.</li>
+          <li>Adjust the <strong>Quality</strong> slider. Lowering the quality reduces the file size more significantly.</li>
+          <li>Set a <strong>Max Width</strong> to resize large photos automatically.</li>
+          <li>Compare the original and compressed sizes in real-time, then click <strong>Download</strong>.</li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>2. Is my picture data safe? Do you upload it?</summary>
+      <div class="guide-content">
+        <p>Yes, your privacy is 100% guaranteed. Because our tool uses <strong>local browser processing</strong>, your images are never uploaded to any server. All compression and resizing happens directly on your own device, making it safe for sensitive or private photos.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>3. Why compress images?</summary>
+      <div class="guide-content">
+        <p>Reducing image file size is essential for web performance and storage management. Lighter images load faster on websites (boosting SEO), consume less mobile data, and make it easier to attach photos to emails or upload them to social media platforms that have file size limits.</p>
+      </div>
+    </details>
+
+    <div class="related-tools">
+      <h3>🛠️ Recommended Utility Tools</h3>
+      <div class="tools-grid">
+        <a href="/special-chars/en/image-format-converter/" class="tool-card">
+          <span class="tool-icon">🔄</span>
+          <span class="tool-name">Format Converter</span>
+        </a>
+        <a href="/special-chars/en/qr-code/" class="tool-card">
+          <span class="tool-icon">📱</span>
+          <span class="tool-name">QR Code</span>
+        </a>
+        <a href="/special-chars/en/color-picker/" class="tool-card">
+          <span class="tool-icon">🎨</span>
+          <span class="tool-name">Color Picker</span>
+        </a>
+        <a href="/special-chars/en/pdf-tool/" class="tool-card">
+          <span class="tool-icon">📄</span>
+          <span class="tool-name">PDF Editor</span>
+        </a>
+      </div>
+    </div>
+  </section>
+    <div class="footer"><span>100% Local Browser Processing</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+<script>
+let origFile = null, compressedBlob = null, origImg = new Image();
+
+// 드래그 앤 드롭
+const dz = document.getElementById('dropZone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('dragover'); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
+
+function handleFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  origFile = file;
+  const url = URL.createObjectURL(file);
+  document.getElementById('origImg').src = url;
+  document.getElementById('origSize').textContent = fmtBytes(file.size);
+  origImg.onload = () => {
+    document.getElementById('origDim').textContent = origImg.width + ' × ' + origImg.height;
+    document.getElementById('maxWidth').value = Math.min(origImg.width, 1920);
+    compress();
+  };
+  origImg.src = url;
+  dz.style.display = 'none';
+  document.getElementById('controls').style.display = 'flex';
+  document.getElementById('preview').style.display = 'flex';
+  document.getElementById('dlBtn').style.display = 'block';
+  document.getElementById('resetBtn').style.display = 'block';
+}
+
+function updateQualLabel() {
+  document.getElementById('qualVal').textContent = document.getElementById('quality').value + '%';
+}
+
+function compress() {
+  if (!origImg.width) return;
+  const quality = parseInt(document.getElementById('quality').value) / 100;
+  const maxW = parseInt(document.getElementById('maxWidth').value) || origImg.width;
+  let w = origImg.width, h = origImg.height;
+  if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(origImg, 0, 0, w, h);
+
+  canvas.toBlob(blob => {
+    compressedBlob = blob;
+    document.getElementById('compImg').src = URL.createObjectURL(blob);
+    document.getElementById('compSize').textContent = fmtBytes(blob.size);
+    document.getElementById('compDim').textContent = w + ' × ' + h;
+
+    const saved = ((1 - blob.size / origFile.size) * 100).toFixed(1);
+    const savedEl = document.getElementById('saved');
+    if (saved > 0) {
+      savedEl.textContent = `🎉 Reduced by ${saved}%! (${fmtBytes(origFile.size)} → ${fmtBytes(blob.size)})`;
+      savedEl.style.color = 'var(--text-success)';
+    } else {
+      savedEl.textContent = `⚠️ File size increased. Try lowering the quality.`;
+      savedEl.style.color = 'var(--text-error, #f87171)';
+    }
+  }, 'image/jpeg', quality);
+}
+
+function download() {
+  if (!compressedBlob) return;
+  const a = document.createElement('a');
+  const name = origFile.name.replace(/\.[^.]+$/, '') + '_compressed.jpg';
+  a.href = URL.createObjectURL(compressedBlob);
+  a.download = name;
+  a.click();
+}
+
+function reset() {
+  origFile = null; compressedBlob = null;
+  dz.style.display = '';
+  document.getElementById('controls').style.display = 'none';
+  document.getElementById('preview').style.display = 'none';
+  document.getElementById('dlBtn').style.display = 'none';
+  document.getElementById('resetBtn').style.display = 'none';
+  document.getElementById('saved').textContent = '';
+  document.getElementById('fileInput').value = '';
+}
+
+function fmtBytes(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+  return (b/1048576).toFixed(2) + ' MB';
+}
+</script>
+<button class="scroll-top-btn" aria-label="Top">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

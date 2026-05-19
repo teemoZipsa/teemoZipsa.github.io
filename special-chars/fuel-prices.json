@@ -1,0 +1,9 @@
+{
+  "updated": "2026-03-30",
+  "source": "opinet",
+  "prices": {
+    "gasoline": 1819,
+    "diesel": 1815,
+    "lpg": 1011
+  }
+}

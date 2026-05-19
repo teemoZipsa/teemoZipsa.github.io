@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>📊 BMI Calculator — TeemoZipsa</title>
+<meta name="description" content="BMI (Body Mass Index) Calculator. Enter your height and weight to instantly check your BMI and weight category based on WHO standards.">
+<meta property="og:title" content="📊 BMI Calculator — TeemoZipsa">
+<meta property="og:description" content="BMI (Body Mass Index) Calculator. Enter your height and weight to instantly check your BMI and weight category.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/bmi-calc/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/bmi-calc/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/bmi-calc/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/bmi-calc/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
+.app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+.body{padding:20px;display:flex;flex-direction:column;gap:16px}
+
+.input-group{display:flex;flex-direction:column;gap:4px}
+.input-group label{font-size:12px;color:var(--text-info);font-weight:600}
+.input-row{display:flex;align-items:center;gap:8px}
+.input-row input{flex:1;padding:12px 14px;background:var(--bg-guide);border:1.5px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:18px;font-family:inherit;font-weight:700;outline:none;transition:border-color .2s;text-align:center}
+.input-row input:focus{border-color:var(--accent)}
+.input-row .unit{font-size:14px;color:var(--text-info);font-weight:600;min-width:24px}
+
+.result-card{border-radius:16px;padding:24px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .3s}
+.result-bmi{font-size:56px;font-weight:800;letter-spacing:-2px}
+.result-label{font-size:18px;font-weight:700}
+.result-emoji{font-size:48px}
+
+.gauge-wrap{width:100%;padding:0 8px}
+.gauge-bar{height:12px;border-radius:6px;background:linear-gradient(to right,#3b82f6 0%,#22c55e 25%,#facc15 50%,#f97316 70%,#ef4444 100%);position:relative;margin:8px 0}
+.gauge-marker{position:absolute;top:-6px;width:4px;height:24px;background:var(--text-primary);border-radius:2px;transition:left .4s ease;box-shadow:0 0 4px rgba(0,0,0,.3)}
+.gauge-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);padding:0 2px}
+
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.info-item{background:var(--bg-guide);border-radius:10px;padding:12px;text-align:center}
+.info-item .label{font-size:11px;color:var(--text-info);margin-bottom:2px}
+.info-item .value{font-size:16px;font-weight:700;color:var(--text-primary)}
+
+.bmi-table{width:100%;border-collapse:collapse;font-size:12px}
+.bmi-table th{background:var(--bg-btn);padding:8px;color:var(--text-secondary);font-weight:600;text-align:center}
+.bmi-table td{padding:8px;border-bottom:1px solid var(--border);text-align:center;color:var(--text-info)}
+.bmi-table tr.current{background:var(--accent-bg);font-weight:700}
+.bmi-table tr.current td{color:var(--accent)}
+
+/* Dynamic Report & Guide standard CSS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.report-box { margin-top: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
+.report-box strong { color: var(--accent); }
+  .guide-section{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+  .guide-section h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
+  .guide:last-child{margin-bottom:0}
+  .guide summary{padding:12px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--bg-guide);transition:background .2s}
+  .guide summary::-webkit-details-marker{display:none}
+  .guide summary::after{content:'▼';font-size:10px;color:var(--text-muted);transition:transform .3s}
+  .guide[open] summary::after{transform:rotate(180deg)}
+  .guide summary:hover{background:var(--bg-guide-hover)}
+  .guide-content{padding:14px;font-size:13px;color:var(--text-info);line-height:1.6;border-top:1px solid var(--border);background:var(--bg-app)}
+  .related-tools{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+  .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+  .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
+  .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.4);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
+    <h1>📊 BMI Calculator</h1>
+    <a href="/special-chars/bmi-calc/" class="back-btn">🌐 한국어</a>
+  </div>
+  <div class="body">
+    <div class="input-group">
+      <label>Height (cm)</label>
+      <div class="input-row">
+        <input type="number" id="height" value="170" min="50" max="250" step="1" oninput="calc()">
+        <span class="unit">cm</span>
+      </div>
+    </div>
+    <div class="input-group">
+      <label>Weight (kg)</label>
+      <div class="input-row">
+        <input type="number" id="weight" value="65" min="10" max="300" step="0.1" oninput="calc()">
+        <span class="unit">kg</span>
+      </div>
+    </div>
+
+    <div class="result-card" id="resultCard">
+      <div class="result-emoji" id="emoji">⏳</div>
+      <div class="result-bmi" id="bmiValue">-</div>
+      <div class="result-label" id="bmiLabel">Enter values</div>
+    </div>
+
+    <div class="gauge-wrap">
+      <div class="gauge-bar"><div class="gauge-marker" id="gaugeMarker" style="left:30%"></div></div>
+      <div class="gauge-labels">
+        <span>Underweight</span><span>Normal</span><span>Overweight</span><span>Obese</span><span>Severe</span>
+      </div>
+    </div>
+
+    <div class="info-grid" id="infoGrid"></div>
+
+    <table class="bmi-table" id="bmiTable">
+      <thead><tr><th>Category</th><th>BMI Range</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr data-range="under"><td>Underweight</td><td>&lt; 18.5</td><td>🔵</td></tr>
+        <tr data-range="normal"><td>Normal weight</td><td>18.5 ~ 24.9</td><td>🟢</td></tr>
+        <tr data-range="over"><td>Overweight</td><td>25.0 ~ 29.9</td><td>🟡</td></tr>
+        <tr data-range="obese1"><td>Obesity Class I</td><td>30.0 ~ 34.9</td><td>🟠</td></tr>
+        <tr data-range="obese2"><td>Obesity Class II</td><td>35.0 ~ 39.9</td><td>🔴</td></tr>
+        <tr data-range="obese3"><td>Obesity Class III</td><td>&ge; 40.0</td><td>🔴</td></tr>
+      </tbody>
+    </table>
+    <div id="reportBox" class="report-box" style="display:none;"></div>
+  </div>
+
+  <section class="guide-section">
+    <h2>💡 Comprehensive Guide to BMI Calculator</h2>
+    
+    <details class="guide" open>
+      <summary>1. What exactly is BMI?</summary>
+      <div class="guide-content">
+        <p><strong>BMI (Body Mass Index)</strong> is a standardized metric used to estimate total body fat based on a person's height and weight. It acts as a quick screening tool for weight categories that may lead to health problems, rather than a diagnostic tool for body fatness or health.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>2. Are these categories applicable to everyone?</summary>
+      <div class="guide-content">
+        <p>While the World Health Organization (WHO) provides these general guidelines for adults, BMI has limitations. It does not distinguish between muscle and fat mass, meaning athletes or highly muscular individuals might score as "overweight" while maintaining a very low body fat percentage. It also doesn't consider age or gender-specific fat distribution.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>3. Why is "Ideal weight" set to BMI 22?</summary>
+      <div class="guide-content">
+        <p>Statistically, a BMI of 22 is often correlated with the lowest rates of morbidity and mortality in general population studies. This tool calculates the distance from your current weight to a theoretical weight that would yield a solid BMI of 22 for your specific height.</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="related-tools">
+    <h2>🔗 Useful Health & Lifestyle Calculators</h2>
+    <div class="tools-grid">
+      <a href="/special-chars/en/calorie-calc/" class="tool-card">🔥 Calorie Calculator</a>
+      <a href="/special-chars/en/pet-bmi-calc/" class="tool-card">🐶 Pet BMI Calculator</a>
+      <a href="/special-chars/en/pet-food-calc/" class="tool-card">🥫 Pet Food Calculator</a>
+      <a href="/special-chars/en/pet-age-calc/" class="tool-card">🐾 Pet Age Calculator</a>
+    </div>
+  </section>
+
+    <div class="footer"><span>WHO Standards</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="scroll-top-btn" aria-label="Top">↑</button>
+
+<script>
+const RANGES = [
+  { max: 18.5, name: 'Underweight', emoji: '🔵', color: '#3b82f6', range: 'under', tip: 'Consider increasing your calorie intake safely' },
+  { max: 25.0, name: 'Normal weight', emoji: '🟢', color: '#22c55e', range: 'normal', tip: 'Great job! Keep up the healthy lifestyle' },
+  { max: 30.0, name: 'Overweight', emoji: '🟡', color: '#facc15', range: 'over', tip: 'Consider a balanced diet and regular exercise' },
+  { max: 35.0, name: 'Obesity Class I', emoji: '🟠', color: '#f97316', range: 'obese1', tip: 'Consider weight management strategies' },
+  { max: 40.0, name: 'Obesity Class II', emoji: '🔴', color: '#ef4444', range: 'obese2', tip: 'Consulting a healthcare provider is recommended' },
+  { max: 999.0, name: 'Obesity Class III', emoji: '🔴', color: '#dc2626', range: 'obese3', tip: 'Consulting a healthcare provider is highly recommended' },
+];
+
+function calc() {
+  const h = parseFloat(document.getElementById('height').value) / 100; // m
+  const w = parseFloat(document.getElementById('weight').value);
+
+  if (!h || !w || h <= 0 || w <= 0) return;
+
+  const bmi = w / (h * h);
+  const range = RANGES.find(r => bmi < r.max);
+
+  // Result card
+  document.getElementById('bmiValue').textContent = bmi.toFixed(1);
+  document.getElementById('bmiLabel').textContent = range.name;
+  document.getElementById('bmiLabel').style.color = range.color;
+  document.getElementById('bmiValue').style.color = range.color;
+  document.getElementById('emoji').textContent = range.emoji;
+
+  // Gauge marker (BMI 15~40 mapped to 0~100%)
+  const pct = Math.max(0, Math.min(100, ((bmi - 15) / 25) * 100));
+  document.getElementById('gaugeMarker').style.left = pct + '%';
+
+  // Highlight table row
+  document.querySelectorAll('.bmi-table tbody tr').forEach(tr => {
+    tr.classList.toggle('current', tr.dataset.range === range.range);
+  });
+
+  // Info grid (WHO values)
+  const normalMin = 18.5 * h * h;
+  const normalMax = 24.9 * h * h;
+  const idealWeight = 22 * h * h; // standard BMI 22
+  const diffToIdeal = w - idealWeight;
+
+  document.getElementById('infoGrid').innerHTML = `
+    <div class="info-item">
+      <div class="label">Normal weight range</div>
+      <div class="value">${normalMin.toFixed(1)} ~ ${normalMax.toFixed(1)} kg</div>
+    </div>
+    <div class="info-item">
+      <div class="label">Ideal weight (BMI 22)</div>
+      <div class="value">${idealWeight.toFixed(1)} kg</div>
+    </div>
+    <div class="info-item">
+      <div class="label">Difference from ideal</div>
+      <div class="value" style="color:${diffToIdeal > 0 ? '#f97316' : diffToIdeal < -3 ? '#3b82f6' : '#22c55e'}">${diffToIdeal > 0 ? '+' : ''}${diffToIdeal.toFixed(1)} kg</div>
+    </div>
+    <div class="info-item">
+      <div class="label">💡 Tip</div>
+      <div class="value" style="font-size:12px;font-weight:500">${range.tip}</div>
+    </div>
+  `;
+
+  // Dynamic Report
+  const inputHeight = document.getElementById('height').value;
+  const inputWeight = document.getElementById('weight').value;
+  const reportBox = document.getElementById('reportBox');
+  reportBox.innerHTML = `<strong>Health Analysis:</strong> Based on the height of ${inputHeight}cm and weight of ${inputWeight}kg, your BMI is exactly <strong>${bmi.toFixed(1)}</strong>. This falls into the <strong>${range.name}</strong> category.`;
+  reportBox.style.display = 'block';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+calc();
+
+(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

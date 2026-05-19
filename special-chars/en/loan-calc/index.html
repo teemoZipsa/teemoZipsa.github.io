@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>🏦 Loan Calculator — TeemoZipsa</title>
+<meta name="description" content="Loan interest calculator. Compare monthly payments and total interest across equal principal & interest, equal principal, and bullet repayment methods.">
+<meta property="og:title" content="🏦 Loan Calculator — TeemoZipsa">
+<meta property="og:description" content="Loan interest calculator. Compare monthly payments and total interest across repayment methods.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/loan-calc/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/loan-calc/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/loan-calc/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/loan-calc/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
+.app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:600px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+.body{padding:16px;display:flex;flex-direction:column;gap:14px}
+
+.input-group{display:flex;flex-direction:column;gap:4px}
+.input-group label{font-size:12px;color:var(--text-info);font-weight:600}
+.input-row{display:flex;align-items:center;gap:8px}
+.input-row input,.input-row select{flex:1;padding:10px 12px;background:var(--bg-guide);border:1.5px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:15px;font-family:inherit;font-weight:600;outline:none;transition:border-color .2s}
+.input-row input:focus,.input-row select:focus{border-color:var(--accent)}
+.input-row .unit{font-size:13px;color:var(--text-info);font-weight:600;white-space:nowrap;min-width:24px}
+
+.tabs{display:flex;gap:4px;background:var(--bg-bar);border-radius:10px;padding:4px}
+.tab{flex:1;padding:10px 6px;border:none;border-radius:8px;background:transparent;color:var(--text-info);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;text-align:center;line-height:1.2}
+.tab.active{background:var(--accent);color:var(--text-on-accent);box-shadow:0 2px 8px rgba(83,52,131,.3)}
+.tab:hover:not(.active){background:var(--bg-btn)}
+
+.summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.summary-card{background:var(--accent-bg);border:1.5px solid var(--accent);border-radius:10px;padding:14px 10px;text-align:center}
+.summary-card.highlight{background:var(--accent);border-color:var(--accent)}
+.summary-card.highlight .s-value{color:var(--text-on-accent)}
+.summary-card.highlight .s-label{color:rgba(255,255,255,.8)}
+.s-label{font-size:11px;color:var(--text-info);margin-bottom:4px}
+.s-value{font-size:20px;font-weight:800;color:var(--accent)}
+.s-sub{font-size:11px;color:var(--text-info);margin-top:2px}
+
+.schedule-toggle{width:100%;padding:10px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;text-align:center}
+.schedule-toggle:hover{background:var(--bg-btn-hover)}
+
+.schedule-wrap{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.schedule-wrap.open{max-height:9999px}
+.schedule{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.schedule th{background:var(--bg-btn);padding:8px 6px;color:var(--text-info);font-weight:600;text-align:right;position:sticky;top:0}
+.schedule th:first-child{text-align:center}
+.schedule td{padding:7px 6px;border-bottom:1px solid var(--border);text-align:right;font-variant-numeric:tabular-nums;color:var(--text-secondary)}
+.schedule td:first-child{text-align:center;color:var(--text-info)}
+.schedule tr:last-child td{font-weight:700;color:var(--accent);border-top:2px solid var(--accent)}
+.schedule-scroll{max-height:400px;overflow-y:auto}
+.schedule-scroll::-webkit-scrollbar{width:4px}
+.schedule-scroll::-webkit-scrollbar-thumb{background:var(--bg-btn-hover);border-radius:2px}
+
+.compare{background:var(--bg-guide);border-radius:10px;padding:14px;font-size:12px;color:var(--text-info);line-height:1.6}
+.compare strong{color:var(--text-primary)}
+.compare .diff{color:var(--accent);font-weight:700}
+
+/* Dynamic Report & Guide standard CSS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.report-box { margin: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
+.report-box strong { color: var(--accent); }
+.guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
+.guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
+.guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.guide summary { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; line-height: 1.4; background: var(--bg-guide); transition: background 0.2s; }
+.guide summary:hover { background: var(--bg-guide-hover); }
+.guide summary::-webkit-details-marker { display: none; }
+.guide summary::after { content: '▼'; font-size: 10px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
+.guide[open] summary { background: var(--bg-btn); border-bottom: 1px solid var(--border); }
+.guide[open] summary::after { transform: rotate(180deg); }
+.guide-content { padding: 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.guide-content h3 { font-size: 14px; color: var(--text-primary); margin: 12px 0 8px; }
+.guide-content p { margin-bottom: 12px; }
+.guide-content ul, .guide-content ol { padding-left: 20px; margin-bottom: 12px; }
+.guide-content li { margin-bottom: 4px; }
+.related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+.related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+.tool-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 10px; text-decoration: none; transition: all 0.2s; }
+.tool-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.tool-icon { font-size: 24px; margin-bottom: 8px; }
+.tool-name { font-size: 12px; font-weight: 600; color: var(--text-primary); line-height: 1.3; }
+
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.4);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){
+  .scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}
+  .summary{grid-template-columns:1fr}
+  .s-value{font-size:18px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
+    <h1>🏦 Loan Calculator</h1>
+    <a href="/special-chars/loan-calc/" class="back-btn">🌐 한국어</a>
+  </div>
+  <div class="body">
+    <div class="input-group">
+      <label>Loan Amount</label>
+      <div class="input-row">
+        <input type="number" id="principal" value="100000" min="0" step="10000" oninput="calc()">
+        <span class="unit">$</span>
+      </div>
+    </div>
+    <div class="input-group">
+      <label>Annual Interest Rate</label>
+      <div class="input-row">
+        <input type="number" id="rate" value="4.5" min="0" max="30" step="0.1" oninput="calc()">
+        <span class="unit">%</span>
+      </div>
+    </div>
+    <div class="input-group">
+      <label>Loan Term</label>
+      <div class="input-row">
+        <input type="number" id="years" value="30" min="1" max="50" step="1" oninput="calc()">
+        <span class="unit">years</span>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="setMethod(0)">Fixed Payment</button>
+      <button class="tab" onclick="setMethod(1)">Fixed Principal</button>
+      <button class="tab" onclick="setMethod(2)">Interest Only</button>
+    </div>
+
+    <div class="summary" id="summary"></div>
+    <div class="compare" id="compare"></div>
+
+    <button class="schedule-toggle" id="scheduleBtn" onclick="toggleSchedule()">📋 View Monthly Payment Schedule</button>
+    <div class="schedule-wrap" id="scheduleWrap">
+      <div class="schedule-scroll">
+        <table class="schedule" id="scheduleTable"></table>
+      </div>
+    </div>
+  </div>
+
+  <section class="guide-section">
+    <h2>💡 Comprehensive Guide to Loan Calculations</h2>
+    
+    <details class="guide" open>
+      <summary>1. How do the three repayment methods differ?</summary>
+      <div class="guide-content">
+        <p>Understanding repayment structures will help you save money:</p>
+        <ul>
+          <li><strong>Fixed Payment (Amortized):</strong> You pay the exact same amount every month. Early payments are mostly interest; later payments are mostly principal. Best for predictable budgeting.</li>
+          <li><strong>Fixed Principal:</strong> You pay a fixed amount of the principal each month, plus interest on the remaining balance. Your monthly payment decreases over time. Under the same conditions, this results in the <strong>lowest overall interest</strong> paid.</li>
+          <li><strong>Interest Only (Bullet):</strong> You only pay interest each month. The entire principal sum remains due at the very end of the loan term. This results in the highest overall interest paid.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>2. Why use this specific loan calculator?</summary>
+      <div class="guide-content">
+        <p>Our online loan calculator allows you to instantly generate an exact <strong>monthly payment schedule (amortization schedule)</strong>. More importantly, it automatically compares all three repayment methods and shows you exactly how much money you can save in interest by choosing one structure over another.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>3. Can I calculate mortgages and auto loans here?</summary>
+      <div class="guide-content">
+        <p>Yes. Simply adjust the <strong>Loan Amount</strong>, <strong>Annual Interest Rate</strong>, and <strong>Loan Term (in years)</strong>. The underlying math applies perfectly to mortgages, auto loans, personal loans, and student loans.</p>
+      </div>
+    </details>
+
+    <div class="related-tools">
+      <h3>🛠️ Recommended Utility Tools</h3>
+      <div class="tools-grid">
+        <a href="/special-chars/en/compound-interest/" class="tool-card">
+          <span class="tool-icon">📈</span>
+          <span class="tool-name">Compound Interest</span>
+        </a>
+        <a href="/special-chars/en/wage-calc/" class="tool-card">
+          <span class="tool-icon">💰</span>
+          <span class="tool-name">Wage Calculator</span>
+        </a>
+        <a href="/special-chars/en/percent-calc/" class="tool-card">
+          <span class="tool-icon">📊</span>
+          <span class="tool-name">Percentage Calc</span>
+        </a>
+        <a href="/special-chars/en/discount-calc/" class="tool-card">
+          <span class="tool-icon">🛍️</span>
+          <span class="tool-name">Discount Calc</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+    <div class="footer"><span>Real-time Calculation · Interest Comparison</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="scroll-top-btn" aria-label="Top">↑</button>
+
+<script>
+let method = 0; // 0=Fixed Payment, 1=Fixed Principal, 2=Interest Only
+let scheduleOpen = false;
+
+function setMethod(m) {
+  method = m;
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i===m));
+  calc();
+}
+
+function fmt(n) { return Math.round(n).toLocaleString('en-US'); }
+
+function calc() {
+  const P = parseFloat(document.getElementById('principal').value) || 0;
+  const annualRate = parseFloat(document.getElementById('rate').value) || 0;
+  const years = parseInt(document.getElementById('years').value) || 0;
+  const months = years * 12;
+  const r = annualRate / 100 / 12; // monthly rate
+
+  if (P <= 0 || annualRate <= 0 || months <= 0) {
+    document.getElementById('summary').innerHTML = '';
+    document.getElementById('compare').innerHTML = '';
+    document.getElementById('scheduleTable').innerHTML = '';
+    return;
+  }
+
+  let schedule = [];
+  let totalInterest = 0;
+  let monthlyFirst = 0;
+
+  if (method === 0) {
+    // Fixed Payment (Amortized)
+    const monthly = P * r * Math.pow(1+r, months) / (Math.pow(1+r, months) - 1);
+    let remaining = P;
+    for (let i = 1; i <= months; i++) {
+      const interest = remaining * r;
+      const principal = monthly - interest;
+      remaining -= principal;
+      totalInterest += interest;
+      schedule.push({ month: i, payment: monthly, principal, interest, remaining: Math.max(0, remaining) });
+    }
+    monthlyFirst = monthly;
+  } else if (method === 1) {
+    // Fixed Principal
+    const monthlyPrincipal = P / months;
+    let remaining = P;
+    for (let i = 1; i <= months; i++) {
+      const interest = remaining * r;
+      const payment = monthlyPrincipal + interest;
+      remaining -= monthlyPrincipal;
+      totalInterest += interest;
+      schedule.push({ month: i, payment, principal: monthlyPrincipal, interest, remaining: Math.max(0, remaining) });
+    }
+    monthlyFirst = schedule[0].payment;
+  } else {
+    // Interest Only (Bullet)
+    const monthlyInterest = P * r;
+    for (let i = 1; i <= months; i++) {
+      const isLast = i === months;
+      totalInterest += monthlyInterest;
+      schedule.push({
+        month: i,
+        payment: isLast ? monthlyInterest + P : monthlyInterest,
+        principal: isLast ? P : 0,
+        interest: monthlyInterest,
+        remaining: isLast ? 0 : P
+      });
+    }
+    monthlyFirst = monthlyInterest;
+  }
+
+  const totalPayment = P + totalInterest;
+  const methodNames = ['Fixed Payment', 'Fixed Principal', 'Interest Only'];
+
+  // Summary cards
+  document.getElementById('summary').innerHTML = `
+    <div class="summary-card highlight">
+      <div class="s-label">${method === 0 ? 'Monthly Payment' : 'First Month Payment'}</div>
+      <div class="s-value">${fmt(monthlyFirst)}</div>
+      <div class="s-sub">$</div>
+    </div>
+    <div class="summary-card">
+      <div class="s-label">Total Interest</div>
+      <div class="s-value">${fmt(totalInterest)}</div>
+      <div class="s-sub">$</div>
+    </div>
+    <div class="summary-card">
+      <div class="s-label">Total Repayment</div>
+      <div class="s-value">${fmt(totalPayment)}</div>
+      <div class="s-sub">Principal + Interest</div>
+    </div>
+  `;
+
+  // Compare
+  const allInterests = calcAllInterests(P, r, months);
+  const diffs = allInterests.map((v,i) => ({name: methodNames[i], interest: v}));
+  diffs.sort((a,b) => a.interest - b.interest);
+  const best = diffs[0], worst = diffs[diffs.length-1];
+  const saving = worst.interest - best.interest;
+  document.getElementById('compare').innerHTML = saving > 0 ?
+    `💡 Comparison: <strong>${best.name}</strong> saves <span class="diff">$${fmt(saving)}</span> in interest compared to <strong>${worst.name}</strong>` : '';
+
+  // Schedule table
+  renderSchedule(schedule);
+}
+
+function calcAllInterests(P, r, months) {
+  // Fixed Payment
+  const m0 = P * r * Math.pow(1+r,months)/(Math.pow(1+r,months)-1);
+  const ti0 = m0 * months - P;
+  // Fixed Principal
+  const mp = P / months;
+  let ti1 = 0, rem = P;
+  for(let i=0;i<months;i++){ ti1 += rem*r; rem -= mp; }
+  // Interest Only
+  const ti2 = P * r * months;
+  return [ti0, ti1, ti2];
+}
+
+function renderSchedule(schedule) {
+  const table = document.getElementById('scheduleTable');
+  let html = `<thead><tr><th>Month</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead><tbody>`;
+  
+  let totalPayment=0, totalPrincipal=0, totalInterest=0;
+  schedule.forEach(s => {
+    totalPayment += s.payment;
+    totalPrincipal += s.principal;
+    totalInterest += s.interest;
+    // Show every month for short loans, every 12th for long loans
+    const show = schedule.length <= 60 || s.month % 12 === 1 || s.month === schedule.length;
+    if (show) {
+      html += `<tr>
+        <td>${s.month}</td>
+        <td>${fmt(s.payment)}</td>
+        <td>${fmt(s.principal)}</td>
+        <td>${fmt(s.interest)}</td>
+        <td>${fmt(s.remaining)}</td>
+      </tr>`;
+    }
+  });
+  html += `<tr>
+    <td>Total</td>
+    <td>${fmt(totalPayment)}</td>
+    <td>${fmt(totalPrincipal)}</td>
+    <td>${fmt(totalInterest)}</td>
+    <td>0</td>
+  </tr>`;
+  html += '</tbody>';
+  table.innerHTML = html;
+}
+
+function toggleSchedule() {
+  scheduleOpen = !scheduleOpen;
+  document.getElementById('scheduleWrap').classList.toggle('open', scheduleOpen);
+  document.getElementById('scheduleBtn').textContent = scheduleOpen ? '📋 Hide Schedule' : '📋 View Monthly Payment Schedule';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+calc();
+
+(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

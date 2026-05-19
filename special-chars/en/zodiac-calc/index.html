@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+    <title>⭐ Zodiac Calculator — TeemoZipsa</title>
+    <meta name="description" content="Find your zodiac sign by birthday. Discover personality traits, element, ruling planet, and compatible signs.">
+    <meta property="og:title" content="⭐ Zodiac Calculator — TeemoZipsa">
+    <meta property="og:description" content="Find your zodiac sign by birthday. Discover personality traits, element, ruling planet, and compatible signs.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/zodiac-calc/">
+    <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+    <link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/zodiac-calc/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/zodiac-calc/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/zodiac-calc/">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:start;padding:20px}
+        .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
+        .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+        .header h1{font-size:15px;font-weight:600;color:#fff}
+        .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+        .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+        .counter-body{padding:16px;flex:1}
+        .input-section{background:var(--bg-guide);border-radius:10px;padding:16px;margin-bottom:16px}
+        .input-section label{font-size:13px;color:var(--text-guide);font-weight:600;display:block;margin-bottom:8px}
+        .date-row{display:flex;gap:10px;align-items:center}
+        .date-row input[type="date"]{flex:1;padding:10px 12px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:inherit}
+        .date-row input:focus{outline:none;border-color:var(--accent)}
+        .btn-today{padding:10px 16px;background:var(--accent);color:var(--text-on-accent);border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s;font-family:inherit;white-space:nowrap}
+        .btn-today:hover{background:var(--accent-hover)}
+
+        .result-card{display:none;background:var(--bg-guide);border-radius:12px;overflow:hidden;animation:fadeIn .4s ease}
+        .result-card.show{display:block}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .result-image{width:100%;max-height:300px;object-fit:cover;display:block}
+        .result-body{padding:16px}
+        .result-name{font-size:22px;font-weight:700;color:var(--text-primary);margin-bottom:2px}
+        .result-name-en{font-size:13px;color:var(--text-info);margin-bottom:12px}
+        .result-date-range{font-size:12px;color:var(--text-guide);margin-bottom:16px;padding:6px 12px;background:var(--bg-btn);border-radius:6px;display:inline-block}
+        .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+        .info-item{background:var(--bg-input);border-radius:8px;padding:12px}
+        .info-label{font-size:11px;color:var(--text-info);margin-bottom:4px}
+        .info-value{font-size:14px;color:var(--text-primary);font-weight:600}
+        .section-title{font-size:13px;font-weight:600;color:var(--text-guide);margin-bottom:8px;margin-top:4px}
+        .traits{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+        .trait-tag{padding:6px 12px;background:var(--bg-btn);border-radius:20px;font-size:12px;color:var(--text-primary);border:1px solid var(--border)}
+        .compat-list{display:flex;gap:8px;flex-wrap:wrap}
+        .compat-item{padding:8px 14px;background:var(--bg-input);border-radius:8px;font-size:13px;color:var(--text-primary);border:1px solid var(--border)}
+        .compat-item .compat-icon{margin-right:4px}
+
+  /* 가이드 & 관련 도구 (표준) */
+  .guide-section{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+  .guide-section h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
+  .guide:last-child{margin-bottom:0}
+  .guide summary{padding:12px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--bg-guide);transition:background .2s}
+  .guide summary::-webkit-details-marker{display:none}
+  .guide summary::after{content:'▼';font-size:10px;color:var(--text-muted);transition:transform .3s}
+  .guide[open] summary::after{transform:rotate(180deg)}
+  .guide summary:hover{background:var(--bg-guide-hover)}
+  .guide-content{padding:14px;font-size:13px;color:var(--text-info);line-height:1.6;border-top:1px solid var(--border);background:var(--bg-app)}
+  .related-tools{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+  .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+  .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
+  .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+
+        .bottom-bar{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
+        .bottom-bar .info{font-size:11px;color:var(--text-info)}
+        .action-btn{padding:8px 20px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+        .btn-clear{background:var(--bg-btn);color:var(--text-guide)}.btn-clear:hover{background:var(--bg-btn-hover)}
+        .btn-copy{background:var(--accent);color:var(--text-on-accent)}.btn-copy:hover{background:var(--accent-hover)}
+        .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.6);transition:transform .3s ease,opacity .3s ease;opacity:0;pointer-events:none;z-index:999}
+        .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+        @media(max-width:640px){.info-grid{grid-template-columns:1fr}.date-row{flex-direction:column}}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+    .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+<div class="app">
+    <div class="header">
+        <a href="https://teemozipsa.github.io/" class="back-btn">← All Tools</a>
+        <h1>⭐ Zodiac Calculator</h1>
+    <a href="/special-chars/zodiac-calc/" class="back-btn">🌐 한국어</a>
+  </div>
+    <div class="counter-body">
+        <div class="input-section">
+            <label>Enter your date of birth</label>
+            <div class="date-row">
+                <input type="date" id="birthDate" onchange="calcZodiac()">
+                <button class="btn-today" onclick="setToday()">Today</button>
+            </div>
+        </div>
+        <div class="result-card" id="resultCard">
+            <img class="result-image" id="resultImage" src="" alt="">
+            <div class="result-body">
+                <div class="result-name" id="resultName"></div>
+                <div class="result-name-en" id="resultNameEn"></div>
+                <div class="result-date-range" id="resultRange"></div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Element</div>
+                        <div class="info-value" id="resultElement"></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Ruling Planet</div>
+                        <div class="info-value" id="resultPlanet"></div>
+                    </div>
+                </div>
+                <div class="section-title">Personality Traits</div>
+                <div class="traits" id="resultTraits"></div>
+                <div class="section-title">Best Compatibility</div>
+                <div class="compat-list" id="resultCompat"></div>
+            </div>
+        </div>
+    </div>
+
+    <section class="guide-section">
+      <h2>💡 Zodiac Calculator FAQ</h2>
+      
+      <details class="guide" open>
+        <summary>📖 How to Use</summary>
+        <div class="guide-content">
+          <ol>
+            <li>Select your date of birth or click the 'Today' button.</li>
+            <li>Your zodiac sign and detailed information will be shown automatically.</li>
+            <li>Use the 'Copy Result' button to easily share or save your reading.</li>
+          </ol>
+          <p>💡 Zodiac signs are based on the period the Sun transits each constellation. If you were born on a cusp date, your sign may vary slightly depending on the exact time and year of your birth.</p>
+        </div>
+      </details>
+      
+      <details class="guide">
+        <summary>⭐ What is a Zodiac Sign?</summary>
+        <div class="guide-content">
+          <p>Your zodiac sign (or sun sign) represents the position of the sun during your birth. In Western astrology, it forms the foundation of your core personality, ego, and basic preferences.</p>
+        </div>
+      </details>
+
+      <details class="guide">
+        <summary>🌍 What do Elements and Planets mean?</summary>
+        <div class="guide-content">
+          <p>Each sign belongs to one of four elements (Fire, Earth, Air, Water) which describe underlying temperaments, and is ruled by a planet that dictates its core motivations and characteristics.</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="related-tools">
+      <h2>🔗 Related Tools</h2>
+      <div class="tools-grid">
+        <a href="/special-chars/en/days-until/" class="tool-card">⏳ D-Day Calculator</a>
+        <a href="/special-chars/en/age-calc/" class="tool-card">🎂 Age Calculator</a>
+        <a href="/special-chars/en/timezone-conv/" class="tool-card">🌍 Timezone Conv</a>
+      </div>
+    </section>
+    <div class="footer"><span>Birthday-based calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const ZODIAC = [
+    { name:'Aquarius', en:'Aquarius', symbol:'♒', img:'Aquarius_compressed.jpg', start:[1,20], end:[2,18], element:'🌬️ Air', planet:'♅ Uranus', traits:['Original','Freedom-loving','Humanitarian','Intellectual'], compat:['Gemini','Libra','Sagittarius'] },
+    { name:'Pisces', en:'Pisces', symbol:'♓', img:'Pisces_compressed.jpg', start:[2,19], end:[3,20], element:'💧 Water', planet:'♆ Neptune', traits:['Intuitive','Emotional','Artistic','Devoted'], compat:['Scorpio','Cancer','Capricorn'] },
+    { name:'Aries', en:'Aries', symbol:'♈', img:'Aries_compressed.jpg', start:[3,21], end:[4,19], element:'🔥 Fire', planet:'♂ Mars', traits:['Passionate','Adventurous','Honest','Brave'], compat:['Leo','Sagittarius','Gemini'] },
+    { name:'Taurus', en:'Taurus', symbol:'♉', img:'Taurus_compressed.jpg', start:[4,20], end:[5,20], element:'🌍 Earth', planet:'♀ Venus', traits:['Stable','Patient','Sensual','Reliable'], compat:['Virgo','Capricorn','Cancer'] },
+    { name:'Gemini', en:'Gemini', symbol:'♊', img:'Gemini_compressed.jpg', start:[5,21], end:[6,21], element:'🌬️ Air', planet:'☿ Mercury', traits:['Witty','Curious','Adaptable','Social'], compat:['Libra','Aquarius','Aries'] },
+    { name:'Cancer', en:'Cancer', symbol:'♋', img:'Cancer_compressed.jpg', start:[6,22], end:[7,22], element:'💧 Water', planet:'☽ Moon', traits:['Protective','Emotional','Intuitive','Family-oriented'], compat:['Scorpio','Pisces','Taurus'] },
+    { name:'Leo', en:'Leo', symbol:'♌', img:'Leo_compressed.jpg', start:[7,23], end:[8,22], element:'🔥 Fire', planet:'☉ Sun', traits:['Charismatic','Confident','Generous','Creative'], compat:['Aries','Sagittarius','Gemini'] },
+    { name:'Virgo', en:'Virgo', symbol:'♍', img:'Virgo_compressed.jpg', start:[8,23], end:[9,22], element:'🌍 Earth', planet:'☿ Mercury', traits:['Analytical','Meticulous','Practical','Humble'], compat:['Taurus','Capricorn','Scorpio'] },
+    { name:'Libra', en:'Libra', symbol:'♎', img:'Libra_compressed.jpg', start:[9,23], end:[10,23], element:'🌬️ Air', planet:'♀ Venus', traits:['Balanced','Graceful','Fair','Social'], compat:['Gemini','Aquarius','Leo'] },
+    { name:'Scorpio', en:'Scorpio', symbol:'♏', img:'Scorpio_compressed.jpg', start:[10,24], end:[11,21], element:'💧 Water', planet:'♇ Pluto', traits:['Passionate','Insightful','Decisive','Mysterious'], compat:['Cancer','Pisces','Virgo'] },
+    { name:'Sagittarius', en:'Sagittarius', symbol:'♐', img:'Sagittarius_compressed.jpg', start:[11,22], end:[12,21], element:'🔥 Fire', planet:'♃ Jupiter', traits:['Optimistic','Adventurous','Philosophical','Free-spirited'], compat:['Aries','Leo','Aquarius'] },
+    { name:'Capricorn', en:'Capricorn', symbol:'♑', img:'Capricorn_compressed.jpg', start:[12,22], end:[1,19], element:'🌍 Earth', planet:'♄ Saturn', traits:['Ambitious','Responsible','Persistent','Realistic'], compat:['Taurus','Virgo','Pisces'] }
+];
+
+function getZodiac(month, day) {
+    for (const z of ZODIAC) {
+        const [sm, sd] = z.start, [em, ed] = z.end;
+        if (sm <= em) {
+            if ((month === sm && day >= sd) || (month === em && day <= ed) || (month > sm && month < em)) return z;
+        } else {
+            if ((month === sm && day >= sd) || (month === em && day <= ed) || month > sm || month < em) return z;
+        }
+    }
+    return ZODIAC[11]; // fallback Capricorn
+}
+
+function calcZodiac() {
+    const input = document.getElementById('birthDate').value;
+    if (!input) return;
+    const d = new Date(input);
+    const month = d.getMonth() + 1;
+    const day = d.getDate();
+    const z = getZodiac(month, day);
+
+    document.getElementById('resultImage').src = 'images/' + z.img;
+    document.getElementById('resultImage').alt = z.name;
+    document.getElementById('resultName').textContent = z.symbol + ' ' + z.name;
+    document.getElementById('resultNameEn').textContent = z.en;
+    const rangeText = `${['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][z.start[0]]} ${z.start[1]} – ${['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][z.end[0]]} ${z.end[1]}`;
+    document.getElementById('resultRange').textContent = rangeText;
+    document.getElementById('resultElement').textContent = z.element;
+    document.getElementById('resultPlanet').textContent = z.planet;
+
+    const traitsEl = document.getElementById('resultTraits');
+    traitsEl.innerHTML = z.traits.map(t => `<span class="trait-tag">${t}</span>`).join('');
+
+    const compatEl = document.getElementById('resultCompat');
+    compatEl.innerHTML = z.compat.map(c => {
+        const cz = ZODIAC.find(x => x.name === c);
+        return `<span class="compat-item"><span class="compat-icon">${cz ? cz.symbol : ''}</span>${c}</span>`;
+    }).join('');
+
+    document.getElementById('resultCard').classList.add('show');
+}
+
+function setToday() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth()+1).padStart(2,'0');
+    const dd = String(today.getDate()).padStart(2,'0');
+    document.getElementById('birthDate').value = `${yyyy}-${mm}-${dd}`;
+    calcZodiac();
+}
+
+function clearAll() {
+    document.getElementById('birthDate').value = '';
+    document.getElementById('resultCard').classList.remove('show');
+    showToast('Reset');
+}
+
+function copyResult() {
+    const card = document.getElementById('resultCard');
+    if (!card.classList.contains('show')) { showToast('Enter your date of birth first'); return; }
+    const name = document.getElementById('resultName').textContent;
+    const en = document.getElementById('resultNameEn').textContent;
+    const range = document.getElementById('resultRange').textContent;
+    const elem = document.getElementById('resultElement').textContent;
+    const planet = document.getElementById('resultPlanet').textContent;
+    const traits = [...document.querySelectorAll('.trait-tag')].map(t=>t.textContent).join(', ');
+    const compat = [...document.querySelectorAll('.compat-item')].map(c=>c.textContent.trim()).join(', ');
+    const text = `${name} (${en})\nPeriod: ${range}\nElement: ${elem} | Planet: ${planet}\nTraits: ${traits}\nCompatibility: ${compat}`;
+    navigator.clipboard.writeText(text).then(()=>showToast('Copied to clipboard'));
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(()=>t.classList.remove('show'), 1500);
+}
+</script>
+<button class="scroll-top-btn" aria-label="Top">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

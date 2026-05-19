@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>📅 날짜/D-Day 계산기 — 티모집사</title>
+<meta name="description" content="D-Day 계산, 두 날짜 사이 일수, 날짜 더하기·빼기를 실시간으로 계산합니다.">
+<meta property="og:title" content="📅 날짜/D-Day 계산기 — 티모집사">
+<meta property="og:description" content="D-Day 계산, 두 날짜 사이 일수, 날짜 더하기·빼기를 실시간으로 계산합니다.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/date-calc/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/date-calc/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/date-calc/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/date-calc/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px}
+  .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
+  .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .header h1{font-size:15px;font-weight:600;color:#fff}
+  .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+  .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.6);transition:transform .3s ease,opacity .3s ease;opacity:0;pointer-events:none;z-index:999}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  .bottom-bar{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
+  .bottom-bar .info{font-size:11px;color:var(--text-info)}
+  .action-btn{padding:8px 20px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+  .btn-clear{background:var(--bg-btn);color:var(--btn-clear-text)}.btn-clear:hover{background:var(--bg-btn-hover)}
+  .btn-copy{background:var(--accent);color:var(--text-on-accent)}.btn-copy:hover{background:var(--accent-hover)}
+
+  .counter-body{padding:12px;flex:1}
+  .date-section{margin-bottom:16px}
+  .date-section-title{font-size:13px;font-weight:600;color:var(--text-guide);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .date-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+  .date-row label{font-size:12px;color:var(--text-info);min-width:42px}
+  .date-row input[type="date"],.date-row input[type="number"]{background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:6px 10px;font-size:13px;flex:1;font-family:inherit;outline:none}
+  .date-row input[type="date"]:focus,.date-row input[type="number"]:focus{border-color:var(--accent)}
+  .date-row input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.7)}
+  .checkbox-row{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-info);margin-bottom:8px}
+  .checkbox-row input[type="checkbox"]{accent-color:#533483}
+  .date-result-card{background:var(--bg-input);border-radius:10px;padding:14px;text-align:center;margin-top:8px}
+  .date-result-value{font-size:28px;font-weight:700;color:var(--text-primary)}
+  .date-result-sub{font-size:12px;color:var(--text-info);margin-top:4px}
+  .quick-buttons{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .quick-btn{background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-guide);padding:5px 12px;font-size:11px;cursor:pointer;transition:background .15s;font-family:inherit}
+  .quick-btn:hover{background:var(--bg-btn-hover)}
+  .section-divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+  .guide-section{margin:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+  .guide-section summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
+  .guide-section summary:hover{background:var(--bg-guide-hover)}
+  .guide-section[open] summary{background:var(--bg-btn);border-bottom:1px solid var(--border)}
+  .guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
+  .guide-content ol{padding-left:20px}.guide-content li{margin-bottom:4px}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+
+.report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:16px;}
+.report-box h3 {font-size:14px;font-weight:700;color:var(--accent);margin-bottom:4px}
+.report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
+.report-box strong {color:var(--text-primary);font-weight:600}
+
+.related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:20px 12px}
+.related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
+.related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
+.related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent);transform:translateX(4px)}
+
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(10px) }
+  to { opacity:1; transform:translateY(0) }
+}
+
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+    <h1>📅 날짜/D-Day 계산기</h1>
+    <a href="/special-chars/en/date-calc/" class="back-btn">🌐 English</a>
+  </div>
+
+  <div class="counter-body">
+    <div class="date-section">
+      <div class="date-section-title">📆 D-Day 계산</div>
+      <div class="date-row"><label>시작일</label><input type="date" id="ddayStart"></div>
+      <div class="date-row"><label>목표일</label><input type="date" id="ddayEnd"></div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="ddayInclusive">
+        <label for="ddayInclusive">시작일을 1일로 포함 (초일 산입)</label>
+        <span title="체크하면 시작일을 D-1이 아닌 D-Day 1일째로 계산합니다.&#10;예: 1월1일~1월3일 → 체크 시 3일, 미체크 시 2일&#10;기념일·만일 계산에는 체크, 업무 D-Day는 미체크 권장" style="cursor:help;color:var(--text-info);">ⓘ</span>
+      </div>
+      <div class="date-result-card" id="ddayResult">
+        <div class="date-result-value" id="ddayValue">-</div>
+        <div class="date-result-sub" id="ddaySub">날짜를 선택하세요</div>
+      </div>
+      <div class="report-box" id="ddayReport" style="display:none;"></div>
+    </div>
+
+    <hr class="section-divider">
+
+    <div class="date-section">
+      <div class="date-section-title">🧮 날짜 계산 (기준일 ± 일수)</div>
+      <div class="date-row"><label>기준일</label><input type="date" id="dateBase"></div>
+      <div class="date-row"><label>일수</label><input type="number" id="dateDays" placeholder="예: 100, -30"></div>
+      <div class="quick-buttons">
+        <button class="quick-btn" onclick="applyQuick(7)">+7일</button>
+        <button class="quick-btn" onclick="applyQuick(30)">+30일</button>
+        <button class="quick-btn" onclick="applyQuick(100)">+100일</button>
+        <button class="quick-btn" onclick="applyQuick(365)">+1년</button>
+        <button class="quick-btn" onclick="applyQuick(-7)">-7일</button>
+        <button class="quick-btn" onclick="applyQuick(-30)">-30일</button>
+        <button class="quick-btn" onclick="applyQuick(-100)">-100일</button>
+        <button class="quick-btn" onclick="applyQuick(-365)">-1년</button>
+      </div>
+      <div class="date-result-card" id="dateAddResult">
+        <div class="date-result-value" id="dateAddValue">-</div>
+        <div class="date-result-sub" id="dateAddSub">기준일과 일수를 입력하세요</div>
+      </div>
+      <div class="report-box" id="dateAddReport" style="display:none;"></div>
+    </div>
+  </div>
+
+  <details class="guide-section" open>
+    <summary>📖 날짜 및 D-Day 계산기 활용 가이드 및 상식</summary>
+    <div class="guide-content">
+      <strong>Q. '초일 산입(첫날 포함)'이란 무엇인가요?</strong>
+      <p>날짜를 계산할 때 시작하는 첫날을 1일로 칠 것인지 여부를 말합니다. 민법상 기본 원칙은 '초일 불산입(첫날을 제외함)'이지만, <b>연인과의 100일 기념일</b>이나 학교 입학일, 신생아 태어난 날(생후 일수) 등을 계산할 때는 첫날을 1일로 포함시키는 '초일 산입'을 주로 사용합니다. 기념일 계산 시에는 체크박스를 활용해주세요!</p>
+      <br>
+      <strong>Q. 근로기준법상 퇴직금 산정에도 쓰이나요?</strong>
+      <p>네, 퇴직금 추계를 위한 계속근로기간(재직일수) 계산 시에도 입사일부터 퇴사일까지의 총 일수가 중요합니다. 일반적으로 초일을 산입하여 총 근로일수를 구합니다. 다만 법정 공휴일 연차 등 특수한 캘린더 제외가 필요하다면 별도의 영업일 계산기가 필요할 수 있습니다.</p>
+      <br>
+      <strong>Q. 윤년, 윤달도 자동 반영되나요?</strong>
+      <p>네. 이 날짜 계산기는 양력(그레고리력) 기준 세계 표준 Date 포맷을 연산하여, 4년에 한 번 돌아오는 2월 29일 윤년 연산도 정확하게 반영합니다. 목표 날짜가 언제이든 안심하고 사용할 수 있습니다.</p>
+      <br>
+      <p style="color:var(--text-muted);font-size:11px;">※ 본 도구는 연인 기념일, 시험 D-day(수능 등), 전역일 관리 등에 직관적이고 빠른 결과를 실시간 제공합니다.</p>
+    </div>
+  </details>
+
+  <div class="related-tools">
+    <h3>🔗 연관 생활 도구</h3>
+    <div class="tool-list">
+      <a href="/special-chars/biz-day-calc/"><span>🏢 영업일(근무일) 계산기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/zodiac-calc/"><span>🔮 띠/만세력 계산기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/sub-calc/"><span>💸 구독료 다이어트 계산기</span><span>바로가기 →</span></a>
+    </div>
+  </div>
+
+  <div class="footer"><span>실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),1500)}
+
+function calcDday(){
+  const start=document.getElementById('ddayStart').value;
+  const end=document.getElementById('ddayEnd').value;
+  const box = document.getElementById('ddayReport');
+  
+  if(!start||!end){
+    document.getElementById('ddayValue').textContent='-';
+    document.getElementById('ddaySub').textContent='날짜를 선택하세요';
+    box.style.display='none';
+    return;
+  }
+  
+  const s=new Date(start);
+  const e=new Date(end);
+  let diff=Math.round((e-s)/86400000);
+  const inclusive=document.getElementById('ddayInclusive').checked;
+  if(inclusive) diff+=1;
+  
+  const absD=Math.abs(diff);
+  if(inclusive){
+    document.getElementById('ddayValue').textContent=`${absD}일`;
+  } else {
+    if(diff===0) document.getElementById('ddayValue').textContent='D-Day';
+    else if(diff>0) document.getElementById('ddayValue').textContent=`D-${diff}`;
+    else document.getElementById('ddayValue').textContent=`D+${Math.abs(diff)}`;
+  }
+  
+  const weeks=Math.floor(absD/7);
+  const remain=absD%7;
+  const months=Math.floor(absD/30);
+  let sub=`${absD}일`;
+  if(weeks>0) sub+=` = ${weeks}주 ${remain}일`;
+  if(months>0) sub+=` ≈ 약 ${months}개월`;
+  document.getElementById('ddaySub').textContent=sub;
+  
+  // SEO Dynamic Insight
+  box.style.display = 'flex';
+  const formatStart = start.replace(/-/g, '.');
+  const formatEnd = end.replace(/-/g, '.');
+  const dDiff = end >= start ? `앞으로 <strong>${absD}일</strong> 남은 상황` : `시작일로부터 <strong>${absD}일</strong> 경과한 상황`;
+  
+  box.innerHTML = `
+      <h3>💡 맞춤형 D-Day 분석 리포트</h3>
+      <p>설정하신 시작일 <strong>${formatStart}</strong>부터 목표일 <strong>${formatEnd}</strong>까지의 기간을 계산한 결과, 현재 ${dDiff}입니다.</p>
+      <p>초일 산입 옵션에 따라 산출된 이 기간은 어림잡아 <strong>약 ${months}개월</strong>의 시간에 속하며, 주 단위로 환산하면 <strong>${weeks}주 ${remain}일</strong>입니다. 수능 시험일이나 공무원 수험 준비, 연인 간의 100일, 1000일 주년 일정 등 중요한 일생일대의 계획을 단단히 세우고 실행하는 데 이 지표를 유용하게 활용하시기 바랍니다. 브라우저 엔진에 기반한 높은 정확도의 스크립트를 사용하여 윤달까지도 빈틈없이 정밀 반영되었습니다.</p>
+  `;
+}
+
+function calcDateAdd(){
+  const base=document.getElementById('dateBase').value;
+  const days=parseInt(document.getElementById('dateDays').value);
+  const box = document.getElementById('dateAddReport');
+  
+  if(!base||isNaN(days)){
+    document.getElementById('dateAddValue').textContent='-';
+    document.getElementById('dateAddSub').textContent='기준일과 일수를 입력하세요';
+    box.style.display='none';
+    return;
+  }
+  
+  const d=new Date(base);
+  d.setDate(d.getDate()+days);
+  const yyyy=d.getFullYear();
+  const mm=String(d.getMonth()+1).padStart(2,'0');
+  const dd=String(d.getDate()).padStart(2,'0');
+  const weekdays=['일','월','화','수','목','금','토'];
+  const dayName=weekdays[d.getDay()];
+  
+  document.getElementById('dateAddValue').textContent=`${yyyy}-${mm}-${dd} (${dayName})`;
+  const sign=days>=0?'+':'';
+  document.getElementById('dateAddSub').textContent=`${base} 부터 ${sign}${days}일`;
+  
+  // SEO Dynamic Insight
+  box.style.display = 'flex';
+  const formatBase = base.replace(/-/g, '.');
+  
+  box.innerHTML = `
+      <h3>💡 맞춤형 기준일 연산 리포트</h3>
+      <p>입력하신 기준일 <strong>${formatBase}</strong>을(를) 모태로 <strong>${sign}${days}일</strong>의 시간 편차를 캘린더 알고리즘으로 엄밀하게 추적한 결과, 도달하게 되는 목표 시점은 확실한 <strong>${yyyy}년 ${mm}월 ${dd}일 ${dayName}요일</strong>입니다.</p>
+      <p>이 결과는 부동산 계약 만료 통보기한을 산정하거나, 자동차 취등록세 유예기한(통상 60일), 상속세 신고 기한(6개월) 등 민감한 행정·법률 일정의 흐름을 짚어볼 때 든든한 기준점이 될 수 있습니다. 모든 연산은 웹 접근성 규격을 준수하는 강력한 Date 파싱 체계를 통해 즉시 도출되었습니다.</p>
+  `;
+}
+
+function applyQuick(days){
+  if(!document.getElementById('dateBase').value){const today=new Date();const y=today.getFullYear();const m=String(today.getMonth()+1).padStart(2,'0');const d=String(today.getDate()).padStart(2,'0');document.getElementById('dateBase').value=`${y}-${m}-${d}`}
+  document.getElementById('dateDays').value=days;calcDateAdd();
+}
+
+function clearDateCalc(){
+  document.getElementById('ddayStart').value='';document.getElementById('ddayEnd').value='';
+  document.getElementById('ddayInclusive').checked=false;
+  document.getElementById('ddayValue').textContent='-';document.getElementById('ddaySub').textContent='날짜를 선택하세요';
+  document.getElementById('dateBase').value='';document.getElementById('dateDays').value='';
+  document.getElementById('dateAddValue').textContent='-';document.getElementById('dateAddSub').textContent='기준일과 일수를 입력하세요';
+  showToast('초기화 완료');
+}
+
+function copyDateResult(){
+  const dday=document.getElementById('ddayValue').textContent;
+  const ddaySub=document.getElementById('ddaySub').textContent;
+  const dateAdd=document.getElementById('dateAddValue').textContent;
+  const dateAddSub=document.getElementById('dateAddSub').textContent;
+  let text='';if(dday!=='-')text+=`D-Day: ${dday} (${ddaySub})\n`;if(dateAdd!=='-')text+=`날짜 계산: ${dateAdd} (${dateAddSub})`;
+  if(!text){showToast('복사할 결과가 없습니다');return}
+  navigator.clipboard.writeText(text.trim()).then(()=>showToast('결과가 복사되었습니다!'));
+}
+
+document.getElementById('ddayStart').addEventListener('change',calcDday);
+document.getElementById('ddayEnd').addEventListener('change',calcDday);
+document.getElementById('ddayInclusive').addEventListener('change',calcDday);
+document.getElementById('dateBase').addEventListener('change',calcDateAdd);
+document.getElementById('dateDays').addEventListener('input',calcDateAdd);
+</script>
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

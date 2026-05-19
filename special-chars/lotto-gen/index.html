@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<title>🎰 로또 번호 자동 추첨기 — 티모집사</title>
+<meta name="description" content="1~45 고정수, 제외수 옵션을 포함하여 로또 당첨 번호를 무작위로 자동 생성해줍니다. 재밌는 시각 효과와 여러 세트 동시 생성을 지원합니다.">
+<meta property="og:title" content="🎰 로또 번호 자동 추첨기 — 티모집사">
+<meta property="og:description" content="고정수/제외수 옵션을 더한 스마트한 로또 번호 자동 추천 생성기.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/lotto-gen/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/lotto-gen/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/lotto-gen/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/lotto-gen/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+.app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:540px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+.content{padding:24px 20px}
+.main-display{background:var(--bg-btn);border:1px solid var(--border);border-radius:12px;padding:32px 20px;text-align:center;margin-bottom:20px;min-height:140px;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.balls-container{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
+.ball{width:48px;height:48px;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:20px;font-weight:800;color:#fff;box-shadow:0 4px 10px rgba(0,0,0,0.15), inset 0 -4px 8px rgba(0,0,0,0.2), inset 0 4px 8px rgba(255,255,255,0.4);transition:transform .3s;text-shadow:0 1px 2px rgba(0,0,0,0.5)}
+
+/* 로또 색상 (동행복권 기준) */
+.b-yellow{background:radial-gradient(circle at 30% 30%, #fcd34d, #f59e0b)}
+.b-blue{background:radial-gradient(circle at 30% 30%, #60a5fa, #2563eb)}
+.b-red{background:radial-gradient(circle at 30% 30%, #f87171, #ef4444)}
+.b-gray{background:radial-gradient(circle at 30% 30%, #9ca3af, #4b5563)}
+.b-green{background:radial-gradient(circle at 30% 30%, #4ade80, #16a34a)}
+.b-empty{background:var(--bg-bar);border:2px dashed var(--border);color:var(--text-muted);box-shadow:none;text-shadow:none}
+
+.gen-btn{width:100%;background:linear-gradient(135deg, var(--accent), #4f46e5);color:#fff;border:none;border-radius:12px;padding:16px;font-size:18px;font-weight:700;cursor:pointer;transition:transform .1s, box-shadow .2s;font-family:inherit;margin-bottom:24px;box-shadow:0 4px 12px rgba(99,102,241,0.3)}
+.gen-btn:active{transform:scale(0.98)}
+.gen-btn:hover{box-shadow:0 6px 16px rgba(99,102,241,0.4)}
+
+.options-box{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px}
+.opt-title{font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.num-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(28px,1fr));gap:6px;margin-bottom:12px}
+.num-btn{width:100%;aspect-ratio:1;border-radius:6px;border:1px solid var(--border);background:var(--bg-btn);color:var(--text-secondary);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.num-btn:hover{border-color:var(--accent)}
+.num-btn.fixed{background:var(--accent);color:#fff;border-color:var(--accent)}
+.num-btn.excluded{background:#ef4444;color:#fff;border-color:#ef4444;text-decoration:line-through;opacity:0.8}
+
+.opt-controls{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-muted)}
+.reset-opt{background:none;border:none;color:var(--text-info);cursor:pointer;text-decoration:underline;font-family:inherit}
+.reset-opt:hover{color:var(--text-secondary)}
+
+.history{border-top:1px solid var(--border);padding-top:16px}
+.history-title{font-size:13px;font-weight:700;color:var(--text-secondary);margin-bottom:10px}
+.hist-list{max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.hist-list::-webkit-scrollbar{width:4px}
+.hist-list::-webkit-scrollbar-thumb{background:var(--bg-btn-hover);border-radius:2px}
+.hist-item{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-btn);border-radius:8px;font-size:14px;font-weight:600}
+.hist-nums{display:flex;gap:6px;font-variant-numeric:tabular-nums}
+.hist-num{color:var(--text-primary)}
+.copy-btn{background:var(--bg-bar);border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:11px;color:var(--text-muted);cursor:pointer}
+.copy-btn:hover{background:var(--bg-btn-hover)}
+
+.report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-bottom:20px;}
+.report-box h3 {font-size:15px;font-weight:700;color:var(--accent);margin-bottom:4px}
+.report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
+.report-box strong {color:var(--text-primary);font-weight:600}
+
+.related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:20px}
+.related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
+.related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
+.related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent);transform:translateX(4px)}
+
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(10px) }
+  to { opacity:1; transform:translateY(0) }
+}
+
+.guide{padding:0 20px 20px}
+.guide summary{font-size:13px;color:var(--text-section);cursor:pointer;padding:8px 0}
+.guide-content{font-size:12px;color:var(--text-info);line-height:1.8;padding:8px 0}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+
+@keyframes pop{ 0%{transform:scale(0.5);opacity:0} 70%{transform:scale(1.2)} 100%{transform:scale(1);opacity:1} }
+.anim-pop{animation:pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+    <h1>🎰 로또 번호 추첨기</h1>
+    <a href="/special-chars/en/lotto-gen/" class="back-btn">🌐 English</a>
+  </div>
+  
+  <div class="content">
+    <div class="main-display">
+      <div class="balls-container" id="ballsView">
+        <div class="ball b-empty">?</div>
+        <div class="ball b-empty">?</div>
+        <div class="ball b-empty">?</div>
+        <div class="ball b-empty">?</div>
+        <div class="ball b-empty">?</div>
+        <div class="ball b-empty">?</div>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:4px" id="genStatus">행운의 번호를 뽑아보세요!</div>
+    </div>
+
+    <button class="gen-btn" onclick="generate()">번호 추첨하기</button>
+
+    <div class="options-box">
+      <div class="opt-title">
+        <span>⚙️ 추출 옵션 (선택)</span>
+      </div>
+      <div style="font-size:11px;color:var(--text-info);margin-bottom:8px">번호를 클릭하여 <b>고정수(파란색)</b> 또는 <b>제외수(빨간색)</b>를 설정하세요.</div>
+      <div class="num-grid" id="numGrid"></div>
+      <div class="opt-controls">
+        <span id="optCountInfo">고정수 0개 · 제외수 0개</span>
+        <button class="reset-opt" onclick="resetOptions()">초기화</button>
+      </div>
+    </div>
+
+    <!-- 신규 동적 리포트 박스 -->
+    <div class="report-box" id="analysisReport" style="display:none;"></div>
+
+    <div class="history" id="historyBox" style="display:none">
+      <div class="history-title">추첨 이력 (최대 10개)</div>
+      <div class="hist-list" id="histList"></div>
+    </div>
+  </div>
+
+  <details class="guide" open>
+    <summary>💡 로또 번호 추첨 가이드 및 통계 상식</summary>
+    <div class="guide-content">
+      <strong>Q. 자동 생성은 완전히 무작위인가요?</strong>
+      <p>네, 자바스크립트의 난수 생성 알고리즘(Fisher-Yates Shuffle)을 적용하여 1부터 45까지의 숫자 중 중복 없이 완전히 독립적인 확률로 6개를 추출합니다. 하지만 사용자가 <strong>고정수(반드시 포함)</strong>나 <strong>제외수(절대 미포함)</strong>를 지정하면 해당 조건이 최우선적으로 적용되어 커스텀 로또 세트를 구성할 수 있습니다.</p>
+      <br>
+      <strong>Q. 고정수와 제외수는 어떻게 쓰나요?</strong>
+      <p>보통 꿈에서 본 숫자나, 지난 회차 당첨 번호를 배제하고 싶을 때 유용합니다.<br>
+      • <b>고정수 설정 (최대 5개):</b> 번호를 한 번 클릭하면 파란색으로 지정되며 매번 생성 무리에 포함됩니다.<br>
+      • <b>제외수 설정 (무제한):</b> 파란색인 번호를 한 번 더 클릭하면 빨간색으로 지정되어 추첨 풀에서 완전히 삭제됩니다.<br>
+      • 한 번 더 클릭하면 기본 상태로 돌아옵니다.</p>
+      <br>
+      <strong>Q. 로또 당첨 확률은 얼마인가요?</strong>
+      <p>로또 6/45의 1등 당첨 확률은 <strong>1/8,145,060</strong> (약 814만 분의 1)입니다. 벼락 맞을 확률보다도 희박하지만, 매주 약 10명 내외의 1등 당첨자가 나오는 것은 그만큼 전국적으로 수천만 게임이 판매되기 때문입니다. 건전한 소액 구매를 통해 삶의 작은 즐거움을 느끼시기를 권장합니다.</p>
+      <br>
+      <p style="color:var(--text-muted);font-size:11px;">※ 공 색상 규칙(동행복권 기준): 1~10 노란색, 11~20 파란색, 21~30 빨간색, 31~40 회색, 41~45 초록색</p>
+    </div>
+  </details>
+
+  <div class="related-tools">
+    <h3>🔗 연관 생활 도구</h3>
+    <div class="tool-list">
+      <a href="/special-chars/date-calc/"><span>📅 디데이/날짜 계산기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/zodiac-calc/"><span>🔮 띠/만세력 계산기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/sub-calc/"><span>💸 구독료 다이어트 계산기</span><span>바로가기 →</span></a>
+    </div>
+  </div>
+
+  <div class="footer"><span>대박을 기원합니다! 🍀</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+
+<script>
+let fixedNums = new Set();
+let exNums = new Set();
+const maxFixed = 5;
+let historyRecs = [];
+
+function initGrid() {
+  const g = document.getElementById('numGrid');
+  g.innerHTML = '';
+  for(let i=1; i<=45; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'num-btn';
+    btn.textContent = i;
+    btn.onclick = () => toggleNum(i, btn);
+    g.appendChild(btn);
+  }
+}
+
+function toggleNum(n, btn) {
+  if (fixedNums.has(n)) {
+    // Fixed -> Exclude
+    fixedNums.delete(n);
+    exNums.add(n);
+    btn.className = 'num-btn excluded';
+  } else if (exNums.has(n)) {
+    // Exclude -> Normal
+    exNums.delete(n);
+    btn.className = 'num-btn';
+  } else {
+    // Normal -> Fixed
+    if (fixedNums.size >= maxFixed) {
+      alert(`고정수는 최대 ${maxFixed}개 까지만 설정할 수 있습니다.`);
+      return;
+    }
+    fixedNums.add(n);
+    btn.className = 'num-btn fixed';
+  }
+  updateOptInfo();
+}
+
+function updateOptInfo() {
+  document.getElementById('optCountInfo').textContent = `고정수 ${fixedNums.size}개 · 제외수 ${exNums.size}개`;
+}
+
+function resetOptions() {
+  fixedNums.clear();
+  exNums.clear();
+  document.querySelectorAll('.num-btn').forEach(b => b.className = 'num-btn');
+  updateOptInfo();
+}
+
+function getBallClass(n) {
+  if(n<=10) return 'b-yellow';
+  if(n<=20) return 'b-blue';
+  if(n<=30) return 'b-red';
+  if(n<=40) return 'b-gray';
+  return 'b-green';
+}
+
+function generate() {
+  const pool = [];
+  for(let i=1; i<=45; i++) {
+    if(!fixedNums.has(i) && !exNums.has(i)) {
+      pool.push(i);
+    }
+  }
+  
+  if (fixedNums.size + pool.length < 6) {
+    alert("가능한 번호 풀이 너무 적습니다! 제외수를 줄여주세요.");
+    return;
+  }
+
+  // Shuffle pool (Fisher-Yates)
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  
+  const result = Array.from(fixedNums);
+  const needed = 6 - result.length;
+  for(let i=0; i<needed; i++) {
+    result.push(pool[i]);
+  }
+  
+  result.sort((a,b) => a - b);
+  
+  renderBalls(result);
+  addHistory(result);
+  
+  // Analytics for SEO text
+  const report = document.getElementById('analysisReport');
+  report.style.display = 'flex';
+  
+  const sum = result.reduce((a,b)=>a+b, 0);
+  const oddCount = result.filter(n=>n%2!==0).length;
+  const evenCount = 6 - oddCount;
+  const highCount = result.filter(n=>n>22).length;
+  const lowCount = 6 - highCount;
+  
+  let msg = `<h3>💡 생성된 로또 번호 패턴 분석</h3>`;
+  msg += `<p>이번에 생성된 행운의 6자리 번호는 <strong>[${result.join(', ')}]</strong>입니다. `;
+  
+  if(fixedNums.size > 0 || exNums.size > 0) {
+      msg += `고객님께서 직접 지정하신 <strong>고정수 ${fixedNums.size}개</strong>와 <strong>제외수 ${exNums.size}개</strong>의 필터링 조건이 추출 알고리즘에 엄격하게 반영되었습니다. `;
+  } else {
+      msg += `완전한 무작위(Random) 난수 발생 알고리즘을 통해 필터링 편견 없이 순수 100% 랜덤 추출되었습니다. `;
+  }
+  
+  msg += `</p><p>통계적 흥미를 위해 이번 번호 세트의 패턴을 분석해 보면, <strong>짝수와 홀수의 비율은 ${evenCount}:${oddCount}</strong>로 구성되었으며, 1~22가 속하는 <strong>저고비율(낮은 수와 높은 수 비율)은 ${lowCount}:${highCount}</strong>입니다. `;
+  msg += `또한 선택된 6개 복권 숫자의 <strong>총합은 ${sum}</strong>을 기록했습니다. (역대 로또 1등 당첨 번호의 숫자 총합은 대체로 120~180 사이에 가장 많이 밀집되는 통계적 경향이 있으니 단순 참고용 패턴으로 확인해 보세요.)</p>`;
+  
+  msg += `<p>위의 [번호 추첨하기] 버튼을 반복해서 누르시면 바로 아래 '추첨 이력 기록'란에 최대 10세트의 번호가 누적 보관되어 쉽게 비교하고 텍스트로 복사하실 수 있습니다. 동행복권의 당첨 기운이 깃들길 응원합니다!</p>`;
+  
+  report.innerHTML = msg;
+}
+
+function renderBalls(nums) {
+  const v = document.getElementById('ballsView');
+  v.innerHTML = '';
+  nums.forEach((n, i) => {
+    const b = document.createElement('div');
+    b.className = `ball ${getBallClass(n)} anim-pop`;
+    b.style.animationDelay = `${i * 0.08}s`;
+    b.textContent = n;
+    v.appendChild(b);
+  });
+  document.getElementById('genStatus').textContent = "행운의 번호가 생성되었습니다!";
+}
+
+function addHistory(nums) {
+  historyRecs.unshift(nums);
+  if(historyRecs.length > 10) historyRecs.pop();
+  
+  const hbox = document.getElementById('historyBox');
+  const hlist = document.getElementById('histList');
+  hbox.style.display = 'block';
+  hlist.innerHTML = '';
+  
+  historyRecs.forEach((r, idx) => {
+    const item = document.createElement('div');
+    item.className = 'hist-item';
+    
+    // Nums
+    const ncont = document.createElement('div');
+    ncont.className = 'hist-nums';
+    r.forEach(n => {
+      const sp = document.createElement('span');
+      sp.className = 'hist-num';
+      sp.style.color = `var(--text-primary)`;
+      sp.textContent = String(n).padStart(2,'0');
+      ncont.appendChild(sp);
+    });
+    
+    // Copy button
+    const cbtn = document.createElement('button');
+    cbtn.className = 'copy-btn';
+    cbtn.textContent = '복사';
+    cbtn.onclick = () => {
+      navigator.clipboard.writeText(r.join(', '));
+      cbtn.textContent = '완료';
+      setTimeout(()=>cbtn.textContent='복사', 1000);
+    };
+    
+    item.appendChild(ncont);
+    item.appendChild(cbtn);
+    hlist.appendChild(item);
+  });
+}
+
+initGrid();
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

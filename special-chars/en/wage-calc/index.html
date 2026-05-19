@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>💵 Wage Converter — TeemoZipsa</title>
+<meta name="description" content="Instantly convert between hourly, monthly, and annual pay. Calculate overtime, night-shift premiums, and see your take-home pay after tax deductions.">
+<meta property="og:title" content="💵 Wage Converter — TeemoZipsa">
+<meta property="og:description" content="Instantly convert between hourly, monthly, and annual pay. Calculate overtime, night-shift premiums, and take-home pay.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/wage-calc/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/wage-calc/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/wage-calc/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/wage-calc/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+  .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
+  .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+  .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+  .header h1{font-size:15px;font-weight:600;color:#fff}
+  .body{padding:16px;display:flex;flex-direction:column;gap:12px}
+  .section{background:var(--bg-bar);border-radius:12px;padding:14px 16px;border:1px solid var(--border)}
+  .section-title{font-size:12px;font-weight:700;color:var(--text-info);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+  .field-row{display:flex;gap:8px;margin-bottom:8px}
+  .field-row:last-child{margin-bottom:0}
+  .field{flex:1;display:flex;flex-direction:column;gap:3px}
+  .field label{font-size:10px;color:var(--calc-expr-text);font-weight:600}
+  .field input,.field select{background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);padding:9px 10px;font-size:14px;font-family:inherit;outline:none;width:100%}
+  .field input:focus{border-color:var(--accent)}
+  .field input::placeholder{color:var(--text-muted)}
+  .field select{cursor:pointer}
+
+  .result-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .r-card{background:var(--bg-input);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .15s}
+  .r-card:hover{border-color:#7c5eb8;transform:translateY(-2px)}
+  .r-label{font-size:10px;color:var(--calc-expr-text);margin-bottom:3px}
+  .r-value{font-size:15px;font-weight:800;color:var(--text-primary);word-break:break-all}
+  .r-sub{font-size:9px;color:var(--text-muted);margin-top:2px}
+
+  /* 세후 결과 */
+  .after-tax{display:none}
+  .after-tax .result-grid{margin-top:8px}
+  .at-label{font-size:11px;color:var(--text-success);font-weight:700;margin-bottom:4px}
+  .r-card.after .r-value{color:var(--text-success)}
+
+  .min-wage{background:var(--bg-success, #1a2a1a);border:1px solid var(--border-success, #2a4a2a);border-radius:10px;padding:10px 14px;font-size:11px;color:var(--text-success);display:flex;justify-content:space-between;align-items:center}
+  .min-wage button{background:var(--bg-success-hover, #2a4a2a);border:none;color:var(--text-success);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;transition:background .15s}
+  .min-wage button:hover{background:var(--bg-success-hover)}
+
+  /* 목표 위젯 */
+  .goal-section{background:var(--bg-bar);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+  .goal-input{display:flex;gap:8px;margin-top:8px}
+  .goal-input input{flex:1}
+  .goal-result{display:none;margin-top:10px;background:var(--bg-input);border-radius:10px;padding:12px;text-align:center;font-size:13px;line-height:1.6;color:var(--text-amount)}
+  .goal-result strong{color:var(--text-highlight)}
+  .goal-result .emoji{font-size:20px}
+
+  .hint{font-size:10px;color:var(--text-muted);text-align:center}
+  .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text)}
+  .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+  .footer a:hover{color:var(--text-guide)}
+  /* 가이드 & 관련 도구 (표준) */
+  .guide-section{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+  .guide-section h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
+  .guide:last-child{margin-bottom:0}
+  .guide summary{padding:12px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--bg-guide);transition:background .2s}
+  .guide summary::-webkit-details-marker{display:none}
+  .guide summary::after{content:'▼';font-size:10px;color:var(--text-muted);transition:transform .3s}
+  .guide[open] summary::after{transform:rotate(180deg)}
+  .guide summary:hover{background:var(--bg-guide-hover)}
+  .guide-content{padding:14px;font-size:13px;color:var(--text-info);line-height:1.6;border-top:1px solid var(--border);background:var(--bg-app)}
+  .related-tools{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+  .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+  .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
+  .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
+    <h1>💵 Wage Converter</h1>
+    <a href="/special-chars/wage-calc/" class="back-btn">🌐 한국어</a>
+  </div>
+  <div class="body">
+    <!-- 근무 조건 -->
+    <div class="section">
+      <div class="section-title">⏰ Work Schedule</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Hours / Day</label>
+          <input type="number" id="hoursDay" value="8" min="1" max="24" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>Days / Week</label>
+          <input type="number" id="daysWeek" value="5" min="1" max="7" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>Weekly Allowance</label>
+          <select id="weeklyHol" onchange="calc()">
+            <option value="yes" selected>Included</option>
+            <option value="no">Excluded</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>⏱️ Overtime (daily, beyond 8h)</label>
+          <input type="number" id="overtime" value="0" min="0" max="16" step="0.5" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>🌙 Night Shift (10pm–6am)</label>
+          <input type="number" id="nighttime" value="0" min="0" max="8" step="0.5" oninput="calc()">
+        </div>
+      </div>
+    </div>
+
+    <!-- 세금 공제 -->
+    <div class="section">
+      <div class="section-title">🧾 Tax Deduction</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Deduction Type</label>
+          <select id="taxType" onchange="calc()">
+            <option value="none">No Deduction (Gross)</option>
+            <option value="insurance" selected>Social Insurance (~9.4%)</option>
+            <option value="freelance">Freelancer Tax (3.3%)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 금액 입력 -->
+    <div class="section">
+      <div class="section-title">💰 Enter Amount (enter one)</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Hourly Rate ($)</label>
+          <input type="text" id="hourly" value="15" oninput="formatAndCalc(this,'hourly')">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Monthly Salary ($)</label>
+          <input type="text" id="monthly" placeholder="" oninput="formatAndCalc(this,'monthly')">
+        </div>
+        <div class="field">
+          <label>Annual Salary ($)</label>
+          <input type="text" id="yearly" placeholder="" oninput="formatAndCalc(this,'yearly')">
+        </div>
+      </div>
+    </div>
+
+    <div class="min-wage">
+      <span>2024 US Federal Min. Wage: <strong>$7.25/hr</strong></span>
+      <button onclick="applyMinWage()">Apply</button>
+    </div>
+
+    <!-- 세전 결과 -->
+    <div class="section-title" style="padding:0 4px;margin-top:4px">📊 Gross Pay (Before Tax)</div>
+    <div class="result-grid">
+      <div class="r-card" onclick="copyVal(this)">
+        <div class="r-label">Hourly</div>
+        <div class="r-value" id="rHourly">-</div>
+      </div>
+      <div class="r-card" onclick="copyVal(this)">
+        <div class="r-label">Monthly (Gross)</div>
+        <div class="r-value" id="rMonthly">-</div>
+      </div>
+      <div class="r-card" onclick="copyVal(this)">
+        <div class="r-label">Annual (Gross)</div>
+        <div class="r-value" id="rYearly">-</div>
+      </div>
+    </div>
+
+    <!-- 세후 결과 -->
+    <div class="after-tax" id="afterTax">
+      <div class="at-label" id="atLabel">💚 After Tax (Social Insurance Deducted)</div>
+      <div class="result-grid">
+        <div class="r-card after" onclick="copyVal(this)">
+          <div class="r-label">Net Hourly</div>
+          <div class="r-value" id="rHourlyAt">-</div>
+        </div>
+        <div class="r-card after" onclick="copyVal(this)">
+          <div class="r-label">Net Monthly</div>
+          <div class="r-value" id="rMonthlyAt">-</div>
+        </div>
+        <div class="r-card after" onclick="copyVal(this)">
+          <div class="r-label">Net Annual</div>
+          <div class="r-value" id="rYearlyAt">-</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 목표 위젯 -->
+    <div class="goal-section">
+      <div class="section-title">🎯 How many hours to buy this?</div>
+      <div class="goal-input">
+        <input type="text" id="goalAmount" placeholder="Enter target amount (e.g. 1,500)" oninput="formatGoal(this);calcGoal()">
+      </div>
+      </div>
+      <div class="goal-result" id="goalResult"></div>
+    </div>
+
+    <div class="hint">Click a card to copy the value</div>
+  </div>
+    <section class="guide-section">
+      <h2>💡 Wage Converter Guide & FAQ</h2>
+      
+      <details class="guide" open>
+        <summary>📖 How to Use</summary>
+        <div class="guide-content">
+          <ol>
+            <li>Enter any one of: hourly rate, monthly salary, or annual salary — the others auto-calculate.</li>
+            <li>Adjust hours per day and days per week for accurate conversion.</li>
+            <li>Toggle the tax deduction type to see your take-home (net) pay.</li>
+            <li>Use the "How many hours" feature to see how long you'd need to work for any purchase.</li>
+          </ol>
+        </div>
+      </details>
+      
+      <details class="guide">
+        <summary>⏰ How is overtime pay calculated?</summary>
+        <div class="guide-content">
+          <p>Overtime hours (beyond the standard 8-hour workday) are typically compensated at 1.5x the regular hourly rate. Night-shift hours (10pm–6am) receive an additional 0.5x premium. These multipliers are applied automatically in this calculator.</p>
+        </div>
+      </details>
+
+      <details class="guide">
+        <summary>📅 What is the Weekly Allowance?</summary>
+        <div class="guide-content">
+          <p>In some labor systems, workers who work 15+ hours per week receive an additional paid day off equivalent. Toggle this on or off depending on your employment terms.</p>
+        </div>
+      </details>
+
+      <details class="guide">
+        <summary>🧾 How does the tax deduction work?</summary>
+        <div class="guide-content">
+          <p>Social Insurance (~9.4%) covers pension, health, long-term care, and employment insurance. Freelancer Tax (3.3%) is a simplified withholding for independent contractors. Your actual tax rate may vary based on your jurisdiction and circumstances.</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="related-tools">
+      <h2>🔗 Related Tools</h2>
+      <div class="tools-grid">
+        <a href="/special-chars/en/timer/" class="tool-card">⏱️ Timer & Stopwatch</a>
+        <a href="/special-chars/en/percent-calc/" class="tool-card">📊 Percent Calc</a>
+        <a href="/special-chars/en/sub-calc/" class="tool-card">💳 Subscription Calc</a>
+        <a href="/special-chars/en/timezone-conv/" class="tool-card">🌍 Timezone Conv</a>
+      </div>
+    </section>
+
+    <div class="footer"><span>Wage Converter</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+<script>
+let lastInput = '';
+
+function formatMoney(el) {
+  let v = el.value.replace(/[^0-9]/g,'');
+  if(v) el.value = parseInt(v).toLocaleString('en-US');
+  else el.value = '';
+}
+function formatGoal(el) { formatMoney(el); }
+function parseNum(id) {
+  return parseInt(document.getElementById(id).value.replace(/[^0-9]/g,'')) || 0;
+}
+function fmt(n) {
+  return '$' + Math.round(n).toLocaleString('en-US');
+}
+function formatAndCalc(el, src) {
+  formatMoney(el);
+  lastInput = src;
+  calc();
+}
+function calc() {
+  const hpd = parseFloat(document.getElementById('hoursDay').value)||8;
+  const dpw = parseInt(document.getElementById('daysWeek').value)||5;
+  const inclHol = document.getElementById('weeklyHol').value === 'yes';
+  const ot = parseFloat(document.getElementById('overtime').value)||0;
+  const nt = parseFloat(document.getElementById('nighttime').value)||0;
+  const taxType = document.getElementById('taxType').value;
+
+  // 주당 기본 시간
+  const baseWeeklyHours = hpd * dpw;
+  // 주휴시간
+  const weeklyHolHours = inclHol ? hpd : 0;
+  // 연장/야간 주당 시간 (근무일 기준)
+  const otWeekly = ot * dpw;
+  const ntWeekly = nt * dpw;
+
+  // 기본 급여 시간 (월)
+  const weeksPerMonth = 4.345;
+  const baseMonthlyHours = (baseWeeklyHours + weeklyHolHours) * weeksPerMonth;
+  // 연장수당 시간 (1.5배)
+  const otMonthlyValue = otWeekly * 1.5 * weeksPerMonth;
+  // 야간수당 시간 (0.5배 추가, 기본급 포함이므로 총 1.5배 효과)
+  const ntMonthlyValue = ntWeekly * 0.5 * weeksPerMonth;
+  // 총 유효 시간 (시급 × 이 시간 = 월급)
+  const effectiveMonthlyHours = baseMonthlyHours + otMonthlyValue + ntMonthlyValue;
+
+  let hourly=0, monthly=0, yearly=0;
+
+  if(lastInput==='hourly'){
+    hourly = parseNum('hourly');
+    monthly = Math.round(hourly * effectiveMonthlyHours);
+    yearly = monthly * 12;
+  } else if(lastInput==='monthly'){
+    monthly = parseNum('monthly');
+    hourly = Math.round(monthly / effectiveMonthlyHours);
+    yearly = monthly * 12;
+  } else if(lastInput==='yearly'){
+    yearly = parseNum('yearly');
+    monthly = Math.round(yearly / 12);
+    hourly = Math.round(monthly / effectiveMonthlyHours);
+  } else return;
+
+  // 세전 결과
+  document.getElementById('rHourly').textContent = hourly ? fmt(hourly) : '-';
+  document.getElementById('rMonthly').textContent = monthly ? fmt(monthly) : '-';
+  document.getElementById('rYearly').textContent = yearly ? fmt(yearly) : '-';
+
+  // 다른 필드 자동 채움
+  if(lastInput!=='hourly' && hourly) document.getElementById('hourly').value = hourly.toLocaleString('en-US');
+  if(lastInput!=='monthly' && monthly) document.getElementById('monthly').value = monthly.toLocaleString('en-US');
+  if(lastInput!=='yearly' && yearly) document.getElementById('yearly').value = yearly.toLocaleString('en-US');
+
+  // 세후 계산
+  const afterTaxEl = document.getElementById('afterTax');
+  if(taxType === 'none') {
+    afterTaxEl.style.display = 'none';
+  } else {
+    afterTaxEl.style.display = 'block';
+    let rate = taxType === 'insurance' ? 0.0939 : 0.033;
+    let label = taxType === 'insurance' ? '💚 After Tax (Social Insurance 9.4%)' : '💚 After Tax (Freelancer 3.3%)';
+    document.getElementById('atLabel').textContent = label;
+
+    const atHourly = Math.round(hourly * (1 - rate));
+    const atMonthly = Math.round(monthly * (1 - rate));
+    const atYearly = Math.round(yearly * (1 - rate));
+
+    document.getElementById('rHourlyAt').textContent = atHourly ? fmt(atHourly) : '-';
+    document.getElementById('rMonthlyAt').textContent = atMonthly ? fmt(atMonthly) : '-';
+    document.getElementById('rYearlyAt').textContent = atYearly ? fmt(atYearly) : '-';
+  }
+
+  // 시급이 있으면 글로벌 저장 (목표 계산용)
+  window._currentHourly = hourly;
+  window._currentHpd = hpd;
+  calcGoal();
+}
+
+function applyMinWage() {
+  document.getElementById('hourly').value = '7.25';
+  lastInput = 'hourly';
+  calc();
+}
+
+function calcGoal() {
+  const goalRaw = parseInt(document.getElementById('goalAmount').value.replace(/[^0-9]/g,''));
+  const hourly = window._currentHourly || 0;
+  const hpd = window._currentHpd || 8;
+  const el = document.getElementById('goalResult');
+
+  if(!goalRaw || !hourly) { el.style.display = 'none'; return; }
+
+  const hours = goalRaw / hourly;
+  const days = hours / hpd;
+
+  let msg = '';
+  if(hours < 1) {
+    msg = `<span class="emoji">😎</span><br>You only need to work about <strong>${Math.round(hours*60)} mins</strong>!<br>Make it before you finish your coffee!`;
+  } else if(days < 1) {
+    msg = `<span class="emoji">💪</span><br>You need to work about <strong>${hours.toFixed(1)} hours</strong>!<br>Doable in a single day!`;
+  } else if(days <= 30) {
+    msg = `<span class="emoji">🔥</span><br>About <strong>${hours.toFixed(1)} hours</strong> (<strong>${days.toFixed(1)} days</strong> at ${hpd}h/day)<br>You'll need to work non-stop to achieve this!`;
+  } else if(days <= 365) {
+    const months = (days / 30).toFixed(1);
+    msg = `<span class="emoji">😤</span><br>About <strong>${Math.round(hours)} hours</strong> = <strong>${months} months</strong> (at ${hpd}h/day)<br>It will take a while, but nothing is impossible!`;
+  } else {
+    const years = (days / 365).toFixed(1);
+    msg = `<span class="emoji">🫠</span><br>About <strong>${Math.round(hours).toLocaleString()} hours</strong> = <strong>${years} years</strong><br>Maybe rely on the power of compounding interest instead...`;
+  }
+  el.innerHTML = msg;
+  el.style.display = 'block';
+}
+
+function copyVal(card) {
+  const val = card.querySelector('.r-value').textContent;
+  if(val==='-') return;
+  navigator.clipboard.writeText(val).then(()=>{
+    card.style.borderColor='#4ade80';
+    setTimeout(()=>card.style.borderColor='',600);
+  });
+}
+// 페이지 로드 시 기본값으로 자동 계산
+lastInput = 'hourly';
+calc();
+</script>
+<button class="scroll-top-btn" aria-label="Top">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

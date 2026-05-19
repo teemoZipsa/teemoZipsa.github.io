@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>🏷️ Discount & Tax Calculator — TeemoZipsa</title>
+<meta name="description" content="Calculate discounted prices and tax-inclusive/exclusive amounts in real time. Useful for shopping, invoicing, and tax calculations.">
+<meta property="og:title" content="🏷️ Discount & Tax Calculator — TeemoZipsa">
+<meta property="og:description" content="Calculate discounted prices and tax amounts in real time.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/discount-calc/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/discount-calc/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/discount-calc/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/discount-calc/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+.app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+.content{padding:20px}
+.section{margin-bottom:20px}
+.section-title{font-size:13px;color:var(--text-section);font-weight:600;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.input-group{margin-bottom:14px}
+.input-group label{display:block;font-size:13px;color:var(--text-label);margin-bottom:5px}
+.input-group input{width:100%;padding:12px 14px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:16px;font-family:inherit;text-align:right}
+.input-group input:focus{outline:none;border-color:var(--accent)}
+.input-group input::placeholder{color:var(--text-muted)5aa;text-align:left}
+.row{display:flex;gap:10px}
+.row .input-group{flex:1}
+.toggle-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg-btn);border-radius:8px;margin-bottom:14px;cursor:pointer;user-select:none}
+.toggle-row:hover{background:var(--bg-btn-hover)}
+.toggle-label{font-size:14px;flex:1}
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle .slider{position:absolute;inset:0;background:var(--bg-btn);border-radius:12px;transition:.3s}
+.toggle .slider::before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+.toggle input:checked+.slider{background:var(--accent)}
+.toggle input:checked+.slider::before{transform:translateX(20px)}
+.result-box{background:var(--bg-bar);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
+.result-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.result-item:last-child{border-bottom:none}
+.result-label{font-size:13px;color:var(--text-section)}
+.result-value{font-size:18px;font-weight:700;color:var(--text-primary)}
+.result-value.highlight{color:var(--accent);font-size:22px}
+.result-value.tax{color:#f97316}
+.copy-btn{width:100%;padding:12px;background:var(--bg-header);color:var(--text-on-accent);border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .2s}
+.copy-btn:hover{opacity:.85}
+.copy-btn:active{transform:scale(.98)}
+/* Dynamic Report & Guide standard CSS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.report-box { margin: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
+.report-box strong { color: var(--accent); }
+  .guide-section{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+  .guide-section h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
+  .guide:last-child{margin-bottom:0}
+  .guide summary{padding:12px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--bg-guide);transition:background .2s}
+  .guide summary::-webkit-details-marker{display:none}
+  .guide summary::after{content:'▼';font-size:10px;color:var(--text-muted);transition:transform .3s}
+  .guide[open] summary::after{transform:rotate(180deg)}
+  .guide summary:hover{background:var(--bg-guide-hover)}
+  .guide-content{padding:14px;font-size:13px;color:var(--text-info);line-height:1.6;border-top:1px solid var(--border);background:var(--bg-app)}
+  .related-tools{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+  .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+  .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
+  .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
+    <h1>🏷️ Discount & Tax Calculator</h1>
+    <a href="/special-chars/discount-calc/" class="back-btn">🌐 한국어</a>
+  </div>
+  <div class="content">
+    <div class="section">
+      <div class="section-title">Price Information</div>
+      <div class="input-group">
+        <label>Original Price ($)</label>
+        <input type="text" id="price" placeholder="e.g. 500" inputmode="numeric" oninput="calc()">
+      </div>
+      <div class="row">
+        <div class="input-group">
+          <label>Discount Rate (%)</label>
+          <input type="text" id="discountRate" placeholder="0" inputmode="decimal" oninput="calc()">
+        </div>
+        <div class="input-group">
+          <label>Discount Amount ($)</label>
+          <input type="text" id="discountAmt" placeholder="0" inputmode="numeric" oninput="calcByAmt()">
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Tax Options</div>
+      <div class="toggle-row" onclick="document.getElementById('vatToggle').click()">
+        <span class="toggle-label">Include Sales Tax (10%)</span>
+        <label class="toggle" onclick="event.stopPropagation()">
+          <input type="checkbox" id="vatToggle" onchange="calc()">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-row" onclick="document.getElementById('vatExToggle').click()">
+        <span class="toggle-label">Input price is pre-tax</span>
+        <label class="toggle" onclick="event.stopPropagation()">
+          <input type="checkbox" id="vatExToggle" checked onchange="calc()">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Results</div>
+      <div class="result-box" id="resultBox">
+        <div class="result-item">
+          <span class="result-label">Discount Amount</span>
+          <span class="result-value" id="resDiscount">0 원</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">After Discount</span>
+          <span class="result-value" id="resAfterDiscount">0 원</span>
+        </div>
+        <div class="result-item" id="vatRow" style="display:none">
+          <span class="result-label">Sales Tax (10%)</span>
+          <span class="result-value tax" id="resVat">0 원</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Final Price</span>
+          <span class="result-value highlight" id="resFinal">0 원</span>
+        </div>
+      </div>
+      <button class="copy-btn" onclick="copyResult()">Copy Result</button>
+    </div>
+
+    <section class="guide-section">
+      <h2>💡 Comprehensive Guide to Discount & Tax Calculator</h2>
+      
+      <details class="guide" open>
+        <summary>1. How do I calculate a simple discount?</summary>
+        <div class="guide-content">
+          <p>Enter your <strong>Original Price</strong>, then enter either the <strong>Discount Rate (%)</strong> or the specific <strong>Discount Amount ($)</strong>. The calculator will automatically sync the two fields and immediately show your final discounted price below.</p>
+        </div>
+      </details>
+  
+      <details class="guide">
+        <summary>2. How does the Sales Tax feature work?</summary>
+        <div class="guide-content">
+          <p>By toggling <strong>"Include Sales Tax (10%)"</strong>, the calculator will compute a 10% tax on the <em>after-discount</em> amount and add it to your final total. This is crucial for accurate invoicing or shopping in regions with value-added taxes (VAT).</p>
+        </div>
+      </details>
+  
+      <details class="guide">
+        <summary>3. What is the "Input price is pre-tax" toggle used for?</summary>
+        <div class="guide-content">
+          <p>If you have a price that <em>already includes</em> tax, but you need to know the base price and the tax amount separately (reverse calculation), turn this toggle <strong>off</strong>. The calculator will extract the tax value out of the given total for you.</p>
+        </div>
+      </details>
+  
+      <div class="related-tools">
+        <h2>🔗 Recommended Calculators</h2>
+        <div class="tools-grid">
+          <a href="/special-chars/en/wage-calc/" class="tool-card">💵 Wage Calculator</a>
+          <a href="/special-chars/en/compound-interest/" class="tool-card">📈 Compound Interest</a>
+          <a href="/special-chars/en/avg-price/" class="tool-card">📉 Average Price Calc</a>
+          <a href="/special-chars/en/percent-calc/" class="tool-card">📊 Percentage Calc</a>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="footer"><span>Real-time Calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<button class="scroll-top-btn" aria-label="Scroll to top">↑</button>
+
+<script>
+function parseNum(s) {
+  return parseFloat(s.replace(/,/g, '')) || 0;
+}
+function fmt(n) {
+  return Math.round(n).toLocaleString('en-US');
+}
+
+let _syncLock = false;
+
+function calc() {
+  if (_syncLock) return;
+  const price = parseNum(document.getElementById('price').value);
+  const rate = parseFloat(document.getElementById('discountRate').value) || 0;
+  const vat = document.getElementById('vatToggle').checked;
+  const preTax = document.getElementById('vatExToggle').checked;
+
+  const discountAmt = price * rate / 100;
+  _syncLock = true;
+  document.getElementById('discountAmt').value = discountAmt ? fmt(discountAmt) : '';
+  _syncLock = false;
+
+  update(price, discountAmt, vat, preTax);
+}
+
+function calcByAmt() {
+  if (_syncLock) return;
+  const price = parseNum(document.getElementById('price').value);
+  const discountAmt = parseNum(document.getElementById('discountAmt').value);
+  const vat = document.getElementById('vatToggle').checked;
+  const preTax = document.getElementById('vatExToggle').checked;
+
+  const rate = price > 0 ? (discountAmt / price * 100) : 0;
+  _syncLock = true;
+  document.getElementById('discountRate').value = rate ? rate.toFixed(1).replace(/\.0$/, '') : '';
+  _syncLock = false;
+
+  update(price, discountAmt, vat, preTax);
+}
+
+function update(price, discountAmt, vat, preTax) {
+  let base = price;
+  // 세후 금액 입력인 경우 세전으로 역산
+  if (vat && !preTax) {
+    base = price / 1.1;
+  }
+
+  const afterDiscount = base - discountAmt;
+  const vatAmt = vat ? afterDiscount * 0.1 : 0;
+  const finalAmt = afterDiscount + vatAmt;
+
+  document.getElementById('resDiscount').textContent = '$' + fmt(discountAmt);
+  document.getElementById('resAfterDiscount').textContent = '$' + fmt(afterDiscount);
+  document.getElementById('resVat').textContent = '$' + fmt(vatAmt);
+  document.getElementById('resFinal').textContent = '$' + fmt(Math.max(0, finalAmt));
+  document.getElementById('vatRow').style.display = vat ? 'flex' : 'none';
+}
+
+function copyResult() {
+  const lines = [];
+  const price = document.getElementById('price').value;
+  const rate = document.getElementById('discountRate').value;
+  if (price) lines.push('Original Price: $' + parseNum(price).toLocaleString('en-US'));
+  if (rate) lines.push('Discount Rate: ' + rate + '%');
+  lines.push('Discount Amount: ' + document.getElementById('resDiscount').textContent);
+  lines.push('After Discount: ' + document.getElementById('resAfterDiscount').textContent);
+  if (document.getElementById('vatToggle').checked) {
+    lines.push('Sales Tax: ' + document.getElementById('resVat').textContent);
+  }
+  lines.push('Final Price: ' + document.getElementById('resFinal').textContent);
+  navigator.clipboard.writeText(lines.join('\n')).then(() => showToast('📋 Result copied to clipboard'));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+calc();
+
+(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

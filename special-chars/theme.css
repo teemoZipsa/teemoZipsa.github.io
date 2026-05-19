@@ -1,0 +1,265 @@
+/* ==============================
+   티모집사 통합 테마 시스템
+   theme.css — CSS 변수 기반 다크/라이트 테마
+   ============================== */
+
+/* ===== 라이트 테마 (기본) ===== */
+html[data-theme="light"] {
+  --bg-body: #f8fafc;
+  --bg-app: #ffffff;
+  --bg-card: #ffffff;
+  --bg-input: #f1f5f9;
+  --bg-header: linear-gradient(135deg, #6366f1, #8b5cf6);
+  --bg-hover: #f1f5f9;
+
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --text-on-accent: #ffffff;
+
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-light: #eef2ff;
+  --accent-bg: rgba(99, 102, 241, 0.08);
+
+  --border: #e2e8f0;
+  --border-hover: #c7d2fe;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-accent: 0 4px 16px rgba(99, 102, 241, 0.2);
+
+  /* 도구 페이지용 */
+  --bg-bar: #f1f5f9;
+  --bg-btn: #e2e8f0;
+  --bg-btn-hover: #cbd5e1;
+  --bg-stat: #f8fafc;
+  --bg-guide: #f1f5f9;
+  --bg-guide-hover: #e2e8f0;
+  --text-guide: #475569;
+  --border-guide: #e2e8f0;
+  --text-info: #475569;
+  --text-code: #6366f1;
+  --bg-tab: #e2e8f0;
+  --bg-tab-hover: #cbd5e1;
+  --bg-tab-active: #6366f1;
+  --text-tab: #64748b;
+  --text-tab-active: #ffffff;
+  --bg-emoji-tab: #e8f5e9;
+  --bg-emoji-tab-hover: #c8e6c9;
+  --bg-emoji-tab-active: #e67e22;
+  --bg-char-btn: #f1f5f9;
+  --bg-char-btn-hover: #6366f1;
+  --border-char: #e2e8f0;
+  --bg-emoji-cell: #f0fdf4;
+  --border-emoji: #d1fae5;
+  --bg-emoji-hover: #e67e22;
+  --border-emoji-hover: #f39c12;
+  --toast-bg: #6366f1;
+  --scrollbar-track: #f1f5f9;
+  --scrollbar-thumb: #6366f1;
+  --progress-bg: #e2e8f0;
+  --btn-clear-bg: #e2e8f0;
+  --btn-clear-text: #475569;
+  --btn-clear-hover: #cbd5e1;
+  --btn-copy-bg: #6366f1;
+  --btn-copy-text: #ffffff;
+  --btn-copy-hover: #4f46e5;
+
+  /* 성공/긍정 상태 */
+  --bg-success: #ecfdf5;
+  --bg-success-hover: #d1fae5;
+  --border-success: #a7f3d0;
+
+  /* 의미적 텍스트 색상 */
+  --text-success: #16a34a;
+  --text-amount: #6366f1;
+  --text-highlight: #ca8a04;
+  --text-section: #6366f1;
+  --text-label: #475569;
+  --text-placeholder: #94a3b8;
+  --bg-item-hover: #f1f5f9;
+  --bg-item-final: #eef2ff;
+  --border-final: #c7d2fe;
+
+  /* 계산기용 */
+  --calc-btn-bg: #f1f5f9;
+  --calc-btn-hover: #e2e8f0;
+  --calc-btn-active: #cbd5e1;
+  --calc-op-bg: #e2e8f0;
+  --calc-op-text: #475569;
+  --calc-op-hover: #cbd5e1;
+  --calc-fn-bg: #f8fafc;
+  --calc-fn-text: #64748b;
+  --calc-fn-hover: #f1f5f9;
+  --calc-eq-bg: #6366f1;
+  --calc-eq-hover: #4f46e5;
+  --calc-eq-active: #4338ca;
+  --calc-display-bg: #f8fafc;
+  --calc-expr-text: #64748b;
+  --calc-result-text: #1e293b;
+}
+
+/* ===== 다크 테마 ===== */
+html[data-theme="dark"] {
+  --bg-body: #1a1a2e;
+  --bg-app: #16213e;
+  --bg-card: #16213e;
+  --bg-input: #222250;
+  --bg-header: linear-gradient(135deg, #0f3460, #533483);
+  --bg-hover: #222250;
+
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0d0;
+  --text-muted: #8888bb;
+  --text-on-accent: #ffffff;
+
+  --accent: #a78bfa;
+  --accent-hover: #c4b5fd;
+  --accent-light: #2a2a5a;
+  --accent-bg: rgba(167, 139, 250, 0.15);
+
+  --border: #333366;
+  --border-hover: #a78bfa;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-accent: 0 4px 16px rgba(167, 139, 250, 0.3);
+
+  /* 도구 페이지용 */
+  --bg-bar: #1a1a3e;
+  --bg-btn: #2a2a5a;
+  --bg-btn-hover: #3a3a6a;
+  --bg-stat: #222250;
+  --bg-guide: #1e1e44;
+  --bg-guide-hover: #2a2a5a;
+  --text-guide: #b0b0e0;
+  --border-guide: #333366;
+  --text-info: #8888bb;
+  --text-code: #bb88ff;
+  --bg-tab: #2a2a5a;
+  --bg-tab-hover: #3a3a7a;
+  --bg-tab-active: #7c3aed;
+  --text-tab: #aaaaaa;
+  --text-tab-active: #ffffff;
+  --bg-emoji-tab: #2a3a2a;
+  --bg-emoji-tab-hover: #3a5a3a;
+  --bg-emoji-tab-active: #e67e22;
+  --bg-char-btn: #222250;
+  --bg-char-btn-hover: #7c3aed;
+  --border-char: #333366;
+  --bg-emoji-cell: #1e2e1e;
+  --border-emoji: #2a3a2a;
+  --bg-emoji-hover: #e67e22;
+  --border-emoji-hover: #f39c12;
+  --toast-bg: #7c3aed;
+  --scrollbar-track: #1a1a3e;
+  --scrollbar-thumb: #7c3aed;
+  --progress-bg: #2a2a5a;
+  --btn-clear-bg: #2a2a5a;
+  --btn-clear-text: #cccccc;
+  --btn-clear-hover: #3a3a6a;
+  --btn-copy-bg: #7c3aed;
+  --btn-copy-text: #ffffff;
+  --btn-copy-hover: #8b5cf6;
+
+  /* 성공/긍정 상태 */
+  --bg-success: #1a2a1a;
+  --bg-success-hover: #2a4a2a;
+  --border-success: #2a4a2a;
+
+  /* 의미적 텍스트 색상 */
+  --text-success: #4ade80;
+  --text-amount: #c4b5fd;
+  --text-highlight: #facc15;
+  --text-section: #8888cc;
+  --text-label: #aaaacc;
+  --text-placeholder: #444466;
+  --bg-item-hover: #1e2250;
+  --bg-item-final: #1e1e50;
+  --border-final: #7c3aed;
+
+  /* 계산기용 */
+  --calc-btn-bg: #222250;
+  --calc-btn-hover: #2a2a6a;
+  --calc-btn-active: #3a3a7a;
+  --calc-op-bg: #2a2a5a;
+  --calc-op-text: #b0b0e0;
+  --calc-op-hover: #3a3a6a;
+  --calc-fn-bg: #1e1e3a;
+  --calc-fn-text: #8888bb;
+  --calc-fn-hover: #2a2a4a;
+  --calc-eq-bg: #7c3aed;
+  --calc-eq-hover: #8b5cf6;
+  --calc-eq-active: #a78bfa;
+  --calc-display-bg: #1a1a3e;
+  --calc-expr-text: #6666aa;
+  --calc-result-text: #ffffff;
+}
+
+/* ===== 테마 토글 버튼 ===== */
+.theme-toggle-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  color: #ffffff;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 8px;
+  transition: background 0.2s, transform 0.2s;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: inherit;
+  user-select: none;
+}
+.theme-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: scale(1.05);
+}
+
+/* 메인 포털용 테마 토글 (히어로/헤더 밖에 있을 때) */
+.theme-toggle-portal {
+  position: fixed;
+  top: 56px;
+  right: 16px;
+  z-index: 1000;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 8px 10px;
+  border-radius: 10px;
+  box-shadow: var(--shadow-md);
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s, top 0.3s;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+  user-select: none;
+}
+.theme-toggle-portal:hover {
+  background: var(--accent-hover);
+  transform: scale(1.05);
+  box-shadow: var(--shadow-accent);
+}
+.theme-toggle-portal.blog-toggle-portal {
+  right: 64px;
+}
+
+/* 전환 애니메이션 */
+html[data-theme] body,
+html[data-theme] body * {
+  transition: background-color 0.3s ease, color 0.2s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+/* 성능을 위해 일부 요소는 전환 제외 */
+html[data-theme] .char-btn,
+html[data-theme] .char-grid button,
+html[data-theme] .calc-btn {
+  transition: background-color 0.12s, transform 0.12s, box-shadow 0.12s;
+}

@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>🎵 Music Calculator — All-in-One BPM, Metronome, Delay & Key Tools</title>
+<meta name="description" content="BPM Tap Tempo, Metronome, Delay Timing, Song Length & Bar Calculator, Note↔Hz Converter, and Key Transpose. The all-in-one music calculator for producers and musicians.">
+<meta property="og:title" content="🎵 Music Calculator — All-in-One Tools for Musicians">
+<meta property="og:description" content="BPM tap tempo, metronome, delay timing, note/Hz conversion, and key transpose — all in one place.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/music-calc/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/music-calc/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/music-calc/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/music-calc/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
+.app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:560px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.lang-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.lang-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+.body{padding:16px;display:flex;flex-direction:column;gap:14px}
+
+/* === Main Tab Navigation === */
+.main-tabs{display:flex;gap:3px;background:var(--bg-bar);border-radius:10px;padding:3px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.main-tabs::-webkit-scrollbar{display:none}
+.main-tab{flex-shrink:0;padding:8px 12px;border:none;border-radius:8px;background:transparent;color:var(--text-info);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;text-align:center;white-space:nowrap}
+.main-tab.active{background:var(--accent);color:var(--text-on-accent);box-shadow:0 2px 8px rgba(83,52,131,.3)}
+.main-tab:hover:not(.active){background:var(--bg-btn)}
+
+/* === Tab Panels === */
+.tab-panel{display:none}
+.tab-panel.active{display:flex;flex-direction:column;gap:14px}
+
+/* === Common Inputs === */
+.section-title{font-size:12px;color:var(--text-info);font-weight:700;letter-spacing:.5px;margin-bottom:2px}
+.input-group{display:flex;flex-direction:column;gap:4px}
+.input-group label{font-size:12px;color:var(--text-info);font-weight:600}
+.input-row{display:flex;align-items:center;gap:8px}
+.input-row input,.input-row select{flex:1;padding:10px 12px;background:var(--bg-guide);border:1.5px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:15px;font-family:inherit;font-weight:600;outline:none;transition:border-color .2s}
+.input-row input:focus,.input-row select:focus{border-color:var(--accent)}
+.input-row .unit{font-size:13px;color:var(--text-info);font-weight:600;white-space:nowrap;min-width:28px}
+
+/* === BPM Tap === */
+.tap-area{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;background:var(--accent-bg);border:2px dashed var(--accent);border-radius:16px;cursor:pointer;transition:all .15s;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.tap-area:active{transform:scale(.97);background:var(--accent);border-style:solid}
+.tap-area:active .tap-bpm,.tap-area:active .tap-hint{color:var(--text-on-accent)}
+.tap-bpm{font-size:56px;font-weight:900;color:var(--accent);line-height:1;transition:color .15s;font-variant-numeric:tabular-nums}
+.tap-label{font-size:14px;color:var(--text-muted);margin-top:4px;font-weight:600}
+.tap-hint{font-size:12px;color:var(--text-info);margin-top:12px;transition:color .15s}
+.tap-sub{display:flex;gap:12px;justify-content:center;margin-top:8px;font-size:12px;color:var(--text-muted)}
+.tap-reset{padding:8px 20px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.tap-reset:hover{background:var(--bg-btn-hover);border-color:var(--border-hover)}
+
+/* === Result Table === */
+.result-table{width:100%;border-collapse:collapse;font-size:13px}
+.result-table th{background:var(--bg-bar);padding:8px 10px;text-align:left;font-weight:700;color:var(--text-info);border-bottom:1.5px solid var(--border);font-size:11px;letter-spacing:.3px}
+.result-table td{padding:8px 10px;border-bottom:1px solid var(--border);font-variant-numeric:tabular-nums}
+.result-table tr:last-child td{border-bottom:none}
+.result-table .note-name{font-weight:700;color:var(--accent)}
+.result-table .ms-value{font-weight:700;color:var(--text-primary)}
+.result-table .hz-value{color:var(--text-highlight);font-weight:600}
+
+/* === Highlight Card === */
+.highlight-card{background:var(--accent);border-radius:12px;padding:16px;text-align:center}
+.highlight-card .h-label{font-size:12px;color:rgba(255,255,255,.8);margin-bottom:4px}
+.highlight-card .h-value{font-size:28px;font-weight:900;color:var(--text-on-accent)}
+.highlight-card .h-sub{font-size:12px;color:rgba(255,255,255,.7);margin-top:4px}
+
+/* === Note Grid === */
+.note-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:3px}
+.note-btn{padding:8px 2px;background:var(--bg-guide);border:1.5px solid var(--border);border-radius:6px;font-size:11px;font-weight:700;color:var(--text-secondary);cursor:pointer;text-align:center;transition:all .15s;font-family:inherit}
+.note-btn.active{background:var(--accent);color:var(--text-on-accent);border-color:var(--accent)}
+.note-btn.sharp{background:var(--bg-btn);color:var(--text-muted)}
+.note-btn:hover:not(.active){border-color:var(--accent);background:var(--accent-light)}
+
+/* === Semitone Slider === */
+.semitone-control{display:flex;align-items:center;gap:12px}
+.semitone-btn{width:36px;height:36px;border-radius:50%;background:var(--bg-btn);border:1.5px solid var(--border);color:var(--text-primary);font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:inherit;flex-shrink:0}
+.semitone-btn:hover{background:var(--accent);color:var(--text-on-accent);border-color:var(--accent)}
+.semitone-display{flex:1;text-align:center;font-size:24px;font-weight:900;color:var(--accent)}
+
+/* === Detail Box === */
+.detail-box{background:var(--bg-guide);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.detail-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+.detail-row:last-child{border-bottom:none}
+.detail-label{color:var(--text-info)}
+.detail-value{font-weight:700;color:var(--text-primary);font-variant-numeric:tabular-nums}
+
+/* Dynamic Report & Guide standard CSS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.report-box { margin: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
+.report-box strong { color: var(--accent); }
+.guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
+.guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
+.guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.guide summary { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; line-height: 1.4; background: var(--bg-guide); transition: background 0.2s; }
+.guide summary:hover { background: var(--bg-guide-hover); }
+.guide summary::-webkit-details-marker { display: none; }
+.guide summary::after { content: '▼'; font-size: 10px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
+.guide[open] summary { background: var(--bg-btn); border-bottom: 1px solid var(--border); }
+.guide[open] summary::after { transform: rotate(180deg); }
+.guide-content { padding: 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.guide-content h3 { font-size: 14px; color: var(--text-primary); margin: 12px 0 8px; }
+.guide-content p { margin-bottom: 12px; }
+.guide-content ul, .guide-content ol { padding-left: 20px; margin-bottom: 12px; }
+.guide-content li { margin-bottom: 4px; }
+.related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+.related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+.tool-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 10px; text-decoration: none; transition: all 0.2s; }
+.tool-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.tool-icon { font-size: 24px; margin-bottom: 8px; }
+.tool-name { font-size: 12px; font-weight: 600; color: var(--text-primary); line-height: 1.3; }
+
+/* === Footer === */
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+
+/* === Toast === */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.4);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* === Scroll Top === */
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+
+/* === 2-Col Cards === */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.info-card{background:var(--accent-bg);border:1.5px solid var(--accent);border-radius:10px;padding:14px 10px;text-align:center}
+.info-card .ic-label{font-size:11px;color:var(--text-info);margin-bottom:4px}
+.info-card .ic-value{font-size:20px;font-weight:800;color:var(--accent)}
+.info-card .ic-sub{font-size:11px;color:var(--text-info);margin-top:2px}
+
+/* === Octave === */
+.octave-row{display:flex;gap:3px;flex-wrap:wrap}
+.oct-btn{padding:6px 10px;background:var(--bg-guide);border:1.5px solid var(--border);border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;font-family:inherit;color:var(--text-secondary)}
+.oct-btn.active{background:var(--accent);color:var(--text-on-accent);border-color:var(--accent)}
+.oct-btn:hover:not(.active){border-color:var(--accent)}
+
+/* === Metronome === */
+.metro-play-btn{width:100%;padding:16px;border:none;border-radius:12px;font-size:18px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;letter-spacing:.5px}
+.metro-play-btn.stopped{background:var(--accent);color:var(--text-on-accent);box-shadow:var(--shadow-accent)}
+.metro-play-btn.stopped:hover{background:var(--accent-hover);transform:scale(1.02)}
+.metro-play-btn.playing{background:#ef4444;color:#fff;box-shadow:0 4px 16px rgba(239,68,68,.3)}
+.metro-play-btn.playing:hover{background:#dc2626}
+.beat-dots{display:flex;justify-content:center;gap:10px;padding:12px 0}
+.beat-dot{width:28px;height:28px;border-radius:50%;background:var(--bg-btn);border:2px solid var(--border);transition:all .08s}
+.beat-dot.accent{border-color:var(--accent)}
+.beat-dot.active{transform:scale(1.3);border-color:var(--accent);box-shadow:0 0 16px rgba(99,102,241,.5)}
+.beat-dot.active.accent{background:var(--accent);box-shadow:0 0 20px rgba(99,102,241,.6)}
+.beat-dot.active:not(.accent){background:var(--accent-light);border-color:var(--accent)}
+.metro-bpm-display{text-align:center;font-size:48px;font-weight:900;color:var(--accent);font-variant-numeric:tabular-nums;line-height:1;margin:4px 0}
+.metro-bpm-label{text-align:center;font-size:13px;color:var(--text-muted);font-weight:600}
+.metro-slider{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:var(--bg-btn);outline:none;transition:opacity .2s}
+.metro-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 2px 8px rgba(99,102,241,.3)}
+.metro-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--accent);cursor:pointer;border:none}
+.metro-presets{display:flex;gap:4px;flex-wrap:wrap}
+.metro-preset{padding:5px 10px;background:var(--bg-guide);border:1px solid var(--border);border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text-secondary);transition:all .15s}
+.metro-preset:hover{border-color:var(--accent);background:var(--accent-light)}
+.vol-row{display:flex;align-items:center;gap:10px}
+.vol-row .vol-icon{font-size:16px;flex-shrink:0}
+.vol-slider{flex:1;-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;background:var(--bg-btn);outline:none}
+.vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer}
+.vol-slider::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);border:none;cursor:pointer}
+
+@media(max-width:640px){
+  .scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}
+  .two-col{grid-template-columns:1fr}
+  .note-grid{grid-template-columns:repeat(6,1fr)}
+  .tap-bpm{font-size:44px}
+  .main-tab{font-size:11px;padding:7px 10px}
+  .metro-bpm-display{font-size:40px}
+  .beat-dot{width:24px;height:24px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/en/" class="lang-btn">← All Tools</a>
+    <h1>🎵 Music Calculator</h1>
+    <a href="/special-chars/music-calc/" class="lang-btn">🌐 한국어</a>
+  </div>
+
+  <!-- Main Tabs -->
+  <div style="padding:12px 16px 0">
+    <div class="main-tabs" id="mainTabs">
+      <button class="main-tab active" onclick="switchTab(0)">🥁 BPM Tap</button>
+      <button class="main-tab" onclick="switchTab(1)">🔊 Metronome</button>
+      <button class="main-tab" onclick="switchTab(2)">⏱ Delay</button>
+      <button class="main-tab" onclick="switchTab(3)">📏 Song Length</button>
+      <button class="main-tab" onclick="switchTab(4)">🎹 Note·Hz</button>
+      <button class="main-tab" onclick="switchTab(5)">🔀 Transpose</button>
+    </div>
+  </div>
+
+  <!-- ===== TAB 0: BPM Tap Tempo ===== -->
+  <div class="body tab-panel active" id="panel0">
+    <div class="tap-area" id="tapArea">
+      <div class="tap-bpm" id="tapBpm">—</div>
+      <div class="tap-label">BPM</div>
+      <div class="tap-hint" id="tapHint">Tap to the beat</div>
+      <div class="tap-sub" id="tapSub"></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="tap-reset" onclick="resetTap()" style="flex:1">🔄 Reset</button>
+      <button class="tap-reset" onclick="copyBpm()" style="flex:1">📋 Copy BPM</button>
+    </div>
+    <div class="detail-box" id="tapDetail" style="display:none"></div>
+  </div>
+
+  <!-- ===== TAB 1: Metronome ===== -->
+  <div class="body tab-panel" id="panel1">
+    <div class="metro-bpm-display" id="metroBpmDisplay">120</div>
+    <div class="metro-bpm-label">BPM</div>
+    <input type="range" class="metro-slider" id="metroSlider" min="20" max="300" value="120" oninput="setMetroBpm(this.value)">
+    <div class="input-row">
+      <input type="number" id="metroBpmInput" value="120" min="20" max="300" style="text-align:center;font-size:16px" oninput="setMetroBpm(this.value)">
+      <span class="unit">BPM</span>
+    </div>
+    <div>
+      <div class="section-title">Presets</div>
+      <div class="metro-presets">
+        <button class="metro-preset" onclick="setMetroBpm(60)">Largo 60</button>
+        <button class="metro-preset" onclick="setMetroBpm(80)">Adagio 80</button>
+        <button class="metro-preset" onclick="setMetroBpm(100)">Andante 100</button>
+        <button class="metro-preset" onclick="setMetroBpm(120)">Allegro 120</button>
+        <button class="metro-preset" onclick="setMetroBpm(140)">Vivace 140</button>
+        <button class="metro-preset" onclick="setMetroBpm(180)">Presto 180</button>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="input-group">
+        <label>Time Signature</label>
+        <div class="input-row">
+          <select id="metroTimeSig" onchange="updateMetroBeats()">
+            <option value="4">4/4</option>
+            <option value="3">3/4</option>
+            <option value="2">2/4</option>
+            <option value="6">6/8</option>
+            <option value="5">5/4</option>
+            <option value="7">7/8</option>
+          </select>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Volume</label>
+        <div class="vol-row">
+          <span class="vol-icon">🔈</span>
+          <input type="range" class="vol-slider" id="metroVol" min="0" max="100" value="80" oninput="metroVolume=this.value/100">
+          <span class="vol-icon">🔊</span>
+        </div>
+      </div>
+    </div>
+    <div class="beat-dots" id="beatDots"></div>
+    <button class="metro-play-btn stopped" id="metroPlayBtn" onclick="toggleMetronome()">▶ Start</button>
+  </div>
+
+  <!-- ===== TAB 2: Delay Timing ===== -->
+  <div class="body tab-panel" id="panel2">
+    <div class="input-group">
+      <label>Enter BPM</label>
+      <div class="input-row">
+        <input type="number" id="delayBpm" value="120" min="1" max="999" oninput="calcDelay()">
+        <span class="unit">BPM</span>
+      </div>
+    </div>
+    <div class="highlight-card" id="delayHighlight">
+      <div class="h-label">♩ Quarter Note Delay</div>
+      <div class="h-value" id="delayQuarter">500 ms</div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="result-table" id="delayTable"></table>
+    </div>
+  </div>
+
+  <!-- ===== TAB 3: Song Length ===== -->
+  <div class="body tab-panel" id="panel3">
+    <div class="two-col">
+      <div class="input-group">
+        <label>BPM</label>
+        <div class="input-row">
+          <input type="number" id="songBpm" value="120" min="1" max="999" oninput="calcSong()">
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Time Signature</label>
+        <div class="input-row">
+          <select id="songTimeSig" onchange="calcSong()">
+            <option value="4/4">4/4</option>
+            <option value="3/4">3/4</option>
+            <option value="6/8">6/8</option>
+            <option value="2/4">2/4</option>
+            <option value="5/4">5/4</option>
+            <option value="7/8">7/8</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="input-group">
+      <label>Number of Bars</label>
+      <div class="input-row">
+        <input type="number" id="songBars" value="32" min="1" max="9999" oninput="calcSong()">
+        <span class="unit">bars</span>
+      </div>
+    </div>
+    <div class="highlight-card">
+      <div class="h-label">Estimated Song Length</div>
+      <div class="h-value" id="songLength">1:04</div>
+      <div class="h-sub" id="songLengthSub">64.0s · 128 beats</div>
+    </div>
+    <div class="detail-box" id="songDetail"></div>
+    <div class="input-group" style="margin-top:4px">
+      <label>🔄 Reverse: Duration → Bars</label>
+      <div class="input-row">
+        <input type="number" id="songMin" value="3" min="0" max="99" style="max-width:70px" oninput="calcReverse()">
+        <span class="unit">min</span>
+        <input type="number" id="songSec" value="30" min="0" max="59" style="max-width:70px" oninput="calcReverse()">
+        <span class="unit">sec</span>
+      </div>
+    </div>
+    <div class="detail-box" id="reverseDetail"></div>
+  </div>
+
+  <!-- ===== TAB 4: Note ↔ Hz ===== -->
+  <div class="body tab-panel" id="panel4">
+    <div class="input-group">
+      <label>Reference Frequency (A4)</label>
+      <div class="input-row">
+        <input type="number" id="refHz" value="440" min="400" max="480" step="1" oninput="calcNote()">
+        <span class="unit">Hz</span>
+      </div>
+    </div>
+    <div>
+      <div class="section-title">Select Note</div>
+      <div class="note-grid" id="noteGrid"></div>
+    </div>
+    <div>
+      <div class="section-title">Octave</div>
+      <div class="octave-row" id="octaveRow"></div>
+    </div>
+    <div class="highlight-card" id="noteResult">
+      <div class="h-label" id="noteResultLabel">C4</div>
+      <div class="h-value" id="noteResultHz">261.63 Hz</div>
+      <div class="h-sub" id="noteResultMidi">MIDI #60</div>
+    </div>
+    <div>
+      <div class="section-title">Frequency Table (Current Octave)</div>
+      <div style="overflow-x:auto">
+        <table class="result-table" id="noteTable"></table>
+      </div>
+    </div>
+    <div class="input-group" style="margin-top:4px">
+      <label>🔄 Hz → Note Conversion</label>
+      <div class="input-row">
+        <input type="number" id="hzInput" value="440" min="1" max="99999" step="0.01" oninput="calcHzToNote()">
+        <span class="unit">Hz</span>
+      </div>
+    </div>
+    <div class="detail-box" id="hzToNoteResult"></div>
+  </div>
+
+  <!-- ===== TAB 5: Key Transpose ===== -->
+  <div class="body tab-panel" id="panel5">
+    <div class="input-group">
+      <label>Original Key</label>
+      <div class="input-row">
+        <select id="transposeFrom" onchange="calcTranspose()"></select>
+      </div>
+    </div>
+    <div>
+      <div class="section-title">Semitone Shift</div>
+      <div class="semitone-control">
+        <button class="semitone-btn" onclick="changeSemitone(-1)">−</button>
+        <div class="semitone-display" id="semitoneVal">0</div>
+        <button class="semitone-btn" onclick="changeSemitone(1)">+</button>
+      </div>
+    </div>
+    <div class="highlight-card">
+      <div class="h-label">Transposed Key</div>
+      <div class="h-value" id="transposeTo">C</div>
+      <div class="h-sub" id="transposeSub"></div>
+    </div>
+    <div>
+      <div class="section-title">Scale Comparison</div>
+      <div class="detail-box" id="transposeScale"></div>
+    </div>
+    <div class="input-group" style="margin-top:4px">
+      <label>BPM Change (Tape-style Pitch Shift)</label>
+      <div class="input-row">
+        <input type="number" id="transposeBpm" value="120" min="1" max="999" oninput="calcTranspose()">
+        <span class="unit">BPM</span>
+      </div>
+    </div>
+    <div class="detail-box" id="transposeBpmResult"></div>
+  </div>
+
+  <!-- Guide -->
+  <section class="guide-section">
+    <h2>💡 Comprehensive Guide to the Music Calculator</h2>
+    
+    <details class="guide" open>
+      <summary>1. How do I find the BPM of a song?</summary>
+      <div class="guide-content">
+        <p>Use the <strong>BPM Tap Tempo</strong> tool. Simply play the song and click or tap the screen exactly on the beat. The calculator averages your taps to output a highly accurate BPM. We recommend tapping at least 4 to 8 times for the best accuracy.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>2. How do I calculate delay and reverb timing for producing?</summary>
+      <div class="guide-content">
+        <p>Go to the <strong>Delay Timing</strong> tab. Enter your track's BPM to instantly get precise millisecond (ms) and Hertz (Hz) values mapped to every musical subdivision (quarter note, dotted eighth, triplets, etc.). This makes syncing delays and LFOs in your DAW perfectly accurate.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>3. Can I convert musical notes to frequencies (Hz)?</summary>
+      <div class="guide-content">
+        <p>Yes. The <strong>Note·Hz</strong> tab allows bidirectional conversion. You can see the exact frequency (and MIDI number) for any given note (e.g., C4 = 261.63 Hz). You can also type in a raw Hz value, and the calculator will tell you the nearest musical note and how many cents sharp or flat it is.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>4. How does the Key Transpose tool work?</summary>
+      <div class="guide-content">
+        <p>Select your original key and shift it up or down by semitones. The tool automatically maps out the full transposed scale for you. Additionally, if you are pitching up audio like on a vinyl record or tape machine, it will calculate exactly how your original BPM will change based on the semitone shift.</p>
+      </div>
+    </details>
+
+    <div class="related-tools">
+      <h3>🛠️ Recommended Utility Tools</h3>
+      <div class="tools-grid">
+        <a href="/special-chars/en/timer/" class="tool-card">
+          <span class="tool-icon">⏱️</span>
+          <span class="tool-name">Online Timer</span>
+        </a>
+        <a href="/special-chars/en/speech-timer/" class="tool-card">
+          <span class="tool-icon">🎤</span>
+          <span class="tool-name">Speech Timer</span>
+        </a>
+        <a href="/special-chars/en/password-gen/" class="tool-card">
+          <span class="tool-icon">🔒</span>
+          <span class="tool-name">Password Gen</span>
+        </a>
+        <a href="/special-chars/en/prompt-gen/" class="tool-card">
+          <span class="tool-icon">✍️</span>
+          <span class="tool-name">AI Prompt Gen</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer"><span>🎵 Music Calculator · All-in-One</span><a href="https://teemozipsa.github.io/">😺 More Tools</a></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="scroll-top-btn" aria-label="Back to top">↑</button>
+
+<script>
+// ========== Common ==========
+const NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+
+function switchTab(idx) {
+  document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));
+  document.querySelectorAll('.main-tab').forEach((t,i)=>t.classList.toggle('active',i===idx));
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),2000)}
+
+function fmt(n,d=2){return Number(n).toFixed(d)}
+
+// ========== TAB 0: BPM Tap Tempo ==========
+let taps = [];
+let tapTimeout;
+
+const tapArea = document.getElementById('tapArea');
+const tapBpmEl = document.getElementById('tapBpm');
+const tapHintEl = document.getElementById('tapHint');
+const tapSubEl = document.getElementById('tapSub');
+const tapDetailEl = document.getElementById('tapDetail');
+
+tapArea.addEventListener('pointerdown', function(e) {
+  e.preventDefault();
+  const now = performance.now();
+
+  if (taps.length > 0 && now - taps[taps.length-1] > 2000) {
+    taps = [];
+  }
+
+  taps.push(now);
+  clearTimeout(tapTimeout);
+
+  if (taps.length < 2) {
+    tapHintEl.textContent = 'Keep tapping...';
+    tapBpmEl.textContent = '—';
+    tapSubEl.textContent = '';
+    tapDetailEl.style.display = 'none';
+    return;
+  }
+
+  const intervals = [];
+  for (let i = 1; i < taps.length; i++) {
+    intervals.push(taps[i] - taps[i-1]);
+  }
+  const avgMs = intervals.reduce((a,b)=>a+b,0) / intervals.length;
+  const bpm = 60000 / avgMs;
+
+  tapBpmEl.textContent = Math.round(bpm);
+  tapHintEl.textContent = `${taps.length} taps · avg interval ${Math.round(avgMs)}ms`;
+
+  const variance = intervals.reduce((sum,v)=>sum+Math.pow(v-avgMs,2),0)/intervals.length;
+  const stdDev = Math.sqrt(variance);
+  const accuracy = Math.max(0, 100 - (stdDev/avgMs*100));
+
+  tapSubEl.innerHTML = `Accuracy <b>${fmt(accuracy,1)}%</b>`;
+
+  tapDetailEl.style.display = 'block';
+  tapDetailEl.innerHTML = `
+    <div class="detail-row"><span class="detail-label">Measured BPM</span><span class="detail-value" style="color:var(--accent);font-size:16px;font-weight:800">${fmt(bpm,1)}</span></div>
+    <div class="detail-row"><span class="detail-label">Tap Count</span><span class="detail-value">${taps.length}</span></div>
+    <div class="detail-row"><span class="detail-label">Avg Interval</span><span class="detail-value">${fmt(avgMs,1)} ms</span></div>
+    <div class="detail-row"><span class="detail-label">♩ Quarter Note</span><span class="detail-value">${fmt(avgMs,1)} ms</span></div>
+    <div class="detail-row"><span class="detail-label">♪ Eighth Note</span><span class="detail-value">${fmt(avgMs/2,1)} ms</span></div>
+    <div class="detail-row"><span class="detail-label">Accuracy</span><span class="detail-value">${fmt(accuracy,1)}%</span></div>
+  `;
+
+  tapTimeout = setTimeout(()=>{
+    tapHintEl.textContent = `Done! ${taps.length} taps`;
+  }, 3000);
+});
+
+function resetTap() {
+  taps = [];
+  clearTimeout(tapTimeout);
+  tapBpmEl.textContent = '—';
+  tapHintEl.textContent = 'Tap to the beat';
+  tapSubEl.textContent = '';
+  tapDetailEl.style.display = 'none';
+}
+
+function copyBpm() {
+  if (taps.length < 2) { showToast('Measure BPM first'); return; }
+  navigator.clipboard.writeText(tapBpmEl.textContent).then(()=>showToast('📋 BPM copied'));
+}
+
+// ========== TAB 2: Delay Timing ==========
+function calcDelay() {
+  const bpm = parseFloat(document.getElementById('delayBpm').value) || 120;
+  const quarter = 60000 / bpm;
+
+  document.getElementById('delayQuarter').textContent = fmt(quarter,1) + ' ms';
+
+  const rows = [
+    { name: '𝅝 Whole',         mult: 4 },
+    { name: '𝅗𝅥 Half',          mult: 2 },
+    { name: '𝅗𝅥. Dotted Half',   mult: 3 },
+    { name: '♩ Quarter',       mult: 1 },
+    { name: '♩. Dotted Quarter', mult: 1.5 },
+    { name: '♩₃ Triplet Quarter',mult: 2/3 },
+    { name: '♪ Eighth',        mult: 0.5 },
+    { name: '♪. Dotted Eighth',  mult: 0.75 },
+    { name: '♪₃ Triplet Eighth', mult: 1/3 },
+    { name: '♬ Sixteenth',     mult: 0.25 },
+    { name: '♬. Dotted 16th',   mult: 0.375 },
+    { name: '♬₃ Triplet 16th',  mult: 1/6 },
+    { name: '32nd Note',       mult: 0.125 },
+  ];
+
+  let html = '<tr><th>Note</th><th>ms</th><th>sec</th><th>Hz</th></tr>';
+  for (const r of rows) {
+    const ms = quarter * r.mult;
+    html += `<tr>
+      <td class="note-name">${r.name}</td>
+      <td class="ms-value">${fmt(ms,1)}</td>
+      <td>${fmt(ms/1000,3)}</td>
+      <td class="hz-value">${fmt(1000/ms,2)}</td>
+    </tr>`;
+  }
+  document.getElementById('delayTable').innerHTML = html;
+}
+
+// ========== TAB 3: Song Length ==========
+function calcSong() {
+  const bpm = parseFloat(document.getElementById('songBpm').value) || 120;
+  const bars = parseInt(document.getElementById('songBars').value) || 32;
+  const ts = document.getElementById('songTimeSig').value.split('/');
+  const beatsPerBar = parseInt(ts[0]);
+  const beatUnit = parseInt(ts[1]);
+
+  const quarterSec = 60 / bpm;
+  const beatSec = quarterSec * (4 / beatUnit);
+  const totalSec = bars * beatsPerBar * beatSec;
+  const totalBeats = bars * beatsPerBar;
+
+  const min = Math.floor(totalSec / 60);
+  const sec = totalSec % 60;
+
+  document.getElementById('songLength').textContent = `${min}:${String(Math.floor(sec)).padStart(2,'0')}`;
+  document.getElementById('songLengthSub').textContent = `${fmt(totalSec,1)}s · ${totalBeats} beats`;
+
+  document.getElementById('songDetail').innerHTML = `
+    <div class="detail-row"><span class="detail-label">BPM</span><span class="detail-value">${bpm}</span></div>
+    <div class="detail-row"><span class="detail-label">Time Sig</span><span class="detail-value">${beatsPerBar}/${beatUnit}</span></div>
+    <div class="detail-row"><span class="detail-label">Bars</span><span class="detail-value">${bars}</span></div>
+    <div class="detail-row"><span class="detail-label">Total Beats</span><span class="detail-value">${totalBeats}</span></div>
+    <div class="detail-row"><span class="detail-label">Bar Length</span><span class="detail-value">${fmt(beatsPerBar*beatSec,2)}s</span></div>
+    <div class="detail-row"><span class="detail-label">Total</span><span class="detail-value" style="color:var(--accent);font-weight:800">${min}m ${fmt(sec,1)}s</span></div>
+  `;
+}
+
+function calcReverse() {
+  const bpm = parseFloat(document.getElementById('songBpm').value) || 120;
+  const ts = document.getElementById('songTimeSig').value.split('/');
+  const beatsPerBar = parseInt(ts[0]);
+  const beatUnit = parseInt(ts[1]);
+  const min = parseInt(document.getElementById('songMin').value) || 0;
+  const sec = parseInt(document.getElementById('songSec').value) || 0;
+  const totalSec = min * 60 + sec;
+
+  const quarterSec = 60 / bpm;
+  const beatSec = quarterSec * (4 / beatUnit);
+  const totalBeats = totalSec / beatSec;
+  const bars = totalBeats / beatsPerBar;
+
+  document.getElementById('reverseDetail').innerHTML = `
+    <div class="detail-row"><span class="detail-label">Input Duration</span><span class="detail-value">${min}m ${sec}s (${totalSec}s)</span></div>
+    <div class="detail-row"><span class="detail-label">Total Beats</span><span class="detail-value">${fmt(totalBeats,1)}</span></div>
+    <div class="detail-row"><span class="detail-label">Bars</span><span class="detail-value" style="color:var(--accent);font-weight:800">${fmt(bars,1)}</span></div>
+  `;
+}
+
+// ========== TAB 4: Note ↔ Hz ==========
+let selectedNote = 0;
+let selectedOctave = 4;
+
+function midiToHz(midi, refHz) {
+  return refHz * Math.pow(2, (midi - 69) / 12);
+}
+
+function noteToMidi(noteIdx, octave) {
+  return (octave + 1) * 12 + noteIdx;
+}
+
+function buildNoteGrid() {
+  const grid = document.getElementById('noteGrid');
+  grid.innerHTML = '';
+  NOTES.forEach((n, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'note-btn' + (n.includes('#') ? ' sharp' : '') + (i === selectedNote ? ' active' : '');
+    btn.textContent = n;
+    btn.onclick = () => { selectedNote = i; buildNoteGrid(); calcNote(); };
+    grid.appendChild(btn);
+  });
+}
+
+function buildOctaveRow() {
+  const row = document.getElementById('octaveRow');
+  row.innerHTML = '';
+  for (let o = 0; o <= 8; o++) {
+    const btn = document.createElement('button');
+    btn.className = 'oct-btn' + (o === selectedOctave ? ' active' : '');
+    btn.textContent = o;
+    btn.onclick = () => { selectedOctave = o; buildOctaveRow(); calcNote(); };
+    row.appendChild(btn);
+  }
+}
+
+function calcNote() {
+  const refHz = parseFloat(document.getElementById('refHz').value) || 440;
+  const midi = noteToMidi(selectedNote, selectedOctave);
+  const hz = midiToHz(midi, refHz);
+
+  document.getElementById('noteResultLabel').textContent = NOTES[selectedNote] + selectedOctave;
+  document.getElementById('noteResultHz').textContent = fmt(hz, 2) + ' Hz';
+  document.getElementById('noteResultMidi').textContent = `MIDI #${midi}`;
+
+  let html = '<tr><th>Note</th><th>Hz</th><th>MIDI</th></tr>';
+  NOTES.forEach((n, i) => {
+    const m = noteToMidi(i, selectedOctave);
+    const h = midiToHz(m, refHz);
+    const isActive = i === selectedNote;
+    html += `<tr style="${isActive ? 'background:var(--accent-bg)' : ''}">
+      <td class="note-name">${n}${selectedOctave}</td>
+      <td class="hz-value">${fmt(h, 2)}</td>
+      <td>${m}</td>
+    </tr>`;
+  });
+  document.getElementById('noteTable').innerHTML = html;
+}
+
+function calcHzToNote() {
+  const refHz = parseFloat(document.getElementById('refHz').value) || 440;
+  const inputHz = parseFloat(document.getElementById('hzInput').value);
+  if (!inputHz || inputHz <= 0) return;
+
+  const midiFloat = 69 + 12 * Math.log2(inputHz / refHz);
+  const midiRound = Math.round(midiFloat);
+  const cents = (midiFloat - midiRound) * 100;
+  const noteIdx = ((midiRound % 12) + 12) % 12;
+  const octave = Math.floor(midiRound / 12) - 1;
+  const exactHz = midiToHz(midiRound, refHz);
+
+  document.getElementById('hzToNoteResult').innerHTML = `
+    <div class="detail-row"><span class="detail-label">Nearest Note</span><span class="detail-value" style="color:var(--accent);font-weight:800;font-size:16px">${NOTES[noteIdx]}${octave}</span></div>
+    <div class="detail-row"><span class="detail-label">Exact Frequency</span><span class="detail-value">${fmt(exactHz,2)} Hz</span></div>
+    <div class="detail-row"><span class="detail-label">MIDI Number</span><span class="detail-value">#${midiRound}</span></div>
+    <div class="detail-row"><span class="detail-label">Deviation</span><span class="detail-value" style="color:${Math.abs(cents)<5?'var(--text-success)':'#e67e22'}">${cents>=0?'+':''}${fmt(cents,1)} cents</span></div>
+  `;
+}
+
+// ========== TAB 5: Key Transpose ==========
+let semitones = 0;
+const KEYS = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const MAJOR_INTERVALS = [0,2,4,5,7,9,11];
+
+function buildTransposeSelect() {
+  const sel = document.getElementById('transposeFrom');
+  KEYS.forEach((k,i) => {
+    const opt = document.createElement('option');
+    opt.value = i; opt.textContent = k + ' Major';
+    sel.appendChild(opt);
+    const optm = document.createElement('option');
+    optm.value = i + '_m'; optm.textContent = k + ' minor';
+    sel.appendChild(optm);
+  });
+}
+
+function changeSemitone(delta) {
+  semitones += delta;
+  if (semitones > 12) semitones = 12;
+  if (semitones < -12) semitones = -12;
+  document.getElementById('semitoneVal').textContent = (semitones >= 0 ? '+' : '') + semitones;
+  calcTranspose();
+}
+
+function calcTranspose() {
+  const val = document.getElementById('transposeFrom').value;
+  const isMinor = val.includes('_m');
+  const fromIdx = parseInt(val);
+  const toIdx = ((fromIdx + semitones) % 12 + 12) % 12;
+  const suffix = isMinor ? ' minor' : ' Major';
+
+  document.getElementById('transposeTo').textContent = KEYS[toIdx] + suffix;
+  
+  const direction = semitones > 0 ? `${semitones} semitone${semitones>1?'s':''} ↑` : semitones < 0 ? `${Math.abs(semitones)} semitone${Math.abs(semitones)>1?'s':''} ↓` : 'No change';
+  document.getElementById('transposeSub').textContent = direction;
+
+  const intervals = isMinor ? [0,2,3,5,7,8,10] : MAJOR_INTERVALS;
+  let html = '<div class="detail-row"><span class="detail-label" style="font-weight:700">Original</span><span class="detail-value" style="font-weight:700">Transposed</span></div>';
+  intervals.forEach(interval => {
+    const fromNote = KEYS[(fromIdx + interval) % 12];
+    const toNote = KEYS[(toIdx + interval) % 12];
+    html += `<div class="detail-row"><span class="detail-label">${fromNote}</span><span class="detail-value" style="color:var(--accent)">${toNote}</span></div>`;
+  });
+  document.getElementById('transposeScale').innerHTML = html;
+
+  const origBpm = parseFloat(document.getElementById('transposeBpm').value) || 120;
+  const ratio = Math.pow(2, semitones / 12);
+  const newBpm = origBpm * ratio;
+  const percentChange = (ratio - 1) * 100;
+
+  document.getElementById('transposeBpmResult').innerHTML = `
+    <div class="detail-row"><span class="detail-label">Original BPM</span><span class="detail-value">${origBpm}</span></div>
+    <div class="detail-row"><span class="detail-label">Pitch Ratio</span><span class="detail-value">${fmt(ratio,4)}×</span></div>
+    <div class="detail-row"><span class="detail-label">Speed Change</span><span class="detail-value" style="color:${percentChange>=0?'var(--text-success)':'#e67e22'}">${percentChange>=0?'+':''}${fmt(percentChange,2)}%</span></div>
+    <div class="detail-row"><span class="detail-label">New BPM</span><span class="detail-value" style="color:var(--accent);font-weight:800;font-size:15px">${fmt(newBpm,2)}</span></div>
+  `;
+}
+
+// ========== TAB 1: Metronome ==========
+let metroCtx = null;
+let metroBpm = 120;
+let metroVolume = 0.8;
+let metroPlaying = false;
+let metroIntervalId = null;
+let metroBeat = 0;
+let metroBeatsPerBar = 4;
+
+function setMetroBpm(val) {
+  metroBpm = Math.max(20, Math.min(300, parseInt(val) || 120));
+  document.getElementById('metroBpmDisplay').textContent = metroBpm;
+  document.getElementById('metroSlider').value = metroBpm;
+  document.getElementById('metroBpmInput').value = metroBpm;
+  if (metroPlaying) { stopMetronome(); startMetronome(); }
+}
+
+function updateMetroBeats() {
+  metroBeatsPerBar = parseInt(document.getElementById('metroTimeSig').value);
+  metroBeat = 0;
+  buildBeatDots();
+  if (metroPlaying) { stopMetronome(); startMetronome(); }
+}
+
+function buildBeatDots() {
+  const container = document.getElementById('beatDots');
+  container.innerHTML = '';
+  for (let i = 0; i < metroBeatsPerBar; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'beat-dot' + (i === 0 ? ' accent' : '');
+    dot.id = 'dot' + i;
+    container.appendChild(dot);
+  }
+}
+
+function playClick(isAccent) {
+  if (!metroCtx) metroCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = metroCtx.createOscillator();
+  const gain = metroCtx.createGain();
+  osc.connect(gain);
+  gain.connect(metroCtx.destination);
+  osc.frequency.value = isAccent ? 1000 : 700;
+  gain.gain.value = metroVolume * (isAccent ? 1 : 0.6);
+  const now = metroCtx.currentTime;
+  osc.start(now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+  osc.stop(now + 0.08);
+}
+
+function metroTick() {
+  const isAccent = metroBeat === 0;
+  playClick(isAccent);
+  for (let i = 0; i < metroBeatsPerBar; i++) {
+    const dot = document.getElementById('dot' + i);
+    if (dot) dot.classList.toggle('active', i === metroBeat);
+  }
+  metroBeat = (metroBeat + 1) % metroBeatsPerBar;
+}
+
+function startMetronome() {
+  metroBeat = 0;
+  metroTick();
+  const interval = 60000 / metroBpm;
+  metroIntervalId = setInterval(metroTick, interval);
+}
+
+function stopMetronome() {
+  clearInterval(metroIntervalId);
+  metroIntervalId = null;
+  for (let i = 0; i < metroBeatsPerBar; i++) {
+    const dot = document.getElementById('dot' + i);
+    if (dot) dot.classList.remove('active');
+  }
+}
+
+function toggleMetronome() {
+  const btn = document.getElementById('metroPlayBtn');
+  if (metroPlaying) {
+    stopMetronome();
+    btn.textContent = '▶ Start';
+    btn.className = 'metro-play-btn stopped';
+  } else {
+    if (!metroCtx) metroCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (metroCtx.state === 'suspended') metroCtx.resume();
+    startMetronome();
+    btn.textContent = '⏹ Stop';
+    btn.className = 'metro-play-btn playing';
+  }
+  metroPlaying = !metroPlaying;
+}
+
+buildBeatDots();
+
+// ========== Init ==========
+buildNoteGrid();
+buildOctaveRow();
+calcNote();
+calcHzToNote();
+calcDelay();
+calcSong();
+calcReverse();
+buildTransposeSelect();
+calcTranspose();
+
+// Scroll to top
+(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
+
+// Tab drag to scroll
+const _tabs = document.getElementById('mainTabs');
+let _isDown = false, _startX, _sLeft;
+_tabs.style.cursor = 'grab';
+_tabs.addEventListener('mousedown', e => { _isDown = true; _tabs.style.cursor = 'grabbing'; _startX = e.pageX - _tabs.offsetLeft; _sLeft = _tabs.scrollLeft; });
+_tabs.addEventListener('mouseleave', () => { _isDown = false; _tabs.style.cursor = 'grab'; });
+_tabs.addEventListener('mouseup', () => { _isDown = false; _tabs.style.cursor = 'grab'; });
+_tabs.addEventListener('mousemove', e => { if(!_isDown) return; e.preventDefault(); const x = e.pageX - _tabs.offsetLeft; _tabs.scrollLeft = _sLeft - (x - _startX) * 1.5; });
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>📷 QR Code Generator — TeemoZipsa</title>
+<meta name="description" content="Generate QR codes instantly from text, URLs, or contacts and download them.">
+<meta property="og:title" content="📷 QR Code Generator — TeemoZipsa">
+<meta property="og:description" content="Generate QR codes instantly from text, URLs, or contacts and download them.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/qr-code/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/qr-code/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/qr-code/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/qr-code/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" onerror="document.getElementById('cdnError').style.display='block'"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+  .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:440px;max-width:100%;overflow:hidden}
+  .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+  .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+  .header h1{font-size:15px;font-weight:600;color:#fff}
+  .body{padding:16px;display:flex;flex-direction:column;gap:14px}
+  textarea{background:var(--bg-bar);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);padding:14px;font-size:14px;font-family:inherit;outline:none;resize:vertical;min-height:100px;width:100%}
+  textarea:focus{border-color:var(--accent)}
+  textarea::placeholder{color:var(--text-placeholder)}
+  .qr-box{display:none;background:#fff;border-radius:12px;padding:20px;text-align:center;align-self:center}
+  .qr-box canvas{max-width:100%}
+  .btn-row{display:flex;gap:8px}
+  .btn{flex:1;padding:10px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .2s}
+  .btn-primary{background:linear-gradient(135deg,#533483,#6b44a3);color:var(--text-on-accent)}
+  .btn-secondary{background:var(--bg-bar);border:1px solid var(--border);color:var(--text-info)}
+  .btn:hover{opacity:.85}
+  .size-row{display:flex;align-items:center;gap:10px}
+  .size-row label{font-size:11px;color:var(--calc-expr-text);font-weight:600;white-space:nowrap}
+  .size-row select{background:var(--bg-bar);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:6px 10px;font-size:12px;font-family:inherit;outline:none}
+  .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text)}
+  .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+  .footer a:hover{color:var(--text-guide)}
+  .guide-section{padding:16px;background:var(--bg-body);max-width:100%}
+  .guide-section h2{font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden;box-shadow:var(--shadow-sm)}
+  .guide summary{padding:12px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-primary);list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--bg-app);transition:background .2s}
+  .guide summary::-webkit-details-marker{display:none}
+  .guide summary::after{content:'▼';font-size:10px;color:var(--text-placeholder);transition:transform .2s}
+  .guide[open] summary::after{transform:rotate(180deg)}
+  .guide summary:hover{background:var(--bg-btn)}
+  .guide-content{padding:12px 14px;font-size:12px;color:var(--text-secondary);line-height:1.6;border-top:1px solid var(--border);background:var(--bg-body)}
+  .guide-content p{margin-bottom:8px}
+  .guide-content p:last-child{margin-bottom:0}
+  .guide-content ul, .guide-content ol{padding-left:20px;margin-bottom:8px}
+  .guide-content li{margin-bottom:4px}
+  
+  .related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+  .related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+  .tool-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 10px; text-decoration: none; transition: all 0.2s; }
+  .tool-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+  .tool-icon { font-size: 24px; margin-bottom: 8px; }
+  .tool-name { font-size: 12px; font-weight: 600; color: var(--text-primary); line-height: 1.3; }
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+</style>
+</head>
+<body>
+<div id="cdnError" style="display:none;background:#ff4444;color:var(--text-on-accent);text-align:center;padding:12px;font-size:14px;">Failed to load external library. Please check your internet connection and refresh the page.</div>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
+    <h1>📷 QR Code Generator</h1>
+    <a href="/special-chars/qr-code/" class="back-btn">🌐 한국어</a>
+  </div>
+  <div class="body">
+    <textarea id="qrInput" placeholder="Enter URL, text, contact info, etc...&#10;e.g. https://teemozipsa.github.io/en/" oninput="generate()"></textarea>
+    <div class="size-row">
+      <label>QR Size:</label>
+      <select id="qrSize" onchange="generate()">
+        <option value="4">Small (132px)</option>
+        <option value="6" selected>Medium (198px)</option>
+        <option value="8">Large (264px)</option>
+        <option value="12">Very Large (396px)</option>
+      </select>
+    </div>
+    <div class="qr-box" id="qrBox"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="downloadQR()">📥 Download PNG</button>
+      <button class="btn btn-secondary" onclick="copyQR()">📋 Copy to Clipboard</button>
+    </div>
+  </div>
+  <section class="guide-section">
+    <h2>💡 Comprehensive Guide to QR Code Generation</h2>
+    
+    <details class="guide" open>
+      <summary>1. How to Use</summary>
+      <div class="guide-content">
+        <ol>
+          <li>Enter the URL, text, or contact information you want in the input box.</li>
+          <li>The QR code will be generated in real-time.</li>
+          <li>Download the generated QR code as an image.</li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>2. What is the minimum print size for a QR code?</summary>
+      <div class="guide-content">
+        <p>Generally, the minimum print size is 2x2 cm (about 0.8 inches). If it's smaller, smartphone cameras may struggle to read it. For business cards, 1.5 cm is possible, but more data requires a larger size. We recommend at least 3x3 cm for safety.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>3. What if the QR code won't scan?</summary>
+      <div class="guide-content">
+        <p>Common reasons for unreadable QR codes include: ① Print size is too small. ② Poor color contrast (e.g., dark QR on a dark background). ③ Blurry or distorted image. ④ Too much data making the QR code overly complex. This tool uses error correction level 'M', meaning it can be recovered even if up to 15% is damaged.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>4. Can I put long texts or special URLs in the QR code?</summary>
+      <div class="guide-content">
+        <p>Yes. However, the more data you include, the more complex the QR code becomes, which can lower the scanning success rate. Depending on the version, a QR code can hold up to ~4,296 alphanumeric characters. We recommend using short URLs whenever possible for the best scanning experience.</p>
+      </div>
+    </details>
+
+    <div class="related-tools">
+      <h3>🛠️ Recommended Utility Tools</h3>
+      <div class="tools-grid">
+        <a href="/special-chars/en/my-ip/" class="tool-card">
+          <span class="tool-icon">🌐</span>
+          <span class="tool-name">What is My IP</span>
+        </a>
+        <a href="/special-chars/en/timer/" class="tool-card">
+          <span class="tool-icon">⏱️</span>
+          <span class="tool-name">Online Timer</span>
+        </a>
+        <a href="/special-chars/en/uuid-gen/" class="tool-card">
+          <span class="tool-icon">🔑</span>
+          <span class="tool-name">UUID Generator</span>
+        </a>
+        <a href="/special-chars/en/lotto-gen/" class="tool-card">
+          <span class="tool-icon">🎰</span>
+          <span class="tool-name">Lotto Generator</span>
+        </a>
+      </div>
+    </div>
+  </section>
+    <div class="footer"><span>100% Local Generation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+<script>
+let currentDataUrl = '';
+// 자동 저장: 페이지 로드 시 이전 입력 복원
+(function(){const saved=localStorage.getItem('qrCode_text');if(saved){document.getElementById('qrInput').value=saved;setTimeout(generate,0)}})();
+
+function generate() {
+  const raw = document.getElementById('qrInput').value;
+  // 자동 저장
+  try{localStorage.setItem('qrCode_text',raw)}catch(e){}
+  const text = raw.trim();
+  const box = document.getElementById('qrBox');
+  if (!text) { box.style.display = 'none'; return; }
+  const cellSize = parseInt(document.getElementById('qrSize').value);
+  try {
+    const qr = qrcode(0, 'M');
+    qr.addData(text);
+    qr.make();
+    const size = qr.getModuleCount() * cellSize;
+    const canvas = document.createElement('canvas');
+    canvas.width = size; canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, size, size);
+    for (let r = 0; r < qr.getModuleCount(); r++) {
+      for (let c = 0; c < qr.getModuleCount(); c++) {
+        if (qr.isDark(r, c)) {
+          ctx.fillStyle = '#1a1a2e';
+          ctx.fillRect(c * cellSize, r * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+    box.innerHTML = '';
+    box.appendChild(canvas);
+    box.style.display = 'block';
+    currentDataUrl = canvas.toDataURL('image/png');
+  } catch(e) {
+    box.innerHTML = '<p style="color:#f87171;font-size:12px">Text is too long or cannot be encoded.</p>';
+    box.style.display = 'block';
+  }
+}
+function downloadQR() {
+  if (!currentDataUrl) return;
+  const a = document.createElement('a');
+  a.href = currentDataUrl;
+  a.download = 'qrcode.png';
+  a.click();
+}
+async function copyQR() {
+  if (!currentDataUrl) return;
+  try {
+    const res = await fetch(currentDataUrl);
+    const blob = await res.blob();
+    await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
+    alert('QR code copied to clipboard!');
+  } catch(e) { alert('Copy failed: Browser not supported.'); }
+}
+</script>
+<button class="scroll-top-btn" aria-label="Top">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

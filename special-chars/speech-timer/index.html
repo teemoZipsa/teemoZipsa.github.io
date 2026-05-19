@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>🎤 발표시간 계산기 — 티모집사</title>
+<meta name="description" content="발표 스크립트를 붙여넣으면 예상 발표 시간을 자동 계산! 말하기 속도 조절 가능.">
+<meta property="og:title" content="🎤 발표시간 계산기 — 티모집사">
+<meta property="og:description" content="발표 스크립트를 붙여넣으면 예상 발표 시간을 자동 계산! 말하기 속도 조절 가능.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/speech-timer/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/speech-timer/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:'Pretendard',-apple-system,sans-serif;
+    background:var(--bg-body);color:var(--text-primary);
+    min-height:100vh;padding:20px;
+    display:flex;justify-content:center;align-items:flex-start;
+  }
+  .app{
+    background:var(--bg-app);border-radius:16px;
+    box-shadow:var(--shadow-lg);
+    width:520px;max-width:100%;overflow:hidden;
+  }
+  .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+  .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+  .header h1{font-size:15px;font-weight:600;color:#fff}
+
+  .body{padding:16px;display:flex;flex-direction:column;gap:14px}
+
+  /* 스크립트 입력 */
+  .script-area{
+    background:var(--bg-bar);border:1px solid var(--border);border-radius:10px;
+    color:var(--text-primary);padding:14px;font-size:14px;font-family:inherit;
+    outline:none;resize:vertical;min-height:180px;line-height:1.7;
+    width:100%;
+  }
+  .script-area:focus{border-color:var(--accent)}
+  .script-area::placeholder{color:var(--text-placeholder)}
+
+  /* 속도 설정 */
+  .speed-row{
+    display:flex;align-items:center;gap:12px;
+    background:var(--bg-bar);border-radius:10px;padding:12px 16px;
+  }
+  .speed-label{font-size:12px;color:var(--text-info);white-space:nowrap;font-weight:600}
+  .speed-slider{
+    flex:1;-webkit-appearance:none;appearance:none;
+    height:6px;background:var(--bg-btn);border-radius:3px;outline:none;
+  }
+  .speed-slider::-webkit-slider-thumb{
+    -webkit-appearance:none;width:18px;height:18px;
+    background:var(--accent);border-radius:50%;cursor:pointer;
+    border:2px solid var(--border-hover);
+  }
+  .speed-slider::-moz-range-thumb{
+    width:18px;height:18px;background:var(--accent);
+    border-radius:50%;cursor:pointer;border:2px solid var(--border-hover);
+  }
+  .speed-value{
+    font-size:14px;color:var(--text-amount);font-weight:700;min-width:80px;text-align:right;
+  }
+  .speed-presets{
+    display:flex;gap:6px;flex-wrap:wrap;
+  }
+  .speed-preset{
+    background:var(--bg-input);border:1px solid var(--border);color:var(--text-info);
+    padding:4px 10px;border-radius:6px;font-size:11px;
+    cursor:pointer;font-family:inherit;transition:all .15s;
+  }
+  .speed-preset:hover{border-color:var(--accent);color:var(--text-amount)}
+  .speed-preset.active{background:var(--accent);color:var(--text-on-accent);border-color:var(--accent)}
+
+  /* 결과 카드 */
+  .result{display:none;animation:fadeIn .5s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .result-main{
+    background:var(--bg-input);
+    border:1px solid var(--border);border-radius:14px;
+    padding:24px;text-align:center;
+  }
+  .result-time{
+    font-size:42px;font-weight:800;color:var(--text-primary);
+    margin-bottom:4px;letter-spacing:-1px;
+  }
+  .result-sub{font-size:13px;color:var(--text-info)}
+
+  .result-stats{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;
+  }
+  .stat{
+    background:var(--bg-bar);border-radius:10px;padding:10px 8px;text-align:center;
+  }
+  .stat .stat-label{font-size:10px;color:var(--calc-expr-text);margin-bottom:3px}
+  .stat .stat-value{font-size:14px;font-weight:700;color:var(--text-amount)}
+
+  /* 동적 리포트 & 가이드 표준 CSS */
+  .report-box { margin-top: 16px; padding: 20px; background: var(--bg-bar); border: 1px solid var(--border); border-radius: 12px; }
+  .report-box h3 { font-size: 15px; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .report-box p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 8px; }
+  .report-box .highlight { color: var(--accent); font-weight: 600; }
+  .guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
+  .guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .guide summary { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+  .guide summary::-webkit-details-marker { display: none; }
+  .guide summary::after { content: '▼'; font-size: 10px; color: var(--text-muted); transition: transform 0.2s; }
+  .guide[open] summary::after { transform: rotate(180deg); }
+  .guide-content { padding: 0 16px 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .guide-content h3 { font-size: 14px; color: var(--text-primary); margin: 12px 0 8px; }
+  .guide-content p { margin-bottom: 12px; }
+  .guide-content ul, .guide-content ol { padding-left: 20px; margin-bottom: 12px; }
+  .guide-content li { margin-bottom: 4px; }
+  .related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+  .related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag { font-size: 12px; background: var(--bg-btn); color: var(--text-secondary); padding: 6px 12px; border-radius: 16px; text-decoration: none; border: 1px solid var(--border); transition: all 0.2s; }
+  .tag:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .footer{
+    background:var(--bg-bar);padding:10px 16px;
+    display:flex;justify-content:space-between;align-items:center;
+    border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text);
+  }
+  .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+  .footer a:hover{color:var(--text-guide)}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+    <h1>🎤 발표시간 계산기</h1>
+  </div>
+
+  <div class="body">
+    <textarea class="script-area" id="script" placeholder="여기에 발표 스크립트를 붙여넣으세요...&#10;&#10;입력하는 즉시 예상 발표 시간이 계산됩니다." oninput="calc()"></textarea>
+
+    <div class="speed-row">
+      <span class="speed-label">🗣️ 말하기 속도</span>
+      <input type="range" class="speed-slider" id="speedSlider" min="200" max="500" value="330" step="10" oninput="updateSpeed()">
+      <span class="speed-value" id="speedDisplay">330 글자/분</span>
+    </div>
+
+    <div class="speed-presets">
+      <button class="speed-preset" onclick="setSpeed(250)">🐢 느리게 (250)</button>
+      <button class="speed-preset active" onclick="setSpeed(330)">🙂 보통 (330)</button>
+      <button class="speed-preset" onclick="setSpeed(400)">🐇 빠르게 (400)</button>
+      <button class="speed-preset" onclick="setSpeed(470)">⚡ 매우 빠르게 (470)</button>
+    </div>
+
+    <div class="result" id="result">
+      <div class="result-main">
+        <div class="result-time" id="resultTime">0:00</div>
+        <div class="result-sub" id="resultSub">예상 발표 시간</div>
+      </div>
+
+      <div class="result-stats">
+        <div class="stat">
+          <div class="stat-label">총 글자 수</div>
+          <div class="stat-value" id="statChars">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">공백 제외</div>
+          <div class="stat-value" id="statNoSpace">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">단어 수</div>
+          <div class="stat-value" id="statWords">0</div>
+        </div>
+      </div>
+      <!-- 동적 발표 분석 리포트 -->
+      <div id="reportContainer" class="report-box"></div>
+    </div> <!-- .result 닫기 -->
+  </div> <!-- .body 닫기 -->
+
+  <section class="guide-section">
+    <h2>💡 발표시간 계산기 사용 가이드</h2>
+    
+    <details class="guide" open>
+      <summary>발표 시간 계산은 어떻게 이루어지나요?</summary>
+      <div class="guide-content">
+        <p>사용자가 붙여넣은 아나운싱 또는 대본 텍스트의 총 글자수(공백 제외 기준)를 <b>실시간으로 분석 및 집계</b>합니다.</p>
+        <p>한국어 화자의 보편적인 말하기 속도(분당 300~350자 내외)를 기준으로 소요 시간을 역산하며, <b>지정하신 '말하기 속도' 설정값에 맞추어 1초 단위까지 정밀하게 계산</b>된 예상 발표 시간을 즉각적으로 제공합니다.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>내 발표 목적에 맞는 적정 대본 속도는 얼마인가요?</summary>
+      <div class="guide-content">
+        <ul>
+          <li><b>느리게 (분당 250자 내외):</b> 감동적인 강연, 시 낭독 등 청중에게 깊은 몰입과 생각할 시간을 부여해야 하는 발표에 적합합니다.</li>
+          <li><b>보통 (분당 330자 내외):</b> 기업 실무 프레젠테이션, 일반적인 세미나, 학교 과제 발표 등 명확한 정보 전달과 설득이 핵심일 때 가장 안정적인 속도입니다.</li>
+          <li><b>빠르게 (분당 400자 이상):</b> 시간 제한이 타이트한 엘리베이터 피칭(Elevator Pitch)이나 짧은 뉴스 인트로 브리핑에서 통용되는 방식입니다.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>데이터 보안 및 클라우드 업로드 여부가 궁금합니다.</summary>
+      <div class="guide-content">
+        <p>본 대본 시간 계산 도구는 <b>백엔드 서버 데이터 통신 과정이 전혀 없는 순수 클라이언트 기반 오프라인 연산 기술</b>을 채택하고 있습니다.</p>
+        <p>즉, 고객님이 입력하시는 기업 문서, 미발표 논문 초록, 민감한 개인 프레젠테이션 프리뷰 문서 등은 오로지 고객님의 PC 및 모바일 브라우저 램(RAM) 내부에서만 연산된 후 완전히 삭제됩니다. 일체의 데이터를 수집/제공/재가공하지 않으므로 유출 위험이 절대 없는 프라이빗 툴(Private Tool)입니다.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>미리 작성된 워드 파일이나 A4 용지 분량은 약 몇 분인가요?</summary>
+      <div class="guide-content">
+        <p>A4 용지 1장(글자 크기 10pt, 기본 여백 기준)에 한글 문서를 가득 채웠을 때, 공백을 제외하고 약 1,500글자에서 1,800글자 사이에 위치합니다.</p>
+        <p>이를 평균적인 '보통 말하기 속도(분당 330글자)'로 소화한다면 대체로 <b>5분 내외의 발표 분량</b>을 소화하게 됩니다. 10분 발표를 준비하신다면 A4 용지 2장 분량(약 3,300자 내외)을 목표로 원고를 기획하시는 것이 효율적입니다.</p>
+      </div>
+    </details>
+
+    <div class="related-tools">
+      <h3>🛠️ 함께 쓰면 좋은 도구</h3>
+      <div class="tags">
+        <a href="/special-chars/gpa-calc/" class="tag">학점 계산기</a>
+        <a href="/special-chars/timezone-conv/" class="tag">타임존 변환기</a>
+        <a href="/special-chars/korean-english-converter/" class="tag">오타 변환기</a>
+        <a href="/special-chars/server-time/" class="tag">서버 시간 확인기</a>
+      </div>
+    </div>
+  </section>
+    <div class="footer"><span>한국어 평균 말하기 속도: 약 330자/분</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+
+<script>
+function getSpeed() {
+  return parseInt(document.getElementById('speedSlider').value) || 330;
+}
+
+function updateSpeed() {
+  const speed = getSpeed();
+  document.getElementById('speedDisplay').textContent = speed + ' 글자/분';
+  // 프리셋 active 표시
+  document.querySelectorAll('.speed-preset').forEach(btn => btn.classList.remove('active'));
+  calc();
+}
+
+function setSpeed(v) {
+  document.getElementById('speedSlider').value = v;
+  document.querySelectorAll('.speed-preset').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.includes('(' + v + ')'));
+  });
+  updateSpeed();
+}
+
+// 자동 저장: 페이지 로드 시 이전 스크립트 복원
+(function(){const saved=localStorage.getItem('speechTimer_text');if(saved){document.getElementById('script').value=saved;setTimeout(calc,0)}})();
+
+function calc() {
+  const text = document.getElementById('script').value;
+  // 자동 저장
+  try{localStorage.setItem('speechTimer_text',text)}catch(e){}
+  const resultEl = document.getElementById('result');
+
+  if (!text.trim()) {
+    resultEl.style.display = 'none';
+    return;
+  }
+
+  resultEl.style.display = 'block';
+  const speed = getSpeed();
+
+  // 글자 수 (공백 포함)
+  const chars = [...text].length;
+  // 공백 제외 글자 수
+  const noSpace = [...text.replace(/\s/g, '')].length;
+  // 단어 수
+  const words = text.trim().split(/\s+/).length;
+
+  // 시간 계산: 공백 제외 글자 기준
+  const totalSeconds = Math.round((noSpace / speed) * 60);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  // 표시
+  if (minutes >= 60) {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    document.getElementById('resultTime').textContent =
+      `${hours}:${String(mins).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+  } else {
+    document.getElementById('resultTime').textContent =
+      `${minutes}:${String(seconds).padStart(2,'0')}`;
+  }
+
+  // 범위 표시 (±15%)
+  const fastSec = Math.round(totalSeconds * 0.85);
+  const slowSec = Math.round(totalSeconds * 1.15);
+  document.getElementById('resultSub').textContent =
+    `실제 ${fmtTime(fastSec)} ~ ${fmtTime(slowSec)} 예상 (속도: ${speed}자/분)`;
+
+  document.getElementById('statChars').textContent = chars.toLocaleString();
+  document.getElementById('statNoSpace').textContent = noSpace.toLocaleString();
+  document.getElementById('statWords').textContent = words.toLocaleString();
+
+  updateReport(noSpace, speed, minutes, seconds);
+}
+
+function updateReport(chars, speed, m, s) {
+  const container = document.getElementById('reportContainer');
+  if (!container) return;
+  
+  let totalMin = m + (s / 60);
+  let feedback = '';
+  
+  if (speed < 280) {
+    feedback = `현재 <b>느린 스크립트 리딩 어조(분당 ${speed}자)</b>로 설정되어 있습니다. 청중에게 묵직한 감동을 전달하거나 생각할 서브 텍스트 여유를 주기 위한 서정적인 강연 목적에 적합합니다. 다만 무리하게 길어질 경우 루즈할 수 있습니다.`;
+  } else if (speed <= 380) {
+    feedback = `현재 <b>표준적인 말하기 템포(분당 ${speed}자)</b>로 설정되어 있습니다. 대다수 대중 청중이 또렷하게 이해도를 높일 수 있는 가장 안정적이고 명료한 스피치 전략이며, 비즈니스 요약 통보와 과제 발표 등 정석적인 페이스입니다.`;
+  } else {
+    feedback = `현재 <b>비교적 스피디한 어조(분당 ${speed}자)</b>로 설정되어 있습니다. 제한된 짧은 딜리버리에 많은 내용을 구겨넣을 수 있다는 장점이 있으나, 전달 과정에서 발음 호흡이 아슬아슬해질 수 있으니 명확한 딕션 훈련이 필수가 되어야만 성공할 수 있습니다.`;
+  }
+  
+  let lengthEval = '';
+  if (totalMin < 1) {
+    lengthEval = `약 1분 미만의 하이라이트 요약 타임라인(Short-form) 혹은 엘리베이터 피치 스피치 분량입니다. 처음 시선 집중의 10초 구간 내에 메인 결론과 임팩트를 꽂아넣는 구조를 확보하십시오.`;
+  } else if (totalMin < 5) {
+    lengthEval = `평균적인 데모 시연 및 스타트업 피칭의 권장 시간 3~5분에 부합합니다. 서론-본론-결론의 삼단 구성 중 '전개'의 예시를 군더더기 없이 압축해야만 전체 프레임을 지킬 수 있을 것입니다.`;
+  } else if (totalMin < 15) {
+    lengthEval = `약 10여 분 전후의 장기 체류(Long-form) 딥다이브 프레젠테이션입니다. 자칫 지루해질 수 있는 7~8분의 늪(마의 구간)에서 주의를 환기시킬 만한 파워 멘트나 재미난 레퍼런스 시각 자료를 추가하세요.`;
+  } else {
+    lengthEval = `대규모 마스터 클래스 강연 단위 수준의 거대 분량입니다. 슬라이드를 명확한 대단원 카테고리로 쪼개고, 각 단원이 넘어갈 때마다 중간 소결론 요약 페이지를 삽입하는 것이 기억 유지에 강력히 추천됩니다.`;
+  }
+
+  container.innerHTML = `
+    <h3>📊 실시간 스피치 구조 & 메타 분석 리포트</h3>
+    <p><b>입력된 대본 볼륨:</b> 공백 제외 핵심 원고 기준 <span class="highlight">${chars.toLocaleString()}</span> 글자 분량</p>
+    <p><b>전달 속도 진단:</b> ${feedback}</p>
+    <p><b>러닝 타임 전략:</b> ${lengthEval}</p>
+    <div style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);">
+      <p style="margin-bottom:0; color:var(--text-info);">※ 실제 라이브 발표 무대에서는 아드레날린(긴장감)으로 인해 연습보다 말이 약 10~15% 정도 무의식적으로 빨라질 확률이 높습니다. 이를 고려하여 타겟 시간 대비 텍스트 스크립트를 조금 다듬고 컴팩트하게 구성하시면 사고를 피할 수 있습니다.</p>
+    </div>
+  `;
+}
+
+function fmtTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  if (m >= 60) {
+    const h = Math.floor(m / 60);
+    return `${h}시간 ${m%60}분`;
+  }
+  return `${m}분 ${s}초`;
+}
+</script>
+
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

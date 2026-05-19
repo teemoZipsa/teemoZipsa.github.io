@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>🔣 Base64 Encoder/Decoder — TeemoZipsa</title>
+<meta name="description" content="Encode or decode text and images with Base64. 100% local browser processing.">
+<meta property="og:title" content="🔣 Base64 Encoder/Decoder — TeemoZipsa">
+<meta property="og:description" content="Encode or decode text and images with Base64. 100% local browser processing.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/base64-tool/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/base64-tool/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/base64-tool/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/base64-tool/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+.app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:540px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+.content{padding:20px}
+.mode-tabs{display:flex;gap:6px;margin-bottom:16px}
+.mode-tab{flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--bg-bar);color:var(--text-section);font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s;font-family:inherit}
+.mode-tab.active{background:var(--accent);border-color:var(--accent);color:var(--text-on-accent)}
+.mode-tab:hover:not(.active){background:var(--bg-hover);border-color:var(--border-hover)}
+.section-title{font-size:12px;color:var(--text-section);font-weight:600;margin-bottom:6px}
+.text-area{width:100%;min-height:100px;background:var(--bg-bar);border:2px solid var(--border);border-radius:12px;padding:14px;font-size:14px;color:var(--text-primary);resize:vertical;outline:none;font-family:inherit,monospace;line-height:1.5;transition:border-color .2s;margin-bottom:14px}
+.text-area:focus{border-color:var(--accent)}
+.text-area::placeholder{color:var(--text-placeholder)}
+.actions{display:flex;gap:8px;margin-bottom:14px}
+.btn{flex:1;padding:11px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-primary{background:var(--accent);color:var(--text-on-accent)}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn-secondary{background:var(--bg-bar);border:1px solid var(--border);color:var(--text-info)}
+.btn-secondary:hover{background:var(--bg-hover)}
+.result-box{background:var(--bg-bar);border:2px solid var(--border);border-radius:12px;padding:14px;min-height:60px;margin-bottom:14px;position:relative;word-break:break-all;line-height:1.5}
+.result-text{font-size:13px;color:var(--text-amount);font-family:inherit,monospace}
+.result-placeholder{color:var(--text-placeholder);font-size:14px}
+.char-count{position:absolute;bottom:6px;right:10px;font-size:10px;color:var(--text-muted)}
+.image-section{display:none;margin-bottom:14px}
+.drop-zone{border:2px dashed var(--border);border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg-bar)}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--accent);background:var(--bg-hover)}
+.drop-zone .icon{font-size:36px;margin-bottom:8px}
+.drop-zone .text{font-size:13px;color:var(--calc-expr-text)}
+.drop-zone .sub{font-size:11px;color:var(--text-placeholder);margin-top:4px}
+.drop-zone input{display:none}
+.preview-img{max-width:100%;max-height:200px;border-radius:8px;margin:12px auto;display:block}
+.copy-row{display:flex;gap:8px;margin-bottom:14px}
+/* Dynamic Report & Guide standard CSS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.report-box { margin-top: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
+.report-box strong { color: var(--accent); }
+.guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
+.guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
+.guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.guide summary { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; line-height: 1.4; background: var(--bg-guide); transition: background 0.2s; }
+.guide summary:hover { background: var(--bg-guide-hover); }
+.guide summary::-webkit-details-marker { display: none; }
+.guide summary::after { content: '▼'; font-size: 10px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
+.guide[open] summary { background: var(--bg-btn); border-bottom: 1px solid var(--border); }
+.guide[open] summary::after { transform: rotate(180deg); }
+.guide-content { padding: 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.guide-content h3 { font-size: 14px; color: var(--text-primary); margin: 12px 0 8px; }
+.guide-content p { margin-bottom: 12px; }
+.guide-content ul, .guide-content ol { padding-left: 20px; margin-bottom: 12px; }
+.guide-content li { margin-bottom: 4px; }
+.related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+.related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+.tool-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; text-decoration: none; color: var(--text-secondary); transition: all 0.2s; text-align: center; gap: 6px; }
+.tool-card:hover { background: var(--accent); color: var(--text-on-accent); border-color: var(--accent); transform: translateY(-2px); }
+.tool-icon { font-size: 20px; }
+.tool-name { font-size: 11px; font-weight: 600; }
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-guide)}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
+    <h1>🔣 Base64 Encoder/Decoder</h1>
+    <a href="/special-chars/base64-tool/" class="back-btn">🌐 한국어</a>
+  </div>
+  <div class="content">
+    <div class="mode-tabs">
+      <button class="mode-tab active" onclick="setMode('text')">📝 Text Mode</button>
+      <button class="mode-tab" onclick="setMode('image')">🖼️ Image Mode</button>
+    </div>
+
+    <!-- Text Mode -->
+    <div id="textMode">
+      <div class="section-title">Source Text</div>
+      <textarea class="text-area" id="inputText" placeholder="Enter text to encode/decode..." oninput="autoConvert()"></textarea>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="encode()">🔒 Encode</button>
+        <button class="btn btn-primary" onclick="decode()">🔓 Decode</button>
+        <button class="btn btn-secondary" onclick="swapText()">🔄 Swap</button>
+      </div>
+
+      <div class="section-title">Result</div>
+      <textarea class="text-area" id="outputText" placeholder="Output will appear here..." oninput="autoConvertReverse()"></textarea>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="copyOutput()">📋 Copy Result</button>
+        <button class="btn btn-secondary" onclick="clearText()">🗑️ Clear</button>
+      </div>
+    </div>
+
+    <!-- Image Mode -->
+    <div id="imageMode" class="image-section">
+      <div class="section-title">Select Image File</div>
+      <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+        <div class="icon">📁</div>
+        <div class="text">Click or drag an image here</div>
+        <div class="sub">Supports JPG, PNG, GIF, WebP, SVG</div>
+        <input type="file" id="fileInput" accept="image/*" onchange="handleFile(this.files[0])">
+      </div>
+
+      <img id="previewImg" class="preview-img" style="display:none">
+
+      <div id="imageResult" style="display:none">
+        <div class="section-title">Base64 Data URL</div>
+        <div class="result-box">
+          <div class="result-text" id="imageBase64" style="max-height:150px;overflow-y:auto"></div>
+          <div class="char-count" id="b64Length"></div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="copyImageBase64()">📋 Copy</button>
+          <button class="btn btn-secondary" onclick="clearImage()">🗑️ Clear</button>
+        </div>
+      </div>
+    </div>
+    <div id="reportBox" class="report-box" style="display:none;"></div>
+  </div>
+
+  <section class="guide-section">
+    <h2>💡 Comprehensive Guide to Base64 Encoder/Decoder</h2>
+    
+    <details class="guide" open>
+      <summary>1. What is Base64 encoding used for?</summary>
+      <div class="guide-content">
+        <p>Base64 is a data representation format that translates binary data or unprintable characters into a standard ASCII string. It is widely used to embed images directly into HTML/CSS files (Data URIs), safely transmit data over HTTP, or store complex data in JSON format without breaking the syntax.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>2. Is my text or image uploaded to a server?</summary>
+      <div class="guide-content">
+        <p><strong>Absolutely not.</strong> All encoding and decoding operations in this tool are executed <strong>100% on your device</strong> using JavaScript running inside your browser. No text data or image files are ever uploaded or saved to any external server.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>3. Why do emojis or foreign characters sometimes break when decoding?</summary>
+      <div class="guide-content">
+        <p>This happens when the Base64 string was not encoded using a UTF-8 aware mechanism. Our tool leverages a modern engine that seamlessly converts strings to UTF-8 bytes before encoding, ensuring that emojis, Korean, Chinese, and other Unicode characters remain perfectly intact upon decoding.</p>
+      </div>
+    </details>
+
+    <div class="related-tools">
+      <h3>🛠️ Useful Developer & Text Tools</h3>
+      <div class="tools-grid">
+        <a href="/special-chars/en/char-counter/" class="tool-card">
+          <span class="tool-icon">📏</span>
+          <span class="tool-name">Char Counter</span>
+        </a>
+        <a href="/special-chars/en/color-conv/" class="tool-card">
+          <span class="tool-icon">🎨</span>
+          <span class="tool-name">Color Converter</span>
+        </a>
+        <a href="/special-chars/en/password-gen/" class="tool-card">
+          <span class="tool-icon">🔑</span>
+          <span class="tool-name">Password Gen</span>
+        </a>
+        <a href="/special-chars/en/image-format-converter/" class="tool-card">
+          <span class="tool-icon">🖼️</span>
+          <span class="tool-name">Image Converter</span>
+        </a>
+      </div>
+    </div>
+  </section>
+    <div class="footer"><span>100% Local Processing</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+let currentMode='text';
+
+function setMode(m){
+  currentMode=m;
+  document.querySelectorAll('.mode-tab').forEach((tab,i)=>{
+    tab.classList.toggle('active',i===(m==='text'?0:1));
+  });
+  document.getElementById('textMode').style.display=m==='text'?'block':'none';
+  document.getElementById('imageMode').style.display=m==='image'?'block':'none';
+}
+
+// UTF-8 safe Base64
+function utf8ToBase64(str){
+  const bytes=new TextEncoder().encode(str);
+  let binary='';
+  bytes.forEach(b=>binary+=String.fromCharCode(b));
+  return btoa(binary);
+}
+
+function base64ToUtf8(b64){
+  const binary=atob(b64);
+  const bytes=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+
+function encode(){
+  const input=document.getElementById('inputText').value;
+  if(!input){showToast('Please enter text.');return;}
+  try{
+    const encoded = utf8ToBase64(input);
+    document.getElementById('outputText').value=encoded;
+    showToast('Encoded successfully! 🔒');
+    updateTextReport('Encoded', input.length, encoded.length);
+  }catch(e){showToast('Encoding failed: '+e.message);}
+}
+
+function decode(){
+  const input=document.getElementById('outputText').value||document.getElementById('inputText').value;
+  if(!input){showToast('Please enter a Base64 string.');return;}
+  try{
+    const result=base64ToUtf8(input.trim());
+    if(document.getElementById('outputText').value){
+      document.getElementById('inputText').value=result;
+    } else {
+      document.getElementById('outputText').value=result;
+    }
+    showToast('Decoded successfully! 🔓');
+    updateTextReport('Decoded', input.length, result.length);
+  }catch(e){showToast('Invalid Base64 string.');}
+}
+
+function updateTextReport(action, beforeLen, afterLen) {
+  const reportBox = document.getElementById('reportBox');
+  reportBox.innerHTML = `<strong>${action}</strong> operation completed.<br>Length changed from <strong>${beforeLen.toLocaleString()}</strong> to <strong>${afterLen.toLocaleString()}</strong> characters.<br>Processed locally using UTF-8 aware binary translation.`;
+  reportBox.style.display = 'block';
+}
+
+function swapText(){
+  const input=document.getElementById('inputText');
+  const output=document.getElementById('outputText');
+  const tmp=input.value;
+  input.value=output.value;
+  output.value=tmp;
+}
+
+function autoConvert(){/* 수동 */}
+function autoConvertReverse(){/* 수동 */}
+
+function copyOutput(){
+  const text=document.getElementById('outputText').value;
+  if(!text){showToast('Nothing to copy.');return;}
+  navigator.clipboard.writeText(text).then(()=>showToast('Copied! 📋'));
+}
+
+function clearText(){
+  document.getElementById('inputText').value='';
+  document.getElementById('outputText').value='';
+  document.getElementById('reportBox').style.display='none';
+}
+
+// 이미지 모드
+const dropZone=document.getElementById('dropZone');
+dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('dragover');});
+dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop',e=>{
+  e.preventDefault();dropZone.classList.remove('dragover');
+  if(e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+
+function handleFile(file){
+  if(!file||!file.type.startsWith('image/')){showToast('Please select an image file.');return;}
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const dataUrl=e.target.result;
+    document.getElementById('previewImg').src=dataUrl;
+    document.getElementById('previewImg').style.display='block';
+    document.getElementById('imageBase64').textContent=dataUrl;
+    document.getElementById('b64Length').textContent=`${(dataUrl.length/1024).toFixed(1)} KB`;
+    document.getElementById('imageResult').style.display='block';
+    showToast('Image converted!');
+    updateImageReport(file.name, file.size, dataUrl.length);
+  };
+  reader.readAsDataURL(file);
+}
+
+function updateImageReport(filename, originSize, currentSize) {
+  const reportBox = document.getElementById('reportBox');
+  const sizeKb = (originSize/1024).toFixed(1);
+  const b64Kb = (currentSize/1024).toFixed(1);
+  const overhead = (((currentSize/(originSize||1))-1)*100).toFixed(1);
+  reportBox.innerHTML = `<strong>Image to Base64</strong> conversion completed for <em>${filename}</em>.<br>Original File Size: <strong>${sizeKb} KB</strong> ➔ Base64 String Size: <strong>${b64Kb} KB</strong>.<br>Due to ASCII representation, the size increased by approximately <strong>${overhead}%</strong>. Ready to be embedded via Data URI.`;
+  reportBox.style.display = 'block';
+}
+
+function copyImageBase64(){
+  const text=document.getElementById('imageBase64').textContent;
+  if(!text){showToast('Nothing to copy.');return;}
+  navigator.clipboard.writeText(text).then(()=>showToast('Copied! 📋'));
+}
+
+function clearImage(){
+  document.getElementById('previewImg').style.display='none';
+  document.getElementById('imageResult').style.display='none';
+  document.getElementById('fileInput').value='';
+  document.getElementById('reportBox').style.display='none';
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+window.addEventListener('scroll',()=>{
+  document.getElementById('scrollTopBtn').classList.toggle('visible',window.scrollY>300);
+});
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

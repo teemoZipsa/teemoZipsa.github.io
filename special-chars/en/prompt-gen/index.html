@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>🤖 AI Prompt Generator — TeemoZipsa</title>
+<meta name="description" content="Fill in the blanks to generate structured AI prompts! Paste directly into ChatGPT, Claude, etc.">
+<meta property="og:title" content="🤖 AI Prompt Generator — TeemoZipsa">
+<meta property="og:description" content="Fill in the blanks to generate structured AI prompts! Paste directly into ChatGPT, Claude, etc.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/prompt-gen/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/prompt-gen/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/prompt-gen/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/prompt-gen/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+  .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:520px;max-width:100%;overflow:hidden}
+  .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+  .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+  .header h1{font-size:15px;font-weight:600;color:#fff}
+  .body{padding:16px;display:flex;flex-direction:column;gap:12px}
+
+  .section{background:var(--bg-bar);border-radius:12px;padding:14px 16px;border:1px solid var(--border)}
+  .section-title{font-size:12px;font-weight:700;color:var(--text-info);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+  .field:last-child{margin-bottom:0}
+  .field label{font-size:11px;color:var(--calc-expr-text);font-weight:600;display:flex;align-items:center;gap:4px}
+  .field label .tip{font-weight:400;color:var(--text-placeholder)}
+  .field input,.field textarea,.field select{background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);padding:10px 12px;font-size:14px;font-family:inherit;outline:none;width:100%}
+  .field input:focus,.field textarea:focus{border-color:var(--accent)}
+  .field input::placeholder,.field textarea::placeholder{color:var(--text-muted)}
+  .field textarea{resize:vertical;min-height:60px;line-height:1.5}
+
+  /* Presets */
+  .presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .preset{background:var(--bg-input);border:1px solid var(--border);color:var(--text-info);padding:5px 12px;border-radius:8px;font-size:11px;cursor:pointer;font-family:inherit;transition:all .15s}
+  .preset:hover{border-color:var(--accent);color:var(--text-amount)}
+  .preset.active{background:var(--accent);color:var(--text-on-accent);border-color:var(--accent)}
+
+  /* Result */
+  .result-box{display:none;background:var(--bg-input);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:13px;line-height:1.7;color:var(--text-primary);white-space:pre-wrap;word-break:break-word;max-height:300px;overflow-y:auto;position:relative}
+  .btn-row{display:flex;gap:8px}
+  .btn{flex:1;padding:10px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .2s}
+  .btn-primary{background:linear-gradient(135deg,#533483,#6b44a3);color:var(--text-on-accent)}
+  .btn-secondary{background:var(--bg-bar);border:1px solid var(--border);color:var(--text-info)}
+  .btn:hover{opacity:.85}
+
+  .char-count{font-size:10px;color:var(--text-placeholder);text-align:right;margin-top:4px}
+
+  .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text)}
+  .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+  .footer a:hover{color:var(--text-guide)}
+  .guide-section{padding:16px;background:var(--bg-body);max-width:100%}
+  .guide-section h2{font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden;box-shadow:var(--shadow-sm)}
+  .guide summary{padding:12px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-primary);list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--bg-app);transition:background .2s}
+  .guide summary::-webkit-details-marker{display:none}
+  .guide summary::after{content:'▼';font-size:10px;color:var(--text-placeholder);transition:transform .2s}
+  .guide[open] summary::after{transform:rotate(180deg)}
+  .guide summary:hover{background:var(--bg-btn)}
+  .guide-content{padding:12px 14px;font-size:12px;color:var(--text-secondary);line-height:1.6;border-top:1px solid var(--border);background:var(--bg-body)}
+  .guide-content p{margin-bottom:8px}
+  .guide-content p:last-child{margin-bottom:0}
+  .guide-content ul, .guide-content ol{padding-left:20px;margin-bottom:8px}
+  .guide-content li{margin-bottom:4px}
+  
+  .related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+  .related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+  .tool-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 10px; text-decoration: none; transition: all 0.2s; }
+  .tool-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+  .tool-icon { font-size: 24px; margin-bottom: 8px; }
+  .tool-name { font-size: 12px; font-weight: 600; color: var(--text-primary); line-height: 1.3; }
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← All Tools</a>
+    <h1>🤖 AI Prompt Generator</h1>
+    <a href="/special-chars/prompt-gen/" class="back-btn">🌐 한국어</a>
+  </div>
+  <div class="body">
+    <div class="section">
+      <div class="section-title">⚡ Quick Templates</div>
+      <div class="presets">
+        <button class="preset" onclick="loadPreset('general')">💬 General</button>
+        <button class="preset" onclick="loadPreset('writing')">✍️ Writing</button>
+        <button class="preset" onclick="loadPreset('code')">💻 Coding</button>
+        <button class="preset" onclick="loadPreset('translate')">🌐 Translation</button>
+        <button class="preset" onclick="loadPreset('summary')">📋 Summary</button>
+        <button class="preset" onclick="loadPreset('brainstorm')">💡 Brainstorm</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">📝 Prompt Builder</div>
+
+      <div class="field">
+        <label>🎭 Role <span class="tip">— Expert role for the AI</span></label>
+        <input type="text" id="role" placeholder="e.g. Senior marketing strategist" oninput="build()">
+      </div>
+
+      <div class="field">
+        <label>🎯 Task <span class="tip">— What you want the AI to do</span></label>
+        <textarea id="task" placeholder="e.g. Write 10 Instagram Reels captions for a product launch" oninput="build()"></textarea>
+      </div>
+
+      <div class="field">
+        <label>📌 Context <span class="tip">— Background info, audience, situation (optional)</span></label>
+        <textarea id="context" placeholder="e.g. Target audience is women aged 20-30, product is a vegan cosmetics brand" oninput="build()"></textarea>
+      </div>
+
+      <div class="field">
+        <label>📐 Format <span class="tip">— Desired output format (optional)</span></label>
+        <input type="text" id="format" placeholder="e.g. Numbered list, each item 2 lines or less" oninput="build()">
+      </div>
+
+      <div class="field">
+        <label>⚠️ Constraints <span class="tip">— Rules, limitations, do-nots (optional)</span></label>
+        <input type="text" id="constraints" placeholder="e.g. Include emojis, each copy under 50 words" oninput="build()">
+      </div>
+
+      <div class="field">
+        <label>🗣️ Tone <span class="tip">— Writing style (optional)</span></label>
+        <select id="tone" onchange="build()">
+          <option value="">Not specified</option>
+          <option value="Friendly & Casual">Friendly & Casual</option>
+          <option value="Professional & Formal">Professional & Formal</option>
+          <option value="Humorous & Witty">Humorous & Witty</option>
+          <option value="Concise & Direct">Concise & Direct</option>
+          <option value="Empathetic & Warm">Empathetic & Warm</option>
+          <option value="Persuasive & Logical">Persuasive & Logical</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="result-box" id="resultBox"></div>
+    <div class="char-count" id="charCount"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="copyPrompt()">📋 Copy Prompt</button>
+      <button class="btn btn-secondary" onclick="clearAll()">🗑️ Reset</button>
+    </div>
+  </div>
+  <section class="guide-section">
+    <h2>💡 Comprehensive Guide to Prompt Generation</h2>
+    
+    <details class="guide" open>
+      <summary>1. How to Use</summary>
+      <div class="guide-content">
+        <ol>
+          <li>Choose a prompt template from the Quick Templates.</li>
+          <li>Fill in the fields with your specific details.</li>
+          <li>Click "Copy" and paste into ChatGPT, Claude, or any AI.</li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>2. Tips for writing good prompts?</summary>
+      <div class="guide-content">
+        <p>The key is <strong>specificity</strong>. Instead of "write something," try "Write 10 Instagram Reels captions targeting women aged 20-30 for a vegan cosmetics brand in a casual tone." Use this tool's Role → Task → Context → Format → Constraints structure to create well-organized prompts naturally.</p>
+      </div>
+    </details>
+    
+    <details class="guide">
+      <summary>3. How do I use the preset templates?</summary>
+      <div class="guide-content">
+        <p>Presets provide optimized defaults for common tasks (writing, coding, translation, summary, brainstorming). Select a preset, fill in the blanks, and you're ready to go. You can also freely modify each field. For example, select "Writing" and just enter a topic to instantly generate a blog writing prompt.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>4. Are prompts used differently in ChatGPT vs Claude?</summary>
+      <div class="guide-content">
+        <p>The basic prompt structure works the same for both. However, ChatGPT works best with system messages for roles, while Claude performs better with XML tags (&lt;role&gt;, &lt;task&gt;). Prompts generated by this tool work well with both services.</p>
+      </div>
+    </details>
+
+    <div class="related-tools">
+      <h3>🛠️ Recommended Utility Tools</h3>
+      <div class="tools-grid">
+        <a href="/special-chars/en/my-ip/" class="tool-card">
+          <span class="tool-icon">🌐</span>
+          <span class="tool-name">What is My IP</span>
+        </a>
+        <a href="/special-chars/en/qr-code/" class="tool-card">
+          <span class="tool-icon">📱</span>
+          <span class="tool-name">QR Code Gen</span>
+        </a>
+        <a href="/special-chars/en/uuid-gen/" class="tool-card">
+          <span class="tool-icon">🔑</span>
+          <span class="tool-name">UUID Generator</span>
+        </a>
+        <a href="/special-chars/en/lotto-gen/" class="tool-card">
+          <span class="tool-icon">🎰</span>
+          <span class="tool-name">Lotto Generator</span>
+        </a>
+      </div>
+    </div>
+  </section>
+    <div class="footer"><span>AI Prompt Generator</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+<script>
+const PRESETS = {
+  general: { role:'Helpful AI assistant', task:'', context:'', format:'', constraints:'', tone:'' },
+  writing: { role:'Senior copywriter with 10 years of experience', task:'Write a blog post on the topic below', context:'', format:'Title + 3 subheadings + body (around 500 words)', constraints:'Use simple language', tone:'Friendly & Casual' },
+  code: { role:'Senior full-stack developer', task:'Write code that meets the requirements below', context:'', format:'Code block + comments + brief usage guide', constraints:'Use modern syntax, include error handling', tone:'Concise & Direct' },
+  translate: { role:'Professional translator', task:'Translate the text below naturally', context:'', format:'Original and translation side by side', constraints:'Focus on natural phrasing over literal translation', tone:'' },
+  summary: { role:'Document summarization expert', task:'Summarize the content below concisely', context:'', format:'3-line summary + 5 key takeaways', constraints:'Don\'t miss the main argument', tone:'Concise & Direct' },
+  brainstorm: { role:'Creative planner', task:'Brainstorm ideas on the topic below', context:'', format:'Numbered list with a one-line description per idea', constraints:'Focus on feasible ideas, at least 10', tone:'Humorous & Witty' }
+};
+
+function loadPreset(key) {
+  const p = PRESETS[key];
+  document.getElementById('role').value = p.role;
+  document.getElementById('task').value = p.task;
+  document.getElementById('context').value = p.context;
+  document.getElementById('format').value = p.format;
+  document.getElementById('constraints').value = p.constraints;
+  document.getElementById('tone').value = p.tone;
+  document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  build();
+}
+
+// Auto-restore previous input
+(function(){
+  const FIELDS = ['role','task','context','format','constraints','tone'];
+  FIELDS.forEach(id => {
+    const saved = localStorage.getItem('promptGen_' + id);
+    if (saved) document.getElementById(id).value = saved;
+  });
+  setTimeout(build, 0);
+})();
+
+function build() {
+  const role = document.getElementById('role').value.trim();
+  const task = document.getElementById('task').value.trim();
+  const context = document.getElementById('context').value.trim();
+  const format = document.getElementById('format').value.trim();
+  const constraints = document.getElementById('constraints').value.trim();
+  const tone = document.getElementById('tone').value;
+
+  // Auto-save
+  try{
+    ['role','task','context','format','constraints','tone'].forEach(id => {
+      localStorage.setItem('promptGen_' + id, document.getElementById(id).value);
+    });
+  }catch(e){}
+
+  if (!role && !task) {
+    document.getElementById('resultBox').style.display = 'none';
+    document.getElementById('charCount').textContent = '';
+    return;
+  }
+
+  let prompt = '';
+  if (role) prompt += `You are ${role}.\n\n`;
+  if (task) prompt += `[Task]\n${task}\n\n`;
+  if (context) prompt += `[Context]\n${context}\n\n`;
+  if (tone) prompt += `[Tone]\nWrite in a ${tone} tone.\n\n`;
+  if (format) prompt += `[Format]\n${format}\n\n`;
+  if (constraints) prompt += `[Constraints]\n${constraints}\n`;
+
+  prompt = prompt.trim();
+  document.getElementById('resultBox').textContent = prompt;
+  document.getElementById('resultBox').style.display = 'block';
+  document.getElementById('charCount').textContent = `${prompt.length} chars`;
+}
+
+function copyPrompt() {
+  const text = document.getElementById('resultBox').textContent;
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => { btn.textContent = '📋 Copy Prompt'; }, 1500);
+  });
+}
+
+function clearAll() {
+  ['role','task','context','format','constraints'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('tone').value = '';
+  document.getElementById('resultBox').style.display = 'none';
+  document.getElementById('charCount').textContent = '';
+  document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
+  // Also clear auto-saved data
+  try{['role','task','context','format','constraints','tone'].forEach(id => localStorage.removeItem('promptGen_' + id))}catch(e){}
+}
+</script>
+<button class="scroll-top-btn" aria-label="Top">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

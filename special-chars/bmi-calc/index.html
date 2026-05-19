@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>📊 BMI 계산기 — 티모집사</title>
+<meta name="description" content="BMI(체질량지수) 계산기. 키와 몸무게를 입력하면 BMI 수치와 비만도 판정을 즉시 확인할 수 있습니다. 대한비만학회 기준.">
+<meta property="og:title" content="📊 BMI 계산기 — 티모집사">
+<meta property="og:description" content="BMI(체질량지수) 계산기. 키와 몸무게로 비만도를 즉시 확인하세요.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/bmi-calc/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/bmi-calc/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/bmi-calc/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/bmi-calc/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
+.app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+.body{padding:20px;display:flex;flex-direction:column;gap:16px}
+
+.input-group{display:flex;flex-direction:column;gap:4px}
+.input-group label{font-size:12px;color:var(--text-info);font-weight:600}
+.input-row{display:flex;align-items:center;gap:8px}
+.input-row input{flex:1;padding:12px 14px;background:var(--bg-guide);border:1.5px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:18px;font-family:inherit;font-weight:700;outline:none;transition:border-color .2s;text-align:center}
+.input-row input:focus{border-color:var(--accent)}
+.input-row .unit{font-size:14px;color:var(--text-info);font-weight:600;min-width:24px}
+
+.result-card{border-radius:16px;padding:24px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .3s}
+.result-bmi{font-size:56px;font-weight:800;letter-spacing:-2px}
+.result-label{font-size:18px;font-weight:700}
+.result-emoji{font-size:48px}
+
+.gauge-wrap{width:100%;padding:0 8px}
+.gauge-bar{height:12px;border-radius:6px;background:linear-gradient(to right,#3b82f6 0%,#22c55e 25%,#facc15 50%,#f97316 70%,#ef4444 100%);position:relative;margin:8px 0}
+.gauge-marker{position:absolute;top:-6px;width:4px;height:24px;background:var(--text-primary);border-radius:2px;transition:left .4s ease;box-shadow:0 0 4px rgba(0,0,0,.3)}
+.gauge-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);padding:0 2px}
+
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.info-item{background:var(--bg-guide);border-radius:10px;padding:12px;text-align:center}
+.info-item .label{font-size:11px;color:var(--text-info);margin-bottom:2px}
+.info-item .value{font-size:16px;font-weight:700;color:var(--text-primary)}
+
+.bmi-table{width:100%;border-collapse:collapse;font-size:12px}
+.bmi-table th{background:var(--bg-btn);padding:8px;color:var(--text-secondary);font-weight:600;text-align:center}
+.bmi-table td{padding:8px;border-bottom:1px solid var(--border);text-align:center;color:var(--text-info)}
+.bmi-table tr.current{background:var(--accent-bg);font-weight:700}
+.bmi-table tr.current td{color:var(--accent)}
+
+.guide-section{margin:0 12px 12px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.guide-section summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
+.guide-section summary:hover{background:var(--bg-guide-hover)}
+.guide-section[open] summary{background:var(--bg-btn);border-bottom:1px solid var(--border)}
+.guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
+
+.report-box{background:var(--bg-guide);padding:20px;border-radius:12px;border:1px solid var(--border);line-height:1.6;font-size:14px;color:var(--text-primary);margin:16px 0;animation:fadeIn 0.5s ease-out}
+.report-box h3{font-size:15px;margin-bottom:12px;font-weight:700}
+.report-box p{margin-bottom:10px;color:var(--text-info);word-break:keep-all}
+.report-box .highlight{font-weight:700;color:var(--text-primary)}
+.report-tip{background:var(--bg-body);border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0;border-radius:0 8px 8px 0;font-size:13.5px}
+.report-notice{font-size:12px;color:var(--text-muted)!important;margin-top:16px;padding-top:12px;border-top:1px dashed var(--border)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.related-tools{margin:0 12px 12px;padding:16px;background:var(--bg-guide);border-radius:8px;border:1px solid var(--border)}
+.related-tools h4{font-size:14px;margin-bottom:10px;font-weight:700;color:var(--text-primary)}
+.related-tools ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px}
+.related-tools li a{font-size:13px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:6px;transition:opacity .2s}
+.related-tools li a:hover{opacity:0.8;text-decoration:underline}
+
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.4);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+    <h1>📊 BMI 계산기</h1>
+    <a href="/special-chars/en/bmi-calc/" class="back-btn">🌐 English</a>
+  </div>
+  <div class="body">
+    <div class="input-group">
+      <label>키 (cm)</label>
+      <div class="input-row">
+        <input type="number" id="height" value="170" min="50" max="250" step="1" oninput="calc()">
+        <span class="unit">cm</span>
+      </div>
+    </div>
+    <div class="input-group">
+      <label>몸무게 (kg)</label>
+      <div class="input-row">
+        <input type="number" id="weight" value="65" min="10" max="300" step="0.1" oninput="calc()">
+        <span class="unit">kg</span>
+      </div>
+    </div>
+
+    <div class="result-card" id="resultCard">
+      <div class="result-emoji" id="emoji">⏳</div>
+      <div class="result-bmi" id="bmiValue">-</div>
+      <div class="result-label" id="bmiLabel">입력하세요</div>
+    </div>
+
+    <div class="gauge-wrap">
+      <div class="gauge-bar"><div class="gauge-marker" id="gaugeMarker" style="left:30%"></div></div>
+      <div class="gauge-labels">
+        <span>저체중</span><span>정상</span><span>과체중</span><span>비만</span><span>고도비만</span>
+      </div>
+    </div>
+
+    <div class="info-grid" id="infoGrid"></div>
+
+    <!-- SEO 친화적 사전 렌더링된 상세 분석 리포트 -->
+    <div class="report-box" id="reportBox">
+      <h3>📋 맞춤형 신체 분석 리포트</h3>
+      <p>
+        입력하신 <span class="highlight">신장 <span id="r-height">170</span>cm</span>, <span class="highlight">체중 <span id="r-weight">65</span>kg</span>을 바탕으로 분석한 결과, 고객님의 체질량지수(BMI)는 <span class="highlight"><span id="r-bmi">22.5</span></span>입니다.
+      </p>
+      <p>
+        이는 대한비만학회 기준 <span class="highlight" id="r-range" style="color:#22c55e;">[정상]</span> 구간에 해당합니다. 해당 신장에서 권장하는 표준 체중인 <span class="highlight"><span id="r-ideal">63.6</span>kg</span>을 기준으로 할 때, 현재 <span class="highlight" id="r-diff-wrap" style="color:#f97316;"><span id="r-diff">+1.4kg</span> 차이</span>가 나는 상태입니다.
+      </p>
+      <div class="report-tip">
+        <strong>💡 건강 관리 가이드:</strong> <span id="r-tip">건강한 상태입니다! 현재의 건강한 체중을 유지하기 위해 꾸준한 운동과 균형 잡힌 식습관을 지속해 주세요.</span>
+      </div>
+      <p class="report-notice">
+        ※ 위 분석 결과는 단순히 키와 몸무게 공식(BMI)만을 바탕으로 한 참고 지표입니다. 근육량, 골격, 체지방률 등 개인별 신체 구성 요소의 차이를 완벽히 반영하지 않으므로 정확한 건강 상태 파악을 위해서는 전문의 진단이나 인바디 측정을 권장합니다.
+      </p>
+    </div>
+
+    <table class="bmi-table" id="bmiTable">
+      <thead><tr><th>구분</th><th>BMI 범위</th><th>상태</th></tr></thead>
+      <tbody>
+        <tr data-range="under"><td>저체중</td><td>18.5 미만</td><td>🔵</td></tr>
+        <tr data-range="normal"><td>정상</td><td>18.5 ~ 22.9</td><td>🟢</td></tr>
+        <tr data-range="over"><td>과체중 (비만 전단계)</td><td>23.0 ~ 24.9</td><td>🟡</td></tr>
+        <tr data-range="obese1"><td>1단계 비만</td><td>25.0 ~ 29.9</td><td>🟠</td></tr>
+        <tr data-range="obese2"><td>2단계 비만</td><td>30.0 ~ 34.9</td><td>🔴</td></tr>
+        <tr data-range="obese3"><td>3단계 비만 (고도)</td><td>35.0 이상</td><td>🔴</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <details class="guide-section">
+    <summary>📖 BMI란?</summary>
+    <div class="guide-content">
+      <p><b>BMI (Body Mass Index, 체질량지수)</b>는 체중(kg)을 신장(m)의 제곱으로 나눈 값으로, 체지방 축적 정도를 간접적으로 측정하고 비만도를 분류하는 데 주로 활용되는 전 세계적인 지표입니다.</p>
+      <br>
+      <p><b>계산 공식:</b> BMI = 몸무게(kg) ÷ 키(m)²</p>
+      <br>
+      <p>⚠️ <b>주의사항:</b> BMI 수치는 체지방률이 낮고 근육량이 많은 운동선수에게도 비만으로 판별될 수 있는 한계가 있습니다. 성별, 연령대, 신체 비율은 반영되지 않으므로 참고용으로만 활용하세요.</p>
+      <p>💡 위 제공된 기준은 <b>대한비만학회(KSSO)</b> 아시아-태평양 비만 진단 기준을 따르고 있습니다 (서양의 WHO 기준과 다릅니다).</p>
+    </div>
+  </details>
+
+  <div class="related-tools">
+    <h4>🔗 추천 관련 도구</h4>
+    <ul>
+      <li><a href="/special-chars/calorie-calc/">🥗 일일 권장 칼로리 계산기 (BMR 기반)</a></li>
+      <li><a href="/special-chars/bmi-calc/">📊 나의 다른 도구 보러가기 (작업 예정)</a></li>
+    </ul>
+  </div>
+
+    <div class="footer"><span>대한비만학회 기준</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+
+<script>
+const RANGES = [
+  { max: 18.5, name: '저체중', emoji: '🔵', color: '#3b82f6', range: 'under', tip: '근력 운동과 함께 질 좋은 단백질/탄수화물 섭취량을 늘려 건강하게 체중을 증량하는 것을 목표로 해보세요.' },
+  { max: 23, name: '정상', emoji: '🟢', color: '#22c55e', range: 'normal', tip: '건강한 상태입니다! 현재의 적정 몸무게를 유지하기 위해 올바른 식습관과 규칙적인 신체활동을 지속해 주세요.' },
+  { max: 25, name: '과체중', emoji: '🟡', color: '#facc15', range: 'over', tip: '비만 전단계에 해당합니다. 체중이 더 늘지 않도록 식습관을 점검하고 걷기 등 가벼운 유산소 운동부터 관리를 시작해 보세요.' },
+  { max: 30, name: '1단계 비만', emoji: '🟠', color: '#f97316', range: 'obese1', tip: '적극적인 체중 관리가 필요한 상태입니다. 규칙적인 운동 플랜과 체계적인 식단 관리를 통해 점진적 감량을 추천합니다.' },
+  { max: 35, name: '2단계 비만', emoji: '🔴', color: '#ef4444', range: 'obese2', tip: '장기적인 다이어트 계획이 필수적입니다. 무리하지 않는 선에서의 운동 스케줄 및 식이요법에 대해 전문가 상담을 권장합니다.' },
+  { max: 999, name: '3단계 비만', emoji: '🔴', color: '#dc2626', range: 'obese3', tip: '관절에 무리가 가지 않는 체중 감량 전문 플랜이 요구됩니다. 각종 대사성 질환 예방을 위해 의학적 상담과 병원에 내원하시는 것을 강하게 권장해 드립니다.' },
+];
+
+function calc() {
+  const h = parseFloat(document.getElementById('height').value) / 100; // m
+  const w = parseFloat(document.getElementById('weight').value);
+  
+  if (!h || !w || h <= 0 || w <= 0) return;
+  
+  const bmi = w / (h * h);
+  const range = RANGES.find(r => bmi < r.max);
+  
+  // Result card
+  document.getElementById('bmiValue').textContent = bmi.toFixed(1);
+  document.getElementById('bmiLabel').textContent = range.name;
+  document.getElementById('bmiLabel').style.color = range.color;
+  document.getElementById('bmiValue').style.color = range.color;
+  document.getElementById('emoji').textContent = range.emoji;
+  
+  // Gauge marker (BMI 15~40 mapped to 0~100%)
+  const pct = Math.max(0, Math.min(100, ((bmi - 15) / 25) * 100));
+  document.getElementById('gaugeMarker').style.left = pct + '%';
+  
+  // Highlight table row
+  document.querySelectorAll('.bmi-table tbody tr').forEach(tr => {
+    tr.classList.toggle('current', tr.dataset.range === range.range);
+  });
+  
+  // Info grid
+  const normalMin = 18.5 * h * h;
+  const normalMax = 22.9 * h * h;
+  const idealWeight = 22 * h * h;
+  const diffToIdeal = w - idealWeight;
+  
+  document.getElementById('infoGrid').innerHTML = `
+    <div class="info-item">
+      <div class="label">정상 체중 범위</div>
+      <div class="value">${normalMin.toFixed(1)} ~ ${normalMax.toFixed(1)} kg</div>
+    </div>
+    <div class="info-item">
+      <div class="label">표준 체중 (BMI 22)</div>
+      <div class="value">${idealWeight.toFixed(1)} kg</div>
+    </div>
+  `;
+
+  // Dynamic Report Text
+  document.getElementById('reportBox').style.animation = 'none';
+  void document.getElementById('reportBox').offsetWidth; // force reflow
+  document.getElementById('reportBox').style.animation = 'fadeIn 0.5s ease-out';
+
+  document.getElementById('r-height').textContent = (h * 100).toFixed(0);
+  document.getElementById('r-weight').textContent = w.toFixed(1);
+  document.getElementById('r-bmi').textContent = bmi.toFixed(1);
+  const rRange = document.getElementById('r-range');
+  rRange.textContent = `[${range.name}]`;
+  rRange.style.color = range.color;
+  
+  document.getElementById('r-ideal').textContent = idealWeight.toFixed(1);
+  
+  const rDiffWrap = document.getElementById('r-diff-wrap');
+  const rDiff = document.getElementById('r-diff');
+  
+  if (Math.abs(diffToIdeal) < 0.1) {
+    rDiffWrap.style.color = '#22c55e';
+    rDiff.textContent = '정확히 일치(0kg)';
+  } else {
+    rDiffWrap.style.color = diffToIdeal > 0 ? '#f97316' : '#3b82f6';
+    rDiff.textContent = `${diffToIdeal > 0 ? '+' : ''}${diffToIdeal.toFixed(1)}kg`;
+  }
+  
+  document.getElementById('r-tip').textContent = range.tip;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+calc();
+
+(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

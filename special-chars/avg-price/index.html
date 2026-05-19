@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>📉 물타기/불타기 계산기 — 티모집사</title>
+<meta name="description" content="코인·주식 물타기 불타기 평단가 계산기. 추가 매수 시 평균 단가를 실시간으로 계산합니다.">
+<meta property="og:title" content="📉 물타기/불타기 계산기 — 티모집사">
+<meta property="og:description" content="코인·주식 물타기 불타기 평단가 계산기. 추가 매수 시 평균 단가를 실시간으로 계산합니다.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/avg-price/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/avg-price/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:'Pretendard',-apple-system,sans-serif;
+    background:var(--bg-body);color:var(--text-primary);
+    min-height:100vh;padding:20px;
+    display:flex;justify-content:center;align-items:flex-start;
+  }
+  .app{
+    background:var(--bg-app);border-radius:16px;
+    box-shadow:var(--shadow-lg);
+    width:480px;max-width:100%;overflow:hidden;
+  }
+  .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+  .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+  .header h1{font-size:15px;font-weight:600;color:#fff}
+
+  .body{padding:16px;display:flex;flex-direction:column;gap:16px}
+
+  /* 섹션 */
+  .section{
+    background:var(--bg-bar);border-radius:12px;padding:14px 16px;
+    border:1px solid var(--border);
+  }
+  .section-title{
+    font-size:12px;font-weight:700;color:var(--text-info);
+    margin-bottom:10px;display:flex;align-items:center;gap:6px;
+  }
+  .section-title .badge{
+    font-size:10px;padding:2px 8px;border-radius:4px;
+    font-weight:600;
+  }
+  .badge-hold{background:#1e3a5f;color:#60a5fa}
+  .badge-add{background:#3a1e5f;color:#c084fc}
+
+  .field-row{display:flex;gap:10px;margin-bottom:8px}
+  .field-row:last-child{margin-bottom:0}
+  .field{flex:1;display:flex;flex-direction:column;gap:3px}
+  .field label{font-size:10px;color:var(--calc-expr-text);font-weight:600}
+  .field input{
+    background:var(--bg-input);border:1px solid var(--border);border-radius:8px;
+    color:var(--text-primary);padding:10px 12px;font-size:15px;font-family:inherit;
+    outline:none;width:100%;
+  }
+  .field input:focus{border-color:var(--accent)}
+  .field input::placeholder{color:var(--text-muted)}
+
+  /* 수량↔금액 토글 */
+  .toggle-row{
+    display:flex;align-items:center;gap:8px;margin-bottom:8px;
+  }
+  .toggle-label{font-size:11px;color:var(--calc-expr-text)}
+  .toggle-btn{
+    display:flex;background:var(--bg-input);border:1px solid var(--border);
+    border-radius:8px;overflow:hidden;
+  }
+  .toggle-opt{
+    padding:5px 12px;font-size:11px;cursor:pointer;
+    font-family:inherit;border:none;background:none;
+    color:var(--calc-expr-text);transition:all .15s;font-weight:600;
+  }
+  .toggle-opt.active{background:var(--accent);color:var(--text-on-accent)}
+
+  /* 결과 */
+  .result-section{
+    background:var(--bg-input);
+    border:1px solid var(--border);border-radius:14px;
+    padding:18px;
+  }
+  .result-title{
+    font-size:12px;font-weight:700;color:var(--text-info);
+    margin-bottom:12px;display:flex;align-items:center;gap:6px;
+  }
+
+  .result-main{
+    text-align:center;margin-bottom:14px;
+  }
+  .result-label{font-size:11px;color:var(--calc-expr-text);margin-bottom:4px}
+  .result-value{
+    font-size:32px;font-weight:800;color:var(--text-primary);
+    letter-spacing:-0.5px;
+  }
+  .result-change{
+    font-size:13px;font-weight:700;margin-top:4px;
+  }
+  .change-down{color:#f87171}
+  .change-up{color:var(--text-success)}
+  .change-same{color:var(--text-info)}
+
+  .result-stats{
+    display:grid;grid-template-columns:1fr 1fr;gap:8px;
+  }
+  .r-stat{
+    background:rgba(0,0,0,.2);border-radius:8px;
+    padding:10px;text-align:center;
+  }
+  .r-stat .r-label{font-size:10px;color:var(--calc-expr-text);margin-bottom:3px}
+  .r-stat .r-value{font-size:14px;font-weight:700;color:var(--text-amount)}
+
+  /* 안내 */
+  .hint{
+    font-size:11px;color:var(--text-muted);text-align:center;
+    padding:4px 0;
+  }
+
+  .footer{
+    background:var(--bg-bar);padding:10px 16px;
+    display:flex;justify-content:space-between;align-items:center;
+    border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text);
+  }
+  .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+  .footer a:hover{color:var(--text-guide)}
+
+  /* 애니메이션 */
+  .result-value{transition:color .3s}
+  .guide-section{margin:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+  .guide-section summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
+  .guide-section summary:hover{background:var(--bg-guide-hover)}
+  .guide-section[open] summary{background:var(--bg-btn);border-bottom:1px solid var(--border)}
+  .guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
+  .guide-content ol{padding-left:20px}.guide-content li{margin-bottom:4px}
+  .scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+  .scroll-top-btn.visible{opacity:1;visibility:visible}
+  .scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+
+  .report-box {background:var(--bg-guide);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:16px}
+  .report-box h3 {font-size:15px;font-weight:700;color:var(--accent);margin-bottom:4px}
+  .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
+  .report-box strong {color:var(--text-primary);font-weight:600}
+
+  .related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:0 12px 12px}
+  .related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
+  .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
+  .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent);transform:translateX(4px)}
+
+  @keyframes fadeIn {
+    from { opacity:0; transform:translateY(10px) }
+    to { opacity:1; transform:translateY(0) }
+  }
+
+  @media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+    <h1>📉 물타기/불타기 계산기</h1>
+  </div>
+
+  <div class="body">
+    <!-- 1단: 기존 보유 -->
+    <div class="section">
+      <div class="section-title">
+        <span class="badge badge-hold">1</span> 내 현재 보유
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>현재 평단가</label>
+          <input type="text" id="curPrice" placeholder="예: 50000" oninput="calc()" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label>보유 수량</label>
+          <input type="text" id="curQty" placeholder="예: 10" oninput="calc()" inputmode="decimal">
+        </div>
+      </div>
+      <div class="hint" id="curTotal">보유 금액: -</div>
+    </div>
+
+    <!-- 2단: 추가 매수 -->
+    <div class="section">
+      <div class="section-title">
+        <span class="badge badge-add">2</span> 추가 매수 계획
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>매수 단가</label>
+          <input type="text" id="addPrice" placeholder="예: 40000" oninput="calc()" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label id="addLabel">추가 수량</label>
+          <input type="text" id="addQtyOrAmt" placeholder="예: 5" oninput="calc()" inputmode="decimal">
+        </div>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">입력 방식:</span>
+        <div class="toggle-btn">
+          <button class="toggle-opt active" id="togQty" onclick="setMode('qty')">수량</button>
+          <button class="toggle-opt" id="togAmt" onclick="setMode('amt')">금액 (원)</button>
+        </div>
+      </div>
+      <div class="hint" id="addConvert">-</div>
+    </div>
+
+    <!-- 3단: 결과 -->
+    <div class="result-section">
+      <div class="result-title">
+        📊 최종 결과
+      </div>
+      <div class="result-main">
+        <div class="result-label">최종 평단가</div>
+        <div class="result-value" id="finalPrice">-</div>
+        <div class="result-change" id="priceChange"></div>
+      </div>
+      <div class="result-stats">
+        <div class="r-stat">
+          <div class="r-label">총 투자 금액</div>
+          <div class="r-value" id="finalInvest">-</div>
+        </div>
+        <div class="r-stat">
+          <div class="r-label">총 보유 수량</div>
+          <div class="r-value" id="finalQty">-</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="report-box" id="analysisReport" style="display:none;"></div>
+  </div>
+
+  <details class="guide-section">
+    <summary>📖 사용 방법</summary>
+    <div class="guide-content">
+      <ol>
+        <li>현재 보유 수량과 평균 단가를 입력하세요.</li>
+        <li>추가 매수할 수량과 매수 단가를 입력하면 새 평균 단가가 계산됩니다.</li>
+        <li>여러 번 추가 매수하는 경우, 메모해두고 한 번에 합산하여 입력할 수도 있습니다. 금액 모드를 선택하여 원화 기준으로 바로 환산할 수 있습니다.</li>
+      </ol>
+    </div>
+  </details>
+  <details class="guide-section" open>
+    <summary>💡 주식/코인 물타기 전략 가이드</summary>
+    <div class="guide-content">
+      <strong>Q. 물타기와 불타기의 정확한 차이는 무엇인가요?</strong>
+      <p><strong>물타기(Averaging Down)</strong>는 보유 종목의 가격이 하락했을 때, 더 낮은 가격에 추가로 매수하여 '평균 매입 단가'를 낮추는 방어적 전략입니다. 반대로 <strong>불타기(Averaging Up)</strong>는 가격이 오르는 추세에서 긍정적인 전망을 바탕으로 추가 매수하여 전체 투자 규모와 수익금을 키우는 공격적 전략입니다.</p>
+      <br>
+      <strong>Q. 평단가를 낮추는 것이 무조건 유리한가요?</strong>
+      <p>물타기를 통해 평단가를 낮추면, 향후 주가가 조금만 반등해도 원금을 회복하거나 수익으로 전환될 수 있다는 장점이 있습니다. 그러나 <strong>기업의 펀더멘털이나 시장 상황이 악화되어 계속 하락하는 경우(소위 '지하실'로 가는 경우)</strong>, 물타기는 오히려 손실 금액을 폭발적으로 키우는 최악의 선택이 될 수 있습니다. 확실한 지지선이나 반등 근거가 있을 때만 신중하게 실행해야 합니다.</p>
+      <br>
+      <strong>Q. 추가 매수 시 비율은 어떻게 설정하는 것이 좋나요?</strong>
+      <p>단순히 현재가에 맞춰 매수하기보다, 본인의 전체 투자 자산 대비 <strong>비중 조절(포트폴리오 리스크 관리)</strong>이 최우선입니다. 일반적으로는 하락폭이 -10%, -20% 등 유의미할 때 분할 매수하는 '피라미딩(Pyramiding) 기법'이나 '정액 분할 매수법(적립식)' 등을 활용하여 한 번에 너무 많은 자금이 한 종목에 묶이지 않도록 조절하는 것을 권장합니다.</p>
+    </div>
+  </details>
+
+  <div class="related-tools">
+    <h3>🔗 연관 금융/생활 계산기</h3>
+    <div class="tool-list">
+      <a href="/special-chars/percent-calc/"><span>🔢 퍼센트 계산기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/compound-interest/"><span>📈 복리 이자 계산기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/broker-fee-calc/"><span>🏠 부동산 중개보수 계산기</span><span>바로가기 →</span></a>
+    </div>
+  </div>
+    <div class="footer"><span>숫자 입력 즉시 실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+
+<script>
+let inputMode = 'qty'; // 'qty' or 'amt'
+
+function setMode(mode) {
+  inputMode = mode;
+  document.getElementById('togQty').classList.toggle('active', mode === 'qty');
+  document.getElementById('togAmt').classList.toggle('active', mode === 'amt');
+  document.getElementById('addLabel').textContent = mode === 'qty' ? '추가 수량' : '추가 금액 (원)';
+  document.getElementById('addQtyOrAmt').placeholder = mode === 'qty' ? '예: 5' : '예: 200000';
+  document.getElementById('addQtyOrAmt').value = '';
+  document.getElementById('addConvert').textContent = '-';
+  calc();
+}
+
+function parseNum(id) {
+  const v = document.getElementById(id).value.replace(/,/g, '').trim();
+  if (v === '' || v === '-') return NaN;
+  return parseFloat(v);
+}
+
+function fmtNum(n, maxDec) {
+  if (isNaN(n) || !isFinite(n)) return '-';
+  // 정수면 콤마, 소수면 적절한 자릿수
+  if (Number.isInteger(n) && Math.abs(n) < 1e15) return n.toLocaleString('ko-KR');
+  // 소수점 자릿수 자동 결정
+  const str = n.toString();
+  const dotIdx = str.indexOf('.');
+  if (dotIdx >= 0) {
+    const decLen = str.length - dotIdx - 1;
+    const dec = Math.min(decLen, maxDec || 8);
+    return n.toLocaleString('ko-KR', { minimumFractionDigits: 0, maximumFractionDigits: dec });
+  }
+  return n.toLocaleString('ko-KR');
+}
+
+function fmtWon(n) {
+  if (isNaN(n)) return '-';
+  if (n >= 1e8) {
+    const eok = Math.floor(n / 1e8);
+    const man = Math.floor((n % 1e8) / 1e4);
+    return man > 0 ? `${eok.toLocaleString()}억 ${man.toLocaleString()}만원` : `${eok.toLocaleString()}억원`;
+  }
+  if (n >= 1e4) return `${Math.floor(n / 1e4).toLocaleString()}만원`;
+  return fmtNum(n, 2) + '원';
+}
+
+function calc() {
+  const curPrice = parseNum('curPrice');
+  const curQty = parseNum('curQty');
+  const addPrice = parseNum('addPrice');
+  const rawInput = parseNum('addQtyOrAmt');
+
+  // 보유 금액 표시
+  if (!isNaN(curPrice) && !isNaN(curQty)) {
+    const curTotal = curPrice * curQty;
+    document.getElementById('curTotal').textContent = '보유 금액: ' + fmtWon(curTotal);
+  } else {
+    document.getElementById('curTotal').textContent = '보유 금액: -';
+  }
+
+  // 추가 수량 계산
+  let addQty = NaN;
+  if (inputMode === 'qty') {
+    addQty = rawInput;
+    if (!isNaN(addQty) && !isNaN(addPrice) && addPrice > 0) {
+      const addTotal = addPrice * addQty;
+      document.getElementById('addConvert').textContent = '= ' + fmtWon(addTotal);
+    } else {
+      document.getElementById('addConvert').textContent = '-';
+    }
+  } else {
+    // 금액 → 수량 역산
+    const addAmt = rawInput;
+    if (!isNaN(addAmt) && !isNaN(addPrice) && addPrice > 0) {
+      addQty = addAmt / addPrice;
+      document.getElementById('addConvert').textContent = '= ' + fmtNum(addQty, 8) + '개';
+    } else {
+      document.getElementById('addConvert').textContent = '-';
+    }
+  }
+
+  const report = document.getElementById('analysisReport');
+
+  // 최종 계산
+  if (!isNaN(curPrice) && !isNaN(curQty) && !isNaN(addPrice) && !isNaN(addQty) && addQty > 0) {
+    const totalInvest = curPrice * curQty + addPrice * addQty;
+    const totalQty = curQty + addQty;
+    const finalAvg = totalInvest / totalQty;
+
+    document.getElementById('finalPrice').textContent = fmtNum(finalAvg, 8);
+    document.getElementById('finalInvest').textContent = fmtWon(totalInvest);
+    document.getElementById('finalQty').textContent = fmtNum(totalQty, 8);
+
+    // 변동 표시
+    const diff = finalAvg - curPrice;
+    const pct = ((diff / curPrice) * 100).toFixed(2);
+    const changeEl = document.getElementById('priceChange');
+    
+    let actionType = '';
+    let reportDesc = '';
+
+    if (diff < 0) {
+      changeEl.textContent = `▼ ${fmtNum(Math.abs(diff), 4)} (${pct}%) — 물타기 적용됨`;
+      changeEl.className = 'result-change change-down';
+      actionType = '물타기';
+      reportDesc = `기존 평단가 <strong>${fmtNum(curPrice, 8)}</strong>에서 추가 매수를 통해 <strong>${fmtNum(Math.abs(diff), 4)}</strong>만큼 단가를 낮추는 데 성공했습니다. 이제 <strong>${fmtNum(finalAvg, 8)}</strong>까지만 가격이 반등해도 본전(원금) 회복이 가능해집니다. 하락장 방어에 집중한 보수적 매수 보강 전략이 반영된 상태입니다.`;
+    } else if (diff > 0) {
+      changeEl.textContent = `▲ ${fmtNum(diff, 4)} (+${pct}%) — 불타기 적용됨`;
+      changeEl.className = 'result-change change-up';
+      actionType = '불타기';
+      reportDesc = `기존 평단가 <strong>${fmtNum(curPrice, 8)}</strong>에서 추가 매수로 인해 단가가 <strong>${fmtNum(diff, 4)}</strong>만큼 상승했습니다. 이는 상승장 추세를 타고 투자 비중을 늘리기 위한 공격적 움직임입니다. 최종 평단가 <strong>${fmtNum(finalAvg, 8)}</strong>을 새로운 기준으로 삼아, 보유 자산의 추세 상승을 주도면밀하게 모니터링하시기 바랍니다.`;
+    } else {
+      changeEl.textContent = '변동 없음';
+      changeEl.className = 'result-change change-same';
+      actionType = '추가 매수';
+      reportDesc = `기존 평단가와 동일한 가격으로 추가 매수하여, 평균 단가의 변화 없이 보유 <strong>수량(${fmtNum(totalQty, 8)}개)</strong>과 <strong>투자 금액(${fmtWon(totalInvest)})</strong>만 증가했습니다. 매입 단가보다는 종목 비중 자체를 확대하기 위한 전략입니다.`;
+    }
+
+    report.style.display = 'flex';
+    report.innerHTML = `
+      <h3>💡 ${actionType} 시뮬레이션 분석 리포트</h3>
+      <p>입력하신 매매 데이터를 기반으로, 총 <strong>${fmtWon(totalInvest)}</strong>의 누적 투자금이 투입되어 <strong>${fmtNum(totalQty, 8)}개</strong>의 물량을 확보하게 됩니다.</p>
+      <p>${reportDesc}</p>
+      <p>⚠️ <strong>투자 인사이트:</strong> 이 종목의 비중이 포트폴리오에 치명적 리스크를 주지 않는 선인지 잔고를 다시 한번 확인하세요.</p>
+    `;
+
+  } else {
+    document.getElementById('finalPrice').textContent = '-';
+    document.getElementById('finalInvest').textContent = '-';
+    document.getElementById('finalQty').textContent = '-';
+    document.getElementById('priceChange').textContent = '';
+    report.style.display = 'none';
+  }
+}
+</script>
+
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

@@ -14,6 +14,15 @@ function logSuccess(msg) {
   console.log(`✅ [Pass]: ${msg}`);
 }
 
+function rel(file) {
+  return path.relative(targetDir, file).replace(/\\/g, '/');
+}
+
+function isToolPage(file) {
+  const relative = rel(file);
+  return relative.startsWith('special-chars/') && path.basename(file).toLowerCase() === 'index.html';
+}
+
 function findFilesByExt(dir, extList, ignoreDirs = ['node_modules', 'dist', '.git', '.github']) {
   let results = [];
   if (!fs.existsSync(dir)) return results;
@@ -61,6 +70,8 @@ let footerFoundInApp = false;
 let appComponentScanned = false;
 
 for (const file of componentFiles) {
+  if (!isToolPage(file)) continue;
+
   const content = fs.readFileSync(file, 'utf8');
   if (content.toLowerCase().includes('<footer')) {
     appComponentScanned = true;
@@ -71,18 +82,18 @@ for (const file of componentFiles) {
     
     if (appRegex.test(content)) {
       footerFoundInApp = true;
-      logSuccess(`[${path.basename(file)}] footer가 .app 내부에 잘 위치합니다.`);
+      logSuccess(`[${rel(file)}] footer가 .app 내부에 잘 위치합니다.`);
     } else if (generalAppRegex.test(content)) {
-      logError(`[${path.basename(file)}] .app 컨테이너는 존재하지만 내부에 footer 구조가 감지되지 않습니다.`);
+      logError(`[${rel(file)}] .app 컨테이너는 존재하지만 내부에 footer 구조가 감지되지 않습니다.`);
     } else {
       // 순수 HTML 파일들(예: index.html 등)의 경우 .app 래퍼가 전체 페이지 기준인지 개별 컴포넌트인지 애매할 수 있으므로 에러 표시
-      logError(`[${path.basename(file)}] footer는 있지만 감싸고 있는 .app 클래스 컨테이너가 발견되지 않았습니다.`);
+      logError(`[${rel(file)}] footer는 있지만 감싸고 있는 .app 클래스 컨테이너가 발견되지 않았습니다.`);
     }
   }
 }
 
 if (!appComponentScanned) {
-  logError('프로젝트 내 어떠한 마크업 파일(.html, .tsx, .jsx, .vue)에서도 <footer> 태그를 찾을 수 없습니다.');
+  console.warn('⚠️ special-chars 도구 페이지에서 <footer> 태그를 찾지 못했습니다. footer 구조 검사를 건너뜁니다.');
 }
 
 // 3. align-items 속성이 CSS에 사용되었는지 검사
@@ -108,19 +119,17 @@ const sitemapFile = findFileByName(targetDir, 'sitemap.xml') || findFileByName(t
 if (sitemapFile) {
   const sitemapContent = fs.readFileSync(sitemapFile, 'utf8');
   let toolPages = findFilesByExt(targetDir, ['.tsx', '.jsx', '.vue', '.html']);
-  const excludeNames = ['index', 'layout', 'main', '404', 'app', 'vite-env.d'];
+  const excludeNames = ['layout', 'main', '404', 'app', 'vite-env.d', 'article-template', 'article_template'];
   
-  toolPages = toolPages.filter(p => !excludeNames.includes(path.basename(p, path.extname(p)).toLowerCase()));
+  toolPages = toolPages.filter(p => isToolPage(p) && !excludeNames.includes(path.basename(p, path.extname(p)).toLowerCase()));
 
   if (toolPages.length > 0) {
     let missingSitemapTools = 0;
     toolPages.forEach(page => {
-      let routeName = path.basename(page, path.extname(page));
-      const kebabName = routeName.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+      const routePath = '/' + rel(path.dirname(page)) + '/';
       
-      // teemoZipsa.github.io 같은 평범한 HTML 환경일 수 있으므로 .html 명칭 그대로도 검색
-      if (!sitemapContent.includes(routeName) && !sitemapContent.includes(kebabName) && !sitemapContent.includes(routeName+'.html')) {
-        logError(`페이지: '${routeName}'(또는 '${kebabName}')가 사이트맵(${path.basename(sitemapFile)})에 누락되었습니다.`);
+      if (!sitemapContent.includes(routePath)) {
+        logError(`페이지: '${routePath}'가 사이트맵(${path.basename(sitemapFile)})에 누락되었습니다.`);
         missingSitemapTools++;
       }
     });

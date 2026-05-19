@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>⏱️ 타이머/스톱워치 — 티모집사</title>
+<meta name="description" content="카운트다운 타이머와 스톱워치를 한 곳에서. 랩 기록, 알림음 지원. 공부, 운동, 요리에 활용하세요.">
+<meta property="og:title" content="⏱️ 타이머/스톱워치 — 티모집사">
+<meta property="og:description" content="카운트다운 타이머와 스톱워치를 한 곳에서. 랩 기록, 알림음 지원.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/timer/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/timer/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/timer/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/timer/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+.app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+
+.mode-tabs{display:flex;background:var(--bg-bar);border-bottom:1px solid var(--border)}
+.mode-tab{flex:1;padding:12px;text-align:center;font-size:14px;font-weight:600;color:var(--text-muted);background:none;border:none;cursor:pointer;font-family:inherit;transition:all .2s;border-bottom:2px solid transparent}
+.mode-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.mode-tab:hover{color:#bbb}
+
+.content{padding:24px 20px}
+
+/* 디스플레이 */
+.display{text-align:center;padding:32px 0 24px;user-select:none}
+.display .time{font-size:64px;font-weight:700;letter-spacing:2px;font-variant-numeric:tabular-nums;color:var(--text-primary)}
+.display .ms{font-size:32px;color:var(--text-section);font-weight:400}
+@media(max-width:400px){.display .time{font-size:48px}.display .ms{font-size:24px}}
+
+/* 타이머 입력 */
+.timer-inputs{display:flex;justify-content:center;gap:8px;margin-bottom:20px}
+.timer-inputs .tfield{text-align:center}
+.timer-inputs input{width:64px;padding:10px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:20px;font-family:inherit;text-align:center;font-weight:600}
+.timer-inputs input:focus{outline:none;border-color:var(--accent)}
+.timer-inputs .tfield span{display:block;font-size:11px;color:var(--text-muted);margin-top:4px}
+
+.quick-btns{display:flex;justify-content:center;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.quick-btn{padding:6px 14px;background:var(--bg-btn);border:1px solid var(--border);border-radius:16px;color:var(--text-label);font-size:12px;cursor:pointer;font-family:inherit;transition:all .2s}
+.quick-btn:hover{background:var(--bg-btn-hover);color:var(--text-primary)}
+
+/* 컨트롤 버튼 */
+.controls{display:flex;justify-content:center;gap:12px;margin-bottom:20px}
+.ctrl-btn{width:72px;height:72px;border-radius:50%;border:none;font-size:22px;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.ctrl-btn:active{transform:scale(.92)}
+.btn-start{background:#22c55e;color:var(--text-primary)}
+.btn-start:hover{background:#16a34a}
+.btn-start.running{background:#ef4444}
+.btn-start.running:hover{background:#dc2626}
+.btn-pause{background:#f59e0b;color:var(--text-primary)}
+.btn-pause:hover{background:#d97706}
+.btn-reset{background:var(--bg-btn-hover);color:var(--text-label)}
+.btn-reset:hover{background:#4a4a7a;color:var(--text-primary)}
+.btn-lap{background:#3b82f6;color:var(--text-primary)}
+.btn-lap:hover{background:#2563eb}
+
+/* 랩 기록 */
+.laps{max-height:200px;overflow-y:auto;margin-top:8px}
+.laps::-webkit-scrollbar{width:4px}
+.laps::-webkit-scrollbar-thumb{background:var(--bg-btn-hover);border-radius:2px}
+.lap-item{display:flex;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--border);font-size:13px}
+.lap-item:first-child{color:var(--accent);font-weight:600}
+.lap-num{color:var(--text-muted)}
+.lap-time{font-variant-numeric:tabular-nums}
+.lap-diff{color:var(--text-muted);font-size:12px}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+
+  /* 가이드 & 관련 도구 (표준) */
+  .guide-section{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+  .guide-section h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
+  .guide:last-child{margin-bottom:0}
+  .guide summary{padding:12px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--bg-guide);transition:background .2s}
+  .guide summary::-webkit-details-marker{display:none}
+  .guide summary::after{content:'▼';font-size:10px;color:var(--text-muted);transition:transform .3s}
+  .guide[open] summary::after{transform:rotate(180deg)}
+  .guide summary:hover{background:var(--bg-guide-hover)}
+  .guide-content{padding:14px;font-size:13px;color:var(--text-info);line-height:1.6;border-top:1px solid var(--border);background:var(--bg-app)}
+  .related-tools{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+  .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+  .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
+  .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+    <h1>⏱️ 타이머/스톱워치</h1>
+    <a href="/special-chars/en/timer/" class="back-btn">🌐 English</a>
+  </div>
+
+  <div class="mode-tabs" role="tablist">
+    <button class="mode-tab active" role="tab" aria-selected="true" onclick="switchMode('timer')">⏳ 타이머</button>
+    <button class="mode-tab" role="tab" aria-selected="false" onclick="switchMode('stopwatch')">⏱️ 스톱워치</button>
+  </div>
+
+  <div class="content">
+    <div class="display">
+      <span class="time" id="display">00:00:00</span><span class="ms" id="displayMs"></span>
+    </div>
+
+    <!-- 타이머 전용 -->
+    <div id="timerSection">
+      <div class="timer-inputs">
+        <div class="tfield">
+          <input type="number" id="tHour" value="0" min="0" max="99" oninput="clampInput(this,99)">
+          <span>시간</span>
+        </div>
+        <div class="tfield">
+          <input type="number" id="tMin" value="5" min="0" max="59" oninput="clampInput(this,59)">
+          <span>분</span>
+        </div>
+        <div class="tfield">
+          <input type="number" id="tSec" value="0" min="0" max="59" oninput="clampInput(this,59)">
+          <span>초</span>
+        </div>
+      </div>
+      <div class="quick-btns">
+        <button class="quick-btn" onclick="setQuick(1)">1분</button>
+        <button class="quick-btn" onclick="setQuick(3)">3분</button>
+        <button class="quick-btn" onclick="setQuick(5)">5분</button>
+        <button class="quick-btn" onclick="setQuick(10)">10분</button>
+        <button class="quick-btn" onclick="setQuick(15)">15분</button>
+        <button class="quick-btn" onclick="setQuick(25)">25분</button>
+        <button class="quick-btn" onclick="setQuick(30)">30분</button>
+        <button class="quick-btn" onclick="setQuick(60)">1시간</button>
+      </div>
+    </div>
+
+    <!-- 컨트롤 -->
+    <div class="controls">
+      <button class="ctrl-btn btn-reset" id="btnReset" onclick="doReset()" title="리셋">↺</button>
+      <button class="ctrl-btn btn-start" id="btnStart" onclick="doStartStop()">▶</button>
+      <button class="ctrl-btn btn-lap" id="btnLap" onclick="doLap()" title="랩" style="display:none">🏁</button>
+    </div>
+
+    <div class="laps" id="lapsContainer"></div>
+  </div>
+
+  <section class="guide-section">
+    <h2>💡 타이머 / 스톱워치 가이드</h2>
+    <details class="guide" open>
+      <summary>타이머 사용법</summary>
+      <div class="guide-content">
+        시, 분, 초를 직접 입력하거나 숫자 버튼(예: 5분, 1시간)을 눌러 시간을 빠르게 설정하세요. 재생 버튼(▶)을 누르면 카운트다운이 시작되며, 시간이 다 되면 자동으로 알림음이 울립니다.
+      </div>
+    </details>
+    <details class="guide">
+      <summary>스톱워치 사용법</summary>
+      <div class="guide-content">
+        스톱워치 탭을 선택한 뒤 재생 버튼(▶)을 누르면 시간이 측정됩니다. 실행 중 랩 버튼(🏁)을 눌러 구간 기록을 남길 수 있습니다. 측정이 끝나면 정지 버튼(■)을 눌러주세요.
+      </div>
+    </details>
+    <details class="guide">
+      <summary>단축키</summary>
+      <div class="guide-content">
+        <ul style="padding-left: 20px; list-style-type: disc;">
+          <li><b>스페이스바</b>: 시작 / 정지</li>
+          <li><b>R</b>: 초기화(리셋)</li>
+          <li><b>L</b>: 랩 기록 (스톱워치 모드)</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <section class="related-tools">
+    <h2>🔗 관련 도구</h2>
+    <div class="tools-grid">
+      <a href="/special-chars/speech-timer/" class="tool-card">🗣️ 스피치 타이머</a>
+      <a href="/special-chars/server-time/" class="tool-card">⌚ 서버 시간 확인</a>
+      <a href="/special-chars/timezone-conv/" class="tool-card">🌍 세계 시간 변환</a>
+    </div>
+  </section>
+    <div class="footer"><span>백그라운드 알림 지원</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+
+<script>
+let mode = 'timer'; // 'timer' | 'stopwatch'
+let running = false;
+let intervalId = null;
+
+// Timer state
+let timerRemaining = 0; // ms
+
+// Stopwatch state
+let swElapsed = 0; // ms
+let swStart = 0;
+let laps = [];
+
+// Audio context for alarm
+function playAlarm() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [0, 200, 400].forEach(delay => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 880;
+      osc.type = 'sine';
+      gain.gain.value = 0.3;
+      osc.start(ctx.currentTime + delay / 1000);
+      osc.stop(ctx.currentTime + delay / 1000 + 0.15);
+    });
+  } catch (e) { /* silent fallback */ }
+}
+
+function switchMode(m) {
+  if (running) doStartStop(); // stop first
+  doReset();
+  mode = m;
+  document.querySelectorAll('.mode-tab').forEach((tab, i) => {
+    const isActive = (i === 0 && m === 'timer') || (i === 1 && m === 'stopwatch');
+    tab.classList.toggle('active', isActive);
+    tab.setAttribute('aria-selected', isActive);
+  });
+  document.getElementById('timerSection').style.display = m === 'timer' ? 'block' : 'none';
+  document.getElementById('btnLap').style.display = m === 'stopwatch' ? 'flex' : 'none';
+  document.getElementById('displayMs').textContent = m === 'stopwatch' ? '.00' : '';
+  updateDisplay();
+}
+
+function clampInput(el, max) {
+  let v = parseInt(el.value) || 0;
+  if (v < 0) v = 0;
+  if (v > max) v = max;
+  el.value = v;
+}
+
+function setQuick(min) {
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  document.getElementById('tHour').value = h;
+  document.getElementById('tMin').value = m;
+  document.getElementById('tSec').value = 0;
+}
+
+function getTimerMs() {
+  const h = parseInt(document.getElementById('tHour').value) || 0;
+  const m = parseInt(document.getElementById('tMin').value) || 0;
+  const s = parseInt(document.getElementById('tSec').value) || 0;
+  return (h * 3600 + m * 60 + s) * 1000;
+}
+
+function formatTime(ms, showMs) {
+  const totalSec = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  const pad = n => String(n).padStart(2, '0');
+  const main = h > 0 ? `${pad(h)}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
+  if (showMs) {
+    const centis = Math.floor((ms % 1000) / 10);
+    return { main, ms: '.' + String(centis).padStart(2, '0') };
+  }
+  return { main, ms: '' };
+}
+
+function updateDisplay() {
+  let ms = mode === 'timer' ? timerRemaining : swElapsed;
+  if (mode === 'timer' && !running && timerRemaining === 0) {
+    ms = getTimerMs();
+  }
+  const f = formatTime(ms, mode === 'stopwatch');
+  document.getElementById('display').textContent = f.main;
+  document.getElementById('displayMs').textContent = f.ms;
+
+  // Update document title
+  if (running) {
+    document.title = f.main + (f.ms || '') + ' — 타이머';
+  } else {
+    document.title = '⏱️ 타이머/스톱워치 — 티모집사';
+  }
+}
+
+function doStartStop() {
+  if (running) {
+    // Stop
+    running = false;
+    clearInterval(intervalId);
+    if (mode === 'stopwatch') {
+      swElapsed += Date.now() - swStart;
+    }
+    document.getElementById('btnStart').textContent = '▶';
+    document.getElementById('btnStart').classList.remove('running');
+    updateDisplay();
+    return;
+  }
+
+  // Start
+  if (mode === 'timer') {
+    if (timerRemaining === 0) {
+      timerRemaining = getTimerMs();
+    }
+    if (timerRemaining <= 0) return;
+    const endTime = Date.now() + timerRemaining;
+    running = true;
+    intervalId = setInterval(() => {
+      timerRemaining = endTime - Date.now();
+      if (timerRemaining <= 0) {
+        timerRemaining = 0;
+        running = false;
+        clearInterval(intervalId);
+        document.getElementById('btnStart').textContent = '▶';
+        document.getElementById('btnStart').classList.remove('running');
+        updateDisplay();
+        playAlarm();
+        showToast('⏰ 타이머 완료!');
+        return;
+      }
+      updateDisplay();
+    }, 50);
+  } else {
+    // Stopwatch
+    swStart = Date.now();
+    running = true;
+    intervalId = setInterval(() => {
+      const current = swElapsed + (Date.now() - swStart);
+      const f = formatTime(current, true);
+      document.getElementById('display').textContent = f.main;
+      document.getElementById('displayMs').textContent = f.ms;
+      if (running) document.title = f.main + f.ms + ' — 스톱워치';
+    }, 30);
+  }
+
+  document.getElementById('btnStart').textContent = '■';
+  document.getElementById('btnStart').classList.add('running');
+}
+
+function doReset() {
+  running = false;
+  clearInterval(intervalId);
+  timerRemaining = 0;
+  swElapsed = 0;
+  laps = [];
+  document.getElementById('lapsContainer').innerHTML = '';
+  document.getElementById('btnStart').textContent = '▶';
+  document.getElementById('btnStart').classList.remove('running');
+  document.title = '⏱️ 타이머/스톱워치 — 티모집사';
+  updateDisplay();
+}
+
+function doLap() {
+  if (mode !== 'stopwatch' || !running) return;
+  const current = swElapsed + (Date.now() - swStart);
+  const prevLap = laps.length > 0 ? laps[laps.length - 1] : 0;
+  laps.push(current);
+  renderLaps();
+}
+
+function renderLaps() {
+  const container = document.getElementById('lapsContainer');
+  container.innerHTML = '';
+  for (let i = laps.length - 1; i >= 0; i--) {
+    const diff = i === 0 ? laps[0] : laps[i] - laps[i - 1];
+    const el = document.createElement('div');
+    el.className = 'lap-item';
+    el.innerHTML = `<span class="lap-num">랩 ${i + 1}</span><span class="lap-time">${formatTime(laps[i], true).main}${formatTime(laps[i], true).ms}</span><span class="lap-diff">+${formatTime(diff, true).main}${formatTime(diff, true).ms}</span>`;
+    container.appendChild(el);
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.code === 'Space') { e.preventDefault(); doStartStop(); }
+  if (e.code === 'KeyR') doReset();
+  if (e.code === 'KeyL' && mode === 'stopwatch') doLap();
+});
+
+updateDisplay();
+
+(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

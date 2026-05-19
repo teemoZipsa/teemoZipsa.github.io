@@ -1,0 +1,225 @@
+wing: special_chars
+rooms:
+- name: avg_price
+  description: Files from avg-price/
+  keywords:
+  - avg_price
+  - avg-price
+- name: base64_tool
+  description: Files from base64-tool/
+  keywords:
+  - base64_tool
+  - base64-tool
+- name: bg_remover
+  description: Files from bg-remover/
+  keywords:
+  - bg_remover
+  - bg-remover
+- name: biz_day_calc
+  description: Files from biz-day-calc/
+  keywords:
+  - biz_day_calc
+  - biz-day-calc
+- name: bmi_calc
+  description: Files from bmi-calc/
+  keywords:
+  - bmi_calc
+  - bmi-calc
+- name: broker_fee_calc
+  description: Files from broker-fee-calc/
+  keywords:
+  - broker_fee_calc
+  - broker-fee-calc
+- name: calculator
+  description: Files from calculator/
+  keywords:
+  - calculator
+  - calculator
+- name: calorie_calc
+  description: Files from calorie-calc/
+  keywords:
+  - calorie_calc
+  - calorie-calc
+- name: char_counter
+  description: Files from char-counter/
+  keywords:
+  - char_counter
+  - char-counter
+- name: color_conv
+  description: Files from color-conv/
+  keywords:
+  - color_conv
+  - color-conv
+- name: compound_interest
+  description: Files from compound-interest/
+  keywords:
+  - compound_interest
+  - compound-interest
+- name: date_calc
+  description: Files from date-calc/
+  keywords:
+  - date_calc
+  - date-calc
+- name: discount_calc
+  description: Files from discount-calc/
+  keywords:
+  - discount_calc
+  - discount-calc
+- name: emoji_mixer
+  description: Files from emoji-mixer/
+  keywords:
+  - emoji_mixer
+  - emoji-mixer
+- name: fuel_calc
+  description: Files from fuel-calc/
+  keywords:
+  - fuel_calc
+  - fuel-calc
+- name: gpa_calc
+  description: Files from gpa-calc/
+  keywords:
+  - gpa_calc
+  - gpa-calc
+- name: image_compress
+  description: Files from image-compress/
+  keywords:
+  - image_compress
+  - image-compress
+- name: image_format_converter
+  description: Files from image-format-converter/
+  keywords:
+  - image_format_converter
+  - image-format-converter
+- name: korean_english_converter
+  description: Files from korean-english-converter/
+  keywords:
+  - korean_english_converter
+  - korean-english-converter
+- name: loan_calc
+  description: Files from loan-calc/
+  keywords:
+  - loan_calc
+  - loan-calc
+- name: lotto_gen
+  description: Files from lotto-gen/
+  keywords:
+  - lotto_gen
+  - lotto-gen
+- name: music_calc
+  description: Files from music-calc/
+  keywords:
+  - music_calc
+  - music-calc
+- name: my_ip
+  description: Files from my-ip/
+  keywords:
+  - my_ip
+  - my-ip
+- name: password_gen
+  description: Files from password-gen/
+  keywords:
+  - password_gen
+  - password-gen
+- name: pdf_tool
+  description: Files from pdf-tool/
+  keywords:
+  - pdf_tool
+  - pdf-tool
+- name: percent_calc
+  description: Files from percent-calc/
+  keywords:
+  - percent_calc
+  - percent-calc
+- name: pet_age_calc
+  description: Files from pet-age-calc/
+  keywords:
+  - pet_age_calc
+  - pet-age-calc
+- name: pet_bmi_calc
+  description: Files from pet-bmi-calc/
+  keywords:
+  - pet_bmi_calc
+  - pet-bmi-calc
+- name: pet_food_calc
+  description: Files from pet-food-calc/
+  keywords:
+  - pet_food_calc
+  - pet-food-calc
+- name: prompt_gen
+  description: Files from prompt-gen/
+  keywords:
+  - prompt_gen
+  - prompt-gen
+- name: qr_code
+  description: Files from qr-code/
+  keywords:
+  - qr_code
+  - qr-code
+- name: quick_reply
+  description: Files from quick-reply/
+  keywords:
+  - quick_reply
+  - quick-reply
+- name: server_time
+  description: Files from server-time/
+  keywords:
+  - server_time
+  - server-time
+- name: speech_timer
+  description: Files from speech-timer/
+  keywords:
+  - speech_timer
+  - speech-timer
+- name: sub_calc
+  description: Files from sub-calc/
+  keywords:
+  - sub_calc
+  - sub-calc
+- name: taxi_calc
+  description: Files from taxi-calc/
+  keywords:
+  - taxi_calc
+  - taxi-calc
+- name: timer
+  description: Files from timer/
+  keywords:
+  - timer
+  - timer
+- name: timezone_conv
+  description: Files from timezone-conv/
+  keywords:
+  - timezone_conv
+  - timezone-conv
+- name: unit_conv
+  description: Files from unit-conv/
+  keywords:
+  - unit_conv
+  - unit-conv
+- name: utm_builder
+  description: Files from utm-builder/
+  keywords:
+  - utm_builder
+  - utm-builder
+- name: wage_calc
+  description: Files from wage-calc/
+  keywords:
+  - wage_calc
+  - wage-calc
+- name: zodiac_animal
+  description: Files from zodiac-animal/
+  keywords:
+  - zodiac_animal
+  - zodiac-animal
+- name: zodiac_calc
+  description: Files from zodiac-calc/
+  keywords:
+  - zodiac_calc
+  - zodiac-calc
+- name: scripts
+  description: Files from scripts/
+  keywords:
+  - scripts
+  - scripts
+- name: general
+  description: Files that don't fit other rooms
+  keywords: []

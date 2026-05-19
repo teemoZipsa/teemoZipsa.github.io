@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+    <title>빠른 답장 도구 / Quick Reply</title>
+    <meta name="description" content="자주 쓰는 답장 문구를 빠르게 복사하세요. 인사, 확인, 일정, 요청, 사과, 축하 등 업무용 템플릿">
+<meta property="og:title" content="빠른 답장 도구 / Quick Reply — 티모집사">
+<meta property="og:description" content="자주 쓰는 답장 문구를 빠르게 복사하세요. 인사, 확인, 일정, 요청, 사과, 축하 등 업무용 템플릿">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/quick-reply/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/quick-reply/">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:start;padding:20px}
+        .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column;max-height:90vh}
+        .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+        .header h1{font-size:15px;font-weight:600;color:#fff}
+        .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+        .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+
+        .search-bar{padding:12px 16px;flex-shrink:0}
+        .search-bar input{width:100%;padding:10px 14px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:13px;font-family:inherit}
+        .search-bar input:focus{outline:none;border-color:var(--accent)}
+        .search-bar input::placeholder{color:var(--calc-expr-text)}
+
+        .tabs-wrap{position:relative;flex-shrink:0}
+        .tabs-wrap::before,.tabs-wrap::after{content:'';position:absolute;top:0;bottom:12px;width:24px;z-index:2;pointer-events:none;transition:opacity .2s}
+        .tabs-wrap::before{left:0;background:linear-gradient(to right,var(--bg-app),transparent)}
+        .tabs-wrap::after{right:0;background:linear-gradient(to left,var(--bg-app),transparent)}
+        .tabs-wrap.at-start::before{opacity:0}
+        .tabs-wrap.at-end::after{opacity:0}
+        .tabs{display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;flex-shrink:0;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;cursor:grab}
+        .tabs::-webkit-scrollbar{height:0}
+        .tabs.dragging{cursor:grabbing;scroll-behavior:auto}
+        .tab{padding:7px 14px;background:var(--bg-btn);border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--text-guide);cursor:pointer;white-space:nowrap;transition:all .2s;font-family:inherit;font-weight:500;user-select:none}
+        .tab:hover{background:var(--bg-btn)366;color:var(--text-primary)}
+        .tab.active{background:var(--accent);color:var(--text-on-accent);border-color:var(--accent)}
+
+        .msg-list{flex:1;overflow-y:auto;padding:0 16px 12px}
+        .msg-list::-webkit-scrollbar{width:4px}
+        .msg-list::-webkit-scrollbar-thumb{background:var(--bg-btn-hover);border-radius:2px}
+        .msg-card{display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--bg-guide);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:all .2s;position:relative}
+        .msg-card:hover{background:var(--bg-input);border-color:var(--accent)}
+        .msg-card.copied{background:rgba(76,175,80,.08);border-color:rgba(76,175,80,.3)}
+        .msg-icon{font-size:20px;flex-shrink:0;width:28px;text-align:center;line-height:1.4}
+        .msg-text{flex:1;font-size:13px;line-height:1.6;color:var(--text-primary);word-break:break-word}
+        .msg-fav{position:absolute;top:8px;right:8px;background:none;border:none;font-size:14px;cursor:pointer;opacity:.4;transition:opacity .2s;padding:4px}
+        .msg-fav:hover,.msg-fav.active{opacity:1}
+        .msg-empty{text-align:center;padding:40px 16px;color:var(--calc-expr-text);font-size:13px;line-height:1.8}
+
+        .guide-section{margin:0 12px 0;border:1px solid var(--border);border-radius:8px;overflow:hidden;flex-shrink:0}
+        .guide-section summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
+        .guide-section summary:hover{background:var(--bg-guide-hover)}
+        .guide-section[open] summary{background:var(--bg-btn);border-bottom:1px solid var(--border)}
+        .guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
+        .guide-content ol{padding-left:20px}.guide-content li{margin-bottom:4px}
+
+        .bottom-bar{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);flex-shrink:0}
+        .bottom-bar .info{font-size:11px;color:var(--text-info)}
+        .action-btn{padding:8px 20px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+        .btn-clear{background:var(--bg-btn);color:var(--text-guide)}.btn-clear:hover{background:var(--bg-btn-hover)}
+        .btn-add{background:var(--accent);color:var(--text-on-accent)}.btn-add:hover{background:var(--accent-hover)}
+
+        .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;justify-content:center;align-items:center}
+        .modal-overlay.show{display:flex}
+        .modal{background:var(--bg-app);border-radius:12px;padding:20px;width:90%;max-width:400px;border:1px solid var(--border)}
+        .modal h3{color:var(--text-primary);font-size:15px;margin-bottom:12px}
+        .modal textarea{width:100%;height:100px;padding:10px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:13px;font-family:inherit;resize:vertical}
+        .modal textarea:focus{outline:none;border-color:var(--accent)}
+        .modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+        .modal-btns button{padding:8px 18px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+        .btn-cancel{background:var(--bg-btn);color:var(--text-guide)}
+        .btn-save{background:var(--accent);color:var(--text-on-accent)}
+
+        .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.6);transition:transform .3s ease,opacity .3s ease;opacity:0;pointer-events:none;z-index:999}
+        .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+    .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+<div class="app">
+    <div class="header">
+        <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+        <h1>💬 빠른 답장 도구</h1>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="문구 검색..." oninput="renderMessages()" aria-label="검색">
+    </div>
+
+    <div class="tabs-wrap at-start" id="tabsWrap">
+        <div class="tabs" id="tabsContainer"></div>
+    </div>
+
+    <div class="msg-list" id="msgList"></div>
+
+    <details class="guide-section">
+        <summary>📖 사용 방법</summary>
+        <div class="guide-content">
+            <ol>
+                <li>카테고리 탭을 선택하여 원하는 분류의 문구를 찾으세요</li>
+                <li>문구 카드를 클릭하면 즉시 클립보드에 복사됩니다</li>
+                <li>❤️ 아이콘을 눌러 자주 쓰는 문구를 즐겨찾기에 등록하세요</li>
+                <li>'+ 커스텀 추가' 버튼으로 나만의 문구를 저장할 수 있습니다</li>
+                <li>검색창에 키워드를 입력하면 전체 문구에서 필터링됩니다</li>
+            </ol>
+        </div>
+    </details>
+  <div class="footer"><span>클릭 한 번으로 복사</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+
+<!-- Custom add modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()" role="dialog" aria-modal="true" aria-label="커스텀 문구 추가">
+    <div class="modal">
+        <h3>📝 커스텀 문구 추가</h3>
+        <textarea id="customText" placeholder="저장할 문구를 입력하세요..."></textarea>
+        <div class="modal-btns">
+            <button class="btn-cancel" onclick="closeModal()">취소</button>
+            <button class="btn-save" onclick="saveCustom()">저장</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const CATEGORIES = [
+    { id:'all', label:'전체', icon:'' },
+    { id:'fav', label:'⭐ 즐겨찾기', icon:'' },
+    { id:'greet', label:'👋 인사·감사', icon:'👋' },
+    { id:'confirm', label:'✅ 확인·완료', icon:'✅' },
+    { id:'schedule', label:'📅 일정·약속', icon:'📅' },
+    { id:'request', label:'📩 요청·문의', icon:'📩' },
+    { id:'sorry', label:'🙏 사과·양해', icon:'🙏' },
+    { id:'insurance', label:'🛡️ 보험 업무', icon:'🛡️' },
+    { id:'celebrate', label:'🎉 축하·위로', icon:'🎉' },
+    { id:'custom', label:'📝 커스텀', icon:'📝' }
+];
+
+const MESSAGES = [
+    // 인사·감사
+    { cat:'greet', icon:'👋', text:'안녕하세요, 좋은 하루 되세요!' },
+    { cat:'greet', icon:'👋', text:'안녕하세요, 연락 주셔서 감사합니다.' },
+    { cat:'greet', icon:'🙏', text:'항상 감사드립니다.' },
+    { cat:'greet', icon:'😊', text:'덕분에 잘 처리되었습니다. 감사합니다!' },
+    { cat:'greet', icon:'👋', text:'오랜만에 연락드립니다. 잘 지내고 계신가요?' },
+    { cat:'greet', icon:'🌅', text:'좋은 아침입니다! 오늘도 좋은 하루 되세요.' },
+    { cat:'greet', icon:'🌙', text:'늦은 시간에 연락드려 죄송합니다.' },
+    { cat:'greet', icon:'🤝', text:'앞으로도 잘 부탁드립니다.' },
+    // 확인·완료
+    { cat:'confirm', icon:'✅', text:'네, 확인했습니다.' },
+    { cat:'confirm', icon:'✅', text:'접수되었습니다. 확인 후 안내드리겠습니다.' },
+    { cat:'confirm', icon:'✅', text:'처리 완료되었습니다.' },
+    { cat:'confirm', icon:'👍', text:'네, 알겠습니다. 그렇게 진행하겠습니다.' },
+    { cat:'confirm', icon:'📋', text:'말씀하신 내용 확인했습니다. 반영하겠습니다.' },
+    { cat:'confirm', icon:'✅', text:'전달 완료했습니다.' },
+    { cat:'confirm', icon:'📨', text:'메일로 발송해 드렸습니다. 확인 부탁드립니다.' },
+    // 일정·약속
+    { cat:'schedule', icon:'📅', text:'내일 ○시에 가능하신가요?' },
+    { cat:'schedule', icon:'📅', text:'일정 확인 부탁드립니다.' },
+    { cat:'schedule', icon:'⏰', text:'약속 시간 30분 전에 다시 연락드리겠습니다.' },
+    { cat:'schedule', icon:'📅', text:'혹시 이번 주 중으로 시간이 되실까요?' },
+    { cat:'schedule', icon:'🔄', text:'일정 변경이 필요한데, 가능하신 시간을 알려주시면 감사하겠습니다.' },
+    { cat:'schedule', icon:'📍', text:'장소는 ○○입니다. 오시는 길 안내해 드릴까요?' },
+    { cat:'schedule', icon:'✅', text:'네, 그 시간으로 확정하겠습니다.' },
+    // 요청·문의
+    { cat:'request', icon:'📩', text:'확인 부탁드립니다.' },
+    { cat:'request', icon:'📩', text:'회신 부탁드립니다.' },
+    { cat:'request', icon:'📩', text:'검토 부탁드립니다.' },
+    { cat:'request', icon:'📎', text:'첨부 파일 확인 부탁드립니다.' },
+    { cat:'request', icon:'❓', text:'혹시 관련해서 추가 문의 사항이 있으시면 편하게 말씀해 주세요.' },
+    { cat:'request', icon:'📞', text:'전화 통화 가능하시면 연락 부탁드립니다.' },
+    { cat:'request', icon:'⏳', text:'급하지 않으니 여유 있으실 때 확인 부탁드립니다.' },
+    { cat:'request', icon:'📄', text:'관련 자료 공유 부탁드립니다.' },
+    // 사과·양해
+    { cat:'sorry', icon:'🙏', text:'늦어서 죄송합니다.' },
+    { cat:'sorry', icon:'🙏', text:'답변이 늦어 죄송합니다.' },
+    { cat:'sorry', icon:'🙏', text:'불편을 드려 대단히 죄송합니다.' },
+    { cat:'sorry', icon:'🙏', text:'양해 부탁드립니다.' },
+    { cat:'sorry', icon:'🙇', text:'착오가 있었습니다. 다시 확인 후 안내드리겠습니다.' },
+    { cat:'sorry', icon:'⏳', text:'처리에 시간이 좀 걸릴 수 있습니다. 양해 부탁드립니다.' },
+    // 보험 업무
+    { cat:'insurance', icon:'📝', text:'보험금 청구 접수되었습니다. 처리까지 약 3~5영업일 소요됩니다.' },
+    { cat:'insurance', icon:'💰', text:'보험금이 입금 처리되었습니다. 통장 확인 부탁드립니다.' },
+    { cat:'insurance', icon:'📞', text:'보험금 청구 관련 추가 서류가 필요합니다. 연락드리겠습니다.' },
+    { cat:'insurance', icon:'✅', text:'보험금 심사 완료되었습니다. 결과 안내드리겠습니다.' },
+    { cat:'insurance', icon:'📑', text:'보험금 청구 시 필요한 서류 안내드립니다.\n- 진단서\n- 진료비 영수증\n- 통장 사본' },
+    { cat:'insurance', icon:'📋', text:'계약 내용 변경 처리 완료되었습니다.' },
+    { cat:'insurance', icon:'🔄', text:'보험 갱신 시기가 다가왔습니다. 상담 도와드릴까요?' },
+    { cat:'insurance', icon:'📊', text:'고객님의 보장 분석 자료 준비했습니다. 확인 부탁드립니다.' },
+    { cat:'insurance', icon:'💳', text:'보험료 미납 안내드립니다. 확인 부탁드립니다.' },
+    { cat:'insurance', icon:'🏦', text:'자동이체 계좌 변경 처리 완료되었습니다.' },
+    { cat:'insurance', icon:'📆', text:'보험료 납입일은 매월 ○○일입니다.' },
+    { cat:'insurance', icon:'💡', text:'보험료 할인 방법 안내드립니다. 궁금하신 점 있으시면 연락 주세요!' },
+    { cat:'insurance', icon:'🚗', text:'지금 출발합니다. 곧 도착하겠습니다.' },
+    { cat:'insurance', icon:'👋', text:'오늘 방문 감사했습니다. 궁금하신 점 있으시면 언제든 연락 주세요.' },
+    // 축하·위로
+    { cat:'celebrate', icon:'🎉', text:'축하드립니다!' },
+    { cat:'celebrate', icon:'🎂', text:'생일 축하드립니다! 행복한 하루 되세요.' },
+    { cat:'celebrate', icon:'💐', text:'승진 축하드립니다! 앞으로도 응원하겠습니다.' },
+    { cat:'celebrate', icon:'🏥', text:'빠른 쾌유를 빕니다. 건강이 최고입니다.' },
+    { cat:'celebrate', icon:'💪', text:'힘내세요! 응원하고 있습니다.' },
+    { cat:'celebrate', icon:'🙏', text:'삼가 조의를 표합니다.' },
+    { cat:'celebrate', icon:'🎊', text:'새해 복 많이 받으세요!' }
+];
+
+let currentTab = 'all';
+let favorites;
+try { favorites = JSON.parse(localStorage.getItem('qr_favorites') || '[]'); } catch { favorites = []; }
+let customs;
+try { customs = JSON.parse(localStorage.getItem('qr_customs') || '[]'); } catch { customs = []; }
+
+function renderTabs() {
+    const container = document.getElementById('tabsContainer');
+    container.innerHTML = CATEGORIES.map(c =>
+        `<button class="tab ${c.id === currentTab ? 'active' : ''}" onclick="switchTab('${c.id}')">${c.label}</button>`
+    ).join('');
+}
+
+function switchTab(id) {
+    currentTab = id;
+    renderTabs();
+    renderMessages();
+    // 활성 탭을 뷰포트 안으로 스크롤
+    setTimeout(() => {
+        const active = document.querySelector('.tab.active');
+        if (active) active.scrollIntoView({ behavior:'smooth', inline:'center', block:'nearest' });
+    }, 10);
+}
+
+function getAllMessages() {
+    const all = [...MESSAGES, ...customs.map(t => ({ cat:'custom', icon:'📝', text:t, isCustom:true }))];
+    return all;
+}
+
+function renderMessages() {
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    let msgs = getAllMessages();
+
+    if (currentTab === 'fav') {
+        msgs = msgs.filter(m => favorites.includes(m.text));
+    } else if (currentTab !== 'all') {
+        msgs = msgs.filter(m => m.cat === currentTab);
+    }
+
+    if (query) {
+        msgs = msgs.filter(m => m.text.toLowerCase().includes(query));
+    }
+
+    const list = document.getElementById('msgList');
+    if (msgs.length === 0) {
+        list.innerHTML = `<div class="msg-empty">${currentTab === 'fav' ? '⭐ 즐겨찾기한 문구가 없습니다<br>문구 카드의 ❤️를 눌러 추가하세요' : currentTab === 'custom' ? '📝 커스텀 문구가 없습니다<br>아래 + 버튼으로 추가하세요' : '검색 결과가 없습니다'}</div>`;
+    } else {
+        list.innerHTML = msgs.map((m, i) => {
+            const isFav = favorites.includes(m.text);
+            const deleteBtn = m.isCustom ? `<button class="msg-fav" style="right:32px" onclick="event.stopPropagation();deleteCustom(${i})" title="삭제">🗑️</button>` : '';
+            return `<div class="msg-card" onclick="copyMsg(this, '${escapeJsString(m.text)}')">
+                <span class="msg-icon">${m.icon}</span>
+                <span class="msg-text">${escapeHtml(m.text).replace(/\n/g, '<br>')}</span>
+                ${deleteBtn}
+                <button class="msg-fav ${isFav ? 'active' : ''}" onclick="event.stopPropagation();toggleFav('${escapeJsString(m.text)}',this)" title="즐겨찾기">${isFav ? '❤️' : '🤍'}</button>
+            </div>`;
+        }).join('');
+    }
+
+    const msgCount = document.getElementById('msgCount');
+    if (msgCount) msgCount.textContent = `${msgs.length}개 문구`;
+}
+
+function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, ch => ({
+        '&':'&amp;',
+        '<':'&lt;',
+        '>':'&gt;',
+        '"':'&quot;',
+        "'":'&#39;'
+    }[ch]));
+}
+
+function escapeJsString(str) {
+    return String(str)
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/\r?\n/g, '\\n')
+        .replace(/</g, '\\x3C')
+        .replace(/>/g, '\\x3E');
+}
+
+function copyMsg(card, text) {
+    text = text.replace(/\\'/g, "'").replace(/&quot;/g, '"');
+    navigator.clipboard.writeText(text).then(() => {
+        card.classList.add('copied');
+        setTimeout(() => card.classList.remove('copied'), 800);
+        showToast('복사 완료!');
+    });
+}
+
+function toggleFav(text, btn) {
+    text = text.replace(/\\'/g, "'").replace(/&quot;/g, '"');
+    const idx = favorites.indexOf(text);
+    if (idx >= 0) {
+        favorites.splice(idx, 1);
+        btn.classList.remove('active');
+        btn.textContent = '🤍';
+    } else {
+        favorites.push(text);
+        btn.classList.add('active');
+        btn.textContent = '❤️';
+    }
+    try { localStorage.setItem('qr_favorites', JSON.stringify(favorites)); } catch {}
+    if (currentTab === 'fav') renderMessages();
+}
+
+function resetFavorites() {
+    if (favorites.length === 0) { showToast('즐겨찾기가 비어있습니다'); return; }
+    favorites = [];
+    try { localStorage.setItem('qr_favorites', JSON.stringify(favorites)); } catch {}
+    renderMessages();
+    showToast('즐겨찾기가 초기화되었습니다');
+}
+
+let _modalTrigger = null;
+function openModal() {
+    _modalTrigger = document.activeElement;
+    document.getElementById('customText').value = '';
+    document.getElementById('modalOverlay').classList.add('show');
+    document.getElementById('customText').focus();
+}
+
+function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('show');
+    if (_modalTrigger) { _modalTrigger.focus(); _modalTrigger = null; }
+}
+
+document.getElementById('modalOverlay').addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { closeModal(); return; }
+    if (e.key !== 'Tab') return;
+    const focusable = this.querySelectorAll('textarea, button');
+    const first = focusable[0], last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+});
+
+function saveCustom() {
+    const text = document.getElementById('customText').value.trim();
+    if (!text) { showToast('문구를 입력해주세요'); return; }
+    customs.push(text);
+    try { localStorage.setItem('qr_customs', JSON.stringify(customs)); } catch {}
+    closeModal();
+    switchTab('custom');
+    showToast('커스텀 문구가 추가되었습니다');
+}
+
+function deleteCustom(globalIdx) {
+    // Find the custom message by filtering
+    const allMsgs = getAllMessages();
+    const msg = allMsgs.filter(m => {
+        if (currentTab === 'fav') return favorites.includes(m.text);
+        if (currentTab !== 'all' && currentTab !== 'custom') return m.cat === currentTab;
+        if (currentTab === 'custom') return m.cat === 'custom';
+        return true;
+    });
+    // Find in customs array
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    let filtered = getAllMessages().filter(m => m.cat === 'custom');
+    if (query) filtered = filtered.filter(m => m.text.toLowerCase().includes(query));
+    const customMsgs = getAllMessages().filter(m => m.isCustom);
+    // Simple: find the text and remove from customs
+    const visibleCustoms = customs.filter(t => !query || t.toLowerCase().includes(query));
+    const adjustedIdx = globalIdx - MESSAGES.length;
+    if (adjustedIdx >= 0 && adjustedIdx < customs.length) {
+        customs.splice(adjustedIdx, 1);
+        try { localStorage.setItem('qr_customs', JSON.stringify(customs)); } catch {}
+        renderMessages();
+        showToast('삭제되었습니다');
+    }
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+// === 탭 드래그 스크롤 ===
+(function() {
+    const wrap = document.getElementById('tabsWrap');
+    const tabs = document.getElementById('tabsContainer');
+    let isDragging = false, startX, scrollLeft, moved = false;
+
+    function updateIndicators() {
+        const sl = tabs.scrollLeft, max = tabs.scrollWidth - tabs.clientWidth;
+        wrap.classList.toggle('at-start', sl <= 4);
+        wrap.classList.toggle('at-end', sl >= max - 4);
+    }
+
+    tabs.addEventListener('scroll', updateIndicators);
+    window.addEventListener('resize', updateIndicators);
+
+    // Mouse drag
+    tabs.addEventListener('mousedown', e => {
+        isDragging = true; moved = false;
+        startX = e.pageX - tabs.offsetLeft;
+        scrollLeft = tabs.scrollLeft;
+        tabs.classList.add('dragging');
+    });
+    document.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const x = e.pageX - tabs.offsetLeft;
+        const walk = (x - startX) * 1.5;
+        if (Math.abs(walk) > 3) moved = true;
+        tabs.scrollLeft = scrollLeft - walk;
+    });
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+        tabs.classList.remove('dragging');
+    });
+
+    // 드래그 후 탭 클릭 방지
+    tabs.addEventListener('click', e => {
+        if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; }
+    }, true);
+
+    // 초기 체크
+    setTimeout(updateIndicators, 100);
+})();
+
+// Init
+renderTabs();
+renderMessages();
+</script>
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>🔣 Base64 인코더/디코더 — 티모집사</title>
+<meta name="description" content="텍스트와 이미지를 Base64로 인코딩·디코딩하세요. 서버 전송 없이 100% 브라우저 로컬 처리.">
+<meta property="og:title" content="🔣 Base64 인코더/디코더 — 티모집사">
+<meta property="og:description" content="텍스트와 이미지를 Base64로 인코딩·디코딩하세요. 100% 브라우저 로컬 처리.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/base64-tool/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/base64-tool/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/base64-tool/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/base64-tool/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+.app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:540px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+.content{padding:20px}
+.mode-tabs{display:flex;gap:6px;margin-bottom:16px}
+.mode-tab{flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--bg-bar);color:var(--text-section);font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s;font-family:inherit}
+.mode-tab.active{background:var(--accent);border-color:var(--accent);color:var(--text-on-accent)}
+.mode-tab:hover:not(.active){background:var(--bg-hover);border-color:var(--border-hover)}
+.section-title{font-size:12px;color:var(--text-section);font-weight:600;margin-bottom:6px}
+.text-area{width:100%;min-height:100px;background:var(--bg-bar);border:2px solid var(--border);border-radius:12px;padding:14px;font-size:14px;color:var(--text-primary);resize:vertical;outline:none;font-family:'Pretendard',monospace;line-height:1.5;transition:border-color .2s;margin-bottom:14px}
+.text-area:focus{border-color:var(--accent)}
+.text-area::placeholder{color:var(--text-placeholder)}
+.actions{display:flex;gap:8px;margin-bottom:14px}
+.btn{flex:1;padding:11px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-primary{background:var(--accent);color:var(--text-on-accent)}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn-secondary{background:var(--bg-bar);border:1px solid var(--border);color:var(--text-info)}
+.btn-secondary:hover{background:var(--bg-hover)}
+.result-box{background:var(--bg-bar);border:2px solid var(--border);border-radius:12px;padding:14px;min-height:60px;margin-bottom:14px;position:relative;word-break:break-all;line-height:1.5}
+.result-text{font-size:13px;color:var(--text-amount);font-family:'Pretendard',monospace}
+.result-placeholder{color:var(--text-placeholder);font-size:14px}
+.char-count{position:absolute;bottom:6px;right:10px;font-size:10px;color:var(--text-muted)}
+.image-section{display:none;margin-bottom:14px}
+.drop-zone{border:2px dashed var(--border);border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg-bar)}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--accent);background:var(--bg-hover)}
+.drop-zone .icon{font-size:36px;margin-bottom:8px}
+.drop-zone .text{font-size:13px;color:var(--calc-expr-text)}
+.drop-zone .sub{font-size:11px;color:var(--text-placeholder);margin-top:4px}
+.drop-zone input{display:none}
+.preview-img{max-width:100%;max-height:200px;border-radius:8px;margin:12px auto;display:block}
+.copy-row{display:flex;gap:8px;margin-bottom:14px}
+.report-box {margin-top:16px; margin-bottom:14px; padding:16px; background:rgba(83,52,131,0.05); border-left:4px solid var(--accent); border-radius:8px; font-size:13px; line-height:1.6; color:var(--text-primary); display:none;}
+.report-box.show {display:block; animation:fadeIn 0.4s;}
+@keyframes fadeIn {from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)}}
+
+.guide-section{margin:12px; padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-app); margin-top:20px;}
+.guide-title{font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:12px;}
+.guide-item{margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:var(--bg-guide); overflow:hidden;}
+.guide-item summary{padding:12px; font-size:13px; font-weight:600; cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; color:var(--text-guide);}
+.guide-item summary::after{content:'▼'; font-size:10px; color:var(--text-info); transition:transform 0.2s;}
+.guide-item[open] summary::after{transform:rotate(180deg);}
+.guide-item[open] summary{border-bottom:1px solid var(--border); background:var(--bg-btn);}
+.guide-item .guide-content{padding:12px; font-size:13px; color:var(--text-info); line-height:1.6;}
+.related-tools{margin-top:16px; padding-top:16px; border-top:1px solid var(--border);}
+.tag-container{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
+.tool-tag{padding:6px 12px; background:rgba(83,52,131,0.1); color:var(--accent); border-radius:16px; font-size:11px; font-weight:600; text-decoration:none; transition:all 0.2s;}
+.tool-tag:hover{background:var(--accent); color:var(--text-on-accent);}
+
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+    <h1>🔣 Base64 인코더/디코더</h1>
+    <a href="/special-chars/en/base64-tool/" class="back-btn">🌐 English</a>
+  </div>
+  <div class="content">
+    <div class="mode-tabs">
+      <button class="mode-tab active" onclick="setMode('text')">📝 텍스트</button>
+      <button class="mode-tab" onclick="setMode('image')">🖼️ 이미지</button>
+    </div>
+
+    <!-- 텍스트 모드 -->
+    <div id="textMode">
+      <div class="section-title">원본 텍스트</div>
+      <textarea class="text-area" id="inputText" placeholder="인코딩할 텍스트를 입력하세요..." oninput="autoConvert()"></textarea>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="encode()">🔒 인코딩</button>
+        <button class="btn btn-primary" onclick="decode()">🔓 디코딩</button>
+        <button class="btn btn-secondary" onclick="swapText()">🔄 교환</button>
+      </div>
+
+      <div class="section-title">Base64 결과</div>
+      <textarea class="text-area" id="outputText" placeholder="결과가 여기에 표시됩니다..." oninput="autoConvertReverse()"></textarea>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="copyOutput()">📋 결과 복사</button>
+        <button class="btn btn-secondary" onclick="clearText()">🗑️ 초기화</button>
+      </div>
+    </div>
+
+    <!-- 이미지 모드 -->
+    <div id="imageMode" class="image-section">
+      <div class="section-title">이미지 파일 선택</div>
+      <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+        <div class="icon">📁</div>
+        <div class="text">클릭하거나 이미지를 드래그하세요</div>
+        <div class="sub">JPG, PNG, GIF, WebP, SVG 지원</div>
+        <input type="file" id="fileInput" accept="image/*" onchange="handleFile(this.files[0])">
+      </div>
+
+      <img id="previewImg" class="preview-img" style="display:none">
+
+      <div id="imageResult" style="display:none">
+        <div class="section-title">Base64 데이터 URL</div>
+        <div class="result-box">
+          <div class="result-text" id="imageBase64" style="max-height:150px;overflow-y:auto"></div>
+          <div class="char-count" id="b64Length"></div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="copyImageBase64()">📋 복사</button>
+          <button class="btn btn-secondary" onclick="clearImage()">🗑️ 초기화</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="reportBox" class="report-box" style="margin-left:20px; margin-right:20px;"></div>
+
+  <div class="guide-section">
+    <div class="guide-title">🤔 Base64 인코딩 관련 Q&A</div>
+    <details class="guide-item">
+      <summary>Base64 인코딩이란 무엇인가요?</summary>
+      <div class="guide-content">
+        컴퓨터 분야에서 쓰이는 Base64(베이스 64) 코딩 기법은 8비트 이진 데이터(예: 이미지 파일, 실행파일, 일반 문자열 등)를 화면에 표시되는 문자 코드표(ASCII)의 일반적인 64개 아스키 문자로 변환하여 나타내는 방식입니다. 이렇게 변환하면 시스템 독립적으로 데이터를 안전하게 전송하거나 저장할 수 있습니다.
+      </div>
+    </details>
+    <details class="guide-item">
+      <summary>Base64는 암호화 방식인가요?</summary>
+      <div class="guide-content">
+        <strong>아닙니다.</strong> Base64는 '인코딩(Encoding)' 방식일 뿐, 보안을 위한 '암호화(Encryption)'가 아닙니다. 누구나 Base64 문자열을 원본 데이터로 다시 디코딩할 수 있으므로, 비밀번호나 개인정보 같은 민감한 데이터는 Base64로만 처리해서 노출하면 안전하지 않습니다. 반드시 강력한 암호화 알고리즘 처리를 별도로 해야 합니다.
+      </div>
+    </details>
+    <details class="guide-item">
+      <summary>이미지를 Base64로 언제 주로 변환하나요?</summary>
+      <div class="guide-content">
+        HTML 문서 내에 작은 크기의 로고 이미지나 아이콘을 삽입할 때 주로 사용됩니다.<br/>
+        문서 내에 <code>&lt;img src="data:image/png;base64,...(데이터)..." /&gt;</code> 형태로 포함시키면 별도의 이미지 파일을 다운로드하기 위한 추가적인 네트워크 HTTP 요청이 발생하지 않아 페이지 로딩 속도를 일부 개선하는 데 도움을 줍니다. 단, 이미지 용량이 너무 크면 문서의 텍스트 크기가 과도하게 커질 수 있으므로 수 킬로바이트 이하의 소형 이미지에 권장됩니다.
+      </div>
+    </details>
+
+    <div class="related-tools">
+      <div class="guide-title" style="font-size:12px; margin-bottom:8px;">🛠 연관 도구 추천</div>
+      <div class="tag-container">
+        <a href="/special-chars/password-gen/" class="tool-tag">비밀번호 생성기</a>
+        <a href="/special-chars/color-conv/" class="tool-tag">색상 코드 변환기</a>
+      </div>
+    </div>
+  </div>
+    <div class="footer"><span>100% 브라우저 로컬 처리 (서버 미전송)</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+let currentMode='text';
+
+function setMode(m){
+  currentMode=m;
+  document.querySelectorAll('.mode-tab').forEach((tab,i)=>{
+    tab.classList.toggle('active',i===(m==='text'?0:1));
+  });
+  document.getElementById('textMode').style.display=m==='text'?'block':'none';
+  document.getElementById('imageMode').style.display=m==='image'?'block':'none';
+  document.getElementById('reportBox').classList.remove('show');
+}
+
+// UTF-8 safe Base64
+function utf8ToBase64(str){
+  const bytes=new TextEncoder().encode(str);
+  let binary='';
+  bytes.forEach(b=>binary+=String.fromCharCode(b));
+  return btoa(binary);
+}
+
+function base64ToUtf8(b64){
+  const binary=atob(b64);
+  const bytes=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+
+function encode(){
+  const input=document.getElementById('inputText').value;
+  if(!input){showToast('텍스트를 입력하세요');return;}
+  try{
+    const result=utf8ToBase64(input);
+    document.getElementById('outputText').value=result;
+    showToast('인코딩 완료! 🔒');
+    updateReport({type:'encode', length:result.length});
+  }catch(e){showToast('인코딩 실패: '+e.message);}
+}
+
+function decode(){
+  const input=document.getElementById('outputText').value||document.getElementById('inputText').value;
+  if(!input){showToast('Base64 문자열을 입력하세요');return;}
+  try{
+    const result=base64ToUtf8(input.trim());
+    if(document.getElementById('outputText').value){
+      document.getElementById('inputText').value=result;
+    } else {
+      document.getElementById('outputText').value=result;
+    }
+    showToast('디코딩 완료! 🔓');
+    updateReport({type:'decode', length:result.length});
+  }catch(e){showToast('유효하지 않은 Base64 문자열이거나 지원하지 않는 형식입니다.');}
+}
+
+function updateReport(data) {
+  const box = document.getElementById('reportBox');
+  let text = '';
+  if(data.type === 'encode') {
+    text = `🔒 <b>Base64 텍스트 인코딩 분석</b><br/>원본 텍스트가 총 <b>${data.length.toLocaleString()}자</b>의 Base64 데이터 문자열로 변환되었습니다. 생성된 Base64 코드는 ASCII 문자셋으로만 이루어져 있어 이메일이나 API 전송 환경에서 데이터 손실 없이 안전하게 전송할 수 있습니다.`;
+  } else if(data.type === 'decode') {
+    text = `🔓 <b>Base64 텍스트 디코딩 분석</b><br/>입력하신 Base64 데이터가 성공적으로 파싱되어 총 <b>${data.length.toLocaleString()}자</b>의 원본 UTF-8 텍스트로 복원(디코딩)되었습니다.`;
+  } else if(data.type === 'image') {
+    text = `🖼️ <b>Base64 이미지 변환 완료</b><br/>업로드된 이미지가 Data URI Scheme 형태의 Base64 코드로 변환되었습니다. 변환된 코드의 용량은 약 <b>${data.kb} KB</b>입니다. 이 코드를 복사하여 브라우저 주소창이나 HTML <code>&lt;img src=""&gt;</code> 속성에 붙여넣으면 이미지가 즉시 렌더링됩니다.`;
+  }
+  box.innerHTML = text;
+  box.classList.add('show');
+}
+
+function swapText(){
+  const input=document.getElementById('inputText');
+  const output=document.getElementById('outputText');
+  const tmp=input.value;
+  input.value=output.value;
+  output.value=tmp;
+}
+
+function autoConvert(){/* 실시간 변환은 부담이 커서 수동으로 */}
+function autoConvertReverse(){/* 수동 */}
+
+function copyOutput(){
+  const text=document.getElementById('outputText').value;
+  if(!text){showToast('복사할 내용이 없습니다');return;}
+  navigator.clipboard.writeText(text).then(()=>showToast('복사 완료! 📋'));
+}
+
+function clearText(){
+  document.getElementById('inputText').value='';
+  document.getElementById('outputText').value='';
+  document.getElementById('reportBox').classList.remove('show');
+}
+
+// 이미지 모드
+const dropZone=document.getElementById('dropZone');
+dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('dragover');});
+dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop',e=>{
+  e.preventDefault();dropZone.classList.remove('dragover');
+  if(e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+
+function handleFile(file){
+  if(!file||!file.type.startsWith('image/')){showToast('이미지 파일을 선택하세요');return;}
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const dataUrl=e.target.result;
+    const kbText = (dataUrl.length/1024).toFixed(1);
+    document.getElementById('previewImg').src=dataUrl;
+    document.getElementById('previewImg').style.display='block';
+    document.getElementById('imageBase64').textContent=dataUrl;
+    document.getElementById('b64Length').textContent=`${kbText} KB`;
+    document.getElementById('imageResult').style.display='block';
+    showToast('이미지 변환 완료!');
+    updateReport({type:'image', kb:kbText});
+  };
+  reader.readAsDataURL(file);
+}
+
+function copyImageBase64(){
+  const text=document.getElementById('imageBase64').textContent;
+  if(!text){showToast('복사할 내용이 없습니다');return;}
+  navigator.clipboard.writeText(text).then(()=>showToast('복사 완료! 📋'));
+}
+
+function clearImage(){
+  document.getElementById('previewImg').style.display='none';
+  document.getElementById('imageResult').style.display='none';
+  document.getElementById('fileInput').value='';
+  document.getElementById('reportBox').classList.remove('show');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+window.addEventListener('scroll',()=>{
+  document.getElementById('scrollTopBtn').classList.toggle('visible',window.scrollY>300);
+});
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

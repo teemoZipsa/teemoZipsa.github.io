@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>📅 Date / D-Day Calculator — TeemoZipsa</title>
+<meta name="description" content="Calculate D-Day countdowns, days between dates, and add/subtract days in real-time.">
+<meta property="og:title" content="📅 Date / D-Day Calculator — TeemoZipsa">
+<meta property="og:description" content="Calculate D-Day countdowns, days between dates, and add/subtract days in real-time.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/date-calc/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/date-calc/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/date-calc/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/date-calc/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px}
+  .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
+  .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .header h1{font-size:15px;font-weight:600;color:#fff}
+  .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+  .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.6);transition:transform .3s ease,opacity .3s ease;opacity:0;pointer-events:none;z-index:999}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  .bottom-bar{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
+  .bottom-bar .info{font-size:11px;color:var(--text-info)}
+  .action-btn{padding:8px 20px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+  .btn-clear{background:var(--bg-btn);color:var(--btn-clear-text)}.btn-clear:hover{background:var(--bg-btn-hover)}
+  .btn-copy{background:var(--accent);color:var(--text-on-accent)}.btn-copy:hover{background:var(--accent-hover)}
+
+  .counter-body{padding:12px;flex:1}
+  .date-section{margin-bottom:16px}
+  .date-section-title{font-size:13px;font-weight:600;color:var(--text-guide);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .date-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+  .date-row label{font-size:12px;color:var(--text-info);min-width:60px;white-space:nowrap;}
+  .date-row input[type="date"],.date-row input[type="number"]{background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:6px 10px;font-size:13px;flex:1;font-family:inherit;outline:none}
+  .date-row input[type="date"]:focus,.date-row input[type="number"]:focus{border-color:var(--accent)}
+  .date-row input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.7)}
+  .checkbox-row{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-info);margin-bottom:8px}
+  .checkbox-row input[type="checkbox"]{accent-color:#533483}
+  .date-result-card{background:var(--bg-input);border-radius:10px;padding:14px;text-align:center;margin-top:8px}
+  .date-result-value{font-size:28px;font-weight:700;color:var(--text-primary)}
+  .date-result-sub{font-size:12px;color:var(--text-info);margin-top:4px}
+  .quick-buttons{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .quick-btn{background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-guide);padding:5px 12px;font-size:11px;cursor:pointer;transition:background .15s;font-family:inherit}
+  .quick-btn:hover{background:var(--bg-btn-hover)}
+  .section-divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+  /* Dynamic Report & Guide standard CSS */
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .report-box { margin: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
+  .report-box strong { color: var(--accent); }
+  .guide-section{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+  .guide-section h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
+  .guide:last-child{margin-bottom:0}
+  .guide summary{padding:12px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--bg-guide);transition:background .2s}
+  .guide summary::-webkit-details-marker{display:none}
+  .guide summary::after{content:'▼';font-size:10px;color:var(--text-muted);transition:transform .3s}
+  .guide[open] summary::after{transform:rotate(180deg)}
+  .guide summary:hover{background:var(--bg-guide-hover)}
+  .guide-content{padding:14px;font-size:13px;color:var(--text-info);line-height:1.6;border-top:1px solid var(--border);background:var(--bg-app)}
+  .related-tools{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+  .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+  .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
+  .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
+    <h1>📅 Date / D-Day Calculator</h1>
+    <a href="/special-chars/date-calc/" class="back-btn">🌐 한국어</a>
+  </div>
+
+  <div class="counter-body">
+    <div class="date-section">
+      <div class="date-section-title">📆 D-Day Countdown</div>
+      <div class="date-row"><label>Start</label><input type="date" id="ddayStart"></div>
+      <div class="date-row"><label>Target</label><input type="date" id="ddayEnd"></div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="ddayInclusive">
+        <label for="ddayInclusive">Include start date as day 1</label>
+        <span title="Check to count the start date as day 1 instead of day 0.&#10;e.g., Jan 1 to Jan 3 → 3 days if checked, 2 days if unchecked.&#10;Recommended for anniversaries." style="cursor:help;color:var(--text-info);">ⓘ</span>
+      </div>
+      <div class="date-result-card" id="ddayResult">
+        <div class="date-result-value" id="ddayValue">-</div>
+        <div class="date-result-sub" id="ddaySub">Select dates</div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <div class="date-section">
+      <div class="date-section-title">🧮 Date Math (Base Date ± Days)</div>
+      <div class="date-row"><label>Base Date</label><input type="date" id="dateBase"></div>
+      <div class="date-row"><label>Days</label><input type="number" id="dateDays" placeholder="e.g. 100, -30"></div>
+      <div class="quick-buttons">
+        <button class="quick-btn" onclick="applyQuick(7)">+7 days</button>
+        <button class="quick-btn" onclick="applyQuick(30)">+30 days</button>
+        <button class="quick-btn" onclick="applyQuick(100)">+100 days</button>
+        <button class="quick-btn" onclick="applyQuick(365)">+1 year</button>
+        <button class="quick-btn" onclick="applyQuick(-7)">-7 days</button>
+        <button class="quick-btn" onclick="applyQuick(-30)">-30 days</button>
+        <button class="quick-btn" onclick="applyQuick(-100)">-100 days</button>
+        <button class="quick-btn" onclick="applyQuick(-365)">-1 year</button>
+      </div>
+      <div class="date-result-card" id="dateAddResult">
+        <div class="date-result-value" id="dateAddValue">-</div>
+        <div class="date-result-sub" id="dateAddSub">Enter base date and days to adjust</div>
+      </div>
+    </div>
+  </div>
+
+  <section class="guide-section">
+    <h2>💡 Comprehensive Guide to Date & D-Day Calculator</h2>
+    
+    <details class="guide" open>
+      <summary>1. How do I calculate a D-Day countdown?</summary>
+      <div class="guide-content">
+        <p>Simply select your "Start" date (typically today) and your "Target" date. The calculator will instantly show the remaining days (e.g., D-100) or elapsed days (e.g., D+50) along with a breakdown in weeks and months.</p>
+        <p><strong>Anniversaries vs. Deadlines:</strong> For couple anniversaries or milestones (where the first day is "Day 1"), make sure to check the <em>"Include start date as day 1"</em> box. If it's a deadline (e.g., days remaining until a test), leave it unchecked.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>2. How can I add or subtract days from a date?</summary>
+      <div class="guide-content">
+        <p>Use the "Date Math" section. Set a Base Date, then enter the number of days you want to add (e.g., 100) or subtract (e.g., -30). The tool will output the exact future or past date, including the day of the week.</p>
+        <p>We also provide quick buttons for common intervals like +7 days, +30 days, or +100 days (frequent for newborn celebrations or relationship milestones).</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>3. Does the calculator account for leap years?</summary>
+      <div class="guide-content">
+        <p>Yes. The calculator leverages built-in, highly accurate date logic that automatically accounts for varying days in a month and leap years, ensuring your 100-day or 1-year calculations are perfectly exact.</p>
+      </div>
+    </details>
+
+  </section>
+
+  <section class="related-tools">
+    <h2>🔗 Recommended Utility Tools</h2>
+    <div class="tools-grid">
+      <a href="/special-chars/en/server-time/" class="tool-card">⏱️ Server Time</a>
+      <a href="/special-chars/en/timezone-conv/" class="tool-card">🌍 Timezone Converter</a>
+      <a href="/special-chars/en/timer/" class="tool-card">⏳ Online Timer</a>
+      <a href="/special-chars/en/calculator/" class="tool-card">🧮 Calculator</a>
+    </div>
+  </section>
+    <div class="footer"><span>Real-time calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),1500)}
+
+function calcDday(){
+  const start=document.getElementById('ddayStart').value;
+  const end=document.getElementById('ddayEnd').value;
+  if(!start||!end){document.getElementById('ddayValue').textContent='-';document.getElementById('ddaySub').textContent='Select dates';return}
+  const s=new Date(start),e=new Date(end);
+  let diff=Math.round((e-s)/86400000);
+  const inclusive=document.getElementById('ddayInclusive').checked;
+  if(inclusive)diff+=1;
+  const absD=Math.abs(diff);
+  if(inclusive){document.getElementById('ddayValue').textContent=`${absD} days`}
+  else{if(diff===0)document.getElementById('ddayValue').textContent='D-Day';else if(diff>0)document.getElementById('ddayValue').textContent=`D-${diff}`;else document.getElementById('ddayValue').textContent=`D+${Math.abs(diff)}`}
+  const weeks=Math.floor(absD/7);const remain=absD%7;const months=Math.floor(absD/30);
+  let sub=`${absD} days`;if(weeks>0)sub+=` = ${weeks} weeks ${remain} days`;if(months>0)sub+=` ≈ ${months} months`;
+  document.getElementById('ddaySub').textContent=sub;
+}
+
+function calcDateAdd(){
+  const base=document.getElementById('dateBase').value;
+  const days=parseInt(document.getElementById('dateDays').value);
+  if(!base||isNaN(days)){document.getElementById('dateAddValue').textContent='-';document.getElementById('dateAddSub').textContent='Enter base date and days to adjust';return}
+  const d=new Date(base);d.setDate(d.getDate()+days);
+  const yyyy=d.getFullYear();const mm=String(d.getMonth()+1).padStart(2,'0');const dd=String(d.getDate()).padStart(2,'0');
+  const weekdays=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];const dayName=weekdays[d.getDay()];
+  document.getElementById('dateAddValue').textContent=`${yyyy}-${mm}-${dd} (${dayName})`;
+  const sign=days>=0?'+':'';
+  document.getElementById('dateAddSub').textContent=`${sign}${days} days from ${base}`;
+}
+
+function applyQuick(days){
+  if(!document.getElementById('dateBase').value){const today=new Date();const y=today.getFullYear();const m=String(today.getMonth()+1).padStart(2,'0');const d=String(today.getDate()).padStart(2,'0');document.getElementById('dateBase').value=`${y}-${m}-${d}`}
+  document.getElementById('dateDays').value=days;calcDateAdd();
+}
+
+function clearDateCalc(){
+  document.getElementById('ddayStart').value='';document.getElementById('ddayEnd').value='';
+  document.getElementById('ddayInclusive').checked=false;
+  document.getElementById('ddayValue').textContent='-';document.getElementById('ddaySub').textContent='Select dates';
+  document.getElementById('dateBase').value='';document.getElementById('dateDays').value='';
+  document.getElementById('dateAddValue').textContent='-';document.getElementById('dateAddSub').textContent='Enter base date and days to adjust';
+  showToast('Reset complete');
+}
+
+function copyDateResult(){
+  const dday=document.getElementById('ddayValue').textContent;
+  const ddaySub=document.getElementById('ddaySub').textContent;
+  const dateAdd=document.getElementById('dateAddValue').textContent;
+  const dateAddSub=document.getElementById('dateAddSub').textContent;
+  let text='';if(dday!=='-')text+=`D-Day: ${dday} (${ddaySub})\n`;if(dateAdd!=='-')text+=`Date Math: ${dateAdd} (${dateAddSub})`;
+  if(!text){showToast('Nothing to copy');return}
+  navigator.clipboard.writeText(text.trim()).then(()=>showToast('Result copied!'));
+}
+
+document.getElementById('ddayStart').addEventListener('change',calcDday);
+document.getElementById('ddayEnd').addEventListener('change',calcDday);
+document.getElementById('ddayInclusive').addEventListener('change',calcDday);
+document.getElementById('dateBase').addEventListener('change',calcDateAdd);
+document.getElementById('dateDays').addEventListener('input',calcDateAdd);
+</script>
+<button class="scroll-top-btn" aria-label="Top">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

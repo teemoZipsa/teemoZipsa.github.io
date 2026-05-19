@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<title>⏳ 서버 시간 확인기 — 티모집사</title>
+<meta name="description" content="티켓팅, 수강신청 필수 도구! 인터파크, 예스24 등 각 웹사이트의 정확한 고유 서버 시간을 밀리초 단위로 띄워줍니다. 정각 알림음 지원.">
+<meta property="og:title" content="⏳ 서버 시간 확인기 — 티모집사">
+<meta property="og:description" content="티켓팅, 수강신청 필수 도구! 특정 사이트의 고유 서버 시간을 정확히 확인하세요.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/server-time/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/server-time/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/server-time/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/server-time/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+.app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:520px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+.content{padding:24px 20px}
+.input-group{display:flex;gap:8px;margin-bottom:20px}
+.url-input{flex:1;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:15px;color:var(--text-primary);outline:none;transition:border-color .2s;font-family:inherit}
+.url-input:focus{border-color:var(--accent)}
+.fetch-btn{background:var(--accent);color:var(--text-on-accent);border:none;border-radius:8px;padding:0 20px;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s;font-family:inherit}
+.fetch-btn:hover{background:var(--accent-hover)}
+.display-box{background:var(--bg-btn);border:1px solid var(--border);border-radius:12px;padding:32px 20px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden}
+.target-name{font-size:13px;color:var(--text-muted);margin-bottom:8px;font-weight:600}
+.time-display{font-size:52px;font-weight:800;letter-spacing:1px;font-variant-numeric:tabular-nums;color:var(--text-primary);display:flex;align-items:baseline;justify-content:center;gap:4px}
+.time-ms{font-size:24px;color:var(--text-info);font-weight:600}
+.date-display{font-size:14px;color:var(--text-secondary);margin-top:8px}
+.status-badge{position:absolute;top:12px;right:14px;font-size:11px;font-weight:600;padding:4px 8px;border-radius:12px;background:var(--bg-bar);color:var(--text-muted)}
+.status-badge.syncing{color:#f59e0b}
+.status-badge.success{color:#10b981;background:rgba(16,185,129,0.1)}
+.status-badge.error{color:#ef4444;background:rgba(239,68,68,0.1)}
+.options{display:flex;justify-content:center;gap:16px;margin-bottom:16px}
+.opt-label{font-size:13px;color:var(--text-secondary);display:flex;align-items:center;gap:6px;cursor:pointer}
+.quick-urls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.q-btn{background:var(--bg-bar);border:1px solid var(--border);border-radius:20px;padding:6px 12px;font-size:12px;color:var(--text-secondary);cursor:pointer;transition:all .2s;font-family:inherit}
+.q-btn:hover{background:var(--bg-btn);color:var(--text-primary)}
+.report-box { margin-top: 24px; padding: 20px; background: var(--bg-bar); border: 1px solid var(--border); border-radius: 12px; display: none; animation: fadeIn 0.5s ease-out; }
+.report-box h3 { font-size: 15px; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.report-box p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 8px; }
+.report-box .highlight { color: var(--accent); font-weight: 600; }
+.guide-section { margin-top: 32px; padding: 24px 20px; background: var(--bg-bar); border-top: 1px solid var(--border); }
+.guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.guide summary { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.guide summary::-webkit-details-marker { display: none; }
+.guide summary::after { content: '▼'; font-size: 10px; color: var(--text-muted); transition: transform 0.2s; }
+.guide[open] summary::after { transform: rotate(180deg); }
+.guide-content { padding: 0 16px 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.guide-content p { margin-bottom: 12px; }
+.related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+.related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag { font-size: 12px; background: var(--bg-btn); color: var(--text-secondary); padding: 6px 12px; border-radius: 16px; text-decoration: none; border: 1px solid var(--border); transition: all 0.2s; }
+.tag:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+.ripple {
+  position: absolute; border-radius: 50%; opacity: 0; pointer-events: none;
+  border: 2px solid var(--accent); left: 50%; top: 50%; transform: translate(-50%, -50%);
+}
+@keyframes rip{ 0%{width:0;height:0;opacity:.5} 100%{width:400px;height:400px;opacity:0} }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+    <h1>⏳ 서버 시간 확인기</h1>
+    <a href="/special-chars/en/server-time/" class="back-btn">🌐 English</a>
+  </div>
+  <div class="content">
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:8px">티켓팅/예매 사이트 주소를 입력하세요 (기본값: 내 컴퓨터 시간)</p>
+    <form class="input-group" onsubmit="event.preventDefault(); syncTime();">
+      <input type="text" id="urlInput" class="url-input" placeholder="예: https://ticket.interpark.com">
+      <button type="submit" class="fetch-btn">시간 확인</button>
+    </form>
+    
+    <div class="quick-urls">
+      <button class="q-btn" onclick="setQuick('https://ticket.interpark.com')">인터파크</button>
+      <button class="q-btn" onclick="setQuick('http://ticket.yes24.com')">YES24</button>
+      <button class="q-btn" onclick="setQuick('https://www.melon.com')">멜론티켓</button>
+      <button class="q-btn" onclick="setQuick('https://www.letskorail.com')">코레일</button>
+      <button class="q-btn" onclick="setQuick('https://sugang.snu.ac.kr')">수강신청</button>
+    </div>
+
+    <div class="display-box" id="displayBox">
+      <div id="rippleEff" class="ripple"></div>
+      <div class="status-badge" id="statusBadge">로컬 시스템 시계</div>
+      <div class="target-name" id="targetName">현재 기준: 내 기기(로컬) 시간</div>
+      <div class="time-display">
+        <span id="hhmmss">00:00:00</span>
+        <span class="time-ms" id="ms">.000</span>
+      </div>
+      <div class="date-display" id="dateStr">- 가동 중 -</div>
+    </div>
+    
+    <div class="options">
+      <label class="opt-label"><input type="checkbox" id="sndTick"> 매초 틱 소리</label>
+      <label class="opt-label"><input type="checkbox" id="sndAlarm" checked> 59초/정각 알림</label>
+      <label class="opt-label"><input type="checkbox" id="showMs" checked> 밀리초 표시</label>
+    </div>
+    
+    <!-- 동적 결과 리포트 -->
+    <div id="reportContainer" class="report-box"></div>
+  </div>
+
+  <section class="guide-section">
+    <h2>💡 서버 시간 확인기 완벽 가이드</h2>
+    
+    <details class="guide" open>
+      <summary>서버 시간이란 무엇이며 왜 중요한가요?</summary>
+      <div class="guide-content">
+        <p><b>서버 시간(Server Time)</b>은 특정 웹사이트(인터파크, 예스24, 멜론티켓 등)를 호스팅하는 서버의 자체적인 시스템 시계를 의미합니다. 내 기기의 시간(로컬 시간)이 아무리 정확하고 표준 시간 단위와 일치한다고 해도, 서버가 위치한 환경이나 상태에 따라 수십~수백 밀리초(ms) 이상의 오차가 발생할 수 있습니다.</p>
+        <p>티켓팅, 수강신청 등 0.1초의 차이가 결과를 가르는 치열한 경쟁 환경에서는 <b>내 기기의 시간이 아닌 해당 서비스의 실제 서버 시간</b>을 기준으로 액션을 취해야 로딩을 포함하여 누구보다 유리한 타이밍을 선점할 수 있습니다.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>이 도구의 작동 원리는 어떻게 되나요?</summary>
+      <div class="guide-content">
+        <p>사용자가 확인하고자 하는 URL을 입력하면, 브라우저가 해당 주소로 <code>HEAD</code> 요청을 보내 HTTP 응답 헤더 내에 포함된 <code>Date</code> 값을 추출합니다.</p>
+        <p>단순히 시간 값을 가져오는 것을 넘어, 이 과정에서 발생하는 <b>네트워크 왕복 지연 시간(Round Trip Time, RTT)을 계산하여 정밀하게 보정</b>합니다. 즉, 요청이 서버까지 도달하고 다시 돌아오는 데 걸린 시간을 반영해 <strong>실제 통신 지연에 따른 오차를 최소화한 서버 시간을 실시간으로 띄워줍니다.</strong></p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>보안 측면(개인정보 보호)에서 안전한가요?</summary>
+      <div class="guide-content">
+        <p>네, 100% 안전합니다. 본 서버 시간 확인기는 <b>가벼운 HTTP Header 조회(HEAD Method)만을 사용</b>하여 날짜 정보만을 반환받습니다.</p>
+        <p>사용자의 어떤 개인정보나 로그인 세션, 쿠키 정보도 수집하지 않으며, 백엔드 서버를 거치지 않고 오로지 <b>고객님의 브라우저(클라이언트) 내부에서만 연산이 이루어집니다.</b> 따라서 정보 유출이나 보안상의 위험이 전혀 없습니다.</p>
+      </div>
+    </details>
+
+    <div class="related-tools">
+      <h3>🛠️ 함께 쓰면 좋은 도구</h3>
+      <div class="tags">
+        <a href="/special-chars/gpa-calc/" class="tag">학점 계산기</a>
+        <a href="/special-chars/speech-timer/" class="tag">발표 타이머</a>
+        <a href="/special-chars/calculator/" class="tag">일반 계산기</a>
+        <a href="/special-chars/percentage-calculator/" class="tag">퍼센트 계산기</a>
+      </div>
+    </div>
+  </section>
+  <div class="footer"><span>0.01초의 승부, 성공을 기원합니다!</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+
+<script>
+let timeOffset = 0; // ms offset between local and server
+let targetMode = false;
+let lastSec = -1;
+
+function setQuick(u) {
+  document.getElementById('urlInput').value = u;
+  syncTime();
+}
+
+// Audio helpers
+let audioCtx;
+function getCtx() {
+  if(!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+function beep(freq, duration, vol=0.1, type='sine') {
+  try {
+    const ctx = getCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    gain.gain.setValueAtTime(vol, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + duration);
+  } catch(e){}
+}
+
+function alarmEffect() {
+  const rp = document.getElementById('rippleEff');
+  rp.style.animation = 'none';
+  void rp.offsetWidth;
+  rp.style.animation = 'rip 1s ease-out forwards';
+}
+
+function playAlarmAt(s) {
+  const tickOn = document.getElementById('sndTick').checked;
+  const alarmOn = document.getElementById('sndAlarm').checked;
+  
+  if (s !== lastSec) {
+    if (alarmOn && s === 0) {
+      beep(880, 0.4, 0.3, 'square');
+      setTimeout(()=>beep(880, 0.6, 0.3, 'square'), 200);
+      alarmEffect();
+    } else if (alarmOn && s === 59) {
+      beep(1200, 0.2, 0.2, 'triangle');
+    } else if (alarmOn && s === 58) {
+      beep(1000, 0.1, 0.1, 'triangle');
+    } else if (tickOn) {
+      beep(600, 0.05, 0.05);
+    }
+    lastSec = s;
+  }
+}
+
+async function syncTime() {
+  getCtx(); // init audio
+  let val = document.getElementById('urlInput').value.trim();
+  const badge = document.getElementById('statusBadge');
+  const tname = document.getElementById('targetName');
+  
+  if(!val) {
+    targetMode = false; timeOffset = 0;
+    badge.className = 'status-badge'; badge.textContent = '로컬 시스템 시계';
+    tname.textContent = '현재 기준: 내 기기(로컬) 시간';
+    document.getElementById('reportContainer').style.display = 'none';
+    return;
+  }
+  if(!/^https?:\/\//i.test(val)) val = 'https://' + val;
+
+  tname.textContent = '동기화 중: ' + val;
+  badge.className = 'status-badge syncing'; badge.textContent = '동기화 중...';
+  
+  const startLocal = performance.now();
+  try {
+    let res = await fetch(val, { method:'HEAD', cache:'no-store' }).catch(e => null);
+    
+    if(!res || !res.headers.get('Date')) {
+      const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(val);
+      res = await fetch(proxyUrl, { method:'HEAD', cache:'no-store' });
+    }
+
+    const dateStr = res.headers.get('Date');
+    if(!dateStr) throw new Error("No Date header");
+    
+    const serverTime = new Date(dateStr).getTime();
+    const endLocal = performance.now();
+    const rtt = endLocal - startLocal;
+    
+    const estimatedLocalEquiv = Date.now() - (rtt/2);
+    timeOffset = serverTime - estimatedLocalEquiv;
+    targetMode = true;
+
+    tname.textContent = '동기화된 대상: ' + new URL(val).hostname;
+    badge.className = 'status-badge success'; badge.textContent = '동기화 완료 (오차 ' + Math.round(timeOffset) + 'ms)';
+    updateReport(val, rtt, timeOffset, true);
+  } catch(e) {
+    timeOffset = 0; targetMode = false;
+    tname.textContent = '오류: ' + new URL(val).hostname;
+    badge.className = 'status-badge error'; badge.textContent = 'CORS 차단 또는 응답 없음';
+    updateReport(val, 0, 0, false);
+  }
+}
+
+function updateReport(url, rtt, offset, success) {
+  const container = document.getElementById('reportContainer');
+  if (!container) return;
+  if (!success) {
+    container.style.display = 'none';
+    container.innerHTML = '';
+    return;
+  }
+  
+  container.style.display = 'block';
+  const domain = new URL(url).hostname;
+  let latencyEval = '양호';
+  let latencyColor = 'var(--text-info)';
+  let tips = '';
+  
+  if (rtt < 100) {
+    latencyEval = '매우 빠름';
+    latencyColor = '#10b981';
+    tips = `응답 속도가 <span class="highlight">${Math.round(rtt)}ms</span>로 매우 빠릅니다. 통신 지연이 거의 없으므로, 정각에 딱 맞춰 새로고침이나 클릭을 시도해도 서버가 빠르게 반응할 확률이 높습니다.`;
+  } else if (rtt < 300) {
+    latencyEval = '보통';
+    latencyColor = '#f59e0b';
+    tips = `응답 속도가 <span class="highlight">${Math.round(rtt)}ms</span>로 평범한 수준입니다. 접속자의 피지컬 및 환경에 따라 다르지만, 대략 0.1~0.2초 전에 미리 예매 버튼을 클릭하는 것이 성공 확률을 높이는 권장 전략입니다.`;
+  } else {
+    latencyEval = '지연됨 (주의)';
+    latencyColor = '#ef4444';
+    tips = `응답 속도가 <span class="highlight">${Math.round(rtt)}ms</span>로 느린 편입니다. 서버에 이미 트래픽 부하가 발생했거나 해외에 위치할 가능성이 큽니다. 일반적인 기준보다 약 0.3초 이상 빨리 움직이는 것을 권장합니다.`;
+  }
+  
+  let offsetDesc = '';
+  if (Math.abs(offset) < 50) {
+    offsetDesc = `측정 오차 범위 이내로, <b>내 기기 시간과 사실상 동일</b>합니다 (오차 ${Math.round(offset)}ms).`;
+  } else if (offset > 0) {
+    offsetDesc = `내 기기보다 대상 서버 시간이 약 <span class="highlight">${Math.round(offset)}ms 만큼 더 빠릅니다.</span> 따라서 평소 감각보다 조금 더 여유있게 접근하세요.`;
+  } else {
+    offsetDesc = `내 기기보다 대상 서버 시간이 약 <span class="highlight">${Math.round(Math.abs(offset))}ms 만큼 더 느립니다.</span> 즉, 내 시계에서는 이미 정각이 지났더라도 서버는 아직 정각이 오지 않았을 수 있습니다.`;
+  }
+
+  container.innerHTML = `
+    <h3>📊 실시간 서버 응답 및 최적화 분석 리포트</h3>
+    <p><b>대상 서버:</b> <span class="highlight">${domain}</span></p>
+    <p><b>응답 상태:</b> <span style="color:${latencyColor}; font-weight:600;">${latencyEval}</span></p>
+    <p><b>시간 오차 분석:</b> ${offsetDesc}</p>
+    <div style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);">
+      <p style="margin-bottom:4px; color:var(--text-primary);">💡 <b>티켓팅 예매 성공 팁:</b></p>
+      <p style="margin-bottom:0;">${tips}</p>
+    </div>
+  `;
+}
+
+function updateClock() {
+  const showMsCheck = document.getElementById('showMs').checked;
+  const now = new Date(Date.now() + timeOffset);
+  
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const s = String(now.getSeconds()).padStart(2,'0');
+  const ms = String(now.getMilliseconds()).padStart(3,'0');
+  
+  document.getElementById('hhmmss').textContent = `${h}:${m}:${s}`;
+  document.getElementById('ms').textContent = showMsCheck ? `.${ms}` : '';
+  
+  const dateOpts = { year:'numeric', month:'long', day:'numeric', weekday:'long' };
+  document.getElementById('dateStr').textContent = now.toLocaleDateString('ko-KR', dateOpts);
+  
+  playAlarmAt(now.getSeconds());
+  
+  if (targetMode) document.title = `${h}:${m}:${s} — 서버 시간`;
+  else document.title = `⏳ 서버 시간 확인기 — 티모집사`;
+
+  requestAnimationFrame(updateClock);
+}
+requestAnimationFrame(updateClock);
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

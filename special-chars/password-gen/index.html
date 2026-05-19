@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>🔐 비밀번호 생성기 — 티모집사</title>
+<meta name="description" content="안전한 비밀번호를 즉시 생성하세요. 길이, 대소문자, 숫자, 특수문자 옵션 설정. 100% 브라우저 로컬 처리.">
+<meta property="og:title" content="🔐 비밀번호 생성기 — 티모집사">
+<meta property="og:description" content="안전한 비밀번호를 즉시 생성하세요. 100% 브라우저 로컬 처리.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/password-gen/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/password-gen/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/password-gen/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/password-gen/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+.app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+.content{padding:24px 20px}
+
+.pw-display{background:var(--bg-bar);border:2px solid #3a3a6a;border-radius:12px;padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;min-height:60px}
+.pw-text{flex:1;font-family:'Pretendard',monospace;font-size:20px;font-weight:600;word-break:break-all;line-height:1.4;color:var(--text-primary);letter-spacing:1px}
+.pw-actions{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+.pw-btn{width:40px;height:40px;border-radius:10px;border:none;font-size:18px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.pw-btn:active{transform:scale(.9)}
+.btn-copy{background:var(--accent);color:var(--text-on-accent)}
+.btn-copy:hover{background:var(--accent-hover)}
+.btn-regen{background:var(--bg-btn);color:var(--text-label)}
+.btn-regen:hover{background:var(--bg-btn-hover);color:var(--text-primary)}
+
+.strength-bar{height:6px;background:var(--bg-btn);border-radius:3px;margin-bottom:6px;overflow:hidden}
+.strength-fill{height:100%;border-radius:3px;transition:width .3s,background .3s}
+.strength-label{font-size:12px;text-align:right;margin-bottom:16px;font-weight:600}
+
+.section-title{font-size:13px;color:var(--text-section);font-weight:600;margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px}
+
+.length-row{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.length-row input[type=range]{flex:1;accent-color:#533483;height:6px}
+.length-value{background:var(--bg-btn);padding:6px 12px;border-radius:8px;font-size:16px;font-weight:700;min-width:44px;text-align:center;color:var(--text-primary)}
+
+.options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
+.option{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg-btn);border-radius:10px;cursor:pointer;user-select:none;transition:background .2s}
+.option:hover{background:var(--bg-btn-hover)}
+.option input{display:none}
+.checkbox{width:22px;height:22px;border:2px solid #555;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s;flex-shrink:0}
+.option input:checked~.checkbox{background:var(--accent);border-color:var(--accent)}
+.option-label{font-size:13px;line-height:1.3}
+.option-label small{display:block;color:var(--text-muted);font-size:11px;margin-top:2px}
+
+.history-section{margin-top:20px}
+.history-list{max-height:160px;overflow-y:auto}
+.history-list::-webkit-scrollbar{width:4px}
+.history-list::-webkit-scrollbar-thumb{background:var(--bg-btn-hover);border-radius:2px}
+.history-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--border);font-size:13px;font-family:monospace;color:var(--text-label);cursor:pointer;transition:background .2s}
+.history-item:hover{background:rgba(83,52,131,.15);color:var(--text-primary)}
+.history-item .idx{color:var(--text-muted);font-size:11px;width:16px}
+.history-empty{text-align:center;color:var(--text-muted);padding:16px;font-size:13px}
+
+.report-box {margin-top:16px; margin-bottom:14px; padding:16px; background:rgba(83,52,131,0.05); border-left:4px solid var(--accent); border-radius:8px; font-size:13px; line-height:1.6; color:var(--text-primary); display:none;}
+.report-box.show {display:block; animation:fadeIn 0.4s;}
+@keyframes fadeIn {from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)}}
+
+.guide-section{margin:20px; padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-app);}
+.guide-title{font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:12px;}
+.guide-item{margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:var(--bg-guide); overflow:hidden;}
+.guide-item summary{padding:12px; font-size:13px; font-weight:600; cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; color:var(--text-guide);}
+.guide-item summary::after{content:'▼'; font-size:10px; color:var(--text-info); transition:transform 0.2s;}
+.guide-item[open] summary::after{transform:rotate(180deg);}
+.guide-item[open] summary{border-bottom:1px solid var(--border); background:var(--bg-btn);}
+.guide-item .guide-content{padding:12px; font-size:13px; color:var(--text-info); line-height:1.6;}
+.related-tools{margin-top:16px; padding-top:16px; border-top:1px solid var(--border);}
+.tag-container{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
+.tool-tag{padding:6px 12px; background:rgba(83,52,131,0.1); color:var(--accent); border-radius:16px; font-size:11px; font-weight:600; text-decoration:none; transition:all 0.2s;}
+.tool-tag:hover{background:var(--accent); color:var(--text-on-accent);}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+    <h1>🔐 비밀번호 생성기</h1>
+    <a href="/special-chars/en/password-gen/" class="back-btn">🌐 English</a>
+  </div>
+  <div class="content">
+    <div class="pw-display">
+      <div class="pw-text" id="pwText">-</div>
+      <div class="pw-actions">
+        <button class="pw-btn btn-copy" onclick="copyPw()" title="복사">📋</button>
+        <button class="pw-btn btn-regen" onclick="generate()" title="재생성">🔄</button>
+      </div>
+    </div>
+
+    <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+    <div class="strength-label" id="strengthLabel">-</div>
+
+    <div class="section-title">길이</div>
+    <div class="length-row">
+      <input type="range" id="pwLength" min="4" max="64" value="16" oninput="onLengthChange()">
+      <div class="length-value" id="lengthDisplay">16</div>
+    </div>
+
+    <div class="section-title">포함 문자</div>
+    <div class="options">
+      <label class="option">
+        <input type="checkbox" id="optUpper" checked onchange="generate()">
+        <span class="checkbox">✓</span>
+        <span class="option-label">대문자<small>A-Z</small></span>
+      </label>
+      <label class="option">
+        <input type="checkbox" id="optLower" checked onchange="generate()">
+        <span class="checkbox">✓</span>
+        <span class="option-label">소문자<small>a-z</small></span>
+      </label>
+      <label class="option">
+        <input type="checkbox" id="optNum" checked onchange="generate()">
+        <span class="checkbox">✓</span>
+        <span class="option-label">숫자<small>0-9</small></span>
+      </label>
+      <label class="option">
+        <input type="checkbox" id="optSpecial" checked onchange="generate()">
+        <span class="checkbox">✓</span>
+        <span class="option-label">특수문자<small>!@#$%...</small></span>
+      </label>
+    </div>
+
+    <div class="history-section">
+      <div class="section-title">최근 생성 기록</div>
+      <div class="history-list" id="historyList">
+        <div class="history-empty">아직 생성된 비밀번호가 없습니다</div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+  <div id="reportBox" class="report-box" style="margin-left:20px; margin-right:20px;"></div>
+
+  <div class="guide-section">
+    <div class="guide-title">🤔 안전한 비밀번호 Q&A</div>
+    <details class="guide-item">
+      <summary>안전한 비밀번호란 무엇인가요?</summary>
+      <div class="guide-content">
+        컴퓨터 시스템과 온라인 계정을 해킹으로부터 보호하기 위해 추측하기 어렵고(무작위성) 기계적인 암호 대입 공격(Brute Force Attack)을 견뎌낼 수 있게 만든 비밀번호입니다. 
+        대문자, 소문자, 숫자, 특수문자를 혼합하고 12자리 이상의 길이로 설정하는 것이 국제 표준 보안 권장 사항입니다.
+      </div>
+    </details>
+    <details class="guide-item">
+      <summary>내 비밀번호는 서버에 저장되나요?</summary>
+      <div class="guide-content">
+        <strong>아니요. 절대 저장되지 않습니다.</strong> 저희 도구는 100% 사용자의 브라우저 로컬 환경(클라이언트 사이드)에서 <code>crypto.getRandomValues()</code> 함수를 사용하여 비밀번호를 생성합니다. 외부 네트워크로 전송되는 데이터가 없으므로 완전히 안전하게 사용하실 수 있습니다. 브라우저를 닫으면 최근 생성 기록도 모두 삭제됩니다.
+      </div>
+    </details>
+    <details class="guide-item">
+      <summary>최근 생성 기록은 어떻게 활용하나요?</summary>
+      <div class="guide-content">
+        여러 사이트에 가입하거나 복수의 비밀번호가 필요할 때, 미리 여러 개를 생성해 두고 클릭 한 번으로 복사하여 빠르게 사용할 수 있도록 돕는 임시 보관함입니다.
+      </div>
+    </details>
+
+    <div class="related-tools">
+      <div class="guide-title" style="font-size:12px; margin-bottom:8px;">🛠 연관 도구 추천</div>
+      <div class="tag-container">
+        <a href="/special-chars/base64-tool/" class="tool-tag">Base64 인코딩/디코딩</a>
+        <a href="/special-chars/char-counter/" class="tool-tag">글자수 세기</a>
+      </div>
+    </div>
+  </div>
+    <div class="footer"><span>100% 브라우저 로컬 생성</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+
+<script>
+const UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const LOWER = 'abcdefghijklmnopqrstuvwxyz';
+const NUMS = '0123456789';
+const SPECIAL = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+let history = [];
+
+function getCharset() {
+  let cs = '';
+  if (document.getElementById('optUpper').checked) cs += UPPER;
+  if (document.getElementById('optLower').checked) cs += LOWER;
+  if (document.getElementById('optNum').checked) cs += NUMS;
+  if (document.getElementById('optSpecial').checked) cs += SPECIAL;
+  return cs;
+}
+
+function generate() {
+  const charset = getCharset();
+  if (!charset) {
+    document.getElementById('pwText').textContent = '최소 1개 옵션을 선택하세요';
+    updateStrength('');
+    return;
+  }
+  const len = parseInt(document.getElementById('pwLength').value);
+  const arr = new Uint32Array(len);
+  crypto.getRandomValues(arr);
+  let pw = '';
+  for (let i = 0; i < len; i++) {
+    pw += charset[arr[i] % charset.length];
+  }
+  document.getElementById('pwText').textContent = pw;
+  updateStrength(pw);
+
+  // Add to history (max 10, no duplicates)
+  history = history.filter(h => h !== pw);
+  history.unshift(pw);
+  if (history.length > 10) history.pop();
+  renderHistory();
+}
+
+function updateStrength(pw) {
+  const fill = document.getElementById('strengthFill');
+  const label = document.getElementById('strengthLabel');
+  if (!pw) {
+    fill.style.width = '0%';
+    label.textContent = '-';
+    label.style.color = '#666';
+    return;
+  }
+
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (pw.length >= 12) score++;
+  if (pw.length >= 16) score++;
+  if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score++;
+  if (/\d/.test(pw)) score++;
+  if (/[^a-zA-Z0-9]/.test(pw)) score++;
+
+  const levels = [
+    { max: 2, pct: '20%', color: '#ef4444', text: '약함' },
+    { max: 3, pct: '45%', color: '#f59e0b', text: '보통' },
+    { max: 4, pct: '70%', color: '#22c55e', text: '강함' },
+    { max: 99, pct: '100%', color: '#10b981', text: '매우 강함' }
+  ];
+  const lv = levels.find(l => score <= l.max);
+  fill.style.width = lv.pct;
+  fill.style.background = lv.color;
+  label.textContent = '강도: ' + lv.text;
+  label.style.color = lv.color;
+  
+  updateReport(pw, score, lv.text);
+}
+
+function updateReport(pw, score, lvText) {
+  const box = document.getElementById('reportBox');
+  if (!pw) {
+    box.classList.remove('show');
+    return;
+  }
+  
+  let types = [];
+  if (/[A-Z]/.test(pw)) types.push('대문자');
+  if (/[a-z]/.test(pw)) types.push('소문자');
+  if (/\d/.test(pw)) types.push('숫자');
+  if (/[^a-zA-Z0-9]/.test(pw)) types.push('특수문자');
+
+  let desc = '';
+  if (score <= 2) desc = `현재 보안 수준은 <b style="color:#ef4444">${lvText}</b>입니다. 더 안전한 계정 보호를 위해 길이를 늘리거나 다양한 문자를 포함하여 재생성하는 것을 권장합니다.`;
+  else if (score === 3) desc = `현재 보안 수준은 <b style="color:#f59e0b">${lvText}</b>입니다. 일반적인 웹사이트의 로그인 비밀번호로 무난하게 사용할 수 있습니다.`;
+  else desc = `현재 보안 수준은 <b style="color:#10b981">${lvText}</b>입니다. 무차별 대입 공격(Brute Force) 등 다양한 해킹 시도를 효과적으로 방어할 수 있는 매우 안전한 상태입니다. 금융 및 중요 계정에 추천합니다.`;
+
+  box.innerHTML = `🛡️ <b>비밀번호 보안 분석 리포트</b><br/>생성된 암호는 총 <b>${pw.length}자리</b> 길이이며, <b>${types.join(', ')}</b> 조합으로 구성되었습니다. <br/>${desc}`;
+  box.classList.add('show');
+}
+
+function copyPw() {
+  const pw = document.getElementById('pwText').textContent;
+  if (!pw || pw === '-' || pw.includes('선택하세요')) return;
+  navigator.clipboard.writeText(pw).then(() => showToast('📋 비밀번호가 복사되었습니다'));
+}
+
+function renderHistory() {
+  const container = document.getElementById('historyList');
+  if (history.length === 0) {
+    container.innerHTML = '<div class="history-empty">아직 생성된 비밀번호가 없습니다</div>';
+    return;
+  }
+  container.innerHTML = history.map((pw, i) =>
+    `<div class="history-item" onclick="copyHistoryItem(${i})" title="클릭하여 복사"><span class="idx">${i + 1}</span><span>${escapeHtml(pw)}</span></div>`
+  ).join('');
+}
+
+function copyHistoryItem(idx) {
+  navigator.clipboard.writeText(history[idx]).then(() => showToast('📋 복사되었습니다'));
+}
+
+function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function onLengthChange() {
+  document.getElementById('lengthDisplay').textContent = document.getElementById('pwLength').value;
+  generate();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+generate();
+
+(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

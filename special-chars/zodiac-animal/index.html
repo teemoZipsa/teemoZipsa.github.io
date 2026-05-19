@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+    <title>🐉 띠(십이지신) 계산기 — 티모집사</title>
+    <meta name="description" content="생년월일로 나의 띠를 정확하게 알아보세요. 음력 설 기준 자동 보정, 십이지신, 천간지지, 오행, 궁합 띠까지 한눈에 확인">
+    <meta property="og:title" content="🐉 띠(십이지신) 계산기 — 티모집사">
+    <meta property="og:description" content="생년월일로 나의 띠를 정확하게 알아보세요. 음력 설 기준 자동 보정, 십이지신, 천간지지, 오행, 궁합 띠까지 한눈에 확인">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://teemozipsa.github.io/special-chars/zodiac-animal/">
+    <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+    <link rel="canonical" href="https://teemozipsa.github.io/special-chars/zodiac-animal/">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:start;padding:20px}
+        .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
+        .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+        .header h1{font-size:15px;font-weight:600;color:#fff}
+        .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+        .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+        .counter-body{padding:16px;flex:1}
+        .input-section{background:var(--bg-guide);border-radius:10px;padding:16px;margin-bottom:16px}
+        .input-section label{font-size:13px;color:var(--text-guide);font-weight:600;display:block;margin-bottom:8px}
+        .date-row{display:flex;gap:10px;align-items:center}
+        .date-row input[type="date"]{flex:1;padding:10px 12px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:inherit}
+        .date-row input:focus{outline:none;border-color:var(--accent)}
+        .btn-today{padding:10px 16px;background:var(--accent);color:var(--text-on-accent);border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s;font-family:inherit;white-space:nowrap}
+        .btn-today:hover{background:var(--accent-hover)}
+        .lunar-note{margin-top:8px;font-size:11px;color:var(--text-guide);line-height:1.5;padding:6px 10px;background:rgba(83,52,131,.15);border-radius:6px;border-left:3px solid var(--accent);display:none}
+        .lunar-note.show{display:block}
+
+        .result-card{display:none;background:var(--bg-guide);border-radius:12px;overflow:hidden;animation:fadeIn .4s ease}
+        .result-card.show{display:block}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .animal-hero{text-align:center;padding:24px 16px 8px;position:relative}
+        .animal-emoji{font-size:72px;line-height:1;margin-bottom:8px;display:block;filter:drop-shadow(0 4px 12px rgba(0,0,0,.3))}
+        .animal-name{font-size:24px;font-weight:700;color:var(--text-primary)}
+        .animal-hanja{font-size:14px;color:var(--text-guide);margin-top:2px}
+        .ganzhi-banner{text-align:center;padding:8px;margin:0 16px 16px;background:var(--bg-input);border-radius:8px}
+        .ganzhi-text{font-size:16px;color:var(--text-primary);font-weight:600}
+        .ganzhi-sub{font-size:12px;color:var(--text-info);margin-top:2px}
+
+        .info-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:0 16px;margin-bottom:16px}
+        .info-item{background:var(--bg-input);border-radius:8px;padding:12px;text-align:center}
+        .info-label{font-size:11px;color:var(--text-info);margin-bottom:4px}
+        .info-value{font-size:14px;color:var(--text-primary);font-weight:600}
+
+        .section{padding:0 16px;margin-bottom:16px}
+        .section-title{font-size:13px;font-weight:600;color:var(--text-guide);margin-bottom:8px}
+        .traits{display:flex;flex-wrap:wrap;gap:6px}
+        .trait-tag{padding:6px 12px;background:var(--bg-btn);border-radius:20px;font-size:12px;color:var(--text-primary);border:1px solid var(--border)}
+        .compat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+        .compat-box{padding:10px;background:var(--bg-input);border-radius:8px;border:1px solid var(--border)}
+        .compat-box-title{font-size:11px;color:var(--text-info);margin-bottom:6px}
+        .compat-items{display:flex;flex-wrap:wrap;gap:4px}
+        .compat-tag{font-size:12px;padding:4px 10px;border-radius:12px;font-weight:500}
+        .compat-good{background:rgba(76,175,80,.15);color:#81c784;border:1px solid rgba(76,175,80,.3)}
+        .compat-bad{background:rgba(244,67,54,.12);color:#e57373;border:1px solid rgba(244,67,54,.25)}
+        .result-footer{padding:0 16px 16px;font-size:11px;color:var(--text-info);text-align:center;line-height:1.6}
+
+        .guide-section{margin:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+        .guide-section summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
+        .guide-section summary:hover{background:var(--bg-guide-hover)}
+        .guide-section[open] summary{background:var(--bg-btn);border-bottom:1px solid var(--border)}
+        .guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
+        .guide-content ol{padding-left:20px}.guide-content li{margin-bottom:4px}
+
+        .bottom-bar{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
+        .bottom-bar .info{font-size:11px;color:var(--text-info)}
+        .action-btn{padding:8px 20px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+        .btn-clear{background:var(--bg-btn);color:var(--text-guide)}.btn-clear:hover{background:var(--bg-btn-hover)}
+        .btn-copy{background:var(--accent);color:var(--text-on-accent)}.btn-copy:hover{background:var(--accent-hover)}
+        .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.6);transition:transform .3s ease,opacity .3s ease;opacity:0;pointer-events:none;z-index:999}
+        .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+        @media(max-width:640px){.info-grid{grid-template-columns:1fr 1fr}.compat-grid{grid-template-columns:1fr}}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+    .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+<div class="app">
+    <div class="header">
+        <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+        <h1>🐉 띠(십이지신) 계산기</h1>
+    </div>
+    <div class="counter-body">
+        <div class="input-section">
+            <label>생년월일을 입력하세요 (양력)</label>
+            <div class="date-row">
+                <input type="date" id="birthDate" onchange="calcAnimal()">
+                <button class="btn-today" onclick="setToday()">오늘 날짜</button>
+            </div>
+            <div class="lunar-note" id="lunarNote"></div>
+        </div>
+
+        <div class="result-card" id="resultCard">
+            <div class="animal-hero">
+                <span class="animal-emoji" id="animalEmoji"></span>
+                <div class="animal-name" id="animalName"></div>
+                <div class="animal-hanja" id="animalHanja"></div>
+            </div>
+            <div class="ganzhi-banner">
+                <div class="ganzhi-text" id="ganzhiText"></div>
+                <div class="ganzhi-sub" id="ganzhiSub"></div>
+            </div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">오행</div>
+                    <div class="info-value" id="resultOhang"></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">음양</div>
+                    <div class="info-value" id="resultYinYang"></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">지지</div>
+                    <div class="info-value" id="resultJiji"></div>
+                </div>
+            </div>
+            <div class="section">
+                <div class="section-title">성격 특성</div>
+                <div class="traits" id="resultTraits"></div>
+            </div>
+            <div class="section">
+                <div class="section-title">띠 궁합</div>
+                <div class="compat-grid">
+                    <div class="compat-box">
+                        <div class="compat-box-title">✨ 잘 맞는 띠 (삼합·육합)</div>
+                        <div class="compat-items" id="compatGood"></div>
+                    </div>
+                    <div class="compat-box">
+                        <div class="compat-box-title">⚡ 상충하는 띠</div>
+                        <div class="compat-items" id="compatBad"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="result-footer" id="resultFooter"></div>
+        </div>
+    </div>
+
+    <details class="guide-section">
+        <summary>📖 사용 방법</summary>
+        <div class="guide-content">
+            <ol>
+                <li>양력 생년월일을 선택하세요</li>
+                <li>음력 설 날짜를 자동으로 비교하여 정확한 띠를 계산합니다</li>
+                <li>1~2월생의 경우 설 이전이면 전년도 띠로 자동 보정됩니다</li>
+                <li>'결과 복사' 버튼으로 텍스트 결과를 복사할 수 있습니다</li>
+            </ol>
+            <p style="margin-top:8px">💡 십이지신은 12년을 주기로 순환합니다. 천간(10개)과 지지(12개)가 조합되어 60갑자를 이루며, 60년마다 같은 간지가 돌아옵니다.</p>
+        </div>
+    </details>
+    <div class="footer"><span>음력 설 기준 자동 보정</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const ANIMALS = [
+    { name:'쥐띠', emoji:'🐭', jiji:'子', hanja:'쥐 자', traits:['재치있는','영리한','적응력','사교적'], good:['용띠','원숭이띠','소띠'], bad:['말띠','양띠'] },
+    { name:'소띠', emoji:'🐂', jiji:'丑', hanja:'소 축', traits:['성실한','인내심','신뢰감','꼼꼼한'], good:['뱀띠','닭띠','쥐띠'], bad:['양띠','말띠'] },
+    { name:'호랑이띠', emoji:'🐯', jiji:'寅', hanja:'범 인', traits:['용감한','리더십','자신감','정의로운'], good:['말띠','개띠','돼지띠'], bad:['원숭이띠','뱀띠'] },
+    { name:'토끼띠', emoji:'🐰', jiji:'卯', hanja:'토끼 묘', traits:['온화한','예술적','세심한','평화적'], good:['양띠','돼지띠','개띠'], bad:['닭띠','용띠'] },
+    { name:'용띠', emoji:'🐲', jiji:'辰', hanja:'용 진', traits:['카리스마','야심찬','열정적','당당한'], good:['쥐띠','원숭이띠','닭띠'], bad:['개띠','토끼띠'] },
+    { name:'뱀띠', emoji:'🐍', jiji:'巳', hanja:'뱀 사', traits:['지혜로운','직관적','신비로운','침착한'], good:['소띠','닭띠','원숭이띠'], bad:['돼지띠','호랑이띠'] },
+    { name:'말띠', emoji:'🐴', jiji:'午', hanja:'말 오', traits:['활동적','자유분방','낙관적','사교적'], good:['호랑이띠','양띠','개띠'], bad:['쥐띠','소띠'] },
+    { name:'양띠', emoji:'🐑', jiji:'未', hanja:'양 미', traits:['온순한','창의적','동정심','예술적'], good:['토끼띠','말띠','돼지띠'], bad:['소띠','쥐띠'] },
+    { name:'원숭이띠', emoji:'🐵', jiji:'申', hanja:'잔나비 신', traits:['영리한','재주많은','유머감각','호기심'], good:['쥐띠','용띠','뱀띠'], bad:['호랑이띠','돼지띠'] },
+    { name:'닭띠', emoji:'🐔', jiji:'酉', hanja:'닭 유', traits:['근면한','관찰력','솔직한','완벽주의'], good:['소띠','뱀띠','용띠'], bad:['토끼띠','개띠'] },
+    { name:'개띠', emoji:'🐶', jiji:'戌', hanja:'개 술', traits:['충직한','정의감','책임감','정직한'], good:['호랑이띠','말띠','토끼띠'], bad:['용띠','닭띠'] },
+    { name:'돼지띠', emoji:'🐷', jiji:'亥', hanja:'돼지 해', traits:['관대한','성실한','낙천적','순수한'], good:['토끼띠','양띠','호랑이띠'], bad:['뱀띠','원숭이띠'] }
+];
+
+const CHEONGAN = ['갑','을','병','정','무','기','경','신','임','계'];
+const CHEONGAN_HANJA = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const JIJI = ['자','축','인','묘','진','사','오','미','신','유','술','해'];
+const JIJI_HANJA = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const OHANG_EMOJI = ['🌳 목(木)','🔥 화(火)','🏔️ 토(土)','🪙 금(金)','💧 수(水)'];
+const YINYANG = ['양(陽)','음(陰)'];
+
+// 양력 기준 음력 설(1월 1일) 날짜 룩업 테이블 [월, 일]
+const LUNAR_NEW_YEAR = {
+    1900:[1,31],1901:[2,19],1902:[2,8],1903:[1,29],1904:[2,16],1905:[2,4],1906:[1,25],1907:[2,13],1908:[2,2],1909:[1,22],
+    1910:[2,10],1911:[1,30],1912:[2,18],1913:[2,6],1914:[1,26],1915:[2,14],1916:[2,3],1917:[1,23],1918:[2,11],1919:[2,1],
+    1920:[2,20],1921:[2,8],1922:[1,28],1923:[2,16],1924:[2,5],1925:[1,24],1926:[2,13],1927:[2,2],1928:[1,23],1929:[2,10],
+    1930:[1,30],1931:[2,17],1932:[2,6],1933:[1,26],1934:[2,14],1935:[2,4],1936:[1,24],1937:[2,11],1938:[1,31],1939:[2,19],
+    1940:[2,8],1941:[1,27],1942:[2,15],1943:[2,5],1944:[1,25],1945:[2,13],1946:[2,2],1947:[1,22],1948:[2,10],1949:[1,29],
+    1950:[2,17],1951:[2,6],1952:[1,27],1953:[2,14],1954:[2,3],1955:[1,24],1956:[2,12],1957:[1,31],1958:[2,18],1959:[2,8],
+    1960:[1,28],1961:[2,15],1962:[2,5],1963:[1,25],1964:[2,13],1965:[2,2],1966:[1,21],1967:[2,9],1968:[1,30],1969:[2,17],
+    1970:[2,6],1971:[1,27],1972:[2,15],1973:[2,3],1974:[1,23],1975:[2,11],1976:[1,31],1977:[2,18],1978:[2,7],1979:[1,28],
+    1980:[2,16],1981:[2,5],1982:[1,25],1983:[2,13],1984:[2,2],1985:[2,20],1986:[2,9],1987:[1,29],1988:[2,17],1989:[2,6],
+    1990:[1,27],1991:[2,15],1992:[2,4],1993:[1,23],1994:[2,10],1995:[1,31],1996:[2,19],1997:[2,7],1998:[1,28],1999:[2,16],
+    2000:[2,5],2001:[1,24],2002:[2,12],2003:[2,1],2004:[1,22],2005:[2,9],2006:[1,29],2007:[2,18],2008:[2,7],2009:[1,26],
+    2010:[2,14],2011:[2,3],2012:[1,23],2013:[2,10],2014:[1,31],2015:[2,19],2016:[2,8],2017:[1,28],2018:[2,16],2019:[2,5],
+    2020:[1,25],2021:[2,12],2022:[2,1],2023:[1,22],2024:[2,10],2025:[1,29],2026:[2,17],2027:[2,6],2028:[1,26],2029:[2,13],
+    2030:[2,3],2031:[1,23],2032:[2,11],2033:[1,31],2034:[2,19],2035:[2,8],2036:[1,28],2037:[2,15],2038:[2,4],2039:[1,24],
+    2040:[2,12],2041:[2,1],2042:[1,22],2043:[2,10],2044:[1,30],2045:[2,17],2046:[2,6],2047:[1,26],2048:[2,14],2049:[2,2],
+    2050:[1,23],2051:[2,11],2052:[2,1],2053:[2,19],2054:[2,8],2055:[1,28],2056:[2,15],2057:[2,4],2058:[1,24],2059:[2,12],
+    2060:[2,2]
+};
+
+function calcAnimal() {
+    const input = document.getElementById('birthDate').value;
+    if (!input) { document.getElementById('resultCard').classList.remove('show'); return; }
+    const d = new Date(input);
+    let year = d.getFullYear();
+    const month = d.getMonth() + 1;
+    const day = d.getDate();
+    const originalYear = year;
+    let lunarAdjusted = false;
+
+    // 음력 설 이전이면 전년도 기준
+    const lny = LUNAR_NEW_YEAR[year];
+    if (lny && (month < lny[0] || (month === lny[0] && day < lny[1]))) {
+        year = year - 1;
+        lunarAdjusted = true;
+    }
+
+    // 음력 보정 안내
+    const noteEl = document.getElementById('lunarNote');
+    if (lunarAdjusted) {
+        noteEl.textContent = `📌 ${originalYear}년 음력 설(${lny[0]}/${lny[1]}) 이전 출생 → ${year}년 기준으로 계산되었습니다`;
+        noteEl.classList.add('show');
+    } else {
+        noteEl.classList.remove('show');
+    }
+
+    const animalIdx = (year - 4) % 12;
+    const idx = ((animalIdx % 12) + 12) % 12;
+    const animal = ANIMALS[idx];
+
+    const ganIdx = (year - 4) % 10;
+    const gan = ((ganIdx % 10) + 10) % 10;
+    const jiIdx = idx;
+
+    document.getElementById('animalEmoji').textContent = animal.emoji;
+    document.getElementById('animalName').textContent = animal.name;
+    document.getElementById('animalHanja').textContent = `${animal.hanja} (${animal.jiji})`;
+
+    const ganzhiKo = `${CHEONGAN[gan]}${JIJI[jiIdx]}년`;
+    const ganzhiHanja = `${CHEONGAN_HANJA[gan]}${JIJI_HANJA[jiIdx]}年`;
+    document.getElementById('ganzhiText').textContent = `${ganzhiKo} (${ganzhiHanja})`;
+    document.getElementById('ganzhiSub').textContent = lunarAdjusted ? `${originalYear}년생 (음력 기준 ${year}년)` : `${year}년생`;
+
+    const ohangIdx = Math.floor(gan / 2);
+    document.getElementById('resultOhang').textContent = OHANG_EMOJI[ohangIdx];
+    document.getElementById('resultYinYang').textContent = gan % 2 === 0 ? '☀️ ' + YINYANG[0] : '🌙 ' + YINYANG[1];
+    document.getElementById('resultJiji').textContent = `${JIJI_HANJA[jiIdx]} (${JIJI[jiIdx]})`;
+
+    document.getElementById('resultTraits').innerHTML = animal.traits.map(t => `<span class="trait-tag">${t}</span>`).join('');
+
+    document.getElementById('compatGood').innerHTML = animal.good.map(g => {
+        const a = ANIMALS.find(x => x.name === g);
+        return `<span class="compat-tag compat-good">${a ? a.emoji : ''} ${g}</span>`;
+    }).join('');
+    document.getElementById('compatBad').innerHTML = animal.bad.map(b => {
+        const a = ANIMALS.find(x => x.name === b);
+        return `<span class="compat-tag compat-bad">${a ? a.emoji : ''} ${b}</span>`;
+    }).join('');
+
+    const nextSame = year + 12;
+    const prevSame = year - 12;
+    document.getElementById('resultFooter').textContent = `같은 ${animal.name}: ${prevSame}년, ${year}년, ${nextSame}년 ...  (12년 주기)`;
+
+    document.getElementById('resultCard').classList.add('show');
+}
+
+function setToday() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth()+1).padStart(2,'0');
+    const dd = String(today.getDate()).padStart(2,'0');
+    document.getElementById('birthDate').value = `${yyyy}-${mm}-${dd}`;
+    calcAnimal();
+}
+
+function clearAll() {
+    document.getElementById('birthDate').value = '';
+    document.getElementById('resultCard').classList.remove('show');
+    document.getElementById('lunarNote').classList.remove('show');
+    showToast('초기화되었습니다');
+}
+
+function copyResult() {
+    const card = document.getElementById('resultCard');
+    if (!card.classList.contains('show')) { showToast('먼저 생년월일을 입력하세요'); return; }
+    const name = document.getElementById('animalName').textContent;
+    const hanja = document.getElementById('animalHanja').textContent;
+    const ganzhi = document.getElementById('ganzhiText').textContent;
+    const sub = document.getElementById('ganzhiSub').textContent;
+    const ohang = document.getElementById('resultOhang').textContent;
+    const yy = document.getElementById('resultYinYang').textContent;
+    const traits = [...document.querySelectorAll('.trait-tag')].map(t=>t.textContent).join(', ');
+    const good = [...document.querySelectorAll('#compatGood .compat-tag')].map(c=>c.textContent.trim()).join(', ');
+    const bad = [...document.querySelectorAll('#compatBad .compat-tag')].map(c=>c.textContent.trim()).join(', ');
+    const text = `${name} ${hanja}\n${ganzhi} (${sub})\n오행: ${ohang} | ${yy}\n성격: ${traits}\n좋은 궁합: ${good}\n상충: ${bad}`;
+    navigator.clipboard.writeText(text).then(()=>showToast('결과가 복사되었습니다'));
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(()=>t.classList.remove('show'), 1500);
+}
+</script>
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

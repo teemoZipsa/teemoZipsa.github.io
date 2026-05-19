@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>🔐 Password Generator — TeemoZipsa</title>
+<meta name="description" content="Generate secure random passwords instantly. Options for length, cases, numbers, and symbols. 100% local browser processing.">
+<meta property="og:title" content="🔐 Password Generator — TeemoZipsa">
+<meta property="og:description" content="Generate secure random passwords instantly. 100% local browser processing.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/password-gen/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/password-gen/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/password-gen/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/password-gen/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+.app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+.content{padding:24px 20px}
+
+.pw-display{background:var(--bg-bar);border:2px solid #3a3a6a;border-radius:12px;padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;min-height:60px}
+.pw-text{flex:1;font-family:inherit,monospace;font-size:20px;font-weight:600;word-break:break-all;line-height:1.4;color:var(--text-primary);letter-spacing:1px}
+.pw-actions{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+.pw-btn{width:40px;height:40px;border-radius:10px;border:none;font-size:18px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.pw-btn:active{transform:scale(.9)}
+.btn-copy{background:var(--accent);color:var(--text-on-accent)}
+.btn-copy:hover{background:var(--accent-hover)}
+.btn-regen{background:var(--bg-btn);color:var(--text-label)}
+.btn-regen:hover{background:var(--bg-btn-hover);color:var(--text-primary)}
+
+.strength-bar{height:6px;background:var(--bg-btn);border-radius:3px;margin-bottom:6px;overflow:hidden}
+.strength-fill{height:100%;border-radius:3px;transition:width .3s,background .3s}
+.strength-label{font-size:12px;text-align:right;margin-bottom:16px;font-weight:600}
+
+.section-title{font-size:13px;color:var(--text-section);font-weight:600;margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px}
+
+.length-row{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.length-row input[type=range]{flex:1;accent-color:#533483;height:6px}
+.length-value{background:var(--bg-btn);padding:6px 12px;border-radius:8px;font-size:16px;font-weight:700;min-width:44px;text-align:center;color:var(--text-primary)}
+
+.options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
+.option{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg-btn);border-radius:10px;cursor:pointer;user-select:none;transition:background .2s}
+.option:hover{background:var(--bg-btn-hover)}
+.option input{display:none}
+.checkbox{width:22px;height:22px;border:2px solid #555;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s;flex-shrink:0}
+.option input:checked~.checkbox{background:var(--accent);border-color:var(--accent)}
+.option-label{font-size:13px;line-height:1.3}
+.option-label small{display:block;color:var(--text-muted);font-size:11px;margin-top:2px}
+
+.history-section{margin-top:20px}
+.history-list{max-height:160px;overflow-y:auto}
+.history-list::-webkit-scrollbar{width:4px}
+.history-list::-webkit-scrollbar-thumb{background:var(--bg-btn-hover);border-radius:2px}
+.history-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--border);font-size:13px;font-family:monospace;color:var(--text-label);cursor:pointer;transition:background .2s}
+.history-item:hover{background:rgba(83,52,131,.15);color:var(--text-primary)}
+.history-item .idx{color:var(--text-muted);font-size:11px;width:16px}
+.history-empty{text-align:center;color:var(--text-muted);padding:16px;font-size:13px}
+
+/* Dynamic Report & Guide standard CSS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.report-box { margin: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
+.report-box strong { color: var(--accent); }
+.guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
+.guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
+.guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.guide summary { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; line-height: 1.4; background: var(--bg-guide); transition: background 0.2s; }
+.guide summary:hover { background: var(--bg-guide-hover); }
+.guide summary::-webkit-details-marker { display: none; }
+.guide summary::after { content: '▼'; font-size: 10px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
+.guide[open] summary { background: var(--bg-btn); border-bottom: 1px solid var(--border); }
+.guide[open] summary::after { transform: rotate(180deg); }
+.guide-content { padding: 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.guide-content h3 { font-size: 14px; color: var(--text-primary); margin: 12px 0 8px; }
+.guide-content p { margin-bottom: 12px; }
+.guide-content ul, .guide-content ol { padding-left: 20px; margin-bottom: 12px; }
+.guide-content li { margin-bottom: 4px; }
+.related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+.related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
+.tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+.tool-card { display: flex; flex-direction: column; align-items: center; gap: 8px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-decoration: none; color: var(--text-secondary); transition: all 0.2s; text-align: center; }
+.tool-card:hover { background: var(--bg-btn); transform: translateY(-2px); border-color: var(--accent); color: var(--text-primary); }
+.tool-icon { font-size: 20px; }
+.tool-name { font-size: 12px; font-weight: 600; }
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
+    <h1>🔐 Password Generator</h1>
+    <a href="/special-chars/password-gen/" class="back-btn">🌐 한국어</a>
+  </div>
+  <div class="content">
+    <div class="pw-display">
+      <div class="pw-text" id="pwText">-</div>
+      <div class="pw-actions">
+        <button class="pw-btn btn-copy" onclick="copyPw()" title="Copy">📋</button>
+        <button class="pw-btn btn-regen" onclick="generate()" title="Regenerate">🔄</button>
+      </div>
+    </div>
+
+    <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+    <div class="strength-label" id="strengthLabel">-</div>
+
+    <div class="section-title">Length</div>
+    <div class="length-row">
+      <input type="range" id="pwLength" min="4" max="64" value="16" oninput="onLengthChange()">
+      <div class="length-value" id="lengthDisplay">16</div>
+    </div>
+
+    <div class="section-title">Characters</div>
+    <div class="options">
+      <label class="option">
+        <input type="checkbox" id="optUpper" checked onchange="generate()">
+        <span class="checkbox">✓</span>
+        <span class="option-label">Uppercase<small>A-Z</small></span>
+      </label>
+      <label class="option">
+        <input type="checkbox" id="optLower" checked onchange="generate()">
+        <span class="checkbox">✓</span>
+        <span class="option-label">Lowercase<small>a-z</small></span>
+      </label>
+      <label class="option">
+        <input type="checkbox" id="optNum" checked onchange="generate()">
+        <span class="checkbox">✓</span>
+        <span class="option-label">Numbers<small>0-9</small></span>
+      </label>
+      <label class="option">
+        <input type="checkbox" id="optSpecial" checked onchange="generate()">
+        <span class="checkbox">✓</span>
+        <span class="option-label">Symbols<small>!@#$%...</small></span>
+      </label>
+    </div>
+
+    <div class="history-section">
+      <div class="section-title">Recent History</div>
+      <div class="history-list" id="historyList">
+        <div class="history-empty">No passwords generated yet</div>
+      </div>
+    </div>
+  </div>
+
+  <section class="guide-section">
+    <h2>💡 Comprehensive Guide to Secure Passwords</h2>
+    
+    <details class="guide" open>
+      <summary>1. Is this password generator safe to use?</summary>
+      <div class="guide-content">
+        <p>Absolutely. Our <strong>local password generator</strong> uses your browser's native cryptographic randomized math functions (<code>crypto.getRandomValues</code>). Your passwords are generated 100% locally on your device and are <em>never</em> sent across the internet or saved to any database. Once you close the tab, the history is gone forever.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>2. What makes a strong password?</summary>
+      <div class="guide-content">
+        <p>A truly <strong>secure password</strong> relies heavily on two factors: length and variety.</p>
+        <ul>
+          <li><strong>Length:</strong> We recommend a minimum of 12 to 16 characters. Every additional character makes it exponentially harder for a computer to crack.</li>
+          <li><strong>Variety:</strong> You should check all the boxes: Uppercase, Lowercase, Numbers, and Symbols. This massively increases the pool of possible character combinations.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>3. Can I recover a password if I forget to copy it?</summary>
+      <div class="guide-content">
+        <p>Yes, as long as you haven't closed the window! Your 10 most recently generated <strong>random passwords</strong> are kept in the 'Recent History' section below. You can simply click on any past password in the list to instantly copy it to your clipboard.</p>
+      </div>
+    </details>
+
+    <div class="related-tools">
+      <h3>🛠️ Recommended Utility Tools</h3>
+      <div class="tools-grid">
+        <a href="/special-chars/en/my-ip/" class="tool-card">
+          <span class="tool-icon">🌐</span>
+          <span class="tool-name">What is My IP</span>
+        </a>
+        <a href="/special-chars/en/qr-code/" class="tool-card">
+          <span class="tool-icon">📱</span>
+          <span class="tool-name">QR Code Gen</span>
+        </a>
+        <a href="/special-chars/en/uuid-gen/" class="tool-card">
+          <span class="tool-icon">🔑</span>
+          <span class="tool-name">UUID Generator</span>
+        </a>
+        <a href="/special-chars/en/lotto-gen/" class="tool-card">
+          <span class="tool-icon">🎰</span>
+          <span class="tool-name">Lotto Generator</span>
+        </a>
+      </div>
+    </div>
+  </section>
+    <div class="footer"><span>100% Local Generation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<button class="scroll-top-btn" aria-label="Top">↑</button>
+
+<script>
+const UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const LOWER = 'abcdefghijklmnopqrstuvwxyz';
+const NUMS = '0123456789';
+const SPECIAL = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+let history = [];
+
+function getCharset() {
+  let cs = '';
+  if (document.getElementById('optUpper').checked) cs += UPPER;
+  if (document.getElementById('optLower').checked) cs += LOWER;
+  if (document.getElementById('optNum').checked) cs += NUMS;
+  if (document.getElementById('optSpecial').checked) cs += SPECIAL;
+  return cs;
+}
+
+function generate() {
+  const charset = getCharset();
+  if (!charset) {
+    document.getElementById('pwText').textContent = 'Select at least 1 option';
+    updateStrength('');
+    return;
+  }
+  const len = parseInt(document.getElementById('pwLength').value);
+  const arr = new Uint32Array(len);
+  crypto.getRandomValues(arr);
+  let pw = '';
+  for (let i = 0; i < len; i++) {
+    pw += charset[arr[i] % charset.length];
+  }
+  document.getElementById('pwText').textContent = pw;
+  updateStrength(pw);
+
+  // Add to history (max 10, no duplicates)
+  history = history.filter(h => h !== pw);
+  history.unshift(pw);
+  if (history.length > 10) history.pop();
+  renderHistory();
+}
+
+function updateStrength(pw) {
+  const fill = document.getElementById('strengthFill');
+  const label = document.getElementById('strengthLabel');
+  if (!pw) {
+    fill.style.width = '0%';
+    label.textContent = '-';
+    label.style.color = '#666';
+    return;
+  }
+
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (pw.length >= 12) score++;
+  if (pw.length >= 16) score++;
+  if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score++;
+  if (/\d/.test(pw)) score++;
+  if (/[^a-zA-Z0-9]/.test(pw)) score++;
+
+  const levels = [
+    { max: 2, pct: '20%', color: '#ef4444', text: 'Weak' },
+    { max: 3, pct: '45%', color: '#f59e0b', text: 'Fair' },
+    { max: 4, pct: '70%', color: '#22c55e', text: 'Strong' },
+    { max: 99, pct: '100%', color: '#10b981', text: 'Very Strong' }
+  ];
+  const lv = levels.find(l => score <= l.max);
+  fill.style.width = lv.pct;
+  fill.style.background = lv.color;
+  label.textContent = 'Strength: ' + lv.text;
+  label.style.color = lv.color;
+}
+
+function copyPw() {
+  const pw = document.getElementById('pwText').textContent;
+  if (!pw || pw === '-' || pw.includes('Select at least')) return;
+  navigator.clipboard.writeText(pw).then(() => showToast('📋 Password copied'));
+}
+
+function renderHistory() {
+  const container = document.getElementById('historyList');
+  if (history.length === 0) {
+    container.innerHTML = '<div class="history-empty">No passwords generated yet</div>';
+    return;
+  }
+  container.innerHTML = history.map((pw, i) =>
+    `<div class="history-item" onclick="copyHistoryItem(${i})" title="Click to copy"><span class="idx">${i + 1}</span><span>${escapeHtml(pw)}</span></div>`
+  ).join('');
+}
+
+function copyHistoryItem(idx) {
+  navigator.clipboard.writeText(history[idx]).then(() => showToast('📋 Password copied'));
+}
+
+function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function onLengthChange() {
+  document.getElementById('lengthDisplay').textContent = document.getElementById('pwLength').value;
+  generate();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+generate();
+
+(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

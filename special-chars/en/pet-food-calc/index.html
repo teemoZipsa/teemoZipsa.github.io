@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>🍖 Pet Food Calculator — TeemoZipsa</title>
+<meta name="description" content="Pet food calculator. Calculate daily food amount and calories based on weight, age, and activity level. Supports dogs and cats.">
+<meta property="og:title" content="🍖 Pet Food Calculator — TeemoZipsa">
+<meta property="og:description" content="Calculate daily food portions based on weight, age, and activity.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/pet-food-calc/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/pet-food-calc/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/pet-food-calc/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/pet-food-calc/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:start;padding:20px}
+.app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+.body{padding:20px;display:flex;flex-direction:column;gap:16px}
+
+.type-tabs{display:flex;gap:0;background:var(--bg-guide);border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.type-tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--text-info);background:transparent;border:none;font-family:inherit}
+.type-tab:hover{color:var(--text-secondary);background:var(--bg-input)}
+.type-tab.active{background:var(--accent);color:var(--text-on-accent)}
+
+.input-group{display:flex;flex-direction:column;gap:4px}
+.input-group label{font-size:12px;color:var(--text-info);font-weight:600}
+.input-row{display:flex;align-items:center;gap:8px}
+.input-row input,.input-row select{flex:1;padding:12px 14px;background:var(--bg-guide);border:1.5px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:16px;font-family:inherit;font-weight:600;outline:none;transition:border-color .2s}
+.input-row input:focus,.input-row select:focus{border-color:var(--accent)}
+.input-row .unit{font-size:14px;color:var(--text-info);font-weight:600;min-width:24px}
+.input-row select{cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%23999' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+
+.result-card{border-radius:16px;padding:24px;text-align:center;background:var(--bg-guide);border:1px solid var(--border)}
+.result-emoji{font-size:48px;margin-bottom:8px}
+.result-main{font-size:42px;font-weight:800;color:var(--accent);letter-spacing:-2px}
+.result-sub{font-size:14px;color:var(--text-info);margin-top:4px}
+
+.meals-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.meal-card{background:var(--bg-guide);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.meal-card .meal-label{font-size:11px;color:var(--text-info);margin-bottom:4px}
+.meal-card .meal-value{font-size:20px;font-weight:700;color:var(--text-primary)}
+.meal-card .meal-unit{font-size:11px;color:var(--text-muted)}
+
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.info-item{background:var(--bg-guide);border-radius:10px;padding:12px;text-align:center;border:1px solid var(--border)}
+.info-item .label{font-size:11px;color:var(--text-info);margin-bottom:2px}
+.info-item .value{font-size:15px;font-weight:700;color:var(--text-primary)}
+
+/* Dynamic Report & Guide standard CSS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.report-box { margin: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
+.report-box strong { color: var(--accent); }
+.guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
+.guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
+.guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.guide summary { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; line-height: 1.4; background: var(--bg-guide); transition: background 0.2s; }
+.guide summary:hover { background: var(--bg-guide-hover); }
+.guide summary::-webkit-details-marker { display: none; }
+.guide summary::after { content: '▼'; font-size: 10px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
+.guide[open] summary { background: var(--bg-btn); border-bottom: 1px solid var(--border); }
+.guide[open] summary::after { transform: rotate(180deg); }
+.guide-content { padding: 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.guide-content h3 { font-size: 14px; color: var(--text-primary); margin: 12px 0 8px; }
+.guide-content p { margin-bottom: 12px; }
+.guide-content ul, .guide-content ol { padding-left: 20px; margin-bottom: 12px; }
+.guide-content li { margin-bottom: 4px; }
+.related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+.related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+.tool-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 10px; text-decoration: none; transition: all 0.2s; }
+.tool-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.tool-icon { font-size: 24px; margin-bottom: 8px; }
+.tool-name { font-size: 12px; font-weight: 600; color: var(--text-primary); line-height: 1.3; }
+
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.4);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
+    <h1>🍖 Pet Food Calculator</h1>
+    <a href="/special-chars/pet-food-calc/" class="back-btn">🌐 한국어</a>
+  </div>
+  <div class="body">
+    <div class="type-tabs">
+      <button class="type-tab active" onclick="setType('dog')">🐶 Dog</button>
+      <button class="type-tab" onclick="setType('cat')">🐱 Cat</button>
+    </div>
+
+    <div class="input-group">
+      <label>Weight</label>
+      <div class="input-row">
+        <input type="number" id="weight" value="5" min="0.5" max="100" step="0.5" oninput="calc()">
+        <span class="unit">kg</span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>Life Stage</label>
+      <div class="input-row">
+        <select id="lifeStage" onchange="calc()">
+          <option value="puppy">Puppy/Kitten (under 1 yr)</option>
+          <option value="adult" selected>Adult (1-7 yrs)</option>
+          <option value="senior">Senior (7+ yrs)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>Activity Level</label>
+      <div class="input-row">
+        <select id="activity" onchange="calc()">
+          <option value="low">Low (mostly indoor)</option>
+          <option value="normal" selected>Normal (1-2 walks/day)</option>
+          <option value="high">High (active/athletic)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>Spay/Neuter Status</label>
+      <div class="input-row">
+        <select id="neutered" onchange="calc()">
+          <option value="no">Not spayed/neutered</option>
+          <option value="yes" selected>Spayed/neutered</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-emoji" id="emoji">🍖</div>
+      <div class="result-main" id="dailyKcal">-</div>
+      <div class="result-sub">Daily Calorie Needs</div>
+    </div>
+
+    <div class="meals-grid" id="mealsGrid"></div>
+
+    <div class="info-grid" id="infoGrid"></div>
+  </div>
+
+  <section class="guide-section">
+    <h2>💡 Comprehensive Pet Feeding Guide</h2>
+    
+    <details class="guide" open>
+      <summary>1. How exactly is my pet's daily calorie need calculated?</summary>
+      <div class="guide-content">
+        <p>Our <strong>pet food calculator</strong> uses standard veterinary formulas to determine Daily Energy Requirement (DER). It involves two steps:</p>
+        <ol>
+          <li><strong>Step 1 (RER):</strong> Calculate Resting Energy Requirement based on weight (70 × kg<sup>0.75</sup>). This is the energy needed to just exist.</li>
+          <li><strong>Step 2 (DER):</strong> Multiply RER by a specific 'Activity Factor' depending on age (puppy vs adult), activity level, and neuter status.</li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>2. Why does spaying or neutering affect food portions?</summary>
+      <div class="guide-content">
+        <p>After a dog or cat is spayed or neutered, their metabolism typically slows down and their energy requirements decrease by roughly 10% to 15%. If you don't reduce their daily food intake accordingly, it can rapidly lead to weight gain and obesity.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>3. Is the gram calculation 100% accurate for every food?</summary>
+      <div class="guide-content">
+        <p>No. Remember that not all pet foods have the same calorie density. Our tool estimates portion sizes in grams based on a standard dry food density of roughly 3,600 kcal/kg. For the highest accuracy, you should look at your specific pet food package, find the "kcal/kg", and use the <strong>daily calorie</strong> output from our tool to calculate precise grams.</p>
+      </div>
+    </details>
+
+    <div class="related-tools">
+      <h3>🛠️ Recommended Utility Tools</h3>
+      <div class="tools-grid">
+        <a href="/special-chars/en/pet-bmi-calc/" class="tool-card">
+          <span class="tool-icon">⚖️</span>
+          <span class="tool-name">Pet BMI Calc</span>
+        </a>
+        <a href="/special-chars/en/pet-age-calc/" class="tool-card">
+          <span class="tool-icon">🐾</span>
+          <span class="tool-name">Pet Age Calc</span>
+        </a>
+        <a href="/special-chars/en/timer/" class="tool-card">
+          <span class="tool-icon">⏱️</span>
+          <span class="tool-name">Online Timer</span>
+        </a>
+        <a href="/special-chars/en/qr-code/" class="tool-card">
+          <span class="tool-icon">📱</span>
+          <span class="tool-name">QR Code Gen</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer"><span>Based on RER/DER calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="scroll-top-btn" aria-label="Top">↑</button>
+
+<script>
+let petType = 'dog';
+
+function setType(t) {
+  petType = t;
+  document.querySelectorAll('.type-tab').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.type-tab[onclick*="${t}"]`).classList.add('active');
+  calc();
+}
+
+function calc() {
+  const w = parseFloat(document.getElementById('weight').value);
+  const stage = document.getElementById('lifeStage').value;
+  const activity = document.getElementById('activity').value;
+  const neutered = document.getElementById('neutered').value;
+
+  if (!w || w <= 0) return;
+
+  // RER = 70 × w^0.75
+  const rer = 70 * Math.pow(w, 0.75);
+
+  // Activity factor
+  let factor;
+  if (petType === 'dog') {
+    if (stage === 'puppy') factor = activity === 'high' ? 3.0 : activity === 'normal' ? 2.5 : 2.0;
+    else if (stage === 'senior') factor = activity === 'high' ? 1.4 : activity === 'normal' ? 1.2 : 1.0;
+    else factor = activity === 'high' ? 1.8 : activity === 'normal' ? 1.4 : 1.0;
+  } else {
+    if (stage === 'puppy') factor = 2.5;
+    else if (stage === 'senior') factor = activity === 'high' ? 1.2 : 1.0;
+    else factor = activity === 'high' ? 1.4 : activity === 'normal' ? 1.2 : 1.0;
+  }
+
+  // Neutered reduction
+  if (neutered === 'yes' && stage !== 'puppy') factor *= 0.85;
+
+  const der = rer * factor;
+  const kcalPerKgFood = 3600; // Average dry food
+  const dailyGrams = (der / kcalPerKgFood) * 1000;
+
+  document.getElementById('emoji').textContent = petType === 'dog' ? '🐶' : '🐱';
+  document.getElementById('dailyKcal').textContent = Math.round(der) + ' kcal';
+
+  // Meals grid (2x/3x daily)
+  document.getElementById('mealsGrid').innerHTML = `
+    <div class="meal-card">
+      <div class="meal-label">🥣 Daily Food (dry food)</div>
+      <div class="meal-value">${Math.round(dailyGrams)}g</div>
+      <div class="meal-unit">~${(dailyGrams / 1000).toFixed(2)}kg</div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-label">🥄 Per Meal (2x/day)</div>
+      <div class="meal-value">${Math.round(dailyGrams / 2)}g</div>
+      <div class="meal-unit">Morning & Evening</div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-label">🥄 Per Meal (3x/day)</div>
+      <div class="meal-value">${Math.round(dailyGrams / 3)}g</div>
+      <div class="meal-unit">3 meals/day</div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-label">💧 Daily Water Intake</div>
+      <div class="meal-value">${Math.round(w * 50)}ml</div>
+      <div class="meal-unit">weight × 50ml</div>
+    </div>
+  `;
+
+  // Info
+  const monthCostUSD = Math.round((dailyGrams / 1000) * 30 * 15); // ~$15/kg estimate
+  document.getElementById('infoGrid').innerHTML = `
+    <div class="info-item">
+      <div class="label">Base Energy (RER)</div>
+      <div class="value">${Math.round(rer)} kcal</div>
+    </div>
+    <div class="info-item">
+      <div class="label">Activity Factor</div>
+      <div class="value">×${factor.toFixed(2)}</div>
+    </div>
+    <div class="info-item">
+      <div class="label">📦 Monthly Food Usage</div>
+      <div class="value">${(dailyGrams * 30 / 1000).toFixed(1)} kg</div>
+    </div>
+    <div class="info-item">
+      <div class="label">💰 Monthly Food Cost (est.)</div>
+      <div class="value">~$${(Math.round((dailyGrams / 1000) * 30 * 15)).toLocaleString()}</div>
+    </div>
+  `;
+}
+
+calc();
+
+(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

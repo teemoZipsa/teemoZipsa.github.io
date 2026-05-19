@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+    <title>🔗 UTM Builder — TeemoZipsa</title>
+    <meta name="description" content="Easily add UTM tracking parameters to your marketing campaign URLs. Analyze traffic sources in Google Analytics.">
+    <meta property="og:title" content="🔗 UTM Builder — TeemoZipsa">
+    <meta property="og:description" content="Easily add UTM tracking parameters to your marketing campaign URLs. Analyze traffic sources in Google Analytics.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/utm-builder/">
+    <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+    <link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/utm-builder/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/utm-builder/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/utm-builder/">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:start;padding:20px}
+        .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
+        .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+        .header h1{font-size:15px;font-weight:600;color:#fff}
+        .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+        .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+        .tool-body{padding:16px;flex:1}
+
+        .field-group{margin-bottom:12px}
+        .field-label{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text-secondary);margin-bottom:6px}
+        .field-label .required{color:#e74c7c;font-size:11px}
+        .field-label .optional{color:var(--text-muted);font-size:11px}
+        .field-input{width:100%;padding:10px 12px;background:var(--bg-guide);border:1.5px solid #333366;border-radius:8px;color:var(--text-primary);font-size:14px;font-family:inherit;transition:border-color .2s}
+        .field-input:focus{outline:none;border-color:#7c5cbf}
+        .field-input::placeholder{color:var(--text-muted)}
+        .field-input.error{border-color:#e74c7c}
+
+        .presets{margin-bottom:16px}
+        .presets-label{font-size:12px;color:var(--text-info);margin-bottom:8px}
+        .preset-btns{display:flex;flex-wrap:wrap;gap:6px}
+        .preset-btn{padding:6px 12px;background:var(--bg-btn);border:1px solid var(--border);border-radius:16px;color:var(--text-secondary);font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit}
+        .preset-btn:hover{background:var(--bg-btn-hover);border-color:#5a5a9a}
+        .preset-btn.active{background:var(--accent);border-color:var(--accent);color:var(--text-on-accent)}
+
+        .divider{height:1px;background:var(--bg-btn);margin:16px 0}
+
+        .result-section{background:var(--bg-guide);border-radius:10px;padding:16px;margin-bottom:12px}
+        .result-label{font-size:12px;color:var(--text-info);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+        .result-url{width:100%;padding:10px 12px;background:var(--bg-body);border:1.5px solid #333366;border-radius:8px;color:#7cc6fe;font-size:13px;font-family:'Inter',monospace;resize:none;min-height:60px;line-height:1.5}
+        .result-url:focus{outline:none;border-color:#7c5cbf}
+        .result-placeholder{color:var(--text-muted);font-size:13px;padding:10px 0}
+
+        .param-table{width:100%;margin-top:12px;border-collapse:collapse}
+        .param-table th{text-align:left;font-size:11px;color:var(--text-info);font-weight:500;padding:6px 8px;border-bottom:1px solid var(--border)}
+        .param-table td{font-size:12px;padding:6px 8px;border-bottom:1px solid var(--border);color:var(--text-secondary);word-break:break-all}
+        .param-table td:first-child{color:var(--accent);font-weight:500;white-space:nowrap}
+        .param-table tr:last-child td{border-bottom:none}
+
+        /* 가이드 & 관련 도구 (표준) */
+        .guide-section{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+        .guide-section h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+        .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
+        .guide:last-child{margin-bottom:0}
+        .guide summary{padding:12px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--bg-guide);transition:background .2s}
+        .guide summary::-webkit-details-marker{display:none}
+        .guide summary::after{content:'▼';font-size:10px;color:var(--text-muted);transition:transform .3s}
+        .guide[open] summary::after{transform:rotate(180deg)}
+        .guide summary:hover{background:var(--bg-guide-hover)}
+        .guide-content{padding:14px;font-size:13px;color:var(--text-info);line-height:1.6;border-top:1px solid var(--border);background:var(--bg-app)}
+        .guide-content strong{color:var(--text-secondary);display:block;margin-bottom:4px}
+        .guide-content ul{padding-left:20px;margin-bottom:12px}
+        .guide-content li{margin-bottom:4px}
+        .guide-content code{background:var(--bg-input);padding:2px 6px;border-radius:4px;font-size:12px;color:var(--accent)}
+        .related-tools{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+        .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+        .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+        .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
+        .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+
+        .bottom-bar{background:var(--bg-body);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #222250}
+        .bottom-bar .info{font-size:11px;color:var(--text-muted)}
+        .action-btn{padding:8px 16px;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .2s}
+        .btn-clear{background:var(--bg-btn);color:var(--text-secondary)}
+        .btn-clear:hover{background:var(--bg-btn-hover)}
+        .btn-copy{background:var(--accent);color:var(--text-on-accent)}
+        .btn-copy:hover{background:var(--accent-hover)}
+        .btn-copy:disabled{opacity:.4;cursor:not-allowed}
+
+        .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:20px;font-size:13px;opacity:0;transition:all .3s;z-index:999;white-space:nowrap}
+        .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+        .history-section{margin-top:12px}
+        .history-label{font-size:12px;color:var(--text-info);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+        .history-clear{font-size:11px;color:var(--text-muted);cursor:pointer;background:none;border:none;font-family:inherit;transition:color .2s}
+        .history-clear:hover{color:#e74c7c}
+        .history-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg-body);border-radius:6px;margin-bottom:4px;cursor:pointer;transition:background .2s}
+        .history-item:hover{background:var(--bg-input)}
+        .history-item .hi-campaign{font-size:12px;color:var(--accent);font-weight:500;flex-shrink:0}
+        .history-item .hi-url{font-size:11px;color:#7cc6fe;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+        .history-item .hi-copy{flex-shrink:0;font-size:11px;color:var(--text-muted);background:var(--bg-btn);border:none;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:inherit;transition:all .2s}
+        .history-item .hi-copy:hover{background:var(--accent);color:var(--text-on-accent)}
+
+        @media(max-width:640px){
+            body{padding:10px}
+            .app{border-radius:8px}
+            .header{padding:12px 14px}
+            .header h1{font-size:15px;font-weight:600;color:#fff}
+            .tool-body{padding:12px}
+            .guide-section{margin:0 12px 12px}
+            .preset-btns{gap:4px}
+            .preset-btn{padding:5px 10px;font-size:11px}
+        }
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+    .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+<div class="app">
+    <div class="header">
+        <a href="https://teemozipsa.github.io/" class="back-btn">← All Tools</a>
+        <h1>🔗 UTM Builder</h1>
+    <a href="/special-chars/utm-builder/" class="back-btn">🌐 한국어</a>
+  </div>
+
+    <div class="tool-body">
+        <!-- URL Input -->
+        <div class="field-group">
+            <div class="field-label">🌐 Website URL <span class="required">Required</span></div>
+            <input type="url" id="urlInput" class="field-input" placeholder="https://example.com/page" oninput="generateURL()">
+        </div>
+
+        <!-- Presets -->
+        <div class="presets">
+            <div class="presets-label">⚡ Quick Fill (Presets)</div>
+            <div class="preset-btns">
+                <button class="preset-btn" onclick="applyPreset('google','cpc',this)">Google Search Ads</button>
+                <button class="preset-btn" onclick="applyPreset('facebook','paid_social',this)">Facebook Ads</button>
+                <button class="preset-btn" onclick="applyPreset('instagram','social',this)">Instagram</button>
+                <button class="preset-btn" onclick="applyPreset('naver_blog','referral',this)">Blog Referral</button>
+                <button class="preset-btn" onclick="applyPreset('newsletter','email',this)">Email Newsletter</button>
+                <button class="preset-btn" onclick="applyPreset('youtube','video',this)">YouTube</button>
+                <button class="preset-btn" onclick="applyPreset('kakao','social',this)">Messaging App</button>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- UTM Parameters -->
+        <div class="field-group">
+            <div class="field-label">utm_source <span class="required">Required</span></div>
+            <input type="text" id="utm_source" class="field-input" placeholder="Traffic source (e.g. google, facebook, newsletter)" oninput="generateURL()">
+        </div>
+        <div class="field-group">
+            <div class="field-label">utm_medium <span class="required">Required</span></div>
+            <input type="text" id="utm_medium" class="field-input" placeholder="Medium type (e.g. cpc, email, social, banner)" oninput="generateURL()">
+        </div>
+        <div class="field-group">
+            <div class="field-label">utm_campaign <span class="required">Required</span></div>
+            <input type="text" id="utm_campaign" class="field-input" placeholder="Campaign name (e.g. spring_sale, launch_2026)" oninput="generateURL()">
+        </div>
+        <div class="field-group">
+            <div class="field-label">utm_term <span class="optional">Optional</span></div>
+            <input type="text" id="utm_term" class="field-input" placeholder="Search keyword (e.g. running_shoes)" oninput="generateURL()">
+        </div>
+        <div class="field-group">
+            <div class="field-label">utm_content <span class="optional">Optional</span></div>
+            <input type="text" id="utm_content" class="field-input" placeholder="Ad content variation (e.g. header_banner, cta_button)" oninput="generateURL()">
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Result -->
+        <div class="result-section">
+            <div class="result-label">📋 Generated URL</div>
+            <div id="resultPlaceholder" class="result-placeholder">Enter a URL and UTM parameters above to see the result here.</div>
+            <textarea id="resultURL" class="result-url" readonly style="display:none"></textarea>
+            <table class="param-table" id="paramTable" style="display:none">
+                <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+                <tbody id="paramBody"></tbody>
+            </table>
+        </div>
+
+        <!-- History -->
+        <div class="history-section" id="historySection" style="display:none">
+            <div class="history-label">
+                <span>🕒 Recent History</span>
+                <button class="history-clear" onclick="clearHistory()">Clear All</button>
+            </div>
+            <div id="historyList"></div>
+        </div>
+    </div>
+
+    <section class="guide-section">
+        <h2>💡 UTM Builder Guide</h2>
+        <details class="guide" open>
+            <summary>What are UTM parameters?</summary>
+            <div class="guide-content">
+                They are short text codes appended to URLs that allow analytics tools (like Google Analytics) to track where traffic is coming from. Using UTMs is essential for measuring the success of your digital marketing campaigns.
+            </div>
+        </details>
+        <details class="guide">
+            <summary>Parameter Descriptions</summary>
+            <div class="guide-content">
+                <ul>
+                    <li><code>utm_source</code> — <b>Traffic source</b> (Where). e.g., google, facebook, newsletter</li>
+                    <li><code>utm_medium</code> — <b>Marketing medium</b> (How). e.g., cpc, email, social, referral</li>
+                    <li><code>utm_campaign</code> — <b>Campaign name</b> (Why). e.g., spring_sale, new_product_launch</li>
+                    <li><code>utm_term</code> — <b>Search keywords</b> (used mostly in paid search advertising)</li>
+                    <li><code>utm_content</code> — <b>Content differentiation</b> (useful for A/B testing variations like <i>header_link</i> vs <i>footer_link</i>)</li>
+                </ul>
+            </div>
+        </details>
+        <details class="guide">
+            <summary>Best Practices for Writing UTMs</summary>
+            <div class="guide-content">
+                <ul>
+                    <li>Use lowercase consistently (Google Analytics treats "Google" and "google" differently).</li>
+                    <li>Use <code>_</code> (underscore) or <code>-</code> (hyphen) instead of spaces.</li>
+                    <li>Establish consistent naming conventions across your entire team.</li>
+                    <li>Use the preset buttons in this tool to quickly fill out standard source/medium structures!</li>
+                </ul>
+            </div>
+        </details>
+    </section>
+
+    <section class="related-tools">
+        <h2>🔗 Related Tools</h2>
+        <div class="tools-grid">
+            <a href="/special-chars/en/qr-code/" class="tool-card">📱 QR Code Generator</a>
+            <a href="/special-chars/en/url-encode/" class="tool-card">🔗 URL Encoder</a>
+            <a href="/special-chars/en/json-formatter/" class="tool-card">📝 JSON Formatter</a>
+        </div>
+    </section>
+    <div class="footer"><span>Marketing URL Tracking</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const HISTORY_KEY = 'utm_history';
+const MAX_HISTORY = 10;
+let activePreset = null;
+
+function generateURL() {
+    const base = document.getElementById('urlInput').value.trim();
+    const source = document.getElementById('utm_source').value.trim();
+    const medium = document.getElementById('utm_medium').value.trim();
+    const campaign = document.getElementById('utm_campaign').value.trim();
+    const term = document.getElementById('utm_term').value.trim();
+    const content = document.getElementById('utm_content').value.trim();
+
+    const placeholder = document.getElementById('resultPlaceholder');
+    const resultEl = document.getElementById('resultURL');
+    const tableEl = document.getElementById('paramTable');
+    const bodyEl = document.getElementById('paramBody');
+    const copyBtn = document.getElementById('copyBtn');
+    const info = document.getElementById('bottomInfo');
+
+    // URL validation
+    document.getElementById('urlInput').classList.remove('error');
+    if (!base) {
+        placeholder.style.display = '';
+        resultEl.style.display = 'none';
+        tableEl.style.display = 'none';
+        copyBtn.disabled = true;
+        info.textContent = 'Enter URL and required parameters';
+        return;
+    }
+
+    let url;
+    try {
+        url = new URL(base.startsWith('http') ? base : 'https://' + base);
+    } catch {
+        document.getElementById('urlInput').classList.add('error');
+        placeholder.textContent = 'Invalid URL format.';
+        placeholder.style.display = '';
+        resultEl.style.display = 'none';
+        tableEl.style.display = 'none';
+        copyBtn.disabled = true;
+        info.textContent = 'Check URL format';
+        return;
+    }
+
+    // Set UTM parameters
+    const params = { utm_source: source, utm_medium: medium, utm_campaign: campaign, utm_term: term, utm_content: content };
+    Object.entries(params).forEach(([k, v]) => {
+        if (v) url.searchParams.set(k, v);
+        else url.searchParams.delete(k);
+    });
+
+    const finalURL = url.toString();
+
+    // Required params check
+    const filled = [source, medium, campaign].filter(Boolean).length;
+    const missing = 3 - filled;
+
+    placeholder.style.display = 'none';
+    resultEl.style.display = '';
+    resultEl.value = finalURL;
+    resultEl.style.height = 'auto';
+    resultEl.style.height = resultEl.scrollHeight + 'px';
+
+    // Parameter table
+    const activeParams = Object.entries(params).filter(([, v]) => v);
+    if (activeParams.length > 0) {
+        tableEl.style.display = '';
+        bodyEl.innerHTML = activeParams.map(([k, v]) => `<tr><td>${k}</td><td>${escapeHtml(v)}</td></tr>`).join('');
+    } else {
+        tableEl.style.display = 'none';
+    }
+
+    if (missing > 0) {
+        copyBtn.disabled = false;
+        info.textContent = `${missing} required params missing (still usable)`;
+    } else {
+        copyBtn.disabled = false;
+        info.textContent = `${activeParams.length} UTM parameters applied`;
+    }
+}
+
+function escapeHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function applyPreset(source, medium, btn) {
+    document.getElementById('utm_source').value = source;
+    document.getElementById('utm_medium').value = medium;
+
+    // Active preset display
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    if (activePreset === btn) {
+        activePreset = null;
+    } else {
+        btn.classList.add('active');
+        activePreset = btn;
+    }
+
+    generateURL();
+    document.getElementById('utm_campaign').focus();
+}
+
+function copyURL() {
+    const url = document.getElementById('resultURL').value;
+    if (!url) return;
+
+    navigator.clipboard.writeText(url).then(() => {
+        showToast('URL copied to clipboard!');
+        saveToHistory(url);
+    }).catch(() => {
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = url;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('URL copied to clipboard!');
+        saveToHistory(url);
+    });
+}
+
+function clearAll() {
+    ['urlInput', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].forEach(id => {
+        document.getElementById(id).value = '';
+        document.getElementById(id).classList.remove('error');
+    });
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    activePreset = null;
+    document.getElementById('resultPlaceholder').textContent = 'Enter a URL and UTM parameters above to see the result here.';
+    generateURL();
+    showToast('Reset');
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// History
+function getHistory() {
+    try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch { return []; }
+}
+
+function saveToHistory(url) {
+    const history = getHistory();
+    // Remove duplicates
+    const idx = history.findIndex(h => h.url === url);
+    if (idx !== -1) history.splice(idx, 1);
+
+    const source = document.getElementById('utm_source').value.trim();
+    const campaign = document.getElementById('utm_campaign').value.trim();
+    history.unshift({ url, label: campaign || source || 'URL', time: Date.now() });
+    if (history.length > MAX_HISTORY) history.pop();
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    renderHistory();
+}
+
+function clearHistory() {
+    localStorage.removeItem(HISTORY_KEY);
+    renderHistory();
+    showToast('History cleared');
+}
+
+function renderHistory() {
+    const history = getHistory();
+    const section = document.getElementById('historySection');
+    const list = document.getElementById('historyList');
+
+    if (history.length === 0) {
+        section.style.display = 'none';
+        return;
+    }
+
+    section.style.display = '';
+    list.innerHTML = history.map((h, i) => `
+        <div class="history-item" onclick="loadHistory(${i})">
+            <span class="hi-campaign">${escapeHtml(h.label)}</span>
+            <span class="hi-url">${escapeHtml(h.url)}</span>
+            <button class="hi-copy" onclick="event.stopPropagation();copyHistoryItem(${i})">Copy</button>
+        </div>
+    `).join('');
+}
+
+function loadHistory(idx) {
+    const history = getHistory();
+    if (!history[idx]) return;
+    try {
+        const url = new URL(history[idx].url);
+        document.getElementById('urlInput').value = url.origin + url.pathname;
+        ['source', 'medium', 'campaign', 'term', 'content'].forEach(key => {
+            document.getElementById('utm_' + key).value = url.searchParams.get('utm_' + key) || '';
+        });
+        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+        activePreset = null;
+        generateURL();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        showToast('Loaded from history');
+    } catch {}
+}
+
+function copyHistoryItem(idx) {
+    const history = getHistory();
+    if (!history[idx]) return;
+    navigator.clipboard.writeText(history[idx].url).then(() => {
+        showToast('URL copied!');
+    });
+}
+
+// Init
+renderHistory();
+</script>
+<button class="scroll-top-btn" aria-label="Top">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

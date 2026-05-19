@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>💰 Compound Interest Calculator — TeemoZipsa</title>
+<meta name="description" content="Visualize the magic of compound interest across multiple trades or investment periods. Simple and fast compound growth simulator.">
+<meta property="og:title" content="💰 Compound Interest Calculator — TeemoZipsa">
+<meta property="og:description" content="Visualize the magic of compound interest across multiple trades or investment periods. Simple and fast compound growth simulator.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/compound-interest/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/compound-interest/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/compound-interest/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/compound-interest/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:'Inter',-apple-system,sans-serif;
+    background:var(--bg-body);color:var(--text-primary);
+    min-height:100vh;padding:20px;
+    display:flex;justify-content:center;align-items:flex-start;
+  }
+  .app{
+    background:var(--bg-app);border-radius:16px;
+    box-shadow:var(--shadow-lg);
+    width:480px;max-width:100%;overflow:hidden;
+  }
+  .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+  .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+  .header h1{font-size:15px;font-weight:600;color:#fff}
+
+  /* 입력 */
+  .inputs{padding:16px;display:flex;flex-direction:column;gap:12px}
+  .input-row{display:flex;gap:10px;align-items:flex-end}
+  .input-group{flex:1;display:flex;flex-direction:column;gap:4px}
+  .input-group label{font-size:11px;color:var(--text-info);font-weight:600}
+  .input-group input{
+    background:var(--bg-bar);border:1px solid var(--border);border-radius:8px;
+    color:var(--text-primary);padding:10px 12px;font-size:15px;font-family:inherit;
+    outline:none;width:100%;
+  }
+  .input-group input:focus{border-color:var(--accent)}
+  .input-group input::placeholder{color:var(--text-placeholder)}
+  .calc-btn{
+    background:linear-gradient(135deg,#533483,#6b44a3);
+    border:none;color:var(--text-on-accent);padding:12px;border-radius:10px;
+    font-size:15px;font-weight:700;cursor:pointer;
+    font-family:inherit;transition:opacity .2s;width:100%;
+  }
+  .calc-btn:hover{opacity:.9}
+
+  /* 요약 */
+  .summary{display:none;padding:0 16px 12px}
+  .summary-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .s-card{background:var(--bg-bar);border-radius:10px;padding:12px 8px;text-align:center}
+  .s-card .s-label{font-size:10px;color:var(--calc-expr-text);margin-bottom:4px}
+  .s-card .s-value{font-size:15px;font-weight:700;color:var(--text-on-accent)}
+  .s-card .s-value.profit{color:var(--text-success)}
+  .s-card .s-value.rate{color:var(--text-highlight)}
+
+  /* 이스터에그 */
+  .buffett-msg{
+    display:none;text-align:center;padding:0 16px 12px;
+    font-size:12px;color:var(--text-highlight);
+    animation:fadeIn .8s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  /* 차트 */
+  .chart-wrap{display:none;padding:0 16px 12px}
+  .chart-title{font-size:11px;color:var(--calc-expr-text);margin-bottom:8px;font-weight:600}
+  .chart{
+    background:var(--bg-bar);border-radius:10px;padding:12px;
+    height:180px;display:flex;align-items:flex-end;gap:2px;
+    position:relative;overflow:visible;
+  }
+  .bar-wrap{
+    flex:1;display:flex;flex-direction:column;align-items:center;
+    height:100%;justify-content:flex-end;position:relative;
+  }
+  .bar{
+    width:100%;border-radius:4px 4px 0 0;
+    background:linear-gradient(180deg,var(--accent-hover),var(--accent));
+    transition:height .5s cubic-bezier(.34,1.56,.64,1);
+    min-height:2px;position:relative;cursor:pointer;
+  }
+  .bar:hover{background:linear-gradient(180deg,var(--accent),var(--accent-hover))}
+  .bar-label{font-size:8px;color:var(--calc-expr-text);margin-top:3px;white-space:nowrap}
+  .bar-tooltip{
+    display:none;position:absolute;bottom:calc(100% + 6px);
+    left:50%;transform:translateX(-50%);
+    background:var(--bg-input);color:var(--text-primary);font-size:10px;
+    padding:4px 8px;border-radius:6px;white-space:nowrap;
+    box-shadow:0 4px 12px rgba(0,0,0,.4);z-index:10;font-weight:600;
+  }
+  .bar:hover .bar-tooltip{display:block}
+
+  /* 시도별 리스트 */
+  .trades-wrap{display:none;padding:0 16px 16px}
+  .trades-title{font-size:11px;color:var(--calc-expr-text);margin-bottom:8px;font-weight:600}
+  .trades-list{
+    display:flex;flex-direction:column;gap:4px;
+    max-height:400px;overflow-y:auto;
+    padding-right:4px;
+  }
+  .trade-item{
+    display:flex;align-items:center;gap:10px;
+    background:var(--bg-bar);border-radius:10px;padding:10px 14px;
+    transition:background .15s;
+  }
+  .trade-item:hover{background:var(--bg-item-hover)}
+  .trade-num{
+    font-size:11px;color:var(--calc-expr-text);font-weight:700;
+    min-width:36px;text-align:center;
+  }
+  .trade-info{flex:1;min-width:0}
+  .trade-amount{
+    font-size:15px;font-weight:700;color:var(--text-amount);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .trade-detail{font-size:11px;color:var(--calc-expr-text);margin-top:2px}
+  .trade-gain{
+    font-size:13px;font-weight:700;color:var(--text-success);
+    white-space:nowrap;
+  }
+
+  /* 현재 자산 강조 (마지막 아이템) */
+  .trade-item.final{
+    border:1px solid var(--border-final);
+    background:#1e1e50;
+  }
+  .trade-item.final .trade-amount{color:var(--text-primary);font-size:17px}
+  .trade-item.final .trade-gain{color:var(--text-highlight);font-size:14px}
+
+  .footer{
+    background:var(--bg-bar);padding:10px 16px;
+    display:flex;justify-content:space-between;align-items:center;
+    border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text);
+  }
+  .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+  .footer a:hover{color:var(--text-guide)}
+  /* Dynamic Report & Guide standard CSS */
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .report-box { margin: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
+  .report-box strong { color: var(--accent); }
+  .guide-section{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+  .guide-section h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
+  .guide:last-child{margin-bottom:0}
+  .guide summary{padding:12px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--bg-guide);transition:background .2s}
+  .guide summary::-webkit-details-marker{display:none}
+  .guide summary::after{content:'▼';font-size:10px;color:var(--text-muted);transition:transform .3s}
+  .guide[open] summary::after{transform:rotate(180deg)}
+  .guide summary:hover{background:var(--bg-guide-hover)}
+  .guide-content{padding:14px;font-size:13px;color:var(--text-info);line-height:1.6;border-top:1px solid var(--border);background:var(--bg-app)}
+  .related-tools{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+  .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+  .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
+  .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
+    <h1>💰 Compound Interest Calculator</h1>
+    <a href="/special-chars/compound-interest/" class="back-btn">🌐 한국어</a>
+  </div>
+
+  <div class="inputs">
+    <div class="input-group">
+      <label>💵 Initial Principal</label>
+      <input type="text" id="principal" value="1,000" oninput="formatMoney(this)">
+    </div>
+    <div class="input-row">
+      <div class="input-group">
+        <label>📈 Interest Rate / Period (%)</label>
+        <input type="number" id="rate" placeholder="10" step="0.1" value="10">
+      </div>
+      <div class="input-group">
+        <label>🔄 Number of Periods</label>
+        <input type="number" id="times" placeholder="10" min="1" max="200" value="10">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">🚀 Calculate Compound Magic</button>
+  </div>
+
+  <div class="summary" id="summary">
+    <div class="summary-cards">
+      <div class="s-card">
+        <div class="s-label">Started With</div>
+        <div class="s-value" id="sumPrincipal">-</div>
+      </div>
+      <div class="s-card">
+        <div class="s-label">Final Amount</div>
+        <div class="s-value profit" id="sumTotal">-</div>
+      </div>
+      <div class="s-card">
+        <div class="s-label">Total Return</div>
+        <div class="s-value rate" id="sumRate">-</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="buffett-msg" id="buffettMsg"></div>
+
+  <div class="chart-wrap" id="chartWrap">
+    <div class="chart-title">📊 Asset Growth Chart</div>
+    <div class="chart" id="chart"></div>
+  </div>
+
+  <div class="trades-wrap" id="tradesWrap">
+    <div class="trades-title">📋 Period Details</div>
+    <div class="trades-list" id="tradesList"></div>
+  </div>
+
+  <section class="guide-section">
+    <h2>💡 Comprehensive Guide to Compound Interest</h2>
+    
+    <details class="guide" open>
+      <summary>1. What is the difference between simple and compound interest?</summary>
+      <div class="guide-content">
+        <p>Simple interest calculates interest based solely on the original principal amount. Compound interest, however, continuously calculates interest on the principal <strong>AND</strong> the accumulated interest from previous periods. Over long horizons, compounding creates spectacular exponential growth, famously called "the eighth wonder of the world" by Albert Einstein.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>2. What is the Rule of 72?</summary>
+      <div class="guide-content">
+        <p>The Rule of 72 is an elegant mental math formula: simply divide 72 by your annual return rate to estimate exactly how many years it will take to double your investment.</p>
+        <table style="width:100%;border-collapse:collapse;margin:8px 0;font-size:11px">
+          <tr style="background:var(--bg-input);color:var(--text-guide)"><th style="padding:6px;border:1px solid var(--border)">Rate</th><th style="padding:6px;border:1px solid var(--border)">Years to Double</th><th style="padding:6px;border:1px solid var(--border)">Rate</th><th style="padding:6px;border:1px solid var(--border)">Years to Double</th></tr>
+          <tr><td style="padding:5px;border:1px solid var(--border);text-align:center">1%</td><td style="padding:5px;border:1px solid var(--border);text-align:center">72 years</td><td style="padding:5px;border:1px solid var(--border);text-align:center">6%</td><td style="padding:5px;border:1px solid var(--border);text-align:center">12 years</td></tr>
+          <tr><td style="padding:5px;border:1px solid var(--border);text-align:center">2%</td><td style="padding:5px;border:1px solid var(--border);text-align:center">36 years</td><td style="padding:5px;border:1px solid var(--border);text-align:center">8%</td><td style="padding:5px;border:1px solid var(--border);text-align:center">9 years</td></tr>
+          <tr><td style="padding:5px;border:1px solid var(--border);text-align:center">3%</td><td style="padding:5px;border:1px solid var(--border);text-align:center">24 years</td><td style="padding:5px;border:1px solid var(--border);text-align:center">10%</td><td style="padding:5px;border:1px solid var(--border);text-align:center">7.2 years</td></tr>
+          <tr><td style="padding:5px;border:1px solid var(--border);text-align:center">4%</td><td style="padding:5px;border:1px solid var(--border);text-align:center">18 years</td><td style="padding:5px;border:1px solid var(--border);text-align:center">12%</td><td style="padding:5px;border:1px solid var(--border);text-align:center">6 years</td></tr>
+        </table>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>3. Is daily or monthly compounding better than annual?</summary>
+      <div class="guide-content">
+        <p>Absolutely. The more frequently your interest compounds, the higher your effective annual yield (APY) will be, since your "interest on interest" hits your account much sooner. This explicitly highlights why avoiding high-interest credit card debt (which often compounds daily) is so critical, yet capturing monthly stock dividends is highly beneficial.</p>
+      </div>
+    </details>
+
+  </section>
+
+  <section class="related-tools">
+    <h2>🔗 Recommended Financial Calculators</h2>
+    <div class="tools-grid">
+      <a href="/special-chars/en/discount-calc/" class="tool-card">🛍️ Discount Calculator</a>
+      <a href="/special-chars/en/percent-calc/" class="tool-card">📊 Percentage Calc</a>
+      <a href="/special-chars/en/wage-calc/" class="tool-card">💵 Wage Calculator</a>
+      <a href="/special-chars/en/avg-price/" class="tool-card">📉 Average Price Calc</a>
+    </div>
+  </section>
+    <div class="footer"><span>Compound Effect Simulator</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+
+<script>
+function formatMoney(el) {
+  let v = el.value.replace(/[^0-9]/g, '');
+  if (v) el.value = parseInt(v).toLocaleString('en-US');
+  else el.value = '';
+}
+function parseMoney(id) {
+  return parseInt(document.getElementById(id).value.replace(/[^0-9]/g, '')) || 0;
+}
+function fmtNum(n) {
+  return Math.round(n).toLocaleString('en-US');
+}
+
+function calculate() {
+  const principal = parseMoney('principal');
+  const rate = parseFloat(document.getElementById('rate').value) || 0;
+  const times = parseInt(document.getElementById('times').value) || 0;
+  if (!principal || !rate || !times) return;
+
+  const r = rate / 100;
+  const data = [{ round: 0, amount: principal, gain: 0 }];
+  let current = principal;
+
+  for (let i = 1; i <= times; i++) {
+    const gain = Math.round(current * r);
+    current = current + gain;
+    data.push({ round: i, amount: current, gain });
+  }
+
+  const finalAmount = data[data.length - 1].amount;
+  const totalProfit = finalAmount - principal;
+  const totalRate = ((totalProfit / principal) * 100).toFixed(1);
+
+  // 요약
+  document.getElementById('sumPrincipal').textContent = fmtNum(principal);
+  document.getElementById('sumTotal').textContent = fmtNum(finalAmount);
+  document.getElementById('sumRate').textContent = '+' + totalRate + '%';
+  document.getElementById('summary').style.display = 'block';
+
+  // 이스터에그
+  const msg = document.getElementById('buffettMsg');
+  if (finalAmount >= principal * 10) {
+    msg.textContent = '🤑 10x growth! Warren Buffett would be proud! Compounding is the eighth wonder of the world! 💸🔥';
+    msg.style.display = 'block';
+  } else if (finalAmount >= principal * 5) {
+    msg.textContent = '🚀 5x your initial investment! The magic of compounding is real!';
+    msg.style.display = 'block';
+  } else if (finalAmount >= principal * 2) {
+    msg.textContent = '✨ Your money doubled! This is the power of compounding!';
+    msg.style.display = 'block';
+  } else {
+    msg.style.display = 'none';
+  }
+
+  renderChart(data);
+  renderTrades(data, principal);
+
+  document.getElementById('chartWrap').style.display = 'block';
+  document.getElementById('tradesWrap').style.display = 'block';
+}
+
+function renderChart(data) {
+  const chart = document.getElementById('chart');
+  chart.innerHTML = '';
+  const maxVal = Math.max(...data.map(d => d.amount));
+
+  let displayData = data;
+  if (data.length > 30) {
+    const step = Math.ceil(data.length / 30);
+    displayData = data.filter((_, i) => i % step === 0 || i === data.length - 1);
+  }
+
+  displayData.forEach(d => {
+    const wrap = document.createElement('div');
+    wrap.className = 'bar-wrap';
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    const pct = (d.amount / maxVal) * 100;
+    bar.style.height = '0%';
+    setTimeout(() => { bar.style.height = Math.max(pct, 2) + '%'; }, 50);
+
+    const tooltip = document.createElement('div');
+    tooltip.className = 'bar-tooltip';
+    tooltip.textContent = d.round === 0
+      ? `Start: ${fmtNum(d.amount)}`
+      : `P${d.round}: ${fmtNum(d.amount)} (+${fmtNum(d.gain)})`;
+    bar.appendChild(tooltip);
+
+    const label = document.createElement('div');
+    label.className = 'bar-label';
+    label.textContent = d.round === 0 ? 'Start' : 'P' + d.round;
+
+    wrap.appendChild(bar);
+    wrap.appendChild(label);
+    chart.appendChild(wrap);
+  });
+}
+
+function renderTrades(data, principal) {
+  const list = document.getElementById('tradesList');
+  list.innerHTML = '';
+
+  data.forEach((d, idx) => {
+    const item = document.createElement('div');
+    const isFinal = idx === data.length - 1 && idx > 0;
+    item.className = 'trade-item' + (isFinal ? ' final' : '');
+
+    const totalGain = d.amount - principal;
+    const totalRate = ((totalGain / principal) * 100).toFixed(1);
+
+    if (d.round === 0) {
+      item.innerHTML = `
+        <div class="trade-num">Start</div>
+        <div class="trade-info">
+          <div class="trade-amount">${fmtNum(d.amount)}</div>
+          <div class="trade-detail">Initial Principal</div>
+        </div>
+      `;
+    } else {
+      item.innerHTML = `
+        <div class="trade-num">P${d.round}</div>
+        <div class="trade-info">
+          <div class="trade-amount">${fmtNum(d.amount)}</div>
+          <div class="trade-detail">Profit +${fmtNum(d.gain)} · Total Return +${totalRate}%</div>
+        </div>
+        <div class="trade-gain">+${fmtNum(d.gain)}</div>
+      `;
+    }
+    list.appendChild(item);
+  });
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Enter') calculate(); });
+</script>
+
+<button class="scroll-top-btn" aria-label="Top">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

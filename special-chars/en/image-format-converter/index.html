@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>🖼️ Image Format Converter — TeemoZipsa</title>
+<meta name="description" content="Convert image formats between JPG, PNG, WebP, etc. 100% local processing in your browser without server uploads.">
+<meta property="og:title" content="🖼️ Image Format Converter — TeemoZipsa">
+<meta property="og:description" content="Convert image formats between JPG, PNG, WebP, etc. 100% local processing in your browser without server uploads.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/image-format-converter/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/image-format-converter/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/image-format-converter/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/image-format-converter/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+.app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:540px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+.content{padding:20px;display:flex;flex-direction:column;gap:14px}
+
+.drop-zone{border:2px dashed var(--border);border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg-bar)}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--accent);background:var(--bg-hover)}
+.drop-zone .icon{font-size:36px;margin-bottom:8px}
+.drop-zone .text{font-size:13px;color:var(--calc-expr-text)}
+.drop-zone .sub{font-size:11px;color:var(--text-placeholder);margin-top:4px}
+.drop-zone input{display:none}
+
+.controls{display:none;gap:14px;flex-direction:column}
+.control-row{display:flex;align-items:center;gap:12px;background:var(--bg-bar);border-radius:10px;padding:12px 16px}
+.control-row label{font-size:12px;color:var(--text-info);font-weight:600;white-space:nowrap;min-width:90px}
+
+.format-options{display:flex;gap:6px;flex:1;flex-wrap:wrap}
+.format-btn{padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg-bar);color:var(--text-section);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+.format-btn.active{background:var(--accent);border-color:var(--accent);color:var(--text-on-accent)}
+.format-btn:hover:not(.active){background:var(--bg-input);border-color:var(--border-hover)}
+
+.slider{flex:1;-webkit-appearance:none;appearance:none;height:6px;background:var(--bg-btn);border-radius:3px;outline:none}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--accent);border-radius:50%;cursor:pointer;border:2px solid var(--border-hover)}
+.slider::-moz-range-thumb{width:18px;height:18px;background:var(--accent);border-radius:50%;cursor:pointer;border:2px solid var(--border-hover)}
+.val{font-size:14px;color:var(--text-amount);font-weight:700;min-width:48px;text-align:right}
+
+.preview{display:none;gap:12px}
+.preview-card{flex:1;background:var(--bg-bar);border-radius:10px;padding:12px;text-align:center;min-width:0}
+.preview-card img{max-width:100%;max-height:140px;border-radius:6px;margin-bottom:8px;object-fit:contain}
+.preview-label{font-size:10px;color:var(--calc-expr-text);margin-bottom:2px}
+.preview-size{font-size:14px;font-weight:700;color:var(--text-amount)}
+.preview-dim{font-size:10px;color:var(--text-muted)}
+.preview-format{font-size:11px;color:var(--text-section);margin-top:2px;font-weight:600}
+.saved{font-size:14px;font-weight:700;color:var(--text-info);text-align:center;padding:4px}
+.saved.success{color:var(--text-success)}
+.saved.warning{color:var(--text-error, #f87171)}
+
+.btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .2s}
+.btn-dl{background:linear-gradient(135deg,#533483,#6b44a3);color:#fff}
+.btn-dl:hover{opacity:.9}
+.btn-reset{background:var(--bg-bar);border:1px solid var(--border);color:var(--text-info);margin-top:4px}
+.btn-reset:hover{background:var(--bg-input)}
+
+.privacy{font-size:10px;color:var(--text-placeholder);text-align:center}
+
+/* Dynamic Report & Guide standard CSS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.report-box { margin: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
+.report-box strong { color: var(--accent); }
+.guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
+.guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
+.guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.guide summary { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; line-height: 1.4; background: var(--bg-guide); transition: background 0.2s; }
+.guide summary:hover { background: var(--bg-guide-hover); }
+.guide summary::-webkit-details-marker { display: none; }
+.guide summary::after { content: '▼'; font-size: 10px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
+.guide[open] summary { background: var(--bg-btn); border-bottom: 1px solid var(--border); }
+.guide[open] summary::after { transform: rotate(180deg); }
+.guide-content { padding: 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.guide-content h3 { font-size: 14px; color: var(--text-primary); margin: 12px 0 8px; }
+.guide-content p { margin-bottom: 12px; }
+.guide-content ul, .guide-content ol { padding-left: 20px; margin-bottom: 12px; }
+.guide-content li { margin-bottom: 4px; }
+.related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+.related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+.tool-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 10px; text-decoration: none; transition: all 0.2s; }
+.tool-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.tool-icon { font-size: 24px; margin-bottom: 8px; }
+.tool-name { font-size: 12px; font-weight: 600; color: var(--text-primary); line-height: 1.3; }
+
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){
+  .scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}
+  .preview{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
+    <h1>🖼️ Image Format Converter</h1>
+    <a href="/special-chars/image-format-converter/" class="back-btn">🌐 한국어</a>
+  </div>
+  <div class="content">
+    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+      <div class="icon">📁</div>
+      <div class="text">Click or Drag image here</div>
+      <div class="sub">Supports JPG, PNG, WebP, GIF, BMP, SVG</div>
+      <input type="file" id="fileInput" accept="image/*" onchange="handleFile(this.files[0])">
+    </div>
+
+    <div class="controls" id="controls">
+      <div class="control-row">
+        <label>Output Format</label>
+        <div class="format-options" id="formatOptions">
+          <button class="format-btn" data-format="image/jpeg" onclick="setFormat(this)">JPG</button>
+          <button class="format-btn active" data-format="image/png" onclick="setFormat(this)">PNG</button>
+          <button class="format-btn" data-format="image/webp" onclick="setFormat(this)">WebP</button>
+        </div>
+      </div>
+      <div class="control-row" id="qualityRow">
+        <label>Quality</label>
+        <input type="range" class="slider" id="qualitySlider" min="10" max="100" value="90" oninput="onQualityChange()">
+        <div class="val" id="qualityVal">90%</div>
+      </div>
+    </div>
+
+    <div class="preview" id="preview">
+      <div class="preview-card">
+        <div class="preview-label">Original</div>
+        <img id="origImg">
+        <div class="preview-format" id="origFormat"></div>
+        <div class="preview-size" id="origSize"></div>
+        <div class="preview-dim" id="origDim"></div>
+      </div>
+      <div class="preview-card">
+        <div class="preview-label">Converted</div>
+        <img id="convImg">
+        <div class="preview-format" id="convFormat"></div>
+        <div class="preview-size" id="convSize"></div>
+        <div class="preview-dim" id="convDim"></div>
+      </div>
+    </div>
+
+    <div class="saved" id="savedInfo" style="display:none"></div>
+
+    <button class="btn btn-dl" id="dlBtn" style="display:none" onclick="download()">⬇️ Download Converted Image</button>
+    <button class="btn btn-reset" id="resetBtn" style="display:none" onclick="resetAll()">🗑️ Reset</button>
+
+    <div class="privacy">⚠️ 100% Local Browser Processing — Images are never sent to a server</div>
+  </div>
+
+  <section class="guide-section">
+    <h2>💡 Comprehensive Guide to Image Formatting</h2>
+    
+    <details class="guide" open>
+      <summary>1. Which image format should I use?</summary>
+      <div class="guide-content">
+        <p>Choosing the right format depends on your needs:</p>
+        <ul>
+          <li><strong>JPG (JPEG):</strong> Extremely common. Best for standard photographs. It uses lossy compression, resulting in significantly smaller file sizes. It does not support transparent backgrounds.</li>
+          <li><strong>PNG:</strong> Essential for graphics, logos, and images requiring transparency. It uses lossless compression, meaning no detail is lost, but the file size is generally larger.</li>
+          <li><strong>WebP:</strong> The modern web standard developed by Google. It offers superior compression logic relative to both JPG and PNG, preserving high quality while deeply cutting file size.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>2. Does converting image formats reduce file size?</summary>
+      <div class="guide-content">
+        <p>Sometimes. Converting from PNG to JPG usually drastically cuts file size due to compression algorithms. Converting anything to WebP generally yields a file 25-35% smaller than standard formats. You can also manipulate the <strong>Quality Slider</strong> (for JPG and WebP) to further shrink the final file size.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>3. Is my privacy protected during conversion?</summary>
+      <div class="guide-content">
+        <p>Absolutely. Unlike many online tools that upload your files to external servers, our Image Format Converter relies strictly on <strong>local browser processing</strong>. Your images never leave your desktop or mobile device.</p>
+      </div>
+    </details>
+
+    <div class="related-tools">
+      <h3>🛠️ Recommended Utility Tools</h3>
+      <div class="tools-grid">
+        <a href="/special-chars/en/image-compress/" class="tool-card">
+          <span class="tool-icon">🗜️</span>
+          <span class="tool-name">Image Compressor</span>
+        </a>
+        <a href="/special-chars/en/color-picker/" class="tool-card">
+          <span class="tool-icon">🎨</span>
+          <span class="tool-name">Color Picker</span>
+        </a>
+        <a href="/special-chars/en/qr-code/" class="tool-card">
+          <span class="tool-icon">📱</span>
+          <span class="tool-name">QR Code Generator</span>
+        </a>
+        <a href="/special-chars/en/pdf-tool/" class="tool-card">
+          <span class="tool-icon">📄</span>
+          <span class="tool-name">PDF Editor</span>
+        </a>
+      </div>
+    </div>
+  </section>
+    <div class="footer"><span>100% Local Browser Processing</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+let originalFile=null;
+let originalDataUrl=null;
+let convertedBlob=null;
+let convertedUrl=null;
+let selectedFormat='image/png';
+let quality=0.9;
+
+const dropZone=document.getElementById('dropZone');
+dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('dragover');});
+dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop',e=>{
+  e.preventDefault();dropZone.classList.remove('dragover');
+  if(e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+
+function handleFile(file){
+  if(!file||!file.type.startsWith('image/')){showToast('Please select an image file.');return;}
+  originalFile=file;
+
+  const reader=new FileReader();
+  reader.onload=function(e){
+    originalDataUrl=e.target.result;
+    document.getElementById('origImg').src=originalDataUrl;
+    document.getElementById('origFormat').textContent=file.type.split('/')[1].toUpperCase();
+    document.getElementById('origSize').textContent=formatSize(file.size);
+
+    const img=new Image();
+    img.onload=function(){
+      document.getElementById('origDim').textContent=`${img.width} × ${img.height}px`;
+      document.getElementById('controls').style.display='flex';
+      document.getElementById('preview').style.display='flex';
+      document.getElementById('dlBtn').style.display='block';
+      document.getElementById('resetBtn').style.display='block';
+
+      // 원본과 다른 포맷 자동 선택
+      autoSelectFormat(file.type);
+      convertImage(img);
+    };
+    img.src=originalDataUrl;
+  };
+  reader.readAsDataURL(file);
+}
+
+function autoSelectFormat(origType){
+  const formats=document.querySelectorAll('.format-btn');
+  const origMime=origType.toLowerCase();
+
+  // 원본과 다른 첫번째 포맷 선택
+  let selected=false;
+  formats.forEach(btn=>{
+    btn.classList.remove('active');
+    if(!selected && btn.dataset.format!==origMime){
+      btn.classList.add('active');
+      selectedFormat=btn.dataset.format;
+      selected=true;
+    }
+  });
+  if(!selected){
+    formats[1].classList.add('active');
+    selectedFormat=formats[1].dataset.format;
+  }
+  updateQualityVisibility();
+}
+
+function setFormat(btn){
+  document.querySelectorAll('.format-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedFormat=btn.dataset.format;
+  updateQualityVisibility();
+  reconvert();
+}
+
+function updateQualityVisibility(){
+  document.getElementById('qualityRow').style.display=
+    selectedFormat==='image/png'?'none':'flex';
+}
+
+function onQualityChange(){
+  quality=document.getElementById('qualitySlider').value/100;
+  document.getElementById('qualityVal').textContent=Math.round(quality*100)+'%';
+  reconvert();
+}
+
+function reconvert(){
+  if(!originalDataUrl)return;
+  const img=new Image();
+  img.onload=()=>convertImage(img);
+  img.src=originalDataUrl;
+}
+
+function convertImage(img){
+  const canvas=document.createElement('canvas');
+  canvas.width=img.width;
+  canvas.height=img.height;
+  const ctx=canvas.getContext('2d');
+
+  // JPG는 투명 배경을 흰색으로
+  if(selectedFormat==='image/jpeg'){
+    ctx.fillStyle='#ffffff';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+  }
+
+  ctx.drawImage(img,0,0);
+
+  canvas.toBlob(function(blob){
+    if(!blob){showToast('Conversion failed.');return;}
+    convertedBlob=blob;
+    if(convertedUrl) URL.revokeObjectURL(convertedUrl);
+    convertedUrl=URL.createObjectURL(blob);
+
+    document.getElementById('convImg').src=convertedUrl;
+    const ext=selectedFormat.split('/')[1];
+    document.getElementById('convFormat').textContent=(ext==='jpeg'?'JPG':ext.toUpperCase());
+    document.getElementById('convSize').textContent=formatSize(blob.size);
+    document.getElementById('convDim').textContent=`${img.width} × ${img.height}px`;
+
+    // 용량 비교
+    const diff=blob.size-originalFile.size;
+    const pct=((diff/originalFile.size)*100).toFixed(1);
+    const savedEl=document.getElementById('savedInfo');
+    if(diff<0){
+      savedEl.textContent=`📉 Reduced by ${formatSize(Math.abs(diff))} (${Math.abs(pct)}% ↓)`;
+      savedEl.style.color='';
+      savedEl.className='saved success';
+    } else if(diff>0){
+      savedEl.textContent=`📈 Increased by ${formatSize(diff)} (${pct}% ↑)`;
+      savedEl.style.color='';
+      savedEl.className='saved warning';
+    } else {
+      savedEl.textContent='Same size';
+      savedEl.style.color='';
+      savedEl.className='saved';
+    }
+    savedEl.style.display='block';
+  }, selectedFormat, selectedFormat==='image/png'?undefined:quality);
+}
+
+function download(){
+  if(!convertedBlob){showToast('No converted image to download.');return;}
+  const ext=selectedFormat.split('/')[1];
+  const name=originalFile.name.replace(/\.[^.]+$/,'')+'.'+(ext==='jpeg'?'jpg':ext);
+  const a=document.createElement('a');
+  a.href=convertedUrl;
+  a.download=name;
+  a.click();
+  showToast('Download started! ⬇️');
+}
+
+function resetAll(){
+  originalFile=null;originalDataUrl=null;convertedBlob=null;
+  if(convertedUrl)URL.revokeObjectURL(convertedUrl);convertedUrl=null;
+  document.getElementById('fileInput').value='';
+  document.getElementById('controls').style.display='none';
+  document.getElementById('preview').style.display='none';
+  document.getElementById('dlBtn').style.display='none';
+  document.getElementById('resetBtn').style.display='none';
+  document.getElementById('savedInfo').style.display='none';
+}
+
+function formatSize(bytes){
+  if(bytes<1024) return bytes+' B';
+  if(bytes<1048576) return (bytes/1024).toFixed(1)+' KB';
+  return (bytes/1048576).toFixed(1)+' MB';
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+window.addEventListener('scroll',()=>{
+  document.getElementById('scrollTopBtn').classList.toggle('visible',window.scrollY>300);
+});
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

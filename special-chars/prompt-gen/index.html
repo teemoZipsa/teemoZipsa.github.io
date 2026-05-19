@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>🤖 AI 프롬프트 자판기 — 티모집사</title>
+<meta name="description" content="빈칸만 채우면 AI가 잘 알아듣는 구조화된 프롬프트가 완성! ChatGPT, Claude 등에 바로 붙여넣기.">
+<meta property="og:title" content="🤖 AI 프롬프트 자판기 — 티모집사">
+<meta property="og:description" content="빈칸만 채우면 AI가 잘 알아듣는 구조화된 프롬프트가 완성! ChatGPT, Claude 등에 바로 붙여넣기.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/prompt-gen/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/prompt-gen/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Pretendard',sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+  .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:520px;max-width:100%;overflow:hidden}
+  .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+  .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+  .header h1{font-size:15px;font-weight:600;color:#fff}
+  .body{padding:16px;display:flex;flex-direction:column;gap:12px}
+
+  .section{background:var(--bg-bar);border-radius:12px;padding:14px 16px;border:1px solid var(--border)}
+  .section-title{font-size:12px;font-weight:700;color:var(--text-info);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+  .field:last-child{margin-bottom:0}
+  .field label{font-size:11px;color:var(--calc-expr-text);font-weight:600;display:flex;align-items:center;gap:4px}
+  .field label .tip{font-weight:400;color:var(--text-placeholder)}
+  .field input,.field textarea,.field select{background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);padding:10px 12px;font-size:14px;font-family:inherit;outline:none;width:100%}
+  .field input:focus,.field textarea:focus{border-color:var(--accent)}
+  .field input::placeholder,.field textarea::placeholder{color:var(--text-muted)}
+  .field textarea{resize:vertical;min-height:60px;line-height:1.5}
+
+  /* 프리셋 */
+  .presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .preset{background:var(--bg-input);border:1px solid var(--border);color:var(--text-info);padding:5px 12px;border-radius:8px;font-size:11px;cursor:pointer;font-family:inherit;transition:all .15s}
+  .preset:hover{border-color:var(--accent);color:var(--text-amount)}
+  .preset.active{background:var(--accent);color:var(--text-on-accent);border-color:var(--accent)}
+
+  /* 결과 */
+  .result-box{display:none;background:var(--bg-input);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:13px;line-height:1.7;color:var(--text-primary);white-space:pre-wrap;word-break:break-word;max-height:300px;overflow-y:auto;position:relative}
+  .btn-row{display:flex;gap:8px}
+  .btn{flex:1;padding:10px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .2s}
+  .btn-primary{background:linear-gradient(135deg,#533483,#6b44a3);color:var(--text-on-accent)}
+  .btn-secondary{background:var(--bg-bar);border:1px solid var(--border);color:var(--text-info)}
+  .btn:hover{opacity:.85}
+
+  .char-count{font-size:10px;color:var(--text-placeholder);text-align:right;margin-top:4px}
+
+  .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text)}
+  .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+  .footer a:hover{color:var(--text-guide)}
+  .guide-section{margin:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+  .guide-section summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
+  .guide-section summary:hover{background:var(--bg-guide-hover)}
+  .guide-section[open] summary{background:var(--bg-btn);border-bottom:1px solid var(--border)}
+  .guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
+  .guide-content ol{padding-left:20px}.guide-content li{margin-bottom:4px}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+    <h1>🤖 AI 프롬프트 자판기</h1>
+  </div>
+  <div class="body">
+    <div class="section">
+      <div class="section-title">⚡ 빠른 템플릿</div>
+      <div class="presets">
+        <button class="preset" onclick="loadPreset('general')">💬 범용</button>
+        <button class="preset" onclick="loadPreset('writing')">✍️ 글쓰기</button>
+        <button class="preset" onclick="loadPreset('code')">💻 코딩</button>
+        <button class="preset" onclick="loadPreset('translate')">🌐 번역</button>
+        <button class="preset" onclick="loadPreset('summary')">📋 요약</button>
+        <button class="preset" onclick="loadPreset('brainstorm')">💡 브레인스토밍</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">📝 프롬프트 빌더</div>
+
+      <div class="field">
+        <label>🎭 역할 (Role) <span class="tip">— AI에게 부여할 전문가 역할</span></label>
+        <input type="text" id="role" placeholder="예: 10년차 마케팅 전문가" oninput="build()">
+      </div>
+
+      <div class="field">
+        <label>🎯 목적 (Task) <span class="tip">— 무엇을 해달라고 할 건지</span></label>
+        <textarea id="task" placeholder="예: 인스타그램 릴스용 마케팅 카피 10개를 작성해줘" oninput="build()"></textarea>
+      </div>
+
+      <div class="field">
+        <label>📌 맥락 (Context) <span class="tip">— 배경 정보, 대상, 상황 (선택)</span></label>
+        <textarea id="context" placeholder="예: 타겟은 20-30대 여성, 제품은 비건 화장품 브랜드" oninput="build()"></textarea>
+      </div>
+
+      <div class="field">
+        <label>📐 출력 형식 (Format) <span class="tip">— 원하는 결과물 형태 (선택)</span></label>
+        <input type="text" id="format" placeholder="예: 번호 매긴 리스트, 각 항목 2줄 이내" oninput="build()">
+      </div>
+
+      <div class="field">
+        <label>⚠️ 제약 조건 (Constraints) <span class="tip">— 주의사항, 금지 사항 (선택)</span></label>
+        <input type="text" id="constraints" placeholder="예: 이모지 포함, 각 카피 30자 이내, 영어 사용 금지" oninput="build()">
+      </div>
+
+      <div class="field">
+        <label>🗣️ 어조 (Tone) <span class="tip">— 말투 스타일 (선택)</span></label>
+        <select id="tone" onchange="build()">
+          <option value="">지정 안 함</option>
+          <option value="친근하고 캐주얼한">친근하고 캐주얼하게</option>
+          <option value="전문적이고 격식 있는">전문적이고 격식 있게</option>
+          <option value="유머러스하고 재치 있는">유머러스하고 재치 있게</option>
+          <option value="간결하고 핵심만 담은">간결하고 핵심만</option>
+          <option value="공감적이고 따뜻한">공감적이고 따뜻하게</option>
+          <option value="설득력 있고 논리적인">설득력 있고 논리적으로</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="result-box" id="resultBox"></div>
+    <div class="char-count" id="charCount"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="copyPrompt()">📋 프롬프트 복사</button>
+      <button class="btn btn-secondary" onclick="clearAll()">🗑️ 초기화</button>
+    </div>
+  </div>
+  <details class="guide-section">
+    <summary>📖 사용 방법</summary>
+    <div class="guide-content">
+      <ol>
+        <li>카테고리에서 원하는 프롬프트 템플릿을 선택하세요.</li>
+        <li>빈칸([ ] 부분)에 원하는 내용을 채워넣으세요.</li>
+        <li>"복사" 버튼을 클릭하여 완성된 프롬프트를 ChatGPT, Claude 등에 붙여넣으세요.</li>
+      </ol>
+    </div>
+  </details>
+  <details class="guide-section">
+    <summary>💡 자주 묻는 질문</summary>
+    <div class="guide-content">
+      <strong>Q. 좋은 프롬프트를 작성하는 팁은?</strong>
+      <p>좋은 프롬프트의 핵심은 <strong>구체성</strong>입니다. "글 써줘" 대신 "20대 여성을 타겟으로 한 비건 화장품 인스타그램 릴스 카피 10개를 캐주얼한 톤으로 작성해줘"처럼 역할, 대상, 형식, 어조를 명시하면 훨씬 좋은 결과를 얻을 수 있습니다. 이 도구의 역할(Role)-목적(Task)-맥락(Context)-형식(Format)-제약(Constraints) 구조를 활용하면 자연스럽게 구조화된 프롬프트가 완성됩니다.</p>
+      <br>
+      <strong>Q. 프리셋 템플릿은 어떻게 활용하나요?</strong>
+      <p>프리셋은 자주 사용되는 작업 유형(글쓰기, 코딩, 번역, 요약, 브레인스토밍)에 대한 최적화된 기본값을 제공합니다. 프리셋을 선택한 후 빈칸만 채우면 바로 사용할 수 있고, 필요에 따라 각 필드를 자유롭게 수정할 수도 있습니다. 예를 들어 '글쓰기' 프리셋을 선택하고 주제만 입력하면 블로그 글 작성 프롬프트가 즉시 완성됩니다.</p>
+      <br>
+      <strong>Q. ChatGPT와 Claude에서 프롬프트 사용법이 다른가요?</strong>
+      <p>기본적인 프롬프트 구조는 동일하게 사용할 수 있습니다. 다만 각 AI의 특성에 따라 약간의 차이가 있습니다. ChatGPT는 시스템 메시지로 역할을 지정하는 것이 효과적이고, Claude는 XML 태그(&lt;role&gt;, &lt;task&gt; 등)를 활용하면 더 정확한 결과를 얻을 수 있습니다. 이 도구에서 생성된 프롬프트는 두 서비스 모두에서 잘 작동합니다.</p>
+    </div>
+  </details>
+    <div class="footer"><span>AI 프롬프트 자판기</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+<script>
+const PRESETS = {
+  general: { role:'도움이 되는 AI 어시스턴트', task:'', context:'', format:'', constraints:'', tone:'' },
+  writing: { role:'10년차 카피라이터', task:'아래 주제로 블로그 글을 작성해줘', context:'', format:'제목 + 소제목 3개 + 본문 (총 800자 내외)', constraints:'쉬운 표현, 한국어만', tone:'친근하고 캐주얼한' },
+  code: { role:'시니어 풀스택 개발자', task:'아래 요구사항에 맞는 코드를 작성해줘', context:'', format:'코드 블록 + 주석 + 간단한 사용법 설명', constraints:'최신 문법 사용, 에러 처리 포함', tone:'간결하고 핵심만 담은' },
+  translate: { role:'한영 전문 번역가', task:'아래 텍스트를 자연스러운 영어로 번역해줘', context:'', format:'원문과 번역문을 나란히', constraints:'직역보다 의역 중심, 뉘앙스 살리기', tone:'' },
+  summary: { role:'문서 요약 전문가', task:'아래 내용을 핵심만 간결하게 요약해줘', context:'', format:'3줄 요약 + 핵심 키워드 5개', constraints:'원문의 핵심 논지를 빠뜨리지 않기', tone:'간결하고 핵심만 담은' },
+  brainstorm: { role:'창의적인 기획자', task:'아래 주제에 대한 아이디어를 브레인스토밍해줘', context:'', format:'번호 매긴 리스트, 각 아이디어에 한 줄 설명 포함', constraints:'실현 가능성 높은 아이디어 위주, 최소 10개', tone:'유머러스하고 재치 있는' }
+};
+
+function loadPreset(key) {
+  const p = PRESETS[key];
+  document.getElementById('role').value = p.role;
+  document.getElementById('task').value = p.task;
+  document.getElementById('context').value = p.context;
+  document.getElementById('format').value = p.format;
+  document.getElementById('constraints').value = p.constraints;
+  document.getElementById('tone').value = p.tone;
+  document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  build();
+}
+
+// 자동 저장: 페이지 로드 시 이전 입력 복원
+(function(){
+  const FIELDS = ['role','task','context','format','constraints','tone'];
+  FIELDS.forEach(id => {
+    const saved = localStorage.getItem('promptGen_' + id);
+    if (saved) document.getElementById(id).value = saved;
+  });
+  setTimeout(build, 0);
+})();
+
+function build() {
+  const role = document.getElementById('role').value.trim();
+  const task = document.getElementById('task').value.trim();
+  const context = document.getElementById('context').value.trim();
+  const format = document.getElementById('format').value.trim();
+  const constraints = document.getElementById('constraints').value.trim();
+  const tone = document.getElementById('tone').value;
+
+  // 자동 저장
+  try{
+    ['role','task','context','format','constraints','tone'].forEach(id => {
+      localStorage.setItem('promptGen_' + id, document.getElementById(id).value);
+    });
+  }catch(e){}
+
+  if (!role && !task) {
+    document.getElementById('resultBox').style.display = 'none';
+    document.getElementById('charCount').textContent = '';
+    return;
+  }
+
+  let prompt = '';
+  if (role) prompt += `당신은 ${role}입니다.\n\n`;
+  if (task) prompt += `[요청]\n${task}\n\n`;
+  if (context) prompt += `[맥락/배경]\n${context}\n\n`;
+  if (tone) prompt += `[어조]\n${tone} 말투로 작성해주세요.\n\n`;
+  if (format) prompt += `[출력 형식]\n${format}\n\n`;
+  if (constraints) prompt += `[제약 조건]\n${constraints}\n`;
+
+  prompt = prompt.trim();
+  document.getElementById('resultBox').textContent = prompt;
+  document.getElementById('resultBox').style.display = 'block';
+  document.getElementById('charCount').textContent = `${prompt.length}자`;
+}
+
+function copyPrompt() {
+  const text = document.getElementById('resultBox').textContent;
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = '✅ 복사 완료!';
+    setTimeout(() => { btn.textContent = '📋 프롬프트 복사'; }, 1500);
+  });
+}
+
+function clearAll() {
+  ['role','task','context','format','constraints'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('tone').value = '';
+  document.getElementById('resultBox').style.display = 'none';
+  document.getElementById('charCount').textContent = '';
+  document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
+  // 자동 저장 데이터도 제거
+  try{['role','task','context','format','constraints','tone'].forEach(id => localStorage.removeItem('promptGen_' + id))}catch(e){}
+}
+</script>
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

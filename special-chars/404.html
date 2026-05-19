@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>페이지를 찾을 수 없습니다 — 티모집사</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    text-align: center;
+  }
+  .container {
+    background: #16213e;
+    border-radius: 16px;
+    padding: 48px 32px;
+    max-width: 480px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .error-code { font-size: 72px; font-weight: 800; color: #533483; margin-bottom: 8px; }
+  .message { font-size: 18px; margin-bottom: 24px; color: #aaa; }
+  .home-link {
+    display: inline-block;
+    padding: 12px 28px;
+    background: linear-gradient(135deg, #0f3460, #533483);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: opacity 0.2s;
+  }
+  .home-link:hover { opacity: 0.85; }
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="error-code">404</div>
+  <p class="message">페이지를 찾을 수 없습니다</p>
+  <a href="/special-chars/" class="home-link">도구 모음으로 돌아가기</a>
+</div>
+</body>
+</html>

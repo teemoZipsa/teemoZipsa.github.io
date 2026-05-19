@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>⚖️ 반려동물 체중 관리 — 티모집사</title>
+<meta name="description" content="반려동물 체중 관리 도구. 강아지·고양이의 체중, 체형(BCS)을 평가하고 이상 체중을 확인하세요. 품종별 표준 체중 안내.">
+<meta property="og:title" content="⚖️ 반려동물 체중 관리 — 티모집사">
+<meta property="og:description" content="강아지·고양이 체중과 체형(BCS)을 평가해보세요.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/pet-bmi-calc/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/pet-bmi-calc/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:start;padding:20px}
+.app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+.body{padding:20px;display:flex;flex-direction:column;gap:16px}
+
+.type-tabs{display:flex;gap:0;background:var(--bg-guide);border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.type-tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--text-info);background:transparent;border:none;font-family:inherit}
+.type-tab:hover{color:var(--text-secondary);background:var(--bg-input)}
+.type-tab.active{background:var(--accent);color:var(--text-on-accent)}
+
+.input-group{display:flex;flex-direction:column;gap:4px}
+.input-group label{font-size:12px;color:var(--text-info);font-weight:600}
+.input-row{display:flex;align-items:center;gap:8px}
+.input-row input,.input-row select{flex:1;padding:12px 14px;background:var(--bg-guide);border:1.5px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:16px;font-family:inherit;font-weight:600;outline:none;transition:border-color .2s}
+.input-row input:focus,.input-row select:focus{border-color:var(--accent)}
+.input-row .unit{font-size:14px;color:var(--text-info);font-weight:600;min-width:24px}
+.input-row select{cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%23999' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+
+.bcs-selector{display:flex;gap:4px}
+.bcs-btn{flex:1;padding:8px 4px;text-align:center;font-size:11px;font-weight:600;cursor:pointer;border:2px solid var(--border);border-radius:8px;background:var(--bg-guide);color:var(--text-info);font-family:inherit;transition:all .2s}
+.bcs-btn:hover{border-color:var(--accent)}
+.bcs-btn.active{border-color:var(--accent);background:var(--accent);color:var(--text-on-accent)}
+.bcs-emoji{font-size:20px;display:block;margin-bottom:2px}
+
+.result-card{border-radius:16px;padding:24px;text-align:center;background:var(--bg-guide);border:1px solid var(--border)}
+.result-emoji{font-size:56px;margin-bottom:8px}
+.result-status{font-size:22px;font-weight:800}
+.result-sub{font-size:13px;color:var(--text-info);margin-top:6px;line-height:1.6}
+
+.gauge-wrap{width:100%;padding:0 8px}
+.gauge-bar{height:14px;border-radius:7px;background:linear-gradient(to right,#3b82f6 0%,#22c55e 35%,#facc15 60%,#f97316 80%,#ef4444 100%);position:relative;margin:8px 0}
+.gauge-marker{position:absolute;top:-4px;width:4px;height:22px;background:var(--text-primary);border-radius:2px;transition:left .4s ease;box-shadow:0 0 4px rgba(0,0,0,.3)}
+.gauge-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);padding:0 2px}
+
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.info-item{background:var(--bg-guide);border-radius:10px;padding:12px;text-align:center;border:1px solid var(--border)}
+.info-item .label{font-size:11px;color:var(--text-info);margin-bottom:2px}
+.info-item .value{font-size:15px;font-weight:700;color:var(--text-primary)}
+
+.breed-section label{font-size:12px;color:var(--text-info);font-weight:600;margin-bottom:4px;display:block}
+.breed-search{width:100%;padding:8px 12px 8px 32px;background:var(--bg-guide);border:1.5px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:13px;font-family:inherit;outline:none;margin-bottom:6px;transition:border-color .2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23999' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:10px center}
+.breed-search:focus{border-color:var(--accent)}
+.breed-search::placeholder{color:var(--text-muted)}
+.breed-count{font-size:10px;color:var(--text-muted);margin-bottom:4px}
+.breed-list{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:200px;overflow-y:auto;padding:4px}
+.breed-item{padding:8px 10px;background:var(--bg-guide);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--text-secondary);cursor:pointer;transition:all .2s;text-align:center}
+.breed-item:hover{border-color:var(--accent);background:var(--bg-input)}
+.breed-item.active{border-color:var(--accent);background:var(--accent);color:var(--text-on-accent)}
+.breed-empty{grid-column:1/-1;text-align:center;padding:20px;font-size:12px;color:var(--text-muted)}
+
+.guide-section{margin:0 12px 12px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.guide-section summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
+.guide-section summary:hover{background:var(--bg-guide-hover)}
+.guide-section[open] summary{background:var(--bg-btn);border-bottom:1px solid var(--border)}
+.guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
+.guide-content strong{color:var(--text-secondary)}
+
+.report-box{background:var(--bg-guide);padding:20px;border-radius:12px;border:1px solid var(--border);line-height:1.6;font-size:14px;color:var(--text-primary);margin-top:16px;animation:fadeIn 0.5s ease-out;display:none}
+.report-box.active{display:block}
+.report-box h3{font-size:15px;margin-bottom:12px;font-weight:700}
+.report-box p{margin-bottom:10px;color:var(--text-info);word-break:keep-all}
+.report-box .highlight{font-weight:700;color:var(--text-primary)}
+.report-tip{background:var(--bg-body);border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0;border-radius:0 8px 8px 0;font-size:13.5px}
+.report-notice{font-size:12px;color:var(--text-muted)!important;margin-top:16px;padding-top:12px;border-top:1px dashed var(--border)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.related-tools{margin:0 12px 12px;padding:16px;background:var(--bg-guide);border-radius:8px;border:1px solid var(--border)}
+.related-tools h4{font-size:14px;margin-bottom:10px;font-weight:700;color:var(--text-primary)}
+.related-tools ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px}
+.related-tools li a{font-size:13px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:6px;transition:opacity .2s}
+.related-tools li a:hover{opacity:0.8;text-decoration:underline}
+
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.4);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+    <h1>⚖️ 반려동물 체중 관리</h1>
+  </div>
+  <div class="body">
+    <div class="type-tabs">
+      <button class="type-tab active" onclick="setType('dog')">🐶 강아지</button>
+      <button class="type-tab" onclick="setType('cat')">🐱 고양이</button>
+    </div>
+
+    <div class="breed-section" id="breedSection">
+      <label>품종 (표준 체중 참고)</label>
+      <input type="text" class="breed-search" id="breedSearch" placeholder="품종 검색 (예: 골든, 푸들, 랙돌...)" oninput="renderBreeds()">
+      <div class="breed-count" id="breedCount"></div>
+      <div class="breed-list" id="breedList"></div>
+    </div>
+
+    <div class="input-group">
+      <label>현재 체중</label>
+      <div class="input-row">
+        <input type="number" id="weight" value="3.5" min="0.5" max="100" step="0.1" oninput="calc()">
+        <span class="unit">kg</span>
+      </div>
+    </div>
+
+    <!-- BCS 입력부 제거됨 -->
+
+    <div class="result-card" id="resultCard">
+      <div class="result-emoji" id="emoji">⚖️</div>
+      <div class="result-status" id="status">-</div>
+      <div class="result-sub" id="statusDetail">체중과 체형을 입력하세요</div>
+    </div>
+
+    <div class="gauge-wrap">
+      <div class="gauge-bar"><div class="gauge-marker" id="gaugeMarker" style="left:40%"></div></div>
+      <div class="gauge-labels">
+        <span>저체중</span><span>이상적</span><span>과체중</span><span>비만</span>
+      </div>
+    </div>
+
+    <div class="info-grid" id="infoGrid"></div>
+
+    <!-- SEO 친화적 사전 렌더링된 상세 분석 리포트 -->
+    <div class="report-box active" id="reportBox">
+      <h3>📋 맞춤형 체중 분석 리포트</h3>
+      <p>
+        입력하신 정보(반려동물 종류: <span class="highlight" id="r-type">🐶 강아지</span>, 품종: <span class="highlight"><span id="r-breed">말티즈</span></span>, 현재 체중: <span class="highlight"><span id="r-weight">3.5</span>kg</span>)를 바탕으로 분석한 결과입니다.
+      </p>
+      <p>
+        <span id="r-breed-name">말티즈</span> 품종의 의학적 표준 체중 범위는 <strong><span id="r-range-min">2.5</span>kg ~ <span id="r-range-max">4.0</span>kg</strong> 사이로 권장되고 있습니다. 이를 바탕으로 평가했을 때, 현재 반려동물은 <strong><span id="r-status" style="color:#22c55e;">[이상적]</span></strong>인 건강 체중 상태에 해당합니다. (해당 품종의 평균 이상 체중은 <span id="r-ideal">3.3</span>kg 입니다.)
+      </p>
+      <div class="report-tip" id="r-tip-box" style="border-color:#22c55e;">
+        <strong>💡 건강 관리 가이드:</strong> <span id="r-tip">건강한 정상 체중이에요! 지금처럼 꾸준한 산책과 균형 잡힌 사료 급여를 통해 안정적인 체형을 평생 유지해 주시기 바랍니다.</span>
+      </div>
+      <p class="report-notice">
+        ※ 본 결과는 대중적인 품종별 평균 체중 통계를 기준으로 한 분석치입니다. 같은 품종이더라도 부모견(묘)의 골격 크기나 타고난 체형에 따라 적정 체중 수치는 차이가 날 수 있습니다. 아이별 체형 상태는 늑골 촉진을 통한 체조직 평가(BCS)로 추가 점검을 권장합니다.
+      </p>
+    </div>
+  </div>
+
+    <!-- BCS 가이드 제거됨 -->
+
+  <details class="guide-section">
+    <summary>❓ 반려동물 체중 관리 Q&A</summary>
+    <div class="guide-content">
+      <strong>Q. 표준 체중 관리가 왜 중요한가요?</strong><br>
+      비만은 무릎 슬개골 탈구를 비롯한 관절 질환, 치명적인 당뇨, 예고 없는 심장병 등의 발병 위험을 크게 높입니다. 따라서 전문가가 권하는 이상 체중의 10% 이내를 생애 주기에 맞춰 유지하는 것이 기대수명 연장과 직결됩니다.<br><br>
+      <strong>Q. 사람 BMI 공식처럼 계산하면 안 되나요?</strong><br>
+      반려동물은 치와와부터 대형마스티프까지 품종별 체중과 골격 차이가 워낙 심해 단일 공식(키/몸무게 구조) 적용이 불가합니다. 이 때문에 수의학에서는 BCS(체형 점수)와 품종의 표준 체중 통계를 병합하여 정확한 비만도를 판별합니다.
+    </div>
+  </details>
+
+  <div class="magazine-cta" id="catMagazineCta" style="display:none; margin: 0 12px 12px; padding: 16px; background: linear-gradient(135deg, var(--bg-hover), var(--bg-guide)); border: 2px solid var(--accent); border-radius: 8px; text-align: center;">
+    <h4 style="font-size:14px; margin-bottom:8px; font-weight:700; color:var(--text-primary)">우리 고양이 비만일까? 원시주머니일까? 🐱</h4>
+    <p style="font-size:12px; color:var(--text-info); margin-bottom:12px; word-break:keep-all;">2025년 최신 수의학 연구에 기반한 고양이 눈대중 체형 평가(BCS) 가이드를 티모 매거진에서 확인해보세요!</p>
+    <a href="/blog/cat-bmi-guide/" style="display:inline-block; padding:8px 16px; background:var(--accent); color:var(--text-on-accent); border-radius:8px; text-decoration:none; font-size:13px; font-weight:700;">가이드 읽어보기 ➔</a>
+  </div>
+
+  <div class="related-tools">
+    <h4>🔗 추천 관련 계산 도구</h4>
+    <ul>
+      <li><a href="/special-chars/pet-food-calc/">🥩 반려동물 맞춤 일일 권장 사료량 계산기</a></li>
+      <li><a href="/special-chars/pet-age-calc/">🐾 강아지/고양이 사람 나이 환산기</a></li>
+    </ul>
+  </div>
+
+  <div class="footer"><span>품종별 표준 체중 비교 도구</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+
+<script>
+let petType = 'dog';
+let selectedBreed = null;
+
+const DOG_BREEDS = [
+  // 초소형 (1~4kg)
+  { name: '치와와', min: 1.5, max: 3 },
+  { name: '포메라니안', min: 1.5, max: 3.5 },
+  { name: '말티즈', min: 2.5, max: 4 },
+  { name: '요크셔 테리어', min: 2, max: 3.5 },
+  { name: '파피용', min: 2, max: 4.5 },
+  { name: '이탈리안 그레이하운드', min: 3, max: 5 },
+  { name: '토이 푸들', min: 2, max: 4 },
+  { name: '미니어처 핀셔', min: 3, max: 5 },
+  { name: '프렌치 불도그', min: 8, max: 13 },
+  { name: '러시안 토이', min: 1, max: 3 },
+  { name: '실키 테리어', min: 3.5, max: 5 },
+  { name: '아펜핀셔', min: 3, max: 4 },
+  // 소형 (4~10kg)
+  { name: '시추', min: 4, max: 7.5 },
+  { name: '미니어처 푸들', min: 5, max: 8 },
+  { name: '비숑 프리제', min: 3, max: 6 },
+  { name: '페키니즈', min: 3, max: 6 },
+  { name: '닥스훈트', min: 5, max: 12 },
+  { name: '웨스트 하이랜드 테리어', min: 6, max: 10 },
+  { name: '미니어처 슈나우저', min: 5, max: 8 },
+  { name: '캐벌리어 킹찰스', min: 5.5, max: 8 },
+  { name: '보스턴 테리어', min: 5, max: 11 },
+  { name: '퍼그', min: 6, max: 8 },
+  { name: '라사 압소', min: 5, max: 8 },
+  { name: '잭 러셀 테리어', min: 5, max: 8 },
+  { name: '코튼 드 툴레아', min: 4, max: 6 },
+  { name: '하바니즈', min: 3.5, max: 7 },
+  { name: '노리치 테리어', min: 5, max: 5.5 },
+  { name: '스코티시 테리어', min: 8, max: 10 },
+  { name: '볼로네즈', min: 2.5, max: 4 },
+  { name: '코카푸', min: 5, max: 11 },
+  { name: '말티푸', min: 2.5, max: 5 },
+  { name: '폼스키', min: 7, max: 14 },
+  // 중형 (10~25kg)
+  { name: '웰시 코기', min: 10, max: 14 },
+  { name: '비글', min: 9, max: 11 },
+  { name: '코카 스파니엘', min: 12, max: 15 },
+  { name: '보더 콜리', min: 14, max: 20 },
+  { name: '스탠다드 슈나우저', min: 14, max: 20 },
+  { name: '스탠다드 푸들', min: 18, max: 27 },
+  { name: '불독 (잉글리시)', min: 18, max: 25 },
+  { name: '스프링어 스파니엘', min: 18, max: 25 },
+  { name: '셸티', min: 6, max: 12 },
+  { name: '버셋 하운드', min: 20, max: 29 },
+  { name: '사모예드', min: 16, max: 30 },
+  { name: '차우차우', min: 20, max: 32 },
+  { name: '오스트레일리안 셰퍼드', min: 16, max: 27 },
+  { name: '불 테리어', min: 22, max: 32 },
+  { name: '아메리칸 코커 스파니엘', min: 10, max: 13 },
+  { name: '달마시안', min: 20, max: 30 },
+  { name: '위핏', min: 11, max: 18 },
+  { name: '바센지', min: 9.5, max: 12 },
+  { name: '시바 이누', min: 8, max: 12 },
+  { name: '아키타', min: 32, max: 45 },
+  // 대형 (25~45kg)
+  { name: '진돗개', min: 18, max: 23 },
+  { name: '래브라도 리트리버', min: 25, max: 36 },
+  { name: '골든 리트리버', min: 25, max: 34 },
+  { name: '시베리안 허스키', min: 16, max: 27 },
+  { name: '저먼 셰퍼드', min: 22, max: 40 },
+  { name: '도베르만', min: 27, max: 45 },
+  { name: '벨지안 말리노이즈', min: 20, max: 30 },
+  { name: '복서', min: 25, max: 32 },
+  { name: '로트와일러', min: 36, max: 60 },
+  { name: '와이마라너', min: 25, max: 40 },
+  { name: '아이리시 세터', min: 24, max: 32 },
+  { name: '포인터', min: 20, max: 30 },
+  { name: '비즐라', min: 18, max: 27 },
+  { name: '플랫코티드 리트리버', min: 25, max: 36 },
+  { name: '콜리 (러프)', min: 23, max: 34 },
+  { name: '자이언트 슈나우저', min: 25, max: 40 },
+  // 초대형 (45kg+)
+  { name: '그레이트 데인', min: 50, max: 80 },
+  { name: '세인트 버나드', min: 54, max: 82 },
+  { name: '마스티프', min: 54, max: 100 },
+  { name: '뉴펀들랜드', min: 45, max: 70 },
+  { name: '그레이트 피레니즈', min: 36, max: 54 },
+  { name: '버니즈 마운틴독', min: 32, max: 52 },
+  { name: '아이리시 울프하운드', min: 48, max: 70 },
+  { name: '보르조이', min: 27, max: 48 },
+  { name: '레온베르거', min: 41, max: 75 },
+  { name: '티베탄 마스티프', min: 36, max: 68 },
+  { name: '캉갈', min: 40, max: 65 },
+];
+
+const CAT_BREEDS = [
+  // 소형 (2~4kg)
+  { name: '싱가푸라', min: 1.5, max: 3.5 },
+  { name: '먼치킨', min: 2.5, max: 4 },
+  { name: '코니시 렉스', min: 2.5, max: 4 },
+  { name: '데본 렉스', min: 2.5, max: 4 },
+  { name: '아메리칸 컬', min: 2.5, max: 4.5 },
+  { name: '소말리', min: 2.7, max: 4.5 },
+  { name: '발리니즈', min: 2.5, max: 4.5 },
+  { name: '자바니즈', min: 2.5, max: 4.5 },
+  { name: '오시캣', min: 2.5, max: 5 },
+  { name: '봄베이', min: 2.5, max: 5 },
+  { name: '버밀라', min: 3, max: 5 },
+  { name: '코랫', min: 2.5, max: 4.5 },
+  { name: '하바나 브라운', min: 2.5, max: 4.5 },
+  { name: '라팜', min: 2.5, max: 4.5 },
+  // 중형 (3.5~6kg)
+  { name: '한국 고양이 (코숏)', min: 3.5, max: 5.5 },
+  { name: '러시안 블루', min: 3, max: 5.5 },
+  { name: '터키쉬 앙고라', min: 2.5, max: 5 },
+  { name: '아비시니안', min: 2.7, max: 4.5 },
+  { name: '페르시안', min: 3, max: 5.5 },
+  { name: '스코티시 폴드', min: 3, max: 6 },
+  { name: '샴 (시아미즈)', min: 2.5, max: 5 },
+  { name: '버만', min: 3, max: 6 },
+  { name: '통키니즈', min: 2.5, max: 5 },
+  { name: '이집션 마우', min: 3, max: 5 },
+  { name: '아메리칸 숏헤어', min: 3, max: 5.5 },
+  { name: '엑조틱 숏헤어', min: 3, max: 6 },
+  { name: '버미즈', min: 3.5, max: 5.5 },
+  { name: '터키쉬 반', min: 3, max: 8.5 },
+  { name: '셀커크 렉스', min: 3, max: 5 },
+  { name: '맹크스', min: 3.5, max: 5.5 },
+  { name: '재패니즈 밥테일', min: 2.5, max: 4 },
+  { name: '네벨룽', min: 3, max: 5 },
+  // 대형 (5~11kg)
+  { name: '브리티시 숏헤어', min: 4, max: 7 },
+  { name: '벵갈', min: 3.5, max: 7 },
+  { name: '랙돌', min: 4.5, max: 9 },
+  { name: '노르웨이 숲', min: 4, max: 9 },
+  { name: '메인쿤', min: 5, max: 11 },
+  { name: '사바나', min: 5, max: 11 },
+  { name: '시베리안', min: 4, max: 9 },
+  { name: '브리티시 롱헤어', min: 4, max: 7.5 },
+  { name: '샤르트뢰', min: 3, max: 7 },
+  { name: '스핑크스', min: 3, max: 5.5 },
+  { name: '오리엔탈', min: 2.5, max: 5 },
+  { name: '픽시밥', min: 4, max: 8 },
+];
+
+const BCS_DATA = [];
+
+function setType(t) {
+  petType = t;
+  selectedBreed = null;
+  document.querySelectorAll('.type-tab').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.type-tab[onclick*="${t}"]`).classList.add('active');
+  document.getElementById('breedSearch').value = '';
+  document.getElementById('catMagazineCta').style.display = t === 'cat' ? 'block' : 'none';
+  renderBreeds();
+  calc();
+}
+
+function renderBreeds() {
+  const allBreeds = petType === 'dog' ? DOG_BREEDS : CAT_BREEDS;
+  const query = (document.getElementById('breedSearch').value || '').trim().toLowerCase();
+  const list = document.getElementById('breedList');
+  
+  const filtered = allBreeds.map((b, i) => ({ ...b, idx: i })).filter(b => {
+    if (!query) return true;
+    return b.name.toLowerCase().includes(query) || b.name.replace(/\s/g,'').toLowerCase().includes(query.replace(/\s/g,''));
+  });
+  
+  document.getElementById('breedCount').textContent = query ? `${filtered.length}/${allBreeds.length}종 표시` : `총 ${allBreeds.length}종`;
+  
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="breed-empty">😿 일치하는 품종이 없습니다</div>';
+    return;
+  }
+  
+  list.innerHTML = filtered.map(b => {
+    const isActive = selectedBreed && selectedBreed.name === b.name;
+    return `<div class="breed-item${isActive ? ' active' : ''}" data-idx="${b.idx}" onclick="selectBreed(${b.idx})">${b.name}<br><span style="font-size:10px;color:var(--text-muted)">${b.min}~${b.max}kg</span></div>`;
+  }).join('');
+}
+
+function selectBreed(idx) {
+  const breeds = petType === 'dog' ? DOG_BREEDS : CAT_BREEDS;
+  selectedBreed = breeds[idx];
+  document.querySelectorAll('.breed-item').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.breed-item[data-idx="${idx}"]`).classList.add('active');
+  // Set weight to midpoint
+  const mid = (selectedBreed.min + selectedBreed.max) / 2;
+  document.getElementById('weight').value = mid.toFixed(1);
+  calc();
+}
+
+function calc() {
+  const w = parseFloat(document.getElementById('weight').value);
+  if (!w || w <= 0) return;
+
+  if (!selectedBreed) {
+    document.getElementById('emoji').textContent = '🤷';
+    document.getElementById('status').textContent = '품종을 선택하세요';
+    document.getElementById('statusDetail').textContent = '표준 체중과 비교하기 위해 위에서 품종을 먼저 검색하고 선택해주세요.';
+    document.getElementById('infoGrid').innerHTML = '';
+    const labelSpans = document.querySelectorAll('.gauge-labels span');
+    labelSpans.forEach(s => s.style.fontWeight = 'normal');
+    document.getElementById('gaugeMarker').style.display = 'none';
+    document.getElementById('reportBox').classList.remove('active');
+    return;
+  }
+  
+  document.getElementById('reportBox').classList.add('active');
+  document.getElementById('gaugeMarker').style.display = 'block';
+
+  // Determine ideal weight
+  const idealWeight = (selectedBreed.min + selectedBreed.max) / 2;
+  const idealSource = selectedBreed.name + ' 기준';
+  
+  const diff = w - idealWeight;
+  const diffPct = ((w - idealWeight) / idealWeight * 100);
+
+  // Combined assessment
+  let statusText, statusColor, emoji, tip;
+
+  // Weight sanity check
+  const maxSane = petType === 'dog' ? 90 : 15;
+  const weightInsane = w > maxSane;
+
+  if (weightInsane) {
+    statusText = '⚠️ 체중 확인 필요';
+    statusColor = '#ef4444';
+    emoji = '❓';
+    tip = petType === 'dog' ? '강아지 체중이 ' + maxSane + 'kg 이상입니다. 입력을 확인해주세요.' : '고양이 체중이 ' + maxSane + 'kg 이상입니다. 입력을 확인해주세요.';
+  } else {
+    // Breed-based assessment
+    if (w < selectedBreed.min * 0.8) {
+      statusText = '심각한 저체중';
+      statusColor = '#3b82f6'; emoji = '🦴';
+      tip = '수의사 상담을 권장합니다';
+    } else if (w < selectedBreed.min) {
+      statusText = '저체중';
+      statusColor = '#60a5fa'; emoji = '🦴';
+      tip = '사료량을 약간 늘려보세요';
+    } else if (w <= selectedBreed.max) {
+      statusText = '이상적';
+      statusColor = '#22c55e'; emoji = '✅';
+      tip = '건강한 정상 체중이에요!';
+    } else if (w <= selectedBreed.max * 1.15) {
+      statusText = '약간 과체중';
+      statusColor = '#facc15'; emoji = '⚠️';
+      tip = '사료량을 약간 줄여보세요';
+    } else if (w <= selectedBreed.max * 1.3) {
+      statusText = '과체중';
+      statusColor = '#f97316'; emoji = '⚠️';
+      tip = '사료량을 줄이고 운동량을 늘려보세요';
+    } else {
+      statusText = '비만';
+      statusColor = '#ef4444'; emoji = '🔴';
+      tip = '수의사와 다이어트 계획을 세워보세요';
+    }
+  }
+
+  document.getElementById('emoji').textContent = emoji;
+  document.getElementById('status').textContent = statusText;
+  document.getElementById('status').style.color = statusColor;
+
+  let detail = '';
+  if (selectedBreed && !weightInsane) {
+    if (w >= selectedBreed.min && w <= selectedBreed.max) {
+      detail = `📋 ${selectedBreed.name} 표준 범위 내 ✅`;
+    } else {
+      detail = `📋 ${selectedBreed.name} 표준: ${selectedBreed.min}~${selectedBreed.max}kg`;
+      detail += `<br>표준 대비 <strong style="color:${statusColor}">${diff > 0 ? '+' : ''}${diff.toFixed(1)}kg</strong>`;
+    }
+  } else if (weightInsane) {
+    detail = `<strong style="color:#ef4444">${petType === 'dog' ? '🐶' : '🐱'} 체중을 다시 확인해주세요</strong>`;
+  }
+  document.getElementById('statusDetail').innerHTML = detail;
+
+  // Gauge: use weight-based position relative to breed standard
+  let gaugePct = 50;
+  if (selectedBreed && !weightInsane) {
+    const mid = (selectedBreed.min + selectedBreed.max) / 2;
+    const range = selectedBreed.max - selectedBreed.min;
+    gaugePct = 50 + ((w - mid) / (range * 2)) * 100;
+    gaugePct = Math.max(0, Math.min(100, gaugePct));
+  }
+  document.getElementById('gaugeMarker').style.left = gaugePct + '%';
+
+  // Info grid
+  let breedInfo = `
+    <div class="info-item">
+      <div class="label">📋 품종 표준 체중</div>
+      <div class="value">${selectedBreed.min}~${selectedBreed.max} kg</div>
+    </div>
+    <div class="info-item">
+      <div class="label">${w >= selectedBreed.min && w <= selectedBreed.max ? '✅ 범위 내' : '⚠️ 범위 밖'}</div>
+      <div class="value" style="color:${w >= selectedBreed.min && w <= selectedBreed.max ? '#22c55e' : '#f97316'}">${selectedBreed.name}</div>
+    </div>
+  `;
+
+  document.getElementById('infoGrid').innerHTML = `
+    <div class="info-item">
+      <div class="label">현재 체중</div>
+      <div class="value">${w.toFixed(1)} kg</div>
+    </div>
+    <div class="info-item">
+      <div class="label">이상 체중 (${idealSource})</div>
+      <div class="value" style="color:#22c55e">${idealWeight.toFixed(1)} kg</div>
+    </div>
+    ${breedInfo}
+    <div class="info-item">
+      <div class="label">${diff > 0.5 ? '🏋️ 감량 목표' : diff < -0.5 ? '🍖 증량 목표' : '👍 유지'}</div>
+      <div class="value">${Math.abs(diff) < 0.5 ? '현재 유지 🎉' : Math.abs(diff).toFixed(1) + 'kg ' + (diff > 0 ? '감량' : '증량')}</div>
+    </div>
+    <div class="info-item">
+      <div class="label">💡 팁</div>
+      <div class="value" style="font-size:11px;font-weight:500">${tip || ''}</div>
+    </div>
+  `;
+
+  // Dynamic Report UI Updates
+  document.getElementById('reportBox').style.animation = 'none';
+  void document.getElementById('reportBox').offsetWidth;
+  document.getElementById('reportBox').style.animation = 'fadeIn 0.5s ease-out';
+
+  document.getElementById('r-type').textContent = petType === 'dog' ? '🐶 강아지' : '🐱 고양이';
+  document.getElementById('r-breed').textContent = selectedBreed.name;
+  document.getElementById('r-weight').textContent = w.toFixed(1);
+  document.getElementById('r-breed-name').textContent = selectedBreed.name;
+  document.getElementById('r-range-min').textContent = selectedBreed.min.toFixed(1);
+  document.getElementById('r-range-max').textContent = selectedBreed.max.toFixed(1);
+  
+  const rStatus = document.getElementById('r-status');
+  rStatus.textContent = `[${statusText}]`;
+  rStatus.style.color = statusColor;
+  
+  document.getElementById('r-ideal').textContent = idealWeight.toFixed(1);
+  
+  const rTipBox = document.getElementById('r-tip-box');
+  rTipBox.style.borderColor = statusColor;
+  document.getElementById('r-tip').textContent = tip || '정상 범위 내 체중 유지를 목표로 하세요.';
+}
+
+renderBreeds();
+selectBreed(2); // default: Maltese
+
+(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+    <title>영업일 계산기 / Business Day Calculator</title>
+    <meta name="description" content="영업일(근무일) 기준으로 날짜를 계산합니다. 주말·공휴일 자동 제외, 한국 공휴일 지원">
+    <meta property="og:title" content="영업일 계산기 / Business Day Calculator — 티모집사">
+    <meta property="og:description" content="영업일(근무일) 기준으로 날짜를 계산합니다. 주말·공휴일 자동 제외, 한국 공휴일 지원">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://teemozipsa.github.io/special-chars/biz-day-calc/">
+    <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+    <link rel="canonical" href="https://teemozipsa.github.io/special-chars/biz-day-calc/">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:start;padding:20px}
+        .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
+        .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+        .header h1{font-size:15px;font-weight:600;color:#fff}
+        .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+        .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+        .tool-body{padding:16px;flex:1}
+
+        .mode-tabs{display:flex;gap:0;margin-bottom:16px;background:var(--bg-guide);border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+        .mode-tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--text-info);background:transparent;border:none;font-family:inherit}
+        .mode-tab:hover{color:var(--text-secondary);background:var(--bg-input)}
+        .mode-tab.active{background:var(--accent);color:var(--text-on-accent)}
+
+        .field-group{margin-bottom:14px}
+        .field-label{font-size:13px;font-weight:500;color:var(--text-secondary);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+        .field-row{display:flex;gap:10px;align-items:center}
+        .field-input{width:100%;padding:10px 12px;background:var(--bg-guide);border:1.5px solid #333366;border-radius:8px;color:var(--text-primary);font-size:14px;font-family:inherit;transition:border-color .2s}
+        .field-input:focus{outline:none;border-color:#7c5cbf}
+        input[type="date"]{color-scheme:dark}
+        input[type="number"]{-moz-appearance:textfield}
+        input[type="number"]::-webkit-outer-spin-button,input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none}
+
+        .quick-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+        .quick-btn{padding:5px 12px;background:var(--bg-btn);border:1px solid var(--border);border-radius:16px;color:var(--text-guide);font-size:11px;cursor:pointer;transition:all .2s;font-family:inherit}
+        .quick-btn:hover{background:var(--bg-btn-hover);border-color:#5a5a9a}
+
+        .option-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+        .toggle-wrap{display:flex;align-items:center;gap:6px;cursor:pointer}
+        .toggle-wrap input{display:none}
+        .toggle{width:36px;height:20px;background:var(--bg-btn);border-radius:10px;position:relative;transition:background .2s;flex-shrink:0}
+        .toggle::after{content:'';position:absolute;width:16px;height:16px;background:#8888bb;border-radius:50%;top:2px;left:2px;transition:all .2s}
+        .toggle-wrap input:checked+.toggle{background:var(--accent)}
+        .toggle-wrap input:checked+.toggle::after{left:18px;background:#fff}
+        .toggle-label{font-size:12px;color:var(--text-guide)}
+
+        .divider{height:1px;background:var(--bg-btn);margin:16px 0}
+
+        .result-section{background:var(--bg-guide);border-radius:10px;padding:16px;margin-bottom:12px;display:none}
+        .result-section.show{display:block}
+        .result-main{text-align:center;margin-bottom:12px}
+        .result-date{font-size:28px;font-weight:700;color:var(--accent);margin-bottom:4px}
+        .result-day{font-size:14px;color:var(--text-info)}
+        .result-detail{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+        .detail-box{background:var(--bg-body);border-radius:8px;padding:10px;text-align:center}
+        .detail-box .label{font-size:11px;color:var(--text-info);margin-bottom:4px}
+        .detail-box .value{font-size:16px;font-weight:600;color:var(--text-primary)}
+        .result-holidays{margin-top:12px;font-size:12px;color:var(--text-info);line-height:1.8}
+        .result-holidays .holiday-chip{display:inline-block;padding:2px 8px;background:var(--bg-btn);border-radius:10px;margin:2px;font-size:11px;color:var(--text-secondary)}
+
+        .guide-section{background:var(--bg-bar);border-radius:10px;margin:0 16px 16px;font-size:14px;overflow:hidden}
+        .guide-section summary{cursor:pointer;padding:14px 16px;font-weight:600;color:var(--text-secondary);list-style:none;display:flex;align-items:center;gap:6px}
+        .guide-section summary::-webkit-details-marker{display:none}
+        .guide-section summary::after{content:'▼';font-size:10px;margin-left:auto;transition:transform .2s;color:var(--text-muted)}
+        .guide-section[open] summary::after{transform:rotate(180deg)}
+        .guide-content{padding:0 16px 16px;color:var(--text-info);line-height:1.8;font-size:13px}
+        .guide-content strong{color:var(--text-secondary)}
+        .guide-content ul{margin:8px 0;padding-left:20px}
+        .guide-content li{margin-bottom:4px}
+
+        .bottom-bar{background:var(--bg-body);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #222250}
+        .bottom-bar .info{font-size:11px;color:var(--text-muted)}
+        .action-btn{padding:8px 16px;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .2s}
+        .btn-clear{background:var(--bg-btn);color:var(--text-secondary)}
+        .btn-clear:hover{background:var(--bg-btn-hover)}
+        .btn-copy{background:var(--accent);color:var(--text-on-accent)}
+        .btn-copy:hover{background:var(--accent-hover)}
+
+        .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-on-accent);padding:10px 24px;border-radius:20px;font-size:13px;opacity:0;transition:all .3s;z-index:999;white-space:nowrap}
+        .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+        .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:16px;}
+        .report-box h3 {font-size:14px;font-weight:700;color:var(--accent);margin-bottom:4px}
+        .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
+        .report-box strong {color:var(--text-primary);font-weight:600}
+
+        .related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:20px 16px}
+        .related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+        .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
+        .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
+        .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent);transform:translateX(4px)}
+
+        @keyframes fadeIn {
+            from { opacity:0; transform:translateY(10px) }
+            to { opacity:1; transform:translateY(0) }
+        }
+
+        @media(max-width:640px){
+            body{padding:10px}
+            .app{border-radius:8px}
+            .header{padding:12px 14px}
+            .header h1{font-size:15px;font-weight:600;color:#fff}
+            .tool-body{padding:12px}
+            .guide-section{margin:0 12px 12px}
+            .result-date{font-size:22px}
+            .result-detail{grid-template-columns:repeat(3,1fr);gap:6px}
+            .detail-box{padding:8px 4px}
+            .detail-box .value{font-size:14px}
+        }
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+    .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+<div class="app">
+    <div class="header">
+        <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+        <h1>🏢 영업일 계산기</h1>
+    </div>
+
+    <div class="tool-body">
+        <!-- 모드 선택 -->
+        <div class="mode-tabs">
+            <button class="mode-tab active" onclick="setMode('add')" id="modeAdd">📅 시작일 + 영업일</button>
+            <button class="mode-tab" onclick="setMode('between')" id="modeBetween">📊 두 날짜 사이</button>
+        </div>
+
+        <!-- 모드1: 시작일 + 영업일 수 -->
+        <div id="addMode">
+            <div class="field-group">
+                <div class="field-label">📅 시작일</div>
+                <div class="field-row">
+                    <input type="date" id="startDate" class="field-input" onchange="calculate()">
+                    <button class="quick-btn" onclick="setToday('startDate')" style="white-space:nowrap">오늘</button>
+                </div>
+            </div>
+            <div class="field-group">
+                <div class="field-label">🔢 영업일 수</div>
+                <input type="number" id="bizDays" class="field-input" placeholder="예: 10 (음수 입력 시 과거로 계산)" oninput="calculate()">
+                <div class="quick-btns">
+                    <button class="quick-btn" onclick="setBizDays(5)">5일</button>
+                    <button class="quick-btn" onclick="setBizDays(10)">10일</button>
+                    <button class="quick-btn" onclick="setBizDays(15)">15일</button>
+                    <button class="quick-btn" onclick="setBizDays(20)">20일</button>
+                    <button class="quick-btn" onclick="setBizDays(30)">30일</button>
+                    <button class="quick-btn" onclick="setBizDays(-5)">-5일</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 모드2: 두 날짜 사이 영업일 -->
+        <div id="betweenMode" style="display:none">
+            <div class="field-group">
+                <div class="field-label">📅 시작일</div>
+                <div class="field-row">
+                    <input type="date" id="fromDate" class="field-input" onchange="calculate()">
+                    <button class="quick-btn" onclick="setToday('fromDate')" style="white-space:nowrap">오늘</button>
+                </div>
+            </div>
+            <div class="field-group">
+                <div class="field-label">📅 종료일</div>
+                <div class="field-row">
+                    <input type="date" id="toDate" class="field-input" onchange="calculate()">
+                    <button class="quick-btn" onclick="setToday('toDate')" style="white-space:nowrap">오늘</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 옵션 -->
+        <div class="option-row">
+            <label class="toggle-wrap">
+                <input type="checkbox" id="excludeHolidays" checked onchange="calculate()">
+                <span class="toggle"></span>
+                <span class="toggle-label">🇰🇷 공휴일 제외</span>
+            </label>
+            <label class="toggle-wrap">
+                <input type="checkbox" id="includeSaturday" onchange="calculate()">
+                <span class="toggle"></span>
+                <span class="toggle-label">토요일 포함</span>
+            </label>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- 결과 -->
+        <div class="result-section" id="resultSection">
+            <div class="result-main">
+                <div class="result-date" id="resultDate"></div>
+                <div class="result-day" id="resultDay"></div>
+            </div>
+            <div class="result-detail" id="resultDetail"></div>
+            <div class="result-holidays" id="resultHolidays"></div>
+            <div class="report-box" id="analysisReport" style="display:none;"></div>
+        </div>
+    </div>
+
+    <details class="guide-section" open>
+        <summary>📖 영업일(근무일) 계산기 활용 가이드 및 상식</summary>
+        <div class="guide-content">
+            <strong>Q. 영업일(Business Day)이란 정확히 무엇인가요?</strong>
+            <p>보통 주말(토, 일요일)과 법정 공휴일을 제외하고 관공서 및 주요 금융기관(은행 등)이 실제 근무하는 날짜를 뜻합니다. 계약서 상의 '3영업일 이내 송금', 은행 대출 심사 기한, 온라인 쇼핑몰의 배송 일정 안내(평일 기준 N일) 등에 엄격히 적용됩니다.</p>
+            <br>
+            <strong>Q. 공휴일 제외 옵션은 어떻게 동작하나요?</strong>
+            <p>신정, 삼일절, 어린이날, 현충일, 광복절 등 양력 고정 휴일은 물론이고, <strong>설날, 추석, 부처님오신날 등 매년 양력 날짜가 바뀌는 음력 변동 공휴일과 최근 지정된 대체공휴일까지 브라우저 자체 데이터(2024~2027년)에 기반하여 연산 배제 처리</strong>합니다.</p>
+            <br>
+            <strong>Q. 토요일 포함 옵션은 언제 쓰나요?</strong>
+            <p>공무원이나 일반 사무직은 주 5일제가 기본이라 토요일을 쉬지만, 제조업체나 일부 물류·운송 업종, 혹은 주말 근무가 포함된 스케줄러를 쓰는 부서는 토요일을 정상 근로일로 치는 경우가 잦습니다. 이 옵션을 켜면 일요일만 주휴일로 치고 토요일을 영업일 카운트에 포함시킵니다.</p>
+            <br>
+            <p style="color:var(--text-muted);font-size:11px;">※ 행정 처리 기한(가령 취득세 납부기한 60일 등)은 영업일이 아닌 '단순 일수(디데이)'로 산정되므로 <b>날짜/디데이 계산기</b>를 이용하셔야 합니다. 본 계산 도구는 금융/계약 관련 '근무일수' 추정에 가장 적합합니다. 임시공휴일(돌발적인 선거일 등)은 사전 예측 데이터에 누락될 수 있으니 참고 바랍니다.</p>
+        </div>
+    </details>
+
+    <div class="related-tools">
+      <h3>🔗 연관 생활 도구</h3>
+      <div class="tool-list">
+        <a href="/special-chars/date-calc/"><span>📅 디데이/단순 날짜 지정 계산기</span><span>바로가기 →</span></a>
+        <a href="/special-chars/wage-calc/"><span>💰 알바/급여(주휴수당) 계산기</span><span>바로가기 →</span></a>
+        <a href="/special-chars/char-counter/"><span>📝 자소서 글자수/맞춤법 검사기</span><span>바로가기 →</span></a>
+      </div>
+    </div>
+
+    <div class="footer"><span>공휴일 자동 반영</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+// === 한국 공휴일 데이터 (양력 고정 + 음력 변동) ===
+// 음력 공휴일은 연도별로 양력 변환된 날짜를 저장 (2024~2027)
+const HOLIDAYS = {
+    // 양력 고정 공휴일
+    fixed: [
+        [1,1,'신정'],
+        [3,1,'삼일절'],
+        [5,5,'어린이날'],
+        [6,6,'현충일'],
+        [8,15,'광복절'],
+        [10,3,'개천절'],
+        [10,9,'한글날'],
+        [12,25,'크리스마스']
+    ],
+    // 연도별 음력 변동 공휴일 (양력 변환)
+    lunar: {
+        2024: [
+            [2,9,'설날 연휴'],[2,10,'설날'],[2,11,'설날 연휴'],[2,12,'대체공휴일(설날)'],
+            [4,10,'석가탄신일'],
+            [5,6,'대체공휴일(어린이날)'],
+            [5,15,'부처님오신날'],
+            [9,16,'추석 연휴'],[9,17,'추석'],[9,18,'추석 연휴'],
+            [10,1,'국군의날']
+        ],
+        2025: [
+            [1,28,'설날 연휴'],[1,29,'설날'],[1,30,'설날 연휴'],
+            [3,3,'대체공휴일(삼일절)'],
+            [5,5,'석가탄신일/어린이날'],[5,6,'대체공휴일(어린이날)'],
+            [10,5,'추석 연휴'],[10,6,'추석'],[10,7,'추석 연휴'],[10,8,'대체공휴일(추석)']
+        ],
+        2026: [
+            [2,16,'설날 연휴'],[2,17,'설날'],[2,18,'설날 연휴'],
+            [5,24,'부처님오신날'],
+            [9,24,'추석 연휴'],[9,25,'추석'],[9,26,'추석 연휴'],
+            [10,5,'대체공휴일(개천절)']
+        ],
+        2027: [
+            [2,5,'설날 연휴'],[2,6,'설날'],[2,7,'설날 연휴'],[2,8,'대체공휴일(설날)'],
+            [5,13,'부처님오신날'],
+            [10,14,'추석 연휴'],[10,15,'추석'],[10,16,'추석 연휴'],
+            [10,11,'대체공휴일(한글날)']
+        ]
+    }
+};
+
+let mode = 'add';
+
+function getHolidaysForYear(year) {
+    const holidays = [];
+    // 고정 공휴일
+    HOLIDAYS.fixed.forEach(([m, d, name]) => {
+        holidays.push({ date: new Date(year, m - 1, d), name });
+    });
+    // 음력 변동 공휴일
+    if (HOLIDAYS.lunar[year]) {
+        HOLIDAYS.lunar[year].forEach(([m, d, name]) => {
+            holidays.push({ date: new Date(year, m - 1, d), name });
+        });
+    }
+    return holidays;
+}
+
+function isHoliday(date, excludeHolidays) {
+    if (!excludeHolidays) return null;
+    const year = date.getFullYear();
+    const holidays = getHolidaysForYear(year);
+    const ds = date.toDateString();
+    const found = holidays.find(h => h.date.toDateString() === ds);
+    return found || null;
+}
+
+function isWeekend(date, includeSat) {
+    const day = date.getDay();
+    if (day === 0) return true; // 일요일
+    if (day === 6 && !includeSat) return true; // 토요일
+    return false;
+}
+
+function isBusinessDay(date, excludeHolidays, includeSat) {
+    if (isWeekend(date, includeSat)) return false;
+    if (excludeHolidays && isHoliday(date, true)) return false;
+    return true;
+}
+
+function setMode(m) {
+    mode = m;
+    document.getElementById('modeAdd').classList.toggle('active', m === 'add');
+    document.getElementById('modeBetween').classList.toggle('active', m === 'between');
+    document.getElementById('addMode').style.display = m === 'add' ? '' : 'none';
+    document.getElementById('betweenMode').style.display = m === 'between' ? '' : 'none';
+    document.getElementById('resultSection').classList.remove('show');
+    document.getElementById('bottomInfo').textContent = m === 'add' ? '시작일과 영업일 수를 입력하세요' : '두 날짜를 선택하세요';
+}
+
+function setToday(id) {
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth() + 1).padStart(2, '0');
+    const d = String(today.getDate()).padStart(2, '0');
+    document.getElementById(id).value = `${y}-${m}-${d}`;
+    calculate();
+}
+
+function setBizDays(n) {
+    document.getElementById('bizDays').value = n;
+    calculate();
+}
+
+function calculate() {
+    const excludeH = document.getElementById('excludeHolidays').checked;
+    const includeSat = document.getElementById('includeSaturday').checked;
+
+    if (mode === 'add') {
+        calcAdd(excludeH, includeSat);
+    } else {
+        calcBetween(excludeH, includeSat);
+    }
+}
+
+function calcAdd(excludeH, includeSat) {
+    const startVal = document.getElementById('startDate').value;
+    const daysVal = document.getElementById('bizDays').value;
+    if (!startVal || !daysVal) return;
+
+    const days = parseInt(daysVal);
+    if (isNaN(days) || days === 0) return;
+
+    const start = new Date(startVal + 'T00:00:00');
+    const direction = days > 0 ? 1 : -1;
+    let remaining = Math.abs(days);
+    let current = new Date(start);
+    let totalDays = 0;
+    let weekendDays = 0;
+    const skippedHolidays = [];
+
+    while (remaining > 0) {
+        current.setDate(current.getDate() + direction);
+        totalDays++;
+        if (isWeekend(current, includeSat)) {
+            weekendDays++;
+            continue;
+        }
+        const holiday = isHoliday(current, excludeH);
+        if (holiday) {
+            skippedHolidays.push(holiday);
+            continue;
+        }
+        remaining--;
+    }
+
+    showResult(current, start, Math.abs(days), totalDays, weekendDays, skippedHolidays, 'add');
+}
+
+function calcBetween(excludeH, includeSat) {
+    const fromVal = document.getElementById('fromDate').value;
+    const toVal = document.getElementById('toDate').value;
+    if (!fromVal || !toVal) return;
+
+    let from = new Date(fromVal + 'T00:00:00');
+    let to = new Date(toVal + 'T00:00:00');
+
+    const swap = from > to;
+    if (swap) { let tmp = from; from = to; to = tmp; }
+
+    let bizDays = 0, totalDays = 0, weekendDays = 0;
+    const skippedHolidays = [];
+    let current = new Date(from);
+
+    while (current < to) {
+        current.setDate(current.getDate() + 1);
+        totalDays++;
+        if (isWeekend(current, includeSat)) {
+            weekendDays++;
+            continue;
+        }
+        const holiday = isHoliday(current, excludeH);
+        if (holiday) {
+            skippedHolidays.push(holiday);
+            continue;
+        }
+        bizDays++;
+    }
+
+    showResult(null, null, bizDays, totalDays, weekendDays, skippedHolidays, 'between');
+}
+
+const DAYS_KO = ['일', '월', '화', '수', '목', '금', '토'];
+
+function showResult(targetDate, startDate, bizDays, totalDays, weekendDays, holidays, type) {
+    const section = document.getElementById('resultSection');
+    section.classList.add('show');
+
+    const dateEl = document.getElementById('resultDate');
+    const dayEl = document.getElementById('resultDay');
+    const detailEl = document.getElementById('resultDetail');
+    const holidayEl = document.getElementById('resultHolidays');
+    const info = document.getElementById('bottomInfo');
+
+    if (type === 'add') {
+        const y = targetDate.getFullYear();
+        const m = targetDate.getMonth() + 1;
+        const d = targetDate.getDate();
+        const dow = DAYS_KO[targetDate.getDay()];
+        dateEl.textContent = `${y}년 ${m}월 ${d}일 (${dow})`;
+        dayEl.textContent = `시작일로부터 ${bizDays}영업일 ${parseInt(document.getElementById('bizDays').value) > 0 ? '후' : '전'}`;
+        info.textContent = `결과: ${y}.${m}.${d} (${dow})`;
+    } else {
+        dateEl.textContent = `${bizDays}영업일`;
+        dayEl.textContent = '두 날짜 사이의 영업일 수';
+        info.textContent = `영업일: ${bizDays}일 / 전체: ${totalDays}일`;
+    }
+
+    detailEl.innerHTML = `
+        <div class="detail-box"><div class="label">총 일수</div><div class="value">${totalDays}일</div></div>
+        <div class="detail-box"><div class="label">주말</div><div class="value">${weekendDays}일</div></div>
+        <div class="detail-box"><div class="label">공휴일</div><div class="value">${holidays.length}일</div></div>
+    `;
+
+    if (holidays.length > 0) {
+        // 중복 제거
+        const uniqueHolidays = [];
+        const seen = new Set();
+        holidays.forEach(h => {
+            const key = h.date.toDateString();
+            if (!seen.has(key)) {
+                seen.add(key);
+                uniqueHolidays.push(h);
+            }
+        });
+
+        // SEO Dynamic Insight Start
+        const reportBox = document.getElementById('analysisReport');
+        reportBox.style.display = 'flex';
+        
+        let msg = `<h3>💡 맞춤형 영업일 분석 리포트</h3>`;
+        if (type === 'add') {
+            const inputDays = parseInt(document.getElementById('bizDays').value);
+            msg += `<p>지정하신 시작일로부터 <strong>${Math.abs(inputDays)}영업일 ${inputDays>0?'후':'이전'}</strong>의 캘린더 날짜를 연산했습니다. `;
+            msg += `순수 근무일 ${bizDays}일을 확보하거나 달성하기 위해, 실제 달력상으로는 <strong>총 ${totalDays}일의 리드타임(소요 기간)이 발생</strong>합니다. </p>`;
+        } else {
+            msg += `<p>지정하신 두 날짜(시작일과 종료일)의 다차원적 기간 편차는 <strong>실제 통상 캘린더 기준 총 ${totalDays}일</strong>입니다. `;
+            msg += `이 중에서 휴일 요건 필터링을 거친 결과, <strong>실질적인 순 근무(영업) 일수는 ${bizDays}일</strong>로 확정되었습니다. </p>`;
+        }
+        
+        msg += `<p>상세히 들여다보면 이 기간 내에는 <strong>주말(토/일)이 ${weekendDays}일</strong> 포함되어 있으며, 한국 법정 공휴일 지정일이 <strong>${uniqueHolidays.length}일</strong> 겹쳐 이를 구조에서 제외 처리(${document.getElementById('excludeHolidays').checked ? '활성화' : '비활성'})한 결괏값입니다. `;
+        msg += `선박 운송(Shipping) 납기 관리나 금융 대출 실행의 이자 기산일 산정, 무역 B2B 대금 회수 디데이 관리에 이처럼 정확한 날짜 지표를 활용하시면 워크플로우 효율성을 크게 개선할 수 있습니다.</p>`;
+        
+        reportBox.innerHTML = msg;
+        // SEO Dynamic Insight End
+
+        holidayEl.innerHTML = '📌 기간 내 제외된 공휴일: ' + uniqueHolidays.map(h => {
+            const m = h.date.getMonth() + 1;
+            const d = h.date.getDate();
+            return `<span class="holiday-chip">${m}/${d} ${h.name}</span>`;
+        }).join('');
+        holidayEl.style.display = '';
+    } else {
+        holidayEl.style.display = 'none';
+    }
+}
+
+function clearAll() {
+    ['startDate', 'bizDays', 'fromDate', 'toDate'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    document.getElementById('resultSection').classList.remove('show');
+    const reportBox = document.getElementById('analysisReport');
+    if(reportBox) reportBox.style.display = 'none';
+    document.getElementById('bottomInfo').textContent = mode === 'add' ? '시작일과 영업일 수를 입력하세요' : '두 날짜를 선택하세요';
+    showToast('초기화되었습니다');
+}
+
+function copyResult() {
+    const dateText = document.getElementById('resultDate').textContent;
+    const dayText = document.getElementById('resultDay').textContent;
+    if (!dateText) { showToast('먼저 계산을 실행하세요'); return; }
+    const text = `${dateText} (${dayText})`;
+    navigator.clipboard.writeText(text).then(() => showToast('결과가 복사되었습니다!'));
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+}
+</script>
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

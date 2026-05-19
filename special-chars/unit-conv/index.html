@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>📐 생활 단위 변환기 — 티모집사</title>
+<meta name="description" content="부동산(평↔㎡), 요리(근↔g), 직구(신발사이즈, ℃↔℉), 디지털(MB↔GB), 여행(mile↔km) 등 생활 단위를 양방향 실시간 변환합니다.">
+<meta property="og:title" content="📐 생활 단위 변환기 — 티모집사">
+<meta property="og:description" content="부동산(평↔㎡), 요리(근↔g), 직구(신발사이즈, ℃↔℉), 디지털(MB↔GB), 여행(mile↔km) 등 생활 단위를 양방향 실시간 변환합니다.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/unit-conv/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/unit-conv/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/unit-conv/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/unit-conv/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px}
+  .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
+  .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .header h1{font-size:15px;font-weight:600;color:#fff}
+  .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+  .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.6);transition:transform .3s ease,opacity .3s ease;opacity:0;pointer-events:none;z-index:999}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  .bottom-bar{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
+  .bottom-bar .info{font-size:11px;color:var(--text-info)}
+  .action-btn{padding:8px 20px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+  .btn-clear{background:var(--bg-btn);color:var(--btn-clear-text)}.btn-clear:hover{background:var(--bg-btn-hover)}
+  .btn-copy{background:var(--accent);color:var(--text-on-accent)}.btn-copy:hover{background:var(--accent-hover)}
+
+  .counter-body{padding:12px;flex:1;overflow-y:auto;max-height:480px}
+  .tab{display:inline-block;padding:6px 12px;background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-guide);font-size:12px;cursor:pointer;transition:background .15s;font-family:inherit}
+  .tab:hover{background:var(--bg-btn-hover)}
+  .tab.active{background:var(--accent);color:var(--text-on-accent);border-color:#6b44a3}
+  .conv-cat-tabs{background:var(--bg-bar);padding:6px 10px;border-radius:8px;margin-bottom:12px}
+  .conv-cat-tabs .tab-row{display:flex;flex-wrap:wrap;gap:4px}
+  .conv-cat-tabs .tab{padding:6px 10px;font-size:11px}
+  .conv-row{margin-bottom:14px}
+  .conv-row-title{font-size:12px;color:var(--text-info);margin-bottom:6px;display:flex;align-items:center;gap:4px}
+  .conv-fields{display:flex;align-items:center;gap:6px}
+  .conv-field{flex:1}
+  .conv-field label{display:block;font-size:11px;color:var(--calc-expr-text);margin-bottom:2px;font-weight:600}
+  .conv-field input[type="number"]{width:100%;background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:8px 10px;font-size:14px;box-sizing:border-box;font-family:inherit}
+  .conv-field input:focus{border-color:var(--accent);outline:none}
+  .conv-arrow{color:#533483;font-size:16px;flex-shrink:0;margin-top:16px}
+  .conv-option{width:100%;background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-guide);padding:5px 8px;font-size:11px;margin-top:4px;font-family:inherit}
+  .conv-triple .conv-field{flex:1;min-width:0}
+  .conv-extra{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:11px;color:var(--text-info)}
+  .conv-extra input{width:60px;background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:4px 8px;font-size:12px;text-align:center;font-family:inherit}
+  .report-box {margin:14px 12px; padding:16px; background:rgba(83,52,131,0.05); border-left:4px solid var(--accent); border-radius:8px; font-size:13px; line-height:1.6; color:var(--text-primary); display:none;}
+  .report-box.show {display:block; animation:fadeIn 0.4s;}
+  @keyframes fadeIn {from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)}}
+  .guide-section{margin:12px; padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-app); margin-top:20px;}
+  .guide-title{font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:12px;}
+  .guide-item{margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:var(--bg-guide); overflow:hidden;}
+  .guide-item summary{padding:12px; font-size:13px; font-weight:600; cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; color:var(--text-guide);}
+  .guide-item summary::after{content:'▼'; font-size:10px; color:var(--text-info); transition:transform 0.2s;}
+  .guide-item[open] summary::after{transform:rotate(180deg);}
+  .guide-item[open] summary{border-bottom:1px solid var(--border); background:var(--bg-btn);}
+  .guide-item .guide-content{padding:12px; font-size:13px; color:var(--text-info); line-height:1.6;}
+  .related-tools{margin-top:16px; padding-top:16px; border-top:1px solid var(--border);}
+  .tag-container{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
+  .tool-tag{padding:6px 12px; background:rgba(83,52,131,0.1); color:var(--accent); border-radius:16px; font-size:11px; font-weight:600; text-decoration:none; transition:all 0.2s;}
+  .tool-tag:hover{background:var(--accent); color:var(--text-on-accent);}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+    <h1>📐 생활 단위 변환기</h1>
+    <a href="/special-chars/en/unit-conv/" class="back-btn">🌐 English</a>
+  </div>
+
+  <div class="counter-body">
+    <div class="conv-cat-tabs"><div class="tab-row" id="unitCatTabs"></div></div>
+    <div id="unitConvArea"></div>
+    <div id="reportBox" class="report-box"></div>
+  </div>
+
+  <div class="bottom-bar">
+    <span class="info">💡 입력하면 변경된 값을 바로 확인할 수 있습니다.</span>
+    <div style="display:flex; gap:8px;">
+      <button class="action-btn btn-clear" onclick="clearUnitConv()">초기화</button>
+      <button class="action-btn btn-copy" onclick="copyUnitResult()">결과 복사</button>
+    </div>
+  </div>
+
+  <div class="guide-section">
+    <div class="guide-title">🤔 실생활 단위 변환 관련 Q&A</div>
+    
+    <details class="guide-item">
+      <summary>국민평형(국평)인 '34평'은 몇 제곱미터(㎡)인가요?</summary>
+      <div class="guide-content">
+        흔히 아파트 <strong>국민평형(국평)</strong>이라고 부르는 전용면적 84㎡는, 예전 평수 개념으로 공급면적 기준 약 33~34평에 해당합니다.<br/>
+        법정 계량 단위인 제곱미터(㎡) 사용이 의무화되면서 84㎡(전용면적), 112㎡(공급면적) 등으로 표기하지만, 여전히 많은 사람들이 직관적인 '평' 단위를 함께 참고하고 있습니다.<br/>
+        (1평 = 약 3.3058㎡)
+      </div>
+    </details>
+    
+    <details class="guide-item">
+      <summary>고기 1근과 채소 1근은 왜 무게가 다른가요?</summary>
+      <div class="guide-content">
+        한국에서 '근'은 척관법에서 유래한 질량의 단위로, 측정 대상에 따라 기준 중량이 다릅니다.<br/>
+        - <strong>육류(고기) 1근</strong> = 600g (일반적으로 3~4인분 정도의 양)<br/>
+        - <strong>채소/과일 1근</strong> = 일반적으로 400g (상추 등 잎채소류 등)<br/>
+        참고로 <strong>금 1돈</strong>은 3.75g이며, 약 1냥은 10돈(37.5g)입니다.
+      </div>
+    </details>
+    
+    <details class="guide-item">
+      <summary>해외직구 시 신발 사이즈와 무게(파운드)는 어떻게 변환하나요?</summary>
+      <div class="guide-content">
+        국가마다 표준 사이즈 표기법이 다릅니다.<br/>
+        - <strong>US (미국)</strong>: 남성 270mm의 경우 US 9, 여성 240mm의 경우 US 7을 주로 신습니다.<br/>
+        - <strong>EU (유럽)</strong>: 남성 270mm는 EU 42, 여성 240mm는 EU 37.5 수준입니다.<br/>
+        - <strong>파운드(lb) ↔ 킬로그램(kg)</strong>: 1파운드는 약 0.45kg입니다. 해외 배송비나 체중을 계산할 때 유용합니다.
+      </div>
+    </details>
+
+    <div class="related-tools">
+      <div class="guide-title" style="font-size:12px; margin-bottom:8px;">🛠 연관 도구 추천</div>
+      <div class="tag-container">
+        <a href="/special-chars/calculator/" class="tool-tag">일반 계산기</a>
+        <a href="/special-chars/percent-calc/" class="tool-tag">퍼센트 계산기</a>
+        <a href="/special-chars/color-conv/" class="tool-tag">색상 변환기</a>
+      </div>
+    </div>
+  </div>
+    <div class="footer"><span>양방향 실시간 변환</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),1500)}
+
+const UNIT_DATA={
+  estate:{label:'🏡 부동산',items:[
+    {id:'pyeong',a:'평',b:'㎡',factor:3.305785,dec:2,tip:'1평 = 약 3.3㎡'},
+    {id:'inch',a:'inch',b:'cm',factor:2.54,dec:2}
+  ]},
+  cooking:{label:'🛒 요리',items:[
+    {id:'geun',a:'근',b:'g',type:'options',dec:0,options:[{label:'고기 (1근=600g)',factor:600},{label:'채소 (1근=400g)',factor:400}]},
+    {id:'don',a:'돈',b:'g',factor:3.75,dec:2,tip:'금/은 계량'},
+    {id:'tbsp',a:'큰술(T)',b:'ml',factor:15,dec:1},
+    {id:'cup',a:'컵(200ml)',b:'ml',factor:200,dec:1},
+    {id:'floz',a:'oz',b:'ml',factor:29.5735,dec:1}
+  ]},
+  shopping:{label:'📦 직구',items:[
+    {id:'shoe',type:'shoe'},
+    {id:'lb',a:'lb',b:'kg',factor:0.453592,dec:2},
+    {id:'temp',a:'℃',b:'℉',type:'formula',toB:v=>v*9/5+32,toA:v=>(v-32)*5/9,dec:1},
+    {id:'yard',a:'yd',b:'m',factor:0.9144,dec:2}
+  ]},
+  digital:{label:'💻 디지털',items:[
+    {id:'data',type:'data'},
+    {id:'pxmm',a:'px',b:'mm',type:'dpi',dec:2,dpiDefault:72}
+  ]},
+  travel:{label:'🚗 여행',items:[
+    {id:'mile',a:'mile',b:'km',factor:1.60934,dec:2},
+    {id:'fuel',a:'km/L',b:'mpg',factor:2.35215,dec:1},
+    {id:'psi',a:'psi',b:'bar',factor:0.0689476,dec:3}
+  ]}
+};
+
+const SHOE_TABLE={220:[3,5,35],225:[3.5,5.5,35.5],230:[4,6,36],235:[4.5,6.5,37],240:[5,7,37.5],245:[5.5,7.5,38],250:[6,8,39],255:[6.5,8.5,39.5],260:[7,9,40],265:[7.5,9.5,41],270:[8,10,42],275:[8.5,10.5,42.5],280:[9,11,43],285:[9.5,11.5,44],290:[10,12,44.5],295:[10.5,12.5,45],300:[11,13,46]};
+
+let currentUnitCat='estate';let _unitSyncing=false;let _shoeGender='male';
+
+function findItem(id){for(const cat of Object.values(UNIT_DATA)){const item=cat.items.find(i=>i.id===id);if(item)return item}return null}
+function roundDec(v,dec){const f=Math.pow(10,dec);return Math.round(v*f)/f}
+
+function renderUnitCats(){
+  const c=document.getElementById('unitCatTabs');c.innerHTML='';
+  for(const[catId,cat]of Object.entries(UNIT_DATA)){
+    const btn=document.createElement('button');btn.className='tab'+(catId===currentUnitCat?' active':'');
+    btn.textContent=cat.label;btn.onclick=()=>switchUnitCat(catId);c.appendChild(btn);
+  }
+}
+function switchUnitCat(catId){
+  currentUnitCat=catId;
+  renderUnitCats();
+  renderConverters();
+  document.getElementById('reportBox').classList.remove('show');
+}
+
+function renderConverters(){
+  const area=document.getElementById('unitConvArea');const cat=UNIT_DATA[currentUnitCat];let html='';
+  for(const item of cat.items){html+='<div class="conv-row">';
+    if(item.type==='shoe')html+=renderShoe();else if(item.type==='data')html+=renderData();
+    else if(item.type==='dpi')html+=renderDpi(item);else if(item.type==='options')html+=renderOptions(item);
+    else html+=renderBasic(item);html+='</div>'}
+  area.innerHTML=html;
+}
+
+function renderBasic(item){
+  const tip=item.tip?`<span class="conv-row-title">${item.tip}</span>`:'';
+  return tip+`<div class="conv-fields"><div class="conv-field"><label>${item.a}</label><input type="number" id="conv-${item.id}-a" oninput="convSync('${item.id}','a')" placeholder="0"></div><span class="conv-arrow">↔</span><div class="conv-field"><label>${item.b}</label><input type="number" id="conv-${item.id}-b" oninput="convSync('${item.id}','b')" placeholder="0"></div></div>`;
+}
+
+function renderOptions(item){
+  let optHtml=item.options.map((o,i)=>`<option value="${i}">${o.label}</option>`).join('');
+  return `<div class="conv-fields"><div class="conv-field"><label>${item.a}</label><input type="number" id="conv-${item.id}-a" oninput="convSync('${item.id}','a')" placeholder="0"><select class="conv-option" id="conv-${item.id}-opt" onchange="convSync('${item.id}','a')">${optHtml}</select></div><span class="conv-arrow">↔</span><div class="conv-field"><label>${item.b}</label><input type="number" id="conv-${item.id}-b" oninput="convSync('${item.id}','b')" placeholder="0"></div></div>`;
+}
+
+function renderShoe(){
+  return `<div class="conv-row-title">👟 신발 사이즈</div><div class="conv-extra" style="margin-bottom:6px"><label><input type="radio" name="shoeGender" value="male" checked onchange="_shoeGender='male';convSync('shoe','kr')"> 남성</label><label><input type="radio" name="shoeGender" value="female" onchange="_shoeGender='female';convSync('shoe','kr')"> 여성</label></div><div class="conv-fields conv-triple"><div class="conv-field"><label>KR (mm)</label><input type="number" id="conv-shoe-kr" oninput="convSync('shoe','kr')" placeholder="270"></div><div class="conv-field"><label>US</label><input type="number" id="conv-shoe-us" oninput="convSync('shoe','us')" placeholder="8" step="0.5"></div><div class="conv-field"><label>EU</label><input type="number" id="conv-shoe-eu" oninput="convSync('shoe','eu')" placeholder="42" step="0.5"></div></div>`;
+}
+
+function renderData(){
+  return `<div class="conv-row-title">💾 데이터 용량</div><div class="conv-fields conv-triple"><div class="conv-field"><label>MB</label><input type="number" id="conv-data-mb" oninput="convSync('data','mb')" placeholder="0"></div><div class="conv-field"><label>GB</label><input type="number" id="conv-data-gb" oninput="convSync('data','gb')" placeholder="0"></div><div class="conv-field"><label>TB</label><input type="number" id="conv-data-tb" oninput="convSync('data','tb')" placeholder="0"></div></div>`;
+}
+
+function renderDpi(item){
+  return `<span class="conv-row-title">DPI 기반 변환</span><div class="conv-fields"><div class="conv-field"><label>${item.a}</label><input type="number" id="conv-${item.id}-a" oninput="convSync('${item.id}','a')" placeholder="0"></div><span class="conv-arrow">↔</span><div class="conv-field"><label>${item.b}</label><input type="number" id="conv-${item.id}-b" oninput="convSync('${item.id}','b')" placeholder="0"></div></div><div class="conv-extra"><label>DPI:</label><input type="number" id="conv-${item.id}-dpi" value="${item.dpiDefault}" oninput="convSync('${item.id}','a')"></div>`;
+}
+
+function convSync(id,side){
+  if(_unitSyncing)return;_unitSyncing=true;
+  try{
+    if(id==='shoe'){syncShoe(side)}else if(id==='data'){syncData(side)}
+    else{const item=findItem(id);if(!item){_unitSyncing=false;return}
+      const elA=document.getElementById(`conv-${id}-a`);const elB=document.getElementById(`conv-${id}-b`);
+      let factor=item.factor||1;
+      if(item.type==='options'){const sel=document.getElementById(`conv-${id}-opt`);factor=item.options[parseInt(sel.value)].factor}
+      if(item.type==='dpi'){const dpiEl=document.getElementById(`conv-${id}-dpi`);const dpi=parseFloat(dpiEl.value)||item.dpiDefault;factor=25.4/dpi}
+      if(side==='a'){const v=parseFloat(elA.value);elB.value=isNaN(v)?'':roundDec(item.toB?item.toB(v):v*factor,item.dec)}
+      else{const v=parseFloat(elB.value);elA.value=isNaN(v)?'':roundDec(item.toA?item.toA(v):v/factor,item.dec)}
+    }
+    updateReportBox(id);
+  }finally{_unitSyncing=false}
+}
+
+function syncShoe(side){
+  const krEl=document.getElementById('conv-shoe-kr');const usEl=document.getElementById('conv-shoe-us');const euEl=document.getElementById('conv-shoe-eu');
+  const gIdx=_shoeGender==='male'?0:1;const entries=Object.entries(SHOE_TABLE);
+  if(side==='kr'){const kr=parseFloat(krEl.value);if(isNaN(kr)){usEl.value='';euEl.value='';return}let best=entries.reduce((a,b)=>Math.abs(b[0]-kr)<Math.abs(a[0]-kr)?b:a);usEl.value=best[1][gIdx];euEl.value=best[1][2]}
+  else if(side==='us'){const us=parseFloat(usEl.value);if(isNaN(us)){krEl.value='';euEl.value='';return}let best=entries.reduce((a,b)=>Math.abs(b[1][gIdx]-us)<Math.abs(a[1][gIdx]-us)?b:a);krEl.value=best[0];euEl.value=best[1][2]}
+  else{const eu=parseFloat(euEl.value);if(isNaN(eu)){krEl.value='';usEl.value='';return}let best=entries.reduce((a,b)=>Math.abs(b[1][2]-eu)<Math.abs(a[1][2]-eu)?b:a);krEl.value=best[0];usEl.value=best[1][gIdx]}
+}
+
+function syncData(side){
+  const mbEl=document.getElementById('conv-data-mb');const gbEl=document.getElementById('conv-data-gb');const tbEl=document.getElementById('conv-data-tb');
+  if(side==='mb'){const v=parseFloat(mbEl.value);if(isNaN(v)){gbEl.value='';tbEl.value='';return}gbEl.value=roundDec(v/1024,4);tbEl.value=roundDec(v/1048576,6)}
+  else if(side==='gb'){const v=parseFloat(gbEl.value);if(isNaN(v)){mbEl.value='';tbEl.value='';return}mbEl.value=roundDec(v*1024,2);tbEl.value=roundDec(v/1024,6)}
+  else{const v=parseFloat(tbEl.value);if(isNaN(v)){mbEl.value='';gbEl.value='';return}mbEl.value=roundDec(v*1048576,2);gbEl.value=roundDec(v*1024,4)}
+}
+
+function clearUnitConv(){
+  document.querySelectorAll('#unitConvArea input[type="number"]').forEach(el=>el.value='');
+  document.getElementById('reportBox').classList.remove('show');
+}
+
+function updateReportBox(id) {
+  const box = document.getElementById('reportBox');
+  let text = '';
+  
+  if (id === 'pyeong') {
+    const a = parseFloat(document.getElementById('conv-pyeong-a').value);
+    const b = parseFloat(document.getElementById('conv-pyeong-b').value);
+    if(isNaN(a) || isNaN(b)) { box.classList.remove('show'); return; }
+    text = `🏡 <b>${a}평</b>은 약 <b>${b}㎡</b> 입니다.<br/>주택 면적 계산 시 가장 대표적으로 사용되는 변환이며, 보통 전용 84㎡를(약 33~34평) '평민평형' 혹은 '국민평형'이라고 부릅니다.`;
+  } else if (id === 'geun') {
+    const a = parseFloat(document.getElementById('conv-geun-a').value);
+    const b = parseFloat(document.getElementById('conv-geun-b').value);
+    const sel = document.getElementById('conv-geun-opt');
+    if(!sel) return;
+    const isMeat = sel.value === "0";
+    if(isNaN(a) || isNaN(b)) { box.classList.remove('show'); return; }
+    text = `🛒 ${isMeat ? '고기류' : '채소류'} <b>${a}근</b>은 <b>${b}g</b>에 해당합니다.<br/>고기 1근(600g)은 성인 기준으로 보통 약 3인분 정도의 고기 양입니다.`;
+  } else if (id === 'shoe') {
+    const kr = parseFloat(document.getElementById('conv-shoe-kr').value);
+    const us = document.getElementById('conv-shoe-us').value;
+    const eu = document.getElementById('conv-shoe-eu').value;
+    if(isNaN(kr) || !us || !eu) { box.classList.remove('show'); return; }
+    const gText = _shoeGender === 'male' ? '남성' : '여성';
+    text = `👟 <b>${gText} 한국 사이즈 ${kr}mm</b>는 미국(US) <b>${us}</b>, 유럽(EU) <b>${eu}</b>와 유사한 크기입니다.<br/>(신발 제조사, 발볼 디자인에 따라 실제 착화감은 다를 수 있습니다.)`;
+  } else if (id === 'mile') {
+     const a = parseFloat(document.getElementById('conv-mile-a').value);
+     const b = parseFloat(document.getElementById('conv-mile-b').value);
+     if(isNaN(a) || isNaN(b)) { box.classList.remove('show'); return; }
+     text = `🚗 약 <b>${a} 마일(ml)</b> 주행거리는 <b>${b} 킬로미터(km)</b>로 변환됩니다.<br/>미국이나 영국의 렌터카 주행 및 속도제한 표지판은 대부분 마일 단위로 표시됩니다.`;
+  } else if (id === 'data') {
+     const mb = parseFloat(document.getElementById('conv-data-mb').value);
+     const gb = parseFloat(document.getElementById('conv-data-gb').value);
+     if(isNaN(mb) || isNaN(gb)) { box.classList.remove('show'); return; }
+     text = `💾 용량 <b>${mb} MB</b>는 약 <b>${gb} GB</b> 입니다.<br/>파일의 정확한 용량 계산 시 제조사 표기(1,000배수)와 운영체제 인식(1,024배수)에 미세한 차이가 발생할 수 있습니다.`;
+  } else if (id === 'temp') {
+     const a = parseFloat(document.getElementById('conv-temp-a').value);
+     const b = parseFloat(document.getElementById('conv-temp-b').value);
+     if(isNaN(a) || isNaN(b)) { box.classList.remove('show'); return; }
+     text = `🌡 섭씨 <b>${a}℃</b>는 화씨 <b>${b}℉</b>와 통용되는 온도입니다.<br/>보통 미국이나 바하마 등 해외직구/날씨 확인 시 화씨 데이터를 입력하여 섭씨로 확인할 수 있습니다.`;
+  } else if (id === 'lb') {
+     const a = parseFloat(document.getElementById('conv-lb-a').value);
+     const b = parseFloat(document.getElementById('conv-lb-b').value);
+     if(isNaN(a) || isNaN(b)) { box.classList.remove('show'); return; }
+     text = `📦 제품 중량 <b>${a} 파운드(lb)</b>는 약 <b>${b} kg</b> 이며, 해외 직구 시 배송대행지 무게 요금 산정의 핵심 기준이 됩니다.`;
+  } else {
+     box.classList.remove('show');
+     return;
+  }
+  
+  if (text) {
+    box.innerHTML = text;
+    box.classList.add('show');
+  } else {
+    box.classList.remove('show');
+  }
+}
+
+function copyUnitResult(){
+  const cat=UNIT_DATA[currentUnitCat];let lines=[];
+  for(const item of cat.items){
+    if(item.type==='shoe'){const kr=document.getElementById('conv-shoe-kr')?.value;const us=document.getElementById('conv-shoe-us')?.value;const eu=document.getElementById('conv-shoe-eu')?.value;if(kr||us||eu)lines.push(`신발: KR ${kr||'-'} = US ${us||'-'} = EU ${eu||'-'}`)}
+    else if(item.type==='data'){const mb=document.getElementById('conv-data-mb')?.value;const gb=document.getElementById('conv-data-gb')?.value;const tb=document.getElementById('conv-data-tb')?.value;if(mb||gb||tb)lines.push(`${mb||0} MB = ${gb||0} GB = ${tb||0} TB`)}
+    else{const a=document.getElementById(`conv-${item.id}-a`)?.value;const b=document.getElementById(`conv-${item.id}-b`)?.value;if(a&&b)lines.push(`${a} ${item.a} = ${b} ${item.b}`)}
+  }
+  if(lines.length===0){showToast('변환할 값을 입력하세요');return}
+  navigator.clipboard.writeText(lines.join('\n')).then(()=>showToast('결과가 복사되었습니다'));
+}
+
+renderUnitCats();renderConverters();
+</script>
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

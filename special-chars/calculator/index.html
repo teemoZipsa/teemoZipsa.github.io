@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>🧮 일반 계산기 — 티모집사</title>
+<meta name="description" content="사칙연산, 퍼센트, 부호 변환 등 기본 계산기. 키보드 입력 지원.">
+<meta property="og:title" content="🧮 일반 계산기 — 티모집사">
+<meta property="og:description" content="사칙연산, 퍼센트, 부호 변환 등 기본 계산기. 키보드 입력 지원.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/calculator/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/calculator/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/calculator/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/calculator/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    background: var(--bg-body);
+    color: var(--text-primary);
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 20px;
+  }
+  .calc-app {
+    background: var(--bg-app);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    width: 340px;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  /* 타이틀바 */
+  .calc-header {
+    background: var(--bg-header);
+    padding: 12px 16px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .calc-header .back-btn {
+    background: rgba(255,255,255,0.12); border: none; color: var(--text-secondary);
+    font-size: 12px; cursor: pointer; padding: 5px 10px;
+    border-radius: 6px; text-decoration: none;
+    transition: background 0.2s; font-family: inherit;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .calc-header .back-btn:hover { background: rgba(255,255,255,0.22); color: #fff; }
+  .calc-header h1 {
+    font-size: 15px; font-weight: 600; color: #fff; letter-spacing: 0.5px;
+  }
+
+  /* 디스플레이 */
+  .calc-display {
+    background: var(--bg-bar);
+    padding: 16px 20px;
+    text-align: right;
+    border-bottom: 1px solid var(--border);
+  }
+  .calc-expr {
+    font-size: 13px; color: var(--calc-expr-text); min-height: 18px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .calc-result {
+    font-size: 36px; font-weight: 700; color: var(--calc-result-text);
+    margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 버튼 그리드 */
+  .calc-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    padding: 1px;
+    background: var(--bg-bar);
+  }
+  .calc-btn {
+    background: var(--bg-input);
+    border: none;
+    color: var(--text-primary);
+    font-size: 20px;
+    font-weight: 500;
+    padding: 18px;
+    cursor: pointer;
+    transition: background 0.12s;
+    font-family: inherit;
+    user-select: none;
+  }
+  .calc-btn:hover { background: var(--calc-btn-hover); }
+  .calc-btn:active { background: var(--bg-btn-hover); }
+
+  .calc-btn.op {
+    background: var(--bg-btn);
+    color: var(--text-secondary);
+    font-size: 22px;
+  }
+  .calc-btn.op:hover { background: var(--bg-btn-hover); }
+
+  .calc-btn.fn {
+    background: var(--bg-bar);
+    color: var(--text-info);
+    font-size: 16px;
+  }
+  .calc-btn.fn:hover { background: var(--calc-fn-hover); }
+
+  .calc-btn.eq {
+    background: var(--accent);
+    color: var(--text-on-accent);
+    font-size: 24px;
+    font-weight: 700;
+  }
+  .calc-btn.eq:hover { background: var(--accent-hover); }
+  .calc-btn.eq:active { background: var(--calc-eq-active); }
+
+  .calc-btn.zero { grid-column: span 2; }
+
+  /* 하단 */
+  .footer {
+    background: var(--bg-bar);
+    padding: 10px 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid var(--border);
+    font-size: 11px; color: var(--calc-expr-text);
+  }
+  .footer a {
+    color: var(--text-info); text-decoration: none; font-weight: 600;
+    transition: color 0.2s;
+  }
+  .footer a:hover { color: var(--text-secondary); }
+  /* 동적 리포트 & 가이드 표준 CSS */
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .report-box { margin: 16px 12px 0; padding: 20px; background: var(--bg-bar); border: 1px solid var(--border); border-radius: 12px; }
+  .report-box h3 { font-size: 15px; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .report-box p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 8px; }
+  .report-box .highlight { color: var(--accent); font-weight: 600; }
+  .guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
+  .guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
+  .guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .guide summary { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; line-height: 1.4; }
+  .guide summary::-webkit-details-marker { display: none; }
+  .guide summary::after { content: '▼'; font-size: 10px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
+  .guide[open] summary::after { transform: rotate(180deg); }
+  .guide-content { padding: 0 16px 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .guide-content h3 { font-size: 14px; color: var(--text-primary); margin: 12px 0 8px; }
+  .guide-content p { margin-bottom: 12px; }
+  .guide-content ul, .guide-content ol { padding-left: 20px; margin-bottom: 12px; }
+  .guide-content li { margin-bottom: 4px; }
+  .related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+  .related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag { font-size: 12px; background: var(--bg-btn); color: var(--text-secondary); padding: 6px 12px; border-radius: 16px; text-decoration: none; border: 1px solid var(--border); transition: all 0.2s; }
+  .tag:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+</style>
+</head>
+<body>
+
+<div class="calc-app">
+  <div class="calc-header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+    <h1>🧮 계산기</h1>
+    <a href="/special-chars/en/calculator/" class="back-btn">🌐 English</a>
+  </div>
+
+  <div class="calc-display">
+    <div class="calc-expr" id="expr"></div>
+    <div class="calc-result" id="result">0</div>
+  </div>
+
+  <div class="calc-buttons">
+    <button class="calc-btn fn" onclick="clearAll()">C</button>
+    <button class="calc-btn fn" onclick="toggleSign()">±</button>
+    <button class="calc-btn fn" onclick="percent()">%</button>
+    <button class="calc-btn op" onclick="inputOp('÷')">÷</button>
+
+    <button class="calc-btn" onclick="inputNum('7')">7</button>
+    <button class="calc-btn" onclick="inputNum('8')">8</button>
+    <button class="calc-btn" onclick="inputNum('9')">9</button>
+    <button class="calc-btn op" onclick="inputOp('×')">×</button>
+
+    <button class="calc-btn" onclick="inputNum('4')">4</button>
+    <button class="calc-btn" onclick="inputNum('5')">5</button>
+    <button class="calc-btn" onclick="inputNum('6')">6</button>
+    <button class="calc-btn op" onclick="inputOp('−')">−</button>
+
+    <button class="calc-btn" onclick="inputNum('1')">1</button>
+    <button class="calc-btn" onclick="inputNum('2')">2</button>
+    <button class="calc-btn" onclick="inputNum('3')">3</button>
+    <button class="calc-btn op" onclick="inputOp('+')">+</button>
+
+    <button class="calc-btn zero" onclick="inputNum('0')">0</button>
+    <button class="calc-btn" onclick="inputDot()">.</button>
+    <button class="calc-btn eq" onclick="calculate()">=</button>
+  </div>
+
+  <!-- 동적 연산 분석 리포트 -->
+  <div id="reportContainer" class="report-box" style="display:none; animation: fadeIn 0.5s ease;"></div>
+
+  <section class="guide-section">
+    <h2>💡 무료 일반 계산기 완벽 사용 가이드</h2>
+    
+    <details class="guide" open>
+      <summary>계산기 입력 및 결과 분석은 어떻게 진행되나요?</summary>
+      <div class="guide-content">
+        <p>사용자가 클릭하거나 키보드로 타이핑하여 도출한 모든 사칙연산, 부호 변경, 퍼센트(%) 처리 결과는 <b>고성능 클라이언트 사이드 연산 로직</b>을 거쳐 즉각적으로 화면에 출력됩니다.</p>
+        <p>단순한 결과 렌더링에 그치지 않고, 현재 생성된 결과값의 <b>수학적 속성(자릿수 단위, 구조적 특징 등)을 하단 분석 리포트에서 실시간으로 파악</b>할 수 있도록 편의성을 극대화하였습니다.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>퍼센트(%) 계산은 실생활에서 어떻게 응용할 수 있나요?</summary>
+      <div class="guide-content">
+        <p>퍼센트 계산 버튼은 입력된 숫자의 백분율(100 분의 1) 기준 수치를 즉시 산출합니다.</p>
+        <ul>
+          <li><b>할인율 적용:</b> 정가 50,000원 상품에 20% 할인이 들어간 경우 <code>50000 × 20 %</code>를 통해 10,000원(할인액)을 즉시 구한 뒤 차감할 수 있습니다.</li>
+          <li><b>부가세 계산:</b> 10%의 세액을 추가해야 할 때, 기준 상용금에 <code>10 %</code>를 활용하면 빠르고 직관적인 세금 계산이 완료됩니다.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>키보드 단축키는 어떻게 지원되나요?</summary>
+      <div class="guide-content">
+        <p>반복적인 회계 업무 및 학업 연산 작업의 효율성을 위한 <b>PC 키보드 풀 스펙 텐키(Ten-key) 모델 입력 단축키를 완벽 적용</b>하였습니다.</p>
+        <ul>
+          <li><b>기본 연산:</b> 키보드 우측 숫자 패드 및 기본 <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code> 키로 사칙연산이 논스톱으로 지원됩니다.</li>
+          <li><b>실행 및 삭제:</b> <code>Enter</code>(또는 <code>=</code>) 키로 결과를 산출하고, <code>Backspace</code>로 마지막 입력을 되돌릴 수 있으며, <code>Escape</code>로 히스토리 전체 초기화(C)가 가능합니다.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>나의 계산 내역과 결괏값의 보안은 안전한가요?</summary>
+      <div class="guide-content">
+        <p>네, 티모집사 무료 계산기는 <b>서버 연동이나 데이터베이스 백업 과정이 존재하지 않는 100% 브라우저 독립형 설계</b>를 원칙으로 합니다.</p>
+        <p>기업 재무 파악용 시트 계산, 민감도가 높은 세금/대출 비용 연산, 개인적인 자산 시뮬레이션 등에 사용하셔도 웹사이트 종료 및 새로고침과 동시에 모든 메모리 캐시가 휘발되므로 안심하고 프라이빗하게 이용하십시오.</p>
+      </div>
+    </details>
+
+    <div class="related-tools">
+      <h3>🛠️ 함께 쓰면 좋은 계산기</h3>
+      <div class="tags">
+        <a href="/special-chars/percent-calc/" class="tag">퍼센트 계산기</a>
+        <a href="/special-chars/avg-price/" class="tag">주식 평단가 계산기</a>
+        <a href="/special-chars/wage-calc/" class="tag">시급/월급 역산</a>
+        <a href="/special-chars/loan-calc/" class="tag">대출 이자 계산기</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    <span>키보드 입력 완벽 지원</span>
+    <a href="https://teemozipsa.github.io/">😺 더 많은 도구</a>
+  </div>
+</div>
+
+<script>
+let currentInput = '0';
+let previousInput = '';
+let operator = '';
+let shouldResetDisplay = false;
+let expression = '';
+
+const resultEl = document.getElementById('result');
+const exprEl = document.getElementById('expr');
+
+function updateDisplay() {
+  resultEl.textContent = currentInput;
+  exprEl.textContent = expression;
+  updateReport();
+}
+
+function updateReport() {
+  const container = document.getElementById('reportContainer');
+  if (!container) return;
+
+  if (currentInput === '0' && expression === '') {
+    container.style.display = 'none';
+    return;
+  }
+  
+  container.style.display = 'block';
+
+  let val = parseFloat(currentInput);
+  let analysis = '';
+  
+  if (isNaN(val) || currentInput === 'Error') {
+    analysis = `<p style="color:var(--accent);">현재 계산 오류(Error) 상태입니다. 유효하지 않은 연산이 발생했습니다.</p>`;
+  } else {
+    let absVal = Math.abs(val);
+    let magnitude = '';
+    if (absVal === 0) magnitude = '영(0)의 기준값';
+    else if (absVal > 0 && absVal < 1) magnitude = '소수점 이하 미세 단위 수치';
+    else if (absVal >= 100000000) magnitude = '억(100,000,000) 단위 이상 대규모 수치';
+    else if (absVal >= 10000) magnitude = '만(10,000) 이상 구조의 단위 수치';
+    else if (absVal >= 1000) magnitude = '천(1,000) 이상 중간 규모의 단위 수치';
+    else magnitude = '천 단위 미만의 기초 단위 수치';
+
+    let parity = '';
+    if (Number.isInteger(val)) {
+      parity = val % 2 === 0 ? '짝수(Even number)' : '홀수(Odd number)';
+    } else {
+      parity = '연속 및 분할 계산용 소수(Decimal)';
+    }
+
+    let sign = val > 0 ? '양수(+)' : (val < 0 ? '음수(-)' : '중립치(0)');
+
+    analysis = `
+      <h3>📊 실시간 연산 결괏값 메타 분석 리포트</h3>
+      <p><b>현재 출력값:</b> <span class="highlight">${currentInput}</span></p>
+      <p><b>수학적 속성:</b> 출력된 결과는 <b>${sign}</b> 및 <b>${parity}</b> 속성을 지니며, 자릿수 표기법 기준 <b>${magnitude}</b>에 해당합니다.</p>
+      <div style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);">
+        <p style="margin-bottom:0; color:var(--text-info);">💡 <b>계산 분석 팁:</b> [ ${expression || '진행 중인 선행 연산 대기'} ] 히스토리를 통해 도출된 이번 결괏값은 연속적인 연산자(＋, －, ×, ÷) 입력 시 추가 연산의 즉각적 베이스 스코어로 자동 편입됩니다.</p>
+      </div>
+    `;
+  }
+  
+  container.innerHTML = analysis;
+}
+
+function inputNum(n) {
+  if (shouldResetDisplay) {
+    currentInput = '';
+    shouldResetDisplay = false;
+  }
+  if (currentInput === '0' && n !== '.') {
+    currentInput = n;
+  } else {
+    if (currentInput.length >= 15) return;
+    currentInput += n;
+  }
+  updateDisplay();
+}
+
+function inputDot() {
+  if (shouldResetDisplay) {
+    currentInput = '0';
+    shouldResetDisplay = false;
+  }
+  if (!currentInput.includes('.')) {
+    currentInput += '.';
+  }
+  updateDisplay();
+}
+
+function inputOp(op) {
+  if (operator && !shouldResetDisplay) {
+    calculate();
+  }
+  previousInput = currentInput;
+  operator = op;
+  expression = formatNum(previousInput) + ' ' + op;
+  shouldResetDisplay = true;
+  updateDisplay();
+}
+
+function calculate() {
+  if (!operator || !previousInput) return;
+  const a = parseFloat(previousInput);
+  const b = parseFloat(currentInput);
+  let result;
+
+  switch (operator) {
+    case '+': result = a + b; break;
+    case '−': result = a - b; break;
+    case '×': result = a * b; break;
+    case '÷': result = b === 0 ? 'Error' : a / b; break;
+    default: return;
+  }
+
+  expression = formatNum(previousInput) + ' ' + operator + ' ' + formatNum(currentInput) + ' =';
+
+  if (result === 'Error') {
+    currentInput = 'Error';
+  } else {
+    // 부동소수점 보정
+    result = parseFloat(result.toPrecision(12));
+    currentInput = String(result);
+  }
+
+  operator = '';
+  previousInput = '';
+  shouldResetDisplay = true;
+  updateDisplay();
+}
+
+function clearAll() {
+  currentInput = '0';
+  previousInput = '';
+  operator = '';
+  expression = '';
+  shouldResetDisplay = false;
+  updateDisplay();
+}
+
+function toggleSign() {
+  if (currentInput === '0' || currentInput === 'Error') return;
+  if (currentInput.startsWith('-')) {
+    currentInput = currentInput.slice(1);
+  } else {
+    currentInput = '-' + currentInput;
+  }
+  updateDisplay();
+}
+
+function percent() {
+  const v = parseFloat(currentInput);
+  if (isNaN(v)) return;
+  currentInput = String(parseFloat((v / 100).toPrecision(12)));
+  updateDisplay();
+}
+
+function formatNum(n) {
+  const num = parseFloat(n);
+  if (isNaN(num)) return n;
+  if (Number.isInteger(num) && Math.abs(num) < 1e15) {
+    return num.toLocaleString('ko-KR');
+  }
+  return n;
+}
+
+// 키보드 입력
+document.addEventListener('keydown', e => {
+  if (e.key >= '0' && e.key <= '9') inputNum(e.key);
+  else if (e.key === '.') inputDot();
+  else if (e.key === '+') inputOp('+');
+  else if (e.key === '-') inputOp('−');
+  else if (e.key === '*') inputOp('×');
+  else if (e.key === '/') { e.preventDefault(); inputOp('÷'); }
+  else if (e.key === 'Enter' || e.key === '=') { e.preventDefault(); calculate(); }
+  else if (e.key === 'Escape') clearAll();
+  else if (e.key === 'Backspace') {
+    if (currentInput.length > 1) {
+      currentInput = currentInput.slice(0, -1);
+    } else {
+      currentInput = '0';
+    }
+    updateDisplay();
+  }
+  else if (e.key === '%') percent();
+});
+
+updateDisplay();
+</script>
+
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

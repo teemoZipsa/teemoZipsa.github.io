@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>✂️ 이미지 배경(누끼) 제거 도구 — 티모집사</title>
+<meta name="description" content="AI로 이미지 배경을 자동 제거(누끼). 서버 업로드 없이 브라우저에서 바로 처리. 무료, 무제한, 개인정보 걱정 없음.">
+<meta property="og:title" content="✂️ 이미지 배경(누끼) 제거 도구 — 티모집사">
+<meta property="og:description" content="AI 이미지 배경(누끼) 제거. 서버 전송 없이 100% 브라우저 처리. 무료 무제한.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/bg-remover/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/bg-remover/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/bg-remover/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/bg-remover/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
+.app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:600px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+.body{padding:16px;display:flex;flex-direction:column;gap:14px}
+
+/* 드롭존 */
+.dropzone{border:2.5px dashed var(--border);border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .3s;background:var(--bg-guide);position:relative}
+.dropzone:hover,.dropzone.dragover{border-color:var(--accent);background:var(--accent-bg)}
+.dropzone-icon{font-size:48px;margin-bottom:10px;display:block}
+.dropzone-text{font-size:14px;color:var(--text-info);font-weight:500;line-height:1.6}
+.dropzone-text strong{color:var(--accent)}
+.dropzone-sub{font-size:11px;color:var(--text-muted);margin-top:6px}
+.dropzone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer}
+
+/* 프로그레스 */
+.progress-wrap{display:none;text-align:center;padding:20px 0}
+.progress-wrap.active{display:block}
+.progress-bar-bg{width:100%;height:8px;background:var(--bg-btn);border-radius:4px;overflow:hidden;margin:12px 0}
+.progress-bar{height:100%;background:var(--accent);border-radius:4px;transition:width .3s;width:0}
+.progress-text{font-size:13px;color:var(--text-info);font-weight:600}
+.progress-spinner{display:inline-block;width:20px;height:20px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;vertical-align:middle;margin-right:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* 결과 영역 */
+.result-area{display:none}
+.result-area.active{display:block}
+
+/* 비교 뷰 */
+.compare-tabs{display:flex;gap:4px;background:var(--bg-bar);border-radius:10px;padding:4px;margin-bottom:10px}
+.compare-tab{flex:1;padding:9px 6px;border:none;border-radius:8px;background:transparent;color:var(--text-info);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;text-align:center}
+.compare-tab.active{background:var(--accent);color:var(--text-on-accent);box-shadow:0 2px 8px rgba(83,52,131,.3)}
+.compare-tab:hover:not(.active){background:var(--bg-btn)}
+
+.preview-box{background:var(--bg-guide);border:1px solid var(--border);border-radius:10px;overflow:hidden;position:relative;min-height:200px;display:flex;align-items:center;justify-content:center}
+/* 체커보드 투명 배경 표시 */
+.preview-box.transparent{background-image:repeating-conic-gradient(var(--bg-btn) 0% 25%, transparent 0% 50%);background-size:20px 20px}
+.preview-box img{max-width:100%;max-height:450px;display:block;margin:0 auto}
+
+/* 슬라이더 비교 */
+.slider-wrap{position:relative;overflow:hidden;border-radius:10px;border:1px solid var(--border);touch-action:none}
+.slider-wrap img{display:block;width:100%;max-height:450px;object-fit:contain;pointer-events:none}
+.slider-overlay{position:absolute;top:0;left:0;bottom:0;overflow:hidden}
+.slider-overlay img{display:block;height:100%;max-height:450px;object-fit:contain;pointer-events:none}
+.slider-handle{position:absolute;top:0;bottom:0;width:4px;background:var(--accent);cursor:ew-resize;z-index:5}
+.slider-handle::after{content:'⟷';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--accent);color:var(--text-on-accent);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+
+/* 버튼 그룹 */
+.btn-group{display:flex;gap:8px}
+.action-btn{flex:1;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;text-align:center}
+.btn-download{background:var(--bg-header);color:var(--text-on-accent)}
+.btn-download:hover{opacity:.85}
+.btn-reset{background:var(--bg-btn);color:var(--text-secondary);border:1px solid var(--border)}
+.btn-reset:hover{background:var(--bg-btn-hover)}
+
+/* 정보 뱃지 */
+.info-badge{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--accent-bg);border:1px solid var(--accent);border-radius:10px;font-size:12px;color:var(--text-info)}
+.info-badge .badge-icon{font-size:16px;flex-shrink:0}
+.info-badge strong{color:var(--accent)}
+
+  /* 동적 리포트 & 가이드 표준 CSS */
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .report-box { margin-top: 20px; padding: 20px; background: var(--bg-bar); border: 1px solid var(--border); border-radius: 12px; }
+  .report-box h3 { font-size: 15px; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .report-box p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 8px; }
+  .report-box .highlight { color: var(--accent); font-weight: 600; }
+  .guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
+  .guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
+  .guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .guide summary { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; line-height: 1.4; }
+  .guide summary::-webkit-details-marker { display: none; }
+  .guide summary::after { content: '▼'; font-size: 10px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
+  .guide[open] summary::after { transform: rotate(180deg); }
+  .guide-content { padding: 0 16px 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .guide-content h3 { font-size: 14px; color: var(--text-primary); margin: 12px 0 8px; }
+  .guide-content p { margin-bottom: 12px; }
+  .guide-content ul, .guide-content ol { padding-left: 20px; margin-bottom: 12px; }
+  .guide-content li { margin-bottom: 4px; }
+  .related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+  .related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag { font-size: 12px; background: var(--bg-btn); color: var(--text-secondary); padding: 6px 12px; border-radius: 16px; text-decoration: none; border: 1px solid var(--border); transition: all 0.2s; }
+  .tag:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.4);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){
+  .scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}
+  .btn-group{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+    <h1>✂️ 이미지 배경(누끼) 제거 도구</h1>
+    <a href="/special-chars/en/bg-remover/" class="back-btn">🌐 English</a>
+  </div>
+  <div class="body">
+    <!-- 프라이버시 뱃지 -->
+    <div class="info-badge">
+      <span class="badge-icon">🔒</span>
+      <span>이미지가 서버로 전송되지 않습니다. <strong>100% 브라우저 처리</strong> · 개인정보 안전</span>
+    </div>
+
+    <!-- 업로드 영역 -->
+    <div class="dropzone" id="dropzone">
+      <input type="file" id="fileInput" accept="image/*">
+      <span class="dropzone-icon">🖼️</span>
+      <div class="dropzone-text">이미지를 <strong>드래그하거나 클릭</strong>하여 업로드</div>
+      <div class="dropzone-sub">JPG, PNG, WebP 지원 · 최대 10MB</div>
+    </div>
+    <div class="info-badge" id="dataWarning" style="display:none;border-color:#e67e22;background:rgba(230,126,34,.08)">
+      <span class="badge-icon">📱</span>
+      <span>첫 사용 시 AI 모델(~40MB)을 다운로드합니다. <strong style="color:#e67e22">Wi-Fi 환경을 권장</strong>합니다. (이후 캐시 사용)</span>
+    </div>
+
+    <!-- 프로그레스 -->
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-text" id="progressText"><span class="progress-spinner"></span>AI 모델 로딩 중...</div>
+      <div class="progress-bar-bg"><div class="progress-bar" id="progressBar"></div></div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="progressSub">첫 실행 시 모델 다운로드(~40MB)에 시간이 걸릴 수 있습니다</div>
+    </div>
+
+    <!-- 결과 영역 -->
+    <div class="result-area" id="resultArea">
+      <div class="compare-tabs">
+        <button class="compare-tab active" onclick="setView('result')">✂️ 결과</button>
+        <button class="compare-tab" onclick="setView('original')">📷 원본</button>
+        <button class="compare-tab" onclick="setView('compare')">🔀 비교</button>
+      </div>
+
+      <!-- 결과 이미지 -->
+      <div class="preview-box transparent" id="resultView">
+        <img id="resultImg" alt="배경 제거 결과">
+      </div>
+
+      <!-- 원본 이미지 -->
+      <div class="preview-box" id="originalView" style="display:none">
+        <img id="originalImg" alt="원본 이미지">
+      </div>
+
+      <!-- 슬라이더 비교 -->
+      <div class="slider-wrap" id="compareView" style="display:none">
+        <img id="compareAfter" alt="배경 제거 결과">
+        <div class="slider-overlay" id="sliderOverlay">
+          <img id="compareBefore" alt="원본">
+        </div>
+        <div class="slider-handle" id="sliderHandle"></div>
+      </div>
+
+      <div style="height:10px"></div>
+
+      <div class="btn-group">
+        <button class="action-btn btn-download" onclick="downloadResult()">💾 PNG 다운로드</button>
+        <button class="action-btn btn-reset" onclick="resetAll()">🔄 다른 이미지</button>
+      </div>
+
+      <!-- 동적 AI 누끼 분석 리포트 -->
+      <div id="reportContainer" class="report-box" style="display:none; animation: fadeIn 0.5s ease;"></div>
+    </div>
+  </div>
+
+  <section class="guide-section">
+    <h2>💡 완전 무료 무제한 AI 영상(이미지) 누끼머신 가이드</h2>
+    
+    <details class="guide" open>
+      <summary>이미지 배경 제거(누끼 따기) 란 정확히 무엇인가요?</summary>
+      <div class="guide-content">
+        <p>전통적인 그래픽 디자인(Photoshop 등)에서는 전문가가 마우스 패스로 이미지의 외곽선을 한 땀 한 땀 따야 했습니다. 하지만 본 도구는 최첨단 <b>AI 딥러닝 비전 모델(.onnx 형태)</b>을 통해 사진에서 '주요 피사체(인물, 동물, 핵심 포커스 사물)'와 '불필요한 뒷배경(Background)'을 단 몇 초 만에 자동으로 분리해 내는 기술입니다.</p>
+        <p>제거된 배경은 '투명 픽셀(Alpha=0)' 처리되므로, 유튜브 썸네일, 쇼핑몰 상세 페이지 모델샷, 웹디자인 로고 소스 제작 시 필수적인 기능입니다.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>오프라인 수준의 100% 프라이버시가 정말 보장되나요?</summary>
+      <div class="guide-content">
+        <p>물론입니다. 본 서비스는 업계 최초로 <strong>[In-Browser WASM Processing]</strong> 기술을 적용했습니다.</p>
+        <p>첫 방문 시 사용자 기기(브라우저 캐시 저장소)에 약 40MB짜리 최신 경량화 AI 두뇌 모델 파일 템플릿만 1회 다운받아 올립니다. 그 후, ඔබ이 올리시는 모든 이미지 사진들의 연산(배경과 전경을 픽셀별로 추론하는 작업)은 오로지 <b>고객님의 스마트폰/PC CPU 메모리 등 기기 내부 자원만을 사용해 처리</b>됩니다.</p>
+        <p>따라서 얼굴이 정면으로 나온 증명사진, 회사 기밀 프로젝트 회의 도면, 결제 영수증 등 사생활 보호가 최우선인 사진이라도 외부 클라우드 서버망으로 단 1바이트조차 전송되지 않는 완벽한 기밀성을 100% 보장합니다.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>오류가 나거나 품질이 잘 안 나오는 경우가 있나요?</summary>
+      <div class="guide-content">
+        <p>아래와 같은 엣지 환경에선 AI가 혼동할 수 있습니다:</p>
+        <ul>
+          <li><b>피사체와 백그라운드 색상이 완전히 같은 경우:</b> (예: 완전히 흰옷을 입은 사람이 하얀 설원 눈밭에 서있는 경우)</li>
+          <li><b>극도로 흐릿하거나 화질이 뭉개진 저해상도:</b> AI 엣지 디텍션이 테두리를 파악하지 못할 수 있습니다.</li>
+          <li><b>해결팁:</b> 원본 화질이 좋고 대상과 배경 대비(Contrast)가 명확할 때 융털, 머리카락 한 올까지 잡아내는 무결점의 결과물이 탄생합니다.</li>
+        </ul>
+      </div>
+    </details>
+
+    <div class="related-tools">
+      <h3>🛠️ 함께 쓰면 좋은 디자인/사진 도구</h3>
+      <div class="tags">
+        <a href="/special-chars/image-compress/" class="tag">초고속 이미지 용량 압축기</a>
+        <a href="/special-chars/image-format-converter/" class="tag">무손실 이미지 확장자 변환</a>
+        <a href="/special-chars/color-picker/" class="tag">컬러 피커 & HEX 코드</a>
+        <a href="/special-chars/calculators/" class="tag">일상 생활 계산기 모음</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer"><span>AI 배경 제거 · 100% 로컬 처리</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+
+<script type="module">
+import { removeBackground } from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm';
+
+let originalURL = null;
+let resultURL = null;
+let resultBlob = null;
+let fileName = 'image';
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const progressWrap = document.getElementById('progressWrap');
+const resultArea = document.getElementById('resultArea');
+
+// 드래그 앤 드롭
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+dropzone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropzone.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) handleFile(file);
+});
+
+fileInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (file) handleFile(file);
+});
+
+// 모바일 데이터 감지 및 경고
+function checkMobileData() {
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (conn && (conn.type === 'cellular' || conn.effectiveType === '3g' || conn.effectiveType === '2g')) {
+    return true;
+  }
+  return false;
+}
+
+// 첫 사용 시 모바일 데이터 경고 표시
+(function() {
+  if (checkMobileData()) {
+    const w = document.getElementById('dataWarning');
+    if (w) w.style.display = '';
+  }
+})();
+
+async function handleFile(file) {
+  if (file.size > 10 * 1024 * 1024) {
+    showToast('⚠️ 파일 크기가 10MB를 초과합니다');
+    return;
+  }
+
+  // 모바일 데이터 경고
+  if (checkMobileData()) {
+    const ok = confirm('📱 모바일 데이터로 접속 중입니다.\n\n첫 사용 시 AI 모델(약 40MB)을 다운로드합니다.\nWi-Fi 환경에서 사용하시는 것을 권장합니다.\n\n계속 진행하시겠습니까?');
+    if (!ok) return;
+  }
+
+  fileName = file.name.replace(/\.[^/.]+$/, '');
+  
+  // 원본 URL 생성
+  if (originalURL) URL.revokeObjectURL(originalURL);
+  originalURL = URL.createObjectURL(file);
+
+  // UI 전환
+  dropzone.style.display = 'none';
+  document.getElementById('dataWarning').style.display = 'none';
+  progressWrap.classList.add('active');
+  resultArea.classList.remove('active');
+  updateProgress(0, 'AI 모델 로딩 중...');
+
+  try {
+    const blob = await removeBackground(file, {
+      progress: (key, current, total) => {
+        if (key === 'compute:inference') {
+          const pct = Math.round((current / total) * 100);
+          updateProgress(pct, '배경 제거 처리 중...');
+        } else if (key.startsWith('fetch:')) {
+          updateProgress(0, 'AI 모델 다운로드 중...');
+          document.getElementById('progressSub').textContent = '첫 실행 시 약 40MB 다운로드 (이후 캐시 사용)';
+        }
+      }
+    });
+
+    resultBlob = blob;
+    if (resultURL) URL.revokeObjectURL(resultURL);
+    resultURL = URL.createObjectURL(blob);
+
+    // 결과 표시
+    document.getElementById('resultImg').src = resultURL;
+    document.getElementById('originalImg').src = originalURL;
+    document.getElementById('compareAfter').src = resultURL;
+    document.getElementById('compareBefore').src = originalURL;
+
+    progressWrap.classList.remove('active');
+    resultArea.classList.add('active');
+    setView('result');
+    showToast('✅ 배경 제거 완료!');
+    
+    // SEO 리포트 생성
+    updateReport(file, blob);
+
+  } catch (err) {
+    console.error('Background removal error:', err);
+    progressWrap.classList.remove('active');
+    dropzone.style.display = '';
+    showToast('❌ 처리 중 오류가 발생했습니다');
+  }
+}
+
+function updateProgress(pct, text) {
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').innerHTML = '<span class="progress-spinner"></span>' + text + (pct > 0 ? ' ' + pct + '%' : '');
+}
+
+// 뷰 전환
+window.setView = function(view) {
+  document.querySelectorAll('.compare-tab').forEach((t, i) => {
+    const views = ['result', 'original', 'compare'];
+    t.classList.toggle('active', views[i] === view);
+  });
+  document.getElementById('resultView').style.display = view === 'result' ? '' : 'none';
+  document.getElementById('originalView').style.display = view === 'original' ? '' : 'none';
+  document.getElementById('compareView').style.display = view === 'compare' ? '' : 'none';
+  
+  if (view === 'compare') initSlider();
+};
+
+// 슬라이더 비교
+function initSlider() {
+  const wrap = document.getElementById('compareView');
+  const overlay = document.getElementById('sliderOverlay');
+  const handle = document.getElementById('sliderHandle');
+  let dragging = false;
+
+  function setPos(x) {
+    const rect = wrap.getBoundingClientRect();
+    let pct = ((x - rect.left) / rect.width) * 100;
+    pct = Math.max(0, Math.min(100, pct));
+    overlay.style.width = pct + '%';
+    handle.style.left = pct + '%';
+  }
+
+  // 초기 50%
+  setTimeout(() => setPos(wrap.getBoundingClientRect().left + wrap.getBoundingClientRect().width / 2), 100);
+
+  handle.addEventListener('mousedown', () => dragging = true);
+  handle.addEventListener('touchstart', () => dragging = true, { passive: true });
+  document.addEventListener('mouseup', () => dragging = false);
+  document.addEventListener('touchend', () => dragging = false);
+  document.addEventListener('mousemove', e => { if (dragging) setPos(e.clientX); });
+  document.addEventListener('touchmove', e => { if (dragging) setPos(e.touches[0].clientX); }, { passive: true });
+  wrap.addEventListener('click', e => setPos(e.clientX));
+}
+
+// 다운로드
+window.downloadResult = function() {
+  if (!resultBlob) return;
+  const a = document.createElement('a');
+  a.href = resultURL;
+  a.download = fileName + '_nobg.png';
+  a.click();
+  showToast('💾 다운로드 완료!');
+};
+
+// 리셋
+window.resetAll = function() {
+  resultArea.classList.remove('active');
+  dropzone.style.display = '';
+  fileInput.value = '';
+  document.getElementById('progressSub').textContent = '첫 실행 시 모델 다운로드(~40MB)에 시간이 걸릴 수 있습니다';
+  if (document.getElementById('reportContainer')) {
+    document.getElementById('reportContainer').style.display = 'none';
+  }
+};
+
+function formatByte(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / 1048576).toFixed(1) + ' MB';
+}
+
+function updateReport(origFile, resBlob) {
+  const container = document.getElementById('reportContainer');
+  if (!container) return;
+  
+  if (!origFile || !resBlob) {
+    container.style.display = 'none';
+    return;
+  }
+  
+  container.style.display = 'block';
+
+  let saved = origFile.size - resBlob.size;
+  let savedPercent = ((saved / origFile.size) * 100).toFixed(1);
+  let sizeFeedback = '';
+  
+  if (saved > 0) {
+    sizeFeedback = `불필요한 누끼(배경 백그라운드) 픽셀 영역이 타겟 클리어되면서 리소스의 용량이 총 <b><span class="highlight">${savedPercent}% 확장 감축 (${formatByte(saved)})</span></b> 되었습니다. 웹 환경 트래픽 최적화(LCP)를 만족합니다.`;
+  } else {
+    sizeFeedback = `누끼 추출의 외곽선 라인 보존 및 투명도(Alpha Channel)가 지원되는 압축방식의 고화질 무손실 PNG 벡터 포맷으로 출력 컨버팅됨에 따라, 원본 대비 파일 바이너리 용량이 상대적으로 약 <span class="highlight">${Math.abs(savedPercent)}% 확장 변경</span>되었습니다.`;
+  }
+
+  container.innerHTML = `
+    <h3>🔍 AI 머신러닝 비전 기반 전경/배경 타겟팅 분리 리포트</h3>
+    <p><b>프로세싱 모듈명:</b> ${origFile.name}</p>
+    <p><b>객체 인식 및 마스킹 스펙:</b> 최신 WASM 및 ONNX 기반 머신러닝 AI 엣지 디텍션 모델이 사용자 브라우저 내부 RAM 메모리에서 즉각적으로 주요 피사체 타겟(인물, 동물, 핵심 포커스 사물)의 외곽선 바운더리를 정밀하게 3D 스캔하여, 버려야 할 백그라운드 매트릭스를 완벽히 디졸브 분리해냈습니다.</p>
+    <p><b>데이터 용량 I/O:</b> ${sizeFeedback}</p>
+    <div style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);">
+      <p style="margin-bottom:0; color:var(--text-info);">💡 <b>테크니컬 웹마스터 꿀팁 조언:</b> 후면(배경)에 투명한 공백을 가진 사진 개체 에셋은 반드시 PNG 나 WebP 확장자로 저장해야 투명 픽셀이 정상 유지됩니다 (JPG는 투명 속성을 미지원하여 검거나 하얗게 깨짐). 현재 하위 출력 버튼을 누르시면 투명(Alpha) 트랜스페어런트 채널이 온전히 보존된 무손실 최고해상도 PNG 포맷을 습득하게 됩니다. 상업용 썸네일 합성 리터치나 웹 디자인 목적으로 즉각 활용해 보세요.</p>
+    </div>
+  `;
+}
+
+// 토스트
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// Scroll top
+(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>🏷️ 할인/세금 계산기 — 티모집사</title>
+<meta name="description" content="할인율 적용 가격, 부가세 포함/미포함 금액을 실시간으로 계산합니다. 쇼핑, 견적, 세금 계산에 유용합니다.">
+<meta property="og:title" content="🏷️ 할인/세금 계산기 — 티모집사">
+<meta property="og:description" content="할인율 적용 가격, 부가세 포함/미포함 금액을 실시간으로 계산합니다.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/discount-calc/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/discount-calc/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+.app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+.content{padding:20px}
+.section{margin-bottom:20px}
+.section-title{font-size:13px;color:var(--text-section);font-weight:600;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.input-group{margin-bottom:14px}
+.input-group label{display:block;font-size:13px;color:var(--text-label);margin-bottom:5px}
+.input-group input{width:100%;padding:12px 14px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:16px;font-family:inherit;text-align:right}
+.input-group input:focus{outline:none;border-color:var(--accent)}
+.input-group input::placeholder{color:var(--text-muted)5aa;text-align:left}
+.row{display:flex;gap:10px}
+.row .input-group{flex:1}
+.toggle-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg-btn);border-radius:8px;margin-bottom:14px;cursor:pointer;user-select:none}
+.toggle-row:hover{background:var(--bg-btn-hover)}
+.toggle-label{font-size:14px;flex:1}
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle .slider{position:absolute;inset:0;background:var(--bg-btn);border-radius:12px;transition:.3s}
+.toggle .slider::before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+.toggle input:checked+.slider{background:var(--accent)}
+.toggle input:checked+.slider::before{transform:translateX(20px)}
+.result-box{background:var(--bg-bar);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
+.result-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.result-item:last-child{border-bottom:none}
+.result-label{font-size:13px;color:var(--text-section)}
+.result-value{font-size:18px;font-weight:700;color:var(--text-primary)}
+.result-value.highlight{color:var(--accent);font-size:22px}
+.result-value.tax{color:#f97316}
+.copy-btn{width:100%;padding:12px;background:var(--bg-header);color:var(--text-on-accent);border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .2s}
+.copy-btn:hover{opacity:.85}
+.copy-btn:active{transform:scale(.98)}
+.guide-section{margin:12px 0 0;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.guide-section summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
+.guide-section summary:hover{background:var(--bg-guide-hover)}
+.guide-section[open] summary{background:var(--bg-btn);border-bottom:1px solid var(--border)}
+.guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+
+.report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-bottom:10px}
+.report-box h3 {font-size:15px;font-weight:700;color:var(--accent);margin-bottom:4px}
+.report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
+.report-box strong {color:var(--text-primary);font-weight:600}
+
+.related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:0 12px 12px}
+.related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
+.related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
+.related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent);transform:translateX(4px)}
+
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(10px) }
+  to { opacity:1; transform:translateY(0) }
+}
+
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+    <h1>🏷️ 할인/세금 계산기</h1>
+  </div>
+  <div class="content">
+    <div class="section">
+      <div class="section-title">가격 정보</div>
+      <div class="input-group">
+        <label>원래 가격 (원)</label>
+        <input type="text" id="price" placeholder="예: 50000" inputmode="numeric" oninput="calc()" value="50000">
+      </div>
+      <div class="row">
+        <div class="input-group">
+          <label>할인율 (%)</label>
+          <input type="text" id="discountRate" placeholder="0" inputmode="decimal" oninput="calc()" value="20">
+        </div>
+        <div class="input-group">
+          <label>할인 금액 (원)</label>
+          <input type="text" id="discountAmt" placeholder="0" inputmode="numeric" oninput="calcByAmt()" value="10000">
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">세금 옵션</div>
+      <div class="toggle-row" onclick="document.getElementById('vatToggle').click()">
+        <span class="toggle-label">부가세(10%) 포함</span>
+        <label class="toggle" onclick="event.stopPropagation()">
+          <input type="checkbox" id="vatToggle" onchange="calc()">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-row" onclick="document.getElementById('vatExToggle').click()">
+        <span class="toggle-label">입력 가격이 세전 금액</span>
+        <label class="toggle" onclick="event.stopPropagation()">
+          <input type="checkbox" id="vatExToggle" checked onchange="calc()">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">계산 결과</div>
+      <div class="result-box" id="resultBox">
+        <div class="result-item">
+          <span class="result-label">할인 금액</span>
+          <span class="result-value" id="resDiscount">10,000 원</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">할인 적용 가격</span>
+          <span class="result-value" id="resAfterDiscount">40,000 원</span>
+        </div>
+        <div class="result-item" id="vatRow" style="display:none">
+          <span class="result-label">부가세 (10%)</span>
+          <span class="result-value tax" id="resVat">0 원</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">최종 금액</span>
+          <span class="result-value highlight" id="resFinal">40,000 원</span>
+        </div>
+      </div>
+      <div class="report-box" id="analysisReport" style="display:none;"></div>
+      <button class="copy-btn" onclick="copyResult()">결과 복사</button>
+    </div>
+
+    <details class="guide-section" open>
+      <summary>💡 무신사 & 스마트스토어 실전 할인/세금 Q&A</summary>
+      <div class="guide-content">
+        <strong>Q. 할인율이 20%라고 할 때, 원래 가격을 어떻게 역산하나요?</strong>
+        <p>세일 중인 옷을 샀는데 원가가 얼만지 궁금한 경우가 있습니다. 이때는 결제 금액을 (1 - 할인율)로 나누면 원래 가격이 나옵니다. 예를 들어 20% 할인된 40,000원짜리 바지라면, 40,000 ÷ 0.8 = 50,000원이 나오게 됩니다. 이 계산기에 할인된 금액과 할인율을 입력하면 쉽게 파악할 수 있습니다.</p>
+        <br>
+        <strong>Q. 쿠폰과 적립금을 동시 적용하면 중복 할인인가요?</strong>
+        <p>보통 쇼핑몰에서는 <strong>'판매가 - 쿠폰 할인'</strong>을 먼저 적용한 뒤, 그 결과값에서 <strong>적립금</strong>을 빼는 방식을 사용합니다. 5만 원짜리에 20% 쿠폰을 먹이고 5,000원 적립금을 쓰면, 4만 원에서 5,000원이 추가로 차감되어 최종 35,000원을 결제하게 됩니다. 퍼센트 할인이 항상 먼저 계산됨을 잊지 마세요!</p>
+        <br>
+        <strong>Q. 부가세 별도(전), 부가세 포함(후)의 차이가 뭔가요? (사업자 필수)</strong>
+        <p>B2B 거래나 프리랜서 견적서 작성 시 가장 중요합니다. <strong>'부가세 포함'</strong>(세단가)는 110%짜리 금액이고, <strong>'부가세 별도'</strong>(공급가액)은 100%짜리 금액입니다. 견적서에 50,000원(부가세 별도)라고 적혀있다면 실제 송금할 금액은 10%가 붙은 55,000원입니다. 본 계산기의 '부가세(10%) 포함' 토글을 켜서 원클릭으로 세금계산서 발행액을 맞출 수 있습니다.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="related-tools">
+    <h3>🔗 연관 쇼핑/비즈니스 계산기</h3>
+    <div class="tool-list">
+      <a href="/special-chars/percent-calc/"><span>🔢 퍼센트 계산기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/wage-calc/"><span>💼 시급 ↔ 월급 변환기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/broker-fee-calc/"><span>🏡 부동산 중개보수 계산기</span><span>바로가기 →</span></a>
+    </div>
+  </div>
+
+  <div class="footer"><span>실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+
+<script>
+function parseNum(s) {
+  return parseFloat(s.replace(/,/g, '')) || 0;
+}
+function fmt(n) {
+  return Math.round(n).toLocaleString('ko-KR');
+}
+
+let _syncLock = false;
+
+function calc() {
+  if (_syncLock) return;
+  const price = parseNum(document.getElementById('price').value);
+  const rate = parseFloat(document.getElementById('discountRate').value) || 0;
+  const vat = document.getElementById('vatToggle').checked;
+  const preTax = document.getElementById('vatExToggle').checked;
+
+  const discountAmt = price * rate / 100;
+  _syncLock = true;
+  document.getElementById('discountAmt').value = discountAmt ? fmt(discountAmt) : '';
+  _syncLock = false;
+
+  update(price, discountAmt, vat, preTax);
+}
+
+function calcByAmt() {
+  if (_syncLock) return;
+  const price = parseNum(document.getElementById('price').value);
+  const discountAmt = parseNum(document.getElementById('discountAmt').value);
+  const vat = document.getElementById('vatToggle').checked;
+  const preTax = document.getElementById('vatExToggle').checked;
+
+  const rate = price > 0 ? (discountAmt / price * 100) : 0;
+  _syncLock = true;
+  document.getElementById('discountRate').value = rate ? rate.toFixed(1).replace(/\.0$/, '') : '';
+  _syncLock = false;
+
+  update(price, discountAmt, vat, preTax);
+}
+
+function update(price, discountAmt, vat, preTax) {
+  let base = price;
+  // 세후 금액 입력인 경우 세전으로 역산
+  if (vat && !preTax) {
+    base = price / 1.1;
+  }
+
+  const afterDiscount = base - discountAmt;
+  const vatAmt = vat ? afterDiscount * 0.1 : 0;
+  const finalAmt = afterDiscount + vatAmt;
+
+  document.getElementById('resDiscount').textContent = fmt(discountAmt) + ' 원';
+  document.getElementById('resAfterDiscount').textContent = fmt(afterDiscount) + ' 원';
+  document.getElementById('resVat').textContent = fmt(vatAmt) + ' 원';
+  document.getElementById('resFinal').textContent = fmt(Math.max(0, finalAmt)) + ' 원';
+  document.getElementById('vatRow').style.display = vat ? 'flex' : 'none';
+
+  // Dynamic Report Logic
+  const report = document.getElementById('analysisReport');
+  const rateStr = document.getElementById('discountRate').value || '0';
+  
+  if (price > 0 || discountAmt > 0) {
+    report.style.display = 'flex';
+    let msg = `<h3>💡 맞춤형 할인/세금 분석 리포트</h3>`;
+    
+    if (discountAmt > 0) {
+        msg += `<p>입력하신 기준 원금 <strong>${fmt(price)}원</strong>에 대해 <strong>${rateStr}%</strong>의 할인이 적용되었습니다. 이로 인해 총 <strong>${fmt(discountAmt)}원</strong>이 절감되어, 순수 상품가(할인가)는 <strong>${fmt(afterDiscount)}원</strong>으로 산출되었습니다.</p>`;
+    } else {
+        msg += `<p>입력하신 기준 원금은 <strong>${fmt(price)}원</strong>이며 해당 건에 적용된 할인은 없습니다.</p>`;
+    }
+    
+    if (vat) {
+        if (!preTax) {
+            msg += `<p>설정하신 <strong>[입력 금액이 세전 금액]</strong> 옵션이 꺼져 있기 때문에, 최초 입력하신 금액을 'VAT가 이미 포함된 판매가격'으로 간주해 역산하여 세전 원금(<strong>${fmt(base)}원</strong>)을 도출했습니다.</p>`;
+        }
+        msg += `<p>거래 성격에 맞춰 <strong>10% 부가가치세(${fmt(vatAmt)}원)</strong>가 부과되었습니다. 국세청 세금계산서 발행 및 비용 처리를 위한 최종 결제 대금은 세액이 합산된 <strong>${fmt(Math.max(0, finalAmt))}원</strong>입니다.</p>`;
+    } else {
+        msg += `<p>현재 <strong>[부가세 포함]</strong> 옵션이 비활성화 되어 있으므로, B2C(일반 소비자) 소매 거래이거나 면세 품목으로 간주합니다. 지갑에서 나가는 최종 결제액은 <strong>${fmt(Math.max(0, finalAmt))}원</strong>입니다.</p>`;
+    }
+    
+    msg += `<p>⚠️ <strong>팁:</strong> B2B 견적서를 작성 중이시라면 반드시 '부가세 10% 포함' 옵션을 활성화하여 공급가액과 세액을 정확히 명시해야 추후 세무 처리 시 불이익(가산세 등)을 피할 수 있습니다.</p>`;
+    
+    report.innerHTML = msg;
+  } else {
+    report.style.display = 'none';
+  }
+}
+
+function copyResult() {
+  const lines = [];
+  const price = document.getElementById('price').value;
+  const rate = document.getElementById('discountRate').value;
+  if (price) lines.push('원래 가격: ' + parseNum(price).toLocaleString('ko-KR') + '원');
+  if (rate) lines.push('할인율: ' + rate + '%');
+  lines.push('할인 금액: ' + document.getElementById('resDiscount').textContent);
+  lines.push('할인 적용: ' + document.getElementById('resAfterDiscount').textContent);
+  if (document.getElementById('vatToggle').checked) {
+    lines.push('부가세: ' + document.getElementById('resVat').textContent);
+  }
+  lines.push('최종 금액: ' + document.getElementById('resFinal').textContent);
+  navigator.clipboard.writeText(lines.join('\n')).then(() => showToast('📋 결과가 복사되었습니다'));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+calc();
+
+(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

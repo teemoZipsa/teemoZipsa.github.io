@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>📐 Unit Converter — TeemoZipsa</title>
+<meta name="description" content="Real-time bidirectional conversion for everyday units: Cooking, Shopping (shoes, ℃↔℉), Digital (MB↔GB), and Travel (miles↔km).">
+<meta property="og:title" content="📐 Unit Converter — TeemoZipsa">
+<meta property="og:description" content="Real-time bidirectional conversion for everyday units: Cooking, Shopping (shoes, ℃↔℉), Digital (MB↔GB), and Travel (miles↔km).">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/unit-conv/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/unit-conv/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/unit-conv/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/unit-conv/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px}
+  .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
+  .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .header h1{font-size:15px;font-weight:600;color:#fff}
+  .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+  .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.6);transition:transform .3s ease,opacity .3s ease;opacity:0;pointer-events:none;z-index:999}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  .bottom-bar{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
+  .bottom-bar .info{font-size:11px;color:var(--text-info)}
+  .action-btn{padding:8px 20px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+  .btn-clear{background:var(--bg-btn);color:var(--btn-clear-text)}.btn-clear:hover{background:var(--bg-btn-hover)}
+  .btn-copy{background:var(--accent);color:var(--text-on-accent)}.btn-copy:hover{background:var(--accent-hover)}
+
+  .counter-body{padding:12px;flex:1;overflow-y:auto;max-height:480px}
+  .tab{display:inline-block;padding:6px 12px;background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-guide);font-size:12px;cursor:pointer;transition:background .15s;font-family:inherit}
+  .tab:hover{background:var(--bg-btn-hover)}
+  .tab.active{background:var(--accent);color:var(--text-on-accent);border-color:#6b44a3}
+  .conv-cat-tabs{background:var(--bg-bar);padding:6px 10px;border-radius:8px;margin-bottom:12px}
+  .conv-cat-tabs .tab-row{display:flex;flex-wrap:wrap;gap:4px}
+  .conv-cat-tabs .tab{padding:6px 10px;font-size:11px}
+  .conv-row{margin-bottom:14px}
+  .conv-row-title{font-size:12px;color:var(--text-info);margin-bottom:6px;display:flex;align-items:center;gap:4px}
+  .conv-fields{display:flex;align-items:center;gap:6px}
+  .conv-field{flex:1}
+  .conv-field label{display:block;font-size:11px;color:var(--calc-expr-text);margin-bottom:2px;font-weight:600}
+  .conv-field input[type="number"]{width:100%;background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:8px 10px;font-size:14px;box-sizing:border-box;font-family:inherit}
+  .conv-field input:focus{border-color:var(--accent);outline:none}
+  .conv-arrow{color:#533483;font-size:16px;flex-shrink:0;margin-top:16px}
+  .conv-option{width:100%;background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-guide);padding:5px 8px;font-size:11px;margin-top:4px;font-family:inherit}
+  .conv-triple .conv-field{flex:1;min-width:0}
+  .conv-extra{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:11px;color:var(--text-info)}
+  .conv-extra input{width:60px;background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:4px 8px;font-size:12px;text-align:center;font-family:inherit}
+  /* Dynamic Report & Guide standard CSS */
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .report-box { margin-top: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
+  .report-box strong { color: var(--accent); }
+  .guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
+  .guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
+  .guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .guide summary { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; line-height: 1.4; background: var(--bg-guide); transition: background 0.2s; }
+  .guide summary:hover { background: var(--bg-guide-hover); }
+  .guide summary::-webkit-details-marker { display: none; }
+  .guide summary::after { content: '▼'; font-size: 10px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
+  .guide[open] summary { background: var(--bg-btn); border-bottom: 1px solid var(--border); }
+  .guide[open] summary::after { transform: rotate(180deg); }
+  .guide-content { padding: 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .guide-content h3 { font-size: 14px; color: var(--text-primary); margin: 12px 0 8px; }
+  .guide-content p { margin-bottom: 12px; }
+  .guide-content ul, .guide-content ol { padding-left: 20px; margin-bottom: 12px; }
+  .guide-content li { margin-bottom: 4px; }
+  .related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+  .related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+  .tool-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; text-decoration: none; color: var(--text-secondary); transition: all 0.2s; text-align: center; gap: 6px; }
+  .tool-card:hover { background: var(--accent); color: var(--text-on-accent); border-color: var(--accent); transform: translateY(-2px); }
+  .tool-icon { font-size: 20px; }
+  .tool-name { font-size: 11px; font-weight: 600; }
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
+    <h1>📐 Unit Converter</h1>
+    <a href="/special-chars/unit-conv/" class="back-btn">🌐 한국어</a>
+  </div>
+
+  <div class="counter-body">
+    <div class="conv-cat-tabs"><div class="tab-row" id="unitCatTabs"></div></div>
+    <div id="unitConvArea"></div>
+  </div>
+
+  <section class="guide-section">
+    <h2>💡 Comprehensive Guide to Unit Converter</h2>
+    
+    <details class="guide" open>
+      <summary>1. How do I use the Unit Converter?</summary>
+      <div class="guide-content">
+        <ol>
+          <li>Select a category from the tabs above (Real Estate, Cooking, Shopping, Digital, Travel).</li>
+          <li>Enter a number in any field, and the corresponding unit will map and calculate automatically.</li>
+          <li>Supports advanced real-world conversions like country-specific shoe sizes.</li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>2. Useful Tips</summary>
+      <div class="guide-content">
+        <p>This converter features a bidirectional mapping system. This means if you type into an output box (like GB or cm), the input box (like MB or inches) updates simultaneously, creating true reciprocal behavior without extra logic.</p>
+      </div>
+    </details>
+
+    <div class="related-tools">
+      <h3>🛠️ Essential Living & Travel Tools</h3>
+      <div class="tools-grid">
+        <a href="/special-chars/en/discount-calc/" class="tool-card">
+          <span class="tool-icon">🛍️</span>
+          <span class="tool-name">Discount Calc</span>
+        </a>
+        <a href="/special-chars/en/calculator/" class="tool-card">
+          <span class="tool-icon">🧮</span>
+          <span class="tool-name">Calculator</span>
+        </a>
+        <a href="/special-chars/en/date-calc/" class="tool-card">
+          <span class="tool-icon">📅</span>
+          <span class="tool-name">Date Calc</span>
+        </a>
+        <a href="/special-chars/en/pet-age-calc/" class="tool-card">
+          <span class="tool-icon">🐕</span>
+          <span class="tool-name">Pet Age Calc</span>
+        </a>
+      </div>
+    </div>
+  </section>
+    <div class="footer"><span>Bidirectional Real-time Conversion</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),1500)}
+
+const UNIT_DATA={
+  estate:{label:'🏡 Real Estate',items:[
+    {id:'sqft',a:'sq ft',b:'㎡',factor:0.092903,dec:2,tip:'1 sq ft ≈ 0.093 ㎡'},
+    {id:'inch',a:'inch',b:'cm',factor:2.54,dec:2}
+  ]},
+  cooking:{label:'🛒 Cooking',items:[
+    {id:'oz',a:'oz',b:'g',factor:28.3495,dec:1},
+    {id:'tbsp',a:'tbsp',b:'ml',factor:14.7868,dec:1},
+    {id:'cup',a:'cup (US)',b:'ml',factor:236.588,dec:1},
+    {id:'floz',a:'fl oz',b:'ml',factor:29.5735,dec:1}
+  ]},
+  shopping:{label:'📦 Shopping',items:[
+    {id:'shoe',type:'shoe'},
+    {id:'lb',a:'lb',b:'kg',factor:0.453592,dec:2},
+    {id:'temp',a:'℃',b:'℉',type:'formula',toB:v=>v*9/5+32,toA:v=>(v-32)*5/9,dec:1},
+    {id:'yard',a:'yd',b:'m',factor:0.9144,dec:2}
+  ]},
+  digital:{label:'💻 Digital',items:[
+    {id:'data',type:'data'},
+    {id:'pxmm',a:'px',b:'mm',type:'dpi',dec:2,dpiDefault:72}
+  ]},
+  travel:{label:'🚗 Travel',items:[
+    {id:'mile',a:'mile',b:'km',factor:1.60934,dec:2},
+    {id:'fuel',a:'km/L',b:'mpg',factor:2.35215,dec:1},
+    {id:'psi',a:'psi',b:'bar',factor:0.0689476,dec:3}
+  ]}
+};
+
+const SHOE_TABLE={220:[3,5,35],225:[3.5,5.5,35.5],230:[4,6,36],235:[4.5,6.5,37],240:[5,7,37.5],245:[5.5,7.5,38],250:[6,8,39],255:[6.5,8.5,39.5],260:[7,9,40],265:[7.5,9.5,41],270:[8,10,42],275:[8.5,10.5,42.5],280:[9,11,43],285:[9.5,11.5,44],290:[10,12,44.5],295:[10.5,12.5,45],300:[11,13,46]};
+
+let currentUnitCat='estate';let _unitSyncing=false;let _shoeGender='male';
+
+function findItem(id){for(const cat of Object.values(UNIT_DATA)){const item=cat.items.find(i=>i.id===id);if(item)return item}return null}
+function roundDec(v,dec){const f=Math.pow(10,dec);return Math.round(v*f)/f}
+
+function renderUnitCats(){
+  const c=document.getElementById('unitCatTabs');c.innerHTML='';
+  for(const[catId,cat]of Object.entries(UNIT_DATA)){
+    const btn=document.createElement('button');btn.className='tab'+(catId===currentUnitCat?' active':'');
+    btn.textContent=cat.label;btn.onclick=()=>switchUnitCat(catId);c.appendChild(btn);
+  }
+}
+function switchUnitCat(catId){currentUnitCat=catId;renderUnitCats();renderConverters()}
+
+function renderConverters(){
+  const area=document.getElementById('unitConvArea');const cat=UNIT_DATA[currentUnitCat];let html='';
+  for(const item of cat.items){html+='<div class="conv-row">';
+    if(item.type==='shoe')html+=renderShoe();else if(item.type==='data')html+=renderData();
+    else if(item.type==='dpi')html+=renderDpi(item);else if(item.type==='options')html+=renderOptions(item);
+    else html+=renderBasic(item);html+='</div>'}
+  area.innerHTML=html;
+}
+
+function renderBasic(item){
+  const tip=item.tip?`<span class="conv-row-title">${item.tip}</span>`:'';
+  return tip+`<div class="conv-fields"><div class="conv-field"><label>${item.a}</label><input type="number" id="conv-${item.id}-a" oninput="convSync('${item.id}','a')" placeholder="0"></div><span class="conv-arrow">↔</span><div class="conv-field"><label>${item.b}</label><input type="number" id="conv-${item.id}-b" oninput="convSync('${item.id}','b')" placeholder="0"></div></div>`;
+}
+
+function renderOptions(item){
+  let optHtml=item.options.map((o,i)=>`<option value="${i}">${o.label}</option>`).join('');
+  return `<div class="conv-fields"><div class="conv-field"><label>${item.a}</label><input type="number" id="conv-${item.id}-a" oninput="convSync('${item.id}','a')" placeholder="0"><select class="conv-option" id="conv-${item.id}-opt" onchange="convSync('${item.id}','a')">${optHtml}</select></div><span class="conv-arrow">↔</span><div class="conv-field"><label>${item.b}</label><input type="number" id="conv-${item.id}-b" oninput="convSync('${item.id}','b')" placeholder="0"></div></div>`;
+}
+
+function renderShoe(){
+  return `<div class="conv-row-title">👟 Shoe Size <span style="font-size:10px;color:var(--text-muted);margin-left:4px">(Korean sizes in mm)</span></div><div class="conv-extra" style="margin-bottom:6px"><label><input type="radio" name="shoeGender" value="male" checked onchange="_shoeGender='male';convSync('shoe','kr')"> Men</label><label><input type="radio" name="shoeGender" value="female" onchange="_shoeGender='female';convSync('shoe','kr')"> Women</label></div><div class="conv-fields conv-triple"><div class="conv-field"><label>KR (mm)</label><input type="number" id="conv-shoe-kr" oninput="convSync('shoe','kr')" placeholder="270"></div><div class="conv-field"><label>US</label><input type="number" id="conv-shoe-us" oninput="convSync('shoe','us')" placeholder="8" step="0.5"></div><div class="conv-field"><label>EU</label><input type="number" id="conv-shoe-eu" oninput="convSync('shoe','eu')" placeholder="42" step="0.5"></div></div>`;
+}
+
+function renderData(){
+  return `<div class="conv-row-title">💾 Data Storage</div><div class="conv-fields conv-triple"><div class="conv-field"><label>MB</label><input type="number" id="conv-data-mb" oninput="convSync('data','mb')" placeholder="0"></div><div class="conv-field"><label>GB</label><input type="number" id="conv-data-gb" oninput="convSync('data','gb')" placeholder="0"></div><div class="conv-field"><label>TB</label><input type="number" id="conv-data-tb" oninput="convSync('data','tb')" placeholder="0"></div></div>`;
+}
+
+function renderDpi(item){
+  return `<span class="conv-row-title">DPI Based Conversion</span><div class="conv-fields"><div class="conv-field"><label>${item.a}</label><input type="number" id="conv-${item.id}-a" oninput="convSync('${item.id}','a')" placeholder="0"></div><span class="conv-arrow">↔</span><div class="conv-field"><label>${item.b}</label><input type="number" id="conv-${item.id}-b" oninput="convSync('${item.id}','b')" placeholder="0"></div></div><div class="conv-extra"><label>DPI:</label><input type="number" id="conv-${item.id}-dpi" value="${item.dpiDefault}" oninput="convSync('${item.id}','a')"></div>`;
+}
+
+function convSync(id,side){
+  if(_unitSyncing)return;_unitSyncing=true;
+  try{
+    if(id==='shoe'){syncShoe(side)}else if(id==='data'){syncData(side)}
+    else{const item=findItem(id);if(!item){_unitSyncing=false;return}
+      const elA=document.getElementById(`conv-${id}-a`);const elB=document.getElementById(`conv-${id}-b`);
+      let factor=item.factor||1;
+      if(item.type==='options'){const sel=document.getElementById(`conv-${id}-opt`);factor=item.options[parseInt(sel.value)].factor}
+      if(item.type==='dpi'){const dpiEl=document.getElementById(`conv-${id}-dpi`);const dpi=parseFloat(dpiEl.value)||item.dpiDefault;factor=25.4/dpi}
+      if(side==='a'){const v=parseFloat(elA.value);elB.value=isNaN(v)?'':roundDec(item.toB?item.toB(v):v*factor,item.dec)}
+      else{const v=parseFloat(elB.value);elA.value=isNaN(v)?'':roundDec(item.toA?item.toA(v):v/factor,item.dec)}
+    }
+  }finally{_unitSyncing=false}
+}
+
+function syncShoe(side){
+  const krEl=document.getElementById('conv-shoe-kr');const usEl=document.getElementById('conv-shoe-us');const euEl=document.getElementById('conv-shoe-eu');
+  const gIdx=_shoeGender==='male'?0:1;const entries=Object.entries(SHOE_TABLE);
+  if(side==='kr'){const kr=parseFloat(krEl.value);if(isNaN(kr)){usEl.value='';euEl.value='';return}let best=entries.reduce((a,b)=>Math.abs(b[0]-kr)<Math.abs(a[0]-kr)?b:a);usEl.value=best[1][gIdx];euEl.value=best[1][2]}
+  else if(side==='us'){const us=parseFloat(usEl.value);if(isNaN(us)){krEl.value='';euEl.value='';return}let best=entries.reduce((a,b)=>Math.abs(b[1][gIdx]-us)<Math.abs(a[1][gIdx]-us)?b:a);krEl.value=best[0];euEl.value=best[1][2]}
+  else{const eu=parseFloat(euEl.value);if(isNaN(eu)){krEl.value='';usEl.value='';return}let best=entries.reduce((a,b)=>Math.abs(b[1][2]-eu)<Math.abs(a[1][2]-eu)?b:a);krEl.value=best[0];usEl.value=best[1][gIdx]}
+}
+
+function syncData(side){
+  const mbEl=document.getElementById('conv-data-mb');const gbEl=document.getElementById('conv-data-gb');const tbEl=document.getElementById('conv-data-tb');
+  if(side==='mb'){const v=parseFloat(mbEl.value);if(isNaN(v)){gbEl.value='';tbEl.value='';return}gbEl.value=roundDec(v/1024,4);tbEl.value=roundDec(v/1048576,6)}
+  else if(side==='gb'){const v=parseFloat(gbEl.value);if(isNaN(v)){mbEl.value='';tbEl.value='';return}mbEl.value=roundDec(v*1024,2);tbEl.value=roundDec(v/1024,6)}
+  else{const v=parseFloat(tbEl.value);if(isNaN(v)){mbEl.value='';gbEl.value='';return}mbEl.value=roundDec(v*1048576,2);gbEl.value=roundDec(v*1024,4)}
+}
+
+function clearUnitConv(){document.querySelectorAll('#unitConvArea input[type="number"]').forEach(el=>el.value='')}
+
+function copyUnitResult(){
+  const cat=UNIT_DATA[currentUnitCat];let lines=[];
+  for(const item of cat.items){
+    if(item.type==='shoe'){const kr=document.getElementById('conv-shoe-kr')?.value;const us=document.getElementById('conv-shoe-us')?.value;const eu=document.getElementById('conv-shoe-eu')?.value;if(kr||us||eu)lines.push(`Shoe: KR ${kr||'-'} = US ${us||'-'} = EU ${eu||'-'}`)}
+    else if(item.type==='data'){const mb=document.getElementById('conv-data-mb')?.value;const gb=document.getElementById('conv-data-gb')?.value;const tb=document.getElementById('conv-data-tb')?.value;if(mb||gb||tb)lines.push(`${mb||0} MB = ${gb||0} GB = ${tb||0} TB`)}
+    else{const a=document.getElementById(`conv-${item.id}-a`)?.value;const b=document.getElementById(`conv-${item.id}-b`)?.value;if(a&&b)lines.push(`${a} ${item.a} = ${b} ${item.b}`)}
+  }
+  if(lines.length===0){showToast('Please enter a value to convert.');return}
+  navigator.clipboard.writeText(lines.join('\n')).then(()=>showToast('Result copied to clipboard.'));
+}
+
+renderUnitCats();renderConverters();
+</script>
+<button class="scroll-top-btn" aria-label="Top">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

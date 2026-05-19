@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>🔢 Percentage Calculator — TeemoZipsa</title>
+<meta name="description" content="Fast and easy percentage calculations! Find X% of Y, percentage increase/decrease, or what percentage X is of Y. Calculate discounts, margins, and ratios instantly.">
+<meta property="og:title" content="🔢 Percentage Calculator — TeemoZipsa">
+<meta property="og:description" content="Fast and easy percentage calculations! Find X% of Y, percentage increase/decrease, or what percentage X is of Y.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/percent-calc/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/percent-calc/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/percent-calc/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/percent-calc/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
+.app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:540px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+.body{padding:16px;display:flex;flex-direction:column;gap:16px}
+
+.tabs{display:flex;gap:4px;background:var(--bg-bar);border-radius:10px;padding:4px}
+.tab{flex:1;padding:10px 8px;border:none;border-radius:8px;background:transparent;color:var(--text-info);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;text-align:center;line-height:1.3}
+.tab.active{background:var(--accent);color:var(--text-on-accent);box-shadow:0 2px 8px rgba(83,52,131,.3)}
+.tab:hover:not(.active){background:var(--bg-btn)}
+
+.calc-card{background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.calc-title{font-size:15px;font-weight:700;color:var(--text-primary);text-align:center}
+.calc-desc{font-size:12px;color:var(--text-info);text-align:center;margin-top:-8px}
+
+.input-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.input-row label{font-size:14px;color:var(--text-secondary);font-weight:600;white-space:nowrap}
+.input-row input{flex:1;min-width:80px;padding:10px 12px;background:var(--bg-app);border:1.5px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:16px;font-family:inherit;font-weight:600;text-align:right;outline:none;transition:border-color .2s}
+.input-row input:focus{border-color:var(--accent)}
+.input-row input::placeholder{color:var(--text-placeholder);font-weight:400}
+.input-row .unit{font-size:14px;color:var(--text-info);font-weight:600}
+
+.result-box{background:var(--accent-bg);border:2px solid var(--accent);border-radius:12px;padding:16px;text-align:center;min-height:70px;display:flex;flex-direction:column;justify-content:center;gap:4px;transition:all .3s}
+.result-box .result-value{font-size:28px;font-weight:800;color:var(--accent);letter-spacing:-0.5px}
+.result-box .result-label{font-size:12px;color:var(--text-info);font-weight:500}
+.result-box .result-detail{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.result-box.empty .result-value{font-size:16px;color:var(--text-placeholder);font-weight:400}
+
+.quick-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.quick-btn{padding:6px 12px;background:var(--bg-btn);border:1px solid var(--border);border-radius:16px;color:var(--text-secondary);font-size:11px;cursor:pointer;transition:all .2s;font-family:inherit;font-weight:500}
+.quick-btn:hover{background:var(--accent);color:var(--text-on-accent);border-color:var(--accent)}
+
+  /* 가이드 & 관련 도구 (표준) */
+  .guide-section{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+  .guide-section h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
+  .guide:last-child{margin-bottom:0}
+  .guide summary{padding:12px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--bg-guide);transition:background .2s}
+  .guide summary::-webkit-details-marker{display:none}
+  .guide summary::after{content:'▼';font-size:10px;color:var(--text-muted);transition:transform .3s}
+  .guide[open] summary::after{transform:rotate(180deg)}
+  .guide summary:hover{background:var(--bg-guide-hover)}
+  .guide-content{padding:14px;font-size:13px;color:var(--text-info);line-height:1.6;border-top:1px solid var(--border);background:var(--bg-app)}
+  .related-tools{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+  .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+  .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
+  .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.4);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){
+  .scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}
+  .input-row{flex-direction:column;align-items:stretch}
+  .input-row label{text-align:center}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
+    <h1>🔢 Percentage Calculator</h1>
+    <a href="/special-chars/percent-calc/" class="back-btn">🌐 한국어</a>
+  </div>
+
+  <div class="body">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab(0)">X% of Y</button>
+      <button class="tab" onclick="switchTab(1)">Change (%)</button>
+      <button class="tab" onclick="switchTab(2)">Ratio</button>
+      <button class="tab" onclick="switchTab(3)">Reverse</button>
+    </div>
+
+    <!-- 모드 0: A의 B%는? -->
+    <div class="calc-card" id="mode0">
+      <div class="calc-title">What is X% of Y?</div>
+      <div class="calc-desc">e.g. What is 15% of 50,000?</div>
+      <div class="input-row">
+        <label>Value (Y)</label>
+        <input type="number" id="m0a" placeholder="50000" oninput="calc0()">
+      </div>
+      <div class="input-row">
+        <label>Percent (X)</label>
+        <input type="number" id="m0b" placeholder="15" oninput="calc0()">
+        <span class="unit">%</span>
+      </div>
+      <div class="quick-btns">
+        <button class="quick-btn" onclick="setQuick(0,'m0b',5)">5%</button>
+        <button class="quick-btn" onclick="setQuick(0,'m0b',10)">10%</button>
+        <button class="quick-btn" onclick="setQuick(0,'m0b',15)">15%</button>
+        <button class="quick-btn" onclick="setQuick(0,'m0b',20)">20%</button>
+        <button class="quick-btn" onclick="setQuick(0,'m0b',25)">25%</button>
+        <button class="quick-btn" onclick="setQuick(0,'m0b',30)">30%</button>
+        <button class="quick-btn" onclick="setQuick(0,'m0b',50)">50%</button>
+      </div>
+      <div class="result-box empty" id="r0">
+        <div class="result-value">Enter numbers</div>
+      </div>
+    </div>
+
+    <!-- 모드 1: 변화율 -->
+    <div class="calc-card" id="mode1" style="display:none">
+      <div class="calc-title">Percentage change from A to B?</div>
+      <div class="calc-desc">e.g. From $40 to $52, how much did it increase?</div>
+      <div class="input-row">
+        <label>Original Value</label>
+        <input type="number" id="m1a" placeholder="40000" oninput="calc1()">
+      </div>
+      <div class="input-row">
+        <label>New Value</label>
+        <input type="number" id="m1b" placeholder="52000" oninput="calc1()">
+      </div>
+      <div class="result-box empty" id="r1">
+        <div class="result-value">Enter numbers</div>
+      </div>
+    </div>
+
+    <!-- 모드 2: 비율 -->
+    <div class="calc-card" id="mode2" style="display:none">
+      <div class="calc-title">A is what percent of B?</div>
+      <div class="calc-desc">e.g. 35 is what percent of 200?</div>
+      <div class="input-row">
+        <label>Part (A)</label>
+        <input type="number" id="m2a" placeholder="35" oninput="calc2()">
+      </div>
+      <div class="input-row">
+        <label>Whole (B)</label>
+        <input type="number" id="m2b" placeholder="200" oninput="calc2()">
+      </div>
+      <div class="result-box empty" id="r2">
+        <div class="result-value">Enter numbers</div>
+      </div>
+    </div>
+
+    <!-- 모드 3: 역산 -->
+    <div class="calc-card" id="mode3" style="display:none">
+      <div class="calc-title">What was the original value if A is after a B% change?</div>
+      <div class="calc-desc">e.g. If $40 is after a 20% discount, what was the original price?</div>
+      <div class="input-row">
+        <label>Final Value</label>
+        <input type="number" id="m3a" placeholder="40000" oninput="calc3()">
+      </div>
+      <div class="input-row">
+        <label>Applied %</label>
+        <input type="number" id="m3b" placeholder="20" oninput="calc3()">
+        <span class="unit">% Discount</span>
+      </div>
+      <div class="quick-btns">
+        <button class="quick-btn" onclick="setM3Type('discount')">Discount (−)</button>
+        <button class="quick-btn" onclick="setM3Type('markup')">Markup (+)</button>
+      </div>
+      <div class="result-box empty" id="r3">
+        <div class="result-value">Enter numbers</div>
+      </div>
+    </div>
+  </div>
+
+    <section class="guide-section">
+      <h2>💡 Percentage Calculator FAQ</h2>
+      
+      <details class="guide" open>
+        <summary>📖 How to Use the 4 Modes</summary>
+        <div class="guide-content">
+          <ul>
+            <li><strong>X% of Y:</strong> Calculate a specific percentage of a value (e.g., finding the tip or tax amount).</li>
+            <li><strong>Change (%):</strong> Find the percentage increase or decrease between two numbers (e.g., measuring price changes or growth).</li>
+            <li><strong>Ratio:</strong> Determine what percentage a part is of a whole (e.g., calculating test scores or project progress).</li>
+            <li><strong>Reverse:</strong> Find the original value before a percentage was added or subtracted (e.g., finding the pre-discount price).</li>
+          </ul>
+        </div>
+      </details>
+      
+      <details class="guide">
+        <summary>✂️ How do I use the quick input buttons?</summary>
+        <div class="guide-content">
+          <p>We've provided quick-select buttons for common percentages (5%, 10%, 15%, etc.) and operations (Discount vs. Markup) to speed up your calculations. In "X% of Y" mode, just click a button to instantly apply that percentage.</p>
+        </div>
+      </details>
+
+      <details class="guide">
+        <summary>📋 How do I copy the results?</summary>
+        <div class="guide-content">
+          <p>Simply click anywhere inside the result box. The calculated value will be automatically copied to your clipboard without any formatting, ready to paste.</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="related-tools">
+      <h2>🔗 Related Tools</h2>
+      <div class="tools-grid">
+        <a href="/special-chars/en/wage-calc/" class="tool-card">💵 Wage Calculator</a>
+        <a href="/special-chars/en/sub-calc/" class="tool-card">💳 Subscription Cost Calc</a>
+        <a href="/special-chars/en/timer/" class="tool-card">⏱️ Timer & Stopwatch</a>
+      </div>
+    </section>
+    <div class="footer"><span>Real-time calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="scroll-top-btn" aria-label="Top">↑</button>
+
+<script>
+let currentTab = 0;
+let m3type = 'discount'; // discount or markup
+
+function switchTab(idx) {
+  currentTab = idx;
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i===idx));
+  for(let i=0;i<4;i++) document.getElementById('mode'+i).style.display = i===idx ? '' : 'none';
+}
+
+function fmt(n) {
+  if (isNaN(n) || !isFinite(n)) return 'Cannot calculate';
+  return n.toLocaleString('en-US', {maximumFractionDigits:4});
+}
+
+function setResult(boxId, value, label, detail) {
+  const box = document.getElementById(boxId);
+  box.classList.remove('empty');
+  box.innerHTML = `
+    <div class="result-value" style="cursor:pointer" onclick="copyVal('${value}')">${value}</div>
+    ${label ? `<div class="result-label">${label}</div>` : ''}
+    ${detail ? `<div class="result-detail">${detail}</div>` : ''}
+  `;
+}
+
+function setEmpty(boxId) {
+  const box = document.getElementById(boxId);
+  box.classList.add('empty');
+  box.innerHTML = '<div class="result-value">Enter numbers</div>';
+}
+
+function calc0() {
+  const a = parseFloat(document.getElementById('m0a').value);
+  const b = parseFloat(document.getElementById('m0b').value);
+  if (isNaN(a) || isNaN(b)) { setEmpty('r0'); return; }
+  const result = a * b / 100;
+  setResult('r0', fmt(result), `${fmt(b)}% of ${fmt(a)}`, `${fmt(a)} − ${fmt(result)} = ${fmt(a - result)} (${fmt(b)}% off)`);
+}
+
+function calc1() {
+  const a = parseFloat(document.getElementById('m1a').value);
+  const b = parseFloat(document.getElementById('m1b').value);
+  if (isNaN(a) || isNaN(b) || a === 0) { setEmpty('r1'); return; }
+  const pct = ((b - a) / Math.abs(a)) * 100;
+  const diff = Math.abs(b - a);
+  const arrow = pct >= 0 ? '📈' : '📉';
+  const sign = pct >= 0 ? '+' : '';
+  setResult('r1', `${sign}${fmt(pct)}%`, `${arrow} ${fmt(diff)} ${pct >= 0 ? 'Increase' : 'Decrease'}`, `${fmt(a)} → ${fmt(b)}`);
+}
+
+function calc2() {
+  const a = parseFloat(document.getElementById('m2a').value);
+  const b = parseFloat(document.getElementById('m2b').value);
+  if (isNaN(a) || isNaN(b) || b === 0) { setEmpty('r2'); return; }
+  const pct = (a / b) * 100;
+  setResult('r2', `${fmt(pct)}%`, `${fmt(a)} ÷ ${fmt(b)} × 100`, `${fmt(a)} is ${fmt(pct)}% of ${fmt(b)}`);
+}
+
+function calc3() {
+  const a = parseFloat(document.getElementById('m3a').value);
+  const b = parseFloat(document.getElementById('m3b').value);
+  if (isNaN(a) || isNaN(b)) { setEmpty('r3'); return; }
+  let original;
+  if (m3type === 'discount') {
+    original = a / (1 - b/100);
+    setResult('r3', fmt(original), `Original value (before ${b}% discount)`, `${fmt(original)} × ${100-b}% = ${fmt(a)}`);
+  } else {
+    original = a / (1 + b/100);
+    setResult('r3', fmt(original), `Original value (before ${b}% markup)`, `${fmt(original)} × ${100+b}% = ${fmt(a)}`);
+  }
+}
+
+function setQuick(mode, inputId, val) {
+  document.getElementById(inputId).value = val;
+  if (mode === 0) calc0();
+  else if (mode === 3) calc3();
+}
+
+function setM3Type(type) {
+  m3type = type;
+  const unitEl = document.querySelector('#mode3 .unit');
+  unitEl.textContent = type === 'discount' ? '% Discount' : '% Markup';
+  calc3();
+}
+
+function copyVal(val) {
+  const clean = val.replace(/,/g, '');
+  navigator.clipboard.writeText(clean).then(() => showToast('Result copied! 📋'));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

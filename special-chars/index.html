@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<meta name="google-site-verification" content="TyyNKYVi782xFUYEwSxrYkTFRbP7qeWK7TUds1zObD0" />
+<meta name="naver-site-verification" content="1240f9c95aabdaaf2a61568437d1a8cbc1749a0c" />
+<title>특수 문자 & 이모지 입력기</title>
+<meta name="description" content="특수문자, 이모지, 기호를 클릭 한 번으로 복사하세요. 글자 수 계산기, 날짜 계산기 등 22가지 무료 온라인 도구 모음.">
+<meta property="og:title" content="특수 문자 & 이모지 입력기 — 티모집사">
+<meta property="og:description" content="특수문자, 이모지, 기호를 클릭 한 번으로 복사하세요. 22가지 무료 온라인 도구 모음.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<meta name="theme-color" content="#533483">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    background: var(--bg-body);
+    color: var(--text-primary);
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .app {
+    background: var(--bg-app);
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    width: 720px;
+    max-width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .header {
+    background: var(--bg-header);
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    position: relative;
+  }
+  .header h1 { font-size: 15px; font-weight: 600; color: #fff; position: absolute; left: 50%; transform: translateX(-50%); pointer-events: none; }
+  .header .search-box {
+    display: flex; align-items: center;
+    background: rgba(255,255,255,0.15);
+    border-radius: 20px; padding: 4px 12px;
+  }
+  .header .search-box input {
+    background: none; border: none; outline: none;
+    color: #fff; font-size: 13px; width: 140px; padding: 2px 4px;
+  }
+  .header .search-box input::placeholder { color: rgba(255,255,255,0.5); }
+  .header .search-box svg { width: 14px; height: 14px; fill: rgba(255,255,255,0.6); }
+
+  .workspace-panel {
+    background: var(--bg-bar); padding: 8px 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .recent-left { display: flex; align-items: center; gap: 8px; flex: 1; overflow: hidden; }
+  .recent-label { font-size: 11px; color: var(--text-info); white-space: nowrap; flex-shrink: 0; font-weight: 600; }
+  .recent-chars { display: flex; gap: 4px; flex-wrap: nowrap; overflow-x: auto; flex: 1; padding-bottom: 2px; }
+  .recent-chars::-webkit-scrollbar { height: 4px; }
+  .recent-chars::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .char-btn-small { 
+    background: var(--bg-btn); border: 1px solid var(--border); flex-shrink:0; 
+    width: 32px; height: 32px; font-size: 16px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-primary);
+    transition: all 0.15s;
+  }
+  .char-btn-small:hover { background: var(--bg-btn-hover); transform: scale(1.1); box-shadow: var(--shadow-sm); z-index: 2; }
+  .action-groups { display: flex; gap: 6px; flex-shrink: 0; }
+  .action-btn {
+    padding: 0 10px; height: 28px; border: none; border-radius: 6px;
+    font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .btn-accent { background: var(--accent); color: var(--text-on-accent); }
+  .btn-accent:hover { background: var(--accent-hover); }
+  .btn-clear { background: var(--btn-clear-bg); color: var(--btn-clear-text); }
+  .btn-clear:hover { background: var(--btn-clear-hover); }
+
+  /* 탭 그룹 */
+  .tab-groups {
+    background: var(--bg-bar);
+    padding: 6px 10px 0;
+  }
+  .tab-group-label {
+    font-size: 10px;
+    color: var(--text-info);
+    padding: 6px 4px 3px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+  .tab-group-label:first-child { padding-top: 2px; }
+  .tab-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding-bottom: 4px;
+  }
+  .tab-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2px 0;
+  }
+  .tab {
+    padding: 7px 12px; font-size: 12px;
+    border: none; background: var(--bg-tab); color: var(--text-tab);
+    border-radius: 8px 8px 0 0; cursor: pointer;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .tab:hover { background: var(--bg-tab-hover); color: var(--text-primary); }
+  .tab.active { background: var(--bg-tab-active); color: var(--text-tab-active); font-weight: 600; }
+  .tab.emoji-tab { background: var(--bg-emoji-tab); }
+  .tab.emoji-tab:hover { background: var(--bg-emoji-tab-hover); }
+  .tab.emoji-tab.active { background: var(--bg-emoji-tab-active); color: var(--text-on-accent); }
+
+  .grid-container {
+    padding: 12px; height: 360px;
+    overflow-y: auto; overflow-x: hidden;
+  }
+  .grid-container::-webkit-scrollbar { width: 6px; }
+  .grid-container::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+  .grid-container::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+  .char-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(38px, 1fr));
+    gap: 3px;
+  }
+  .char-grid.emoji-mode {
+    grid-template-columns: repeat(auto-fill, minmax(42px, 1fr));
+  }
+  .char-btn {
+    width: 100%; aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; background: var(--bg-char-btn);
+    border: 1px solid var(--border-char); border-radius: 6px;
+    color: var(--text-primary); cursor: pointer;
+    transition: all 0.15s; user-select: none; position: relative;
+  }
+  .char-btn:hover {
+    background: var(--bg-char-btn-hover); border-color: var(--border-hover);
+    transform: scale(1.15); z-index: 2;
+    box-shadow: var(--shadow-accent);
+  }
+  .char-btn:active { transform: scale(0.95); background: var(--accent-hover); }
+  .char-btn.copied { background: #2ecc71 !important; border-color: #27ae60 !important; }
+  .char-btn.emoji-cell {
+    font-size: 24px; background: var(--bg-emoji-cell); border-color: var(--border-emoji);
+  }
+  .char-btn.emoji-cell:hover {
+    background: var(--bg-emoji-hover); border-color: var(--border-emoji-hover);
+    box-shadow: 0 4px 12px rgba(230,126,34,0.5);
+  }
+
+  .toast {
+    position: fixed; bottom: 30px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--toast-bg); color: var(--text-on-accent);
+    padding: 10px 24px; border-radius: 24px;
+    font-size: 14px; font-weight: 500;
+    box-shadow: var(--shadow-accent);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    opacity: 0; pointer-events: none; z-index: 999;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+
+
+  .sub-header {
+    grid-column: 1 / -1; font-size: 11px; color: var(--text-info);
+    padding: 8px 4px 4px; border-bottom: 1px solid var(--border); margin-bottom: 2px;
+  }
+  .sub-header:first-child { padding-top: 0; }
+
+  /* 뒤로가기 버튼 */
+  .back-btn {
+    background: rgba(255,255,255,0.15); border: none; color: rgba(255,255,255,0.9);
+    font-size: 12px; cursor: pointer; padding: 5px 10px;
+    border-radius: 6px; text-decoration: none;
+    transition: background 0.2s; white-space: nowrap;
+    display: flex; align-items: center; gap: 4px;
+    font-family: inherit;
+  }
+  .back-btn:hover { background: rgba(255,255,255,0.25); color: #fff; }
+
+
+  .btn-copy { background: var(--btn-copy-bg); color: var(--btn-copy-text); }
+  .btn-copy:hover { background: var(--btn-copy-hover); }
+
+  .guide-section{margin:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+  .guide-section summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
+  .guide-section summary:hover{background:var(--bg-guide-hover)}
+  .guide-section[open] summary{background:var(--bg-guide-hover);border-bottom:1px solid var(--border)}
+  .guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
+  .guide-content ol{padding-left:20px}.guide-content li{margin-bottom:4px}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:var(--shadow-accent);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+  .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+  .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+  .footer a:hover{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+    <h1>⌨ 특수 문자 & 이모지</h1>
+    <div class="search-box" id="searchBox">
+      <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <input type="text" id="searchInput" placeholder="검색..." oninput="filterChars()" aria-label="문자 검색">
+    </div>
+  </div>
+
+  <div id="tool-special-chars">
+    <div class="workspace-panel">
+      <div class="recent-left">
+        <span class="recent-label">최근 사용 ▸</span>
+        <div class="recent-chars" id="recentChars"></div>
+      </div>
+      <div class="action-groups">
+        <button class="action-btn btn-accent" onclick="copyMultiInput()">전체 복사</button>
+        <button class="action-btn btn-clear" onclick="clearRecent()">전체 삭제</button>
+      </div>
+    </div>
+
+    <div class="tab-groups" id="tabBar"></div>
+
+    <div class="grid-container">
+      <div class="char-grid" id="charGrid"></div>
+    </div>
+
+    <details class="guide-section">
+      <summary>📖 사용 방법</summary>
+      <div class="guide-content">
+        <ol>
+          <li>상단 카테고리 탭에서 원하는 문자 종류를 선택하세요.</li>
+          <li>원하는 특수문자나 이모지를 클릭하면 자동으로 클립보드에 복사됩니다.</li>
+          <li>하단 입력창에서 복사된 문자를 확인하고, "전체 복사" 버튼으로 한꺼번에 복사할 수 있습니다.</li>
+        </ol>
+      </div>
+    </details>
+
+    <style>
+      .related-tools { margin: 12px; padding: 12px; background: var(--bg-guide); border: 1px solid var(--border); border-radius: 8px; }
+      .related-tools .guide-title { font-size: 12px; margin-bottom: 8px; font-weight: 600; color: var(--text-guide); display: flex; align-items: center; gap: 6px; }
+      .related-tools .tag-container { display: flex; gap: 8px; flex-wrap: wrap; }
+      .related-tools .tool-tag { padding: 6px 12px; font-size: 11px; font-weight: 600; background: var(--bg-btn); border: 1px solid var(--border); border-radius: 6px; text-decoration: none; color: var(--text-primary); transition: all 0.2s; }
+      .related-tools .tool-tag:hover { background: var(--bg-btn-hover); border-color: var(--border-hover); transform: translateY(-1px); }
+    </style>
+    <div class="related-tools">
+      <div class="guide-title">🛠 연관 도구 추천</div>
+      <div class="tag-container">
+        <a href="/special-chars/emoji-mixer/" class="tool-tag">이모지 믹서</a>
+        <a href="/special-chars/char-counter/" class="tool-tag">글자 수 계산기</a>
+        <a href="/special-chars/font-generator/" class="tool-tag">SNS 폰트 변환기</a>
+      </div>
+    </div>
+
+  </div>
+  <div class="footer"><span>클릭 한 번으로 복사</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const SPECIAL = {
+  "기호": {
+    "일반 기호": "★☆♠♣♥♦♤♧♡♢♩♪♫♬♭♮♯✝✞✡✿❀❁❂❃❄❅❆❇❈❉❊❋",
+    "화살표": "←↑→↓↔↕↖↗↘↙⇐⇑⇒⇓⇔⇕⇦⇧⇨⇩➔➜➝➞➟➠➡➢➣➤➥➦➧➨➩➪➫➬➭➮➯➲",
+    "수학 기호": "±×÷≠≤≥≦≧⩽⩾≈∞∑∏∫∂√∝∟∠∥∦∧∨∩∪∈∉⊂⊃⊆⊇∀∃∄∅∇∝≡≢≪≫⊕⊖⊗⊘⊙⊚⊛⊜⊝∓∔≅≆≇≊≋≌≍≎≏≐≑∘∙⋅⋆⋇⋈⋉⋊⋋⋌⋍⋎⋏⋐⋑⋒⋓²³⁴½⅓¼",
+    "도형": "■□▢▣▤▥▦▧▨▩▪▫▬▭▮▯▰▱▲△▴▵▶▷▸▹►▻▼▽▾▿◀◁◂◃◄◅◆◇◈◉◊○◌◍◎●◐◑◒◓◔◕◖◗",
+    "체크/선택": "☐☑☒✓✗✔✖✘",
+    "기타": "‣※†‡‰‱′″‴‵‶‷‸‹›«»‼‽⁂⁑⁕⁖⁗⁘⁙⁚⁛⁜⁝⁞"
+  },
+  "따옴표/괄호": {
+    "따옴표": "\u201C\u201D\u2018\u2019\u300C\u300D\u300E\u300F\u301D\u301E",
+    "다양한 괄호": "【】〔〕〈〉《》〖〗〘〙｛｝",
+    "꺾쇠/화살괄호": "‹›«»"
+  },
+  "구두점/대시": {
+    "가운뎃점": "·‧∙⋅",
+    "말줄임/생략": "…‥",
+    "대시류": "—–―‐",
+    "글머리 기호": "•◦▪▫▸▹‣⁃",
+    "기타 구두점": "※†‡§¶♪°"
+  },
+  "숫자/수식": {
+    "사칙연산/기본": "＋－×÷﹢﹣·∙⋅±∓",
+    "비교/등호": "＝≠≒≈≡≢＜＞≤≥≦≧⩽⩾≪≫≲≳≶≷≺≻≼≽",
+    "집합": "∈∉∋∌⊂⊃⊄⊅⊆⊇⊈⊉⊊⊋∩∪∅⊕⊖⊗⊘⊙⊚",
+    "논리": "∧∨¬⊻⊼⊽⇒⇐⇔∀∃∄∴∵⊢⊣⊤⊥",
+    "미적분/해석": "∫∬∭∮∯∰∱∲∳∂∆∇δ∑∏∐",
+    "근호/지수": "√∛∜ⁿ∝²³⁴",
+    "기타 연산": "⌈⌉⌊⌋∟∠∡∢⊾⊿∥∦‖∞℃℉‰‱",
+    "그리스 대문자": "ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ",
+    "그리스 소문자": "αβγδεζηθικλμνξοπρςστυφχψω",
+    "위첨자": "⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ⁱⁿ",
+    "아래첨자": "₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎ₐₑₒₓₔ",
+    "분수": "½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞⅟↉",
+    "로마 숫자": "ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⅪⅫⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⅺⅻ"
+  },
+  "원/괄호": {
+    "원 숫자": "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳",
+    "괄호 숫자": "⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂⒃⒄⒅⒆⒇",
+    "원 영문 대문자": "ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏ",
+    "원 영문 소문자": "ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ",
+    "원 한글": "㉠㉡㉢㉣㉤㉥㉦㉧㉨㉩㉪㉫㉬㉭",
+    "괄호 한글": "㈀㈁㈂㈃㈄㈅㈆㈇㈈㈉㈊㈋㈌㈍",
+    "원 한글(가나다)": "㉮㉯㉰㉱㉲㉳㉴㉵㉶㉷㉸㉹㉺㉻"
+  },
+  "선/단위": {
+    "선 문자": "─│┌┐└┘├┤┬┴┼═║╒╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡╢╣╤╥╦╧╨╩╪╫╬",
+    "블록": "▀▁▂▃▄▅▆▇█▉▊▋▌▍▎▏░▒▓",
+    "단위 기호": "℃℉Å㎕㎖㎗ℓ㎘㎣㎤㎥㎦㎙㎜㎝㎞㎟㎠㎡㎢㏊㎍㎎㎏㏏㎈㎉㏈㎐㎑㎒㎓㎔㎴㎵㎶㎷㎸㎹㎺㎻㎼㎽㎾㎿㎀㎁㎂㎃㎄",
+    "화폐/상업": "¢£¥€₩₪₫₭₮₯₰₱₲₳₴₵℀℁℃℅℆№℗℠™℡㏂㏘㏜"
+  },
+  "발음/외국어": {
+    "악센트 소문자": "àáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ",
+    "악센트 대문자": "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞ",
+    "독일어/북유럽": "ßÄäÖöÜü",
+    "스페인어": "¿¡ñÑ"
+  },
+  "꾸미기": {
+    "별/반짝이": "✦✧⊹✶✷✸✹⁂⁑",
+    "꽃/자연": "ꕤ❁❃✿❀❋꙳",
+    "감싸기": "꒰꒱꒦꒷⸝⸜˚₊",
+    "하트/기호": "♡♥❥꙰",
+    "라인/구분": "─━═┈┉╌╍"
+  }
+};
+
+const EMOJI = {
+  "😀 스마일": {
+    "웃는 얼굴": "😀😃😄😁😆😅🤣😂🙂🙃😉😊😇🥰😍🤩😘😗☺😚😙🥲",
+    "혀/손 얼굴": "😋😛😜🤪😝🤑🤗🤭🫢🫣🤫🤔🫡",
+    "중립/졸린 얼굴": "🤐🤨😐😑😶🫥😏😒🙄😬🤥🫨",
+    "걱정/슬픈 얼굴": "😌😔😪🤤😴😷🤒🤕🤢🤮🤧🥵🥶🥴😵😵‍💫🤯",
+    "모자/안경 얼굴": "🤠🥳🥸😎🤓🧐",
+    "부정 얼굴": "😕🫤😟🙁☹😮😯😲😳🥺🥹😦😧😨😰😥😢😭😱",
+    "화난 얼굴": "😤😡😠🤬😈👿💀☠",
+    "기타 얼굴": "💩🤡👹👺👻👽👾🤖😺😸😹😻😼😽🙀😿😾🫶"
+  },
+  "👋 제스처": {
+    "손": "👋🤚🖐✋🖖🫱🫲🫳🫴🫷🫸👌🤌🤏✌🤞🫰🤟🤘🤙",
+    "손가락": "👈👉👆🖕👇☝🫵👍👎✊👊🤛🤜",
+    "손동작": "👏🙌🫶👐🤲🤝🙏",
+    "팔/몸": "✍💅🤳💪🦾🦿🦵🦶👂🦻👃🧠🫀🫁🦷🦴👀👁👅👄🫦",
+    "사람": "👶🧒👦👧🧑👱👨🧔👩🧓👴👵",
+    "직업": "👮🕵💂🥷👷🫅🤴👸👳👲🧕🤵👰🤰🫃🫄🤱",
+    "동작": "🙍🙎🙅🙆💁🙋🧏🙇🤦🤷💆💇🧖🛀🛌🕴🗣👤👥🫂"
+  },
+  "🐶 동물": {
+    "포유류": "🐶🐕🦮🐕‍🦺🐩🐺🦊🦝🐱🐈🐈‍⬛🦁🐯🐅🐆🐴🫎🫏🐎🦄🦓🦌🦬🐮🐂🐃🐄🐷🐖🐗🐽🐏🐑🐐🐪🐫🦙🦒🐘🦣🦏🦛🐭🐁🐀🐹🐰🐇🐿🦫🦔🦇🐻🐻‍❄️🐨🐼🦥🦦🦨🦘🦡",
+    "새": "🐔🐓🐣🐤🐥🐦🐧🕊🦅🦆🦢🦉🦤🪶🦩🦚🦜🪽🐦‍⬛🪿",
+    "해양/파충류": "🐸🐊🐢🦎🐍🐲🐉🦕🦖🐳🐋🐬🦭🐟🐠🐡🦈🐙🐚🪸🪼🦀🦞🦐🦑",
+    "곤충": "🐌🦋🐛🐜🐝🪲🐞🦗🪳🕷🕸🦂🦟🪰🪱🦠",
+    "식물": "💐🌸💮🪷🏵🌹🥀🌺🌻🌼🌷🪻🌱🪴🌲🌳🌴🌵🌾🌿☘🍀🍁🍂🍃🪹🪺🍄🪨"
+  },
+  "🍔 음식": {
+    "과일": "🍇🍈🍉🍊🍋🍋‍🟩🍌🍍🥭🍎🍏🍐🍑🍒🍓🫐🥝🍅🫒🥥",
+    "채소": "🥑🍆🥔🥕🌽🌶🫑🥒🥬🥦🧄🧅🍄🥜🫘🌰🫚🫛",
+    "곡물/빵": "🍞🥐🥖🫓🥨🥯🥞🧇🧀🍖🍗🥩🥓🍔🍟🍕🌭🥪🌮🌯🫔🥙🧆🥚🍳🥘🍲🫕🥣🥗🍿🧈🧂🥫",
+    "디저트": "🍦🍧🍨🍩🍪🎂🍰🧁🥧🍫🍬🍭🍮🍯",
+    "음료": "🍼🥛☕🫖🍵🍶🍾🍷🍸🍹🍺🍻🥂🥃🫗🥤🧋🧃🧉🧊",
+    "식기": "🥢🍽🍴🥄🔪🫙🏺"
+  },
+  "⚽ 활동": {
+    "스포츠": "⚽⚾🥎🏀🏐🏈🏉🎾🥏🎳🏏🏑🏒🥍🏓🏸🥊🥋🥅⛳⛸🎣🤿🎽🎿🛷🥌",
+    "게임/오락": "🎯🪀🪁🔫🎱🔮🪄🎮🕹🎰🧩🎲♟🪅🧸🪆🪩",
+    "예술": "🎭🖼🎨🧵🪡🧶🪢",
+    "악기/음악": "🎼🎵🎶🎙🎚🎛🎤🎧📯🎷🪗🎸🎹🎺🎻🪕🥁🪘🪇",
+    "이벤트": "🎪🎗🎟🎫🎖🏆🏅🥇🥈🥉",
+    "운동": "🧗🤸🤼🤽🤾🤺⛷🏂🪂🏋🤹🧘🛹🛼🛶🏄🚣🏊🚴🚵🏇"
+  },
+  "✈ 여행": {
+    "지도/세계": "🌍🌎🌏🌐🗺🧭",
+    "지형/건물": "🏔⛰🌋🗻🏕🏖🏜🏝🏞🏟🏛🏗🧱🪨🪵🛖🏘🏚🏠🏡🏢🏣🏤🏥🏦🏨🏩🏪🏫🏬🏭🏯🏰💒🗼🗽⛪🕌🛕🕍⛩🕋⛲⛺🌁🌃🏙🌄🌅🌆🌇🌉♨🎠🛝🎡🎢💈🎪",
+    "교통": "🚂🚃🚄🚅🚆🚇🚈🚉🚊🚝🚞🚋🚌🚍🚎🚐🚑🚒🚓🚔🚕🚖🚗🚘🚙🛻🚚🚛🚜🏎🏍🛵🦽🦼🛺🚲🛴🛹🛼🚏🛣🛤🛢⛽🛞🚨🚥🚦🛑🚧",
+    "항공/해양": "⚓🛟⛵🛶🚤🛳⛴🛥🚢✈🛩🛫🛬🪂💺🚁🚟🚠🚡🛰🚀🛸",
+    "시간/하늘": "🌑🌒🌓🌔🌕🌖🌗🌘🌙🌚🌛🌜🌡☀🌝🌞🪐⭐🌟🌠🌌☁⛅⛈🌤🌥🌦🌧🌨🌩🌪🌫🌬🌀🌈🌂☂☔⛱⚡❄☃⛄☄🔥💧🌊"
+  },
+  "💡 사물": {
+    "의류": "👓🕶🥽🥼🦺👔👕👖🧣🧤🧥🧦👗👘🥻🩱🩲🩳👙👚🪭👛👜👝🛍🎒🩴👞👟🥾🥿👠👡🩰👢🪮👑👒🎩🪖🧢⛑📿💄💍💎",
+    "전자기기": "⌚📱📲💻⌨🖥🖨🖱🖲🕹🗜💽💾💿📀📷📸📹🎥📽🎞📞☎📟📠📺📻🎙🎚🎛🧭⏱⏲⏰🕰",
+    "조명/생활": "💡🔦🏮🪔🕯🧯🛒🚬⚰🪦⚱🗿🪧🪪🏧🚮🚰♿🚹🚺🚻🚼🚾🛂🛃🛄🛅",
+    "도구": "🔧🔨⚒🛠⛏🪓🔩⚙🗜⚖🦯🔗⛓🪝🧰🧲🪜🪣",
+    "문구": "📌📍📎🖇📏📐✂🗃🗄🗑📦📫📪📬📭📮🗳✏✒🖋🖊🖌🖍📝",
+    "책/서류": "💼📁📂🗂📅📆🗒🗓📇📈📉📊📋📌📃📄📑🧾📰🗞📓📔📒📕📗📘📙📚",
+    "잠금/보안": "🔒🔓🔏🔐🔑🗝🛡🔫🪃🏹⚔🗡🔪🪚🪛🪤🪆"
+  },
+  "🔣 기호": {
+    "하트": "❤🩷🧡💛💚💙🩵💜🖤🩶🤍🤎💔❣💕💞💟❤️‍🔥❤️‍🩹♥💘💝💖💗",
+    "말풍선": "💬💭🗯💢💥💫💦💨🕳💣",
+    "경고/정보": "⚠🚸⛔🚫🚳🚭🚯🚱🚷📵🔞☢☣",
+    "화살표 기호": "⬆↗➡↘⬇↙⬅↖↕↔↩↪⤴⤵🔃🔄🔙🔚🔛🔜🔝",
+    "종교/점성": "♈♉♊♋♌♍♎♏♐♑♒♓⛎☮✡🕉☸☯✝☦☪🔯🪯♾",
+    "숫자/문자": "🔢🔤🔡🔠🆎🆑🆒🆓🆔🆕🆖🆗🆘🆙🆚🈁🈂🈷🈶🈯🉐🈹🈚🈲🉑🈸🈴🈳㊗㊙🈺🈵",
+    "기타 기호": "▶⏩⏭⏯◀⏪⏮🔀🔁🔂⏫⏬⏸⏹⏺⏏🎦📶📳📴♀♂⚧✖➕➖➗♻🔱📛🔰⭕✅☑✔❌❎➰➿〽✳✴❇©®™🔘🔴🟠🟡🟢🔵🟣⚫⚪🟤🔺🔻🔸🔹🔶🔷🔲🔳▪▫◼◻◾◽⬛⬜🟥🟧🟨🟩🟦🟪🟫"
+  },
+  "🏁 깃발": {
+    "특수 깃발": "🏁🚩🎌🏴🏳🏳️‍🌈🏳️‍⚧️🏴‍☠️",
+    "아시아": "🇰🇷🇯🇵🇨🇳🇹🇼🇭🇰🇲🇴🇲🇳🇻🇳🇹🇭🇸🇬🇲🇾🇮🇩🇵🇭🇲🇲🇰🇭🇱🇦🇧🇳🇹🇱🇮🇳🇧🇩🇱🇰🇳🇵🇧🇹🇵🇰🇦🇫🇲🇻🇮🇷🇮🇶🇸🇾🇯🇴🇱🇧🇮🇱🇵🇸🇸🇦🇦🇪🇶🇦🇰🇼🇧🇭🇴🇲🇾🇪🇹🇷🇰🇿🇺🇿🇹🇲🇰🇬🇹🇯🇦🇿🇬🇪🇦🇲",
+    "유럽": "🇬🇧🇫🇷🇩🇪🇮🇹🇪🇸🇵🇹🇳🇱🇧🇪🇨🇭🇦🇹🇸🇪🇳🇴🇩🇰🇫🇮🇮🇸🇮🇪🇵🇱🇨🇿🇸🇰🇭🇺🇷🇴🇧🇬🇬🇷🇺🇦🇷🇺🇧🇾🇱🇹🇱🇻🇪🇪🇭🇷🇷🇸🇸🇮🇲🇪🇲🇰🇦🇱🇧🇦🇽🇰🇲🇩🇱🇺🇱🇮🇲🇨🇦🇩🇲🇹🇨🇾🇻🇦",
+    "아메리카": "🇺🇸🇨🇦🇲🇽🇧🇷🇦🇷🇨🇱🇨🇴🇵🇪🇻🇪🇪🇨🇧🇴🇵🇾🇺🇾🇬🇾🇸🇷🇨🇷🇵🇦🇨🇺🇯🇲🇭🇹🇩🇴🇵🇷🇹🇹🇧🇸🇧🇧🇬🇹🇭🇳🇸🇻🇳🇮🇧🇿",
+    "아프리카/오세아니아": "🇪🇬🇿🇦🇳🇬🇰🇪🇪🇹🇬🇭🇹🇿🇲🇦🇹🇳🇩🇿🇱🇾🇸🇩🇸🇸🇨🇩🇨🇲🇨🇮🇸🇳🇲🇱🇧🇫🇳🇪🇹🇩🇲🇬🇲🇺🇦🇺🇳🇿🇫🇯🇵🇬🇼🇸🇹🇴🇻🇺🇸🇧🇰🇮🇹🇻🇳🇷🇵🇼🇲🇭🇫🇲",
+    "국제기구": "🇺🇳🇪🇺"
+  }
+};
+
+const CATEGORIES = { ...SPECIAL, ...EMOJI };
+
+// 한국어 검색 키워드 → 문자 매핑
+const SEARCH_KEYWORDS = {
+  // 사칙연산
+  '곱하기': '×·∙⋅﹡✕✖⊗',
+  '곱셈': '×·∙⋅﹡✕✖⊗',
+  '나누기': '÷∕⊘',
+  '나눗셈': '÷∕⊘',
+  '더하기': '＋﹢➕⊕',
+  '덧셈': '＋﹢➕⊕',
+  '빼기': '－﹣➖⊖',
+  '뺄셈': '－﹣➖⊖',
+  'multiply': '×·∙⋅﹡✕✖⊗',
+  'divide': '÷∕⊘',
+  'plus': '＋﹢➕⊕',
+  'minus': '－﹣➖⊖',
+  // 비교
+  '같다': '＝≡≣',
+  '같지않다': '≠≢',
+  '크다': '＞≫≳﹥',
+  '작다': '＜≪≲﹤',
+  '크거나같다': '≥≧≳',
+  '작거나같다': '≤≦≲',
+  '약': '≈≒≅≃',
+  '약같다': '≈≒≅≃',
+  '근사': '≈≒≅≃',
+  // 수학 함수/기호
+  '루트': '√∛∜',
+  '제곱근': '√∛∜',
+  '세제곱근': '∛',
+  '네제곱근': '∜',
+  '제곱': '²³⁴ⁿ',
+  '세제곱': '³',
+  '네제곱': '⁴',
+  '위첨자': '⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ⁱⁿ',
+  '아래첨자': '₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎ₐₑₒₓₔ',
+  '무한': '∞',
+  '무한대': '∞',
+  '인피니티': '∞',
+  'infinity': '∞',
+  '파이': 'πΠ',
+  'pi': 'πΠ',
+  '시그마': 'σΣ∑',
+  'sigma': 'σΣ∑',
+  '알파': 'αΑ',
+  'alpha': 'αΑ',
+  '베타': 'βΒ',
+  'beta': 'βΒ',
+  '감마': 'γΓ',
+  'gamma': 'γΓ',
+  '델타': 'δΔ∆',
+  'delta': 'δΔ∆',
+  '엡실론': 'εΕ',
+  '제타': 'ζΖ',
+  '에타': 'ηΗ',
+  '세타': 'θΘ',
+  'theta': 'θΘ',
+  '이오타': 'ιΙ',
+  '카파': 'κΚ',
+  '람다': 'λΛ',
+  'lambda': 'λΛ',
+  '뮤': 'μΜ',
+  '뉴': 'νΝ',
+  '크사이': 'ξΞ',
+  '오미크론': 'οΟ',
+  '로': 'ρΡ',
+  '타우': 'τΤ',
+  '입실론': 'υΥ',
+  '파이문자': 'φΦ',
+  'phi': 'φΦ',
+  '카이': 'χΧ',
+  '프사이': 'ψΨ',
+  'psi': 'ψΨ',
+  '오메가': 'ωΩ',
+  'omega': 'ωΩ',
+  // 적분/미분
+  '적분': '∫∬∭∮∯∰',
+  '인테그랄': '∫∬∭∮∯∰',
+  'integral': '∫∬∭∮∯∰',
+  '미분': '∂∆∇',
+  '편미분': '∂',
+  // 논리
+  '그리고': '∧⊻',
+  '또는': '∨',
+  '부정': '¬',
+  'and': '∧⊻',
+  'or': '∨',
+  'not': '¬',
+  // 집합
+  '합집합': '∪',
+  '교집합': '∩',
+  '부분집합': '⊂⊆⊊',
+  '원소': '∈∉∋∌',
+  '공집합': '∅',
+  // 화살표
+  '화살표': '←↑→↓↔↕⇐⇑⇒⇓⇔⇕➔➜➝➞➡',
+  '왼쪽': '←⇐↖↙⬅',
+  '오른쪽': '→⇒↗↘➡',
+  '위': '↑⇑⬆',
+  '아래': '↓⇓⬇',
+  // 도형
+  '동그라미': '○◎●◉◌◍◐◑',
+  '원': '○◎●◉◌◍',
+  '세모': '△▲▵▴▽▼',
+  '삼각형': '△▲▵▴▽▼',
+  '네모': '□■▢▣◇◆',
+  '사각형': '□■▢▣◇◆',
+  '마름모': '◇◆◈',
+  // 체크
+  '체크': '✓✔☑',
+  '엑스': '✗✖✘☒❌',
+  // 별
+  '별': '★☆✦✧⊹✶✷✸✹⭐🌟',
+  '별표': '★☆✦✧✶✷',
+  // 하트
+  '하트': '♡♥❤💕💖💗💘💙💚💛🧡💜🖤🤍🤎💔❣',
+  '사랑': '♡♥❤💕💖💗💘❣',
+  // 음표
+  '음표': '♩♪♫♬🎵🎶',
+  '음악': '♩♪♫♬🎵🎶🎼',
+  // 전화
+  '전화': '☎📞📟',
+  // 기타 자주 쓰는 것들
+  '저작권': '©',
+  '코피라이트': '©',
+  'copyright': '©',
+  '등록상표': '®',
+  '상표': '™',
+  '각도': '∠∡∢⊾⊿∟',
+  '직각': '∟⊾',
+  '평행': '∥∦‖',
+  '수직': '⊥',
+  '비례': '∝∷',
+  '함수': 'ƒ',
+  '따라서': '∴',
+  '왜냐하면': '∵',
+  '도': '°℃℉',
+  '온도': '°℃℉🌡',
+  '퍼센트': '%‰‱',
+  '프로': '%‰',
+  // 분수
+  '분수': '½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞',
+  '반': '½',
+  '삼분의일': '⅓',
+  '사분의일': '¼',
+  '사분의삼': '¾',
+  // 원 숫자
+  '원문자': '①②③④⑤⑥⑦⑧⑨⑩',
+  // 화폐
+  '돈': '₩$€£¥₿',
+  '원화': '₩',
+  '달러': '$',
+  '유로': '€',
+  '엔': '¥',
+  '파운드': '£',
+  '비트코인': '₿',
+  // 날씨
+  '태양': '☀🌞🌝🌅🌄',
+  '해': '☀🌞🌝',
+  '달': '🌙🌑🌒🌓🌔🌕🌖🌗🌘🌚🌛🌜',
+  '비': '🌧☔🌂💧',
+  '눈': '❄☃⛄🌨',
+  '구름': '☁⛅🌤🌥🌦',
+  '번개': '⚡🌩',
+  '무지개': '🌈',
+  // 동물
+  '개': '🐶🐕🐕‍🦺🐩',
+  '고양이': '🐱🐈😺😸😹😻😼😽🙀😿😾',
+  '강아지': '🐶🐕🦮',
+  // 음식
+  '커피': '☕',
+  '맥주': '🍺🍻',
+  '와인': '🍷🍾',
+  '케이크': '🎂🍰🧁',
+};
+
+const SPECIAL_KEYS = Object.keys(SPECIAL);
+const EMOJI_KEYS = Object.keys(EMOJI);
+
+let currentTab = "기호";
+let recentChars;
+try { recentChars = JSON.parse(localStorage.getItem('recentChars') || '[]'); } catch { recentChars = []; }
+
+// ZWJ 이모지, 국기 등 올바르게 분리
+function splitChars(str) {
+  if (Intl.Segmenter) {
+    return [...new Intl.Segmenter().segment(str)].map(s => s.segment);
+  }
+  return [...str];
+}
+
+function isEmojiTab(name) {
+  return EMOJI_KEYS.includes(name);
+}
+
+function renderTabs() {
+  const bar = document.getElementById('tabBar');
+  bar.innerHTML = '';
+  // 특수문자 그룹
+  const lbl1 = document.createElement('div');
+  lbl1.className = 'tab-group-label';
+  lbl1.textContent = '특수 문자';
+  bar.appendChild(lbl1);
+  const row1 = document.createElement('div');
+  row1.className = 'tab-row';
+  SPECIAL_KEYS.forEach(name => {
+    const btn = document.createElement('button');
+    btn.className = 'tab' + (name === currentTab ? ' active' : '');
+    btn.textContent = name;
+    btn.onclick = () => { currentTab = name; renderTabs(); renderGrid(); };
+    row1.appendChild(btn);
+  });
+  bar.appendChild(row1);
+  // 구분선
+  const hr = document.createElement('hr');
+  hr.className = 'tab-divider';
+  bar.appendChild(hr);
+  // 이모지 그룹
+  const lbl2 = document.createElement('div');
+  lbl2.className = 'tab-group-label';
+  lbl2.textContent = '이모지';
+  bar.appendChild(lbl2);
+  const row2 = document.createElement('div');
+  row2.className = 'tab-row';
+  EMOJI_KEYS.forEach(name => {
+    const btn = document.createElement('button');
+    btn.className = 'tab emoji-tab' + (name === currentTab ? ' active' : '');
+    btn.textContent = name;
+    btn.onclick = () => { currentTab = name; renderTabs(); renderGrid(); };
+    row2.appendChild(btn);
+  });
+  bar.appendChild(row2);
+}
+
+function renderGrid(filter = '') {
+  const grid = document.getElementById('charGrid');
+  grid.innerHTML = '';
+  const isEmoji = isEmojiTab(currentTab);
+  grid.className = 'char-grid' + (isEmoji ? ' emoji-mode' : '');
+  const cat = CATEGORIES[currentTab];
+  for (const [subName, chars] of Object.entries(cat)) {
+    const charArr = splitChars(chars);
+    const filtered = filter
+      ? charArr.filter(c => c.includes(filter) || subName.includes(filter) || ('U+' + c.codePointAt(0).toString(16).toUpperCase()).includes(filter.toUpperCase()))
+      : charArr;
+    if (filtered.length === 0) continue;
+    const header = document.createElement('div');
+    header.className = 'sub-header';
+    header.textContent = subName;
+    grid.appendChild(header);
+    filtered.forEach(ch => {
+      const btn = document.createElement('button');
+      btn.className = 'char-btn' + (isEmoji ? ' emoji-cell' : '');
+      btn.textContent = ch;
+      btn.title = `${ch}  (U+${ch.codePointAt(0).toString(16).toUpperCase().padStart(4,'0')})`;
+      btn.onmouseenter = () => {
+        document.getElementById('codeInfo').textContent = 'U+' + ch.codePointAt(0).toString(16).toUpperCase().padStart(4,'0');
+      };
+      btn.onclick = () => copyChar(ch, btn);
+      grid.appendChild(btn);
+    });
+  }
+}
+
+function copyChar(ch, btnEl) {
+  navigator.clipboard.writeText(ch).then(() => {
+    showToast(`'${ch}' 복사됨!`);
+    
+    if (btnEl) {
+      btnEl.classList.add('copied');
+      setTimeout(() => btnEl.classList.remove('copied'), 400);
+    }
+    addRecent(ch);
+  });
+}
+
+function copyMultiInput() {
+  if (recentChars.length === 0) return;
+  const comboText = recentChars.join('');
+  navigator.clipboard.writeText(comboText).then(() => {
+    showToast(`전체 복사됨: ${comboText}`);
+  });
+}
+
+function addRecent(ch) {
+  recentChars = recentChars.filter(c => c !== ch);
+  recentChars.unshift(ch);
+  if (recentChars.length > 20) recentChars = recentChars.slice(0, 20);
+  try { localStorage.setItem('recentChars', JSON.stringify(recentChars)); } catch {}
+  renderRecent();
+}
+
+function renderRecent() {
+  const container = document.getElementById('recentChars');
+  container.innerHTML = '';
+  recentChars.forEach(ch => {
+    const btn = document.createElement('button');
+    btn.className = 'char-btn-small';
+    btn.textContent = ch;
+    btn.onclick = () => copyChar(ch, btn);
+    btn.onmouseenter = () => {
+      document.getElementById('codeInfo').textContent = 'U+' + ch.codePointAt(0).toString(16).toUpperCase().padStart(4,'0');
+    };
+    container.appendChild(btn);
+  });
+}
+
+function clearRecent() {
+  recentChars = [];
+  try { localStorage.setItem('recentChars', JSON.stringify(recentChars)); } catch {}
+  renderRecent();
+  showToast('최근 사용 목록 삭제됨');
+}
+
+const CHOSUNG_LIST = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+const JUNGSUNG_LIST = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+const JONGSUNG_LIST = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+const KOR_TO_ENG = {
+  'ㄱ':'r', 'ㄲ':'R', 'ㄴ':'s', 'ㄷ':'e', 'ㄸ':'E', 'ㄹ':'f', 'ㅁ':'a', 'ㅂ':'q', 'ㅃ':'Q', 'ㅅ':'t', 'ㅆ':'T', 'ㅇ':'d', 'ㅈ':'w', 'ㅉ':'W', 'ㅊ':'c', 'ㅋ':'z', 'ㅌ':'x', 'ㅍ':'v', 'ㅎ':'g',
+  'ㅏ':'k', 'ㅐ':'o', 'ㅒ':'O', 'ㅑ':'i', 'ㅓ':'j', 'ㅔ':'p', 'ㅖ':'P', 'ㅕ':'u', 'ㅗ':'h', 'ㅘ':'hk', 'ㅙ':'ho', 'ㅚ':'hl', 'ㅛ':'y', 'ㅜ':'n', 'ㅝ':'nj', 'ㅞ':'np', 'ㅟ':'nl', 'ㅠ':'b', 'ㅡ':'m', 'ㅢ':'ml', 'ㅣ':'l'
+};
+
+function getChosung(text) {
+  let result = '';
+  for (let i = 0; i < text.length; i++) {
+    const code = text.charCodeAt(i) - 44032;
+    if (code >= 0 && code <= 11171) {
+      result += CHOSUNG_LIST[Math.floor(code / 588)];
+    } else {
+      result += text.charAt(i);
+    }
+  }
+  return result;
+}
+
+function korToEngTypo(text) {
+  let res = '';
+  for(let i=0; i<text.length; i++) {
+    let code = text.charCodeAt(i) - 44032;
+    if (code >= 0 && code <= 11171) {
+      let cho = Math.floor(code / 588);
+      let jung = Math.floor((code - (cho * 588)) / 28);
+      let jong = code % 28;
+      res += KOR_TO_ENG[CHOSUNG_LIST[cho]];
+      res += KOR_TO_ENG[JUNGSUNG_LIST[jung]];
+      if (jong > 0) {
+        const jongChar = JONGSUNG_LIST[jong];
+        const compositeMap = {
+          'ㄳ':['ㄱ','ㅅ'],'ㄵ':['ㄴ','ㅈ'],'ㄶ':['ㄴ','ㅎ'],'ㄺ':['ㄹ','ㄱ'],'ㄻ':['ㄹ','ㅁ'],
+          'ㄼ':['ㄹ','ㅂ'],'ㄽ':['ㄹ','ㅅ'],'ㄾ':['ㄹ','ㅌ'],'ㄿ':['ㄹ','ㅍ'],'ㅀ':['ㄹ','ㅎ'],'ㅄ':['ㅂ','ㅅ']
+        };
+        if(compositeMap[jongChar]) {
+          res += KOR_TO_ENG[compositeMap[jongChar][0]] + KOR_TO_ENG[compositeMap[jongChar][1]];
+        } else {
+          res += KOR_TO_ENG[jongChar];
+        }
+      }
+    } else {
+      res += KOR_TO_ENG[text[i]] || text[i];
+    }
+  }
+  return res;
+}
+
+const EXTENDED_KEYWORDS = [];
+for (const [kw, chars] of Object.entries(SEARCH_KEYWORDS)) {
+  EXTENDED_KEYWORDS.push({ kw: kw, cho: getChosung(kw), eng: korToEngTypo(kw), chars: chars });
+}
+
+function getKeywordMatches(query) {
+  const q = query.toLowerCase();
+  const matched = new Set();
+  
+  const isEngQuery = /^[a-zA-Z]+$/.test(q);
+  const isChoQuery = /^[ㄱ-ㅎ]+$/.test(q);
+
+  for (const item of EXTENDED_KEYWORDS) {
+    let match = false;
+    if (isEngQuery && item.eng.includes(q)) match = true;
+    else if (isChoQuery && item.cho.includes(q)) match = true;
+    else if (item.kw.includes(q) || q.includes(item.kw)) match = true;
+
+    if (match) {
+      splitChars(item.chars).forEach(c => matched.add(c));
+    }
+  }
+  return matched;
+}
+
+function filterChars() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (q) {
+    const grid = document.getElementById('charGrid');
+    grid.innerHTML = '';
+    grid.className = 'char-grid';
+    const kwMatches = getKeywordMatches(q);
+    // 키워드 매칭 결과가 있으면 먼저 보여주기
+    if (kwMatches.size > 0) {
+      const header = document.createElement('div');
+      header.className = 'sub-header';
+      header.textContent = `🔍 "${q}" 검색 결과`;
+      grid.appendChild(header);
+      kwMatches.forEach(ch => {
+        const btn = document.createElement('button');
+        btn.className = 'char-btn';
+        btn.textContent = ch;
+        btn.title = `${ch}  (U+${ch.codePointAt(0).toString(16).toUpperCase().padStart(4,'0')})`;
+        btn.onmouseenter = () => {
+          document.getElementById('codeInfo').textContent = 'U+' + ch.codePointAt(0).toString(16).toUpperCase().padStart(4,'0');
+        };
+        btn.onclick = () => copyChar(ch, btn);
+        grid.appendChild(btn);
+      });
+    }
+    // 카테고리/서브네임/유니코드 기반 기존 검색도 유지
+    const isEngQuery = /^[a-zA-Z]+$/.test(q);
+    const isChoQuery = /^[ㄱ-ㅎ]+$/.test(q);
+
+    for (const [catName, subs] of Object.entries(CATEGORIES)) {
+      for (const [subName, chars] of Object.entries(subs)) {
+        const subCho = getChosung(subName);
+        const subEng = korToEngTypo(subName);
+        const charArr = splitChars(chars);
+        const filtered = charArr.filter(c => {
+          if (kwMatches.has(c)) return false; // 이미 위에 표시됨
+          
+          let catMatch = catName.toLowerCase().includes(q) || getChosung(catName).includes(q) || korToEngTypo(catName).includes(q);
+          let subMatch = subName.toLowerCase().includes(q);
+          if (isEngQuery) subMatch = subMatch || subEng.includes(q);
+          if (isChoQuery) subMatch = subMatch || subCho.includes(q);
+
+          return (
+            c.includes(q) ||
+            subMatch ||
+            catMatch ||
+            ('U+' + c.codePointAt(0).toString(16).toUpperCase()).includes(q.toUpperCase())
+          );
+        });
+        if (filtered.length === 0) continue;
+        const header = document.createElement('div');
+        header.className = 'sub-header';
+        header.textContent = `${catName} › ${subName}`;
+        grid.appendChild(header);
+        const isEmoji = EMOJI_KEYS.some(k => k === catName);
+        filtered.forEach(ch => {
+          const btn = document.createElement('button');
+          btn.className = 'char-btn' + (isEmoji ? ' emoji-cell' : '');
+          btn.textContent = ch;
+          btn.title = `${ch}  (U+${ch.codePointAt(0).toString(16).toUpperCase().padStart(4,'0')})`;
+          btn.onmouseenter = () => {
+            document.getElementById('codeInfo').textContent = 'U+' + ch.codePointAt(0).toString(16).toUpperCase().padStart(4,'0');
+          };
+          btn.onclick = () => copyChar(ch, btn);
+          grid.appendChild(btn);
+        });
+      }
+    }
+    // 결과가 없으면 안내
+    if (grid.children.length === 0) {
+      const noResult = document.createElement('div');
+      noResult.className = 'sub-header';
+      noResult.textContent = `"${q}"에 대한 검색 결과가 없습니다.`;
+      noResult.style.textAlign = 'center';
+      noResult.style.padding = '40px 0';
+      grid.appendChild(noResult);
+    }
+  } else {
+    renderGrid();
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+
+renderTabs();
+renderGrid();
+renderRecent();
+
+// 거슬림 없는 부드러운 드래그 스크롤 (마우스용)
+const recentSlider = document.getElementById('recentChars');
+let isDown = false, isDragging = false, startX, scrollLeft;
+recentSlider.addEventListener('mousedown', (e) => {
+  isDown = true;
+  isDragging = false;
+  startX = e.pageX - recentSlider.offsetLeft;
+  scrollLeft = recentSlider.scrollLeft;
+});
+recentSlider.addEventListener('mouseleave', () => { isDown = false; });
+recentSlider.addEventListener('mouseup', () => { isDown = false; });
+recentSlider.addEventListener('mousemove', (e) => {
+  if (!isDown) return;
+  const x = e.pageX - recentSlider.offsetLeft;
+  const walk = (x - startX) * 1.5;
+  if (Math.abs(walk) > 5) isDragging = true;
+  recentSlider.scrollLeft = scrollLeft - walk;
+  if (isDragging) e.preventDefault();
+});
+// 드래그 중 실수로 버튼이 복사(클릭)되는 것 방지
+recentSlider.addEventListener('click', (e) => {
+  if (isDragging) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+}, true);
+
+
+</script>
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

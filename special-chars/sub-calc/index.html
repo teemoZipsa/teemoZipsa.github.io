@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>💸 구독료 팩폭 계산기 — 티모집사</title>
+<meta name="description" content="매달 나가는 구독료, 1년·3년·5년 뒤면 얼마일까? S&P500에 투자했다면 비교까지!">
+<meta property="og:title" content="💸 구독료 팩폭 계산기 — 티모집사">
+<meta property="og:description" content="매달 나가는 구독료, 1년·3년·5년 뒤면 얼마일까? S&P500에 투자했다면 비교까지!">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/sub-calc/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/sub-calc/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Pretendard',sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+  .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:500px;max-width:100%;overflow:hidden}
+  .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+  .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+  .header h1{font-size:15px;font-weight:600;color:#fff}
+  .body{padding:16px;display:flex;flex-direction:column;gap:12px}
+
+  .section{background:var(--bg-bar);border-radius:12px;padding:14px 16px;border:1px solid var(--border)}
+  .section-title{font-size:12px;font-weight:700;color:var(--text-info);margin-bottom:10px}
+
+  /* 구독 목록 */
+  .sub-list{display:flex;flex-direction:column;gap:6px}
+  .sub-item{display:flex;gap:8px;align-items:center}
+  .sub-item input{background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);padding:8px 10px;font-size:13px;font-family:inherit;outline:none}
+  .sub-item input:focus{border-color:var(--accent)}
+  .sub-item input::placeholder{color:var(--text-muted)}
+  .sub-name{flex:2}
+  .sub-price{flex:1;text-align:right}
+  .sub-del{background:none;border:none;color:var(--text-muted);font-size:16px;cursor:pointer;padding:0 4px;transition:color .15s}
+  .sub-del:hover{color:#f87171}
+
+  .add-row{display:flex;gap:8px;margin-top:8px}
+  .add-btn{background:var(--bg-input);border:1px solid var(--border);color:var(--text-info);padding:7px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s;flex-shrink:0}
+  .add-btn:hover{border-color:var(--accent);color:var(--text-amount)}
+
+  /* 빠른 추가 */
+  .quick-adds{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+  .quick-add{background:var(--bg-bar);border:1px solid var(--border);color:var(--calc-expr-text);padding:4px 10px;border-radius:6px;font-size:10px;cursor:pointer;font-family:inherit;transition:all .15s}
+  .quick-add:hover{border-color:var(--accent);color:var(--text-amount)}
+
+  /* 월 합계 */
+  .monthly-total{text-align:center;padding:8px;font-size:14px;color:var(--text-amount);font-weight:700}
+  .monthly-total strong{font-size:20px;color:var(--text-primary)}
+
+  /* 결과 */
+  .result-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .r-card{background:var(--bg-input);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center}
+  .r-label{font-size:10px;color:var(--calc-expr-text);margin-bottom:3px}
+  .r-value{font-size:15px;font-weight:800;color:#f87171}
+  .r-sub{font-size:9px;color:var(--text-muted);margin-top:2px}
+
+  /* 투자 비교 */
+  .invest-section{background:var(--bg-success, #1a2a1a);border:1px solid var(--border-success, #2a4a2a);border-radius:12px;padding:14px 16px}
+  .invest-title{font-size:12px;font-weight:700;color:var(--text-success);margin-bottom:8px}
+  .invest-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .i-card{background:rgba(0,0,0,.2);border-radius:8px;padding:10px 8px;text-align:center}
+  .i-card .r-label{color:#2a6a2a}
+  .i-card .r-value{color:var(--text-success)}
+  .invest-note{font-size:10px;color:#2a5a2a;margin-top:8px;text-align:center}
+
+  /* 팩폭 */
+  .punchline{display:none;text-align:center;padding:8px 16px;font-size:13px;color:var(--text-highlight);line-height:1.5;animation:fadeIn .6s ease}
+  .punchline{display:none;text-align:center;padding:8px 16px;font-size:13px;color:var(--text-highlight);line-height:1.5;animation:fadeIn .6s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid #f87171;animation:fadeIn .5s ease-in-out;margin-top:12px}
+  .report-box h3 {font-size:15px;font-weight:700;color:#f87171;margin-bottom:4px}
+  .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
+  .report-box strong {color:var(--text-primary);font-weight:600}
+
+  .related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:12px}
+  .related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
+  .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
+  .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent);transform:translateX(4px)}
+
+  .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text)}
+  .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+  .footer a:hover{color:var(--text-guide)}
+  .guide-section{margin:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+  .guide-section summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
+  .guide-section summary:hover{background:var(--bg-guide-hover)}
+  .guide-section[open] summary{background:var(--bg-btn);border-bottom:1px solid var(--border)}
+  .guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
+  .guide-content ol{padding-left:20px}.guide-content li{margin-bottom:4px}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+    <h1>💸 구독료 팩폭 계산기</h1>
+  </div>
+  <div class="body">
+    <div class="section">
+      <div class="section-title">📋 내 구독 서비스 목록</div>
+      <div class="sub-list" id="subList"></div>
+      <div class="add-row">
+        <button class="add-btn" onclick="addItem()">+ 항목 추가</button>
+      </div>
+      <div class="quick-adds">
+        <button class="quick-add" onclick="quickAdd('유튜브 프리미엄',14900)">유튜브 ₩14,900</button>
+        <button class="quick-add" onclick="quickAdd('넷플릭스',17000)">넷플릭스 ₩17,000</button>
+        <button class="quick-add" onclick="quickAdd('ChatGPT Plus',28000)">ChatGPT ₩28,000</button>
+        <button class="quick-add" onclick="quickAdd('스포티파이',10900)">스포티파이 ₩10,900</button>
+        <button class="quick-add" onclick="quickAdd('iCloud+ 200GB',4400)">iCloud ₩4,400</button>
+        <button class="quick-add" onclick="quickAdd('쿠팡 로켓와우',7890)">로켓와우 ₩7,890</button>
+        <button class="quick-add" onclick="quickAdd('디즈니+',13900)">디즈니+ ₩13,900</button>
+        <button class="quick-add" onclick="quickAdd('웨이브',13900)">웨이브 ₩13,900</button>
+      </div>
+    </div>
+
+    <div class="monthly-total" id="monthlyTotal">월 합계: <strong>0원</strong></div>
+
+    <div class="section">
+      <div class="section-title">💀 누적 지출 (이 돈이 그냥 사라집니다)</div>
+      <div class="result-grid">
+        <div class="r-card">
+          <div class="r-label">1년</div>
+          <div class="r-value" id="y1">-</div>
+        </div>
+        <div class="r-card">
+          <div class="r-label">3년</div>
+          <div class="r-value" id="y3">-</div>
+        </div>
+        <div class="r-card">
+          <div class="r-label">5년</div>
+          <div class="r-value" id="y5">-</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="invest-section">
+      <div class="invest-title">📈 이 돈을 S&P500에 넣었다면? (연 10% 복리)</div>
+      <div class="invest-grid">
+        <div class="i-card">
+          <div class="r-label">1년 후</div>
+          <div class="r-value" id="inv1">-</div>
+        </div>
+        <div class="i-card">
+          <div class="r-label">3년 후</div>
+          <div class="r-value" id="inv3">-</div>
+        </div>
+        <div class="i-card">
+          <div class="r-label">5년 후</div>
+          <div class="r-value" id="inv5">-</div>
+        </div>
+      </div>
+      <div class="invest-note">※ 연 10% 복리, 매월 적립 기준 시뮬레이션</div>
+    </div>
+
+    <div class="punchline" id="punchline"></div>
+    <div class="report-box" id="analysisReport" style="display:none;"></div>
+  </div>
+  <details class="guide-section" open>
+    <summary>💬 구독 경제의 함정, 구독료 절약 Q&A</summary>
+    <div class="guide-content">
+      <strong>Q. 월 만원대 구독, 진짜 무서운 이유가 뭔가요? (가랑비 지출)</strong>
+      <p>넷플릭스 1.7만 원, 유튜브 1.5만 원.. 하나하나 보면 커피 3잔 값이지만, 합치면 월 3~5만 원이 훌쩍 넘어갑니다. 이를 1년으로 환산하면 60만 원, 5년이면 <strong>최신형 기기</strong> 한 대 값(약 300만 원)이 증발하는 것과 같습니다. 구독 서비스는 잊고 안 쓰는 달에도 결제되는 '자동 결제 늪'에 빠지기 쉬우므로 정기적인 구독 다이어트가 필수입니다.</p>
+      <br>
+      <strong>Q. 대체 이 돈을 S&P500에 넣는다는 게 무슨 뜻인가요? (기회비용)</strong>
+      <p>금융에서 <strong>기회비용</strong>은 어떤 선택으로 인해 포기하게 된 가치를 뜻합니다. 매월 3만 원의 구독료를 소비로 소멸시키는 대신, 미국 우량 장기 지수인 <strong>S&P500 ETF(연평균 기대수익률 약 10%)</strong>에 복리로 매달 적립 투자했다면 어떻게 될까요? 5년 뒤에는 원금보다 훨씬 불어난 <strong>복리 마법</strong>의 결과물을 만지게 됩니다. 본 계산기는 여러분의 소중한 돈이 투자금으로 쓰였을 때의 투자 기회비용을 경각심 차원에서 수치화하여 보여줍니다.</p>
+      <br>
+      <strong>Q. 구독 다이어트, 어떻게 시작해야 할까요?</strong>
+      <p>1. 현재 결제되는 모든 구독을 위 리스트에 추가합니다. <br>2. 계산된 '월 합계'를 확인하고 충격을 먼저 받습니다. 😱<br>3. 최근 2주 동안 한 번도 안 킨 서비스는 과감하게 <strong>구독 해지</strong>를 누릅니다.<br>4. 가족 요금제나 통신사 결합 할인이 있는지 먼저 찾아 갈아타는 것도 현명한 방법입니다.</p>
+    </div>
+  </details>
+
+  <div class="related-tools">
+    <h3>🔗 연관 금융/생활 계산기</h3>
+    <div class="tool-list">
+      <a href="/special-chars/compound-interest/"><span>📈 복리 이자 계산기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/loan-calc/"><span>💰 대출 이자 계산기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/discount-calc/"><span>🛍️ 할인율 계산기</span><span>바로가기 →</span></a>
+    </div>
+  </div>
+    <div class="footer"><span>실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+<script>
+let subs = [];
+let nextId = 1;
+
+function addItem(name='', price=0) {
+  subs.push({ id: nextId++, name, price });
+  render();
+}
+
+function quickAdd(name, price) {
+  subs.push({ id: nextId++, name, price });
+  render();
+}
+
+function removeItem(id) {
+  subs = subs.filter(s => s.id !== id);
+  render();
+}
+
+function updateItem(id, field, val) {
+  const item = subs.find(s => s.id === id);
+  if (!item) return;
+  if (field === 'name') item.name = val;
+  else item.price = parseInt(val.replace(/[^0-9]/g,'')) || 0;
+  calc();
+}
+
+function render() {
+  const list = document.getElementById('subList');
+  list.innerHTML = '';
+  subs.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'sub-item';
+    div.innerHTML = `
+      <input class="sub-name" value="${s.name}" placeholder="서비스 이름" oninput="updateItem(${s.id},'name',this.value)">
+      <input class="sub-price" value="${s.price || ''}" placeholder="월 금액" oninput="updateItem(${s.id},'price',this.value)" inputmode="numeric">
+      <button class="sub-del" onclick="removeItem(${s.id})">✕</button>
+    `;
+    list.appendChild(div);
+  });
+  calc();
+}
+
+function fmtWon(n) {
+  if(n>=1e8){const e=Math.floor(n/1e8),m=Math.floor((n%1e8)/1e4);return m>0?`${e}억 ${m.toLocaleString()}만`:`${e}억`}
+  if(n>=1e4)return Math.floor(n/1e4).toLocaleString()+'만원';
+  return Math.round(n).toLocaleString()+'원';
+}
+
+function calcInvest(monthly, years) {
+  // 월 적립 복리: FV = PMT × ((1+r)^n - 1) / r
+  const r = 0.10 / 12; // 월 수익률
+  const n = years * 12;
+  if (r === 0) return monthly * n;
+  return Math.round(monthly * ((Math.pow(1+r, n) - 1) / r));
+}
+
+function calc() {
+  const total = subs.reduce((sum, s) => sum + (s.price || 0), 0);
+  document.getElementById('monthlyTotal').innerHTML = `월 합계: <strong>${total.toLocaleString()}원</strong>`;
+
+  const y1 = total * 12;
+  const y3 = total * 36;
+  const y5 = total * 60;
+
+  document.getElementById('y1').textContent = y1 ? fmtWon(y1) : '-';
+  document.getElementById('y3').textContent = y3 ? fmtWon(y3) : '-';
+  document.getElementById('y5').textContent = y5 ? fmtWon(y5) : '-';
+
+  // 투자 비교
+  document.getElementById('inv1').textContent = total ? fmtWon(calcInvest(total, 1)) : '-';
+  document.getElementById('inv3').textContent = total ? fmtWon(calcInvest(total, 3)) : '-';
+  document.getElementById('inv5').textContent = total ? fmtWon(calcInvest(total, 5)) : '-';
+
+  // 팩폭 메시지 -> 다이나믹 리포트로 교체
+  const punch = document.getElementById('punchline');
+  punch.style.display = 'none';
+
+  const report = document.getElementById('analysisReport');
+  if (total > 0) {
+    report.style.display = 'flex';
+    let msg = `<h3>💡 구독 다이어트 팩폭 진단서</h3>`;
+    msg += `<p>현재 고객님께서 매달 지출하는 숨만 쉬어도 나가는 고정 구독료는 <strong>${total.toLocaleString()}원</strong>입니다. 이것을 1년 동안 유지하면 <strong>${fmtWon(y1)}</strong>, 5년 동안 아무 생각 없이 자동결제하면 자그마치 <strong>${fmtWon(y5)}</strong>이라는 거금이 완전히 공중으로 증발하게 됩니다.</p>`;
+    
+    const inv5 = calcInvest(total, 5);
+    const diff = inv5 - y5;
+    
+    msg += `<p><strong>💔 기회비용의 충격:</strong> 만약 오늘 당장 이 모든 구독을 끊고, 그 돈을 매달 우량 자산(연평균 10% 수익 가정)에 적립식으로 꾸준히 투자했다면 5년 뒤 고객님의 계좌에는 무려 <strong>${fmtWon(inv5)}</strong>이 찍혀있을 수 있습니다. 원금 대비 이자로만 <strong>${fmtWon(diff)}</strong>이 복리로 창출되는 셈이죠.</p>`;
+    
+    if (y1 >= 1000000) {
+        msg += `<p>🚨 <strong>경고:</strong> 고정 지출이 매우 위험 수위입니다. 1년 지출액이 백만 원에 육박합니다. 당장 이번 주말에 스마트폰 결제 내역을 훑어보고 정말 절대적으로 필요한 서비스 1~2개만 남기고 모조리 구조조정을 하시는 것을 강력히 권고합니다!</p>`;
+    } else if (y1 >= 400000) {
+        msg += `<p>⚠️ <strong>주의:</strong> 무심코 결제되는 매월 나가는 서비스가 제법 누적된 상태입니다. 최근 한 달간 한 번도 접속하지 않은 서비스가 있는지 당장 '구독 내역'을 점검해보세요. 해지 버튼을 누르는 5분이 고객님의 지갑을 살립니다.</p>`;
+    } else {
+        msg += `<p>✅ <strong>양호:</strong> 비교적 건전하게 고정 지출 관리를 하고 계시네요! 지금 곡 필요한 핵심 서비스만 슬기롭게 활용하시고, 무료 체험 기간에 혹해 무의식적인 추가 자동결제가 발생하지 않도록 조심하세요.</p>`;
+    }
+    
+    report.innerHTML = msg;
+  } else {
+    report.style.display = 'none';
+  }
+}
+
+// 초기 빈 항목 2개 -> 디폴트 2개 입력
+addItem('유튜브 프리미엄', 14900);
+addItem('넷플릭스 (스탠다드)', 13500);
+</script>
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>🎨 이모지 합치기 — 티모집사</title>
+<meta name="description" content="이모지 두 개를 합쳐 새로운 이모지를 만들어보세요! Google Emoji Kitchen 기반, 10만 가지 이상의 조합.">
+<meta property="og:title" content="🎨 이모지 합치기 — 티모집사">
+<meta property="og:description" content="이모지 두 개를 합쳐 새로운 이모지를 만들어보세요! Google Emoji Kitchen 기반, 10만 가지 이상의 조합.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/emoji-mixer/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/emoji-mixer/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+.app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:500px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+
+/* 조합 영역 */
+.combo-area{padding:20px 16px;text-align:center}
+.combo-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px}
+.emoji-slot{width:64px;height:64px;border-radius:16px;background:var(--bg-guide);border:2px dashed #3a3a6a;display:flex;align-items:center;justify-content:center;font-size:36px;cursor:pointer;transition:all .2s;user-select:none}
+.emoji-slot:hover{border-color:var(--accent);background:#252560}
+.emoji-slot.filled{border-style:solid;border-color:var(--accent)}
+.emoji-slot.active{border-color:var(--accent);box-shadow:0 0 12px rgba(167,139,250,.3)}
+.combo-op{font-size:20px;font-weight:700;color:var(--calc-expr-text)}
+.result-area{min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.result-img{width:160px;height:160px;object-fit:contain;border-radius:12px;display:none}
+.result-placeholder{font-size:14px;color:var(--calc-expr-text);line-height:1.6}
+.result-loading{display:none}
+.result-loading .spinner{width:32px;height:32px;border:3px solid #2a2a5a;border-top-color:#533483;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.no-result{display:none;font-size:14px;color:var(--text-info)}
+.action-btns{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.act-btn{padding:8px 16px;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:4px}
+.act-btn:disabled{opacity:.4;cursor:default}
+.btn-save{background:var(--accent);color:var(--text-on-accent)}
+.btn-save:hover:not(:disabled){background:var(--accent-hover)}
+.btn-copy{background:var(--bg-guide);color:var(--text-guide);border:1px solid var(--border)}
+.btn-copy:hover:not(:disabled){background:var(--bg-guide-hover)}
+.btn-random{background:var(--accent);color:var(--text-on-accent);border:1px solid var(--accent)}
+.btn-random:hover:not(:disabled){background:var(--accent-hover)}
+.btn-clear{background:var(--bg-btn);color:var(--text-info);border:1px solid var(--border)}
+.btn-clear:hover{background:var(--bg-btn-hover)}
+
+/* 카테고리 탭 */
+.cat-tabs{display:flex;gap:0;background:var(--bg-guide);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 16px 8px}
+.cat-tab{flex:1;padding:8px 4px;text-align:center;font-size:18px;cursor:pointer;transition:all .2s;background:transparent;border:none}
+.cat-tab:hover{background:#252560}
+.cat-tab.active{background:var(--accent)}
+
+/* 이모지 그리드 */
+.emoji-grid-wrap{padding:0 16px 16px;max-height:260px;overflow-y:auto}
+.emoji-grid-wrap::-webkit-scrollbar{width:6px}
+.emoji-grid-wrap::-webkit-scrollbar-track{background:transparent}
+.emoji-grid-wrap::-webkit-scrollbar-thumb{background:var(--bg-btn);border-radius:3px}
+.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}
+.emoji-btn{width:40px;height:40px;border:none;background:var(--bg-bar);border-radius:8px;font-size:22px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;margin:0 auto}
+.emoji-btn:hover{background:var(--bg-btn);transform:scale(1.15)}
+.emoji-btn.selected{background:var(--accent);box-shadow:0 0 8px rgba(83,52,131,.5)}
+
+/* 초기 로딩 */
+.init-loading{padding:40px 16px;text-align:center}
+.init-loading .spinner-lg{width:40px;height:40px;border:3px solid #2a2a5a;border-top-color:#533483;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+.init-loading p{font-size:13px;color:var(--text-info)}
+
+/* 가이드 */
+.guide-section{margin:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.guide-section summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
+.guide-section summary:hover{background:var(--bg-guide-hover)}
+.guide-section[open] summary{background:var(--bg-btn);border-bottom:1px solid var(--border)}
+.guide-section summary::-webkit-details-marker{display:none}
+.guide-section summary::after{content:'▼';font-size:10px;margin-left:auto;transition:transform .2s;color:var(--text-muted)}
+.guide-section[open] summary::after{transform:rotate(180deg)}
+.guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
+.guide-content strong{color:var(--text-secondary)}
+.guide-content ul{margin:8px 0;padding-left:20px}
+.guide-content li{margin-bottom:4px}
+
+/* 바닥바 */
+.bottom-bar{background:var(--bg-body);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #222250}
+.bottom-bar .info{font-size:11px;color:var(--text-muted)}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:20px;font-size:13px;opacity:0;transition:all .3s;z-index:999;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+@media(max-width:400px){
+  .emoji-grid{grid-template-columns:repeat(7,1fr)}
+  .emoji-slot{width:56px;height:56px;font-size:30px}
+  .result-img{width:130px;height:130px}
+}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+    <h1>🎨 이모지 합치기</h1>
+  </div>
+
+  <!-- 초기 로딩 -->
+  <div class="init-loading" id="initLoading">
+    <div class="spinner-lg"></div>
+    <p>이모지 데이터 로딩 중...</p>
+  </div>
+
+  <!-- 메인 컨텐츠 (로딩 후 표시) -->
+  <div id="mainContent" style="display:none">
+    <!-- 조합 영역 -->
+    <div class="combo-area">
+      <div class="combo-row">
+        <div class="emoji-slot active" id="slot1" onclick="activateSlot(1)" title="이모지 선택">?</div>
+        <span class="combo-op">+</span>
+        <div class="emoji-slot" id="slot2" onclick="activateSlot(2)" title="이모지 선택">?</div>
+        <span class="combo-op">=</span>
+        <div style="width:64px;height:64px;display:flex;align-items:center;justify-content:center;font-size:36px" id="resultMini">?</div>
+      </div>
+
+      <div class="result-area" id="resultArea">
+        <div class="result-placeholder" id="placeholder">이모지 두 개를 선택하세요 ☝️</div>
+        <div class="result-loading" id="resultLoading"><div class="spinner"></div></div>
+        <img class="result-img" id="resultImg" alt="조합 결과">
+        <div class="no-result" id="noResult">조합 결과가 없습니다 😢<br><span style="font-size:12px;color:var(--calc-expr-text)">다른 이모지를 시도해보세요!</span></div>
+      </div>
+
+      <div class="action-btns">
+        <button class="act-btn btn-save" id="btnSave" onclick="saveImage()" disabled>💾 저장</button>
+        <button class="act-btn btn-copy" id="btnCopy" onclick="copyImage()" disabled>📋 복사</button>
+        <button class="act-btn btn-random" id="btnRandom" onclick="randomCombo()">🎲 랜덤</button>
+        <button class="act-btn btn-clear" onclick="clearSlots()">↻ 초기화</button>
+      </div>
+    </div>
+
+    <!-- 카테고리 탭 -->
+    <div class="cat-tabs" id="catTabs">
+      <button class="cat-tab active" data-cat="face" title="표정">😀</button>
+      <button class="cat-tab" data-cat="animal" title="동물">🐱</button>
+      <button class="cat-tab" data-cat="food" title="음식">🍕</button>
+      <button class="cat-tab" data-cat="nature" title="자연">🌸</button>
+      <button class="cat-tab" data-cat="object" title="활동·물건">⚽</button>
+      <button class="cat-tab" data-cat="heart" title="하트·기호">❤️</button>
+    </div>
+
+    <!-- 이모지 그리드 -->
+    <div class="emoji-grid-wrap">
+      <div class="emoji-grid" id="emojiGrid"></div>
+    </div>
+  </div>
+
+  <!-- 가이드 -->
+  <details class="guide-section">
+    <summary>📖 사용 방법</summary>
+    <div class="guide-content">
+      <ol>
+        <li>아래 이모지 그리드에서 이모지 <strong>두 개를 차례로</strong> 선택하세요</li>
+        <li>조합 가능한 쌍이면 <strong>합성된 이모지 이미지</strong>가 자동으로 표시됩니다</li>
+        <li><strong>🎲 랜덤</strong> 버튼으로 재미있는 조합을 발견해보세요</li>
+        <li>결과 이미지를 <strong>저장</strong>하거나 <strong>클립보드에 복사</strong>할 수 있습니다</li>
+      </ol>
+      <ul>
+        <li>슬롯을 클릭하면 해당 슬롯만 변경할 수 있습니다</li>
+        <li>모든 이모지 쌍이 조합 가능한 것은 아닙니다</li>
+      </ul>
+    </div>
+  </details>
+  <details class="guide-section">
+    <summary>💡 자주 묻는 질문</summary>
+    <div class="guide-content">
+      <p><strong>Q. 모든 이모지 조합이 가능한가요?</strong></p>
+      <p>아니요, Google Emoji Kitchen에서 지원하는 조합만 가능합니다. 현재 약 10만 가지 이상의 조합이 있으며, 지속적으로 추가되고 있습니다.</p>
+      <p style="margin-top:8px"><strong>Q. 이 이미지를 SNS에서 사용해도 되나요?</strong></p>
+      <p>네, 개인적 용도(메시지, SNS 포스팅 등)로는 자유롭게 사용할 수 있습니다. 이모지 조합 이미지는 Google에서 제공합니다.</p>
+      <p style="margin-top:8px"><strong>Q. 이미지가 표시되지 않아요</strong></p>
+      <p>인터넷 연결 상태를 확인해주세요. 이모지 데이터와 조합 이미지를 외부 서버에서 불러오기 때문에 인터넷 연결이 필요합니다.</p>
+    </div>
+  </details>
+    <div class="footer"><span>Google Emoji Kitchen 기반</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+
+<script>
+// === 이모지 카테고리 데이터 ===
+const splitEmojis = (str) => {
+  const emojis = [];
+  for (const char of str) {
+    if (char.trim() && char !== '\uFE0F' && char !== '\u200D') {
+      emojis.push(char);
+    }
+  }
+  return emojis;
+};
+
+const EMOJI_CATS = {
+  face: splitEmojis('😀😃😄😁😆🥹😅😂🤣🥲😊😇🙂🙃😉😌😍🥰😘😗😙😚😋😛😝😜🤪🤨🧐🤓😎🥸🤩🥳😏😒😞😔😟😕🙁😣😖😫😩🥺😢😭😤😠😡🤬🤯😳🥵🥶😱😨😰😥😓🤗🤔🤭🤫🤥😶😐😑😬🙄😯😦😧😮😲🥱😴🤤😪😵🤐🥴🤢🤮🤧😷🤒🤕🤑🤠😈👿👻💀☠️👽🤖🎃😺😸😹😻😼😽🙀😿😾'),
+  animal: splitEmojis('🐶🐱🐭🐹🐰🦊🐻🐼🐨🐯🦁🐮🐷🐽🐸🐵🙈🙉🙊🐔🐧🐦🐤🐣🐥🦆🦅🦉🦇🐺🐗🐴🦄🐝🐛🦋🐌🐞🐜🐢🐍🦎🦖🦕🐙🦑🦐🦞🦀🐡🐠🐟🐬🐳🐋🐊🐆🐅🐃🐂🐄🦬🐎🐖🐏🐑🦙🐐🦌🐕🐩🦮🐈🐓🦃🦚🦜🦢🦩🐇🦝🦨🐁🐀🐿️🦔🐾🐉🐲'),
+  food: splitEmojis('🍎🍐🍊🍋🍌🍉🍇🍓🫐🍈🍒🍑🥭🍍🥥🥝🍅🍆🥑🥦🥬🥒🌶️🫑🌽🥕🫒🧄🧅🥔🍠🥐🥯🍞🥖🥨🧀🥚🍳🧈🥞🧇🥓🥩🍗🍖🌭🍔🍟🍕🫓🥪🥙🧆🌮🌯🫔🥗🥘🫕🥫🍝🍜🍲🍛🍣🍱🥟🦪🍤🍙🍚🍘🍥🥠🥮🍢🍡🍧🍨🍦🥧🧁🍰🎂🍮🍭🍬🍫🍩🍪🌰🥜🍯🥛☕🍵🍶🍺🍻🥂🍷🍸🍹🧃🥤🧋🍾🧊'),
+  nature: splitEmojis('🌸🌷🌹🥀🌺🌻🌼💐🌿🍀🍃🍂🍁🌾🌱🪴🌵🌲🌳🌴🍄🐚🌍🌎🌏🌑🌒🌓🌔🌕🌖🌗🌘🌙⭐🌟💫✨☀️🌤️🌥️🌦️🌧️🌨️🌩️🌪️🌫️🌊💧💦🔥⛄❄️🌈🌠'),
+  object: splitEmojis('⚽🏀🏈⚾🥎🎾🏐🏉🎱🏓🥊🎽🏆🥇🎪🎨🎬🎤🎧🎼🎹🥁🎸🎺🎷🎻🎲🧩🎯🎳🎮🕹️🎰💎👑💍👒🧢🎩👓🕶️🌂🧸🎀🎁🎈🎉🎊🪄🔮🧿🪬📱💻🖥️⌨️🖱️💡🔦🕯️🏠🏰🗽⛩️🚗🚕🚌🚎🏎️🚓🚑🚒✈️🚀🛸🚁⛵🚢🎡🎢🎠'),
+  heart: splitEmojis('❤️🧡💛💚💙💜🖤🤍🤎💔❣️💕💞💓💗💖💝💘💟♥️🫶👍👎👊✊🤛🤜🤞✌️🤟🤘👌🤌🤏👈👉👆👇☝️✋🤚🖐️🖖👋🤙💪🦾🙏👏🤝🫂')
+};
+
+// === 상태 ===
+let emojiData = null;
+let slot1Emoji = null;
+let slot2Emoji = null;
+let activeSlot = 1;
+let supportedEmoji = new Set();
+
+// === DOM ===
+const $slot1 = document.getElementById('slot1');
+const $slot2 = document.getElementById('slot2');
+const $resultImg = document.getElementById('resultImg');
+const $resultMini = document.getElementById('resultMini');
+const $placeholder = document.getElementById('placeholder');
+const $resultLoading = document.getElementById('resultLoading');
+const $noResult = document.getElementById('noResult');
+const $btnSave = document.getElementById('btnSave');
+const $btnCopy = document.getElementById('btnCopy');
+const $emojiGrid = document.getElementById('emojiGrid');
+
+// === 이모지 ↔ 코드 변환 ===
+function emojiToCode(emoji) {
+  const pts = [];
+  for (const ch of emoji) {
+    const cp = ch.codePointAt(0);
+    if (cp !== 0xfe0f) pts.push(cp.toString(16));
+  }
+  return pts.join('-');
+}
+
+function codeToEmoji(code) {
+  return String.fromCodePoint(...code.split('-').map(x => parseInt(x, 16)));
+}
+
+// === 데이터 로드 ===
+async function loadData() {
+  const url = './emoji-db.json';
+  const cacheName = 'emoji-kitchen-db-v1';
+  try {
+    let resp;
+    if ('caches' in window) {
+      const cache = await caches.open(cacheName);
+      const cachedResp = await cache.match(url);
+      if (cachedResp) {
+        resp = cachedResp;
+      } else {
+        resp = await fetch(url);
+        if (resp.ok) cache.put(url, resp.clone());
+      }
+    } else {
+      resp = await fetch(url);
+    }
+    
+    if (!resp.ok) throw new Error('fetch failed');
+    emojiData = await resp.json();
+    
+    // Build supported emoji set
+    if (emojiData && emojiData.emojis) {
+      for (const key of emojiData.emojis) {
+        supportedEmoji.add(key);
+      }
+    }
+    document.getElementById('initLoading').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+    renderGrid('face');
+  } catch(e) {
+    document.getElementById('initLoading').innerHTML = '<p style="color:#ff6b6b">데이터를 불러오지 못했습니다 😢<br><span style="font-size:12px;color:var(--text-info)">인터넷 연결을 확인하고 새로고침해주세요</span></p>';
+  }
+}
+
+// === 그리드 렌더링 ===
+function renderGrid(cat) {
+  const emojis = EMOJI_CATS[cat] || [];
+  $emojiGrid.innerHTML = '';
+  emojis.forEach(em => {
+    const btn = document.createElement('button');
+    btn.className = 'emoji-btn';
+    btn.textContent = em;
+    if (em === slot1Emoji || em === slot2Emoji) btn.classList.add('selected');
+    btn.addEventListener('click', () => selectEmoji(em));
+    $emojiGrid.appendChild(btn);
+  });
+}
+
+// === 카테고리 탭 ===
+document.getElementById('catTabs').addEventListener('click', e => {
+  const tab = e.target.closest('.cat-tab');
+  if (!tab) return;
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  renderGrid(tab.dataset.cat);
+});
+
+// === 슬롯 활성화 ===
+function activateSlot(n) {
+  activeSlot = n;
+  $slot1.classList.toggle('active', n === 1);
+  $slot2.classList.toggle('active', n === 2);
+}
+
+// === 이모지 선택 ===
+function selectEmoji(emoji) {
+  if (activeSlot === 1) {
+    slot1Emoji = emoji;
+    $slot1.textContent = emoji;
+    $slot1.classList.add('filled');
+    // 자동으로 다음 슬롯으로
+    if (!slot2Emoji) activateSlot(2);
+  } else {
+    slot2Emoji = emoji;
+    $slot2.textContent = emoji;
+    $slot2.classList.add('filled');
+  }
+  updateSelectedHighlight();
+  if (slot1Emoji && slot2Emoji) tryCombo();
+}
+
+function updateSelectedHighlight() {
+  document.querySelectorAll('.emoji-btn').forEach(btn => {
+    btn.classList.toggle('selected', btn.textContent === slot1Emoji || btn.textContent === slot2Emoji);
+  });
+}
+
+// === 조합 시도 ===
+function tryCombo() {
+  if (!slot1Emoji || !slot2Emoji || !emojiData) return;
+  $placeholder.style.display = 'none';
+  $noResult.style.display = 'none';
+  $resultImg.style.display = 'none';
+  $resultLoading.style.display = 'flex';
+  $resultMini.textContent = '⏳';
+  $btnSave.disabled = true;
+  $btnCopy.disabled = true;
+
+  const url = findComboUrl(slot1Emoji, slot2Emoji);
+  if (url) {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      $resultLoading.style.display = 'none';
+      $resultImg.src = url;
+      $resultImg.style.display = 'block';
+      $resultMini.innerHTML = '<img src="'+url+'" style="width:48px;height:48px;object-fit:contain">';
+      $btnSave.disabled = false;
+      $btnCopy.disabled = false;
+    };
+    img.onerror = () => {
+      showNoResult();
+    };
+    img.src = url;
+  } else {
+    showNoResult();
+  }
+}
+
+function showNoResult() {
+  $resultLoading.style.display = 'none';
+  $noResult.style.display = 'block';
+  $resultMini.textContent = '❌';
+  $btnSave.disabled = true;
+  $btnCopy.disabled = true;
+}
+
+// === 조합 URL 찾기 ===
+function findComboUrl(e1, e2) {
+  if (!emojiData || !emojiData.data) return null;
+  const c1 = emojiToCode(e1);
+  const c2 = emojiToCode(e2);
+
+  const idx1 = emojiData.emojis.indexOf(c1);
+  const idx2 = emojiData.emojis.indexOf(c2);
+  if (idx1 === -1 || idx2 === -1) return null;
+
+  const n1 = idx1.toString(36);
+  const n2 = idx2.toString(36);
+
+  const arr = [n1, n2].sort();
+  const nA = arr[0];
+  const nB = arr[1];
+
+  if (emojiData.data[nA] && emojiData.data[nA][nB] !== undefined) {
+    const val = emojiData.data[nA][nB];
+    const sign = val.charAt(0);
+    const dateIdx = parseInt(val.substring(1), 36);
+    const date = emojiData.dates[dateIdx];
+
+    const codeA = emojiData.emojis[parseInt(nA, 36)];
+    const codeB = emojiData.emojis[parseInt(nB, 36)];
+
+    let leftCode, rightCode;
+    if (sign === '+') {
+      leftCode = codeA;
+      rightCode = codeB;
+    } else {
+      leftCode = codeB;
+      rightCode = codeA;
+    }
+
+    return `https://www.gstatic.com/android/keyboard/emojikitchen/${date}/u${leftCode}/u${leftCode}_u${rightCode}.png`;
+  }
+
+  return null;
+}
+
+// === 초기화 ===
+function clearSlots() {
+  slot1Emoji = null;
+  slot2Emoji = null;
+  $slot1.textContent = '?';
+  $slot2.textContent = '?';
+  $slot1.classList.remove('filled');
+  $slot2.classList.remove('filled');
+  $resultImg.style.display = 'none';
+  $noResult.style.display = 'none';
+  $resultLoading.style.display = 'none';
+  $placeholder.style.display = 'block';
+  $resultMini.textContent = '?';
+  $btnSave.disabled = true;
+  $btnCopy.disabled = true;
+  activateSlot(1);
+  updateSelectedHighlight();
+}
+
+// === 랜덤 조합 ===
+function randomCombo() {
+  if (!emojiData || !emojiData.data) return;
+  const keys = Object.keys(emojiData.data);
+  let validComboFound = false;
+  let attempts = 0;
+  
+  while (!validComboFound && attempts < 100) {
+    attempts++;
+    const randA = keys[Math.floor(Math.random() * keys.length)];
+    const subKeys = Object.keys(emojiData.data[randA]);
+    
+    if (subKeys.length > 0) {
+      const randB = subKeys[Math.floor(Math.random() * subKeys.length)];
+      
+      const codeA = emojiData.emojis[parseInt(randA, 36)];
+      const codeB = emojiData.emojis[parseInt(randB, 36)];
+      
+      const e1 = codeToEmoji(codeA);
+      const e2 = codeToEmoji(codeB);
+      
+      if (e1 && e2) {
+        slot1Emoji = e1;
+        slot2Emoji = e2;
+        $slot1.textContent = e1;
+        $slot2.textContent = e2;
+        $slot1.classList.add('filled');
+        $slot2.classList.add('filled');
+        activateSlot(2);
+        updateSelectedHighlight();
+
+        $placeholder.style.display = 'none';
+        $noResult.style.display = 'none';
+        $resultLoading.style.display = 'flex';
+        $resultImg.style.display = 'none';
+        $resultMini.textContent = '⏳';
+        $btnSave.disabled = true;
+        $btnCopy.disabled = true;
+
+        const url = findComboUrl(e1, e2);
+        if (url) {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => {
+            $resultLoading.style.display = 'none';
+            $resultImg.src = url;
+            $resultImg.style.display = 'block';
+            $resultMini.innerHTML = '<img src="'+url+'" style="width:48px;height:48px;object-fit:contain">';
+            $btnSave.disabled = false;
+            $btnCopy.disabled = false;
+          };
+          img.onerror = () => {
+             randomCombo();
+          };
+          img.src = url;
+          
+          validComboFound = true;
+          return;
+        }
+      }
+    }
+  }
+  
+  if (!validComboFound) {
+    showToast('랜덤 조합을 찾지 못했습니다');
+  }
+}
+
+// === 저장 ===
+async function saveImage() {
+  const src = $resultImg.src;
+  if (!src) return;
+  try {
+    const resp = await fetch(src);
+    const blob = await resp.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'emoji-mix-' + Date.now() + '.png';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    showToast('이미지 저장 완료!');
+  } catch(e) {
+    showToast('저장 실패 — 이미지를 길게 눌러 저장해보세요');
+  }
+}
+
+// === 복사 ===
+async function copyImage() {
+  const src = $resultImg.src;
+  if (!src) return;
+  try {
+    const resp = await fetch(src);
+    const blob = await resp.blob();
+    // Convert to PNG if needed
+    const pngBlob = blob.type === 'image/png' ? blob : await convertToPng(src);
+    await navigator.clipboard.write([new ClipboardItem({'image/png': pngBlob})]);
+    showToast('클립보드에 복사됨!');
+  } catch(e) {
+    showToast('복사 실패 — 저장 버튼을 이용해주세요');
+  }
+}
+
+function convertToPng(src) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = img.width; c.height = img.height;
+      c.getContext('2d').drawImage(img, 0, 0);
+      c.toBlob(b => resolve(b), 'image/png');
+    };
+    img.src = src;
+  });
+}
+
+// === 토스트 ===
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// === 맨 위로 버튼 ===
+(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
+
+// === 시작 ===
+loadData();
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

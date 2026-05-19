@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>📉 Average Cost Calculator — TeemoZipsa</title>
+<meta name="description" content="Stock & crypto average cost calculator. Instantly calculate your new average price when buying more shares at a different price.">
+<meta property="og:title" content="📉 Average Cost Calculator — TeemoZipsa">
+<meta property="og:description" content="Stock & crypto average cost calculator. Instantly calculate your new average price when buying more.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/avg-price/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/avg-price/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/avg-price/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/avg-price/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:'Inter',-apple-system,sans-serif;
+    background:var(--bg-body);color:var(--text-primary);
+    min-height:100vh;padding:20px;
+    display:flex;justify-content:center;align-items:flex-start;
+  }
+  .app{
+    background:var(--bg-app);border-radius:16px;
+    box-shadow:var(--shadow-lg);
+    width:480px;max-width:100%;overflow:hidden;
+  }
+  .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+  .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+  .header h1{font-size:15px;font-weight:600;color:#fff}
+
+  .body{padding:16px;display:flex;flex-direction:column;gap:16px}
+
+  /* 섹션 */
+  .section{
+    background:var(--bg-bar);border-radius:12px;padding:14px 16px;
+    border:1px solid var(--border);
+  }
+  .section-title{
+    font-size:12px;font-weight:700;color:var(--text-info);
+    margin-bottom:10px;display:flex;align-items:center;gap:6px;
+  }
+  .section-title .badge{
+    font-size:10px;padding:2px 8px;border-radius:4px;
+    font-weight:600;
+  }
+  .badge-hold{background:#1e3a5f;color:#60a5fa}
+  .badge-add{background:#3a1e5f;color:#c084fc}
+
+  .field-row{display:flex;gap:10px;margin-bottom:8px}
+  .field-row:last-child{margin-bottom:0}
+  .field{flex:1;display:flex;flex-direction:column;gap:3px}
+  .field label{font-size:10px;color:var(--calc-expr-text);font-weight:600}
+  .field input{
+    background:var(--bg-input);border:1px solid var(--border);border-radius:8px;
+    color:var(--text-primary);padding:10px 12px;font-size:15px;font-family:inherit;
+    outline:none;width:100%;
+  }
+  .field input:focus{border-color:var(--accent)}
+  .field input::placeholder{color:var(--text-muted)}
+
+  /* 수량↔금액 토글 */
+  .toggle-row{
+    display:flex;align-items:center;gap:8px;margin-bottom:8px;
+  }
+  .toggle-label{font-size:11px;color:var(--calc-expr-text)}
+  .toggle-btn{
+    display:flex;background:var(--bg-input);border:1px solid var(--border);
+    border-radius:8px;overflow:hidden;
+  }
+  .toggle-opt{
+    padding:5px 12px;font-size:11px;cursor:pointer;
+    font-family:inherit;border:none;background:none;
+    color:var(--calc-expr-text);transition:all .15s;font-weight:600;
+  }
+  .toggle-opt.active{background:var(--accent);color:var(--text-on-accent)}
+
+  /* 결과 */
+  .result-section{
+    background:var(--bg-input);
+    border:1px solid var(--border);border-radius:14px;
+    padding:18px;
+  }
+  .result-title{
+    font-size:12px;font-weight:700;color:var(--text-info);
+    margin-bottom:12px;display:flex;align-items:center;gap:6px;
+  }
+
+  .result-main{
+    text-align:center;margin-bottom:14px;
+  }
+  .result-label{font-size:11px;color:var(--calc-expr-text);margin-bottom:4px}
+  .result-value{
+    font-size:32px;font-weight:800;color:var(--text-primary);
+    letter-spacing:-0.5px;
+  }
+  .result-change{
+    font-size:13px;font-weight:700;margin-top:4px;
+  }
+  .change-down{color:#f87171}
+  .change-up{color:var(--text-success)}
+  .change-same{color:var(--text-info)}
+
+  .result-stats{
+    display:grid;grid-template-columns:1fr 1fr;gap:8px;
+  }
+  .r-stat{
+    background:rgba(0,0,0,.2);border-radius:8px;
+    padding:10px;text-align:center;
+  }
+  .r-stat .r-label{font-size:10px;color:var(--calc-expr-text);margin-bottom:3px}
+  .r-stat .r-value{font-size:14px;font-weight:700;color:var(--text-amount)}
+
+  /* 안내 */
+  .hint{
+    font-size:11px;color:var(--text-muted);text-align:center;
+    padding:4px 0;
+  }
+
+  .footer{
+    background:var(--bg-bar);padding:10px 16px;
+    display:flex;justify-content:space-between;align-items:center;
+    border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text);
+  }
+  .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+  .footer a:hover{color:var(--text-guide)}
+
+  /* 애니메이션 */
+  .result-value{transition:color .3s}
+  /* Dynamic Report & Guide standard CSS */
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .report-box { margin-top: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
+  .report-box strong { color: var(--accent); }
+  /* 가이드 & 관련 도구 (표준) */
+  .guide-section{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+  .guide-section h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
+  .guide:last-child{margin-bottom:0}
+  .guide summary{padding:12px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--bg-guide);transition:background .2s}
+  .guide summary::-webkit-details-marker{display:none}
+  .guide summary::after{content:'▼';font-size:10px;color:var(--text-muted);transition:transform .3s}
+  .guide[open] summary::after{transform:rotate(180deg)}
+  .guide summary:hover{background:var(--bg-guide-hover)}
+  .guide-content{padding:14px;font-size:13px;color:var(--text-info);line-height:1.6;border-top:1px solid var(--border);background:var(--bg-app)}
+  .related-tools{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+  .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+  .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
+  .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
+    <h1>📉 Average Cost Calculator</h1>
+    <a href="/special-chars/avg-price/" class="back-btn">🌐 한국어</a>
+  </div>
+
+  <div class="body">
+    <!-- 1단: 기존 보유 -->
+    <div class="section">
+      <div class="section-title">
+        <span class="badge badge-hold">1</span> Current Holdings
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Current Avg. Price</label>
+          <input type="text" id="curPrice" placeholder="e.g. 50" oninput="calc()" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label>Quantity Held</label>
+          <input type="text" id="curQty" placeholder="e.g. 10" oninput="calc()" inputmode="decimal">
+        </div>
+      </div>
+      <div class="hint" id="curTotal">Total Value: -</div>
+    </div>
+
+    <!-- 2단: 추가 매수 -->
+    <div class="section">
+      <div class="section-title">
+        <span class="badge badge-add">2</span> Additional Purchase
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Buy Price</label>
+          <input type="text" id="addPrice" placeholder="e.g. 40" oninput="calc()" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label id="addLabel">Additional Quantity</label>
+          <input type="text" id="addQtyOrAmt" placeholder="e.g. 5" oninput="calc()" inputmode="decimal">
+        </div>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Input mode:</span>
+        <div class="toggle-btn">
+          <button class="toggle-opt active" id="togQty" onclick="setMode('qty')">Quantity</button>
+          <button class="toggle-opt" id="togAmt" onclick="setMode('amt')">Amount ($)</button>
+        </div>
+      </div>
+      <div class="hint" id="addConvert">-</div>
+    </div>
+
+    <!-- 3단: 결과 -->
+    <div class="result-section">
+      <div class="result-title">
+        📊 Final Result
+      </div>
+      <div class="result-main">
+        <div class="result-label">New Average Price</div>
+        <div class="result-value" id="finalPrice">-</div>
+        <div class="result-change" id="priceChange"></div>
+      </div>
+      <div class="result-stats">
+        <div class="r-stat">
+          <div class="r-label">Total Investment</div>
+          <div class="r-value" id="finalInvest">-</div>
+        </div>
+        <div class="r-stat">
+          <div class="r-label">Total Quantity</div>
+          <div class="r-value" id="finalQty">-</div>
+        </div>
+      </div>
+    </div>
+    <div id="reportBox" class="report-box" style="display:none;"></div>
+  </div>
+
+  <section class="guide-section">
+    <h2>💡 Comprehensive Guide to Average Cost Calculator</h2>
+    
+    <details class="guide" open>
+      <summary>1. What does it mean to average down?</summary>
+      <div class="guide-content">
+        <p><strong>Averaging down</strong> involves buying more of a stock or cryptocurrency when its price drops below your initial entry point. By doing so, you lower the overall average cost per share, which theoretically makes it easier to break even or profit once the price rebounds. However, this strategy assumes the investment will eventually recover, which carries risks.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>2. How does the Average Cost Calculator work?</summary>
+      <div class="guide-content">
+        <p>This calculator blends your current holdings with new purchases in real-time. Simply provide your <strong>Current Average Price</strong> and <strong>Held Quantity</strong>, then input the <strong>Add Buy Price</strong> and <strong>Quantity (or Amount)</strong>. The tool instantly computes your newly adjusted average cost, total invested amount, and updated share quantity.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>3. Can I input standard currency amounts instead of quantities?</summary>
+      <div class="guide-content">
+        <p>Yes. You can switch the input toggle from "Quantity" to "Amount ($)". When selecting "Amount," the calculator automatically figures out how many fractional continuous shares/tokens you will acquire with your specified budget based on the additional buy price.</p>
+      </div>
+    </details>
+
+  </section>
+
+  <section class="related-tools">
+    <h2>🔗 Related Tools</h2>
+    <div class="tools-grid">
+      <a href="/special-chars/en/compound-interest/" class="tool-card">📈 Compound Interest</a>
+      <a href="/special-chars/en/percent-calc/" class="tool-card">📊 Percent Calc</a>
+      <a href="/special-chars/en/discount-calc/" class="tool-card">🛒 Discount Calc</a>
+      <a href="/special-chars/en/wage-calc/" class="tool-card">💰 Wage Calculator</a>
+    </div>
+  </section>
+
+    <div class="footer"><span>Real-time Calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+
+<script>
+let inputMode = 'qty'; // 'qty' or 'amt'
+
+function setMode(mode) {
+  inputMode = mode;
+  document.getElementById('togQty').classList.toggle('active', mode === 'qty');
+  document.getElementById('togAmt').classList.toggle('active', mode === 'amt');
+  document.getElementById('addLabel').textContent = mode === 'qty' ? 'Additional Quantity' : 'Additional Amount ($)';
+  document.getElementById('addQtyOrAmt').placeholder = mode === 'qty' ? 'e.g. 5' : 'e.g. 2000';
+  document.getElementById('addQtyOrAmt').value = '';
+  document.getElementById('addConvert').textContent = '-';
+  calc();
+}
+
+function parseNum(id) {
+  const v = document.getElementById(id).value.replace(/,/g, '').trim();
+  if (v === '' || v === '-') return NaN;
+  return parseFloat(v);
+}
+
+function fmtNum(n, maxDec) {
+  if (isNaN(n) || !isFinite(n)) return '-';
+  // 정수면 콤마, 소수면 적절한 자릿수
+  if (Number.isInteger(n) && Math.abs(n) < 1e15) return n.toLocaleString('en-US');
+  // 소수점 자릿수 자동 결정
+  const str = n.toString();
+  const dotIdx = str.indexOf('.');
+  if (dotIdx >= 0) {
+    const decLen = str.length - dotIdx - 1;
+    const dec = Math.min(decLen, maxDec || 8);
+    return n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: dec });
+  }
+  return n.toLocaleString('en-US');
+}
+
+function fmtMoney(n) {
+  if (isNaN(n)) return '-';
+  return '$' + fmtNum(n, 2);
+}
+
+function calc() {
+  const curPrice = parseNum('curPrice');
+  const curQty = parseNum('curQty');
+  const addPrice = parseNum('addPrice');
+  const rawInput = parseNum('addQtyOrAmt');
+
+  // 보유 금액 표시
+  if (!isNaN(curPrice) && !isNaN(curQty)) {
+    const curTotal = curPrice * curQty;
+    document.getElementById('curTotal').textContent = 'Total Value: ' + fmtMoney(curTotal);
+  } else {
+    document.getElementById('curTotal').textContent = 'Total Value: -';
+  }
+
+  // 추가 수량 계산
+  let addQty = NaN;
+  if (inputMode === 'qty') {
+    addQty = rawInput;
+    if (!isNaN(addQty) && !isNaN(addPrice) && addPrice > 0) {
+      const addTotal = addPrice * addQty;
+      document.getElementById('addConvert').textContent = '= ' + fmtMoney(addTotal);
+    } else {
+      document.getElementById('addConvert').textContent = '-';
+    }
+  } else {
+    // 금액 → 수량 역산
+    const addAmt = rawInput;
+    if (!isNaN(addAmt) && !isNaN(addPrice) && addPrice > 0) {
+      addQty = addAmt / addPrice;
+      document.getElementById('addConvert').textContent = '= ' + fmtNum(addQty, 8) + ' shares';
+    } else {
+      document.getElementById('addConvert').textContent = '-';
+    }
+  }
+
+  // 최종 계산
+  if (!isNaN(curPrice) && !isNaN(curQty) && !isNaN(addPrice) && !isNaN(addQty) && addQty > 0) {
+    const totalInvest = curPrice * curQty + addPrice * addQty;
+    const totalQty = curQty + addQty;
+    const finalAvg = totalInvest / totalQty;
+
+    document.getElementById('finalPrice').textContent = fmtNum(finalAvg, 8);
+    document.getElementById('finalInvest').textContent = fmtMoney(totalInvest);
+    document.getElementById('finalQty').textContent = fmtNum(totalQty, 8);
+
+    // 변동 표시
+    const diff = finalAvg - curPrice;
+    const pct = ((diff / curPrice) * 100).toFixed(2);
+    const changeEl = document.getElementById('priceChange');
+    let actionTxt = '';
+    
+    if (diff < 0) {
+      changeEl.textContent = `▼ ${fmtNum(Math.abs(diff), 4)} (${pct}%) — Averaged down!`;
+      changeEl.className = 'result-change change-down';
+      actionTxt = '<strong>averaging down</strong>, lowering your break-even point!';
+    } else if (diff > 0) {
+      changeEl.textContent = `▲ ${fmtNum(diff, 4)} (+${pct}%) — Averaged up`;
+      changeEl.className = 'result-change change-up';
+      actionTxt = '<strong>averaging up</strong> to increase your overall position.';
+    } else {
+      changeEl.textContent = 'No change';
+      changeEl.className = 'result-change change-same';
+      actionTxt = 'maintaining exactly the same average cost while adding shares.';
+    }
+
+    const reportBox = document.getElementById('reportBox');
+    reportBox.innerHTML = `<strong>Analysis summary:</strong> You are ${actionTxt}<br>Your new blended average cost becomes <strong>${fmtNum(finalAvg, 8)}</strong>, across a total of <strong>${fmtNum(totalQty, 8)}</strong> shares.`;
+    reportBox.style.display = 'block';
+
+  } else {
+    document.getElementById('finalPrice').textContent = '-';
+    document.getElementById('finalInvest').textContent = '-';
+    document.getElementById('finalQty').textContent = '-';
+    document.getElementById('priceChange').textContent = '';
+    document.getElementById('reportBox').style.display = 'none';
+  }
+}
+</script>
+
+<button class="scroll-top-btn" aria-label="Top">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<title>🌐 내 IP 확인기 — 티모집사</title>
+<meta name="description" content="현재 접속 중인 내 공인 IP 주소(IPv4/IPv6)와 접속 국가, 브라우저 정보를 즉시 확인하고 복사하세요.">
+<meta property="og:title" content="🌐 내 IP 확인기 — 티모집사">
+<meta property="og:description" content="클릭 한 번으로 내 공인 IP 주소를 쉽고 빠르게 확인하세요.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/my-ip/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/my-ip/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/my-ip/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/my-ip/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+.app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+.content{padding:24px 20px}
+
+.ip-hero{background:var(--bg-btn);border:1px solid var(--border);border-radius:12px;padding:32px 20px;text-align:center;margin-bottom:20px;position:relative}
+.ip-label{font-size:13px;color:var(--text-muted);font-weight:700;margin-bottom:8px}
+.ip-value{font-size:42px;font-weight:800;letter-spacing:1px;color:var(--accent);word-break:break-all;line-height:1.2;margin-bottom:16px;font-variant-numeric:tabular-nums}
+.ip-type-badge{display:inline-block;background:var(--bg-bar);padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:8px}
+
+.copy-btn{background:var(--bg-bar);border:1px solid var(--border);color:var(--text-primary);padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;font-family:inherit}
+.copy-btn:hover{background:var(--bg-btn-hover);border-color:var(--text-muted)}
+.copy-btn.copied{background:#10b981;color:#fff;border-color:#10b981}
+
+.detail-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px}
+.detail-item{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px}
+.detail-item:last-child{border-bottom:none;padding-bottom:0}
+.detail-item:first-child{padding-top:0}
+.d-label{color:var(--text-muted);font-weight:600}
+.d-value{color:var(--text-primary);font-weight:500;text-align:right;max-width:65%;word-break:break-all}
+
+.loading-spinner{display:inline-block;width:30px;height:30px;border:3px solid rgba(99,102,241,0.2);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.report-box {margin-top:16px; margin-bottom:14px; padding:16px; background:rgba(83,52,131,0.05); border-left:4px solid var(--accent); border-radius:8px; font-size:13px; line-height:1.6; color:var(--text-primary); display:none;}
+.report-box.show {display:block; animation:fadeIn 0.4s;}
+@keyframes fadeIn {from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)}}
+
+.guide-section{margin-top:20px; padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-app);}
+.guide-title{font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:12px;}
+.guide-item{margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:var(--bg-guide); overflow:hidden;}
+.guide-item summary{padding:12px; font-size:13px; font-weight:600; cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; color:var(--text-guide);}
+.guide-item summary::after{content:'▼'; font-size:10px; color:var(--text-info); transition:transform 0.2s;}
+.guide-item[open] summary::after{transform:rotate(180deg);}
+.guide-item[open] summary{border-bottom:1px solid var(--border); background:var(--bg-btn);}
+.guide-item .guide-content{padding:12px; font-size:13px; color:var(--text-info); line-height:1.6;}
+.related-tools{margin-top:16px; padding-top:16px; border-top:1px solid var(--border);}
+.tag-container{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
+.tool-tag{padding:6px 12px; background:rgba(83,52,131,0.1); color:var(--accent); border-radius:16px; font-size:11px; font-weight:600; text-decoration:none; transition:all 0.2s;}
+.tool-tag:hover{background:var(--accent); color:var(--text-on-accent);}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+    <h1>🌐 내 IP 확인기</h1>
+    <a href="/special-chars/en/my-ip/" class="back-btn">🌐 English</a>
+  </div>
+  
+  <div class="content">
+    <div class="ip-hero" id="ipContain">
+      <div id="loader" class="loading-spinner"></div>
+      <div id="ipContent" style="display:none">
+        <div class="ip-type-badge" id="ipType">IPv4</div>
+        <div class="ip-label">현재 접속 중인 공인 IP 주소</div>
+        <div class="ip-value" id="myIp">...</div>
+        <div style="display:flex; justify-content:center; gap:8px;">
+          <button class="copy-btn" id="copyBtn" onclick="copyIp()"><span>📋</span> IP 복사하기</button>
+          <button class="copy-btn" style="background:var(--bg-card); color:var(--text-secondary); border-color:var(--border);" onclick="refreshIp()" id="refreshBtn" title="새로고침"><span>🔄</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-card">
+      <div class="detail-item">
+        <span class="d-label">접속 국가</span>
+        <span class="d-value" id="locStr">...</span>
+      </div>
+      <div class="detail-item">
+        <span class="d-label">통신 프로토콜</span>
+        <span class="d-value" id="httpStr">...</span>
+      </div>
+      <div class="detail-item">
+        <span class="d-label">사용 브라우저</span>
+        <span class="d-value" id="uaStr">...</span>
+      </div>
+    </div>
+    
+    <div id="reportBox" class="report-box"></div>
+
+    <div class="guide-section">
+      <div class="guide-title">🤔 내 IP 주소 확인 가이드 & Q&A</div>
+      <details class="guide-item">
+        <summary>IP (Internet Protocol) 주소란 무엇인가요?</summary>
+        <div class="guide-content">
+          네트워크 상에서 데이터를 송수신하기 위해 스마트폰, PC 등 통신 기기마다 부여되는 고유한 논리적 주소입니다. 인터넷 세상의 '우편번호'와 같은 역할을 하며, 본 도구에서 표시되는 것은 아파트 동/호수 같은 내부 사설 IP가 아니라 외부 인터넷 망으로 통신할 때 사용되는 <strong>공인 IP(Public IP)</strong>입니다.
+        </div>
+      </details>
+      <details class="guide-item">
+        <summary>내 IP 위치가 실제 위치와 다르게 나와요.</summary>
+        <div class="guide-content">
+          IP 주소에 매핑된 위치 정보는 통신사(SKT, KT, LG 등)가 할당받은 지역 네트워크 라우터의 위치를 기반으로 합니다. 따라서 GPS 방식이 아니기 때문에 본인의 정확한 실제 위치나 동(洞) 단위까지 일치하지 않으며, 인근 통신사 국사 또는 데이터센터 위치가 표시되는 것이 정상입니다.
+        </div>
+      </details>
+      <details class="guide-item">
+        <summary>IPv4와 IPv6의 차이점은 무엇인가요?</summary>
+        <div class="guide-content">
+          <strong>IPv4</strong>는 <code>192.168.0.1</code>처럼 4개 숫자 묶음으로 표기되는 구형 체계이며, 주소 고갈 문제를 겪고 있습니다. 이를 해결하기 위해 도입된 <strong>IPv6</strong>는 <code>2001:0db8:85a3::</code> 등 16진수로 훨씬 길고 복잡하게 표현되는 차세대 인터넷 프로토콜 표준입니다. 접속 환경(통신사, 공유기 설정)에 따라 표시되는 버전이 다를 수 있습니다.
+        </div>
+      </details>
+      
+      <div class="related-tools">
+        <div class="guide-title" style="font-size:12px; margin-bottom:8px;">🛠 연관 도구 추천</div>
+        <div class="tag-container">
+          <a href="/special-chars/password-gen/" class="tool-tag">비밀번호 생성기</a>
+          <a href="/special-chars/server-time/" class="tool-tag">서버 시간 확인기</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>보안과 네트워크 확인에 필수!</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+
+<script>
+function refreshIp() {
+  document.getElementById('loader').style.display = 'inline-block';
+  document.getElementById('ipContent').style.display = 'none';
+  document.getElementById('reportBox').classList.remove('show');
+  fetchIpInfo();
+}
+
+async function fetchIpInfo() {
+  let ip = '알 수 없음', loc = '알 수 없음', http = 'HTTP', ua = navigator.userAgent;
+  try {
+    try {
+      const res = await fetch('https://cloudflare.com/cdn-cgi/trace');
+      const text = await res.text();
+      text.split('\n').filter(Boolean).forEach(line => {
+        const [k, v] = line.split('=');
+        if (k === 'ip') ip = v;
+        if (k === 'loc') loc = v;
+        if (k === 'http') http = v;
+        if (k === 'uag') ua = v;
+      });
+    } catch(err) {
+      console.warn("Cloudflare proxy blocked, trying fallback", err);
+      try {
+        const res = await fetch('https://api.country.is');
+        const json = await res.json();
+        ip = json.ip;
+        loc = json.country || '알 수 없음';
+      } catch(e2) {
+        const res = await fetch('https://api64.ipify.org?format=json');
+        const json = await res.json();
+        ip = json.ip;
+      }
+    }
+
+    const isV6 = ip.includes(':');
+
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('ipContent').style.display = 'block';
+
+    document.getElementById('myIp').textContent = ip;
+    document.getElementById('myIp').style.fontSize = ip.length > 20 ? '28px' : '42px';
+    document.getElementById('ipType').textContent = isV6 ? 'IPv6 프로토콜' : 'IPv4 프로토콜';
+    
+    const regionNames = new Intl.DisplayNames(['ko'], {type: 'region'});
+    let locKor = loc;
+    if (loc !== '알 수 없음') {
+      try { locKor = regionNames.of(loc) + ` (${loc})`; } catch(e){}
+    }
+    
+    document.getElementById('locStr').textContent = locKor;
+    document.getElementById('httpStr').textContent = http;
+    
+    let uaSimple = '기타 웹 브라우저';
+    if(ua.includes('Chrome')) uaSimple = 'Google Chrome';
+    else if(ua.includes('Safari') && !ua.includes('Chrome')) uaSimple = 'Apple Safari';
+    else if(ua.includes('Firefox')) uaSimple = 'Mozilla Firefox';
+    else if(ua.includes('Edge')) uaSimple = 'Microsoft Edge';
+    
+    const os = ua.includes('Windows') ? 'Windows' : ua.includes('Mac') ? 'macOS/iOS' : ua.includes('Android') ? 'Android' : 'Linux';
+    document.getElementById('uaStr').textContent = `${uaSimple} (${os})`;
+
+    updateReport(ip, isV6 ? 'IPv6' : 'IPv4', locKor, http, uaSimple, os);
+
+  } catch(e) {
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('ipContent').style.display = 'block';
+    document.getElementById('myIp').textContent = '연결 오류(광고 차단기 확인)';
+    document.getElementById('myIp').style.fontSize = '24px';
+  }
+}
+
+function updateReport(ip, ver, loc, proto, browser, os) {
+  const box = document.getElementById('reportBox');
+  if(!ip || ip.includes('오류')) return;
+  box.innerHTML = `🛡️ <b>네트워크 접속 분석 리포트</b><br/>확인된 공인 IP 주소는 <b>${ip}</b>이며, 최신 인터넷 라우팅 체계인 <b>${ver}</b> 환경에서 접속되었습니다. 이 주소는 사용자의 디바이스가 <b>${loc}</b> 네트워크 환경을 통해 웹 보안 <b>${proto}</b> 프로토콜로 통신 중임을 의미합니다. 현재 구동 중인 환경은 <b>${os}</b> 운영체제 기반의 <b>${browser}</b>(으)로 식별되었습니다. 본 데이터는 로그를 남기지 않으며 실시간 1회성 진단 목적으로만 완전히 안전하게 렌더링됩니다.`;
+  box.classList.add('show');
+}
+
+function copyIp() {
+  const ip = document.getElementById('myIp').textContent;
+  if(ip === '연결 오류' || ip === '...') return;
+  navigator.clipboard.writeText(ip);
+  const btn = document.getElementById('copyBtn');
+  btn.innerHTML = '<span>✅</span> 복사 완료!';
+  btn.classList.add('copied');
+  setTimeout(() => {
+    btn.innerHTML = '<span>📋</span> IP 복사하기';
+    btn.classList.remove('copied');
+  }, 2000);
+}
+
+fetchIpInfo();
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

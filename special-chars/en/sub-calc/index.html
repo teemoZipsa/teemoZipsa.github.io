@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>💸 Subscription Cost Calculator — TeemoZipsa</title>
+<meta name="description" content="How much do your monthly subscriptions really cost? See 1-year, 3-year, and 5-year totals and compare with S&P 500 investment returns!">
+<meta property="og:title" content="💸 Subscription Cost Calculator — TeemoZipsa">
+<meta property="og:description" content="How much do your monthly subscriptions really cost? Compare with S&P 500 investment returns!">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/sub-calc/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/sub-calc/">
+<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/sub-calc/">
+<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/sub-calc/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+  .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:500px;max-width:100%;overflow:hidden}
+  .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+  .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+  .header h1{font-size:15px;font-weight:600;color:#fff}
+  .body{padding:16px;display:flex;flex-direction:column;gap:12px}
+
+  .section{background:var(--bg-bar);border-radius:12px;padding:14px 16px;border:1px solid var(--border)}
+  .section-title{font-size:12px;font-weight:700;color:var(--text-info);margin-bottom:10px}
+
+  /* 구독 목록 */
+  .sub-list{display:flex;flex-direction:column;gap:6px}
+  .sub-item{display:flex;gap:8px;align-items:center}
+  .sub-item input{background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);padding:8px 10px;font-size:13px;font-family:inherit;outline:none}
+  .sub-item input:focus{border-color:var(--accent)}
+  .sub-item input::placeholder{color:var(--text-muted)}
+  .sub-name{flex:2}
+  .sub-price{flex:1;text-align:right}
+  .sub-del{background:none;border:none;color:var(--text-muted);font-size:16px;cursor:pointer;padding:0 4px;transition:color .15s}
+  .sub-del:hover{color:#f87171}
+
+  .add-row{display:flex;gap:8px;margin-top:8px}
+  .add-btn{background:var(--bg-input);border:1px solid var(--border);color:var(--text-info);padding:7px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s;flex-shrink:0}
+  .add-btn:hover{border-color:var(--accent);color:var(--text-amount)}
+
+  /* 빠른 추가 */
+  .quick-adds{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+  .quick-add{background:var(--bg-bar);border:1px solid var(--border);color:var(--calc-expr-text);padding:4px 10px;border-radius:6px;font-size:10px;cursor:pointer;font-family:inherit;transition:all .15s}
+  .quick-add:hover{border-color:var(--accent);color:var(--text-amount)}
+
+  /* 월 합계 */
+  .monthly-total{text-align:center;padding:8px;font-size:14px;color:var(--text-amount);font-weight:700}
+  .monthly-total strong{font-size:20px;color:var(--text-primary)}
+
+  /* 결과 */
+  .result-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .r-card{background:var(--bg-input);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center}
+  .r-label{font-size:10px;color:var(--calc-expr-text);margin-bottom:3px}
+  .r-value{font-size:15px;font-weight:800;color:#f87171}
+  .r-sub{font-size:9px;color:var(--text-muted);margin-top:2px}
+
+  /* 투자 비교 */
+  .invest-section{background:var(--bg-success, #1a2a1a);border:1px solid var(--border-success, #2a4a2a);border-radius:12px;padding:14px 16px}
+  .invest-title{font-size:12px;font-weight:700;color:var(--text-success);margin-bottom:8px}
+  .invest-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .i-card{background:rgba(0,0,0,.2);border-radius:8px;padding:10px 8px;text-align:center}
+  .i-card .r-label{color:#2a6a2a}
+  .i-card .r-value{color:var(--text-success)}
+  .invest-note{font-size:10px;color:#2a5a2a;margin-top:8px;text-align:center}
+
+  /* 팩폭 */
+  .punchline{display:none;text-align:center;padding:8px 16px;font-size:13px;color:var(--text-highlight);line-height:1.5;animation:fadeIn .6s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text)}
+  .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+  .footer a:hover{color:var(--text-guide)}
+  .guide-section{padding:16px;background:var(--bg-body);max-width:100%}
+  .guide-section h2{font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden;box-shadow:var(--shadow-sm)}
+  .guide summary{padding:12px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-primary);list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--bg-app);transition:background .2s}
+  .guide summary::-webkit-details-marker{display:none}
+  .guide summary::after{content:'▼';font-size:10px;color:var(--text-placeholder);transition:transform .2s}
+  .guide[open] summary::after{transform:rotate(180deg)}
+  .guide summary:hover{background:var(--bg-btn)}
+  .guide-content{padding:12px 14px;font-size:12px;color:var(--text-secondary);line-height:1.6;border-top:1px solid var(--border);background:var(--bg-body)}
+  .guide-content p{margin-bottom:8px}
+  .guide-content p:last-child{margin-bottom:0}
+  .guide-content ul, .guide-content ol{padding-left:20px;margin-bottom:8px}
+  .guide-content li{margin-bottom:4px}
+  
+  .related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+  .related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+  .tool-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 10px; text-decoration: none; transition: all 0.2s; }
+  .tool-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+  .tool-icon { font-size: 24px; margin-bottom: 8px; }
+  .tool-name { font-size: 12px; font-weight: 600; color: var(--text-primary); line-height: 1.3; }
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
+    <h1>💸 Subscription Cost Calculator</h1>
+    <a href="/special-chars/sub-calc/" class="back-btn">🌐 한국어</a>
+  </div>
+  <div class="body">
+    <div class="section">
+      <div class="section-title">📋 My Subscriptions</div>
+      <div class="sub-list" id="subList"></div>
+      <div class="add-row">
+        <button class="add-btn" onclick="addItem()">+ Add Subscription</button>
+      </div>
+      <div class="quick-adds">
+        <button class="quick-add" onclick="quickAdd('YouTube Premium',13.99)">YouTube $13.99</button>
+        <button class="quick-add" onclick="quickAdd('Netflix',15.49)">Netflix $15.49</button>
+        <button class="quick-add" onclick="quickAdd('ChatGPT Plus',20)">ChatGPT $20</button>
+        <button class="quick-add" onclick="quickAdd('Spotify',11.99)">Spotify $11.99</button>
+        <button class="quick-add" onclick="quickAdd('iCloud+ 200GB',2.99)">iCloud $2.99</button>
+        <button class="quick-add" onclick="quickAdd('Amazon Prime',14.99)">Amazon $14.99</button>
+        <button class="quick-add" onclick="quickAdd('Disney+',13.99)">Disney+ $13.99</button>
+        <button class="quick-add" onclick="quickAdd('Apple Music',10.99)">Apple Music $10.99</button>
+      </div>
+    </div>
+
+    <div class="monthly-total" id="monthlyTotal">Monthly Total: <strong>$0</strong></div>
+
+    <div class="section">
+      <div class="section-title">💀 Cumulative Spending (This money is gone forever)</div>
+      <div class="result-grid">
+        <div class="r-card">
+          <div class="r-label">1 Year</div>
+          <div class="r-value" id="y1">-</div>
+        </div>
+        <div class="r-card">
+          <div class="r-label">3 Years</div>
+          <div class="r-value" id="y3">-</div>
+        </div>
+        <div class="r-card">
+          <div class="r-label">5 Years</div>
+          <div class="r-value" id="y5">-</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="invest-section">
+      <div class="invest-title">📈 What if you invested in S&P 500 instead? (10% annual return)</div>
+      <div class="invest-grid">
+        <div class="i-card">
+          <div class="r-label">After 1 Year</div>
+          <div class="r-value" id="inv1">-</div>
+        </div>
+        <div class="i-card">
+          <div class="r-label">After 3 Years</div>
+          <div class="r-value" id="inv3">-</div>
+        </div>
+        <div class="i-card">
+          <div class="r-label">After 5 Years</div>
+          <div class="r-value" id="inv5">-</div>
+        </div>
+      </div>
+      <div class="invest-note">* Assumes 10% annual compound return, monthly contributions</div>
+    </div>
+
+    <div class="punchline" id="punchline"></div>
+  </div>
+  <section class="guide-section">
+    <h2>💡 Subscription Cost Calculator Guide</h2>
+    <details class="guide" open>
+      <summary>What is this tool and why use it?</summary>
+      <div class="guide-content">
+        <p>It is a simple calculator that helps you track your monthly subscriptions. Subscriptions feel small monthly, but they add up to shockingly large amounts over years. By calculating the 1-year, 3-year, and 5-year totals, you get a reality check on your recurring expenses and can make informed financial decisions.</p>
+      </div>
+    </details>
+    <details class="guide">
+      <summary>How are investment returns calculated?</summary>
+      <div class="guide-content">
+        <p>We compare your cumulative spending to what that money could grow to if invested in the S&P 500 instead with a projected 10% annual compound return and monthly contributions. It’s an eye-opening perspective!</p>
+      </div>
+    </details>
+    <details class="guide">
+      <summary>Tips for optimizing subscriptions</summary>
+      <div class="guide-content">
+        <ul>
+          <li>Review your subscriptions regularly.</li>
+          <li>Cancel the ones you rarely use or forgot about.</li>
+          <li>Group family or friends to use shared premium plans.</li>
+          <li>Redirect the saved money toward savings or investments.</li>
+        </ul>
+      </div>
+    </details>
+
+    <div class="related-tools">
+      <h3>🛠️ Recommended Utility Tools</h3>
+      <div class="tools-grid">
+        <a href="/special-chars/en/timer/" class="tool-card">
+          <span class="tool-icon">⏳</span>
+          <span class="tool-name">Online Timer</span>
+        </a>
+        <a href="/special-chars/en/percent-calc/" class="tool-card">
+          <span class="tool-icon">🛒</span>
+          <span class="tool-name">Percent Calc</span>
+        </a>
+        <a href="/special-chars/en/wage-calc/" class="tool-card">
+          <span class="tool-icon">💵</span>
+          <span class="tool-name">Wage Calculator</span>
+        </a>
+      </div>
+    </div>
+  </section>
+    <div class="footer"><span>Subscription Cost Tracker</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+</div>
+<script>
+let subs = [];
+let nextId = 1;
+
+function addItem(name='', price=0) {
+  subs.push({ id: nextId++, name, price });
+  render();
+}
+
+function quickAdd(name, price) {
+  subs.push({ id: nextId++, name, price });
+  render();
+}
+
+function removeItem(id) {
+  subs = subs.filter(s => s.id !== id);
+  render();
+}
+
+function updateItem(id, field, val) {
+  const item = subs.find(s => s.id === id);
+  if (!item) return;
+  if (field === 'name') item.name = val;
+  else item.price = parseFloat(val.replace(/[^0-9.]/g,'')) || 0;
+  calc();
+}
+
+function render() {
+  const list = document.getElementById('subList');
+  list.innerHTML = '';
+  subs.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'sub-item';
+    div.innerHTML = `
+      <input class="sub-name" value="${s.name}" placeholder="Service name" oninput="updateItem(${s.id},'name',this.value)">
+      <input class="sub-price" value="${s.price || ''}" placeholder="$ / mo" oninput="updateItem(${s.id},'price',this.value)" inputmode="decimal">
+      <button class="sub-del" onclick="removeItem(${s.id})">✕</button>
+    `;
+    list.appendChild(div);
+  });
+  calc();
+}
+
+function fmt(n) {
+  return '$' + Math.round(n).toLocaleString('en-US');
+}
+
+function calcInvest(monthly, years) {
+  const r = 0.10 / 12;
+  const n = years * 12;
+  if (r === 0) return monthly * n;
+  return Math.round(monthly * ((Math.pow(1+r, n) - 1) / r));
+}
+
+function calc() {
+  const total = subs.reduce((sum, s) => sum + (s.price || 0), 0);
+  document.getElementById('monthlyTotal').innerHTML = `Monthly Total: <strong>${fmt(total)}</strong>`;
+
+  const y1 = total * 12;
+  const y3 = total * 36;
+  const y5 = total * 60;
+
+  document.getElementById('y1').textContent = y1 ? fmt(y1) : '-';
+  document.getElementById('y3').textContent = y3 ? fmt(y3) : '-';
+  document.getElementById('y5').textContent = y5 ? fmt(y5) : '-';
+
+  document.getElementById('inv1').textContent = total ? fmt(calcInvest(total, 1)) : '-';
+  document.getElementById('inv3').textContent = total ? fmt(calcInvest(total, 3)) : '-';
+  document.getElementById('inv5').textContent = total ? fmt(calcInvest(total, 5)) : '-';
+
+  const punch = document.getElementById('punchline');
+  const msgs = [
+    { min: 500, text: '🔥 That\'s a new vacation every year gone to streaming!' },
+    { min: 200, text: '😱 Enough for a nice dinner every month!' },
+    { min: 100, text: '😬 That could be coffee money for the whole month!' },
+    { min: 50, text: '🤔 Small but steady — these still add up!' },
+    { min: 0, text: '😊 You\'re doing great! Keep it lean.' }
+  ];
+  const msg = msgs.find(m => y1 >= m.min * 12);
+  if (total > 0 && msg) {
+    punch.textContent = msg.text;
+    punch.style.display = 'block';
+  } else {
+    punch.style.display = 'none';
+  }
+}
+
+// 초기 빈 항목 2개
+addItem(); addItem();
+</script>
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+<script>(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

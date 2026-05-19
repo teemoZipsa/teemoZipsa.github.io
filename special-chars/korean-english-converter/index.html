@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>⌨️ 한영 타자 변환기 — 티모집사</title>
+<meta name="description" content="영타로 친 한글, 한타로 친 영어를 즉시 변환하세요. 서버 전송 없이 100% 브라우저 로컬 처리.">
+<meta property="og:title" content="⌨️ 한영 타자 변환기 — 티모집사">
+<meta property="og:description" content="영타로 친 한글, 한타로 친 영어를 즉시 변환하세요. 100% 브라우저 로컬 처리.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.github.io/special-chars/korean-english-converter/">
+<meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.github.io/special-chars/korean-english-converter/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+.app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:520px;max-width:100%;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+.content{padding:20px}
+.mode-tabs{display:flex;gap:6px;margin-bottom:16px}
+.mode-tab{flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--bg-bar);color:var(--text-section);font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s;font-family:inherit}
+.mode-tab.active{background:var(--accent);border-color:var(--accent);color:var(--text-on-accent)}
+.mode-tab:hover:not(.active){background:var(--bg-hover);border-color:var(--border-hover)}
+.input-group{margin-bottom:14px}
+.input-group label{display:block;font-size:12px;color:var(--text-section);font-weight:600;margin-bottom:6px}
+.input-area{width:100%;min-height:100px;background:var(--bg-bar);border:2px solid var(--border);border-radius:12px;padding:14px;font-size:15px;color:var(--text-primary);resize:vertical;outline:none;font-family:'Pretendard',sans-serif;line-height:1.6;transition:border-color .2s}
+.input-area:focus{border-color:var(--accent)}
+.input-area::placeholder{color:var(--text-placeholder)}
+.result-box{background:var(--bg-bar);border:2px solid var(--border);border-radius:12px;padding:14px;min-height:60px;margin-bottom:14px;position:relative;line-height:1.6}
+.result-text{font-size:15px;color:var(--text-amount);word-break:break-all;font-weight:500}
+.result-placeholder{color:var(--text-placeholder);font-size:14px}
+.actions{display:flex;gap:8px;margin-bottom:16px}
+.btn{flex:1;padding:11px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-copy{background:var(--accent);color:var(--text-on-accent)}
+.btn-copy:hover{background:var(--accent-hover)}
+.btn-clear{background:var(--bg-bar);border:1px solid var(--border);color:var(--text-info)}
+.btn-clear:hover{background:var(--bg-hover)}
+.examples{margin-top:8px}
+.examples-title{font-size:12px;color:var(--calc-expr-text);margin-bottom:8px;font-weight:600}
+.example-chips{display:flex;flex-wrap:wrap;gap:6px}
+.example-chip{background:var(--bg-bar);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--text-section);cursor:pointer;transition:all .2s;font-family:inherit}
+.example-chip:hover{background:var(--bg-hover);border-color:var(--accent);color:var(--text-amount)}
+.example-chip span{color:var(--text-muted);margin:0 4px}
+.guide-section{margin:12px;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg-bar);transition:all .3s ease}
+.guide-section summary{padding:14px 18px;cursor:pointer;font-size:14px;font-weight:700;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:8px;background:var(--bg-guide);transition:background .2s}
+.guide-section summary::before{content:'▶';font-size:11px;color:var(--accent);transition:transform .3s}
+.guide-section[open] summary::before{transform:rotate(90deg)}
+.guide-section summary:hover{background:var(--bg-guide-hover)}
+.guide-section[open] summary{border-bottom:1px solid var(--border)}
+.guide-content{padding:20px;font-size:13px;color:var(--text-info);line-height:1.7}
+.guide-block{margin-bottom:18px}
+.guide-block:last-child{margin-bottom:0}
+.guide-block h3{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.tags-container{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px;padding-top:16px;border-top:1px dashed var(--border);align-items:center}
+.tag-title{font-size:12px;font-weight:600;color:var(--text-muted)}
+.related-tag{background:var(--bg-btn);color:var(--text-amount);padding:4px 10px;border-radius:12px;font-size:12px;font-weight:600;text-decoration:none;transition:all .2s;border:1px solid var(--border)}
+.related-tag:hover{background:var(--accent);color:#fff;border-color:var(--accent);transform:translateY(-1px)}
+.report-container{margin-top:16px;background:var(--bg-bar);border:1px solid var(--border);border-radius:12px;padding:16px;animation:fadeIn .4s ease-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.report-title{font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.report-box{background:var(--bg-body);border-radius:8px;padding:14px;border:1px solid var(--border)}
+.report-list{list-style:none;margin:0;padding:0}
+.report-list li{position:relative;padding-left:14px;margin-bottom:8px;font-size:13px;color:var(--text-info)}
+.report-list li::before{content:'•';position:absolute;left:0;color:var(--accent);font-weight:bold}
+.report-list li:last-child{margin-bottom:0}
+.report-list li a{color:var(--accent);text-decoration:none;font-weight:600;transition:opacity .2s}
+.report-list li a:hover{opacity:.8;text-decoration:underline}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-guide)}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
+.paste-btn{position:absolute;top:8px;right:8px;background:var(--accent);color:var(--text-on-accent);border:none;padding:5px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;opacity:.85;display:flex;align-items:center;gap:4px}
+.paste-btn:hover{opacity:1;background:var(--accent-hover)}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
+    <h1>⌨️ 한영 타자 변환기</h1>
+  </div>
+  <div class="content">
+    <div class="mode-tabs">
+      <button class="mode-tab active" id="tab-e2k" onclick="setMode('engToKor')">🔤 영타 → 한글</button>
+      <button class="mode-tab" id="tab-k2e" onclick="setMode('korToEng')">🔤 한타 → 영어</button>
+    </div>
+
+    <div class="input-group">
+      <label id="inputLabel">영타로 잘못 친 텍스트를 입력하세요</label>
+      <div style="position:relative">
+        <textarea class="input-area" id="inputText" placeholder="예: dkssud" oninput="convert()"></textarea>
+        <button class="paste-btn" onclick="pasteFromClipboard()" title="클립보드에서 붙여넣기">📋 붙여넣기</button>
+      </div>
+    </div>
+
+
+    <div class="input-group">
+      <label>변환 결과</label>
+      <div class="result-box">
+        <div class="result-text" id="resultText"><span class="result-placeholder">입력하면 자동으로 변환됩니다</span></div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-copy" onclick="copyResult()">📋 결과 복사</button>
+      <button class="btn btn-clear" onclick="clearAll()">🗑️ 초기화</button>
+    </div>
+
+    <!-- 동적 분석 리포트 영역 -->
+    <div class="report-container" id="reportContainer" style="display:none;">
+      <div class="report-title">📊 실시간 타이핑 분석 리포트</div>
+      <div class="report-box" id="reportBox"></div>
+    </div>
+
+    <div class="examples" id="examples">
+      <div class="examples-title">💡 예시 (클릭하면 입력됩니다)</div>
+      <div class="example-chips" id="exampleChips"></div>
+    </div>
+  </div>
+
+  <details class="guide-section">
+    <summary>📖 한영 타자 변환기 완벽 사용 가이드 및 Q&A</summary>
+    <div class="guide-content">
+      <div class="guide-block">
+        <h3>💡 한영 타자 변환율 및 정확도는 어떻게 되나요?</h3>
+        <p>본 변환기는 한글 자소(자음과 모음)의 조합 패턴을 분석하여 오타를 교정합니다. 영타로 잘못 친 텍스트나 한글 상태에서 입력된 영문을 100% 브라우저 내에서 즉각적으로 복원해 줍니다. 타이핑 실수가 발생했을 때 가장 빠르고 정확하게 본래의 문장으로 되돌릴 수 있는 최적의 한영 변환 도구입니다.</p>
+      </div>
+
+      <div class="guide-block">
+        <h3>🔒 변환된 텍스트는 안전하게 보호되나요?</h3>
+        <p>네, 안전합니다. 모든 입력 내용과 변환 결과는 사용자 기기(웹 브라우저)에서만 암호화 없이 로컬 연산으로 처리됩니다. 외부 서버로 전송되는 데이터가 일절 없으므로 이메일, 비밀번호, 결제 정보 등 보안이 중요한 개인정보나 기밀 문서 내용도 철저히 보장되며 안심하고 변환할 수 있습니다.</p>
+      </div>
+
+      <div class="guide-block">
+        <h3>🚀 장문이나 특수문자가 포함된 문장도 변환 가능한가요?</h3>
+        <p>물론입니다. 글자 수 제한 없이 변환이 가능하며, 키보드에 매핑되지 않은 특수문자(!@# 등), 숫자, 그리고 띄어쓰기는 본래의 입력 형태 그대로 유지하면서 오직 문자 영역에 대해서만 한/영 전환 로직을 반영하여 원본의 의도를 훼손하지 않고 완벽하게 변환을 지원합니다.</p>
+      </div>
+      
+      <div class="tags-container">
+        <span class="tag-title">관련 유틸리티 도구:</span>
+        <a href="https://teemozipsa.github.io/special-chars/word-counter/" class="related-tag">글자수 계산기</a>
+        <a href="https://teemozipsa.github.io/special-chars/base64-tool/" class="related-tag">Base64 인코더/디코더</a>
+      </div>
+    </div>
+  </details>
+    <div class="footer"><span>실시간 변환</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// 한영 키보드 매핑
+const ENG_KEYS = "rRseEfaqQtTdwWczxvgkoiOjpuPhynbml";
+const KOR_CHO  = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";
+const KOR_JUNG = "ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ";
+const KOR_JONG = ["","ㄱ","ㄲ","ㄳ","ㄴ","ㄵ","ㄶ","ㄷ","ㄹ","ㄺ","ㄻ","ㄼ","ㄽ","ㄾ","ㄿ","ㅀ","ㅁ","ㅂ","ㅄ","ㅅ","ㅆ","ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+
+// 영문 키 → 한글 자모 매핑
+const engToJamo = {
+  'r':'ㄱ','R':'ㄲ','s':'ㄴ','e':'ㄷ','E':'ㄸ','f':'ㄹ','a':'ㅁ','q':'ㅂ','Q':'ㅃ',
+  't':'ㅅ','T':'ㅆ','d':'ㅇ','w':'ㅈ','W':'ㅉ','c':'ㅊ','z':'ㅋ','x':'ㅌ','v':'ㅍ','g':'ㅎ',
+  'k':'ㅏ','o':'ㅐ','i':'ㅑ','O':'ㅒ','j':'ㅓ','p':'ㅔ','u':'ㅕ','P':'ㅖ',
+  'h':'ㅗ','y':'ㅛ','n':'ㅜ','b':'ㅠ','m':'ㅡ','l':'ㅣ',
+  'hk':'ㅘ','ho':'ㅙ','hl':'ㅚ','nj':'ㅝ','np':'ㅞ','nl':'ㅟ','ml':'ㅢ'
+};
+
+// 한글 자모 → 영문 키 매핑
+const jamoToEng = {};
+for(const [e,k] of Object.entries(engToJamo)) jamoToEng[k] = e;
+
+// 초성 인덱스 매핑
+const CHO_MAP = {'ㄱ':0,'ㄲ':1,'ㄴ':2,'ㄷ':3,'ㄸ':4,'ㄹ':5,'ㅁ':6,'ㅂ':7,'ㅃ':8,'ㅅ':9,'ㅆ':10,'ㅇ':11,'ㅈ':12,'ㅉ':13,'ㅊ':14,'ㅋ':15,'ㅌ':16,'ㅍ':17,'ㅎ':18};
+const JUNG_MAP = {'ㅏ':0,'ㅐ':1,'ㅑ':2,'ㅒ':3,'ㅓ':4,'ㅔ':5,'ㅕ':6,'ㅖ':7,'ㅗ':8,'ㅘ':9,'ㅙ':10,'ㅚ':11,'ㅛ':12,'ㅜ':13,'ㅝ':14,'ㅞ':15,'ㅟ':16,'ㅠ':17,'ㅡ':18,'ㅢ':19,'ㅣ':20};
+const JONG_MAP = {'':0,'ㄱ':1,'ㄲ':2,'ㄳ':3,'ㄴ':4,'ㄵ':5,'ㄶ':6,'ㄷ':7,'ㄹ':8,'ㄺ':9,'ㄻ':10,'ㄼ':11,'ㄽ':12,'ㄾ':13,'ㄿ':14,'ㅀ':15,'ㅁ':16,'ㅂ':17,'ㅄ':18,'ㅅ':19,'ㅆ':20,'ㅇ':21,'ㅈ':22,'ㅊ':23,'ㅋ':24,'ㅌ':25,'ㅍ':26,'ㅎ':27};
+
+// 복합 종성 분리
+const COMPLEX_JONG = {'ㄳ':['ㄱ','ㅅ'],'ㄵ':['ㄴ','ㅈ'],'ㄶ':['ㄴ','ㅎ'],'ㄺ':['ㄹ','ㄱ'],'ㄻ':['ㄹ','ㅁ'],'ㄼ':['ㄹ','ㅂ'],'ㄽ':['ㄹ','ㅅ'],'ㄾ':['ㄹ','ㅌ'],'ㄿ':['ㄹ','ㅍ'],'ㅀ':['ㄹ','ㅎ'],'ㅄ':['ㅂ','ㅅ']};
+
+// 복합 종성 조합
+const JONG_COMBINE = {
+  'ㄱㅅ':'ㄳ','ㄴㅈ':'ㄵ','ㄴㅎ':'ㄶ',
+  'ㄹㄱ':'ㄺ','ㄹㅁ':'ㄻ','ㄹㅂ':'ㄼ','ㄹㅅ':'ㄽ','ㄹㅌ':'ㄾ','ㄹㅍ':'ㄿ','ㄹㅎ':'ㅀ',
+  'ㅂㅅ':'ㅄ'
+};
+
+// 복합 모음 조합
+const JUNG_COMBINE = {
+  'ㅗㅏ':'ㅘ','ㅗㅐ':'ㅙ','ㅗㅣ':'ㅚ',
+  'ㅜㅓ':'ㅝ','ㅜㅔ':'ㅞ','ㅜㅣ':'ㅟ',
+  'ㅡㅣ':'ㅢ'
+};
+
+const CHO_LIST = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+const JUNG_LIST = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+
+function isCho(c){return CHO_MAP.hasOwnProperty(c)}
+function isJung(c){return JUNG_MAP.hasOwnProperty(c)}
+function isJong(c){return JONG_MAP.hasOwnProperty(c) && c!==''}
+
+function composeSyllable(cho,jung,jong){
+  const ci=CHO_MAP[cho], ji=JUNG_MAP[jung], ki=jong?JONG_MAP[jong]:0;
+  return String.fromCharCode(0xAC00+ci*21*28+ji*28+ki);
+}
+
+// 영타 → 한글 변환
+function engToKor(text){
+  // 영문을 자모로 변환
+  const jamos=[];
+  for(const ch of text){
+    if(engToJamo[ch]) jamos.push(engToJamo[ch]);
+    else jamos.push(ch);
+  }
+
+  // 자모를 음절로 조합
+  let result='';
+  let i=0;
+  while(i<jamos.length){
+    const cur=jamos[i];
+
+    // 초성이 될 수 있는 자음인지
+    if(isCho(cur)){
+      // 다음이 모음인지 확인
+      let jung=null, jungIdx=i+1;
+
+      if(jungIdx<jamos.length && isJung(jamos[jungIdx])){
+        jung=jamos[jungIdx];
+
+        // 복합 모음 체크
+        if(jungIdx+1<jamos.length){
+          const combined=JUNG_COMBINE[jung+jamos[jungIdx+1]];
+          if(combined){jung=combined;jungIdx++;}
+        }
+
+        // 종성 체크
+        let jong=null, jongIdx=jungIdx+1;
+
+        if(jongIdx<jamos.length && isJong(jamos[jongIdx])){
+          const possibleJong=jamos[jongIdx];
+
+          // 다음에 모음이 오면 종성이 아니라 다음 음절의 초성
+          if(jongIdx+1<jamos.length && isJung(jamos[jongIdx+1])){
+            // 종성 없이 현재 음절 완성
+            result+=composeSyllable(cur,jung,'');
+            i=jongIdx;
+            continue;
+          }
+
+          // 복합 종성 체크
+          if(jongIdx+1<jamos.length){
+            const complexJong=JONG_COMBINE[possibleJong+jamos[jongIdx+1]];
+            if(complexJong && JONG_MAP.hasOwnProperty(complexJong)){
+              // 복합 종성 뒤에 모음이 오면 분리
+              if(jongIdx+2<jamos.length && isJung(jamos[jongIdx+2])){
+                jong=possibleJong;
+                result+=composeSyllable(cur,jung,jong);
+                i=jongIdx+1;
+                continue;
+              }
+              jong=complexJong;
+              result+=composeSyllable(cur,jung,jong);
+              i=jongIdx+2;
+              continue;
+            }
+          }
+
+          jong=possibleJong;
+          result+=composeSyllable(cur,jung,jong);
+          i=jongIdx+1;
+          continue;
+        }
+
+        result+=composeSyllable(cur,jung,'');
+        i=jungIdx+1;
+        continue;
+      }
+
+      // 초성만 있으면 자음 그대로
+      result+=cur;
+      i++;
+    } else if(isJung(cur)){
+      // 모음만 단독
+      result+=cur;
+      i++;
+    } else {
+      result+=cur;
+      i++;
+    }
+  }
+  return result;
+}
+
+// 한글 음절 분해
+function decompose(ch){
+  const code=ch.charCodeAt(0);
+  if(code<0xAC00||code>0xD7A3) return null;
+  const idx=code-0xAC00;
+  const cho=Math.floor(idx/(21*28));
+  const jung=Math.floor((idx%(21*28))/28);
+  const jong=idx%28;
+  return {cho:CHO_LIST[cho], jung:JUNG_LIST[jung], jong:KOR_JONG[jong]};
+}
+
+// 한타 → 영어 변환
+function korToEng(text){
+  let result='';
+  for(const ch of text){
+    const d=decompose(ch);
+    if(d){
+      result+=jamoToEng[d.cho]||d.cho;
+      // 복합 모음 분리
+      const jungParts=decomposeJung(d.jung);
+      for(const jp of jungParts) result+=jamoToEng[jp]||jp;
+      // 종성 분리
+      if(d.jong){
+        if(COMPLEX_JONG[d.jong]){
+          for(const jj of COMPLEX_JONG[d.jong]) result+=jamoToEng[jj]||jj;
+        } else {
+          result+=jamoToEng[d.jong]||d.jong;
+        }
+      }
+    } else if(jamoToEng[ch]){
+      result+=jamoToEng[ch];
+    } else {
+      result+=ch;
+    }
+  }
+  return result;
+}
+
+function decomposeJung(jung){
+  const map={'ㅘ':['ㅗ','ㅏ'],'ㅙ':['ㅗ','ㅐ'],'ㅚ':['ㅗ','ㅣ'],'ㅝ':['ㅜ','ㅓ'],'ㅞ':['ㅜ','ㅔ'],'ㅟ':['ㅜ','ㅣ'],'ㅢ':['ㅡ','ㅣ']};
+  return map[jung]||[jung];
+}
+
+let mode='engToKor';
+
+const engExamples=[
+  ['dkssud','안녕'],['tksrmfdlqfur','사랑이란'],['skansk','나는나'],
+  ['rhksflwk','관리자'],['dkswud','안녕'],['ahtdj','메세']
+];
+const korExamples=[
+  ['ㅗ디ㅣㅐ','hello'],['ㅈㅐㄱ디','world'],['ㅎㅐㅐㅇ','good'],
+  ['ㅅㅗㅁㄷ','than'],['ㄱㄷㅁㅊㅅ','react'],['ㅔㅁㅅㅗㅐㅜ','python']
+];
+
+function setMode(m){
+  const prevMode = mode;
+  const inputEl = document.getElementById('inputText');
+  const resultEl = document.getElementById('resultText');
+  
+  // 모드 전환 시 텍스트 위치 교환
+  if(prevMode !== m && resultEl.textContent && resultEl.textContent !== '입력하면 자동으로 변환됩니다') {
+    inputEl.value = resultEl.textContent;
+  }
+  
+  mode = m;
+  document.getElementById('tab-e2k').classList.toggle('active', m === 'engToKor');
+  document.getElementById('tab-k2e').classList.toggle('active', m === 'korToEng');
+  document.getElementById('inputLabel').textContent =
+    m === 'engToKor' ? '영타로 잘못 친 텍스트를 입력하세요' : '한타로 잘못 친 텍스트를 입력하세요';
+  inputEl.placeholder = m === 'engToKor' ? '예: dkssud' : '예: ㅗ디ㅣㅐ';
+  renderExamples();
+  convert();
+}
+
+
+async function pasteFromClipboard() {
+  try {
+    const text = await navigator.clipboard.readText();
+    if (text) {
+      document.getElementById('inputText').value = text;
+      convert();
+      showToast('클립보드에서 붙여넣기 완료! 📋');
+    }
+  } catch (e) {
+    showToast('클립보드 접근 권한이 필요합니다');
+  }
+}
+
+function renderExamples(){
+  const chips=document.getElementById('exampleChips');
+  const examples=mode==='engToKor'?engExamples:korExamples;
+  chips.innerHTML=examples.map(([inp,out])=>
+    `<button class="example-chip" onclick="useExample('${inp}')">${inp}<span>→</span>${out}</button>`
+  ).join('');
+}
+
+function useExample(text){
+  document.getElementById('inputText').value=text;
+  convert();
+}
+
+function updateReport(resultLen, modeLabel) {
+  const container = document.getElementById('reportContainer');
+  const box = document.getElementById('reportBox');
+  if (resultLen === 0) {
+    container.style.display = 'none';
+    return;
+  }
+  
+  container.style.display = 'block';
+  
+  box.innerHTML = `
+    <ul class="report-list">
+      <li><strong>변환 모드:</strong> <code>${modeLabel}</code> 형태로 텍스트를 파싱하여 최적의 결과를 찾았습니다.</li>
+      <li><strong>글자수 분석:</strong> 총 <strong>${resultLen.toLocaleString()}</strong>자의 텍스트가 대기 시간 없이 실시간으로 교정되었습니다.</li>
+      <li><strong>로컬 보안:</strong> 현재 이 한영 변환 과정은 외부 서버 통신 없이 사용자 브라우저 보안 샌드박스 내부에서 100% 로컬로 연산되며 어떠한 데이터도 수집되지 않습니다.</li>
+      <li><strong>추가 추천:</strong> 장문 오타 교정 작업 후 글자 수 확인이 필요하다면 <a href="https://teemozipsa.github.io/special-chars/word-counter/">글자수 계산기</a>를 함께 활용해 보세요.</li>
+    </ul>
+  `;
+}
+
+function convert(){
+  const input=document.getElementById('inputText').value;
+  const resultEl=document.getElementById('resultText');
+  if(!input){
+    resultEl.innerHTML='<span class="result-placeholder">입력하면 자동으로 변환됩니다</span>';
+    updateReport(0, '');
+    return;
+  }
+  const result=mode==='engToKor'?engToKor(input):korToEng(input);
+  resultEl.textContent=result;
+  updateReport(result.length, mode === 'engToKor' ? '영타 → 한글' : '한타 → 영어');
+}
+
+function copyResult(){
+  const text=document.getElementById('resultText').textContent;
+  if(!text||text==='입력하면 자동으로 변환됩니다'){showToast('변환할 내용이 없습니다');return;}
+  navigator.clipboard.writeText(text).then(()=>showToast('복사 완료! 📋'));
+}
+
+function clearAll(){
+  document.getElementById('inputText').value='';
+  document.getElementById('resultText').innerHTML='<span class="result-placeholder">입력하면 자동으로 변환됩니다</span>';
+  updateReport(0, '');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+// 스크롤 탑 버튼
+window.addEventListener('scroll',()=>{
+  document.getElementById('scrollTopBtn').classList.toggle('visible',window.scrollY>300);
+});
+
+renderExamples();
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

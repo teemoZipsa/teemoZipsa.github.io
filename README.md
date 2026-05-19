@@ -7,7 +7,7 @@
 [![Website](https://img.shields.io/badge/🌐_사이트_바로가기-teemoZipsa.github.io-FF6B6B?style=for-the-badge)](https://teemozipsa.github.io)
 [![Tools](https://img.shields.io/badge/도구_개수-36개-6C5CE7?style=for-the-badge)](#-도구-목록)
 [![PWA](https://img.shields.io/badge/PWA-오프라인_지원-00C853?style=for-the-badge)](#-주요-기능)
-[![CI](https://github.com/teemoZipsa/special-chars/actions/workflows/audit.yml/badge.svg)](https://github.com/teemoZipsa/special-chars/actions)
+[![CI](https://github.com/teemoZipsa/teemoZipsa.github.io/actions/workflows/check-rules.yml/badge.svg)](https://github.com/teemoZipsa/teemoZipsa.github.io/actions/workflows/check-rules.yml)
 
 </div>
 
