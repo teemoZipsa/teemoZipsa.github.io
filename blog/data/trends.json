@@ -1,55 +1,237 @@
 {
-  "last_updated": "2026-05-20T03:33:22.853291",
+  "last_updated": "2026-05-20T21:24:03+09:00",
+  "refresh_minutes": 60,
+  "source": "google_suggest_cat_keywords",
   "items": [
     {
-      "keyword": "한능검",
-      "category": "",
-      "timestamp": "2026-05-20T03:33:22.853270"
+      "keyword": "고양이 나이 계산",
+      "rank": 1,
+      "previousRank": 1,
+      "change": "flat",
+      "delta": 0,
+      "growth24h": "+2%",
+      "sparkline": [
+        19,
+        20,
+        24,
+        24,
+        20,
+        25,
+        21,
+        18,
+        20,
+        23,
+        19,
+        25,
+        22
+      ]
     },
     {
-      "keyword": "박준금",
-      "category": "",
-      "timestamp": "2026-05-20T03:33:22.853280"
+      "keyword": "고양이 BCS 측정법",
+      "rank": 2,
+      "previousRank": 2,
+      "change": "flat",
+      "delta": 0,
+      "growth24h": "+3%",
+      "sparkline": [
+        37,
+        42,
+        36,
+        38,
+        38,
+        40,
+        41,
+        38,
+        41,
+        40,
+        42,
+        37,
+        38
+      ]
     },
     {
-      "keyword": "놀",
-      "category": "",
-      "timestamp": "2026-05-20T03:33:22.853282"
+      "keyword": "츄르 권장량 하루",
+      "rank": 3,
+      "previousRank": 3,
+      "change": "flat",
+      "delta": 0,
+      "growth24h": "+0%",
+      "sparkline": [
+        47,
+        40,
+        41,
+        44,
+        48,
+        42,
+        42,
+        46,
+        42,
+        40,
+        47,
+        44,
+        43
+      ]
     },
     {
-      "keyword": "cavaliers vs knicks",
-      "category": "",
-      "timestamp": "2026-05-20T03:33:22.853283"
+      "keyword": "고양이 양치질 거부",
+      "rank": 4,
+      "previousRank": 4,
+      "change": "flat",
+      "delta": 0,
+      "growth24h": "+2%",
+      "sparkline": [
+        42,
+        43,
+        42,
+        43,
+        41,
+        38,
+        42,
+        42,
+        42,
+        40,
+        43,
+        42,
+        37
+      ]
     },
     {
-      "keyword": "mg손해보험",
-      "category": "",
-      "timestamp": "2026-05-20T03:33:22.853284"
+      "keyword": "고양이 사료 급여량",
+      "rank": 5,
+      "previousRank": 5,
+      "change": "flat",
+      "delta": 0,
+      "growth24h": "+0%",
+      "sparkline": [
+        38,
+        30,
+        36,
+        30,
+        35,
+        36,
+        30,
+        35,
+        31,
+        31,
+        30,
+        32,
+        37
+      ]
     },
     {
-      "keyword": "미국 증권거래위원회",
-      "category": "",
-      "timestamp": "2026-05-20T03:33:22.853285"
+      "keyword": "고양이 신장 질환 증상",
+      "rank": 6,
+      "previousRank": 6,
+      "change": "flat",
+      "delta": 0,
+      "growth24h": "+0%",
+      "sparkline": [
+        47,
+        44,
+        40,
+        47,
+        41,
+        43,
+        46,
+        41,
+        44,
+        43,
+        40,
+        41,
+        43
+      ]
     },
     {
-      "keyword": "이훈",
-      "category": "",
-      "timestamp": "2026-05-20T03:33:22.853286"
+      "keyword": "원시주머니 vs 비만",
+      "rank": 7,
+      "previousRank": 7,
+      "change": "flat",
+      "delta": 0,
+      "growth24h": "+0%",
+      "sparkline": [
+        23,
+        25,
+        22,
+        27,
+        27,
+        26,
+        27,
+        23,
+        26,
+        21,
+        23,
+        24,
+        20
+      ]
     },
     {
-      "keyword": "금융결제원",
-      "category": "",
-      "timestamp": "2026-05-20T03:33:22.853287"
+      "keyword": "고양이 나이",
+      "rank": 8,
+      "previousRank": null,
+      "change": "new",
+      "delta": 0,
+      "growth24h": "+∞",
+      "sparkline": [
+        34,
+        37,
+        36,
+        37,
+        36,
+        37,
+        42,
+        42,
+        44,
+        46,
+        50,
+        53,
+        52
+      ]
     },
     {
-      "keyword": "가비아",
-      "category": "",
-      "timestamp": "2026-05-20T03:33:22.853289"
+      "keyword": "고양이 나이 사람 나이",
+      "rank": 9,
+      "previousRank": null,
+      "change": "new",
+      "delta": 0,
+      "growth24h": "+∞",
+      "sparkline": [
+        20,
+        22,
+        20,
+        24,
+        26,
+        27,
+        31,
+        31,
+        34,
+        34,
+        38,
+        39,
+        47
+      ]
     },
     {
-      "keyword": "추성훈",
-      "category": "",
-      "timestamp": "2026-05-20T03:33:22.853290"
+      "keyword": "다묘 가정 사료",
+      "rank": 10,
+      "previousRank": 8,
+      "change": "down",
+      "delta": -2,
+      "growth24h": "-20%",
+      "sparkline": [
+        46,
+        57,
+        47,
+        44,
+        44,
+        41,
+        44,
+        43,
+        36,
+        36,
+        33,
+        32,
+        32
+      ]
     }
   ]
 }

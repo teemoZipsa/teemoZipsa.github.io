@@ -1,0 +1,41 @@
+{
+  "_comment": "랭킹 키워드를 글/도구로 연결하는 룰. 정확한 매칭이 우선, 없으면 substring/contains 매칭으로 fallback.",
+  "keyword_to_content": {
+    "고양이 나이 계산":     { "article": "cat-age-guide",    "tool": "pet-age-calc"   },
+    "고양이 BCS 측정법":    { "article": "cat-bmi-guide",    "tool": "pet-bmi-calc"   },
+    "원시주머니 vs 비만":   { "article": "cat-bmi-guide",    "tool": "pet-bmi-calc"   },
+    "츄르 권장량 하루":     { "article": "pet-food-tool",    "tool": "pet-food-calc"  },
+    "고양이 사료 급여량":   { "article": "pet-food-tool",    "tool": "pet-food-calc"  },
+    "다묘 가정 사료":       { "article": "pet-food-tool",    "tool": "pet-food-calc"  },
+    "고양이 양치질 거부":   { "article": "cat-bmi-guide",    "tool": "pet-bmi-calc"  },
+    "고양이 신장 질환 증상":{ "article": "pet-food-tool",    "tool": "pet-food-calc"  },
+    "고양이 발톱 정리 주기":{ "article": "cat-bmi-guide",    "tool": "pet-bmi-calc"  },
+    "노묘 건강검진 항목":   { "article": "cat-age-guide",    "tool": "pet-age-calc"   }
+  },
+  "_fallback_comment": "정확 매칭이 없을 때 단어 포함(contains) 룰. 위에서 아래로 first-match.",
+  "contains_fallback": [
+    { "match": "나이",        "article": "cat-age-guide",    "tool": "pet-age-calc"  },
+    { "match": "BCS",         "article": "cat-bmi-guide",    "tool": "pet-bmi-calc"  },
+    { "match": "비만",        "article": "cat-bmi-guide",    "tool": "pet-bmi-calc"  },
+    { "match": "체중",        "article": "cat-bmi-guide",    "tool": "pet-bmi-calc"  },
+    { "match": "사료",        "article": "pet-food-tool",    "tool": "pet-food-calc" },
+    { "match": "츄르",        "article": "pet-food-tool",    "tool": "pet-food-calc" },
+    { "match": "신장",        "article": "pet-food-tool",    "tool": "pet-food-calc" },
+    { "match": "양치",        "article": "cat-bmi-guide",    "tool": "pet-bmi-calc" },
+    { "match": "건강검진",    "article": "cat-age-guide",    "tool": "pet-age-calc"  },
+    { "match": "고양이",      "article": "cat-age-guide",    "tool": "pet-age-calc"  }
+  ],
+  "_tool_meta_comment": "사이트 도구 메타 — id 만으로 카드를 렌더할 수 있게 정리.",
+  "tools": {
+    "pet-age-calc":      { "url": "/special-chars/pet-age-calc/",      "name": "반려동물 나이 계산기",      "icon": "🐾",  "color": "teal", "desc": "AAFP 기준 사람 나이 환산" },
+    "pet-bmi-calc":      { "url": "/special-chars/pet-bmi-calc/",      "name": "반려동물 체중 관리",        "icon": "⚖️",  "color": "blue", "desc": "BCS 9점 척도 평가" },
+    "pet-food-calc":     { "url": "/special-chars/pet-food-calc/",     "name": "사료 급여량 계산기",        "icon": "🍖",  "color": "warn", "desc": "체중·활동량 기반 하루치" },
+    "calorie-calc":      { "url": "/special-chars/calorie-calc/",      "name": "칼로리 계산기",            "icon": "🔥",  "color": "blue", "desc": "다이어트 목표 칼로리" },
+    "loan-calc":         { "url": "/special-chars/loan-calc/",         "name": "대출이자 계산기",          "icon": "🏦",  "color": "warn", "desc": "상환 방식별 월 납입금" },
+    "sub-calc":          { "url": "/special-chars/sub-calc/",          "name": "구독료 계산기",            "icon": "💸",  "color": "warn", "desc": "1년·5년 누적 지출" },
+    "date-calc":         { "url": "/special-chars/date-calc/",         "name": "날짜/D-Day 계산기",        "icon": "📅",  "color": "blue", "desc": "초일 산입 옵션" },
+    "bmi-calc":          { "url": "/special-chars/bmi-calc/",          "name": "BMI 계산기",              "icon": "📊",  "color": "blue", "desc": "한국 비만학회 기준" },
+    "fuel-calc":         { "url": "/special-chars/fuel-calc/",         "name": "유류비 계산기",            "icon": "⛽",  "color": "warn", "desc": "거리·연비·유가 N빵" },
+    "image-format-converter": { "url": "/special-chars/image-format-converter/", "name": "이미지 포맷 변환기", "icon": "🖼️", "color": "blue", "desc": "JPG/PNG/WebP/AVIF" }
+  }
+}

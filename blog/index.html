@@ -1,539 +1,665 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>티모 매거진 | 프리미엄 펫케어 매거진</title>
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <link rel="stylesheet" href="/special-chars/theme.css">
-    <meta name="theme-color" content="#ffffff">
-    <meta name="description" content="공식 데이터와 수의학 논문을 기반으로 한 프리미엄 펫케어 매거진입니다.">
-    <link rel="canonical" href="https://teemozipsa.github.io/blog/">
-    
-    <style>
-        /* Fonts */
-        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-        @import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700;1,800&display=swap');
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Pretendard', sans-serif; 
-            background: var(--bg-body); 
-            color: var(--text-primary); 
-            min-height: 100vh; 
-            line-height: 1.6; 
-        }
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>티모집사 가이드 · 지금 사람들이 찾는 고양이 키워드와 생활 계산 도구</title>
+<meta name="description" content="실시간으로 갱신되는 고양이 관련 검색 키워드와 그에 맞는 가이드·계산 도구를 한 화면에서. 회원가입 없이 바로 쓰는 무료 도구의 사용법 허브.">
+<link rel="canonical" href="https://teemozipsa.github.io/blog/">
+<link rel="icon" type="image/png" href="/favicon.png">
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
-        /* === Blob 배경 === */
-        .blob-bg{position:fixed;top:0;left:0;width:100%;height:100%;overflow:hidden;z-index:0;pointer-events:none;filter:blur(90px);opacity:.5}
-        .blob-bg .blob{position:absolute;border-radius:50%}
-        .blob-bg .b1{width:420px;height:420px;top:-8%;left:-5%;animation:bFloat1 14s ease-in-out infinite}
-        .blob-bg .b2{width:350px;height:350px;bottom:-8%;right:-3%;animation:bFloat2 18s ease-in-out infinite}
-        .blob-bg .b3{width:300px;height:300px;top:45%;left:55%;animation:bFloat3 20s ease-in-out infinite}
-        /* 다크모드 블롭 색상 */
-        html[data-theme="dark"] .b1{background:radial-gradient(circle,rgba(124,58,237,.6) 0%,transparent 70%)}
-        html[data-theme="dark"] .b2{background:radial-gradient(circle,rgba(59,130,246,.5) 0%,transparent 70%)}
-        html[data-theme="dark"] .b3{background:radial-gradient(circle,rgba(167,139,250,.4) 0%,transparent 70%)}
-        /* 라이트모드 블롭 색상 */
-        html[data-theme="light"] .b1{background:radial-gradient(circle,rgba(99,102,241,.8) 0%,transparent 70%)}
-        html[data-theme="light"] .b2{background:radial-gradient(circle,rgba(59,130,246,.7) 0%,transparent 70%)}
-        html[data-theme="light"] .b3{background:radial-gradient(circle,rgba(139,92,246,.75) 0%,transparent 70%)}
-        @keyframes bFloat1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(80px,60px) scale(1.08)}66%{transform:translate(-40px,100px) scale(.95)}}
-        @keyframes bFloat2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-100px,-50px) scale(1.12)}66%{transform:translate(50px,-80px) scale(.92)}}
-        @keyframes bFloat3{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-60px,120px) scale(1.05)}66%{transform:translate(90px,-40px) scale(.95)}}
+:root[data-theme="light"]{
+  --bg:#f4f6fa; --bg-soft:#eef1f5; --card:#ffffff; --card-2:#f3f5f8;
+  --text:#0b1220; --text-2:#3b4a63; --muted:#6b7587;
+  --border:#e3e7ee; --border-2:#d6dce6; --hover:#eef2f8;
+  --accent:#1f6feb; --accent-soft:#e8f0fe; --accent-strong:#1859c2;
+  --teal:#0fba9f; --teal-soft:#dff7f0; --teal-strong:#0e9f88;
+  --warn:#d97706; --warn-soft:#fef3c7;
+  --rise:#e11d48; --rise-soft:#ffe4ea; --fall:#2563eb; --fall-soft:#dbeafe; --flat:#64748b; --neww:#0fba9f;
+  --shadow-sm:0 1px 2px rgba(15,23,42,.04);
+  --shadow-md:0 10px 30px rgba(15,23,42,.08);
+  --shadow-lg:0 24px 60px rgba(15,23,42,.12);
+  --ink:#0b1220;
+  --hero-bg:#0b1220;
+}
+:root[data-theme="dark"]{
+  --bg:#070a11; --bg-soft:#0c111c; --card:#121826; --card-2:#0e1422;
+  --text:#e6ecf5; --text-2:#b6c2d4; --muted:#8895ab;
+  --border:#1f2a3c; --border-2:#2a3850; --hover:#172033;
+  --accent:#5aa1ff; --accent-soft:#13284a; --accent-strong:#86b8ff;
+  --teal:#3ed6ba; --teal-soft:#0e2a26; --teal-strong:#3ed6ba;
+  --warn:#f59e0b; --warn-soft:#3a2a09;
+  --rise:#fb7185; --rise-soft:#3a1320; --fall:#7dd3fc; --fall-soft:#0d2638; --flat:#94a3b8; --neww:#3ed6ba;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4);
+  --shadow-md:0 10px 30px rgba(0,0,0,.45);
+  --shadow-lg:0 24px 60px rgba(0,0,0,.55);
+  --ink:#000;
+  --hero-bg:#000;
+}
 
-        /* Content Wrapper on top of blobs */
-        .page-wrap { max-width: 1200px; margin: 0 auto; padding: 0 15px; position: relative; z-index: 1; }
-        
-        /* Top Utility Bar */
-        .top-bar { 
-            display: flex; 
-            justify-content: center; 
-            gap: 20px; 
-            padding: 10px 0; 
-            font-size: 11px; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            letter-spacing: 1px;
-            align-items: center;
-        }
-        .top-bar a { color: var(--text-primary); text-decoration: none; }
-        .top-bar span { color: #e60000; }
-        
-        /* Logo Header (Sticky Setup) */
-        .header-wrap {
-            position: sticky;
-            top: -1px; /* Avoids 1px gap bug */
-            z-index: 100;
-            background: rgba(248, 250, 252, 0.9); /* Default light */
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-            border-bottom: 0px solid var(--text-primary);
-        }
-        html[data-theme="dark"] .header-wrap {
-            background: rgba(26, 26, 46, 0.9); /* Default dark body color */
-        }
-        .header-wrap.is-sticky {
-            border-bottom-width: 3px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        }
-        html[data-theme="dark"] .header-wrap.is-sticky {
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        }
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--bg);color:var(--text);font-family:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,'Noto Sans KR',sans-serif;-webkit-font-smoothing:antialiased}
+body{min-height:100vh;line-height:1.55}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
 
-        .logo-header { 
-            max-width: 1200px; margin: 0 auto; padding: 0 15px;
-            padding-top: 20px; padding-bottom: 30px; 
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: padding 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        .is-sticky .logo-header {
-            padding-top: 8px;
-            padding-bottom: 8px;
-        }
+/* ===== NAV ===== */
+.nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1280px;margin:0 auto;padding:12px 20px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:-.02em;font-size:16px}
+.brand-mark{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--accent),var(--teal));box-shadow:0 6px 14px color-mix(in srgb,var(--accent) 35%,transparent)}
+.brand sub{font-size:11px;font-weight:800;color:var(--muted);margin-left:6px}
+.nav-links{display:flex;align-items:center;gap:2px;overflow-x:auto;scrollbar-width:none}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-links a{padding:8px 12px;font-size:13.5px;font-weight:800;color:var(--text-2);border-radius:8px;white-space:nowrap}
+.nav-links a:hover{background:var(--hover);color:var(--text)}
+.nav-links a.active{color:var(--accent);background:var(--accent-soft)}
+.nav-right{display:flex;align-items:center;gap:6px}
+.icon-btn{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;color:var(--text-2)}
+.icon-btn:hover{background:var(--hover);color:var(--text)}
+.nav-cta{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;border-radius:9px;font-size:13px;font-weight:800;color:#fff;background:var(--accent)}
+.theme-toggle .moon{display:none}
+:root[data-theme="dark"] .theme-toggle .sun{display:none}
+:root[data-theme="dark"] .theme-toggle .moon{display:block}
 
-        .brand-slogan { 
-            width: 170px; font-weight: 800; font-style: italic; border: 2px solid var(--text-primary); 
-            padding: 5px; font-size: 12px; transform: rotate(-3deg); line-height: 1.4; 
-            transition: opacity 0.3s;
-        }
-        .is-sticky .brand-slogan { opacity: 0; visibility: hidden; }
+.wrap{max-width:1280px;margin:0 auto;padding:0 20px}
 
-        .logo-text { 
-            font-family: 'Impact', 'Arial Black', sans-serif;
-            font-size: 64px; 
-            font-weight: 900; 
-            color: transparent; 
-            -webkit-text-stroke: 1px #e60000; 
-            text-shadow: 0px 0px 10px rgba(230,0,0,0.3);
-            letter-spacing: -2px;
-            text-transform: uppercase;
-            text-align: center;
-            transition: font-size 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        .is-sticky .logo-text { font-size: 32px; }
+/* ===== HERO: TREND COMMAND ===== */
+.trend-hero{background:var(--hero-bg);color:#fff;padding:24px 0 32px;margin-bottom:32px;position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,.08)}
+.trend-hero::before{content:"";position:absolute;inset:0;background:
+  radial-gradient(60% 80% at 100% 0%, color-mix(in srgb,#1f6feb 60%,transparent), transparent 60%),
+  radial-gradient(50% 70% at 0% 100%, color-mix(in srgb,#0fba9f 50%,transparent), transparent 60%);
+  pointer-events:none;opacity:.7}
+.trend-hero > .wrap{position:relative;z-index:1}
+.th-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;padding:8px 0 20px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:22px;flex-wrap:wrap}
+.th-head h1{font-size:clamp(26px,3.2vw,40px);font-weight:900;letter-spacing:-.035em;line-height:1.1;color:#fff}
+.th-head h1 .sm{display:block;font-size:11px;letter-spacing:.18em;font-weight:900;color:#3ed6ba;text-transform:uppercase;margin-bottom:8px}
+.th-head .meta{display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(255,255,255,.7);font-weight:700;font-variant-numeric:tabular-nums}
+.th-head .live{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:rgba(62,214,186,.16);color:#3ed6ba;font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:900}
+.th-head .live .dot{width:7px;height:7px;border-radius:50%;background:#3ed6ba;position:relative}
+.th-head .live .dot::after{content:"";position:absolute;inset:-5px;border-radius:50%;background:#3ed6ba;opacity:.4;animation:pulseB 1.6s ease-out infinite}
+@keyframes pulseB{0%{transform:scale(.4);opacity:.6}100%{transform:scale(2.4);opacity:0}}
 
-        .logo-right { width: 170px; text-align: right; display: flex; flex-direction: column; gap: 8px; transition: transform 0.3s; }
-        .is-sticky .logo-right { flex-direction: row; justify-content: flex-end; align-items: center; }
-        
-        .logo-right a.btn-red { background: #e60000; color: white; padding: 6px 12px; font-weight: 800; font-size: 13px; text-decoration: none; display: inline-block; white-space: nowrap; }
-        .logo-right a.btn-outline { border: 2px solid var(--text-primary); color: var(--text-primary); padding: 4px 12px; font-weight: 800; font-size: 13px; text-decoration: none; display: inline-block; white-space: nowrap; }
-        
-        /* Category Nav */
-        .cat-nav {
-            border-top: 3px solid var(--text-primary);
-            border-bottom: 3px solid var(--text-primary);
-            display: flex;
-            align-items: center;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-        .cat-nav::-webkit-scrollbar { height: 0; }
-        .cat-nav a {
-            padding: 12px 16px;
-            font-size: 14px;
-            font-weight: 800;
-            color: var(--text-primary);
-            text-decoration: none;
-            text-transform: uppercase;
-            border-right: 1px solid var(--border);
-        }
-        .cat-nav a:last-child { border-right: none; }
-        .cat-nav a.active {
-            background: var(--text-primary);
-            color: var(--bg-body);
-        }
-        .cat-nav a:hover:not(.active) {
-            background: var(--bg-hover);
-        }
+.th-tabs{display:flex;gap:6px}
+.th-tabs button{padding:6px 12px;border-radius:999px;font-size:12px;font-weight:800;color:rgba(255,255,255,.6);background:rgba(255,255,255,.06)}
+.th-tabs button.on{background:#fff;color:#0b1220}
+.th-tabs button:hover{color:#fff}
+.th-tabs button.on:hover{color:#0b1220}
 
-        .cat-search { margin-left: auto; padding: 12px 16px; color: var(--text-primary); font-weight: 800; }
-        
-        /* Main Newspaper Layout */
-        .news-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 30px;
-            margin-top: 30px;
-            margin-bottom: 60px;
-        }
-        
-        /* Hero Article (Left) */
-        .hero-article { position: relative; text-decoration: none; display: block; }
-        .hero-article:hover .hero-title-box h1 { text-decoration: underline; text-decoration-color: #e60000; text-decoration-thickness: 3px; }
-        
-        /* Image Micro-animation Prep */
-        .hero-img-wrap {
-            overflow: hidden;
-            display: block;
-            border-bottom: 3px solid var(--text-primary);
-        }
-        .hero-image {
-            width: 100%;
-            height: auto;
-            display: block;
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        .hero-article:hover .hero-image {
-            transform: scale(1.04);
-        }
+/* ranking grid */
+.rank-grid{display:grid;grid-template-columns:1.25fr .9fr;gap:22px;align-items:stretch}
 
-        .hero-title-box {
-            background: var(--bg-body);
-            border: 3px solid var(--text-primary);
-            margin: -60px 40px 0;
-            padding: 24px 30px;
-            position: relative;
-            z-index: 10;
-            text-align: center;
-        }
-        .hero-title-box h1 {
-            font-family: 'Playfair Display', 'Nanum Myeongjo', serif;
-            font-size: 42px;
-            font-weight: 800;
-            font-style: italic;
-            line-height: 1.1;
-            letter-spacing: -1px;
-            color: var(--text-primary);
-            word-break: keep-all;
-        }
-        .article-tag {
-            color: #e60000;
-            font-size: 14px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 24px 0 12px;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        .article-tag.tag-hero::before, .article-tag.tag-hero::after {
-            content: ""; width: 2px; height: 16px; background: #e60000; display: inline-block;
-        }
-        .hero-summary {
-            text-align: center;
-            font-family: 'Nanum Myeongjo', serif;
-            font-size: 18px;
-            color: var(--text-secondary);
-            margin-bottom: 20px;
-            padding: 0 40px;
-            word-break: keep-all;
-        }
-        .author {
-            text-align: center;
-            font-size: 12px;
-            font-weight: 800;
-            font-style: italic;
-            text-decoration: none;
-            color: var(--text-primary);
-            display: block;
-        }
-        
-        /* Sidebar (Right) */
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            border-left: 1px solid var(--border);
-            padding-left: 30px;
-        }
-        .side-article {
-            display: flex;
-            gap: 15px;
-            padding: 25px 0;
-            border-bottom: 2px dashed var(--border);
-            color: inherit;
-        }
-        .side-article:last-child { border-bottom: none; }
-        .side-article:hover .side-title { color: #e60000; }
-        .side-content { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-        .side-title {
-            font-family: 'Pretendard', sans-serif;
-            font-size: 20px;
-            font-weight: 800;
-            line-height: 1.3;
-            letter-spacing: -0.5px;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-            word-break: keep-all;
-            transition: color 0.2s;
-        }
-        .side-author { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: auto; }
-        
-        /* Micro-animation Prep */
-        .side-thumb-wrap {
-            width: 120px;
-            height: 120px;
-            flex-shrink: 0;
-            border-radius: 2px;
-            border: 1px solid var(--border);
-            overflow: hidden;
-        }
-        .side-thumb {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        .side-article:hover .side-thumb {
-            transform: scale(1.08); /* slight zoom */
-        }
-        
-        .side-tag {
-            color: #e60000;
-            font-size: 12px;
-            font-weight: 900;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 8px;
-        }
-        .side-tag::before { content: ""; width: 2px; height: 12px; background: #e60000; display: inline-block; }
+/* spotlight (top 1) */
+.spot{background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:24px;display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center;position:relative;overflow:hidden;min-height:280px}
+.spot::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:linear-gradient(180deg,#3ed6ba,#5aa1ff)}
+.spot-rank{font-family:'Inter',monospace;font-size:clamp(72px,9vw,128px);font-weight:900;line-height:.85;letter-spacing:-.08em;background:linear-gradient(180deg,#fff,rgba(255,255,255,.55));-webkit-background-clip:text;background-clip:text;color:transparent;align-self:flex-start;margin-top:4px}
+.spot-body{display:flex;flex-direction:column;gap:14px;min-width:0}
+.spot-meta{display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(255,255,255,.6);font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.spot-meta .badge-rise{background:rgba(225,29,72,.16);color:#fda4af;padding:3px 8px;border-radius:5px}
+.spot-meta .badge-new{background:rgba(62,214,186,.16);color:#3ed6ba;padding:3px 8px;border-radius:5px}
+.spot-kw{font-size:clamp(28px,3.4vw,44px);font-weight:900;letter-spacing:-.035em;line-height:1.05;color:#fff;word-break:keep-all}
+.spot-spark{margin-top:2px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.spot-spark svg{display:block;width:240px;max-width:100%;height:54px}
+.spot-stats{display:flex;align-items:center;gap:14px;font-size:12px;color:rgba(255,255,255,.7);font-weight:700}
+.spot-stats b{color:#3ed6ba;font-weight:900;font-variant-numeric:tabular-nums;font-size:14px}
+.spot-cta{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
+.spot-cta a{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:10px;font-size:12.5px;font-weight:800}
+.spot-cta a.primary{background:#fff;color:#0b1220}
+.spot-cta a.primary:hover{background:#3ed6ba}
+.spot-cta a.ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.16)}
+.spot-cta a.ghost:hover{background:rgba(255,255,255,.16)}
 
-        /* Links */
-        a { text-decoration: none; }
-        
-        /* Main Footer */
-        .mag-footer {
-            border-top: 4px solid var(--text-primary);
-            padding: 30px 0;
-            text-align: center;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin-top: 40px;
-            text-transform: uppercase;
-        }
+/* rank list (2-10) */
+.rank-list{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:6px;display:flex;flex-direction:column;overflow:hidden}
+.rank-list .ri{display:grid;grid-template-columns:32px 1fr 80px auto;align-items:center;gap:12px;padding:11px 14px;border-radius:14px;transition:background .15s;color:rgba(255,255,255,.92)}
+.rank-list .ri:hover{background:rgba(255,255,255,.06)}
+.rank-list .ri .rk{font-family:'Inter',monospace;font-weight:900;font-size:18px;color:rgba(255,255,255,.55);text-align:center;font-variant-numeric:tabular-nums}
+.rank-list .ri.t .rk{color:#3ed6ba}
+.rank-list .ri .kw{font-size:14.5px;font-weight:800;letter-spacing:-.01em;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.rank-list .ri .kw .nb{font-size:9.5px;font-weight:900;padding:2px 5px;border-radius:4px;background:#3ed6ba;color:#0b1220;letter-spacing:.06em}
+.rank-list .ri .spk svg{display:block;width:80px;height:22px}
+.rank-list .ri .ch{font-size:11.5px;font-weight:800;font-variant-numeric:tabular-nums;text-align:right;min-width:42px}
+.ch-up{color:#fb7185}.ch-down{color:#7dd3fc}.ch-flat{color:#94a3b8}.ch-new{color:#3ed6ba}
 
-        /* Responsive adjustments */
-        @media (max-width: 950px) {
-            .news-grid { grid-template-columns: 1fr; gap: 40px; }
-            .sidebar { border-left: none; padding-left: 0; border-top: 3px double var(--text-primary); padding-top: 20px; }
-            .logo-text { font-size: 48px; -webkit-text-stroke: 1px #e60000; }
-            .is-sticky .logo-text { font-size: 28px; }
-            .hero-title-box { margin: -30px 15px 0; padding: 15px; }
-            .hero-title-box h1 { font-size: 32px; }
-            .brand-slogan { display: none; }
-            .logo-header { justify-content: center; position: relative; }
-            .logo-right { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); width: auto; align-items: flex-end; }
-            .logo-right a.btn-red { display: none; }
-        }
-        @media (max-width: 600px) {
-            .logo-text { font-size: 38px; }
-            .is-sticky .logo-text { font-size: 24px; }
-            .side-article { flex-direction: column-reverse; }
-            .side-thumb-wrap { width: 100%; height: auto; aspect-ratio: 16/9; margin-bottom: 15px; }
-            .hero-summary { padding: 0 10px; font-size: 16px; }
-        }
-        
-        /* Dark Mode Consistency */
-        html[data-theme="dark"] .logo-text {
-            -webkit-text-stroke: 1.5px #ff4d4d;
-            text-shadow: 0px 0px 10px rgba(255, 77, 77, 0.4);
-        }
-        html[data-theme="dark"] .cat-nav a.active {
-            background: #ffffff;
-            color: #000000;
-        }
-        html[data-theme="dark"] .hero-title-box {
-            border-color: #555577;
-        }
-    </style>
+.th-foot{margin-top:18px;display:flex;justify-content:space-between;align-items:center;color:rgba(255,255,255,.6);font-size:11.5px;font-weight:700;flex-wrap:wrap;gap:8px}
+.th-foot a{color:#fff;font-weight:800;border-bottom:1px solid rgba(255,255,255,.5);padding-bottom:1px}
+.th-foot .legend{display:flex;gap:14px;align-items:center}
+.th-foot .legend span{display:inline-flex;align-items:center;gap:4px}
+.dotr{width:6px;height:6px;border-radius:50%}.dotr.r{background:#fb7185}.dotr.f{background:#7dd3fc}.dotr.n{background:#3ed6ba}
+
+/* ===== KW-DRIVEN CONTENT ===== */
+.section{padding:8px 0 32px}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:18px}
+.section-head h2{font-size:22px;font-weight:900;letter-spacing:-.025em;line-height:1.2}
+.section-head h2 em{font-style:normal;background:linear-gradient(180deg,transparent 60%,color-mix(in srgb,var(--teal) 40%,transparent) 60%);padding:0 2px}
+.section-head .desc{font-size:12.5px;color:var(--muted);margin-top:4px;font-weight:600}
+.section-head a.more{color:var(--accent);font-size:13px;font-weight:800;white-space:nowrap}
+
+/* "이 키워드로 본 이야기" — article+tool side by side per keyword */
+.kw-stack{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.kw-card{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-sm);transition:transform .15s, box-shadow .15s, border-color .15s}
+.kw-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:var(--border-2)}
+.kw-card .kw-hd{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;background:var(--card-2)}
+.kw-card .kw-hd .rk{font-family:'Inter',monospace;font-weight:900;font-size:14px;color:var(--accent);width:24px}
+.kw-card .kw-hd .kw{font-size:14px;font-weight:900;letter-spacing:-.01em;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kw-card .kw-hd .ch{font-size:11px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--rise)}
+.kw-card .kw-hd .ch.up{color:var(--rise)}
+.kw-card .kw-hd .ch.new{color:var(--teal-strong)}
+.kw-card .thumb{aspect-ratio:16/9;position:relative;background:var(--card-2);overflow:hidden}
+.ph-fill{position:absolute;inset:0;background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--teal) 14%,transparent) 0 12px,color-mix(in srgb,var(--teal) 4%,transparent) 12px 24px);display:grid;place-items:center;color:var(--teal-strong);font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;font-weight:700;letter-spacing:.05em}
+.ph-fill.blue{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--accent) 12%,transparent) 0 12px,color-mix(in srgb,var(--accent) 4%,transparent) 12px 24px);color:var(--accent)}
+.ph-fill.warn{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--warn) 14%,transparent) 0 12px,color-mix(in srgb,var(--warn) 4%,transparent) 12px 24px);color:#a76200}
+.kw-card .body{padding:16px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.kw-card .body .tag{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:900;color:var(--teal-strong);background:var(--teal-soft);padding:3px 8px;border-radius:5px;width:fit-content;letter-spacing:.04em;text-transform:uppercase}
+.kw-card .body h3{font-size:16px;font-weight:900;letter-spacing:-.015em;line-height:1.35;color:var(--text)}
+.kw-card .body p{font-size:13px;color:var(--text-2);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.kw-card .related-tool{display:flex;align-items:center;gap:10px;padding:12px 18px;border-top:1px solid var(--border);background:var(--card-2);font-size:12.5px;color:var(--text-2);font-weight:700}
+.kw-card .related-tool .ic{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:15px;background:var(--accent-soft);color:var(--accent);flex-shrink:0}
+.kw-card .related-tool b{color:var(--text);font-weight:800}
+.kw-card .related-tool .arr{margin-left:auto;color:var(--accent);font-weight:800;font-size:12px}
+
+/* ===== STREAM: full magazine grid ===== */
+.stream{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+.scard{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-sm);transition:transform .15s, box-shadow .15s, border-color .15s}
+.scard:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:var(--border-2)}
+.scard.big{grid-column:span 6}
+.scard.med{grid-column:span 4}
+.scard.sm{grid-column:span 3}
+.scard.tall{grid-column:span 4;grid-row:span 2}
+.scard .thumb{aspect-ratio:16/9;position:relative}
+.scard.tall .thumb{aspect-ratio:4/5}
+.scard .body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
+.scard .body .tag{align-self:flex-start;font-size:10.5px;font-weight:900;color:var(--accent);background:var(--accent-soft);padding:3px 8px;border-radius:5px;letter-spacing:.04em;text-transform:uppercase}
+.scard .body .tag.teal{color:var(--teal-strong);background:var(--teal-soft)}
+.scard .body .tag.warn{color:#a76200;background:var(--warn-soft)}
+.scard h4{font-size:16px;font-weight:900;letter-spacing:-.02em;line-height:1.35;color:var(--text);margin-top:4px}
+.scard.big h4{font-size:20px}
+.scard p{font-size:13px;color:var(--text-2);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.scard .meta{font-size:11.5px;color:var(--muted);font-weight:700;margin-top:auto;padding-top:10px;border-top:1px dashed var(--border);display:flex;align-items:center;justify-content:space-between}
+.scard .meta .read{color:var(--accent);font-weight:800}
+
+/* tool strip (auto-recommended from trending) */
+.smart-tools{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:var(--shadow-sm)}
+.smart-tools .h{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.smart-tools .h .kicker{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:900;letter-spacing:.06em;color:var(--teal-strong);text-transform:uppercase;padding:4px 9px;background:var(--teal-soft);border-radius:999px}
+.smart-tools .h .kicker .d{width:6px;height:6px;border-radius:50%;background:var(--teal-strong)}
+.smart-tools .h h3{font-size:17px;font-weight:900;letter-spacing:-.02em}
+.smart-tools .desc{font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:14px}
+.smart-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stool{display:flex;flex-direction:column;gap:6px;padding:14px;border:1px solid var(--border);border-radius:14px;background:var(--card-2);transition:border-color .15s,transform .15s;min-height:128px}
+.stool:hover{border-color:var(--accent);transform:translateY(-2px)}
+.stool .ic{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;font-size:18px;background:var(--accent-soft);color:var(--accent)}
+.stool .ic.teal{background:var(--teal-soft);color:var(--teal-strong)}
+.stool .ic.warn{background:var(--warn-soft);color:#a76200}
+.stool b{font-size:13px;font-weight:900;color:var(--text);letter-spacing:-.01em;margin-top:6px}
+.stool span{font-size:11.5px;color:var(--muted);font-weight:700;line-height:1.4;flex:1}
+.stool .via{margin-top:auto;font-size:10.5px;color:var(--accent);font-weight:800;display:flex;align-items:center;gap:4px}
+.stool .via::before{content:"↑";color:var(--rise);font-weight:900}
+
+/* ad slot */
+.ad{margin:8px 0;border:1px dashed var(--border-2);background:repeating-linear-gradient(135deg,var(--card-2) 0 10px,var(--card) 10px 20px);border-radius:14px;padding:18px;display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--muted);font-size:12px;font-weight:700;font-family:'JetBrains Mono',ui-monospace,monospace}
+.ad .label{display:inline-flex;align-items:center;gap:6px;background:var(--card);padding:4px 8px;border-radius:6px;border:1px solid var(--border);color:var(--text-2)}
+
+/* portal CTA */
+.portal-cta{margin:24px 0 8px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;display:grid;grid-template-columns:1.4fr auto;gap:18px;align-items:center;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+.portal-cta::before{content:"";position:absolute;inset:0 auto 0 0;width:6px;background:linear-gradient(180deg,var(--accent),var(--teal))}
+.portal-cta h3{font-size:22px;font-weight:900;letter-spacing:-.025em;line-height:1.25}
+.portal-cta p{margin-top:6px;color:var(--text-2);font-size:14px;line-height:1.55}
+.portal-cta-btn{display:inline-flex;align-items:center;gap:8px;height:50px;padding:0 22px;border-radius:14px;background:var(--text);color:var(--bg);font-weight:900;font-size:15px;white-space:nowrap}
+.portal-cta-btn:hover{background:var(--accent);color:#fff}
+
+footer{border-top:1px solid var(--border);margin-top:20px;padding:28px 0 80px;color:var(--muted);font-size:12.5px;text-align:center}
+
+/* ===== MOBILE ===== */
+@media (max-width: 1080px){
+  .rank-grid{grid-template-columns:1fr}
+  .stream{grid-template-columns:repeat(6,1fr)}
+  .scard.big{grid-column:span 6}
+  .scard.med{grid-column:span 3}
+  .scard.sm{grid-column:span 3}
+  .scard.tall{grid-column:span 3;grid-row:auto}
+  .scard.tall .thumb{aspect-ratio:16/9}
+  .kw-stack{grid-template-columns:repeat(2,1fr)}
+  .smart-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width: 640px){
+  .nav-cta span{display:none}
+  .wrap{padding:0 14px}
+  .trend-hero{padding:16px 0 22px;margin-bottom:22px}
+  .spot{grid-template-columns:1fr;padding:18px;min-height:auto}
+  .spot-rank{font-size:64px}
+  .rank-list .ri{grid-template-columns:24px minmax(0,1fr) auto;gap:8px;padding:10px}
+  .rank-list .ri .kw{font-size:13.5px}
+  .rank-list .ri .spk{display:none}
+  .th-tabs button{display:none}
+  .th-tabs button.on{display:block}
+  .stream{grid-template-columns:1fr}
+  .scard.big, .scard.med, .scard.sm, .scard.tall{grid-column:span 1}
+  .scard.tall .thumb{aspect-ratio:16/9}
+  .kw-stack{grid-template-columns:1fr}
+  .smart-grid{grid-template-columns:1fr 1fr}
+  .portal-cta{grid-template-columns:1fr}
+}
+</style>
 </head>
-<body>
+<body data-screen-label="Blog Home">
 
-<!-- Blob Background -->
-<div class="blob-bg" id="blobBg" aria-hidden="true">
-    <div class="blob b1"></div>
-    <div class="blob b2"></div>
-    <div class="blob b3"></div>
-</div>
-
-<div class="page-wrap">
-    <!-- Top Utility Bar -->
-    <div class="top-bar">
-        <a href="/">🛠️ 티모 도구웹 가기</a>
-        <span>•</span>
-        <a href="/special-chars/bmi-calc/">🐾 고양이 비만도 계산기</a>
-        <span>•</span>
-        <a href="/">티모 소개</a>
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="brand">
+      <span class="brand-mark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16M4 12h10M4 19h16"/></svg></span>
+      <span>티모집사 <sub>트렌드</sub></span>
+    </a>
+    <div class="nav-links">
+      <a href="/">도구 홈</a>
+      <a href="/blog/" class="active">블로그</a>
+      <a href="#keyword-map">카테고리</a>
+      <a href="#trend-ranking">인기 키워드</a>
+      <a href="#article-stream">최신</a>
     </div>
-</div>
+    <div class="nav-right">
+      <button class="icon-btn theme-toggle" onclick="toggleTheme()">
+        <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="#article-stream" class="nav-cta">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <span>검색</span>
+      </a>
+    </div>
+  </div>
+</nav>
 
-<!-- Header (Sticky) -->
-<div class="header-wrap" id="headerWrap">
-    <header class="logo-header">
-        <div class="brand-slogan">
-            수의학 논문 기반의<br>프리미엄 펫케어 매거진.
+<!-- ===== TREND HERO (RANKING IS THE HERO) ===== -->
+<section class="trend-hero" id="trend-ranking">
+  <div class="wrap">
+
+    <div class="th-head">
+      <div>
+        <h1><span class="sm">티모 트렌드 · Live Rank</span>지금 사람들이 찾는<br>고양이 키워드 TOP 10</h1>
+      </div>
+      <div class="meta">
+        <span class="live"><span class="dot"></span>LIVE</span>
+        <span id="heroMeta">05.20 · 12:33 갱신 · 매 10분</span>
+        <div class="th-tabs">
+          <button class="on">실시간</button>
+          <button>오늘</button>
+          <button>주간</button>
         </div>
-        <div class="logo-text">티모 매거진</div>
-        <div class="logo-right">
-            <a href="https://teemozipsa.github.io/" class="btn-red">메인 홈</a>
-            <a href="https://teemozipsa.github.io/" class="btn-outline">로그인</a>
+      </div>
+    </div>
+
+    <div class="rank-grid" data-render="trend-spotlight-grid">
+
+      <!-- SPOTLIGHT TOP 1 — JS will replace if trends.json loads, this is the no-JS fallback -->
+      <article class="spot">
+        <div class="spot-rank">01</div>
+        <div class="spot-body">
+          <div class="spot-meta">
+            <span class="badge-rise">▲ 4 ranks</span>
+            <span>지난 1시간 +312% 검색량</span>
+          </div>
+          <h2 class="spot-kw">고양이 나이 계산</h2>
+
+          <div class="spot-spark">
+            <!-- 24h sparkline -->
+            <svg viewBox="0 0 240 54" preserveAspectRatio="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="spotGrad" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#3ed6ba" stop-opacity=".6"/>
+                  <stop offset="100%" stop-color="#3ed6ba" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path d="M0 42 L20 40 L40 38 L60 35 L80 36 L100 30 L120 28 L140 22 L160 26 L180 16 L200 12 L220 8 L240 4" fill="none" stroke="#3ed6ba" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M0 42 L20 40 L40 38 L60 35 L80 36 L100 30 L120 28 L140 22 L160 26 L180 16 L200 12 L220 8 L240 4 L240 54 L0 54 Z" fill="url(#spotGrad)"/>
+              <circle cx="240" cy="4" r="3.5" fill="#3ed6ba"/>
+              <circle cx="240" cy="4" r="6" fill="#3ed6ba" opacity=".3"/>
+            </svg>
+            <div class="spot-stats">
+              <span>24h <b>+312%</b></span>
+              <span style="opacity:.5">|</span>
+              <span>유입원: 검색 84%</span>
+            </div>
+          </div>
+
+          <div class="spot-cta">
+            <a href="/blog/cat-age-guide/" class="primary">
+              관련 가이드 읽기
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </a>
+            <a href="/special-chars/pet-age-calc/" class="ghost">
+              🐾 반려동물 나이 계산기
+            </a>
+          </div>
         </div>
-    </header>
-</div>
+      </article>
 
-<div class="page-wrap">
-    <!-- Navigation -->
-    <nav class="cat-nav">
-        <a href="/blog/" class="active">≡ 전체</a>
-        <a href="#">팩트체크</a>
-        <a href="#">질병·건강</a>
-        <a href="#">행동·심리</a>
-        <a href="#">영양·사료</a>
-        <a href="#">라이프스타일</a>
-        <a href="#">묘종·가이드</a>
-        <span class="cat-search">🔍</span>
-    </nav>
+      <!-- RANKS 2-10 -->
+      <ol class="rank-list" aria-label="2위~10위 키워드">
 
-    <!-- Main Content -->
-    <main class="news-grid">
-        <!-- Left: Hero Article Container -->
-        <article id="hero-container">
-            <!-- Dynamically injected via JS -->
-            <div style="text-align:center; padding: 100px; color: var(--text-muted); font-size: 14px; font-weight:800; font-style:italic;">
-                최신 기사를 불러오는 중입니다...
-            </div>
-        </article>
+        <li class="ri t">
+          <span class="rk">2</span>
+          <a class="kw" href="/blog/cat-bmi-guide/"><span>고양이 BCS 측정법</span><span class="nb">NEW</span></a>
+          <span class="spk">
+            <svg viewBox="0 0 80 22" preserveAspectRatio="none"><path d="M0 20 L13 18 L26 12 L40 14 L54 8 L67 6 L80 2" fill="none" stroke="#3ed6ba" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </span>
+          <span class="ch ch-new">NEW</span>
+        </li>
 
-        <!-- Right: Secondary Articles & Trends Container -->
-        <aside class="sidebar" id="sidebar-container">
-            <!-- Articles dynamically injected via JS -->
-            
-            <!-- Trending Now Widget Container -->
-            <div id="trending-widget" style="margin-top: 40px; padding: 25px; border: 3px double var(--text-primary); background: var(--bg-hover);">
-                <div style="font-weight: 900; font-family: 'Pretendard', sans-serif; font-size: 22px; color: #e60000; display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
-                    <span>🔥</span> 실시간 고양이 검색 랭킹
-                </div>
-                <ul id="trending-list" style="list-style: none; padding: 0; margin: 0; font-size: 15px; font-weight: 800; display: flex; flex-direction: column; gap: 12px;">
-                    <li style="color: var(--text-muted);">실시간 데이터를 동기화 중입니다...</li>
-                </ul>
-            </div>
-        </aside>
-    </main>
+        <li class="ri t">
+          <span class="rk">3</span>
+          <a class="kw" href="/special-chars/pet-food-calc/"><span>츄르 권장량 하루</span></a>
+          <span class="spk">
+            <svg viewBox="0 0 80 22" preserveAspectRatio="none"><path d="M0 16 L13 17 L26 14 L40 10 L54 12 L67 6 L80 3" fill="none" stroke="#fb7185" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </span>
+          <span class="ch ch-up">▲ 12</span>
+        </li>
 
-    <footer class="mag-footer">
-        &copy; 2026 티모 매거진. 매일 업데이트되는 고양이 집사 백과사전.
-    </footer>
-</div>
+        <li class="ri">
+          <span class="rk">4</span>
+          <a class="kw" href="/blog/cat-bmi-guide/"><span>고양이 양치질 거부</span></a>
+          <span class="spk">
+            <svg viewBox="0 0 80 22" preserveAspectRatio="none"><path d="M0 4 L13 7 L26 10 L40 9 L54 12 L67 14 L80 16" fill="none" stroke="#7dd3fc" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </span>
+          <span class="ch ch-down">▼ 2</span>
+        </li>
 
+        <li class="ri">
+          <span class="rk">5</span>
+          <a class="kw" href="/special-chars/pet-food-calc/"><span>고양이 사료 급여량</span></a>
+          <span class="spk">
+            <svg viewBox="0 0 80 22" preserveAspectRatio="none"><path d="M0 14 L13 12 L26 13 L40 11 L54 10 L67 9 L80 8" fill="none" stroke="#fb7185" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </span>
+          <span class="ch ch-up">▲ 1</span>
+        </li>
+
+        <li class="ri">
+          <span class="rk">6</span>
+          <a class="kw" href="/special-chars/pet-food-calc/"><span>신장 질환 증상</span></a>
+          <span class="spk">
+            <svg viewBox="0 0 80 22" preserveAspectRatio="none"><path d="M0 11 L13 10 L26 12 L40 11 L54 10 L67 11 L80 11" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </span>
+          <span class="ch ch-flat">—</span>
+        </li>
+
+        <li class="ri">
+          <span class="rk">7</span>
+          <a class="kw" href="/blog/cat-bmi-guide/"><span>원시주머니 vs 비만</span><span class="nb">NEW</span></a>
+          <span class="spk">
+            <svg viewBox="0 0 80 22" preserveAspectRatio="none"><path d="M0 20 L13 19 L26 15 L40 13 L54 10 L67 7 L80 4" fill="none" stroke="#3ed6ba" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </span>
+          <span class="ch ch-new">NEW</span>
+        </li>
+
+        <li class="ri">
+          <span class="rk">8</span>
+          <a class="kw" href="/special-chars/pet-food-calc/"><span>다묘 가정 사료</span></a>
+          <span class="spk">
+            <svg viewBox="0 0 80 22" preserveAspectRatio="none"><path d="M0 14 L13 12 L26 13 L40 11 L54 10 L67 9 L80 7" fill="none" stroke="#fb7185" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </span>
+          <span class="ch ch-up">▲ 3</span>
+        </li>
+
+        <li class="ri">
+          <span class="rk">9</span>
+          <a class="kw" href="/blog/cat-bmi-guide/"><span>발톱 정리 주기</span></a>
+          <span class="spk">
+            <svg viewBox="0 0 80 22" preserveAspectRatio="none"><path d="M0 6 L13 8 L26 11 L40 12 L54 14 L67 15 L80 17" fill="none" stroke="#7dd3fc" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </span>
+          <span class="ch ch-down">▼ 5</span>
+        </li>
+
+        <li class="ri">
+          <span class="rk">10</span>
+          <a class="kw" href="/blog/cat-age-guide/"><span>노묘 건강검진</span></a>
+          <span class="spk">
+            <svg viewBox="0 0 80 22" preserveAspectRatio="none"><path d="M0 12 L13 11 L26 10 L40 11 L54 9 L67 8 L80 7" fill="none" stroke="#fb7185" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </span>
+          <span class="ch ch-up">▲ 2</span>
+        </li>
+
+      </ol>
+    </div>
+
+    <div class="th-foot">
+      <div class="legend">
+        <span><span class="dotr r"></span>상승</span>
+        <span><span class="dotr f"></span>하락</span>
+        <span><span class="dotr n"></span>NEW</span>
+        <span style="opacity:.5">스파크라인 = 최근 24시간 검색량</span>
+      </div>
+      <a href="#trend-ranking">전체 키워드 랭킹 보기 →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== "이 키워드가 향한 곳" — top 3 trending → article + tool ===== -->
+<section class="wrap section" id="keyword-map">
+  <div class="section-head">
+    <div>
+      <h2>이 키워드가 <em>향한 곳</em></h2>
+      <div class="desc">상승 중인 키워드별로 가장 가까운 가이드와 도구를 묶었습니다.</div>
+    </div>
+    <a class="more" href="#smart-tools">추천 도구 →</a>
+  </div>
+  <div class="kw-stack" data-render="kw-mapping">
+
+    <a class="kw-card" href="/blog/cat-age-guide/">
+      <div class="kw-hd"><span class="rk">#1</span><span class="kw">고양이 나이 계산</span><span class="ch up">▲ 4</span></div>
+      <div class="thumb"><div class="ph-fill">CAT · AGE</div></div>
+      <div class="body">
+        <span class="tag">팩트체크</span>
+        <h3>"1년 = 7년"이라는 거짓말 — AAFP 6단계 환산표</h3>
+        <p>첫 해 +15세, 둘째 해 +9세, 이후 매년 +4세. 우리집 묘의 진짜 사람 나이를 다시 계산합니다.</p>
+      </div>
+      <div class="related-tool">
+        <div class="ic">🐾</div>
+        <div><b>반려동물 나이 계산기</b></div>
+        <span class="arr">바로 계산 →</span>
+      </div>
+    </a>
+
+    <a class="kw-card" href="/blog/cat-bmi-guide/">
+      <div class="kw-hd"><span class="rk">#2</span><span class="kw">고양이 BCS 측정법</span><span class="ch new">NEW</span></div>
+      <div class="thumb"><div class="ph-fill blue">CAT · BCS</div></div>
+      <div class="body">
+        <span class="tag" style="color:var(--accent);background:var(--accent-soft)">건강관리</span>
+        <h3>비만일까 원시주머니일까 — 9점 척도 시각 평가법</h3>
+        <p>위에서·옆에서·만져서. 3단 평가로 우리 고양이 체형을 정확히 점수화합니다.</p>
+      </div>
+      <div class="related-tool">
+        <div class="ic teal">⚖️</div>
+        <div><b>반려동물 체중 관리 도구</b></div>
+        <span class="arr">BCS 평가 →</span>
+      </div>
+    </a>
+
+    <a class="kw-card" href="/special-chars/pet-food-calc/">
+      <div class="kw-hd"><span class="rk">#3</span><span class="kw">츄르 권장량 하루</span><span class="ch up">▲ 12</span></div>
+      <div class="thumb"><div class="ph-fill warn">CAT · TREAT</div></div>
+      <div class="body">
+        <span class="tag warn">영양 경고</span>
+        <h3>츄르 1일 권장량 초과 — 신장 질환과의 숨겨진 연관성</h3>
+        <p>나트륨·인 함량 기준으로 본 적정 급여량과 위험 신호 체크리스트.</p>
+      </div>
+      <div class="related-tool">
+        <div class="ic warn">🍖</div>
+        <div><b>사료 급여량 계산기</b></div>
+        <span class="arr">하루치 계산 →</span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ===== AD ===== -->
+<section class="wrap">
+  <div class="ad">
+    <span class="label">⬜ AdSense Slot · trend-feed</span>
+    <small>responsive · 트렌드 위젯과 자연스럽게 어울리는 사이즈</small>
+  </div>
+</section>
+
+<!-- ===== AUTO-RECOMMENDED TOOLS (driven by trending) ===== -->
+<section class="wrap section" id="smart-tools">
+  <div class="smart-tools">
+    <div class="h">
+      <span class="kicker"><span class="d"></span>지금 트렌드 기반 자동 추천</span>
+      <h3>이 키워드들이 향하는 도구</h3>
+    </div>
+    <div class="desc">상위 10개 검색 키워드를 분석해 가장 자주 필요한 도구 4개를 추천합니다.</div>
+    <div class="smart-grid" data-render="smart-tools">
+      <a class="stool" href="/special-chars/pet-age-calc/">
+        <div class="ic teal">🐾</div>
+        <b>반려동물 나이 계산기</b>
+        <span>AAFP 기준 사람 나이 환산</span>
+        <span class="via">"고양이 나이 계산"에서 유입</span>
+      </a>
+      <a class="stool" href="/special-chars/pet-bmi-calc/">
+        <div class="ic">⚖️</div>
+        <b>반려동물 체중 관리</b>
+        <span>BCS 9점 척도 평가</span>
+        <span class="via">"BCS 측정법" 키워드</span>
+      </a>
+      <a class="stool" href="/special-chars/pet-food-calc/">
+        <div class="ic warn">🍖</div>
+        <b>사료 급여량 계산기</b>
+        <span>체중·활동량 기반 하루치</span>
+        <span class="via">"츄르 권장량" 키워드</span>
+      </a>
+      <a class="stool" href="/special-chars/calorie-calc/">
+        <div class="ic">🔥</div>
+        <b>칼로리 계산기</b>
+        <span>다이어트 목표 칼로리</span>
+        <span class="via">"신장 질환" 키워드</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STREAM ===== -->
+<section class="wrap section" id="article-stream">
+  <div class="section-head">
+    <div>
+      <h2>매거진 스트림</h2>
+      <div class="desc">트렌드와 무관하게 챙겨야 할 가이드들.</div>
+    </div>
+    <a class="more" href="/blog/">전체 글 →</a>
+  </div>
+  <div class="stream" data-render="article-stream">
+
+    <a href="/blog/cat-bmi-guide/" class="scard big">
+      <div class="thumb"><div class="ph-fill blue">FINANCE · LOAN</div></div>
+      <div class="body">
+        <span class="tag">금융 / 비용</span>
+        <h4>원리금균등 vs 원금균등 — 5천만원·5년 시뮬레이션</h4>
+        <p>총 이자·월 부담·중도상환 시점을 표로 정리. 결정 기준 5가지.</p>
+        <div class="meta"><span>티모 에디터 · 05.18</span><span class="read">읽기 →</span></div>
+      </div>
+    </a>
+
+    <a href="/blog/cat-age-guide/" class="scard tall">
+      <div class="thumb"><div class="ph-fill">CAT · AGE</div></div>
+      <div class="body">
+        <span class="tag teal">팩트체크</span>
+        <h4>"1년 = 7년"이라는 거짓말</h4>
+        <p>AAFP 가이드라인이 정의한 고양이 6단계 생애주기.</p>
+        <div class="meta"><span>티모 스튜디오 · 05.18</span><span class="read">읽기 →</span></div>
+      </div>
+    </a>
+
+    <a href="/special-chars/date-calc/" class="scard sm">
+      <div class="thumb"><div class="ph-fill">D-DAY</div></div>
+      <div class="body">
+        <span class="tag">날짜</span>
+        <h4>"초일 산입"이 뭐길래 100일이 99일이 될까</h4>
+        <div class="meta"><span>05.18</span><span class="read">3분</span></div>
+      </div>
+    </a>
+
+    <a href="/special-chars/sub-calc/" class="scard sm">
+      <div class="thumb"><div class="ph-fill warn">SUB</div></div>
+      <div class="body">
+        <span class="tag warn">구독</span>
+        <h4>매달 새는 구독료, 5년 누적이면 차 한 대 값</h4>
+        <div class="meta"><span>05.16</span><span class="read">4분</span></div>
+      </div>
+    </a>
+
+    <a href="/special-chars/image-format-converter/" class="scard med">
+      <div class="thumb"><div class="ph-fill">IMG · WEBP</div></div>
+      <div class="body">
+        <span class="tag">이미지</span>
+        <h4>JPG·PNG·WebP·AVIF — 용도별 포맷 선택표</h4>
+        <p>블로그 썸네일부터 인쇄용까지, 5가지 케이스 비교.</p>
+        <div class="meta"><span>05.15</span><span class="read">4분</span></div>
+      </div>
+    </a>
+
+    <a href="/special-chars/pet-food-calc/" class="scard med">
+      <div class="thumb"><div class="ph-fill">CAT · WATER</div></div>
+      <div class="body">
+        <span class="tag teal">고양이 건강</span>
+        <h4>겨울철 음수량을 두 배로 — 5가지 환경 변화</h4>
+        <p>그릇 위치·재질·온도 조정만으로 평균 1.8배 증가.</p>
+        <div class="meta"><span>05.20</span><span class="read">4분</span></div>
+      </div>
+    </a>
+
+    <a href="/special-chars/fuel-calc/" class="scard med">
+      <div class="thumb"><div class="ph-fill warn">FUEL</div></div>
+      <div class="body">
+        <span class="tag warn">생활 계산</span>
+        <h4>주말 드라이브 유류비 N빵, 가장 깔끔한 공식</h4>
+        <p>거리·연비·유가만 있으면 인원수로 자동 분할.</p>
+        <div class="meta"><span>05.17</span><span class="read">3분</span></div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ===== BOTTOM CTA ===== -->
+<section class="wrap">
+  <div class="portal-cta">
+    <div>
+      <h3>트렌드만 보고 끝내지 말고, 직접 계산해보기</h3>
+      <p>티모집사 툴즈의 36개 무료 도구로 검색만 하던 것을 바로 내 숫자로.</p>
+    </div>
+    <a href="/" class="portal-cta-btn">
+      도구 포털로 돌아가기
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</section>
+
+<footer>
+  © 2026 티모집사 트렌드 · 실시간 키워드 데이터는 매 10분 자동 갱신
+</footer>
+
+<script src="app.js" defer></script>
 <script>
-    // Sticky Header Scroll Listener
-    const headerWrap = document.getElementById('headerWrap');
-    window.addEventListener('scroll', () => {
-        if(window.scrollY > 40) {
-            headerWrap.classList.add('is-sticky');
-        } else {
-            headerWrap.classList.remove('is-sticky');
-        }
-    });
-
-    // Dynamic Article Rendering JSON Engine
-    async function loadMagazineData() {
-        try {
-            // 1. Fetch Articles
-            const res = await fetch('/blog/data/articles.json');
-            const articles = await res.json();
-            
-            const heroContainer = document.getElementById('hero-container');
-            const sidebarContainer = document.getElementById('sidebar-container');
-            const trendingWidget = document.getElementById('trending-widget');
-            
-            let heroHTML = '';
-            let sidebarHTML = '';
-
-            articles.forEach(article => {
-                const opacityStyle = article.opacity ? `style="opacity: ${article.opacity};"` : '';
-                
-                if (article.isHero) {
-                    // Render Hero
-                    heroHTML = `
-                        <a href="${article.url}" class="hero-article">
-                            <div class="hero-img-wrap">
-                                <img src="${article.thumbnail}" class="hero-image" alt="Hero Image">
-                            </div>
-                            <div class="hero-title-box">
-                                <h1>${article.title}</h1>
-                            </div>
-                            <div class="article-tag tag-hero">${article.tag}</div>
-                            ${article.summary ? `<p class="hero-summary">${article.summary}</p>` : ''}
-                            <span class="author">${article.author}</span>
-                        </a>
-                    `;
-                } else {
-                    // Render Sidebar
-                    sidebarHTML += `
-                        <a href="${article.url}" class="side-article" ${opacityStyle}>
-                            <div class="side-content">
-                                <h2 class="side-title">${article.title}</h2>
-                                <div class="side-tag">${article.tag}</div>
-                                <p class="side-author">${article.author}</p>
-                            </div>
-                            <div class="side-thumb-wrap">
-                                <img src="${article.thumbnail}" class="side-thumb" alt="Thumbnail">
-                            </div>
-                        </a>
-                    `;
-                }
-            });
-
-            if(heroHTML) heroContainer.innerHTML = heroHTML;
-            if(sidebarHTML) {
-                // Insert sidebar articles before the trending widget
-                sidebarContainer.insertAdjacentHTML('afterbegin', sidebarHTML);
-            }
-
-            // 2. Fetch Trends
-            try {
-                // Cache bust to avoid stale JSON on pure static pages
-                const trendRes = await fetch(`/blog/data/trends.json?t=${new Date().getTime()}`);
-                const trendsData = await trendRes.json();
-                
-                const trendingList = document.getElementById('trending-list');
-                if (trendsData && trendsData.items && trendsData.items.length > 0) {
-                    let trendHTML = '';
-                    trendsData.items.forEach((item, idx) => {
-                        trendHTML += `
-                            <li style="display: flex; gap: 10px; align-items: baseline;">
-                                <span style="color: #e60000; font-weight: 900; font-family: 'Playfair Display', serif; font-size: 18px; width: 24px;">${idx + 1}.</span>
-                                <a href="https://search.naver.com/search.naver?query=${encodeURIComponent(item.keyword + ' 고양이')}" target="_blank" style="color: var(--text-primary); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#e60000'" onmouseout="this.style.color='var(--text-primary)'">
-                                    <span style="font-weight: 800;">${item.keyword}</span>
-                                    <span style="font-size: 12px; color: var(--text-muted); font-weight: 600; margin-left: 6px;">${item.category || '웹검색'}</span>
-                                </a>
-                            </li>
-                        `;
-                    });
-                    trendingList.innerHTML = trendHTML;
-                }
-            } catch (err) {
-                console.warn('Trends data not yet available or failed to load:', err);
-                document.getElementById('trending-list').innerHTML = `
-                    <li style="color: var(--text-muted);">업데이트 준비 중... (매 12시간 갱신)</li>
-                `;
-            }
-
-        } catch (error) {
-            console.error('Failed to load magazine data:', error);
-            document.getElementById('hero-container').innerHTML = `
-                <div style="text-align:center; padding: 50px; color: red; font-weight:bold;">
-                    데이터를 불러오지 못했습니다. articles.json 파일을 확인해주세요.
-                </div>
-            `;
-        }
-    }
-
-    // Initialize
-    loadMagazineData();
-
+function toggleTheme(){
+  var cur=document.documentElement.getAttribute('data-theme');
+  var next=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',next);
+  try{localStorage.setItem('theme',next)}catch(e){}
+}
+(function(){
+  var d=new Date();
+  var pad=function(n){return n<10?'0'+n:''+n};
+  var s=pad(d.getMonth()+1)+'.'+pad(d.getDate())+' · '+pad(d.getHours())+':'+pad(d.getMinutes())+' 갱신 · 매 10분';
+  var el=document.getElementById('heroMeta');
+  if(el) el.textContent=s;
+})();
+(function(){
+  var btns=document.querySelectorAll('.th-tabs button');
+  btns.forEach(function(b){b.addEventListener('click',function(){btns.forEach(function(x){x.classList.remove('on')});b.classList.add('on');});});
+})();
 </script>
-
 </body>
 </html>
