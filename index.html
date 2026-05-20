@@ -242,6 +242,175 @@
 
         /* 콘텐츠를 블롭 위에 */
         .update-banner,.hero,.today-widget,.search-wrap,.section-label,.view-controls,.tools-grid,.fav-drop-zone,.category-group,.faq-section,.tip-section,footer,.no-results{position:relative;z-index:1}
+
+        /* === 2026 portal refresh === */
+        .blob-bg { display: none; }
+        body {
+            background:
+                linear-gradient(180deg, rgba(15, 23, 42, .04), transparent 420px),
+                var(--bg-body);
+        }
+        html[data-theme="dark"] body {
+            background:
+                linear-gradient(180deg, #0f172a 0%, #111827 460px, var(--bg-body) 100%);
+        }
+        .site-nav {
+            max-width: 1120px; margin: 18px auto 0; padding: 0 20px;
+            display: flex; align-items: center; justify-content: space-between; gap: 18px;
+            position: relative; z-index: 2;
+        }
+        .brand-link {
+            display: inline-flex; align-items: center; gap: 10px;
+            color: var(--text-primary); text-decoration: none; font-weight: 900;
+            letter-spacing: -0.02em;
+        }
+        .brand-mark {
+            width: 34px; height: 34px; border-radius: 10px;
+            display: grid; place-items: center;
+            background: linear-gradient(135deg, #2563eb, #0fba9f);
+            color: #fff; box-shadow: 0 10px 22px rgba(37, 99, 235, .28);
+        }
+        .site-nav-links { display: flex; align-items: center; gap: 8px; }
+        .site-nav-links a {
+            color: var(--text-secondary); text-decoration: none;
+            padding: 9px 12px; border-radius: 10px; font-size: 13px; font-weight: 800;
+        }
+        .site-nav-links a:hover { background: var(--bg-hover); color: var(--text-primary); }
+        .site-nav-links .nav-strong {
+            background: var(--accent); color: var(--text-on-accent);
+            box-shadow: var(--shadow-accent);
+        }
+        .site-nav-links .nav-strong:hover { background: var(--accent-hover); color: var(--text-on-accent); }
+        .hero {
+            max-width: 1120px; padding: 34px 20px 28px;
+        }
+        .hero-shell {
+            display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(320px, .72fr);
+            gap: 22px; align-items: stretch; min-width: 0;
+        }
+        .hero-main, .hero-side-card, .mini-card {
+            background: color-mix(in srgb, var(--bg-card) 92%, transparent);
+            border: 1px solid var(--border); border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+        }
+        .hero-main {
+            text-align: left; padding: 34px;
+            overflow: hidden; position: relative; min-width: 0;
+        }
+        .hero-main::before {
+            content: ""; position: absolute; inset: 0 0 auto;
+            height: 5px; background: linear-gradient(90deg, #2563eb, #0fba9f, #f59e0b);
+        }
+        .hero-kicker {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: var(--accent); background: var(--accent-light);
+            border: 1px solid var(--border); border-radius: 999px;
+            padding: 7px 11px; font-size: 12px; font-weight: 900;
+        }
+        .hero h1 {
+            max-width: 680px; margin: 18px 0 12px;
+            font-size: clamp(38px, 5vw, 64px); line-height: 1.02;
+            letter-spacing: -0.06em; text-align: left; overflow-wrap: break-word;
+        }
+        .hero p {
+            max-width: 610px; margin: 0;
+            font-size: 17px; line-height: 1.7; text-align: left;
+        }
+        .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+        .hero-action {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            min-height: 44px; padding: 0 16px; border-radius: 12px;
+            text-decoration: none; font-weight: 900; font-size: 14px;
+            border: 1px solid var(--border); color: var(--text-primary); background: var(--bg-card);
+        }
+        .hero-action.primary { background: var(--accent); border-color: var(--accent); color: var(--text-on-accent); }
+        .hero-action:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        .hero-stats {
+            display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px; margin-top: 28px;
+        }
+        .hero-stat {
+            border: 1px solid var(--border); border-radius: 16px; padding: 14px;
+            background: var(--bg-input);
+        }
+        .hero-stat strong { display: block; color: var(--text-primary); font-size: 22px; line-height: 1; }
+        .hero-stat span { display: block; margin-top: 6px; color: var(--text-muted); font-size: 12px; font-weight: 700; }
+        .hero-side { display: grid; gap: 14px; min-width: 0; }
+        .hero-side-card { padding: 22px; }
+        .hero-side-card h2 { color: var(--text-primary); font-size: 20px; line-height: 1.25; letter-spacing: -0.03em; }
+        .hero-side-card p { margin-top: 8px; font-size: 13px; line-height: 1.6; }
+        .quick-links { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+        .quick-link {
+            text-decoration: none; color: var(--text-primary); background: var(--bg-input);
+            border: 1px solid var(--border); border-radius: 14px; padding: 13px;
+            font-size: 13px; font-weight: 900; min-height: 78px;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .quick-link span { color: var(--text-muted); font-size: 11px; font-weight: 700; }
+        .mini-card { padding: 18px 20px; }
+        .mini-card a { color: var(--accent); font-weight: 900; text-decoration: none; }
+        .today-widget {
+            max-width: none; margin: 18px 0 0; border-radius: 18px;
+            background: var(--bg-input);
+        }
+        .search-wrap { max-width: 720px; margin: 24px auto 14px; }
+        .search-wrap input {
+            min-height: 56px; border-radius: 16px; font-size: 16px;
+            box-shadow: var(--shadow-lg);
+        }
+        .search-wrap input.dropdown-open { border-radius: 16px 16px 0 0; }
+        .tools-grid, .category-group, .view-controls, .section-label, .faq-section, .tip-section {
+            max-width: 1120px;
+        }
+        .view-controls { margin-top: 10px; }
+        .tool-card {
+            border-radius: 18px; min-height: 86px;
+            background: color-mix(in srgb, var(--bg-card) 94%, transparent);
+        }
+        .tool-icon {
+            background: linear-gradient(135deg, var(--accent-light), var(--bg-input));
+        }
+        .portal-note {
+            max-width: 1120px; margin: 0 auto 18px; padding: 0 20px;
+            position: relative; z-index: 1;
+        }
+        .portal-note-inner {
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            padding: 14px 16px; border: 1px solid var(--border); border-radius: 16px;
+            background: var(--bg-card); color: var(--text-secondary); box-shadow: var(--shadow-sm);
+            font-size: 13px;
+        }
+        .portal-note-inner a { color: var(--accent); text-decoration: none; font-weight: 900; }
+        @media (max-width: 900px) {
+            .site-nav { margin-top: 12px; }
+            .site-nav-links { gap: 4px; overflow-x: auto; }
+            .site-nav-links a { white-space: nowrap; }
+            .hero-shell { grid-template-columns: 1fr; }
+            .hero-main { padding: 28px 24px; }
+            .hero h1, .hero p { text-align: left; }
+        }
+        @media (max-width: 560px) {
+            .update-banner {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .theme-toggle-portal { display: none; }
+            .site-nav { align-items: flex-start; flex-direction: column; }
+            .site-nav-links { width: 100%; max-width: 100%; padding-bottom: 2px; }
+            .hero { width: 100%; max-width: 100%; padding: 22px 16px 24px; overflow: hidden; }
+            .hero-shell { display: block; width: 100%; max-width: 100%; }
+            .hero-main, .hero-side-card, .mini-card { width: 100%; max-width: 100%; }
+            .hero-side { margin-top: 14px; }
+            .hero-main { padding: 25px 20px; border-radius: 20px; }
+            .hero h1 { font-size: 30px; letter-spacing: -0.045em; line-height: 1.08; word-break: break-all; }
+            .hero p { font-size: 15px; overflow-wrap: anywhere; }
+            .hero-actions { flex-direction: column; }
+            .hero-action { width: 100%; max-width: 100%; }
+            .hero-stats { grid-template-columns: 1fr; }
+            .quick-links { grid-template-columns: 1fr; }
+            .portal-note-inner { align-items: flex-start; flex-direction: column; }
+        }
     </style>
 </head>
 <body>
@@ -255,20 +424,62 @@
     <button class="banner-close" onclick="dismissBanner()" aria-label="닫기">&times;</button>
 </div>
 
-<div class="hero">
-    <h1>티모집사의 유용한 웹 도구 모음😺</h1>
-    <p>일상과 업무에 필요한 도구들을 한곳에 모았습니다.</p>
-</div>
-
-<!-- 오늘의 정보 위젯 -->
-<div class="today-widget">
-    <div>
-        <div class="today-date" id="todayDate"></div>
-        <div class="today-sub" id="todaySub"></div>
+<nav class="site-nav" aria-label="주요 메뉴">
+    <a href="/" class="brand-link">
+        <span class="brand-mark">T</span>
+        <span>티모집사 툴즈</span>
+    </a>
+    <div class="site-nav-links">
+        <a href="#toolsGrid">도구</a>
+        <a href="/blog/">블로그</a>
+        <a href="/PCBareun-site/">PC 바른</a>
+        <a href="/en/">English</a>
+        <a class="nav-strong" href="#searchInput">검색</a>
     </div>
-    <div style="text-align:right">
-        <div class="today-clock" id="todayClock"></div>
-        <div class="today-remain" id="todayRemain"></div>
+</nav>
+
+<div class="hero">
+    <div class="hero-shell">
+        <section class="hero-main" aria-labelledby="mainTitle">
+            <div class="hero-kicker">브라우저에서 바로 쓰는 생활·업무 도구</div>
+            <h1 id="mainTitle">필요한 계산과 변환을<br>한 화면에서 끝냅니다.</h1>
+            <p>회원가입 없이 바로 열고,<br>입력값은 내 브라우저 안에서 처리합니다.<br>자주 쓰는 도구는 검색과 즐겨찾기로 빠르게 이동하세요.</p>
+            <div class="hero-actions">
+                <a class="hero-action primary" href="#searchInput">도구 검색하기</a>
+                <a class="hero-action" href="/special-chars/">특수문자 열기</a>
+                <a class="hero-action" href="/blog/">블로그 보기</a>
+            </div>
+            <div class="hero-stats" aria-label="사이트 요약">
+                <div class="hero-stat"><strong>36+</strong><span>무료 웹 도구</span></div>
+                <div class="hero-stat"><strong>100%</strong><span>클라이언트 처리</span></div>
+                <div class="hero-stat"><strong>PWA</strong><span>모바일 홈 화면 지원</span></div>
+            </div>
+            <div class="today-widget">
+                <div>
+                    <div class="today-date" id="todayDate"></div>
+                    <div class="today-sub" id="todaySub"></div>
+                </div>
+                <div style="text-align:right">
+                    <div class="today-clock" id="todayClock"></div>
+                    <div class="today-remain" id="todayRemain"></div>
+                </div>
+            </div>
+        </section>
+        <aside class="hero-side" aria-label="추천 링크">
+            <div class="hero-side-card">
+                <h2>많이 찾는 도구부터 바로 시작</h2>
+                <p>계산기, 날짜, 이미지, 파일, AI 프롬프트 도구를 빠르게 열 수 있습니다.</p>
+                <div class="quick-links">
+                    <a class="quick-link" href="/special-chars/date-calc/">날짜/D-Day<span>일정 계산</span></a>
+                    <a class="quick-link" href="/special-chars/image-compress/">이미지 압축<span>용량 줄이기</span></a>
+                    <a class="quick-link" href="/special-chars/loan-calc/">대출이자<span>상환 비교</span></a>
+                    <a class="quick-link" href="/special-chars/prompt-gen/">AI 프롬프트<span>템플릿 생성</span></a>
+                </div>
+            </div>
+            <div class="mini-card">
+                블로그는 도구 사용법과 생활 계산 가이드를 묶는 허브로 정리할 예정입니다. <a href="/blog/">현재 블로그 보기 →</a>
+            </div>
+        </aside>
     </div>
 </div>
 
@@ -276,6 +487,13 @@
     <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
     <input type="text" id="searchInput" placeholder="도구 검색... (예: 글자, 날짜, 특수문자)" oninput="onSearchInput()" onkeydown="onSearchKeydown(event)" onfocus="onSearchFocus()" autocomplete="off">
     <div class="search-dropdown" id="searchDropdown"></div>
+</div>
+
+<div class="portal-note">
+    <div class="portal-note-inner">
+        <span>추천 흐름: 급한 계산은 검색, 반복 사용 도구는 즐겨찾기, 사용법 글은 블로그에서 이어갑니다.</span>
+        <a href="/blog/">블로그/가이드 정리하기 →</a>
+    </div>
 </div>
 
 <!-- 최근 사용 섹션 -->
