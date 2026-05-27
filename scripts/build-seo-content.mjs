@@ -497,11 +497,13 @@ function renderArticle(article) {
       <a href="/blog/">블로그 홈</a>
       <a href="${escapeHtml(tool.url)}">${escapeHtml(tool.name)}</a>
       <a href="/about.html">운영 기준</a>
+      <a href="/editorial-policy.html">편집정책</a>
+      <a href="/contact.html">정정 제보</a>
       <a href="/privacy.html">개인정보처리방침</a>
     </nav>
   </article>
 </main>
-<footer>© 2026 티모집사. 광고와 도구 사용성을 분리해 운영합니다.</footer>
+<footer>© 2026 티모집사. 광고와 도구 사용성을 분리해 운영합니다. <a href="/editorial-policy.html">편집정책</a> · <a href="/contact.html">문의</a></footer>
 </body>
 </html>
 `;
@@ -598,13 +600,20 @@ function writeTrendsJson() {
 
 function updateSitemap() {
   const sitemapPath = path.join(root, 'sitemap.xml');
+  const supportUrls = [
+    'https://teemozipsa.github.io/contact.html',
+    'https://teemozipsa.github.io/editorial-policy.html'
+  ];
   const urls = [
     ...articles.map((article) => `https://teemozipsa.github.io${articleUrl(article.id)}`),
     ...existingArticles.map((article) => `https://teemozipsa.github.io${article.url}`)
   ];
   let xml = fs.readFileSync(sitemapPath, 'utf8');
+  xml = xml.replace(/\n\s*<url><loc>https:\/\/teemozipsa\.github\.io\/(?:contact|editorial-policy)\.html<\/loc><changefreq>monthly<\/changefreq><priority>0\.4<\/priority><\/url>/g, '');
   xml = xml.replace(/\n\s*<url><loc>https:\/\/teemozipsa\.github\.io\/blog\/[^<]+?\/<\/loc><changefreq>monthly<\/changefreq><priority>0\.55<\/priority><\/url>/g, '');
+  const supportBlock = supportUrls.map((url) => `  <url><loc>${url}</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>`).join('\n');
   const block = urls.map((url) => `  <url><loc>${url}</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>`).join('\n');
+  xml = xml.replace(/(\s*<url><loc>https:\/\/teemozipsa\.github\.io\/privacy\.html<\/loc><changefreq>monthly<\/changefreq><priority>0\.3<\/priority><\/url>)/, `$1\n${supportBlock}`);
   xml = xml.replace(/(\s*<url><loc>https:\/\/teemozipsa\.github\.io\/blog\/<\/loc><changefreq>weekly<\/changefreq><priority>0\.6<\/priority><\/url>)/, `$1\n${block}`);
   fs.writeFileSync(sitemapPath, xml, 'utf8');
 }

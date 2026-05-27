@@ -25,7 +25,11 @@ function discoverPages() {
     const rel = path.relative(rootDir, file);
     return !rel.startsWith(`scripts${path.sep}`);
   });
-  for (const name of ['about.html', 'privacy.html', path.join('en', 'about.html'), path.join('en', 'privacy.html')]) {
+  for (const name of fs.readdirSync(rootDir).filter(name => name.toLowerCase().endsWith('.html'))) {
+    const file = path.join(rootDir, name);
+    if (fs.existsSync(file)) pages.push(file);
+  }
+  for (const name of [path.join('en', 'about.html'), path.join('en', 'privacy.html')]) {
     const file = path.join(rootDir, name);
     if (fs.existsSync(file)) pages.push(file);
   }
