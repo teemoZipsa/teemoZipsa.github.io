@@ -29,5 +29,8 @@ jobs:
       - name: Run Formula Audit
         run: node scripts/audit-formulas.mjs
 
+      - name: Run SEO Index Audit
+        run: node scripts/audit-seo-index.mjs
+
       - name: Run Page Smoke Audit
         run: node scripts/audit-pages.mjs
