@@ -19,7 +19,7 @@
 <link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/qr-code/">
 <link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/qr-code/">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" onerror="document.getElementById('cdnError').style.display='block'"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" onerror="window.__qrCdnError=true"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
   *{margin:0;padding:0;box-sizing:border-box}
@@ -75,6 +75,7 @@
 </head>
 <body>
 <div id="cdnError" style="display:none;background:#ff4444;color:var(--text-on-accent);text-align:center;padding:12px;font-size:14px;">Failed to load external library. Please check your internet connection and refresh the page.</div>
+<script>if(window.__qrCdnError){document.getElementById('cdnError').style.display='block'}</script>
 <div class="app">
   <div class="header">
     <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
@@ -144,9 +145,9 @@
           <span class="tool-icon">⏱️</span>
           <span class="tool-name">Online Timer</span>
         </a>
-        <a href="/special-chars/en/uuid-gen/" class="tool-card">
-          <span class="tool-icon">🔑</span>
-          <span class="tool-name">UUID Generator</span>
+        <a href="/special-chars/en/base64-tool/" class="tool-card">
+          <span class="tool-icon">🔐</span>
+          <span class="tool-name">Base64 Tool</span>
         </a>
         <a href="/special-chars/en/lotto-gen/" class="tool-card">
           <span class="tool-icon">🎰</span>

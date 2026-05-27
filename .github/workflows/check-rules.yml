@@ -18,7 +18,16 @@ jobs:
           node-version: '20'
           
       - name: Install Dependencies
-        run: npm ci || echo "No dependencies to install"
+        run: npm ci
+
+      - name: Install Playwright Browser
+        run: npx playwright install --with-deps chromium
         
       - name: Run Rule Checks
         run: node scripts/check-rules.mjs
+
+      - name: Run Formula Audit
+        run: node scripts/audit-formulas.mjs
+
+      - name: Run Page Smoke Audit
+        run: node scripts/audit-pages.mjs

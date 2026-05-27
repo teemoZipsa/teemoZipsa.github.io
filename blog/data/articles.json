@@ -1,5 +1,313 @@
 [
   {
+    "id": "cat-food-amount-guide",
+    "title": "고양이 사료 급여량 계산법 — 체중만 넣으면 왜 자꾸 틀릴까",
+    "url": "/blog/cat-food-amount-guide/",
+    "thumbnailLabel": "CAT · FOOD",
+    "tag": "사료 계산",
+    "category": "반려동물",
+    "summary": "RER와 활동 계수를 나눠 하루 칼로리와 사료 그램 수를 계산하는 방법을 예시로 정리했습니다.",
+    "author": "티모집사 편집팀",
+    "date": "2026-05-27",
+    "readMinutes": 4,
+    "size": "big",
+    "relatedTool": "/special-chars/pet-food-calc/",
+    "relatedToolName": "사료 급여량 계산기",
+    "relatedToolIcon": "🍖",
+    "sources": [
+      "AAHA 2021 Nutrition and Weight Management Guidelines",
+      "WSAVA Global Nutrition Guidelines"
+    ]
+  },
+  {
+    "id": "kitten-feeding-guide",
+    "title": "아기 고양이 사료량 — 성장기에는 성묘 공식으로 계산하면 안 됩니다",
+    "url": "/blog/kitten-feeding-guide/",
+    "thumbnailLabel": "KITTEN · FOOD",
+    "tag": "성장기",
+    "category": "반려동물",
+    "summary": "자묘는 성묘보다 에너지 요구량이 높습니다. 월령별로 사료량을 볼 때 확인해야 할 기준을 정리했습니다.",
+    "author": "티모집사 편집팀",
+    "date": "2026-05-28",
+    "readMinutes": 4,
+    "size": "sm",
+    "relatedTool": "/special-chars/pet-food-calc/",
+    "relatedToolName": "사료 급여량 계산기",
+    "relatedToolIcon": "🍖",
+    "sources": [
+      "WSAVA Global Nutrition Guidelines"
+    ]
+  },
+  {
+    "id": "senior-cat-health-check",
+    "title": "노묘 건강검진 항목 — 나이 계산 후 바로 확인할 것들",
+    "url": "/blog/senior-cat-health-check/",
+    "thumbnailLabel": "CAT · SENIOR",
+    "tag": "노묘 관리",
+    "category": "반려동물",
+    "summary": "고양이 나이를 사람 나이로 바꾼 뒤, 생애 단계별로 어떤 검진과 생활 변화를 챙길지 정리했습니다.",
+    "author": "티모집사 편집팀",
+    "date": "2026-05-29",
+    "readMinutes": 4,
+    "size": "sm",
+    "relatedTool": "/special-chars/pet-age-calc/",
+    "relatedToolName": "반려동물 나이 계산기",
+    "relatedToolIcon": "🐾",
+    "sources": [
+      "AAFP/AAHA Feline Life Stage Guidelines"
+    ]
+  },
+  {
+    "id": "cat-treat-calorie-guide",
+    "title": "츄르 하루 권장량 — 간식을 사료와 따로 계산하면 살이 찝니다",
+    "url": "/blog/cat-treat-calorie-guide/",
+    "thumbnailLabel": "CAT · TREAT",
+    "tag": "간식 관리",
+    "category": "반려동물",
+    "summary": "고양이 간식은 하루 총칼로리 안에서 계산해야 합니다. 츄르와 사료량을 함께 조정하는 방법입니다.",
+    "author": "티모집사 편집팀",
+    "date": "2026-05-30",
+    "readMinutes": 4,
+    "size": "med",
+    "relatedTool": "/special-chars/pet-food-calc/",
+    "relatedToolName": "사료 급여량 계산기",
+    "relatedToolIcon": "🍖",
+    "sources": [
+      "AAHA 2021 Nutrition and Weight Management Guidelines"
+    ]
+  },
+  {
+    "id": "dog-food-amount-guide",
+    "title": "강아지 사료량 계산 — 몸무게보다 활동량 계수가 먼저입니다",
+    "url": "/blog/dog-food-amount-guide/",
+    "thumbnailLabel": "DOG · FOOD",
+    "tag": "강아지 급여",
+    "category": "반려동물",
+    "summary": "강아지 급여량은 체중, 중성화, 활동량, 감량 여부에 따라 크게 달라집니다.",
+    "author": "티모집사 편집팀",
+    "date": "2026-05-31",
+    "readMinutes": 4,
+    "size": "sm",
+    "relatedTool": "/special-chars/pet-food-calc/",
+    "relatedToolName": "사료 급여량 계산기",
+    "relatedToolIcon": "🍖",
+    "sources": [
+      "WSAVA Global Nutrition Guidelines"
+    ]
+  },
+  {
+    "id": "pet-weight-loss-calorie-guide",
+    "title": "반려동물 다이어트 칼로리 — 적게 주기 전에 목표를 계산하세요",
+    "url": "/blog/pet-weight-loss-calorie-guide/",
+    "thumbnailLabel": "PET · DIET",
+    "tag": "감량 계획",
+    "category": "반려동물",
+    "summary": "무작정 사료를 줄이기보다 현재 체형, 목표 체중, 간식량을 함께 계산하는 방법입니다.",
+    "author": "티모집사 편집팀",
+    "date": "2026-06-01",
+    "readMinutes": 4,
+    "size": "big",
+    "relatedTool": "/special-chars/pet-bmi-calc/",
+    "relatedToolName": "반려동물 체중 관리",
+    "relatedToolIcon": "⚖️",
+    "sources": [
+      "AAHA 2021 Nutrition and Weight Management Guidelines"
+    ]
+  },
+  {
+    "id": "multi-cat-feeding-guide",
+    "title": "다묘 가정 사료량 — 한 그릇 급식이 계산을 망치는 이유",
+    "url": "/blog/multi-cat-feeding-guide/",
+    "thumbnailLabel": "MULTI · CAT",
+    "tag": "다묘 가정",
+    "category": "반려동물",
+    "summary": "여러 마리가 함께 먹을 때 개별 섭취량을 확인하는 현실적인 방법을 정리했습니다.",
+    "author": "티모집사 편집팀",
+    "date": "2026-06-02",
+    "readMinutes": 4,
+    "size": "med",
+    "relatedTool": "/special-chars/pet-food-calc/",
+    "relatedToolName": "사료 급여량 계산기",
+    "relatedToolIcon": "🍖",
+    "sources": [
+      "WSAVA Global Nutrition Guidelines"
+    ]
+  },
+  {
+    "id": "cat-bcs-home-checklist",
+    "title": "고양이 BCS 집에서 보는 법 — 위·옆·손끝 3단계 체크",
+    "url": "/blog/cat-bcs-home-checklist/",
+    "thumbnailLabel": "CAT · BCS",
+    "tag": "체형 체크",
+    "category": "반려동물",
+    "summary": "BCS 9점 척도를 집에서 대략 확인할 때 보는 허리, 복부, 갈비뼈 기준입니다.",
+    "author": "티모집사 편집팀",
+    "date": "2026-06-03",
+    "readMinutes": 4,
+    "size": "sm",
+    "relatedTool": "/special-chars/pet-bmi-calc/",
+    "relatedToolName": "반려동물 체중 관리",
+    "relatedToolIcon": "⚖️",
+    "sources": [
+      "WSAVA Body Condition Score 참고"
+    ]
+  },
+  {
+    "id": "business-day-count-guide",
+    "title": "영업일 계산법 — 오늘부터 5영업일 후와 두 날짜 사이는 다릅니다",
+    "url": "/blog/business-day-count-guide/",
+    "thumbnailLabel": "BIZ · DAY",
+    "tag": "영업일",
+    "category": "생활 계산",
+    "summary": "시작일 포함 여부가 결과를 바꿉니다. 업무 마감일을 계산할 때 확인할 규칙입니다.",
+    "author": "티모집사 편집팀",
+    "date": "2026-06-04",
+    "readMinutes": 4,
+    "size": "sm",
+    "relatedTool": "/special-chars/biz-day-calc/",
+    "relatedToolName": "영업일 계산기",
+    "relatedToolIcon": "📆",
+    "sources": [
+      "관공서의 공휴일에 관한 규정",
+      "티모집사 공휴일 fixture"
+    ]
+  },
+  {
+    "id": "korean-substitute-holiday-guide",
+    "title": "대체공휴일 계산 — 주말이면 무조건 다음 평일일까",
+    "url": "/blog/korean-substitute-holiday-guide/",
+    "thumbnailLabel": "HOLIDAY",
+    "tag": "공휴일",
+    "category": "생활 계산",
+    "summary": "한국 대체공휴일은 휴일 종류별 규칙이 달라 단순 주말 치환으로 계산하면 틀릴 수 있습니다.",
+    "author": "티모집사 편집팀",
+    "date": "2026-06-05",
+    "readMinutes": 4,
+    "size": "med",
+    "relatedTool": "/special-chars/biz-day-calc/",
+    "relatedToolName": "영업일 계산기",
+    "relatedToolIcon": "📆",
+    "sources": [
+      "관공서의 공휴일에 관한 규정"
+    ]
+  },
+  {
+    "id": "vat-inclusive-exclusive-guide",
+    "title": "부가세 포함·별도 계산 — 11,000원에서 공급가액은 얼마일까",
+    "url": "/blog/vat-inclusive-exclusive-guide/",
+    "thumbnailLabel": "VAT",
+    "tag": "부가세",
+    "category": "생활 계산",
+    "summary": "VAT 역산은 공급가액과 세액을 분리한 뒤 반올림 규칙까지 확인해야 합니다.",
+    "author": "티모집사 편집팀",
+    "date": "2026-06-06",
+    "readMinutes": 4,
+    "size": "big",
+    "relatedTool": "/special-chars/discount-calc/",
+    "relatedToolName": "할인/부가세 계산기",
+    "relatedToolIcon": "🏷️",
+    "sources": [
+      "부가가치세 일반 계산 원칙",
+      "티모집사 금액 검산 fixture"
+    ]
+  },
+  {
+    "id": "discount-percent-guide",
+    "title": "할인율 계산 — 20% 할인과 20% 적립은 같은 혜택이 아닙니다",
+    "url": "/blog/discount-percent-guide/",
+    "thumbnailLabel": "DISCOUNT",
+    "tag": "할인율",
+    "category": "생활 계산",
+    "summary": "쇼핑 가격 비교에서 할인, 쿠폰, 적립, 부가세를 같은 기준으로 환산하는 방법입니다.",
+    "author": "티모집사 편집팀",
+    "date": "2026-06-07",
+    "readMinutes": 4,
+    "size": "sm",
+    "relatedTool": "/special-chars/discount-calc/",
+    "relatedToolName": "할인/부가세 계산기",
+    "relatedToolIcon": "🏷️",
+    "sources": [
+      "티모집사 금액 검산 fixture"
+    ]
+  },
+  {
+    "id": "loan-interest-repayment-guide",
+    "title": "원리금균등·원금균등 차이 — 월 납입액만 보면 놓치는 것",
+    "url": "/blog/loan-interest-repayment-guide/",
+    "thumbnailLabel": "LOAN",
+    "tag": "대출",
+    "category": "금융 계산",
+    "summary": "대출 상환 방식별 월 납입액, 총이자, 초반 부담 차이를 계산 예시로 설명합니다.",
+    "author": "티모집사 편집팀",
+    "date": "2026-06-08",
+    "readMinutes": 4,
+    "size": "med",
+    "relatedTool": "/special-chars/loan-calc/",
+    "relatedToolName": "대출이자 계산기",
+    "relatedToolIcon": "🏦",
+    "sources": [
+      "티모집사 대출 검산 fixture"
+    ]
+  },
+  {
+    "id": "broker-fee-rent-guide",
+    "title": "월세 중개보수 계산 — 보증금 + 월세×100만 기억하면 틀릴 수 있습니다",
+    "url": "/blog/broker-fee-rent-guide/",
+    "thumbnailLabel": "BROKER",
+    "tag": "부동산",
+    "category": "생활 계산",
+    "summary": "월세 환산보증금의 5천만 원 미만 예외와 서울 기준 중개보수 계산 흐름을 정리했습니다.",
+    "author": "티모집사 편집팀",
+    "date": "2026-06-09",
+    "readMinutes": 4,
+    "size": "sm",
+    "relatedTool": "/special-chars/broker-fee-calc/",
+    "relatedToolName": "부동산 중개보수 계산기",
+    "relatedToolIcon": "🏠",
+    "sources": [
+      "공인중개사법 시행규칙 별표",
+      "서울특별시 중개보수 요율표"
+    ]
+  },
+  {
+    "id": "date-dday-count-guide",
+    "title": "디데이 계산 — 오늘을 1일로 셀지 0일로 셀지 먼저 정하세요",
+    "url": "/blog/date-dday-count-guide/",
+    "thumbnailLabel": "D-DAY",
+    "tag": "D-Day",
+    "category": "생활 계산",
+    "summary": "기념일, 수험일, 프로젝트 마감일 계산에서 가장 많이 헷갈리는 초일 산입 규칙입니다.",
+    "author": "티모집사 편집팀",
+    "date": "2026-06-10",
+    "readMinutes": 4,
+    "size": "sm",
+    "relatedTool": "/special-chars/date-calc/",
+    "relatedToolName": "날짜/D-Day 계산기",
+    "relatedToolIcon": "📅",
+    "sources": [
+      "티모집사 날짜 계산 규칙"
+    ]
+  },
+  {
+    "id": "image-compress-webp-guide",
+    "title": "이미지 용량 줄이기 — JPG, PNG, WebP를 언제 써야 할까",
+    "url": "/blog/image-compress-webp-guide/",
+    "thumbnailLabel": "IMG · WEBP",
+    "tag": "이미지",
+    "category": "웹 도구",
+    "summary": "블로그·쇼핑몰·문서 업로드 전에 이미지 품질과 용량을 함께 맞추는 실전 기준입니다.",
+    "author": "티모집사 편집팀",
+    "date": "2026-06-11",
+    "readMinutes": 4,
+    "size": "big",
+    "relatedTool": "/special-chars/image-compress/",
+    "relatedToolName": "이미지 압축기",
+    "relatedToolIcon": "🗜️",
+    "sources": [
+      "티모집사 이미지 도구 운영 기준"
+    ]
+  },
+  {
     "id": "cat-age-guide",
     "title": "\"1년 = 7년\"이라는 거짓말 — AAFP 기준으로 다시 보는 고양이 나이",
     "url": "/blog/cat-age-guide/",
@@ -8,7 +316,7 @@
     "tag": "팩트체크",
     "category": "고양이 건강/생활",
     "summary": "첫 해 +15세, 둘째 해 +9세, 이후 매년 +4세. 우리집 고양이의 진짜 사람 나이를 다시 계산합니다.",
-    "author": "티모 스튜디오",
+    "author": "티모집사 편집팀",
     "date": "2026-05-18",
     "readMinutes": 6,
     "size": "tall",
@@ -16,7 +324,9 @@
     "relatedTool": "/special-chars/pet-age-calc/",
     "relatedToolName": "반려동물 나이 계산기",
     "relatedToolIcon": "🐾",
-    "sources": ["AAFP/AAHA Feline Life Stage Guidelines"]
+    "sources": [
+      "AAFP/AAHA Feline Life Stage Guidelines"
+    ]
   },
   {
     "id": "cat-bmi-guide",
@@ -27,60 +337,15 @@
     "tag": "건강관리",
     "category": "고양이 건강/생활",
     "summary": "위에서 보고, 옆에서 보고, 만져서 확인하는 고양이 체형 평가 기준을 정리합니다.",
-    "author": "티모 AI 에디터",
+    "author": "티모집사 편집팀",
     "date": "2026-05-16",
     "readMinutes": 5,
     "size": "big",
     "relatedTool": "/special-chars/pet-bmi-calc/",
     "relatedToolName": "반려동물 체중 관리",
-    "relatedToolIcon": "⚖️"
-  },
-  {
-    "id": "pet-age-tool",
-    "title": "고양이 나이를 사람 나이로 바로 계산하기",
-    "url": "/special-chars/pet-age-calc/",
-    "thumbnailLabel": "TOOL · AGE",
-    "tag": "추천 도구",
-    "category": "반려동물",
-    "summary": "생년월일이나 현재 나이를 입력하면 고양이·강아지의 생애 단계를 빠르게 확인할 수 있습니다.",
-    "author": "티모집사 툴즈",
-    "date": "2026-05-20",
-    "readMinutes": 1,
-    "size": "med",
-    "relatedTool": "/special-chars/pet-age-calc/",
-    "relatedToolName": "반려동물 나이 계산기",
-    "relatedToolIcon": "🐾"
-  },
-  {
-    "id": "pet-bmi-tool",
-    "title": "우리 고양이 정상 체중일까? BCS로 확인하기",
-    "url": "/special-chars/pet-bmi-calc/",
-    "thumbnailLabel": "TOOL · BCS",
-    "tag": "추천 도구",
-    "category": "반려동물",
-    "summary": "품종, 체중, 체형 점수를 기준으로 고양이와 강아지의 체중 상태를 점검합니다.",
-    "author": "티모집사 툴즈",
-    "date": "2026-05-20",
-    "readMinutes": 1,
-    "size": "med",
-    "relatedTool": "/special-chars/pet-bmi-calc/",
-    "relatedToolName": "반려동물 체중 관리",
-    "relatedToolIcon": "⚖️"
-  },
-  {
-    "id": "pet-food-tool",
-    "title": "간식까지 포함한 하루 급여량 계산하기",
-    "url": "/special-chars/pet-food-calc/",
-    "thumbnailLabel": "TOOL · FOOD",
-    "tag": "추천 도구",
-    "category": "반려동물",
-    "summary": "체중과 활동량을 기준으로 하루 사료량과 칼로리를 계산합니다.",
-    "author": "티모집사 툴즈",
-    "date": "2026-05-20",
-    "readMinutes": 1,
-    "size": "sm",
-    "relatedTool": "/special-chars/pet-food-calc/",
-    "relatedToolName": "사료 급여량 계산기",
-    "relatedToolIcon": "🍖"
+    "relatedToolIcon": "⚖️",
+    "sources": [
+      "WSAVA Body Condition Score 참고"
+    ]
   }
 ]

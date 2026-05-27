@@ -149,6 +149,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       <div class="progress-text" id="progressText"><span class="progress-spinner"></span>Loading AI model...</div>
       <div class="progress-bar-bg"><div class="progress-bar" id="progressBar"></div></div>
       <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="progressSub">Downloading the AI model (~40MB) may take a moment on first use.</div>
+      <button class="action-btn btn-reset" id="retryBtn" style="display:none;margin:12px auto 0" onclick="retryProcessing()">Try again</button>
     </div>
 
     <!-- 결과 영역 -->
@@ -237,6 +238,8 @@ let originalURL = null;
 let resultURL = null;
 let resultBlob = null;
 let fileName = 'image';
+let lastFile = null;
+const MAX_INFERENCE_DIM = 2048;
 
 const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('fileInput');
@@ -267,6 +270,47 @@ function checkMobileData() {
   return false;
 }
 
+function loadImageFromBlob(blob) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Could not read the image.')); };
+    img.src = url;
+  });
+}
+
+async function prepareInferenceImage(file) {
+  const img = await loadImageFromBlob(file);
+  const maxSide = Math.max(img.naturalWidth, img.naturalHeight);
+  const originalSize = { width: img.naturalWidth, height: img.naturalHeight };
+  if (maxSide <= MAX_INFERENCE_DIM) return { input: file, originalSize, resized: false };
+
+  const scale = MAX_INFERENCE_DIM / maxSide;
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(img.naturalWidth * scale);
+  canvas.height = Math.round(img.naturalHeight * scale);
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  const input = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  return { input, originalSize, resized: true };
+}
+
+async function restoreOriginalSize(blob, originalSize, resized) {
+  if (!resized) return blob;
+  const img = await loadImageFromBlob(blob);
+  const canvas = document.createElement('canvas');
+  canvas.width = originalSize.width;
+  canvas.height = originalSize.height;
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+}
+
 // 첫 사용 시 모바일 데이터 경고 표시
 (function() {
   if (checkMobileData()) {
@@ -287,6 +331,7 @@ async function handleFile(file) {
     if (!ok) return;
   }
 
+  lastFile = file;
   fileName = file.name.replace(/\.[^/.]+$/, '');
   
   // 원본 URL 생성
@@ -297,11 +342,16 @@ async function handleFile(file) {
   dropzone.style.display = 'none';
   document.getElementById('dataWarning').style.display = 'none';
   progressWrap.classList.add('active');
+  document.getElementById('retryBtn').style.display = 'none';
   resultArea.classList.remove('active');
   updateProgress(0, 'Loading AI model...');
 
   try {
-    const blob = await removeBackground(file, {
+    const prepared = await prepareInferenceImage(file);
+    if (prepared.resized) {
+      document.getElementById('progressSub').textContent = `Inference runs at ${MAX_INFERENCE_DIM}px on the long edge, then restores the original output size.`;
+    }
+    const rawBlob = await removeBackground(prepared.input, {
       progress: (key, current, total) => {
         if (key === 'compute:inference') {
           const pct = Math.round((current / total) * 100);
@@ -312,6 +362,7 @@ async function handleFile(file) {
         }
       }
     });
+    const blob = await restoreOriginalSize(rawBlob, prepared.originalSize, prepared.resized);
 
     resultBlob = blob;
     if (resultURL) URL.revokeObjectURL(resultURL);
@@ -336,8 +387,11 @@ async function handleFile(file) {
 
   } catch (err) {
     console.error('Background removal error:', err);
-    progressWrap.classList.remove('active');
+    progressWrap.classList.add('active');
+    updateProgress(0, 'Processing failed');
+    document.getElementById('progressSub').textContent = 'This may be a network or browser memory issue. Please try again.';
     dropzone.style.display = '';
+    document.getElementById('retryBtn').style.display = '';
     showToast('❌ An error occurred during processing.');
   }
 }
@@ -399,10 +453,15 @@ window.downloadResult = function() {
 
 window.resetAll = function() {
   resultArea.classList.remove('active');
+  progressWrap.classList.remove('active');
   dropzone.style.display = '';
   fileInput.value = '';
   document.getElementById('progressSub').textContent = 'Downloading the AI model (~40MB) may take a moment on first use.';
   document.getElementById('reportBox').style.display = 'none';
+};
+
+window.retryProcessing = function() {
+  if (lastFile) handleFile(lastFile);
 };
 
 // 토스트

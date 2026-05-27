@@ -191,6 +191,14 @@
 </div>
 <script>
 let origFile = null, compressedBlob = null, origImg = new Image();
+let origPreviewUrl = null, compPreviewUrl = null;
+
+function revokePreviewUrls() {
+  if (origPreviewUrl) URL.revokeObjectURL(origPreviewUrl);
+  if (compPreviewUrl) URL.revokeObjectURL(compPreviewUrl);
+  origPreviewUrl = null;
+  compPreviewUrl = null;
+}
 
 // 드래그 앤 드롭
 const dz = document.getElementById('dropZone');
@@ -200,16 +208,18 @@ dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag
 
 function handleFile(file) {
   if (!file || !file.type.startsWith('image/')) return;
+  revokePreviewUrls();
   origFile = file;
-  const url = URL.createObjectURL(file);
-  document.getElementById('origImg').src = url;
+  compressedBlob = null;
+  origPreviewUrl = URL.createObjectURL(file);
+  document.getElementById('origImg').src = origPreviewUrl;
   document.getElementById('origSize').textContent = fmtBytes(file.size);
   origImg.onload = () => {
     document.getElementById('origDim').textContent = origImg.width + ' × ' + origImg.height;
     document.getElementById('maxWidth').value = Math.min(origImg.width, 1920);
     compress();
   };
-  origImg.src = url;
+  origImg.src = origPreviewUrl;
   dz.style.display = 'none';
   document.getElementById('controls').style.display = 'flex';
   document.getElementById('preview').style.display = 'flex';
@@ -235,7 +245,9 @@ function compress() {
 
   canvas.toBlob(blob => {
     compressedBlob = blob;
-    document.getElementById('compImg').src = URL.createObjectURL(blob);
+    if (compPreviewUrl) URL.revokeObjectURL(compPreviewUrl);
+    compPreviewUrl = URL.createObjectURL(blob);
+    document.getElementById('compImg').src = compPreviewUrl;
     document.getElementById('compSize').textContent = fmtBytes(blob.size);
     document.getElementById('compDim').textContent = w + ' × ' + h;
 
@@ -303,19 +315,24 @@ function download() {
   if (!compressedBlob) return;
   const a = document.createElement('a');
   const name = origFile.name.replace(/\.[^.]+$/, '') + '_compressed.jpg';
-  a.href = URL.createObjectURL(compressedBlob);
+  const downloadUrl = URL.createObjectURL(compressedBlob);
+  a.href = downloadUrl;
   a.download = name;
   a.click();
+  setTimeout(() => URL.revokeObjectURL(downloadUrl), 0);
 }
 
 function reset() {
   origFile = null; compressedBlob = null;
+  revokePreviewUrls();
   dz.style.display = '';
   document.getElementById('controls').style.display = 'none';
   document.getElementById('preview').style.display = 'none';
   document.getElementById('dlBtn').style.display = 'none';
   document.getElementById('resetBtn').style.display = 'none';
   document.getElementById('saved').textContent = '';
+  document.getElementById('origImg').removeAttribute('src');
+  document.getElementById('compImg').removeAttribute('src');
   document.getElementById('fileInput').value = '';
   if(document.getElementById('reportContainer')){ document.getElementById('reportContainer').style.display = 'none'; }
 }

@@ -1,0 +1,21 @@
+{
+  "meta": {
+    "description": "Manual Korean public-holiday additions that are not safely derived from fixed/lunar rules alone, including term-end election days and government-designated special holidays.",
+    "checkedAt": "2026-05-27",
+    "minimumReviewCadence": "Review at least once per year and whenever the government announces a temporary public holiday.",
+    "source": [
+      "https://law.go.kr/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1018770085",
+      "https://law.go.kr/LSW/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1027161473"
+    ]
+  },
+  "years": {
+    "2026": [
+      {
+        "date": "2026-06-03",
+        "name": "전국동시지방선거일",
+        "type": "term-end-election",
+        "source": "공직선거법 제34조에 따른 임기만료에 의한 선거의 선거일"
+      }
+    ]
+  }
+}

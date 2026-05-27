@@ -205,6 +205,9 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   <details class="guide-section" open>
     <summary>💡 실전 중개보수 및 부동산 상식 Q&A</summary>
     <div class="guide-content">
+      <strong>Q. 이 계산기의 기준 관할은 어디인가요?</strong>
+      <p>본 계산기는 <strong>공인중개사법 시행규칙 별표의 상한 구조와 서울 기준 요율표</strong>를 기준으로 합니다. 주택 중개보수는 시·도 조례로 정해지므로 대부분 동일하더라도 관할 지자체 공고와 실제 중개사무소 고지를 최종 확인하세요.</p>
+      <br>
       <strong>Q. 월세 중개수수료가 생각보다 비싼 것 같아요. 환산보증금이 뭔가요?</strong>
       <p>월세의 경우 보증금만으로 계산하지 않고 <strong>환산보증금 [보증금 + (월세 × 100)]</strong>을 기준으로 거래 금액을 산정합니다. 다만, 이 환산보증금이 5천만 원 미만일 때는 소액 임차인 보호를 위해 <strong>[보증금 + (월세 × 70)]</strong>으로 계산하여 수수료 부담을 낮춰줍니다. 이 계산기는 해당 조건에 맞춰 자동으로 환산보증금을 계산합니다.</p>
       <br>
@@ -448,10 +451,6 @@ function calc() {
     <div class="detail-row"><span class="detail-label">부가세 (10%)</span><span class="detail-value">${fmt(vat)} 원</span></div>
     <div class="detail-row"><span class="detail-label">합계 (VAT 포함)</span><span class="detail-value" style="color:var(--accent);font-size:15px;font-weight:800">${fmt(total)} 원</span></div>`;
   }
-  
-    <div class="detail-row"><span class="detail-label">합계 (VAT 포함)</span><span class="detail-value" style="color:var(--accent);font-size:15px;font-weight:800">${fmt(total)} 원</span></div>`;
-  }
-  
   detailEl.innerHTML = detail;
   
   // 다이나믹 리포트 생성

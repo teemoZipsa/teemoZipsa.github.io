@@ -154,6 +154,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <div class="progress-text" id="progressText"><span class="progress-spinner"></span>AI 모델 로딩 중...</div>
       <div class="progress-bar-bg"><div class="progress-bar" id="progressBar"></div></div>
       <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="progressSub">첫 실행 시 모델 다운로드(~40MB)에 시간이 걸릴 수 있습니다</div>
+      <button class="action-btn btn-reset" id="retryBtn" style="display:none;margin:12px auto 0" onclick="retryProcessing()">다시 시도</button>
     </div>
 
     <!-- 결과 영역 -->
@@ -232,8 +233,8 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <div class="tags">
         <a href="/special-chars/image-compress/" class="tag">초고속 이미지 용량 압축기</a>
         <a href="/special-chars/image-format-converter/" class="tag">무손실 이미지 확장자 변환</a>
-        <a href="/special-chars/color-picker/" class="tag">컬러 피커 & HEX 코드</a>
-        <a href="/special-chars/calculators/" class="tag">일상 생활 계산기 모음</a>
+        <a href="/special-chars/color-conv/" class="tag">컬러 피커 & HEX 코드</a>
+        <a href="/#toolsGrid" class="tag">일상 생활 계산기 모음</a>
       </div>
     </div>
   </section>
@@ -251,6 +252,8 @@ let originalURL = null;
 let resultURL = null;
 let resultBlob = null;
 let fileName = 'image';
+let lastFile = null;
+const MAX_INFERENCE_DIM = 2048;
 
 const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('fileInput');
@@ -281,6 +284,47 @@ function checkMobileData() {
   return false;
 }
 
+function loadImageFromBlob(blob) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('이미지를 읽을 수 없습니다')); };
+    img.src = url;
+  });
+}
+
+async function prepareInferenceImage(file) {
+  const img = await loadImageFromBlob(file);
+  const maxSide = Math.max(img.naturalWidth, img.naturalHeight);
+  const originalSize = { width: img.naturalWidth, height: img.naturalHeight };
+  if (maxSide <= MAX_INFERENCE_DIM) return { input: file, originalSize, resized: false };
+
+  const scale = MAX_INFERENCE_DIM / maxSide;
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(img.naturalWidth * scale);
+  canvas.height = Math.round(img.naturalHeight * scale);
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  const input = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  return { input, originalSize, resized: true };
+}
+
+async function restoreOriginalSize(blob, originalSize, resized) {
+  if (!resized) return blob;
+  const img = await loadImageFromBlob(blob);
+  const canvas = document.createElement('canvas');
+  canvas.width = originalSize.width;
+  canvas.height = originalSize.height;
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+}
+
 // 첫 사용 시 모바일 데이터 경고 표시
 (function() {
   if (checkMobileData()) {
@@ -301,6 +345,7 @@ async function handleFile(file) {
     if (!ok) return;
   }
 
+  lastFile = file;
   fileName = file.name.replace(/\.[^/.]+$/, '');
   
   // 원본 URL 생성
@@ -311,11 +356,16 @@ async function handleFile(file) {
   dropzone.style.display = 'none';
   document.getElementById('dataWarning').style.display = 'none';
   progressWrap.classList.add('active');
+  document.getElementById('retryBtn').style.display = 'none';
   resultArea.classList.remove('active');
   updateProgress(0, 'AI 모델 로딩 중...');
 
   try {
-    const blob = await removeBackground(file, {
+    const prepared = await prepareInferenceImage(file);
+    if (prepared.resized) {
+      document.getElementById('progressSub').textContent = `긴 변 ${MAX_INFERENCE_DIM}px로 추론 후 원본 해상도로 복원합니다`;
+    }
+    const rawBlob = await removeBackground(prepared.input, {
       progress: (key, current, total) => {
         if (key === 'compute:inference') {
           const pct = Math.round((current / total) * 100);
@@ -326,6 +376,7 @@ async function handleFile(file) {
         }
       }
     });
+    const blob = await restoreOriginalSize(rawBlob, prepared.originalSize, prepared.resized);
 
     resultBlob = blob;
     if (resultURL) URL.revokeObjectURL(resultURL);
@@ -347,8 +398,11 @@ async function handleFile(file) {
 
   } catch (err) {
     console.error('Background removal error:', err);
-    progressWrap.classList.remove('active');
+    progressWrap.classList.add('active');
+    updateProgress(0, '처리 실패');
+    document.getElementById('progressSub').textContent = '네트워크 또는 브라우저 메모리 문제일 수 있습니다. 다시 시도해 주세요.';
     dropzone.style.display = '';
+    document.getElementById('retryBtn').style.display = '';
     showToast('❌ 처리 중 오류가 발생했습니다');
   }
 }
@@ -411,12 +465,17 @@ window.downloadResult = function() {
 // 리셋
 window.resetAll = function() {
   resultArea.classList.remove('active');
+  progressWrap.classList.remove('active');
   dropzone.style.display = '';
   fileInput.value = '';
   document.getElementById('progressSub').textContent = '첫 실행 시 모델 다운로드(~40MB)에 시간이 걸릴 수 있습니다';
   if (document.getElementById('reportContainer')) {
     document.getElementById('reportContainer').style.display = 'none';
   }
+};
+
+window.retryProcessing = function() {
+  if (lastFile) handleFile(lastFile);
 };
 
 function formatByte(bytes) {

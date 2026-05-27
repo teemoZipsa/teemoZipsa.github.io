@@ -19,7 +19,7 @@
 <link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/qr-code/">
 <link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/qr-code/">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" onerror="document.getElementById('cdnError').style.display='block'"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" onerror="window.__qrCdnError=true"></script>
 <style>
   @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
   *{margin:0;padding:0;box-sizing:border-box}
@@ -73,6 +73,7 @@
 </head>
 <body>
 <div id="cdnError" style="display:none;background:#ff4444;color:var(--text-on-accent);text-align:center;padding:12px;font-size:14px;">외부 라이브러리 로드에 실패했습니다. 인터넷 연결을 확인하고 새로고침 해주세요.</div>
+<script>if(window.__qrCdnError){document.getElementById('cdnError').style.display='block'}</script>
 <div class="app">
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>

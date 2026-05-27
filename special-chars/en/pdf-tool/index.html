@@ -19,8 +19,6 @@
 <link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/pdf-tool/">
 <link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/pdf-tool/">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js" onerror="document.getElementById('cdnError').style.display='block'"></script>
-<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js" onerror="document.getElementById('cdnError').style.display='block'"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
@@ -290,6 +288,117 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       </div>
       <div class="loading" id="watermarkLoading"><span class="spinner"></span>Processing...</div>
     </div>
+
+    <!-- Delete Panel -->
+    <div class="tab-panel" id="deletePanel">
+      <div class="drop-zone" id="deleteDropZone">
+        <div class="icon">📁</div>
+        <div class="text">Click or Drag a PDF file here</div>
+        <div class="sub">Files are not sent to any server</div>
+        <input type="file" accept=".pdf" id="deleteFileInput">
+      </div>
+      <div class="info-bar" id="deleteInfo" style="display:none;margin-top:12px">
+        📄 Total <span class="highlight" id="deletePageCount">0</span> pages
+      </div>
+      <div class="field-group" id="deleteRangeGroup" style="display:none;margin-top:12px">
+        <div class="field-label">🗑️ Pages to Delete</div>
+        <input type="text" class="field-input" id="deleteRange" placeholder="e.g. 3, 5-7">
+      </div>
+      <button class="btn btn-primary" id="deleteBtn" style="display:none" onclick="doDelete()">🗑️ Delete Pages</button>
+      <div class="loading" id="deleteLoading"><span class="spinner"></span>Processing...</div>
+    </div>
+
+    <!-- Image to PDF Panel -->
+    <div class="tab-panel" id="img2pdfPanel">
+      <div class="drop-zone" id="img2pdfDropZone">
+        <div class="icon">📁</div>
+        <div class="text">Click or Drag image files here</div>
+        <div class="sub">JPG, PNG, WebP supported · Drag to reorder</div>
+        <input type="file" accept="image/jpeg, image/png, image/webp" multiple id="img2pdfFileInput">
+      </div>
+      <div class="file-list" id="img2pdfFileList"></div>
+      <button class="btn btn-primary" id="img2pdfBtn" style="display:none" onclick="doImgToPdf()">🖼️ Convert to PDF</button>
+      <div class="loading" id="img2pdfLoading"><span class="spinner"></span>Processing...</div>
+    </div>
+
+    <!-- Page Number Panel -->
+    <div class="tab-panel" id="pagenumPanel">
+      <div class="drop-zone" id="pagenumDropZone">
+        <div class="icon">📁</div>
+        <div class="text">Click or Drag a PDF file here</div>
+        <div class="sub">Files are not sent to any server</div>
+        <input type="file" accept=".pdf" id="pagenumFileInput">
+      </div>
+      <div id="pagenumControls" style="display:none;margin-top:12px">
+        <div class="control-row">
+          <label>Font Size</label>
+          <input type="range" class="slider" id="pageNumSize" min="8" max="24" value="12" oninput="document.getElementById('pageNumSizeVal').textContent=this.value+'px';">
+          <span class="val" id="pageNumSizeVal">12px</span>
+        </div>
+        <div class="control-row">
+          <label>Position</label>
+          <select id="pageNumPos" style="background:var(--bg-input);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:6px 8px;font-size:13px;width:100%;outline:none;font-family:inherit">
+            <option value="bottom-center">Bottom center</option>
+            <option value="bottom-right">Bottom right</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="doPageNum()">✅ Apply</button>
+      </div>
+      <div class="loading" id="pagenumLoading"><span class="spinner"></span>Processing...</div>
+    </div>
+
+    <!-- Metadata Panel -->
+    <div class="tab-panel" id="metadataPanel">
+      <div class="drop-zone" id="metadataDropZone">
+        <div class="icon">📁</div>
+        <div class="text">Click or Drag a PDF file here</div>
+        <div class="sub">Files are not sent to any server</div>
+        <input type="file" accept=".pdf" id="metadataFileInput">
+      </div>
+      <div id="metadataControls" style="display:none;margin-top:12px">
+        <div class="field-group">
+          <div class="field-label">Title</div>
+          <input type="text" class="field-input" id="metaTitle">
+        </div>
+        <div class="field-group">
+          <div class="field-label">Author</div>
+          <input type="text" class="field-input" id="metaAuthor">
+        </div>
+        <div class="field-group">
+          <div class="field-label">Subject</div>
+          <input type="text" class="field-input" id="metaSubject">
+        </div>
+        <div class="field-group">
+          <div class="field-label">Keywords</div>
+          <input type="text" class="field-input" id="metaKeywords">
+        </div>
+        <button class="btn btn-primary" onclick="doMetadata()">✅ Save Metadata</button>
+      </div>
+      <div class="loading" id="metadataLoading"><span class="spinner"></span>Processing...</div>
+    </div>
+
+    <!-- Blank Page Panel -->
+    <div class="tab-panel" id="blankPanel">
+      <div class="drop-zone" id="blankDropZone">
+        <div class="icon">📁</div>
+        <div class="text">Click or Drag a PDF file here</div>
+        <div class="sub">Files are not sent to any server</div>
+        <input type="file" accept=".pdf" id="blankFileInput">
+      </div>
+      <div id="blankControls" style="display:none;margin-top:12px">
+        <div class="info-bar" style="margin-bottom:12px">
+          📄 Total <span class="highlight" id="blankPageCount">0</span> pages
+        </div>
+        <div class="field-group">
+          <div class="field-label">Insert after pages</div>
+          <input type="text" class="field-input" id="blankPositions" placeholder="e.g. 2, 5">
+        </div>
+        <button class="btn btn-primary" onclick="doBlank()">✅ Insert Blank Pages</button>
+      </div>
+      <div class="loading" id="blankLoading"><span class="spinner"></span>Processing...</div>
+    </div>
+
+    <div id="reportContainer" class="report-box" style="display:none; animation: fadeIn 0.5s ease;"></div>
   </div>
 
   <details class="guide-section">
@@ -326,9 +435,46 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 <button class="scroll-top-btn" id="scrollTopBtn" aria-label="Top">↑</button>
 
 <script>
-/* ===== PDF.js worker setup ===== */
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
-const { PDFDocument, degrees, rgb, StandardFonts } = PDFLib;
+/* ===== Lazy PDF library loading ===== */
+let pdfLibsPromise = null;
+let PDFDocument, degrees, rgb, StandardFonts;
+
+function loadScriptOnce(src) {
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector(`script[data-src="${src}"]`);
+    if (existing) {
+      existing.addEventListener('load', resolve, { once: true });
+      existing.addEventListener('error', reject, { once: true });
+      if (existing.dataset.loaded === 'true') resolve();
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = src;
+    script.dataset.src = src;
+    script.onload = () => { script.dataset.loaded = 'true'; resolve(); };
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+async function ensurePdfLibs() {
+  if (!pdfLibsPromise) {
+    pdfLibsPromise = (async () => {
+      await Promise.all([
+        loadScriptOnce('https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js'),
+        loadScriptOnce('https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js')
+      ]);
+      if (!window.PDFLib || !window.pdfjsLib) throw new Error('Failed to load PDF libraries.');
+      ({ PDFDocument, degrees, rgb, StandardFonts } = window.PDFLib);
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+    })().catch(err => {
+      pdfLibsPromise = null;
+      document.getElementById('cdnError').style.display = 'block';
+      throw err;
+    });
+  }
+  return pdfLibsPromise;
+}
 
 /* ===== Tab switching ===== */
 document.querySelectorAll('.mode-tab').forEach(tab => {
@@ -370,6 +516,7 @@ function setLoading(id, show) {
 }
 
 async function renderThumb(pdfBytes, pageNum, width) {
+  await ensurePdfLibs();
   width = width || 120;
   const pdf = await pdfjsLib.getDocument({ data: pdfBytes }).promise;
   const page = await pdf.getPage(pageNum);
@@ -390,13 +537,22 @@ function setupDropZone(zoneId, inputId, handler, multi) {
   zone.addEventListener('click', () => input.click());
   zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
   zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+  async function runHandler(files) {
+    try {
+      await ensurePdfLibs();
+      await handler(files);
+    } catch (e) {
+      showToast('Failed to load PDF libraries or process the file.');
+      console.error(e);
+    }
+  }
   zone.addEventListener('drop', e => {
     e.preventDefault(); zone.classList.remove('dragover');
     const files = Array.from(e.dataTransfer.files).filter(f => f.type === 'application/pdf');
-    if (files.length) handler(multi ? files : [files[0]]);
+    if (files.length) runHandler(multi ? files : [files[0]]);
   });
   input.addEventListener('change', () => {
-    if (input.files.length) handler(multi ? Array.from(input.files) : [input.files[0]]);
+    if (input.files.length) runHandler(multi ? Array.from(input.files) : [input.files[0]]);
     input.value = '';
   });
 }
