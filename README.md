@@ -5,7 +5,7 @@
 **일상과 업무에 필요한 도구들을 한곳에 모았습니다.**
 
 [![Website](https://img.shields.io/badge/🌐_사이트_바로가기-teemoZipsa.github.io-FF6B6B?style=for-the-badge)](https://teemozipsa.github.io)
-[![Tools](https://img.shields.io/badge/도구_개수-36개-6C5CE7?style=for-the-badge)](#-도구-목록)
+[![도구 개수](https://img.shields.io/badge/도구_개수-36개-6C5CE7?style=for-the-badge)](#-도구-목록)
 [![PWA](https://img.shields.io/badge/PWA-오프라인_지원-00C853?style=for-the-badge)](#-주요-기능)
 [![CI](https://github.com/teemoZipsa/teemoZipsa.github.io/actions/workflows/check-rules.yml/badge.svg)](https://github.com/teemoZipsa/teemoZipsa.github.io/actions/workflows/check-rules.yml)
 
@@ -118,7 +118,7 @@ Copyright © 2026 teemoZipsa. All Rights Reserved.
 
 <div align="center">
 
-**Made with ❤️ by [티모집사](https://www.instagram.com/seon_7yu/)**
+**[티모집사](https://www.instagram.com/seon_7yu/)가 만들었습니다**
 
 [🌐 사이트 바로가기](https://teemozipsa.github.io) · [☕ 후원하기](https://ctee.kr/place/teemozipsa/post/2)
 
