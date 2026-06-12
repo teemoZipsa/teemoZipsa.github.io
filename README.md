@@ -112,7 +112,7 @@
 
 ## 📜 라이선스
 
-Copyright © 2026 teemoZipsa. All Rights Reserved.
+MIT License. See [LICENSE](LICENSE) for details.
 
 ---
 
