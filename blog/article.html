@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>고양이 나이 계산의 새로운 기준 — 1년이 7년이라는 거짓말 | 티모집사 가이드</title>
+<meta name="description" content="AAFP 공식 가이드라인 기반 고양이 생애 6단계와 우리집 묘의 진짜 사람 나이 계산법. 단계별 케어 포인트와 곧장 이어지는 계산기까지.">
+<link rel="canonical" href="https://teemozipsa.github.io/blog/article.html">
+<link rel="icon" type="image/png" href="/favicon.png">
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+:root[data-theme="light"]{
+  --bg:#f7f8fa; --bg-soft:#eef1f5; --card:#ffffff; --card-2:#f3f5f8;
+  --text:#0b1220; --text-2:#3b4a63; --muted:#6b7587;
+  --border:#e3e7ee; --border-2:#d6dce6; --hover:#eef2f8;
+  --accent:#1f6feb; --accent-soft:#e8f0fe; --accent-strong:#1859c2;
+  --teal:#0fba9f; --teal-soft:#dff7f0;
+  --warn:#d97706; --warn-soft:#fef3c7;
+  --rise:#e11d48; --fall:#2563eb; --flat:#64748b; --neww:#0fba9f;
+  --shadow-sm:0 1px 2px rgba(15,23,42,.04);
+  --shadow-md:0 6px 18px rgba(15,23,42,.06);
+}
+:root[data-theme="dark"]{
+  --bg:#0b0f17; --bg-soft:#10151f; --card:#121826; --card-2:#0e1422;
+  --text:#e6ecf5; --text-2:#b6c2d4; --muted:#8895ab;
+  --border:#1f2a3c; --border-2:#2a3850; --hover:#172033;
+  --accent:#5aa1ff; --accent-soft:#13284a; --accent-strong:#86b8ff;
+  --teal:#3ed6ba; --teal-soft:#0e2a26;
+  --warn:#f59e0b; --warn-soft:#3a2a09;
+  --rise:#fb7185; --fall:#7dd3fc; --flat:#94a3b8; --neww:#3ed6ba;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4);
+  --shadow-md:0 6px 18px rgba(0,0,0,.4);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--bg);color:var(--text);font-family:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,'Noto Sans KR',sans-serif;-webkit-font-smoothing:antialiased}
+body{min-height:100vh;line-height:1.6}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+
+/* progress bar */
+.read-progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--accent),var(--teal));z-index:60;transition:width .12s linear}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1280px;margin:0 auto;padding:12px 20px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:-.02em;font-size:16px}
+.brand-mark{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--accent),var(--teal));box-shadow:0 6px 14px color-mix(in srgb,var(--accent) 35%,transparent)}
+.nav-links{display:flex;align-items:center;gap:2px;overflow-x:auto;scrollbar-width:none}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-links a{padding:8px 12px;font-size:13.5px;font-weight:800;color:var(--text-2);border-radius:8px;white-space:nowrap}
+.nav-links a:hover{background:var(--hover);color:var(--text)}
+.nav-links a.active{color:var(--accent);background:var(--accent-soft)}
+.nav-right{display:flex;align-items:center;gap:6px}
+.icon-btn{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;color:var(--text-2)}
+.icon-btn:hover{background:var(--hover);color:var(--text)}
+.nav-cta{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;border-radius:9px;font-size:13px;font-weight:800;color:#fff;background:var(--accent)}
+.nav-cta:hover{background:var(--accent-strong)}
+
+/* breadcrumbs */
+.crumbs{max-width:1280px;margin:0 auto;padding:18px 20px 0;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;font-weight:700}
+.crumbs a{color:var(--text-2)}
+.crumbs a:hover{color:var(--accent)}
+.crumbs .sep{color:var(--border-2)}
+
+/* layout */
+.shell{max-width:1280px;margin:0 auto;padding:18px 20px 40px;display:grid;grid-template-columns:1fr minmax(0,720px) 1fr;gap:24px;align-items:flex-start}
+.shell > .toc-col{position:sticky;top:84px;justify-self:end;width:220px;align-self:flex-start;max-height:calc(100vh - 100px);overflow:auto;padding-right:8px}
+.shell > .side-col{position:sticky;top:84px;width:300px;align-self:flex-start;max-height:calc(100vh - 100px);overflow:auto}
+.main{min-width:0}
+
+/* article header */
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:900;letter-spacing:.04em;color:var(--teal);background:var(--teal-soft);padding:5px 10px;border-radius:999px;text-transform:uppercase}
+.tag .dot{width:6px;height:6px;border-radius:50%;background:var(--teal)}
+h1.art-title{font-size:clamp(28px,3.6vw,42px);line-height:1.15;letter-spacing:-.035em;margin:14px 0 14px;font-weight:900;word-break:keep-all}
+.art-sub{font-size:17px;color:var(--text-2);line-height:1.65;font-weight:500;max-width:680px;word-break:keep-all}
+.art-meta{display:flex;align-items:center;gap:12px;margin-top:18px;padding:14px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);font-size:13px;color:var(--text-2);font-weight:600;flex-wrap:wrap}
+.author{display:flex;align-items:center;gap:8px}
+.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--teal));color:#fff;display:grid;place-items:center;font-weight:900;font-size:13px}
+.art-meta .dot{width:3px;height:3px;border-radius:50%;background:var(--border-2)}
+.art-meta .share{margin-left:auto;display:flex;gap:6px}
+.share button{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text-2)}
+.share button:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+
+/* hero placeholder image */
+.art-hero{margin:22px 0 0;aspect-ratio:16/9;border-radius:16px;background:linear-gradient(140deg,#0b1220 0%,#1f6feb 60%,#0fba9f 110%);position:relative;overflow:hidden;border:1px solid var(--border)}
+.art-hero::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 80% at 80% 10%, color-mix(in srgb,var(--teal) 65%,transparent), transparent 60%), radial-gradient(80% 60% at 10% 100%, color-mix(in srgb,#1f6feb 70%,transparent), transparent 60%)}
+.art-hero .cap{position:absolute;left:20px;bottom:18px;color:rgba(255,255,255,.85);font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.06em}
+
+/* body */
+.body{margin-top:34px;font-size:17px;line-height:1.85;color:var(--text-2);word-break:keep-all}
+.body p{margin-bottom:22px}
+.body h2{font-size:24px;color:var(--text);margin:44px 0 14px;padding-top:18px;border-top:1px solid var(--border);font-weight:900;letter-spacing:-.025em;scroll-margin-top:80px}
+.body h3{font-size:18px;color:var(--text);margin:28px 0 12px;font-weight:800;letter-spacing:-.02em;scroll-margin-top:80px}
+.body strong{color:var(--text);font-weight:800;background:linear-gradient(180deg,transparent 64%,color-mix(in srgb,var(--teal) 32%,transparent) 64%)}
+.body ul,.body ol{margin:0 0 22px 22px}
+.body li{margin-bottom:8px}
+.body blockquote{border-left:3px solid var(--accent);background:var(--accent-soft);padding:14px 18px;margin:22px 0;border-radius:0 10px 10px 0;color:var(--text);font-weight:500}
+.body blockquote .src{display:block;margin-top:8px;font-size:12px;color:var(--muted);font-weight:700}
+
+/* keypoint table */
+.keytable{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--card);margin:22px 0;font-size:14px}
+.keytable .row{display:grid;grid-template-columns:140px 1fr;padding:12px 16px;border-bottom:1px solid var(--border)}
+.keytable .row:last-child{border-bottom:none}
+.keytable .row:nth-child(even){background:var(--card-2)}
+.keytable .row b{color:var(--text);font-weight:800}
+.keytable .row span{color:var(--text-2)}
+
+/* in-article tool CTA */
+.tool-cta{margin:30px 0;border:1px solid var(--border);border-radius:16px;padding:20px;background:linear-gradient(180deg,var(--card),var(--card-2));display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+.tool-cta::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:linear-gradient(180deg,var(--accent),var(--teal))}
+.tool-cta .ic{width:54px;height:54px;border-radius:14px;display:grid;place-items:center;font-size:26px;background:var(--accent-soft);color:var(--accent)}
+.tool-cta .info b{display:block;font-size:16px;font-weight:900;color:var(--text);letter-spacing:-.015em}
+.tool-cta .info span{display:block;margin-top:4px;font-size:13px;color:var(--text-2)}
+.tool-cta .btn{display:inline-flex;align-items:center;gap:6px;height:42px;padding:0 16px;border-radius:10px;background:var(--accent);color:#fff;font-size:13.5px;font-weight:800;white-space:nowrap}
+.tool-cta .btn:hover{background:var(--accent-strong)}
+
+/* callout */
+.callout{margin:24px 0;border:1px solid var(--border);background:var(--card);border-radius:12px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start}
+.callout .ic{width:32px;height:32px;border-radius:8px;background:var(--warn-soft);color:var(--warn);display:grid;place-items:center;font-weight:900;flex-shrink:0}
+.callout .ic.info{background:var(--accent-soft);color:var(--accent)}
+.callout p{margin:0;font-size:14px;color:var(--text-2);line-height:1.65}
+.callout p b{color:var(--text);font-weight:800}
+
+/* faq */
+.faq{margin-top:40px;border-top:1px solid var(--border);padding-top:30px}
+.faq h2{font-size:22px;font-weight:900;letter-spacing:-.025em;margin-bottom:6px}
+.faq .sub{color:var(--muted);font-size:13px;margin-bottom:18px}
+.faq details{border:1px solid var(--border);border-radius:12px;padding:0;margin-bottom:8px;background:var(--card);overflow:hidden;transition:border-color .2s}
+.faq details[open]{border-color:var(--accent)}
+.faq summary{padding:14px 18px;font-size:14.5px;font-weight:800;color:var(--text);list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;justify-content:space-between}
+.faq summary::before{content:"Q";color:var(--accent);font-weight:900;flex-shrink:0;font-family:'Inter',sans-serif}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary .chev{margin-left:auto;color:var(--muted);transition:transform .2s}
+.faq details[open] summary .chev{transform:rotate(180deg)}
+.faq .ans{padding:0 18px 16px 38px;color:var(--text-2);font-size:14px;line-height:1.7}
+
+/* related */
+.related{margin-top:44px;padding-top:24px;border-top:1px solid var(--border)}
+.related h2{font-size:20px;font-weight:900;letter-spacing:-.02em;margin-bottom:14px}
+.rel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.rel{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--card);transition:border-color .15s, transform .15s}
+.rel:hover{border-color:var(--accent);transform:translateY(-2px)}
+.rel .thumb{aspect-ratio:16/9;background:var(--card-2);position:relative}
+.rel .body{padding:12px 14px 14px}
+.rel .body .tag{padding:2px 6px;font-size:10px;margin-bottom:6px}
+.rel h4{font-size:14px;font-weight:800;letter-spacing:-.015em;line-height:1.35;color:var(--text)}
+.rel .meta{margin-top:8px;font-size:11px;color:var(--muted);font-weight:700}
+
+.ph-fill{position:absolute;inset:0;background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--accent) 12%,transparent) 0 12px,color-mix(in srgb,var(--accent) 4%,transparent) 12px 24px);display:grid;place-items:center;color:var(--accent);font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;font-weight:700;letter-spacing:.05em}
+.ph-fill.teal{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--teal) 14%,transparent) 0 12px,color-mix(in srgb,var(--teal) 4%,transparent) 12px 24px);color:#0e9f88}
+
+/* big bottom CTA */
+.big-cta{margin-top:40px;border:1px solid var(--border);border-radius:20px;padding:30px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;background:var(--card);box-shadow:var(--shadow-md);position:relative;overflow:hidden}
+.big-cta::after{content:"";position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,var(--accent),var(--teal))}
+.big-cta h3{font-size:22px;font-weight:900;letter-spacing:-.025em;line-height:1.25}
+.big-cta p{margin-top:6px;color:var(--text-2);font-size:14px}
+.big-cta-btn{display:inline-flex;align-items:center;gap:8px;height:54px;padding:0 22px;border-radius:14px;background:var(--text);color:var(--bg);font-weight:900;font-size:15px;white-space:nowrap}
+.big-cta-btn:hover{background:var(--accent);color:#fff}
+
+/* TOC */
+.toc-box{border:1px solid var(--border);border-radius:12px;background:var(--card);padding:16px;font-size:13px}
+.toc-box h6{font-size:11px;letter-spacing:.06em;color:var(--muted);font-weight:900;text-transform:uppercase;margin-bottom:10px}
+.toc-box ul{list-style:none;display:flex;flex-direction:column;gap:8px;border-left:1px solid var(--border);padding-left:12px}
+.toc-box a{color:var(--text-2);font-weight:600;line-height:1.4;display:block;padding:2px 0 2px 4px;border-left:2px solid transparent;margin-left:-14px;padding-left:12px}
+.toc-box a.sub{padding-left:22px;font-size:12.5px;color:var(--muted)}
+.toc-box a:hover{color:var(--accent)}
+.toc-box a.on{color:var(--accent);border-left-color:var(--accent);font-weight:800}
+
+/* SIDEBAR (right) */
+.side-card{border:1px solid var(--border);border-radius:14px;background:var(--card);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow-sm)}
+.side-card .h{padding:14px 16px 10px;border-bottom:1px dashed var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.side-card .h h6{font-size:13px;font-weight:900;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.side-card .h .pulse{width:7px;height:7px;border-radius:50%;background:var(--teal);position:relative}
+.side-card .h .pulse::after{content:"";position:absolute;inset:-5px;border-radius:50%;background:var(--teal);opacity:.25;animation:pulse 1.8s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.4);opacity:.5}100%{transform:scale(2.2);opacity:0}}
+.side-card .h small{font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.mini-trends{list-style:none;padding:6px 0}
+.mini-trends li{display:grid;grid-template-columns:22px 1fr auto;align-items:center;gap:8px;padding:8px 16px;font-size:13px}
+.mini-trends li:hover{background:var(--hover)}
+.mini-trends .rk{font-family:'Inter',monospace;font-weight:800;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.mini-trends .rk.top{color:var(--accent)}
+.mini-trends .kw{font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mini-trends .ch{font-size:11px;font-weight:800}
+.ch-up{color:var(--rise)}.ch-down{color:var(--fall)}.ch-flat{color:var(--flat)}.ch-new{color:var(--neww)}
+.side-foot{padding:10px 16px;border-top:1px solid var(--border);background:var(--card-2);font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+.side-foot a{color:var(--accent);font-weight:800}
+
+/* mini tool card */
+.mini-tool{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px dashed var(--border);font-size:13px}
+.mini-tool:last-child{border-bottom:none}
+.mini-tool .ic{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;font-size:18px;background:var(--accent-soft);color:var(--accent);flex-shrink:0}
+.mini-tool .ic.teal{background:var(--teal-soft);color:#0e9f88}
+.mini-tool .ic.warn{background:var(--warn-soft);color:#a76200}
+.mini-tool b{display:block;font-size:13.5px;font-weight:800;color:var(--text)}
+.mini-tool span{display:block;font-size:11.5px;color:var(--muted);font-weight:600;margin-top:2px}
+.mini-tool .arr{color:var(--muted);margin-left:auto}
+
+/* sidebar ad slot */
+.side-ad{border:1px dashed var(--border-2);background:repeating-linear-gradient(135deg,var(--card-2) 0 10px,var(--card) 10px 20px);border-radius:12px;padding:14px;color:var(--muted);font-size:11.5px;font-weight:700;font-family:'JetBrains Mono',ui-monospace,monospace;text-align:center;margin-bottom:16px;line-height:1.5}
+.side-ad .label{display:inline-block;background:var(--card);padding:3px 7px;border-radius:5px;border:1px solid var(--border);color:var(--text-2);margin-bottom:6px}
+
+/* mobile floating CTA */
+.mfloat{display:none;position:fixed;left:14px;right:14px;bottom:14px;z-index:40;background:var(--text);color:var(--bg);border-radius:14px;padding:12px 16px;align-items:center;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:13px;font-weight:800}
+.mfloat .ic{font-size:18px}
+.mfloat .arr{margin-left:auto;opacity:.7}
+
+/* mobile in-article trends widget */
+.m-trends{display:none}
+
+@media (max-width: 1180px){
+  .shell{grid-template-columns:200px minmax(0,1fr);max-width:1080px}
+  .shell > .side-col{display:none}
+  .m-trends{display:block;margin:24px 0}
+}
+@media (max-width: 880px){
+  .shell{grid-template-columns:1fr;padding:14px 16px 80px}
+  .shell > .toc-col{display:none}
+  .crumbs{padding:14px 16px 0}
+  .rel-grid{grid-template-columns:1fr 1fr}
+  .tool-cta{grid-template-columns:auto 1fr;gap:12px}
+  .tool-cta .btn{grid-column:1 / -1;justify-content:center;width:100%}
+  .big-cta{grid-template-columns:1fr}
+  .big-cta-btn{width:100%;justify-content:center}
+  .mfloat{display:flex}
+  body{padding-bottom:70px}
+}
+@media (max-width: 560px){
+  .nav-cta span{display:none}
+  h1.art-title{font-size:26px}
+  .art-sub{font-size:15px}
+  .body{font-size:16px;line-height:1.8}
+  .body h2{font-size:21px}
+  .rel-grid{grid-template-columns:1fr}
+}
+
+.theme-toggle .moon{display:none}
+:root[data-theme="dark"] .theme-toggle .sun{display:none}
+:root[data-theme="dark"] .theme-toggle .moon{display:block}
+</style>
+</head>
+<body data-screen-label="02 Article Detail">
+
+<div class="read-progress" id="progress"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="brand">
+      <span class="brand-mark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16M4 12h10M4 19h16"/></svg></span>
+      <span>티모집사 가이드</span>
+    </a>
+    <div class="nav-links">
+      <a href="/">도구 홈</a>
+      <a href="index.html" class="active">블로그</a>
+      <a href="index.html#cats">카테고리</a>
+      <a href="index.html#popular">인기 글</a>
+      <a href="index.html#latest">최신</a>
+    </div>
+    <div class="nav-right">
+      <button class="icon-btn theme-toggle" onclick="toggleTheme()" aria-label="테마 전환">
+        <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="/special-chars/pet-age-calc/" class="nav-cta">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        <span>도구 열기</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- BREADCRUMBS -->
+<div class="crumbs">
+  <a href="/">도구 홈</a><span class="sep">/</span>
+  <a href="index.html">가이드</a><span class="sep">/</span>
+  <a href="index.html#cats">고양이 건강 / 생활</a><span class="sep">/</span>
+  <span style="color:var(--text-2)">고양이 나이 계산</span>
+</div>
+
+<!-- SHELL -->
+<div class="shell">
+
+  <!-- LEFT: TOC -->
+  <aside class="toc-col" aria-label="목차">
+    <div class="toc-box" id="toc">
+      <h6>목차</h6>
+      <ul>
+        <li><a href="#s1" class="on">1. 7년 공식의 진실</a></li>
+        <li><a href="#s2">2. 고양이 생애 6단계</a></li>
+        <li><a href="#s2-1" class="sub">자묘기 (0~6개월)</a></li>
+        <li><a href="#s2-2" class="sub">청년기 (7개월~2년)</a></li>
+        <li><a href="#s2-3" class="sub">성묘기 (3~6년)</a></li>
+        <li><a href="#s2-4" class="sub">중·노·초고령기</a></li>
+        <li><a href="#s3">3. 사람 나이 환산표</a></li>
+        <li><a href="#s4">4. 자주 묻는 질문</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- CENTER: ARTICLE -->
+  <main class="main">
+
+    <span class="tag"><span class="dot"></span>고양이 건강 · 팩트체크</span>
+    <h1 class="art-title">고양이 나이 계산의 새로운 기준 — "1년 = 7년"이라는 거짓말</h1>
+    <p class="art-sub">AAFP 공식 가이드라인 기반으로 고양이 생애 6단계를 다시 정리하고, 우리집 묘의 진짜 사람 나이를 계산해봅니다. 노화 속도가 일정하다는 오해부터 풀어볼게요.</p>
+
+    <div class="art-meta">
+      <div class="author">
+        <div class="avatar">T</div>
+        <div>
+          <div style="font-weight:800;color:var(--text)">티모 스튜디오</div>
+          <div style="font-size:11.5px;color:var(--muted);font-weight:700">에디터 · AAFP 가이드 기반</div>
+        </div>
+      </div>
+      <span class="dot"></span>
+      <span>2026. 05. 18</span>
+      <span class="dot"></span>
+      <span>읽는데 약 6분</span>
+      <div class="share" aria-label="공유">
+        <button aria-label="링크 복사" title="링크 복사">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </button>
+        <button aria-label="저장" title="저장">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </button>
+        <button aria-label="공유" title="공유">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="art-hero" role="img" aria-label="고양이 가이드 이미지 placeholder">
+      <span class="cap">[ HERO IMAGE · 1600×900 — drop original photo here ]</span>
+    </div>
+
+    <!-- BODY -->
+    <article class="body">
+
+      <h2 id="s1">1. "동물의 1년 = 사람의 7년"이라는 공식이 틀린 이유</h2>
+      <p>우리 집 고양이가 사람 나이로 치면 몇 살쯤 되었을까? 반려인이라면 한 번쯤 해보는 생각입니다. 오랫동안 암묵적인 룰처럼 여겨졌던 <strong>'동물의 1년 = 사람의 7년'</strong>이라는 공식은 사실 과학적 근거가 전혀 없는 편의주의적인 발상에 불과합니다.</p>
+      <p>현대 수의학계, 특히 미국고양이수의사회(AAFP, American Association of Feline Practitioners)의 생애주기 가이드라인에 따르면, 고양이의 노화 속도는 일직선으로 진행되지 않습니다.</p>
+
+      <blockquote>
+        고양이의 생후 첫 2년은 인간의 24년과 맞먹을 정도로 극적인 성장이 일어납니다. 1년 차에 이미 15살 청소년기 수준의 신체 발달을 이루며, 2년 차에는 24살 청년기에 도달합니다.
+        <span class="src">— AAFP / AAHA Feline Life Stage Guidelines</span>
+      </blockquote>
+
+      <p>즉, 사람으로 치면 초고속 성장을 마친 뒤 3년 차부터 노화 속도가 안정화되어 <strong>1년마다 인간 나이 기준 4살씩 더해지는 구조</strong>로 변환되는 것입니다.</p>
+
+      <!-- INLINE TOOL CTA -->
+      <div class="tool-cta">
+        <div class="ic">🐾</div>
+        <div class="info">
+          <b>방금 읽은 공식으로 바로 계산해보기</b>
+          <span>생년월일만 넣으면 AAFP 기준 사람 나이와 생애 단계를 알려드려요.</span>
+        </div>
+        <a class="btn" href="/special-chars/pet-age-calc/">반려동물 나이 계산기 열기 →</a>
+      </div>
+
+      <h2 id="s2">2. 고양이 생애 6단계 (AAFP 기준)</h2>
+      <p>고양이의 생체 리듬은 나이에 따라 큰 변화를 맞이합니다. 나이대별로 요구되는 식단과 질병 관리 포인트를 짚어봅니다.</p>
+
+      <h3 id="s2-1">2.1. 자묘기 (Kitten, 0~6개월)</h3>
+      <p>사람 나이 <strong>0~10세</strong>. 골격과 뇌, 면역 체계가 폭발적으로 발달하는 시기입니다. 고열량 키튼 전용 사료와 철저한 백신 접종 가이드라인 준수가 필수적입니다.</p>
+
+      <h3 id="s2-2">2.2. 청년기 (Junior, 7개월~2년)</h3>
+      <p>사람 나이 <strong>12~24세</strong>. 성적 성숙이 완료되고 기본 성향이 자리 잡는 시기입니다. 전염성 질환에 가장 많이 노출되는 활동기이므로 잦은 스크래치와 물리적 사고를 주의해야 합니다.</p>
+
+      <div class="callout">
+        <div class="ic info">i</div>
+        <p><b>중성화 시점</b> — 청년기 초입(생후 6~9개월)이 일반적인 권장 시기지만, 품종·환경에 따라 4개월 조기 중성화가 권장되기도 합니다. 수의사 상담 후 결정하세요.</p>
+      </div>
+
+      <h3 id="s2-3">2.3. 성묘기 (Prime, 3~6년)</h3>
+      <p>사람 나이 <strong>28~40세</strong>. 신체적으로 가장 완성된 전성기입니다. 이 시기엔 비만이 가장 큰 적이 되므로 체형 관리(BCS 점수 확인)가 일주일 단위로 이루어져야 합니다.</p>
+
+      <h3 id="s2-4">2.4. 중년기·노묘기·초고령기</h3>
+      <p>7년 차부터는 매년 정기 건강검진이 권장되며, 11년 차 이후로는 관절·갑상선·신장 관리가 핵심으로 바뀝니다. 15년 차 이상은 삶의 질(QOL) 중심으로 환경을 다시 설계하세요.</p>
+
+      <!-- KEYPOINT TABLE -->
+      <h2 id="s3">3. 한눈에 보는 사람 나이 환산표</h2>
+      <p>아래 표는 AAFP 기준을 단순화한 빠른 참조용입니다. 정확한 환산은 도구로 계산하세요.</p>
+      <div class="keytable">
+        <div class="row"><b>1살</b><span>사람 나이 15세 · 청소년기</span></div>
+        <div class="row"><b>2살</b><span>사람 나이 24세 · 청년기</span></div>
+        <div class="row"><b>4살</b><span>사람 나이 32세 · 성묘 전성기</span></div>
+        <div class="row"><b>7살</b><span>사람 나이 44세 · 중년기 진입</span></div>
+        <div class="row"><b>10살</b><span>사람 나이 56세 · 정기 검진 필수</span></div>
+        <div class="row"><b>15살</b><span>사람 나이 76세 · 초고령기</span></div>
+      </div>
+
+      <div class="callout">
+        <div class="ic">!</div>
+        <p><b>주의</b> — 위 환산값은 일반 평균이며, 품종(러시안블루·메인쿤 등 대형묘는 노화가 다소 느림)·실내외 환경·기저 질환에 따라 ±2~3년 차이가 날 수 있습니다.</p>
+      </div>
+
+      <!-- INLINE TOOL CTA #2 -->
+      <div class="tool-cta">
+        <div class="ic">📊</div>
+        <div class="info">
+          <b>체중 관리도 함께 확인해보세요</b>
+          <span>BCS 9점 척도 시각 평가와 적정 체중 역산 — 30초.</span>
+        </div>
+        <a class="btn" href="/special-chars/pet-bmi-calc/">반려동물 체중 관리 →</a>
+      </div>
+
+      <!-- FAQ -->
+      <section class="faq" id="s4">
+        <h2>자주 묻는 질문</h2>
+        <div class="sub">가이드를 읽고 가장 많이 들어온 5가지 질문을 정리했습니다.</div>
+
+        <details open>
+          <summary>중성화 후에는 노화 속도가 달라지나요? <span class="chev">▾</span></summary>
+          <div class="ans">중성화 자체가 노화 속도를 바꾸지는 않습니다. 다만 호르몬 변화로 기초대사량이 감소하기 때문에 같은 사료량을 유지하면 비만으로 이어질 확률이 높아집니다. 중성화 직후 한 달 동안 사료량을 약 10~20% 줄이고 BCS로 체크하는 것을 권장합니다.</div>
+        </details>
+        <details>
+          <summary>실외묘와 실내묘의 사람 나이 환산이 다른가요? <span class="chev">▾</span></summary>
+          <div class="ans">생체 시계 자체는 동일하지만, 실외 생활 시 부상·감염·스트레스 등 위험 요인이 많아 기대 수명이 짧아지는 경향이 있습니다. AAFP 환산표는 실내묘 기준으로 작성됩니다.</div>
+        </details>
+        <details>
+          <summary>입양한 길고양이의 정확한 나이는 어떻게 추정하나요? <span class="chev">▾</span></summary>
+          <div class="ans">치아 마모도·홍채 변화·근육량을 종합 평가합니다. 정확도는 수의사 진료 시 가장 높으며, 가정에서는 어금니 색·잇몸 상태로 4단계(어린묘/성묘/노묘/초고령) 정도까지 추정할 수 있습니다.</div>
+        </details>
+        <details>
+          <summary>나이대에 따라 건강검진 주기는 어떻게 잡아야 하나요? <span class="chev">▾</span></summary>
+          <div class="ans">7세 전: 1년 1회, 7~10세: 1년 1~2회 (혈액검사 포함), 11세 이상: 1년 2회 + SDMA 신장 패널. 중성화 직후·식욕 변화·체중 변동 시에는 정기 일정과 별개로 즉시 진료 권장.</div>
+        </details>
+        <details>
+          <summary>고양이 나이 계산기는 어떤 공식을 쓰나요? <span class="chev">▾</span></summary>
+          <div class="ans">티모집사 도구는 AAFP의 6단계 생애주기 환산표를 기본으로 하며, 첫 2년은 비선형 가중치(1년 차 15세 / 2년 차 +9세)를 적용하고 3년 차부터 매년 +4세를 더하는 방식입니다.</div>
+        </details>
+      </section>
+
+      <!-- RELATED -->
+      <section class="related">
+        <h2>이어 읽으면 좋은 가이드</h2>
+        <div class="rel-grid">
+          <a href="article.html" class="rel">
+            <div class="thumb"><div class="ph-fill teal">CAT · BCS</div></div>
+            <div class="body">
+              <span class="tag" style="background:var(--teal-soft);color:#0e9f88">건강관리</span>
+              <h4>비만일까 원시주머니일까? 2025 최신 고양이 체중 관리</h4>
+              <div class="meta">닥터 티모 · 5분</div>
+            </div>
+          </a>
+          <a href="article.html" class="rel">
+            <div class="thumb"><div class="ph-fill teal">CAT · FOOD</div></div>
+            <div class="body">
+              <span class="tag" style="background:var(--teal-soft);color:#0e9f88">영양</span>
+              <h4>츄르 1일 권장량 — 신장 질환과의 숨겨진 연관성</h4>
+              <div class="meta">닥터 티모 · 4분</div>
+            </div>
+          </a>
+          <a href="article.html" class="rel">
+            <div class="thumb"><div class="ph-fill teal">CAT · DENTAL</div></div>
+            <div class="body">
+              <span class="tag" style="background:var(--teal-soft);color:#0e9f88">치아</span>
+              <h4>고양이 양치질 거부 사태, 보호자가 알아야 할 5가지</h4>
+              <div class="meta">객원 에디터 · 6분</div>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- BIG BOTTOM CTA -->
+      <div class="big-cta">
+        <div>
+          <h3>이 계산, 직접 해볼 시간</h3>
+          <p>방금 본 AAFP 기준을 적용한 무료 계산기로 우리집 고양이의 진짜 사람 나이를 확인하세요.</p>
+        </div>
+        <a class="big-cta-btn" href="/special-chars/pet-age-calc/">
+          반려동물 나이 계산기 열기
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <!-- mobile trends widget (visible only when right sidebar is collapsed) -->
+      <aside class="m-trends side-card">
+        <div class="h">
+          <h6><span class="pulse" aria-hidden="true"></span>지금 사람들이 찾는 고양이 키워드</h6>
+          <small>실시간</small>
+        </div>
+        <ol class="mini-trends" data-render="sidebar-trends" data-limit="5">
+          <li><span class="rk top">1</span><span class="kw">고양이 나이 계산</span><span class="ch ch-up">▲ 4</span></li>
+          <li><span class="rk top">2</span><span class="kw">고양이 BCS 측정법</span><span class="ch ch-new">NEW</span></li>
+          <li><span class="rk top">3</span><span class="kw">츄르 권장량 하루</span><span class="ch ch-up">▲ 12</span></li>
+          <li><span class="rk">4</span><span class="kw">고양이 양치질 거부</span><span class="ch ch-down">▼ 2</span></li>
+          <li><span class="rk">5</span><span class="kw">고양이 사료 급여량</span><span class="ch ch-up">▲ 1</span></li>
+        </ol>
+        <div class="side-foot"><a href="index.html">전체 랭킹 보기 →</a><small>매 10분 갱신</small></div>
+      </aside>
+
+    </article>
+  </main>
+
+  <!-- RIGHT SIDEBAR -->
+  <aside class="side-col" aria-label="사이드바">
+
+    <!-- Mini trends -->
+    <div class="side-card">
+      <div class="h">
+        <h6><span class="pulse" aria-hidden="true"></span>지금 사람들이 찾는<br>고양이 키워드</h6>
+        <small id="sideMeta">12:33</small>
+      </div>
+      <ol class="mini-trends" data-render="sidebar-trends" data-limit="7">
+        <li><span class="rk top">1</span><span class="kw">고양이 나이 계산</span><span class="ch ch-up">▲ 4</span></li>
+        <li><span class="rk top">2</span><span class="kw">고양이 BCS 측정법</span><span class="ch ch-new">NEW</span></li>
+        <li><span class="rk top">3</span><span class="kw">츄르 권장량 하루</span><span class="ch ch-up">▲ 12</span></li>
+        <li><span class="rk">4</span><span class="kw">고양이 양치질 거부</span><span class="ch ch-down">▼ 2</span></li>
+        <li><span class="rk">5</span><span class="kw">고양이 사료 급여량</span><span class="ch ch-up">▲ 1</span></li>
+        <li><span class="rk">6</span><span class="kw">신장 질환 증상</span><span class="ch ch-flat">—</span></li>
+        <li><span class="rk">7</span><span class="kw">원시주머니 vs 비만</span><span class="ch ch-new">NEW</span></li>
+      </ol>
+      <div class="side-foot">
+        <a href="index.html">전체 랭킹 →</a>
+        <small>매 10분 갱신</small>
+      </div>
+    </div>
+
+    <!-- Sidebar ad -->
+    <div class="side-ad">
+      <div class="label">사이드바 프로모션 영역</div>
+      300×250 / 300×600<br>반응형 광고 영역
+    </div>
+
+    <!-- Related tools -->
+    <div class="side-card">
+      <div class="h"><h6>이 글과 관련된 도구</h6></div>
+      <a href="/special-chars/pet-age-calc/" class="mini-tool">
+        <div class="ic teal">🐾</div>
+        <div><b>반려동물 나이 계산기</b><span>AAFP 기준 적용</span></div>
+        <span class="arr">→</span>
+      </a>
+      <a href="/special-chars/pet-bmi-calc/" class="mini-tool">
+        <div class="ic">⚖️</div>
+        <div><b>반려동물 체중 관리</b><span>BCS 9점 척도</span></div>
+        <span class="arr">→</span>
+      </a>
+      <a href="/special-chars/pet-food-calc/" class="mini-tool">
+        <div class="ic warn">🍖</div>
+        <div><b>사료 급여량 계산기</b><span>체중·활동량 기반</span></div>
+        <span class="arr">→</span>
+      </a>
+    </div>
+
+  </aside>
+</div>
+
+<!-- mobile floating CTA -->
+<a href="/special-chars/pet-age-calc/" class="mfloat">
+  <span class="ic">🐾</span>
+  <span>지금 우리 고양이 나이 계산하기</span>
+  <span class="arr">→</span>
+</a>
+
+<script src="app.js" defer></script>
+<script>
+function toggleTheme(){
+  var cur = document.documentElement.getAttribute('data-theme');
+  var next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try{ localStorage.setItem('theme', next); }catch(e){}
+}
+
+// reading progress
+(function(){
+  var bar = document.getElementById('progress');
+  function upd(){
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var p = max ? (h.scrollTop / max * 100) : 0;
+    bar.style.width = p + '%';
+  }
+  window.addEventListener('scroll', upd, {passive:true});
+  upd();
+})();
+
+// TOC active state on scroll
+(function(){
+  var links = document.querySelectorAll('#toc a');
+  var sections = Array.from(links).map(function(a){
+    return document.querySelector(a.getAttribute('href'));
+  });
+  function upd(){
+    var sy = window.scrollY + 120;
+    var cur = -1;
+    for(var i=0;i<sections.length;i++){
+      if(sections[i] && sections[i].offsetTop <= sy) cur = i;
+    }
+    links.forEach(function(l,i){ l.classList.toggle('on', i===cur); });
+  }
+  window.addEventListener('scroll', upd, {passive:true});
+  upd();
+})();
+
+// side meta timestamp
+(function(){
+  var d = new Date();
+  var pad = function(n){ return n<10? '0'+n : ''+n; };
+  var el = document.getElementById('sideMeta');
+  if(el) el.textContent = pad(d.getHours())+':'+pad(d.getMinutes());
+})();
+</script>
+</body>
+</html>

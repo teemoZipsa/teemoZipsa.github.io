@@ -9,6 +9,7 @@
   <url><loc>https://teemozipsa.github.io/en/about.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://teemozipsa.github.io/en/privacy.html</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
   <url><loc>https://teemozipsa.github.io/blog/</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://teemozipsa.github.io/blog/article.html</loc><changefreq>monthly</changefreq><priority>0.45</priority></url>
   <url><loc>https://teemozipsa.github.io/blog/cat-food-amount-guide/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
   <url><loc>https://teemozipsa.github.io/blog/kitten-feeding-guide/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
   <url><loc>https://teemozipsa.github.io/blog/senior-cat-health-check/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>

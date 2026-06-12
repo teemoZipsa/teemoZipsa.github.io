@@ -128,11 +128,9 @@
       var stroke = changeColor(it.change);
       var nb = it.change==='new' ? '<span class="nb">NEW</span>' : '';
       var topCls = it.rank <= 3 ? ' t' : '';
-      var map = resolve(it.keyword);
-      var href = map.article ? map.article.url : (map.tool ? map.tool.url : '#');
       return '<li class="ri'+topCls+'">'+
         '<span class="rk">'+ it.rank +'</span>'+
-        '<a class="kw" href="'+ escapeHTML(href) +'"><span>'+ escapeHTML(it.keyword) +'</span>'+ nb +'</a>'+
+        '<a class="kw" href="#"><span>'+ escapeHTML(it.keyword) +'</span>'+ nb +'</a>'+
         '<span class="spk"><svg viewBox="0 0 80 22" preserveAspectRatio="none">'+
           '<path d="'+ path +'" fill="none" stroke="'+ stroke +'" stroke-width="1.8" stroke-linecap="round"/>'+
         '</svg></span>'+
@@ -153,25 +151,20 @@
       var map = resolve(it.keyword);
       var art = map.article;
       var tool = map.tool;
-      if(!art && !tool) return '';
-      var title = art ? art.title : tool.name;
-      var url = art ? art.url : tool.url;
-      var summary = art ? art.summary : tool.desc;
-      var tag = art ? art.tag : '추천 도구';
-      var label = art ? (art.thumbnailLabel || art.tag || '') : 'TOOL';
-      var thumb = '<div class="ph-fill">'+ escapeHTML(label) +'</div>';
-      if(art && art.thumbnail){
+      if(!art) return '';
+      var thumb = '<div class="ph-fill">'+ escapeHTML(art.thumbnailLabel || art.tag || '') +'</div>';
+      if(art.thumbnail){
         thumb = '<img src="'+ escapeHTML(art.thumbnail) +'" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>';
       }
       var chCls = it.change==='new' ? 'new' : (it.change==='up' ? 'up' : '');
-      return '<a class="kw-card" href="'+ escapeHTML(url) +'">'+
+      return '<a class="kw-card" href="'+ escapeHTML(art.url) +'">'+
         '<div class="kw-hd"><span class="rk">#'+ it.rank +'</span><span class="kw">'+ escapeHTML(it.keyword) +'</span>'+
           '<span class="ch '+ chCls +'">'+ escapeHTML(changeLabel(it)) +'</span></div>'+
         '<div class="thumb">'+ thumb +'</div>'+
         '<div class="body">'+
-          '<span class="tag">'+ escapeHTML(tag || '') +'</span>'+
-          '<h3>'+ escapeHTML(title) +'</h3>'+
-          '<p>'+ escapeHTML(summary || '') +'</p>'+
+          '<span class="tag">'+ escapeHTML(art.tag || '') +'</span>'+
+          '<h3>'+ escapeHTML(art.title) +'</h3>'+
+          '<p>'+ escapeHTML(art.summary || '') +'</p>'+
         '</div>'+
         (tool
           ? '<div class="related-tool"><div class="ic">'+ escapeHTML(tool.icon||'') +'</div>'+
