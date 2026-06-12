@@ -1,51 +1,122 @@
 {
-  "last_updated": "2026-05-20T12:33:00+09:00",
-  "refresh_minutes": 10,
+  "last_updated": "2026-06-12T20:07:30+09:00",
+  "refresh_minutes": 60,
+  "source": "google_suggest_cat_keywords",
   "items": [
     {
       "keyword": "고양이 나이 계산",
       "rank": 1,
-      "previousRank": 5,
-      "change": "up",
-      "delta": 4,
-      "growth24h": "+312%",
-      "sparkline": [42, 40, 38, 35, 36, 30, 28, 22, 26, 16, 12, 8, 4]
+      "previousRank": 1,
+      "change": "flat",
+      "delta": 0,
+      "growth24h": "+2%",
+      "sparkline": [
+        19,
+        20,
+        24,
+        24,
+        20,
+        25,
+        21,
+        18,
+        20,
+        23,
+        19,
+        25,
+        22
+      ]
     },
     {
       "keyword": "고양이 BCS 측정법",
       "rank": 2,
-      "previousRank": null,
-      "change": "new",
+      "previousRank": 2,
+      "change": "flat",
       "delta": 0,
-      "growth24h": "+∞",
-      "sparkline": [20, 18, 12, 14, 8, 6, 2]
+      "growth24h": "+3%",
+      "sparkline": [
+        37,
+        42,
+        36,
+        38,
+        38,
+        40,
+        41,
+        38,
+        41,
+        40,
+        42,
+        37,
+        38
+      ]
     },
     {
       "keyword": "츄르 권장량 하루",
       "rank": 3,
-      "previousRank": 15,
-      "change": "up",
-      "delta": 12,
-      "growth24h": "+184%",
-      "sparkline": [16, 17, 14, 10, 12, 6, 3]
+      "previousRank": 3,
+      "change": "flat",
+      "delta": 0,
+      "growth24h": "+0%",
+      "sparkline": [
+        47,
+        40,
+        41,
+        44,
+        48,
+        42,
+        42,
+        46,
+        42,
+        40,
+        47,
+        44,
+        43
+      ]
     },
     {
       "keyword": "고양이 양치질 거부",
       "rank": 4,
-      "previousRank": 2,
-      "change": "down",
-      "delta": -2,
-      "growth24h": "-22%",
-      "sparkline": [4, 7, 10, 9, 12, 14, 16]
+      "previousRank": 4,
+      "change": "flat",
+      "delta": 0,
+      "growth24h": "+2%",
+      "sparkline": [
+        42,
+        43,
+        42,
+        43,
+        41,
+        38,
+        42,
+        42,
+        42,
+        40,
+        43,
+        42,
+        37
+      ]
     },
     {
       "keyword": "고양이 사료 급여량",
       "rank": 5,
-      "previousRank": 6,
-      "change": "up",
-      "delta": 1,
-      "growth24h": "+8%",
-      "sparkline": [14, 12, 13, 11, 10, 9, 8]
+      "previousRank": 5,
+      "change": "flat",
+      "delta": 0,
+      "growth24h": "+0%",
+      "sparkline": [
+        38,
+        30,
+        36,
+        30,
+        35,
+        36,
+        30,
+        35,
+        31,
+        31,
+        30,
+        32,
+        37
+      ]
     },
     {
       "keyword": "고양이 신장 질환 증상",
@@ -53,44 +124,114 @@
       "previousRank": 6,
       "change": "flat",
       "delta": 0,
-      "growth24h": "+1%",
-      "sparkline": [11, 10, 12, 11, 10, 11, 11]
+      "growth24h": "+0%",
+      "sparkline": [
+        47,
+        44,
+        40,
+        47,
+        41,
+        43,
+        46,
+        41,
+        44,
+        43,
+        40,
+        41,
+        43
+      ]
     },
     {
       "keyword": "원시주머니 vs 비만",
       "rank": 7,
+      "previousRank": 7,
+      "change": "flat",
+      "delta": 0,
+      "growth24h": "+0%",
+      "sparkline": [
+        23,
+        25,
+        22,
+        27,
+        27,
+        26,
+        27,
+        23,
+        26,
+        21,
+        23,
+        24,
+        20
+      ]
+    },
+    {
+      "keyword": "고양이 나이 사람 나이",
+      "rank": 8,
       "previousRank": null,
       "change": "new",
       "delta": 0,
       "growth24h": "+∞",
-      "sparkline": [20, 19, 15, 13, 10, 7, 4]
+      "sparkline": [
+        20,
+        22,
+        20,
+        24,
+        26,
+        27,
+        31,
+        31,
+        34,
+        34,
+        38,
+        39,
+        47
+      ]
+    },
+    {
+      "keyword": "고양이 나이",
+      "rank": 9,
+      "previousRank": null,
+      "change": "new",
+      "delta": 0,
+      "growth24h": "+∞",
+      "sparkline": [
+        34,
+        37,
+        36,
+        37,
+        36,
+        37,
+        42,
+        42,
+        44,
+        46,
+        50,
+        53,
+        52
+      ]
     },
     {
       "keyword": "다묘 가정 사료",
-      "rank": 8,
-      "previousRank": 11,
-      "change": "up",
-      "delta": 3,
-      "growth24h": "+24%",
-      "sparkline": [14, 12, 13, 11, 10, 9, 7]
-    },
-    {
-      "keyword": "고양이 발톱 정리 주기",
-      "rank": 9,
-      "previousRank": 4,
-      "change": "down",
-      "delta": -5,
-      "growth24h": "-41%",
-      "sparkline": [6, 8, 11, 12, 14, 15, 17]
-    },
-    {
-      "keyword": "노묘 건강검진 항목",
       "rank": 10,
-      "previousRank": 12,
-      "change": "up",
-      "delta": 2,
-      "growth24h": "+12%",
-      "sparkline": [12, 11, 10, 11, 9, 8, 7]
+      "previousRank": 8,
+      "change": "down",
+      "delta": -2,
+      "growth24h": "-20%",
+      "sparkline": [
+        46,
+        57,
+        47,
+        44,
+        44,
+        41,
+        44,
+        43,
+        36,
+        36,
+        33,
+        32,
+        32
+      ]
     }
   ]
 }
