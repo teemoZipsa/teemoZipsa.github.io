@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-17T20:15:31+09:00",
+  "last_updated": "2026-06-18T00:59:24+09:00",
   "refresh_minutes": 60,
   "source": "google_suggest_cat_keywords",
   "items": [
@@ -211,26 +211,26 @@
       ]
     },
     {
-      "keyword": "다묘 가정 사료",
+      "keyword": "고양이 나이 계산기",
       "rank": 10,
-      "previousRank": 10,
-      "change": "flat",
+      "previousRank": null,
+      "change": "new",
       "delta": 0,
-      "growth24h": "+2%",
+      "growth24h": "+∞",
       "sparkline": [
-        31,
-        27,
-        30,
-        28,
-        34,
-        33,
-        35,
-        33,
-        35,
-        27,
-        34,
-        32,
-        29
+        38,
+        37,
+        43,
+        43,
+        39,
+        43,
+        47,
+        49,
+        51,
+        53,
+        57,
+        59,
+        60
       ]
     }
   ]
