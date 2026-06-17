@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-18T00:59:24+09:00",
+  "last_updated": "2026-06-18T03:30:23+09:00",
   "refresh_minutes": 60,
   "source": "google_suggest_cat_keywords",
   "items": [
@@ -213,24 +213,24 @@
     {
       "keyword": "고양이 나이 계산기",
       "rank": 10,
-      "previousRank": null,
-      "change": "new",
+      "previousRank": 10,
+      "change": "flat",
       "delta": 0,
-      "growth24h": "+∞",
+      "growth24h": "+2%",
       "sparkline": [
-        38,
+        41,
+        40,
         37,
+        41,
         43,
+        41,
+        44,
+        38,
         43,
-        39,
-        43,
-        47,
-        49,
-        51,
-        53,
-        57,
-        59,
-        60
+        40,
+        37,
+        37,
+        41
       ]
     }
   ]
