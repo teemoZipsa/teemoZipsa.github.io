@@ -6,7 +6,7 @@ import urllib.request
 from datetime import datetime, timedelta, timezone
 
 OUTPUT_FILE = "blog/data/trends.json"
-REFRESH_MINUTES = 60
+REFRESH_MINUTES = 360
 
 SUGGEST_URL = "https://suggestqueries.google.com/complete/search"
 CAT_SEEDS = [
@@ -59,13 +59,18 @@ def fetch_suggestions(seed):
     return data[1] if len(data) > 1 and isinstance(data[1], list) else []
 
 
-def load_previous_ranks():
+def load_previous_data():
     try:
         with open(OUTPUT_FILE, "r", encoding="utf-8") as f:
-            data = json.load(f)
+            return json.load(f)
     except FileNotFoundError:
         return {}
     except json.JSONDecodeError:
+        return {}
+
+
+def load_previous_ranks(data):
+    if not isinstance(data, dict):
         return {}
 
     ranks = {}
@@ -165,7 +170,8 @@ def build_items(keywords, previous):
 
 
 def fetch_trends():
-    previous = load_previous_ranks()
+    previous_data = load_previous_data()
+    previous = load_previous_ranks(previous_data)
     keywords = collect_keywords()
     if len(keywords) < 10:
         for keyword in PINNED_KEYWORDS:
@@ -174,12 +180,21 @@ def fetch_trends():
             if len(keywords) >= 10:
                 break
 
+    items = build_items(keywords[:10], previous)
     output_data = {
         "last_updated": now_kst().isoformat(timespec="seconds"),
         "refresh_minutes": REFRESH_MINUTES,
         "source": "google_suggest_cat_keywords",
-        "items": build_items(keywords[:10], previous),
+        "items": items,
     }
+
+    if (
+        previous_data.get("refresh_minutes") == REFRESH_MINUTES
+        and previous_data.get("source") == output_data["source"]
+        and previous_data.get("items") == items
+    ):
+        print(f"No trend changes; leaving {OUTPUT_FILE} untouched")
+        return
 
     os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:

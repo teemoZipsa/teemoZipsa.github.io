@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-06-19T08:01:32+09:00",
-  "refresh_minutes": 60,
+  "last_updated": "2026-06-19T09:51:46+09:00",
+  "refresh_minutes": 360,
   "source": "google_suggest_cat_keywords",
   "items": [
     {
@@ -165,32 +165,9 @@
       ]
     },
     {
-      "keyword": "고양이 나이 사람 나이",
+      "keyword": "고양이 나이",
       "rank": 8,
       "previousRank": 8,
-      "change": "flat",
-      "delta": 0,
-      "growth24h": "+3%",
-      "sparkline": [
-        26,
-        24,
-        19,
-        26,
-        22,
-        27,
-        24,
-        21,
-        24,
-        19,
-        20,
-        19,
-        27
-      ]
-    },
-    {
-      "keyword": "고양이 나이",
-      "rank": 9,
-      "previousRank": 9,
       "change": "flat",
       "delta": 0,
       "growth24h": "+3%",
@@ -212,8 +189,8 @@
     },
     {
       "keyword": "고양이 나이 계산기",
-      "rank": 10,
-      "previousRank": 10,
+      "rank": 9,
+      "previousRank": 9,
       "change": "flat",
       "delta": 0,
       "growth24h": "+2%",
@@ -231,6 +208,29 @@
         37,
         37,
         41
+      ]
+    },
+    {
+      "keyword": "고양이 나이 사람 나이",
+      "rank": 10,
+      "previousRank": 10,
+      "change": "flat",
+      "delta": 0,
+      "growth24h": "+3%",
+      "sparkline": [
+        26,
+        24,
+        19,
+        26,
+        22,
+        27,
+        24,
+        21,
+        24,
+        19,
+        20,
+        19,
+        27
       ]
     }
   ]

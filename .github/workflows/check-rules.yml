@@ -3,8 +3,16 @@ name: Check Code Rules
 on:
   push:
     branches: [ "main", "master" ]
+    paths-ignore:
+      - "**/*.md"
+      - "blog/data/trends.json"
   pull_request:
     branches: [ "main", "master" ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   check-rules:
