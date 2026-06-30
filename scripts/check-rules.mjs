@@ -23,6 +23,10 @@ function isToolPage(file) {
   return relative.startsWith('special-chars/') && path.basename(file).toLowerCase() === 'index.html';
 }
 
+function hasNoindex(content) {
+  return /<meta\s+[^>]*(?:name|property)=["']robots["'][^>]*content=["'][^"']*noindex/i.test(content);
+}
+
 function findFilesByExt(dir, extList, ignoreDirs = ['node_modules', 'dist', '.git', '.github']) {
   let results = [];
   if (!fs.existsSync(dir)) return results;
@@ -113,7 +117,7 @@ if (!alignItemsFound) {
 }
 
 
-// 4. sitemap에 모든 도구가 올바르게 등록되어 있는지 검사
+// 4. sitemap에 색인 대상 도구만 올바르게 등록되어 있는지 검사
 const sitemapFile = findFileByName(targetDir, 'sitemap.xml') || findFileByName(targetDir, 'sitemap.ts');
 
 if (sitemapFile) {
@@ -125,17 +129,28 @@ if (sitemapFile) {
 
   if (toolPages.length > 0) {
     let missingSitemapTools = 0;
+    let noindexTools = 0;
     toolPages.forEach(page => {
       const routePath = '/' + rel(path.dirname(page)) + '/';
+      const sitemapLoc = `<loc>https://teemozipsa.github.io${routePath}</loc>`;
+      const content = fs.readFileSync(page, 'utf8');
+      if (hasNoindex(content)) {
+        noindexTools++;
+        if (sitemapContent.includes(sitemapLoc)) {
+          logError(`noindex 페이지: '${routePath}'가 사이트맵(${path.basename(sitemapFile)})에 포함되어 있습니다.`);
+          missingSitemapTools++;
+        }
+        return;
+      }
       
-      if (!sitemapContent.includes(routePath)) {
+      if (!sitemapContent.includes(sitemapLoc)) {
         logError(`페이지: '${routePath}'가 사이트맵(${path.basename(sitemapFile)})에 누락되었습니다.`);
         missingSitemapTools++;
       }
     });
 
     if (missingSitemapTools === 0) {
-      logSuccess(`총 ${toolPages.length}개의 주요 파일/도구 페이지가 모두 사이트맵에 정상 등록되어 있습니다.`);
+      logSuccess(`색인 대상 도구 페이지가 사이트맵에 정상 등록되어 있습니다. (${toolPages.length - noindexTools}개 index, ${noindexTools}개 noindex)`);
     }
   } else {
       console.warn('⚠️ 검사할 도구 페이지 컴포넌트를 찾지 못했습니다.');

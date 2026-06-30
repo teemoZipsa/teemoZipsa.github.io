@@ -128,9 +128,11 @@
       var stroke = changeColor(it.change);
       var nb = it.change==='new' ? '<span class="nb">NEW</span>' : '';
       var topCls = it.rank <= 3 ? ' t' : '';
+      var map = resolve(it.keyword);
+      var href = (map.article && map.article.url) || (map.tool && map.tool.url) || '/blog/';
       return '<li class="ri'+topCls+'">'+
         '<span class="rk">'+ it.rank +'</span>'+
-        '<a class="kw" href="#"><span>'+ escapeHTML(it.keyword) +'</span>'+ nb +'</a>'+
+        '<a class="kw" href="'+ escapeHTML(href) +'"><span>'+ escapeHTML(it.keyword) +'</span>'+ nb +'</a>'+
         '<span class="spk"><svg viewBox="0 0 80 22" preserveAspectRatio="none">'+
           '<path d="'+ path +'" fill="none" stroke="'+ stroke +'" stroke-width="1.8" stroke-linecap="round"/>'+
         '</svg></span>'+
@@ -279,7 +281,7 @@
     });
   }
 
-  // Resolve base path so /blog/, /blog/index.html, /blog/article.html, and
+  // Resolve base path so /blog/, /blog/index.html, and
   // /blog/<slug>/index.html all find the same data/ folder.
   function dataBase(){
     var path = location.pathname.replace(/\/+$/,'/');

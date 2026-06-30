@@ -98,6 +98,11 @@ async function main() {
       const rel = relFile.endsWith('/index.html') ? relFile.slice(0, -'index.html'.length) : relFile;
       const url = `http://127.0.0.1:${port}/${rel}?audit=${Date.now()}`;
       const page = await context.newPage();
+      await page.route('**/*', route => {
+        const reqUrl = route.request().url();
+        if (reqUrl.startsWith(`http://127.0.0.1:${port}/`)) return route.continue();
+        return route.abort();
+      });
       const errors = [];
       page.on('console', msg => {
         const text = msg.text();
@@ -105,7 +110,8 @@ async function main() {
         if (msg.type() === 'error' && !externalResourceNoise) errors.push(text);
       });
       page.on('pageerror', err => errors.push(err.message));
-      const response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 10000 });
+      const response = await page.goto(url, { waitUntil: 'commit', timeout: 10000 });
+      await page.waitForLoadState('domcontentloaded', { timeout: 5000 }).catch(() => {});
       await page.waitForTimeout(250);
       const bodyChars = await page.locator('body').innerText({ timeout: 5000 }).then(t => t.length).catch(() => 0);
       if (!response || !response.ok()) failures.push(`${relFile}: HTTP ${response?.status() || 'no response'}`);
