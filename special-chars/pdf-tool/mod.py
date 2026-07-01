@@ -1,7 +1,8 @@
 import os
 import re
+from pathlib import Path
 
-file_path = r"c:\Users\arasoftGJ_01\MyProjects\teemoZipsa\special-chars\pdf-tool\index.html"
+file_path = Path(__file__).resolve().with_name("index.html")
 
 with open(file_path, "r", encoding="utf-8") as f:
     html_content = f.read()

@@ -1,6 +1,7 @@
 const fs = require('fs');
-const path = 'c:/Users/arasoftGJ_01/MyProjects/teemoZipsa/special-chars/pdf-tool/index.html';
-let text = fs.readFileSync(path, 'utf-8');
+const path = require('path');
+const filePath = path.join(__dirname, 'pdf-tool', 'index.html');
+let text = fs.readFileSync(filePath, 'utf-8');
 
 // 1. CSS
 const oldCss = `.guide-section{background:var(--bg-bar);border-radius:10px;margin:0 16px 12px;font-size:14px;overflow:hidden}
@@ -256,5 +257,5 @@ text = text.replace(/document\.getElementById\('wmAngle'\)\.value = \-45;[\r\n]+
   showToast('초기화 완료');
 }`);
 
-fs.writeFileSync(path, text, 'utf-8');
+fs.writeFileSync(filePath, text, 'utf-8');
 console.log('Success');

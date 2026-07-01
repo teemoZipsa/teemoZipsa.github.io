@@ -1,7 +1,8 @@
 import os
 import re
+from pathlib import Path
 
-file_path = r"c:\Users\arasoftGJ_01\MyProjects\teemoZipsa\special-chars\en\pdf-tool\index.html"
+file_path = Path(__file__).resolve().parents[1] / "en" / "pdf-tool" / "index.html"
 
 with open(file_path, "r", encoding="utf-8") as f:
     html_content = f.read()
