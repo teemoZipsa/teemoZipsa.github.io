@@ -5,9 +5,6 @@
   <url><loc>https://teemozipsa.github.io/privacy.html</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
   <url><loc>https://teemozipsa.github.io/contact.html</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
   <url><loc>https://teemozipsa.github.io/editorial-policy.html</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
-  <url><loc>https://teemozipsa.github.io/en/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://teemozipsa.github.io/en/about.html</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
-  <url><loc>https://teemozipsa.github.io/en/privacy.html</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
   <url><loc>https://teemozipsa.github.io/blog/</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://teemozipsa.github.io/blog/broker-fee-rent-guide/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
   <url><loc>https://teemozipsa.github.io/blog/business-day-count-guide/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
@@ -28,38 +25,17 @@
   <url><loc>https://teemozipsa.github.io/blog/senior-cat-health-check/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
   <url><loc>https://teemozipsa.github.io/blog/vat-inclusive-exclusive-guide/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
   <url><loc>https://teemozipsa.github.io/special-chars/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
+  <url><loc>https://teemozipsa.github.io/special-chars/percent-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
+  <url><loc>https://teemozipsa.github.io/special-chars/loan-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
+  <url><loc>https://teemozipsa.github.io/special-chars/discount-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
+  <url><loc>https://teemozipsa.github.io/special-chars/bmi-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
+  <url><loc>https://teemozipsa.github.io/special-chars/biz-day-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
+  <url><loc>https://teemozipsa.github.io/special-chars/broker-fee-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
+  <url><loc>https://teemozipsa.github.io/special-chars/image-compress/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
   <url><loc>https://teemozipsa.github.io/special-chars/bg-remover/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
   <url><loc>https://teemozipsa.github.io/special-chars/calorie-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
   <url><loc>https://teemozipsa.github.io/special-chars/compound-interest/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
   <url><loc>https://teemozipsa.github.io/special-chars/date-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/avg-price/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/base64-tool/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/bg-remover/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/bmi-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/calorie-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/compound-interest/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/date-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/emoji-mixer/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/gpa-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/image-compress/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/image-format-converter/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/loan-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/lotto-gen/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/music-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/my-ip/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/password-gen/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/pdf-tool/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/percent-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/pet-age-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/pet-bmi-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/pet-food-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/prompt-gen/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/qr-code/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/server-time/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/speech-timer/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/sub-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/utm-builder/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
-  <url><loc>https://teemozipsa.github.io/special-chars/en/wage-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
   <url><loc>https://teemozipsa.github.io/special-chars/password-gen/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
   <url><loc>https://teemozipsa.github.io/special-chars/pdf-tool/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
   <url><loc>https://teemozipsa.github.io/special-chars/pet-food-calc/</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>

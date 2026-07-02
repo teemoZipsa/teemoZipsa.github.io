@@ -398,7 +398,6 @@ function renderArticle(article) {
         <h2>${escapeHtml(heading)}</h2>
         ${paragraphs.map((p) => `<p>${escapeHtml(p)}</p>`).join('\n        ')}
       `).join('\n');
-  const intentText = (article.keywords || []).slice(0, 3).join(', ');
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -483,11 +482,6 @@ function renderArticle(article) {
   <article>
     <div class="note"><strong>먼저 확인하세요.</strong> 이 글은 ${escapeHtml(today)} 기준으로 정리한 생활 정보입니다. 건강·금융·부동산 관련 내용은 교육용 참고 자료이며, 실제 진단·계약·세무 처리는 전문가나 공식 기관 기준을 확인해야 합니다.</div>
     ${body}
-    <h2>검색 의도에 맞게 쓰는 방법</h2>
-    <p>이 글은 ${escapeHtml(intentText)}처럼 실제 사용자가 자주 찾는 질문을 기준으로 정리했습니다. 단순히 공식 하나만 외우기보다, 먼저 내 상황이 어떤 조건에 해당하는지 확인하고 그 조건에 맞는 입력값을 넣는 것이 중요합니다.</p>
-    <p>${escapeHtml(tool.name)}를 사용할 때는 결과 숫자만 보지 말고 입력값, 기준일, 적용 대상, 제외해야 할 예외를 함께 확인하세요. 특히 기준이 바뀔 수 있는 주제는 글의 작성일과 도구 안의 안내 문구를 같이 보는 편이 안전합니다.</p>
-    <p>계산 결과가 기대와 다르면 먼저 단위, 반올림 방식, 포함·제외 규칙을 점검하세요. 그래도 차이가 크다면 공식 출처나 기관 기준을 다시 확인하고, 오류가 의심되는 경우 <a href="/contact.html">정정 제보</a>로 알려주시면 검토 후 반영합니다.</p>
-    <p>비슷한 주제를 여러 번 검색하고 있다면 결과를 한 번만 보고 끝내지 말고, 입력값을 바꿔가며 범위를 확인해 보세요. 최솟값과 최댓값, 일반적인 경우와 예외적인 경우를 함께 비교하면 도구 결과를 더 현실적으로 해석할 수 있습니다.</p>
     <h2>바로 써볼 수 있는 체크포인트</h2>
     ${renderList(article.examples)}
     <section class="tool-card">
@@ -498,7 +492,7 @@ function renderArticle(article) {
       <a href="${escapeHtml(tool.url)}">도구 열기</a>
     </section>
     ${faqHtml ? `<section class="faq"><h2>자주 묻는 질문</h2>${faqHtml}</section>` : ''}
-    <section class="sources"><h2>기준과 참고</h2>${sourceList}<p>계산식이 포함된 도구는 별도 검산 fixture로 회귀 검사를 진행합니다.</p></section>
+    <section class="sources"><h2>기준과 참고</h2>${sourceList}</section>
     <nav class="related" aria-label="관련 링크">
       <a href="/blog/">블로그 홈</a>
       <a href="${escapeHtml(tool.url)}">${escapeHtml(tool.name)}</a>
