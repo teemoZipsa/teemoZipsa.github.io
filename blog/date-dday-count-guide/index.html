@@ -14,8 +14,8 @@
   <meta property="og:description" content="기념일, 수험일, 프로젝트 마감일 계산에서 가장 많이 헷갈리는 초일 산입 규칙입니다.">
   <meta property="og:url" content="https://teemozipsa.github.io/blog/date-dday-count-guide/">
   <meta property="og:type" content="article">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"디데이 계산 — 오늘을 1일로 셀지 0일로 셀지 먼저 정하세요","description":"기념일, 수험일, 프로젝트 마감일 계산에서 가장 많이 헷갈리는 초일 산입 규칙입니다.","author":{"@type":"Organization","name":"티모집사 편집팀"},"publisher":{"@type":"Organization","name":"티모집사"},"datePublished":"2026-06-10","dateModified":"2026-05-27","mainEntityOfPage":"https://teemozipsa.github.io/blog/date-dday-count-guide/"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"왜 다른 사이트와 하루 차이가 나나요?","acceptedAnswer":{"@type":"Answer","text":"시작일 포함 여부가 다르기 때문인 경우가 많습니다."}}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"디데이 계산 — 오늘을 1일로 셀지 0일로 셀지 먼저 정하세요","description":"기념일, 수험일, 프로젝트 마감일 계산에서 가장 많이 헷갈리는 초일 산입 규칙입니다.","author":{"@type":"Organization","name":"티모집사 편집팀"},"publisher":{"@type":"Organization","name":"티모집사"},"datePublished":"2026-06-10","dateModified":"2026-07-02","mainEntityOfPage":"https://teemozipsa.github.io/blog/date-dday-count-guide/"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"다른 사이트와 하루 차이가 나는 이유가 뭔가요?","acceptedAnswer":{"@type":"Answer","text":"시작일 포함 여부(초일 산입) 설정이 다르기 때문인 경우가 대부분입니다. 같은 설정으로 맞추면 결과도 일치합니다."}},{"@type":"Question","name":"100일 기념일은 어떻게 계산하나요?","acceptedAnswer":{"@type":"Answer","text":"사귄 날을 1일로 세는 초일 산입이 일반적인 관행입니다. 시작일에 99일을 더한 날짜가 100일째가 됩니다."}}]}</script>
 <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
     *{box-sizing:border-box} body{margin:0;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,'Noto Sans KR',sans-serif;background:var(--bg-body);color:var(--text-secondary);line-height:1.75}
@@ -39,6 +39,10 @@
     .related{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}.related a{border:1px solid var(--border);border-radius:999px;padding:9px 13px;color:var(--text-primary);text-decoration:none;font-weight:800;background:var(--bg-card)}
     footer{border-top:1px solid var(--border);padding:34px 20px;text-align:center;color:var(--text-muted);font-size:14px}
     @media(max-width:640px){.tool-card{grid-template-columns:1fr}.tool-card a{width:100%}.hero-label{min-height:140px;font-size:22px}}
+    article table{width:100%;border-collapse:collapse;margin:14px 0 26px;font-size:15px;line-height:1.6}
+    article th,article td{border:1px solid var(--border);padding:9px 11px;text-align:left;vertical-align:top}
+    article th{background:var(--bg-hover);color:var(--text-primary);font-weight:800}
+
   </style>
 </head>
 <body>
@@ -53,26 +57,40 @@
     <span class="tag">D-Day</span>
     <span>2026-06-10</span>
     <span>티모집사 편집팀</span>
+    <span>2026-07-02 업데이트</span>
   </div>
   <h1>디데이 계산 — 오늘을 1일로 셀지 0일로 셀지 먼저 정하세요</h1>
   <p class="summary">기념일, 수험일, 프로젝트 마감일 계산에서 가장 많이 헷갈리는 초일 산입 규칙입니다.</p>
   <div class="hero-label">D-DAY</div>
   <article>
-    <div class="note"><strong>먼저 확인하세요.</strong> 이 글은 2026-05-27 기준으로 정리한 생활 정보입니다. 건강·금융·부동산 관련 내용은 교육용 참고 자료이며, 실제 진단·계약·세무 처리는 전문가나 공식 기관 기준을 확인해야 합니다.</div>
-    
-        <h2>초일 산입이 결과를 바꿉니다</h2>
-        <p>오늘을 1일차로 세면 결과가 하나 커지고, 오늘을 제외하면 일반적인 날짜 차이에 가까워집니다. 어느 방식이 맞는지는 사용 상황에 따라 다릅니다.</p>
-      
+    <div class="note"><strong>먼저 확인하세요.</strong> 날짜 계산은 "오늘을 며칠째로 볼 것인가"라는 규칙에 따라 결과가 하루 달라집니다. 법적 기한이 걸린 계산은 해당 기관의 산정 기준이 우선입니다.</div>
 
-        <h2>기념일과 마감일</h2>
-        <p>연애 100일처럼 기념일은 시작일을 1일로 보는 경우가 많습니다. 반대로 프로젝트 마감까지 남은 일수는 오늘을 제외하고 계산하는 경우가 많습니다.</p>
-      
+    <h2>오늘을 세는 순간 하루가 달라집니다</h2>
+    <p>민법의 기본 원칙은 <strong>초일 불산입</strong>, 즉 첫날은 세지 않는 것입니다(민법 제157조). 하지만 일상에서는 반대 관행이 흔합니다. 연인들의 "사귄 지 100일"은 사귄 날을 1일로 치는 초일 산입 방식이 일반적입니다.</p>
+    <p>예를 들어 7월 2일에 만나기 시작했다면 — 첫날을 1일로 세면 100일 기념일은 <strong>10월 9일</strong>, 첫날을 빼고 세면 <strong>10월 10일</strong>입니다. 다른 계산기와 하루 차이가 난다면 십중팔구 이 규칙이 다른 것입니다.</p>
 
-        <h2>달력 기준과 시간 기준</h2>
-        <p>날짜 계산은 시각을 버리고 달력 날짜만 보는 경우가 많습니다. 정확한 시간 차이가 필요하면 시간대와 시각까지 포함해야 합니다.</p>
-      
-<h2>바로 써볼 수 있는 체크포인트</h2>
-    <ul><li>오늘부터 7일 뒤와 7일째 되는 날은 다를 수 있습니다.</li><li>생일 D-Day는 날짜 기준이면 충분합니다.</li><li>해외 일정은 시간대 차이를 확인합니다.</li></ul>
+    <h2>D-Day 표기와 날짜 차이</h2>
+    <p>D-Day 표기는 목표일을 D-0으로 두고 남은 날을 셉니다. 오늘이 7월 2일이고 목표일이 12월 31일이면 남은 날수는 182일, 즉 <strong>D-182</strong>입니다. 이 계산은 시각(몇 시인지)을 버리고 달력 날짜만 비교하는 것이 표준입니다. 밤 11시든 아침 7시든 같은 날이면 같은 D-Day입니다.</p>
+
+    <h2>상황별로 쓰는 규칙이 다릅니다</h2>
+    <table>
+      <thead><tr><th>상황</th><th>관행적인 규칙</th></tr></thead>
+      <tbody>
+        <tr><td>기념일 (100일, 1000일)</td><td>초일 산입 — 시작일이 1일</td></tr>
+        <tr><td>수험 D-Day, 마감일</td><td>초일 불산입 — 남은 날만 셈</td></tr>
+        <tr><td>생후 일수</td><td>태어난 날을 1일로 세는 경우가 많음</td></tr>
+        <tr><td>계약·법정 기한</td><td>원칙은 초일 불산입, 단 계약서 문구가 우선</td></tr>
+      </tbody>
+    </table>
+    <p>재직일수, 민원 처리 기한, 소송 기간처럼 권리나 돈이 걸린 날짜는 관행이 아니라 해당 기관·계약서의 산정 기준을 따라야 합니다. <a href="/special-chars/date-calc/">날짜/D-Day 계산기</a>에는 초일 산입 체크박스가 있어 두 방식을 바로 비교할 수 있습니다.</p>
+
+    <h2>헷갈림을 줄이는 요령</h2>
+    <ul>
+      <li>"7일 뒤"와 "7일째 되는 날"은 다를 수 있다는 것을 기억하세요.</li>
+      <li>해외 일정은 시간대가 다르면 날짜 자체가 달라질 수 있습니다.</li>
+      <li>매년 반복되는 기념일은 첫해에 정한 규칙을 기록해두는 것이 최선입니다.</li>
+    </ul>
+  
     <section class="tool-card">
       <div>
         <h2>📅 날짜/D-Day 계산기</h2>
@@ -80,8 +98,8 @@
       </div>
       <a href="/special-chars/date-calc/">도구 열기</a>
     </section>
-    <section class="faq"><h2>자주 묻는 질문</h2><details><summary>왜 다른 사이트와 하루 차이가 나나요?</summary><p>시작일 포함 여부가 다르기 때문인 경우가 많습니다.</p></details></section>
-    <section class="sources"><h2>기준과 참고</h2><ul><li>티모집사 날짜 계산 규칙</li></ul></section>
+    <section class="faq"><h2>자주 묻는 질문</h2><details><summary>다른 사이트와 하루 차이가 나는 이유가 뭔가요?</summary><p>시작일 포함 여부(초일 산입) 설정이 다르기 때문인 경우가 대부분입니다. 같은 설정으로 맞추면 결과도 일치합니다.</p></details><details><summary>100일 기념일은 어떻게 계산하나요?</summary><p>사귄 날을 1일로 세는 초일 산입이 일반적인 관행입니다. 시작일에 99일을 더한 날짜가 100일째가 됩니다.</p></details></section>
+    <section class="sources"><h2>기준과 참고</h2><ul><li>민법 제157조 (기간의 기산점 — 초일 불산입 원칙)</li></ul></section>
     <nav class="related" aria-label="관련 링크">
       <a href="/blog/">블로그 홈</a>
       <a href="/special-chars/date-calc/">날짜/D-Day 계산기</a>

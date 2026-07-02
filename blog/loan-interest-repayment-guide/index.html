@@ -14,8 +14,8 @@
   <meta property="og:description" content="대출 상환 방식별 월 납입액, 총이자, 초반 부담 차이를 계산 예시로 설명합니다.">
   <meta property="og:url" content="https://teemozipsa.github.io/blog/loan-interest-repayment-guide/">
   <meta property="og:type" content="article">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"원리금균등·원금균등 차이 — 월 납입액만 보면 놓치는 것","description":"대출 상환 방식별 월 납입액, 총이자, 초반 부담 차이를 계산 예시로 설명합니다.","author":{"@type":"Organization","name":"티모집사 편집팀"},"publisher":{"@type":"Organization","name":"티모집사"},"datePublished":"2026-06-08","dateModified":"2026-05-27","mainEntityOfPage":"https://teemozipsa.github.io/blog/loan-interest-repayment-guide/"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"계산기 월 납입액과 은행 표가 다를 수 있나요?","acceptedAnswer":{"@type":"Answer","text":"원 단위 처리, 실행일, 첫 이자 기간 때문에 차이가 날 수 있습니다."}}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"원리금균등·원금균등 차이 — 월 납입액만 보면 놓치는 것","description":"대출 상환 방식별 월 납입액, 총이자, 초반 부담 차이를 계산 예시로 설명합니다.","author":{"@type":"Organization","name":"티모집사 편집팀"},"publisher":{"@type":"Organization","name":"티모집사"},"datePublished":"2026-06-08","dateModified":"2026-07-02","mainEntityOfPage":"https://teemozipsa.github.io/blog/loan-interest-repayment-guide/"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"총이자가 가장 적은 방식은 무엇인가요?","acceptedAnswer":{"@type":"Answer","text":"같은 금리·기간이면 원금균등상환입니다. 원금이 가장 빨리 줄기 때문입니다. 다만 초반 월 납입액이 커서 현금 흐름 부담과 함께 비교해야 합니다."}},{"@type":"Question","name":"계산기 월 납입액과 은행 상환표가 왜 다른가요?","acceptedAnswer":{"@type":"Answer","text":"대출 실행일에 따른 첫 이자 기간의 일할 계산, 원 단위 반올림 처리, 상품별 우대금리 적용 방식 때문에 수백 원 수준의 차이가 날 수 있습니다. 구조 비교용으로는 계산기를, 확정 금액은 은행 상환예정표를 보세요."}},{"@type":"Question","name":"중도상환을 계획 중이면 어떤 방식이 유리한가요?","acceptedAnswer":{"@type":"Answer","text":"조기 상환 시점의 남은 원금이 작을수록 이자 절감 효과가 큽니다. 원금균등은 잔액이 빨리 줄어드는 구조라 중도상환수수료 조건이 같다면 조합이 자연스럽습니다."}}]}</script>
 <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
     *{box-sizing:border-box} body{margin:0;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,'Noto Sans KR',sans-serif;background:var(--bg-body);color:var(--text-secondary);line-height:1.75}
@@ -39,6 +39,10 @@
     .related{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}.related a{border:1px solid var(--border);border-radius:999px;padding:9px 13px;color:var(--text-primary);text-decoration:none;font-weight:800;background:var(--bg-card)}
     footer{border-top:1px solid var(--border);padding:34px 20px;text-align:center;color:var(--text-muted);font-size:14px}
     @media(max-width:640px){.tool-card{grid-template-columns:1fr}.tool-card a{width:100%}.hero-label{min-height:140px;font-size:22px}}
+    article table{width:100%;border-collapse:collapse;margin:14px 0 26px;font-size:15px;line-height:1.6}
+    article th,article td{border:1px solid var(--border);padding:9px 11px;text-align:left;vertical-align:top}
+    article th{background:var(--bg-hover);color:var(--text-primary);font-weight:800}
+
   </style>
 </head>
 <body>
@@ -53,26 +57,39 @@
     <span class="tag">대출</span>
     <span>2026-06-08</span>
     <span>티모집사 편집팀</span>
+    <span>2026-07-02 업데이트</span>
   </div>
   <h1>원리금균등·원금균등 차이 — 월 납입액만 보면 놓치는 것</h1>
   <p class="summary">대출 상환 방식별 월 납입액, 총이자, 초반 부담 차이를 계산 예시로 설명합니다.</p>
   <div class="hero-label">LOAN</div>
   <article>
-    <div class="note"><strong>먼저 확인하세요.</strong> 이 글은 2026-05-27 기준으로 정리한 생활 정보입니다. 건강·금융·부동산 관련 내용은 교육용 참고 자료이며, 실제 진단·계약·세무 처리는 전문가나 공식 기관 기준을 확인해야 합니다.</div>
-    
-        <h2>월 납입액의 모양이 다릅니다</h2>
-        <p>원리금균등은 매달 비슷한 금액을 내도록 설계됩니다. 원금균등은 원금을 매달 같은 금액으로 갚기 때문에 초반 납입액이 크고 시간이 갈수록 줄어듭니다.</p>
-      
+    <div class="note"><strong>먼저 확인하세요.</strong> 이 글의 계산 예시는 2026-07-02 기준 교육용 시뮬레이션입니다. 실제 대출은 금융기관이 제공하는 상환예정표와 계약 조건(금리 유형, 수수료)이 우선합니다.</div>
 
-        <h2>총이자 차이</h2>
-        <p>조건이 같다면 원금이 더 빨리 줄어드는 방식이 총이자를 줄이는 데 유리할 수 있습니다. 하지만 초반 현금 흐름 부담도 함께 봐야 합니다.</p>
-      
+    <h2>세 가지 상환 방식, 구조가 다릅니다</h2>
+    <p><strong>원리금균등</strong>은 매달 내는 금액(원금+이자)이 만기까지 같도록 설계된 방식입니다. <strong>원금균등</strong>은 원금을 매달 같은 액수로 갚고 이자는 남은 원금에만 붙기 때문에, 납입액이 처음에 크고 갈수록 줄어듭니다. <strong>만기일시</strong>는 기간 내내 이자만 내다가 만기에 원금을 한 번에 갚습니다.</p>
 
-        <h2>반올림 규칙</h2>
-        <p>실제 금융기관 상환표는 원 단위 처리와 마지막 회차 잔차 처리 방식이 있습니다. 계산기는 비교용으로 보고, 계약 전에는 금융기관 상환 예정표를 확인하세요.</p>
-      
-<h2>바로 써볼 수 있는 체크포인트</h2>
-    <ul><li>초반 부담이 낮아야 하면 원리금균등을 많이 봅니다.</li><li>총이자 절감을 우선하면 원금균등도 비교합니다.</li><li>중도상환수수료는 별도 조건입니다.</li></ul>
+    <h2>같은 조건으로 비교 — 3,000만 원, 연 4%, 3년</h2>
+    <table>
+      <thead><tr><th>상환 방식</th><th>월 납입액</th><th>총이자</th></tr></thead>
+      <tbody>
+        <tr><td>원리금균등</td><td>매달 885,720원</td><td>1,885,904원</td></tr>
+        <tr><td>원금균등</td><td>첫 달 933,333원 → 마지막 달 836,111원</td><td>1,850,000원</td></tr>
+        <tr><td>만기일시</td><td>매달 100,000원 (만기에 원금 3,000만 원)</td><td>3,600,000원</td></tr>
+      </tbody>
+    </table>
+    <p>원금균등의 총이자가 원리금균등보다 35,904원 적습니다. 원금이 더 빨리 줄어들어 이자가 붙는 대상 자체가 작아지기 때문입니다. 반대로 만기일시는 3년 내내 원금 3,000만 원 전체에 이자가 붙어 총이자가 두 배 가까이 됩니다.</p>
+
+    <h2>총이자만 보면 놓치는 것</h2>
+    <p>표만 보면 원금균등이 정답 같지만, 첫 달 납입액이 원리금균등보다 약 48,000원 많습니다. 대출 초기에 지출이 몰려 있는 상황(이사, 인테리어 등)이라면 이 차이가 부담이 될 수 있습니다. 매달 고정된 금액으로 가계부를 관리하고 싶다면 원리금균등이, 초반 여유가 있고 총비용을 줄이고 싶다면 원금균등이 맞는 선택에 가깝습니다. 만기일시는 만기에 목돈이 확실히 들어오는 경우(전세보증금 회수 등)가 아니라면 이자 부담이 큽니다.</p>
+
+    <h2>계약 전 확인 목록</h2>
+    <ul>
+      <li>금리가 <strong>고정인지 변동인지</strong> — 변동금리면 위 표의 숫자는 기준금리 변화에 따라 달라집니다.</li>
+      <li><strong>중도상환수수료</strong> 면제 시점 — 여유 자금으로 조기 상환할 계획이 있다면 총이자 계산이 달라집니다.</li>
+      <li>실행일과 첫 회차 이자의 <strong>일할 계산</strong> — 계산기와 은행 상환표가 다른 가장 흔한 이유입니다.</li>
+      <li>은행 상환예정표의 원 단위 처리 — 마지막 회차에서 잔차를 정리하는 방식이 기관마다 다릅니다.</li>
+    </ul>
+  
     <section class="tool-card">
       <div>
         <h2>🏦 대출이자 계산기</h2>
@@ -80,8 +97,8 @@
       </div>
       <a href="/special-chars/loan-calc/">도구 열기</a>
     </section>
-    <section class="faq"><h2>자주 묻는 질문</h2><details><summary>계산기 월 납입액과 은행 표가 다를 수 있나요?</summary><p>원 단위 처리, 실행일, 첫 이자 기간 때문에 차이가 날 수 있습니다.</p></details></section>
-    <section class="sources"><h2>기준과 참고</h2><ul><li>티모집사 대출 검산 fixture</li></ul></section>
+    <section class="faq"><h2>자주 묻는 질문</h2><details><summary>총이자가 가장 적은 방식은 무엇인가요?</summary><p>같은 금리·기간이면 원금균등상환입니다. 원금이 가장 빨리 줄기 때문입니다. 다만 초반 월 납입액이 커서 현금 흐름 부담과 함께 비교해야 합니다.</p></details><details><summary>계산기 월 납입액과 은행 상환표가 왜 다른가요?</summary><p>대출 실행일에 따른 첫 이자 기간의 일할 계산, 원 단위 반올림 처리, 상품별 우대금리 적용 방식 때문에 수백 원 수준의 차이가 날 수 있습니다. 구조 비교용으로는 계산기를, 확정 금액은 은행 상환예정표를 보세요.</p></details><details><summary>중도상환을 계획 중이면 어떤 방식이 유리한가요?</summary><p>조기 상환 시점의 남은 원금이 작을수록 이자 절감 효과가 큽니다. 원금균등은 잔액이 빨리 줄어드는 구조라 중도상환수수료 조건이 같다면 조합이 자연스럽습니다.</p></details></section>
+    <section class="sources"><h2>기준과 참고</h2><ul><li>은행연합회 소비자포털 — 대출금리 비교 공시</li><li>각 금융기관 상환예정표 (확정 금액 기준)</li></ul></section>
     <nav class="related" aria-label="관련 링크">
       <a href="/blog/">블로그 홈</a>
       <a href="/special-chars/loan-calc/">대출이자 계산기</a>

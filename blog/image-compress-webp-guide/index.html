@@ -14,8 +14,8 @@
   <meta property="og:description" content="블로그·쇼핑몰·문서 업로드 전에 이미지 품질과 용량을 함께 맞추는 실전 기준입니다.">
   <meta property="og:url" content="https://teemozipsa.github.io/blog/image-compress-webp-guide/">
   <meta property="og:type" content="article">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"이미지 용량 줄이기 — JPG, PNG, WebP를 언제 써야 할까","description":"블로그·쇼핑몰·문서 업로드 전에 이미지 품질과 용량을 함께 맞추는 실전 기준입니다.","author":{"@type":"Organization","name":"티모집사 편집팀"},"publisher":{"@type":"Organization","name":"티모집사"},"datePublished":"2026-06-11","dateModified":"2026-05-27","mainEntityOfPage":"https://teemozipsa.github.io/blog/image-compress-webp-guide/"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"무조건 WebP가 좋은가요?","acceptedAnswer":{"@type":"Answer","text":"대부분 웹에서는 유리하지만, 호환성이나 편집 목적에 따라 JPG/PNG가 더 편할 수 있습니다."}}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"이미지 용량 줄이기 — JPG, PNG, WebP를 언제 써야 할까","description":"블로그·쇼핑몰·문서 업로드 전에 이미지 품질과 용량을 함께 맞추는 실전 기준입니다.","author":{"@type":"Organization","name":"티모집사 편집팀"},"publisher":{"@type":"Organization","name":"티모집사"},"datePublished":"2026-06-11","dateModified":"2026-07-02","mainEntityOfPage":"https://teemozipsa.github.io/blog/image-compress-webp-guide/"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"무조건 WebP로 바꾸는 게 좋은가요?","acceptedAnswer":{"@type":"Answer","text":"웹 게시용이라면 대체로 유리하지만, 오래된 프로그램에서 열거나 편집할 파일이라면 JPG/PNG가 무난합니다. 인쇄소 입고용은 요구 포맷을 따르세요."}},{"@type":"Question","name":"압축했더니 글자가 흐려졌어요.","acceptedAnswer":{"@type":"Answer","text":"글자·선이 많은 이미지는 손실 압축에 취약합니다. 품질 값을 올리거나 PNG(무손실)로 저장하고, 리사이즈로 용량을 줄이는 쪽을 먼저 시도하세요."}}]}</script>
 <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
     *{box-sizing:border-box} body{margin:0;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,'Noto Sans KR',sans-serif;background:var(--bg-body);color:var(--text-secondary);line-height:1.75}
@@ -39,6 +39,10 @@
     .related{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}.related a{border:1px solid var(--border);border-radius:999px;padding:9px 13px;color:var(--text-primary);text-decoration:none;font-weight:800;background:var(--bg-card)}
     footer{border-top:1px solid var(--border);padding:34px 20px;text-align:center;color:var(--text-muted);font-size:14px}
     @media(max-width:640px){.tool-card{grid-template-columns:1fr}.tool-card a{width:100%}.hero-label{min-height:140px;font-size:22px}}
+    article table{width:100%;border-collapse:collapse;margin:14px 0 26px;font-size:15px;line-height:1.6}
+    article th,article td{border:1px solid var(--border);padding:9px 11px;text-align:left;vertical-align:top}
+    article th{background:var(--bg-hover);color:var(--text-primary);font-weight:800}
+
   </style>
 </head>
 <body>
@@ -53,26 +57,42 @@
     <span class="tag">이미지</span>
     <span>2026-06-11</span>
     <span>티모집사 편집팀</span>
+    <span>2026-07-02 업데이트</span>
   </div>
   <h1>이미지 용량 줄이기 — JPG, PNG, WebP를 언제 써야 할까</h1>
   <p class="summary">블로그·쇼핑몰·문서 업로드 전에 이미지 품질과 용량을 함께 맞추는 실전 기준입니다.</p>
   <div class="hero-label">IMG · WEBP</div>
   <article>
-    <div class="note"><strong>먼저 확인하세요.</strong> 이 글은 2026-05-27 기준으로 정리한 생활 정보입니다. 건강·금융·부동산 관련 내용은 교육용 참고 자료이며, 실제 진단·계약·세무 처리는 전문가나 공식 기관 기준을 확인해야 합니다.</div>
-    
-        <h2>포맷 선택이 먼저입니다</h2>
-        <p>사진은 JPG나 WebP가 유리하고, 투명 배경이 필요한 이미지는 PNG나 WebP를 봐야 합니다. 스크린샷은 글자 선명도가 중요하므로 과한 압축을 피하세요.</p>
-      
+    <div class="note"><strong>먼저 확인하세요.</strong> 압축 수치는 이미지 내용에 따라 달라지는 일반적인 경향입니다. 인쇄·인화용 원본은 압축본과 별도로 보관하세요.</div>
 
-        <h2>크기와 품질을 나눠 조정하기</h2>
-        <p>가로 4000px 이미지를 그대로 올리면 압축률을 높여도 무겁습니다. 먼저 실제 표시 크기에 맞게 리사이즈하고, 그 다음 품질을 조정하는 순서가 좋습니다.</p>
-      
+    <h2>포맷부터 고르는 것이 순서입니다</h2>
+    <table>
+      <thead><tr><th>포맷</th><th>강점</th><th>이런 경우에</th></tr></thead>
+      <tbody>
+        <tr><td>JPG</td><td>사진 압축 효율, 어디서나 열림</td><td>일반 사진, 호환성이 중요한 곳</td></tr>
+        <tr><td>PNG</td><td>무손실, 투명 배경</td><td>로고, 스크린샷, 글자가 많은 이미지</td></tr>
+        <tr><td>WebP</td><td>같은 품질에서 JPG보다 대체로 작음, 투명도 지원</td><td>웹 업로드 전반</td></tr>
+      </tbody>
+    </table>
+    <p>사진을 PNG로 저장하면 용량이 몇 배로 커지고, 글자가 많은 스크린샷을 JPG로 강하게 압축하면 글자 주변이 뭉개집니다. "사진은 JPG/WebP, 그림·스크린샷은 PNG/WebP"만 기억해도 대부분의 실수를 피할 수 있습니다.</p>
 
-        <h2>개인정보와 로컬 처리</h2>
-        <p>주민등록증, 계약서, 내부 문서 이미지는 서버 업로드형 도구보다 브라우저 로컬 처리 도구가 안전합니다. 티모집사 이미지 도구는 브라우저에서 처리하는 것을 원칙으로 합니다.</p>
-      
-<h2>바로 써볼 수 있는 체크포인트</h2>
-    <ul><li>블로그 본문 이미지는 긴 변 1200~1600px로도 충분한 경우가 많습니다.</li><li>투명 로고는 PNG 또는 WebP를 확인합니다.</li><li>압축 후 글자가 흐리면 품질을 올립니다.</li></ul>
+    <h2>순서는 리사이즈 → 품질 → 포맷</h2>
+    <p>스마트폰 원본은 가로 4,000px이 넘는 경우가 많습니다. 블로그 본문처럼 실제 표시 폭이 800px 남짓인 곳에 원본을 그대로 올리면, 압축률을 아무리 높여도 무겁습니다. 가로 4,000px을 1,600px로 줄이면 픽셀 수가 84% 줄어들어, 품질을 건드리기 전에 이미 용량이 크게 떨어집니다. 그다음 품질(퀄리티) 값을 75~85 사이에서 조정하는 것이 화질과 용량의 균형점입니다.</p>
+
+    <h2>용도별 권장 설정</h2>
+    <table>
+      <thead><tr><th>용도</th><th>긴 변 크기</th><th>품질</th></tr></thead>
+      <tbody>
+        <tr><td>블로그·게시판 본문</td><td>1,200~1,600px</td><td>75~85</td></tr>
+        <tr><td>프로필·썸네일</td><td>400~800px</td><td>80</td></tr>
+        <tr><td>문서 첨부·이메일</td><td>1,000~1,400px</td><td>70~80</td></tr>
+        <tr><td>인쇄·보관용</td><td>원본 유지</td><td>압축하지 않음</td></tr>
+      </tbody>
+    </table>
+
+    <h2>민감한 사진일수록 로컬 처리</h2>
+    <p>신분증, 계약서, 진료 기록처럼 민감한 이미지를 서버 업로드형 압축 사이트에 올리는 것은 피하는 편이 좋습니다. <a href="/special-chars/image-compress/">티모집사 이미지 압축기</a>는 브라우저 안에서만 처리하고 서버로 전송하지 않는 방식이라, 민감한 파일도 기기 밖으로 나가지 않습니다.</p>
+  
     <section class="tool-card">
       <div>
         <h2>🗜️ 이미지 압축기</h2>
@@ -80,8 +100,8 @@
       </div>
       <a href="/special-chars/image-compress/">도구 열기</a>
     </section>
-    <section class="faq"><h2>자주 묻는 질문</h2><details><summary>무조건 WebP가 좋은가요?</summary><p>대부분 웹에서는 유리하지만, 호환성이나 편집 목적에 따라 JPG/PNG가 더 편할 수 있습니다.</p></details></section>
-    <section class="sources"><h2>기준과 참고</h2><ul><li>티모집사 이미지 도구 운영 기준</li></ul></section>
+    <section class="faq"><h2>자주 묻는 질문</h2><details><summary>무조건 WebP로 바꾸는 게 좋은가요?</summary><p>웹 게시용이라면 대체로 유리하지만, 오래된 프로그램에서 열거나 편집할 파일이라면 JPG/PNG가 무난합니다. 인쇄소 입고용은 요구 포맷을 따르세요.</p></details><details><summary>압축했더니 글자가 흐려졌어요.</summary><p>글자·선이 많은 이미지는 손실 압축에 취약합니다. 품질 값을 올리거나 PNG(무손실)로 저장하고, 리사이즈로 용량을 줄이는 쪽을 먼저 시도하세요.</p></details></section>
+    <section class="sources"><h2>기준과 참고</h2><ul><li>이미지 포맷별 압축 방식 (손실/무손실) 일반 원리</li></ul></section>
     <nav class="related" aria-label="관련 링크">
       <a href="/blog/">블로그 홈</a>
       <a href="/special-chars/image-compress/">이미지 압축기</a>

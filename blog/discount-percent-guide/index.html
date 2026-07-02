@@ -14,8 +14,8 @@
   <meta property="og:description" content="쇼핑 가격 비교에서 할인, 쿠폰, 적립, 부가세를 같은 기준으로 환산하는 방법입니다.">
   <meta property="og:url" content="https://teemozipsa.github.io/blog/discount-percent-guide/">
   <meta property="og:type" content="article">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"할인율 계산 — 20% 할인과 20% 적립은 같은 혜택이 아닙니다","description":"쇼핑 가격 비교에서 할인, 쿠폰, 적립, 부가세를 같은 기준으로 환산하는 방법입니다.","author":{"@type":"Organization","name":"티모집사 편집팀"},"publisher":{"@type":"Organization","name":"티모집사"},"datePublished":"2026-06-07","dateModified":"2026-05-27","mainEntityOfPage":"https://teemozipsa.github.io/blog/discount-percent-guide/"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"최저가 비교는 무엇을 기준으로 하나요?","acceptedAnswer":{"@type":"Answer","text":"실제 결제금액에서 즉시 사용 가능한 혜택만 먼저 반영하는 편이 안전합니다."}}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"할인율 계산 — 20% 할인과 20% 적립은 같은 혜택이 아닙니다","description":"쇼핑 가격 비교에서 할인, 쿠폰, 적립, 부가세를 같은 기준으로 환산하는 방법입니다.","author":{"@type":"Organization","name":"티모집사 편집팀"},"publisher":{"@type":"Organization","name":"티모집사"},"datePublished":"2026-06-07","dateModified":"2026-07-02","mainEntityOfPage":"https://teemozipsa.github.io/blog/discount-percent-guide/"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"30% 할인에 20% 쿠폰을 겹치면 50% 할인인가요?","acceptedAnswer":{"@type":"Answer","text":"아닙니다. 두 번째 할인은 이미 할인된 금액에 적용되므로 0.7 × 0.8 = 0.56, 즉 44% 할인입니다."}},{"@type":"Question","name":"최저가 비교는 무엇을 기준으로 하나요?","acceptedAnswer":{"@type":"Answer","text":"배송비를 포함한 실제 결제 금액에서, 즉시 적용되는 혜택만 반영한 값이 가장 안전한 비교 기준입니다. 적립·캐시백은 조건부 가치로 따로 계산하세요."}}]}</script>
 <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
     *{box-sizing:border-box} body{margin:0;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,'Noto Sans KR',sans-serif;background:var(--bg-body);color:var(--text-secondary);line-height:1.75}
@@ -39,6 +39,10 @@
     .related{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}.related a{border:1px solid var(--border);border-radius:999px;padding:9px 13px;color:var(--text-primary);text-decoration:none;font-weight:800;background:var(--bg-card)}
     footer{border-top:1px solid var(--border);padding:34px 20px;text-align:center;color:var(--text-muted);font-size:14px}
     @media(max-width:640px){.tool-card{grid-template-columns:1fr}.tool-card a{width:100%}.hero-label{min-height:140px;font-size:22px}}
+    article table{width:100%;border-collapse:collapse;margin:14px 0 26px;font-size:15px;line-height:1.6}
+    article th,article td{border:1px solid var(--border);padding:9px 11px;text-align:left;vertical-align:top}
+    article th{background:var(--bg-hover);color:var(--text-primary);font-weight:800}
+
   </style>
 </head>
 <body>
@@ -53,26 +57,47 @@
     <span class="tag">할인율</span>
     <span>2026-06-07</span>
     <span>티모집사 편집팀</span>
+    <span>2026-07-02 업데이트</span>
   </div>
   <h1>할인율 계산 — 20% 할인과 20% 적립은 같은 혜택이 아닙니다</h1>
   <p class="summary">쇼핑 가격 비교에서 할인, 쿠폰, 적립, 부가세를 같은 기준으로 환산하는 방법입니다.</p>
   <div class="hero-label">DISCOUNT</div>
   <article>
-    <div class="note"><strong>먼저 확인하세요.</strong> 이 글은 2026-05-27 기준으로 정리한 생활 정보입니다. 건강·금융·부동산 관련 내용은 교육용 참고 자료이며, 실제 진단·계약·세무 처리는 전문가나 공식 기관 기준을 확인해야 합니다.</div>
-    
-        <h2>할인과 적립을 구분하세요</h2>
-        <p>20% 할인은 결제금액을 바로 줄이지만, 20% 적립은 다음 구매에서만 가치가 생깁니다. 같은 퍼센트라도 현금 흐름이 다릅니다.</p>
-      
+    <div class="note"><strong>먼저 확인하세요.</strong> 이 글의 금액 예시는 원 단위 반올림 기준입니다. 쇼핑몰마다 쿠폰 적용 순서와 정산 규칙이 다르므로 최종 결제 화면의 금액이 항상 기준입니다.</div>
 
-        <h2>중복 쿠폰의 순서</h2>
-        <p>정률 할인과 정액 쿠폰이 같이 있을 때 적용 순서가 결과를 바꿉니다. 쇼핑몰은 보통 자체 규칙이 있으므로 최종 결제 단계 금액을 기준으로 비교해야 합니다.</p>
-      
+    <h2>할인 계산의 세 가지 공식</h2>
+    <ul>
+      <li>할인가 = 정가 × (1 − 할인율) &nbsp;예: 50,000원의 20% 할인 → 50,000 × 0.8 = 40,000원</li>
+      <li>할인율 = (정가 − 판매가) ÷ 정가 × 100 &nbsp;예: 50,000원 → 42,500원이면 15% 할인</li>
+      <li>정가 역산 = 판매가 ÷ (1 − 할인율) &nbsp;예: 20% 할인가가 40,000원이면 원래 가격은 40,000 ÷ 0.8 = 50,000원</li>
+    </ul>
+    <p>세 번째 역산이 가장 자주 틀립니다. 40,000원에 20%를 "다시 더하면" 48,000원이 나오는데, 이는 원가(50,000원)와 2,000원이나 차이 나는 잘못된 값입니다.</p>
 
-        <h2>VAT와 배송비</h2>
-        <p>사업자 구매나 견적 비교에서는 부가세 포함 여부와 배송비를 따로 봐야 합니다. 할인율만 높아도 총액은 더 비쌀 수 있습니다.</p>
-      
-<h2>바로 써볼 수 있는 체크포인트</h2>
-    <ul><li>10만원의 20% 할인은 8만원 결제입니다.</li><li>8만원 결제 후 2만원 적립은 현금 할인과 다릅니다.</li><li>배송비 무료 조건도 총액에 포함해 비교합니다.</li></ul>
+    <h2>쿠폰 두 장, 적용 순서로 1,000원 차이</h2>
+    <p>정가 59,000원 상품에 20% 할인 쿠폰과 5,000원 상품권이 있다고 해봅시다.</p>
+    <table>
+      <thead><tr><th>적용 순서</th><th>계산</th><th>최종 결제액</th></tr></thead>
+      <tbody>
+        <tr><td>정률(20%) 먼저</td><td>59,000 × 0.8 = 47,200 → − 5,000</td><td><strong>42,200원</strong></td></tr>
+        <tr><td>정액(5,000원) 먼저</td><td>59,000 − 5,000 = 54,000 → × 0.8</td><td>43,200원</td></tr>
+      </tbody>
+    </table>
+    <p>퍼센트 쿠폰을 먼저 적용하는 쪽이 소비자에게 1,000원 유리합니다. 정액 쿠폰을 먼저 빼면 퍼센트 할인이 작아진 금액에만 적용되기 때문입니다. 다만 적용 순서는 쇼핑몰이 자체 규칙으로 고정해두는 경우가 대부분이라, 어느 쪽인지는 최종 결제 단계에서 확인하는 수밖에 없습니다.</p>
+
+    <h2>20% 할인과 20% 적립은 다른 혜택입니다</h2>
+    <p>할인은 지금 결제액을 바로 줄여주지만, 적립은 다음 구매를 해야만 가치가 생기고 유효기간이 지나면 소멸하기도 합니다. 같은 퍼센트라면 즉시 할인이 항상 유리하고, 적립은 "그 쇼핑몰에서 반드시 재구매할 금액"만큼만 가치로 계산하는 편이 현실적입니다.</p>
+
+    <h2>중복 할인의 착시</h2>
+    <p>"30% 할인 + 추가 20% 쿠폰"은 50% 할인이 아닙니다. 0.7 × 0.8 = 0.56이므로 실제로는 44% 할인입니다. 마찬가지로 10% 내렸다가 10% 올리면 제자리가 아니라 원가의 99%가 됩니다. 퍼센트는 더하는 것이 아니라 곱해서 확인해야 합니다.</p>
+
+    <h2>최저가 비교 체크리스트</h2>
+    <ul>
+      <li>배송비를 더한 <strong>총 지불액</strong>으로 비교하기</li>
+      <li>카드사 청구할인은 결제 수단이 맞을 때만 반영하기</li>
+      <li>적립금·포인트는 즉시 할인과 분리해서 평가하기</li>
+      <li>사업자 구매라면 부가세 포함가인지 공급가액인지 확인하기</li>
+    </ul>
+  
     <section class="tool-card">
       <div>
         <h2>🏷️ 할인/부가세 계산기</h2>
@@ -80,8 +105,8 @@
       </div>
       <a href="/special-chars/discount-calc/">도구 열기</a>
     </section>
-    <section class="faq"><h2>자주 묻는 질문</h2><details><summary>최저가 비교는 무엇을 기준으로 하나요?</summary><p>실제 결제금액에서 즉시 사용 가능한 혜택만 먼저 반영하는 편이 안전합니다.</p></details></section>
-    <section class="sources"><h2>기준과 참고</h2><ul><li>티모집사 금액 검산 fixture</li></ul></section>
+    <section class="faq"><h2>자주 묻는 질문</h2><details><summary>30% 할인에 20% 쿠폰을 겹치면 50% 할인인가요?</summary><p>아닙니다. 두 번째 할인은 이미 할인된 금액에 적용되므로 0.7 × 0.8 = 0.56, 즉 44% 할인입니다.</p></details><details><summary>최저가 비교는 무엇을 기준으로 하나요?</summary><p>배송비를 포함한 실제 결제 금액에서, 즉시 적용되는 혜택만 반영한 값이 가장 안전한 비교 기준입니다. 적립·캐시백은 조건부 가치로 따로 계산하세요.</p></details></section>
+    <section class="sources"><h2>기준과 참고</h2><ul><li>할인율·역산 공식 (기초 산술)</li><li>각 쇼핑몰 쿠폰 이용약관 (적용 순서 규정)</li></ul></section>
     <nav class="related" aria-label="관련 링크">
       <a href="/blog/">블로그 홈</a>
       <a href="/special-chars/discount-calc/">할인/부가세 계산기</a>

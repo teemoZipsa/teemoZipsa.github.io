@@ -14,8 +14,8 @@
   <meta property="og:description" content="시작일 포함 여부가 결과를 바꿉니다. 업무 마감일을 계산할 때 확인할 규칙입니다.">
   <meta property="og:url" content="https://teemozipsa.github.io/blog/business-day-count-guide/">
   <meta property="og:type" content="article">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"영업일 계산법 — 오늘부터 5영업일 후와 두 날짜 사이는 다릅니다","description":"시작일 포함 여부가 결과를 바꿉니다. 업무 마감일을 계산할 때 확인할 규칙입니다.","author":{"@type":"Organization","name":"티모집사 편집팀"},"publisher":{"@type":"Organization","name":"티모집사"},"datePublished":"2026-06-04","dateModified":"2026-05-27","mainEntityOfPage":"https://teemozipsa.github.io/blog/business-day-count-guide/"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"토요일은 영업일인가요?","acceptedAnswer":{"@type":"Answer","text":"일반적인 은행·관공서 기준에서는 영업일로 보지 않습니다. 업종별로 다를 수 있습니다."}}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"영업일 계산법 — 오늘부터 5영업일 후와 두 날짜 사이는 다릅니다","description":"시작일 포함 여부가 결과를 바꿉니다. 업무 마감일을 계산할 때 확인할 규칙입니다.","author":{"@type":"Organization","name":"티모집사 편집팀"},"publisher":{"@type":"Organization","name":"티모집사"},"datePublished":"2026-06-04","dateModified":"2026-07-02","mainEntityOfPage":"https://teemozipsa.github.io/blog/business-day-count-guide/"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"토요일은 영업일인가요?","acceptedAnswer":{"@type":"Answer","text":"은행·관공서 기준으로는 영업일이 아닙니다. 다만 택배나 일부 서비스업은 토요일에도 운영하므로, 어느 쪽 달력을 쓰는 계산인지가 먼저입니다."}},{"@type":"Question","name":"임시공휴일도 자동으로 반영되나요?","acceptedAnswer":{"@type":"Answer","text":"정기 공휴일과 확정된 대체공휴일은 미리 계산할 수 있지만, 정부가 수시로 지정하는 임시공휴일은 발표 후에야 반영됩니다. 중요한 기한이라면 해당 연도 공고를 확인하세요."}}]}</script>
 <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
     *{box-sizing:border-box} body{margin:0;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,'Noto Sans KR',sans-serif;background:var(--bg-body);color:var(--text-secondary);line-height:1.75}
@@ -39,6 +39,10 @@
     .related{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}.related a{border:1px solid var(--border);border-radius:999px;padding:9px 13px;color:var(--text-primary);text-decoration:none;font-weight:800;background:var(--bg-card)}
     footer{border-top:1px solid var(--border);padding:34px 20px;text-align:center;color:var(--text-muted);font-size:14px}
     @media(max-width:640px){.tool-card{grid-template-columns:1fr}.tool-card a{width:100%}.hero-label{min-height:140px;font-size:22px}}
+    article table{width:100%;border-collapse:collapse;margin:14px 0 26px;font-size:15px;line-height:1.6}
+    article th,article td{border:1px solid var(--border);padding:9px 11px;text-align:left;vertical-align:top}
+    article th{background:var(--bg-hover);color:var(--text-primary);font-weight:800}
+
   </style>
 </head>
 <body>
@@ -53,26 +57,33 @@
     <span class="tag">영업일</span>
     <span>2026-06-04</span>
     <span>티모집사 편집팀</span>
+    <span>2026-07-02 업데이트</span>
   </div>
   <h1>영업일 계산법 — 오늘부터 5영업일 후와 두 날짜 사이는 다릅니다</h1>
   <p class="summary">시작일 포함 여부가 결과를 바꿉니다. 업무 마감일을 계산할 때 확인할 규칙입니다.</p>
   <div class="hero-label">BIZ · DAY</div>
   <article>
-    <div class="note"><strong>먼저 확인하세요.</strong> 이 글은 2026-05-27 기준으로 정리한 생활 정보입니다. 건강·금융·부동산 관련 내용은 교육용 참고 자료이며, 실제 진단·계약·세무 처리는 전문가나 공식 기관 기준을 확인해야 합니다.</div>
-    
-        <h2>연산이 다르면 포함 규칙도 다릅니다</h2>
-        <p>오늘부터 N영업일 후를 구할 때는 보통 시작일을 세지 않습니다. 반면 두 날짜 사이 영업일 수는 시작일과 종료일 포함 여부를 먼저 정해야 합니다.</p>
-      
+    <div class="note"><strong>먼저 확인하세요.</strong> 이 글은 「관공서의 공휴일에 관한 규정」 기준의 달력 계산을 다룹니다. 회사·업종별 영업일 정의(은행, 택배, 관공서)는 각자 다를 수 있습니다.</div>
 
-        <h2>공휴일이 핵심 변수입니다</h2>
-        <p>주말만 빼는 계산은 실제 업무일과 다를 수 있습니다. 한국 기준 계산은 고정 공휴일, 음력 공휴일, 대체공휴일, 선거일·임시공휴일을 구분해야 합니다.</p>
-      
+    <h2>'5영업일 후'와 '두 날짜 사이 영업일'은 다른 계산입니다</h2>
+    <p>"오늘부터 5영업일 후"를 구할 때는 보통 시작일을 세지 않고, 주말·공휴일을 건너뛰며 다섯 번째 영업일을 찾습니다. 금요일에 접수한 업무의 5영업일 후는 주말 이틀을 건너뛰어 <strong>다음 주 금요일</strong>이 됩니다.</p>
+    <p>반면 "두 날짜 사이의 영업일 수"는 시작일과 종료일을 각각 포함할지 먼저 정해야 합니다. 같은 구간이라도 포함 규칙에 따라 결과가 1~2일 달라지므로, 계약서나 공고문에서는 "초일 불산입" 같은 문구를 먼저 확인하는 것이 순서입니다.</p>
 
-        <h2>실무 예시</h2>
-        <p>계약서 제출, 택배 영업일, 고객센터 처리일은 회사별 기준이 다를 수 있습니다. 도구 결과는 공통 달력 기준으로 보고, 각 서비스 약관의 산입 규칙을 함께 확인하세요.</p>
-      
-<h2>바로 써볼 수 있는 체크포인트</h2>
-    <ul><li>시작일이 금요일이면 1영업일 후는 보통 다음 월요일입니다.</li><li>공휴일 전후에는 하루 차이가 쉽게 납니다.</li><li>회사 휴무일은 별도 캘린더로 관리해야 합니다.</li></ul>
+    <h2>공휴일 하나가 결과를 바꿉니다</h2>
+    <p>주말만 빼는 계산은 공휴일이 낀 주에서 어긋납니다. 예를 들어 2026년 광복절(8월 15일)은 토요일이라 <strong>8월 17일 월요일이 대체공휴일</strong>이 됩니다. 그 주의 영업일은 4일뿐이므로, 주말만 고려한 계산과 하루 차이가 납니다. 설·추석 연휴, 어린이날, 선거일, 정부가 수시로 지정하는 임시공휴일까지 반영해야 실제 업무 일정과 맞습니다.</p>
+
+    <h2>실무에서 '영업일'의 기준은 제각각입니다</h2>
+    <table>
+      <thead><tr><th>상황</th><th>기준</th></tr></thead>
+      <tbody>
+        <tr><td>은행 이체·대출 실행</td><td>은행 영업일 (토·일·공휴일 제외)</td></tr>
+        <tr><td>택배 배송 안내</td><td>택배사 휴무일 기준 — 일요일만 쉬는 곳도 있음</td></tr>
+        <tr><td>관공서 민원 처리 기한</td><td>공휴일·토요일 제외, 기관별 규정 확인</td></tr>
+        <tr><td>회사 내부 마감</td><td>회사 휴무일(창립기념일 등)은 별도 반영 필요</td></tr>
+      </tbody>
+    </table>
+    <p>같은 "3영업일 이내"라도 은행과 택배사의 달력이 다를 수 있다는 뜻입니다. 금액이나 권리가 걸린 기한이라면 해당 기관의 규정으로 최종 확인하세요. 공휴일을 반영한 날짜 계산은 <a href="/special-chars/biz-day-calc/">영업일 계산기</a>에서 바로 해볼 수 있습니다.</p>
+  
     <section class="tool-card">
       <div>
         <h2>📆 영업일 계산기</h2>
@@ -80,8 +91,8 @@
       </div>
       <a href="/special-chars/biz-day-calc/">도구 열기</a>
     </section>
-    <section class="faq"><h2>자주 묻는 질문</h2><details><summary>토요일은 영업일인가요?</summary><p>일반적인 은행·관공서 기준에서는 영업일로 보지 않습니다. 업종별로 다를 수 있습니다.</p></details></section>
-    <section class="sources"><h2>기준과 참고</h2><ul><li>관공서의 공휴일에 관한 규정</li><li>티모집사 공휴일 fixture</li></ul></section>
+    <section class="faq"><h2>자주 묻는 질문</h2><details><summary>토요일은 영업일인가요?</summary><p>은행·관공서 기준으로는 영업일이 아닙니다. 다만 택배나 일부 서비스업은 토요일에도 운영하므로, 어느 쪽 달력을 쓰는 계산인지가 먼저입니다.</p></details><details><summary>임시공휴일도 자동으로 반영되나요?</summary><p>정기 공휴일과 확정된 대체공휴일은 미리 계산할 수 있지만, 정부가 수시로 지정하는 임시공휴일은 발표 후에야 반영됩니다. 중요한 기한이라면 해당 연도 공고를 확인하세요.</p></details></section>
+    <section class="sources"><h2>기준과 참고</h2><ul><li>관공서의 공휴일에 관한 규정</li><li>민원 처리에 관한 법률 (처리기간 계산)</li></ul></section>
     <nav class="related" aria-label="관련 링크">
       <a href="/blog/">블로그 홈</a>
       <a href="/special-chars/biz-day-calc/">영업일 계산기</a>

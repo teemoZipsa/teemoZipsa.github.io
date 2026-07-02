@@ -14,8 +14,8 @@
   <meta property="og:description" content="VAT 역산은 공급가액과 세액을 분리한 뒤 반올림 규칙까지 확인해야 합니다.">
   <meta property="og:url" content="https://teemozipsa.github.io/blog/vat-inclusive-exclusive-guide/">
   <meta property="og:type" content="article">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"부가세 포함·별도 계산 — 11,000원에서 공급가액은 얼마일까","description":"VAT 역산은 공급가액과 세액을 분리한 뒤 반올림 규칙까지 확인해야 합니다.","author":{"@type":"Organization","name":"티모집사 편집팀"},"publisher":{"@type":"Organization","name":"티모집사"},"datePublished":"2026-06-06","dateModified":"2026-05-27","mainEntityOfPage":"https://teemozipsa.github.io/blog/vat-inclusive-exclusive-guide/"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"계산기와 거래처 금액이 1원 다르면 오류인가요?","acceptedAnswer":{"@type":"Answer","text":"반올림·절사 규칙 차이일 수 있습니다. 거래처 기준을 확인해야 합니다."}}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"부가세 포함·별도 계산 — 11,000원에서 공급가액은 얼마일까","description":"VAT 역산은 공급가액과 세액을 분리한 뒤 반올림 규칙까지 확인해야 합니다.","author":{"@type":"Organization","name":"티모집사 편집팀"},"publisher":{"@type":"Organization","name":"티모집사"},"datePublished":"2026-06-06","dateModified":"2026-07-02","mainEntityOfPage":"https://teemozipsa.github.io/blog/vat-inclusive-exclusive-guide/"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"계산기 결과와 거래처 금액이 1원 다르면 오류인가요?","acceptedAnswer":{"@type":"Answer","text":"대부분 반올림·버림 규칙 차이입니다. 세액의 원 미만 금액을 어느 쪽에서 어떻게 처리하는지 거래처와 기준을 맞추면 해결됩니다."}},{"@type":"Question","name":"\"포함가에서 10% 빼기\"는 왜 틀린가요?","acceptedAnswer":{"@type":"Answer","text":"부가세는 공급가액의 10%이지 총액의 10%가 아니기 때문입니다. 총액에서 10%를 빼면 실제 공급가액보다 작은 값이 나옵니다. 11,000원의 예에서 정답은 10,000원이지만, 10%를 빼면 9,900원이 됩니다."}},{"@type":"Question","name":"면세 상품도 1.1로 나눠서 봐야 하나요?","acceptedAnswer":{"@type":"Answer","text":"아닙니다. 면세 품목은 부가세가 붙지 않으므로 표시 금액 전체가 공급가액입니다."}}]}</script>
 <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
     *{box-sizing:border-box} body{margin:0;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,'Noto Sans KR',sans-serif;background:var(--bg-body);color:var(--text-secondary);line-height:1.75}
@@ -39,6 +39,10 @@
     .related{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}.related a{border:1px solid var(--border);border-radius:999px;padding:9px 13px;color:var(--text-primary);text-decoration:none;font-weight:800;background:var(--bg-card)}
     footer{border-top:1px solid var(--border);padding:34px 20px;text-align:center;color:var(--text-muted);font-size:14px}
     @media(max-width:640px){.tool-card{grid-template-columns:1fr}.tool-card a{width:100%}.hero-label{min-height:140px;font-size:22px}}
+    article table{width:100%;border-collapse:collapse;margin:14px 0 26px;font-size:15px;line-height:1.6}
+    article th,article td{border:1px solid var(--border);padding:9px 11px;text-align:left;vertical-align:top}
+    article th{background:var(--bg-hover);color:var(--text-primary);font-weight:800}
+
   </style>
 </head>
 <body>
@@ -53,26 +57,45 @@
     <span class="tag">부가세</span>
     <span>2026-06-06</span>
     <span>티모집사 편집팀</span>
+    <span>2026-07-02 업데이트</span>
   </div>
   <h1>부가세 포함·별도 계산 — 11,000원에서 공급가액은 얼마일까</h1>
   <p class="summary">VAT 역산은 공급가액과 세액을 분리한 뒤 반올림 규칙까지 확인해야 합니다.</p>
   <div class="hero-label">VAT</div>
   <article>
-    <div class="note"><strong>먼저 확인하세요.</strong> 이 글은 2026-05-27 기준으로 정리한 생활 정보입니다. 건강·금융·부동산 관련 내용은 교육용 참고 자료이며, 실제 진단·계약·세무 처리는 전문가나 공식 기관 기준을 확인해야 합니다.</div>
-    
-        <h2>포함과 별도는 방향이 다릅니다</h2>
-        <p>부가세 별도 금액에 10%를 더하는 계산은 쉽습니다. 반대로 부가세 포함 금액에서 공급가액을 역산할 때는 총액을 1.1로 나누고 세액을 분리합니다.</p>
-      
+    <div class="note"><strong>먼저 확인하세요.</strong> 이 글은 2026-07-02 기준 대한민국 부가가치세율 10%를 기준으로 합니다. 세금계산서 발행, 신고 등 실제 세무 처리는 국세청 안내와 세무 전문가 확인이 우선입니다.</div>
 
-        <h2>원 단위 처리</h2>
-        <p>금액 계산에서는 1원 차이도 의미가 있습니다. 견적서, 세금계산서, 장부 입력에서는 반올림인지 버림인지 규칙을 맞춰야 합니다.</p>
-      
+    <h2>'포함'과 '별도'는 계산 방향이 다릅니다</h2>
+    <p>부가세 별도 금액에 세금을 붙이는 방향은 쉽습니다. 공급가액 10,000원에 10%를 더하면 총액 11,000원입니다. 문제는 반대 방향입니다. 부가세 포함 금액 11,000원에서 공급가액을 구할 때 "10%를 빼면 되겠지"라고 계산하면 11,000 − 1,100 = 9,900원이 나오는데, 이는 틀린 값입니다.</p>
+    <p>부가세는 <strong>총액이 아니라 공급가액의 10%</strong>이기 때문입니다. 올바른 역산은 총액을 1.1로 나누는 것입니다. 11,000 ÷ 1.1 = 10,000원이 공급가액이고, 나머지 1,000원이 세액입니다.</p>
 
-        <h2>실전 확인</h2>
-        <p>쇼핑몰 판매가, 프리랜서 견적, 사업자 거래는 표시 방식이 다릅니다. 부가세 포함 가격인지 별도 가격인지 먼저 확인하세요.</p>
-      
-<h2>바로 써볼 수 있는 체크포인트</h2>
-    <ul><li>11,000원 포함가는 공급가액 10,000원과 세액 1,000원으로 볼 수 있습니다.</li><li>10,000원 별도가는 총 11,000원입니다.</li><li>소수점이 생기면 정수화 규칙을 명시합니다.</li></ul>
+    <h2>역산 공식과 예시</h2>
+    <p>공식은 두 줄이면 충분합니다.</p>
+    <ul>
+      <li>공급가액 = 부가세 포함 총액 ÷ 1.1</li>
+      <li>부가세액 = 총액 − 공급가액 (또는 총액 × 10 ÷ 110)</li>
+    </ul>
+    <table>
+      <thead><tr><th>부가세 포함 총액</th><th>공급가액</th><th>부가세액</th></tr></thead>
+      <tbody>
+        <tr><td>11,000원</td><td>10,000원</td><td>1,000원</td></tr>
+        <tr><td>55,000원</td><td>50,000원</td><td>5,000원</td></tr>
+        <tr><td>12,345원</td><td>11,222.72…원</td><td>1,122.27…원</td></tr>
+      </tbody>
+    </table>
+    <p>마지막 행처럼 1.1로 나누어떨어지지 않는 금액이 실무에서 훨씬 많습니다. 이때 소수점 처리 규칙이 등장합니다.</p>
+
+    <h2>1원이 안 맞는 이유 — 원 단위 처리</h2>
+    <p>12,345원을 역산하면 공급가액이 11,222.72…원으로 떨어집니다. 세액을 반올림하면 1,122원, 버림 처리하면 역시 1,122원이지만 금액에 따라서는 반올림과 버림의 결과가 1원 달라집니다. 회계 프로그램, 쇼핑몰 정산 시스템, 거래처 장부가 서로 다른 규칙을 쓰면 세금계산서와 장부 사이에 1원 차이가 생기는데, 이는 오류가 아니라 <strong>정수화 규칙의 차이</strong>입니다. 거래처와 같은 규칙(보통 세액 기준 버림 또는 반올림)을 정해두면 반복되는 1원 맞추기에서 벗어날 수 있습니다.</p>
+
+    <h2>상황별 확인 포인트</h2>
+    <ul>
+      <li><strong>쇼핑몰 소비자가</strong>는 원칙적으로 부가세 포함 표시입니다. 사업자 구매로 매입세액 공제를 받을 계획이라면 공급가액 기준으로 단가를 비교하세요.</li>
+      <li><strong>프리랜서 견적서</strong>는 "부가세 별도" 문구 하나로 실제 청구액이 10% 달라집니다. 견적 단계에서 포함 여부를 반드시 명시하세요.</li>
+      <li><strong>간이과세자</strong>와의 거래는 세금계산서 수취가 안 되는 경우가 있어 매입세액 공제 여부를 미리 확인해야 합니다.</li>
+      <li>면세 품목(가공되지 않은 농수산물, 도서 등)은 애초에 부가세가 없으므로 1.1로 나누면 안 됩니다.</li>
+    </ul>
+  
     <section class="tool-card">
       <div>
         <h2>🏷️ 할인/부가세 계산기</h2>
@@ -80,8 +103,8 @@
       </div>
       <a href="/special-chars/discount-calc/">도구 열기</a>
     </section>
-    <section class="faq"><h2>자주 묻는 질문</h2><details><summary>계산기와 거래처 금액이 1원 다르면 오류인가요?</summary><p>반올림·절사 규칙 차이일 수 있습니다. 거래처 기준을 확인해야 합니다.</p></details></section>
-    <section class="sources"><h2>기준과 참고</h2><ul><li>부가가치세 일반 계산 원칙</li><li>티모집사 금액 검산 fixture</li></ul></section>
+    <section class="faq"><h2>자주 묻는 질문</h2><details><summary>계산기 결과와 거래처 금액이 1원 다르면 오류인가요?</summary><p>대부분 반올림·버림 규칙 차이입니다. 세액의 원 미만 금액을 어느 쪽에서 어떻게 처리하는지 거래처와 기준을 맞추면 해결됩니다.</p></details><details><summary>"포함가에서 10% 빼기"는 왜 틀린가요?</summary><p>부가세는 공급가액의 10%이지 총액의 10%가 아니기 때문입니다. 총액에서 10%를 빼면 실제 공급가액보다 작은 값이 나옵니다. 11,000원의 예에서 정답은 10,000원이지만, 10%를 빼면 9,900원이 됩니다.</p></details><details><summary>면세 상품도 1.1로 나눠서 봐야 하나요?</summary><p>아닙니다. 면세 품목은 부가세가 붙지 않으므로 표시 금액 전체가 공급가액입니다.</p></details></section>
+    <section class="sources"><h2>기준과 참고</h2><ul><li>부가가치세법 (세율 10%, 공급가액 기준)</li><li>국세청 부가가치세 안내</li></ul></section>
     <nav class="related" aria-label="관련 링크">
       <a href="/blog/">블로그 홈</a>
       <a href="/special-chars/discount-calc/">할인/부가세 계산기</a>
