@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-20T23:27:05+09:00",
+  "last_updated": "2026-07-04T04:43:55+09:00",
   "refresh_minutes": 360,
   "source": "google_suggest_cat_keywords",
   "items": [
@@ -188,49 +188,49 @@
       ]
     },
     {
-      "keyword": "고양이 나이 계산기",
+      "keyword": "고양이 나이 계산법",
       "rank": 9,
-      "previousRank": 9,
-      "change": "flat",
-      "delta": 0,
-      "growth24h": "+2%",
+      "previousRank": 10,
+      "change": "up",
+      "delta": 1,
+      "growth24h": "+33%",
       "sparkline": [
-        41,
+        35,
         40,
-        37,
-        41,
         43,
-        41,
-        44,
-        38,
-        43,
+        42,
         40,
-        37,
-        37,
-        41
+        51,
+        51,
+        50,
+        52,
+        50,
+        61,
+        62,
+        57
       ]
     },
     {
-      "keyword": "고양이 나이 계산법",
+      "keyword": "다묘 가정 사료",
       "rank": 10,
-      "previousRank": 10,
-      "change": "flat",
+      "previousRank": null,
+      "change": "new",
       "delta": 0,
-      "growth24h": "+3%",
+      "growth24h": "+∞",
       "sparkline": [
-        39,
+        28,
+        34,
+        29,
+        29,
+        28,
         33,
-        34,
         38,
-        37,
-        39,
-        39,
-        39,
-        36,
-        38,
-        34,
-        38,
-        35
+        43,
+        40,
+        45,
+        48,
+        54,
+        50
       ]
     }
   ]
