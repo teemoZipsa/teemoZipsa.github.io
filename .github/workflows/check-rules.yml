@@ -1,13 +1,7 @@
 name: Check Code Rules
 
 on:
-  push:
-    branches: [ "main", "master" ]
-    paths-ignore:
-      - "**/*.md"
-      - "blog/data/trends.json"
-  pull_request:
-    branches: [ "main", "master" ]
+  # Keep service automation separate; code-rule checks are manual and local-first.
   workflow_dispatch:
 
 concurrency:
