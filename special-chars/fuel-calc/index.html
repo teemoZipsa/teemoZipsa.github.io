@@ -51,6 +51,8 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .price-source a{color:var(--accent);text-decoration:none;font-weight:600}
 .price-source a:hover{text-decoration:underline}
 .price-date{background:var(--bg-btn);padding:2px 6px;border-radius:4px;font-size:10px;color:var(--text-info);font-weight:500}
+.price-warning{display:none;margin-top:7px;padding:8px 10px;border-radius:8px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.45);color:#d97706;font-size:11px;line-height:1.5}
+.price-warning.show{display:block}
 
 /* 왕복 토글 */
 .toggle-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg-btn);border-radius:8px;cursor:pointer;user-select:none}
@@ -143,7 +145,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
     <!-- 유가 입력 -->
     <div class="input-group">
-      <label>현재 유가 (원/L)</label>
+      <label>참고 유가 (원/L · 직접 수정 가능)</label>
       <div class="price-row">
         <div class="input-row" style="flex:1">
           <input type="number" id="fuelPrice" min="0" step="10" oninput="calc()">
@@ -152,9 +154,10 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       </div>
       <div class="price-source">
         <span class="price-date" id="priceDate">로딩 중...</span>
-        <span>오피넷 전국 평균</span>
+        <span>저장된 오피넷 전국 평균 참고값</span>
         <a href="https://www.opinet.co.kr" target="_blank" rel="noopener">최신 유가 확인 →</a>
       </div>
+      <div class="price-warning" id="priceWarning" role="status"></div>
     </div>
 
     <!-- 거리 -->
@@ -240,7 +243,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
   </div>
 
-  <div class="footer"><span>실시간 계산 · 오피넷 유가 연동</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+  <div class="footer"><span>입력값 기준 즉시 계산 · 유가 직접 수정 가능</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -256,6 +259,7 @@ const FUEL_KEYS = ['gasoline', 'diesel', 'lpg'];
 let currentFuel = 0;
 let fuelPrices = { ...DEFAULT_PRICES };
 let priceDate = '';
+let priceLoadFailed = false;
 
 // 오피넷 유가 JSON 로드
 (async function loadPrices() {
@@ -269,6 +273,7 @@ let priceDate = '';
     }
   } catch (e) {
     // 로드 실패 시 기본값 사용
+    priceLoadFailed = true;
     console.warn('유가 데이터 로드 실패, 기본값 사용', e);
   }
   applyFuel();
@@ -288,10 +293,24 @@ function applyFuel() {
 
   // 업데이트 날짜
   const dateEl = document.getElementById('priceDate');
+  const warningEl = document.getElementById('priceWarning');
   if (priceDate) {
     dateEl.textContent = priceDate + ' 기준';
+    const updatedAt = new Date(priceDate + 'T00:00:00');
+    const ageDays = Number.isNaN(updatedAt.getTime()) ? null : Math.floor((Date.now() - updatedAt.getTime()) / 86400000);
+    if (ageDays !== null && ageDays > 30) {
+      warningEl.textContent = `⚠️ 저장된 유가가 ${ageDays}일 전 자료입니다. 실제 계산 전 오피넷에서 최신 가격을 확인하거나 위 값을 직접 수정하세요.`;
+      warningEl.classList.add('show');
+    } else {
+      warningEl.textContent = 'ℹ️ 전국 평균 참고값입니다. 지역·주유소별 실제 가격에 맞게 직접 수정할 수 있습니다.';
+      warningEl.classList.add('show');
+    }
   } else {
     dateEl.textContent = '기본값';
+    warningEl.textContent = priceLoadFailed
+      ? '⚠️ 저장 유가를 불러오지 못해 기본값을 표시합니다. 실제 유가를 직접 입력하세요.'
+      : 'ℹ️ 기본 참고값입니다. 실제 유가를 직접 입력하세요.';
+    warningEl.classList.add('show');
   }
   calc();
 }

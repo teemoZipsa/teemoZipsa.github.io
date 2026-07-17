@@ -8,10 +8,10 @@
 <link rel="stylesheet" href="/special-chars/theme.css">
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
-<title>⚖️ 반려동물 체중 관리 — 티모집사</title>
-<meta name="description" content="반려동물 체중 관리 도구. 강아지·고양이의 체중, 체형(BCS)을 평가하고 이상 체중을 확인하세요. 품종별 표준 체중 안내.">
-<meta property="og:title" content="⚖️ 반려동물 체중 관리 — 티모집사">
-<meta property="og:description" content="강아지·고양이 체중과 체형(BCS)을 평가해보세요.">
+<title>🐾 반려동물 BCS 체형 점수 확인 — 티모집사</title>
+<meta name="description" content="강아지·고양이의 갈비뼈, 허리선, 복부선을 확인해 1~9단계 BCS 구간을 기록하는 교육용 도구입니다. 품종별 체중 범위는 선택 참고 정보로만 제공합니다.">
+<meta property="og:title" content="🐾 반려동물 BCS 체형 점수 확인 — 티모집사">
+<meta property="og:description" content="9점 BCS로 반려동물 체형을 자가 점검하고 품종별 체중 범위는 참고용으로 확인하세요.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.github.io/special-chars/pet-bmi-calc/">
 <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
@@ -42,11 +42,13 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .input-row .unit{font-size:14px;color:var(--text-info);font-weight:600;min-width:24px}
 .input-row select{cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%23999' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
 
-.bcs-selector{display:flex;gap:4px}
-.bcs-btn{flex:1;padding:8px 4px;text-align:center;font-size:11px;font-weight:600;cursor:pointer;border:2px solid var(--border);border-radius:8px;background:var(--bg-guide);color:var(--text-info);font-family:inherit;transition:all .2s}
+.bcs-selector{display:grid;grid-template-columns:repeat(9,1fr);gap:4px}
+.bcs-btn{min-width:0;padding:10px 4px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;border:2px solid var(--border);border-radius:8px;background:var(--bg-guide);color:var(--text-info);font-family:inherit;transition:all .2s}
 .bcs-btn:hover{border-color:var(--accent)}
 .bcs-btn.active{border-color:var(--accent);background:var(--accent);color:var(--text-on-accent)}
 .bcs-emoji{font-size:20px;display:block;margin-bottom:2px}
+.bcs-helper{font-size:11px;color:var(--text-muted);line-height:1.6;margin:2px 0 6px}
+.bcs-hint{font-size:12px;color:var(--text-info);line-height:1.6;padding:10px 12px;background:var(--bg-guide);border:1px solid var(--border);border-radius:8px;margin-top:6px}
 
 .result-card{border-radius:16px;padding:24px;text-align:center;background:var(--bg-guide);border:1px solid var(--border)}
 .result-emoji{font-size:56px;margin-bottom:8px}
@@ -54,8 +56,8 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .result-sub{font-size:13px;color:var(--text-info);margin-top:6px;line-height:1.6}
 
 .gauge-wrap{width:100%;padding:0 8px}
-.gauge-bar{height:14px;border-radius:7px;background:linear-gradient(to right,#3b82f6 0%,#22c55e 35%,#facc15 60%,#f97316 80%,#ef4444 100%);position:relative;margin:8px 0}
-.gauge-marker{position:absolute;top:-4px;width:4px;height:22px;background:var(--text-primary);border-radius:2px;transition:left .4s ease;box-shadow:0 0 4px rgba(0,0,0,.3)}
+.gauge-bar{height:14px;border-radius:7px;background:linear-gradient(to right,#3b82f6 0%,#3b82f6 31.25%,#22c55e 31.25%,#22c55e 56.25%,#f97316 56.25%,#f97316 81.25%,#ef4444 81.25%,#ef4444 100%);position:relative;margin:8px 0}
+.gauge-marker{position:absolute;top:-4px;width:4px;height:22px;background:var(--text-primary);border-radius:2px;transform:translateX(-50%);transition:left .4s ease;box-shadow:0 0 4px rgba(0,0,0,.3)}
 .gauge-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);padding:0 2px}
 
 .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -104,13 +106,14 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
 .scroll-top-btn.visible{opacity:1;visibility:visible}
 .scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:390px){.bcs-selector{grid-template-columns:repeat(5,1fr)}}
 </style>
 </head>
 <body>
 <div class="app">
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
-    <h1>⚖️ 반려동물 체중 관리</h1>
+    <h1>🐾 반려동물 BCS 체형 점수</h1>
   </div>
   <div class="body">
     <div class="type-tabs">
@@ -118,65 +121,81 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <button class="type-tab" onclick="setType('cat')">🐱 고양이</button>
     </div>
 
+    <div class="input-group">
+      <label>현재 체중</label>
+      <div class="input-row">
+        <input type="number" id="weight" value="3.5" min="0.1" max="200" step="0.1" inputmode="decimal" oninput="calc()">
+        <span class="unit">kg</span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label id="bcsLabel">9단계 체형 점수(BCS)</label>
+      <p class="bcs-helper">위에서 본 허리선, 옆에서 본 복부선과 갈비뼈 촉진을 함께 확인한 뒤 가장 가까운 점수를 선택하세요.</p>
+      <div class="bcs-selector" id="bcsSelector" role="group" aria-labelledby="bcsLabel"></div>
+      <div class="bcs-hint" id="bcsHint" aria-live="polite"></div>
+    </div>
+
     <div class="breed-section" id="breedSection">
-      <label>품종 (표준 체중 참고)</label>
+      <label>품종별 성견·성묘 체중 범위 (선택·참고용)</label>
       <input type="text" class="breed-search" id="breedSearch" placeholder="품종 검색 (예: 골든, 푸들, 랙돌...)" oninput="renderBreeds()">
       <div class="breed-count" id="breedCount"></div>
       <div class="breed-list" id="breedList"></div>
     </div>
 
-    <div class="input-group">
-      <label>현재 체중</label>
-      <div class="input-row">
-        <input type="number" id="weight" value="3.5" min="0.5" max="100" step="0.1" oninput="calc()">
-        <span class="unit">kg</span>
-      </div>
-    </div>
-
-    <!-- BCS 입력부 제거됨 -->
-
     <div class="result-card" id="resultCard">
       <div class="result-emoji" id="emoji">⚖️</div>
       <div class="result-status" id="status">-</div>
-      <div class="result-sub" id="statusDetail">체중과 체형을 입력하세요</div>
+      <div class="result-sub" id="statusDetail">BCS 점수를 선택하세요</div>
     </div>
 
     <div class="gauge-wrap">
       <div class="gauge-bar"><div class="gauge-marker" id="gaugeMarker" style="left:40%"></div></div>
       <div class="gauge-labels">
-        <span>저체중</span><span>이상적</span><span>과체중</span><span>비만</span>
+        <span>1~3 이상 미만</span><span>4~5 이상적</span><span>6~7 이상 초과</span><span>8~9 비만</span>
       </div>
     </div>
 
     <div class="info-grid" id="infoGrid"></div>
 
-    <!-- SEO 친화적 사전 렌더링된 상세 분석 리포트 -->
+    <!-- SEO 친화적 사전 렌더링된 BCS 자가 점검 리포트 -->
     <div class="report-box active" id="reportBox">
-      <h3>📋 맞춤형 체중 분석 리포트</h3>
+      <h3>📋 BCS 자가 점검 리포트</h3>
       <p>
-        입력하신 정보(반려동물 종류: <span class="highlight" id="r-type">🐶 강아지</span>, 품종: <span class="highlight"><span id="r-breed">말티즈</span></span>, 현재 체중: <span class="highlight"><span id="r-weight">3.5</span>kg</span>)를 바탕으로 분석한 결과입니다.
+        반려동물 종류: <span class="highlight" id="r-type">🐶 강아지</span>, 현재 체중: <span class="highlight" id="r-weight">3.5kg</span>, 선택한 BCS: <span class="highlight"><span id="r-bcs">5</span>/9</span>
       </p>
       <p>
-        <span id="r-breed-name">말티즈</span> 품종의 평균 체중 참고 범위는 <strong><span id="r-range-min">2.5</span>kg ~ <span id="r-range-max">4.0</span>kg</strong> 사이입니다. 이를 바탕으로 평가했을 때, 현재 반려동물은 <strong><span id="r-status" style="color:#22c55e;">[이상적]</span></strong>인 체중 상태 참고 범위에 해당합니다. (해당 품종의 평균 이상 체중은 <span id="r-ideal">3.3</span>kg 입니다.)
+        선택한 BCS는 <strong><span id="r-status" style="color:#22c55e;">[이상적]</span></strong> 구간입니다. 이 구간은 현재 체중이나 품종 평균이 아니라 보호자가 선택한 9점 BCS를 기준으로 표시합니다.
       </p>
+      <p id="r-breed-note">품종별 체중 범위를 선택하지 않았습니다. 품종 정보는 BCS 결과에 영향을 주지 않습니다.</p>
       <div class="report-tip" id="r-tip-box" style="border-color:#22c55e;">
-        <strong>💡 건강 관리 가이드:</strong> <span id="r-tip">건강한 정상 체중이에요! 지금처럼 꾸준한 산책과 균형 잡힌 사료 급여를 통해 안정적인 체형을 평생 유지해 주시기 바랍니다.</span>
+        <strong>💡 다음 확인:</strong> <span id="r-tip">현재 급여량과 활동을 기록하며 정기적으로 같은 방법으로 재확인하세요.</span>
       </div>
       <p class="report-notice">
-        ※ 본 결과는 대중적인 품종별 평균 체중 범위를 기준으로 한 교육용 추정치입니다. 같은 품종이더라도 부모견(묘)의 골격 크기나 타고난 체형에 따라 적정 체중 수치는 차이가 날 수 있습니다. 아이별 체형 상태는 늑골 촉진을 통한 체조직 평가(BCS)와 수의사 상담으로 추가 점검을 권장합니다.
+        ※ 이 결과는 보호자가 직접 선택한 BCS를 구간으로 정리하는 교육용 기록이며 자동 진단이 아닙니다. 털 길이, 자세, 골격, 나이와 근육량에 따라 오차가 생길 수 있고 BCS는 근육 상태(MCS)를 대신하지 않습니다. 체중이 갑자기 변했거나 1~3점 또는 6~9점으로 보이면 수의사의 촉진 평가를 받아보세요.
       </p>
     </div>
   </div>
 
-    <!-- BCS 가이드 제거됨 -->
+  <details class="guide-section" open>
+    <summary>🖐️ 9점 BCS를 확인하는 방법</summary>
+    <div class="guide-content">
+      반려동물을 위와 옆에서 보고, 양손으로 갈비뼈를 가볍게 만져보세요. 털 때문에 눈으로만 판단하기 어려우므로 촉진을 함께 해야 합니다.<br><br>
+      <strong>1~3점 · 이상 체형 미만:</strong> 갈비뼈와 뼈 돌출이 쉽게 보이거나 만져지고 허리·복부 들어감이 뚜렷합니다.<br>
+      <strong>4~5점 · 이상적:</strong> 갈비뼈가 과도한 지방 없이 만져지고 위에서 허리, 옆에서 복부 들어감이 확인됩니다.<br>
+      <strong>6~7점 · 이상 체형 초과:</strong> 갈비뼈 위 지방층이 늘어 만지기 어려워지고 허리와 복부선이 덜 뚜렷합니다.<br>
+      <strong>8~9점 · 비만 구간:</strong> 갈비뼈가 두꺼운 지방층 아래 잘 만져지지 않고 허리선 소실과 지방 축적이 뚜렷합니다.<br><br>
+      기준 자료: <a href="https://www.aaha.org/resources/2021-aaha-nutrition-and-weight-management-guidelines/screening-evaluation/" target="_blank" rel="noopener noreferrer">AAHA 9점 BCS 안내</a> · <a href="https://wsava.org/wp-content/uploads/2025/06/WSAVA_BCSCat_BCSDog_Nutrition_250612.pdf" target="_blank" rel="noopener noreferrer">WSAVA 개·고양이 BCS 도표</a>
+    </div>
+  </details>
 
   <details class="guide-section">
     <summary>❓ 반려동물 체중 관리 Q&A</summary>
     <div class="guide-content">
-      <strong>Q. 표준 체중 관리가 왜 중요한가요?</strong><br>
-      비만은 무릎 슬개골 탈구를 비롯한 관절 질환, 치명적인 당뇨, 예고 없는 심장병 등의 발병 위험을 크게 높입니다. 따라서 전문가가 권하는 이상 체중의 10% 이내를 생애 주기에 맞춰 유지하는 것이 기대수명 연장과 직결됩니다.<br><br>
+      <strong>Q. 품종별 체중 범위로 저체중·비만을 판단하나요?</strong><br>
+      아니요. 같은 품종도 성별, 골격, 나이와 근육량에 따라 적정 체중이 다릅니다. 품종 범위는 현재 체중을 기록할 때 참고만 하며, 이 도구의 체형 구간은 선택한 BCS로만 정합니다.<br><br>
       <strong>Q. 사람 BMI 공식처럼 계산하면 안 되나요?</strong><br>
-      반려동물은 치와와부터 대형마스티프까지 품종별 체중과 골격 차이가 워낙 심해 단일 공식(키/몸무게 구조) 적용이 불가합니다. 이 도구는 BCS(체형 점수) 개념과 품종 평균 체중표를 함께 참고하지만, 진단이 아니라 보호자용 교육 도구입니다.
+      개와 고양이는 품종과 골격 차이가 커 사람의 BMI 공식을 그대로 적용하기 어렵습니다. 수의학에서는 관찰과 촉진으로 지방 상태를 확인하는 BCS와 근육 상태를 보는 MCS를 함께 활용합니다.
     </div>
   </details>
 
@@ -194,7 +213,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </ul>
   </div>
 
-  <div class="footer"><span>품종별 표준 체중 비교 도구</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+  <div class="footer"><span>9점 BCS 자가 점검 도구</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
 </div>
 
 <div class="toast" id="toast"></div>

@@ -38,7 +38,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .result-card{background:var(--accent-bg);border:2px solid var(--accent);border-radius:12px;padding:20px;text-align:center;display:flex;flex-direction:column;gap:4px}
 .result-gpa{font-size:42px;font-weight:800;color:var(--accent);letter-spacing:-1px}
 .result-scale{font-size:14px;color:var(--text-info);font-weight:500}
-.result-stats{display:flex;justify-content:center;gap:20px;margin-top:6px;font-size:12px;color:var(--text-secondary)}
+.result-stats{display:flex;justify-content:center;gap:10px 18px;margin-top:6px;font-size:12px;color:var(--text-secondary);flex-wrap:wrap}
 .result-stats span{display:flex;align-items:center;gap:4px}
 .result-empty{font-size:15px;color:var(--text-placeholder);padding:12px 0}
 
@@ -153,11 +153,11 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </div>
 
   <details class="guide-section">
-    <summary>📖 대학 학점(GPA) 및 백분율 환산 가이드</summary>
+    <summary>📖 대학 학점(GPA) 및 만점 대비 비율 가이드</summary>
     <div class="guide-content">
       <div class="guide-block">
-        <h3>💡 내 학점 백분율(%) 계산이 왜 중요한가요?</h3>
-        <p>취업, 장학금 신청, 또는 유학 준비 시 학교마다 만점 기준(4.5, 4.3, 4.0)이 다르기 때문에 지원 자격 요건으로 100점 만점 기준의 환산 점수(백분율)를 요구하는 경우가 많습니다. 본 학점 계산기는 별도의 퍼센트 계산기 없이 입력된 GPA를 바탕으로 정확한 백분율을 즉시 산출해 주어 자기소개서 작성 시 편리합니다.</p>
+        <h3>💡 만점 대비 비율은 어떻게 봐야 하나요?</h3>
+        <p>화면의 비율은 현재 GPA를 선택한 만점으로 나눈 <strong>단순 비율</strong>입니다. 대학·기관별 백분위나 100점 환산표는 서로 다르므로 공식 제출용 점수로 사용할 수 없습니다. 지원 서류에는 반드시 소속 학교 성적표나 지원 기관의 공식 환산 기준을 확인하세요.</p>
       </div>
 
       <div class="guide-block">
@@ -167,7 +167,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
       <div class="guide-block">
         <h3>🚀 P/F (Pass/Fail) 혹은 S/U 과목은 어떻게 처리되나요?</h3>
-        <p>성적 입력 드롭다운에서 'P'를 선택하면 해당 과목은 졸업을 위한 '취득 학점'으로는 누적 반영되지만, 전체 <b>지수(GPA) 계산의 분모와 분자에서는 완전히 제외</b>됩니다. 이는 대한민국 대다수 인서울 4년제 대학교의 공식 평균 평점 산출 공식 표준 알고리즘과 100% 동일하게 설계되었습니다.</p>
+        <p>성적 입력 드롭다운에서 'P'를 선택하면 해당 과목은 <strong>취득 학점에는 포함</strong>되지만 GPA 계산의 분모와 분자에서는 제외됩니다. F는 GPA 반영 학점에는 포함되지만 취득 학점에는 포함되지 않습니다. 학교별 세부 규정이 다를 수 있으므로 최종 값은 학칙과 대조하세요.</p>
       </div>
 
       <div class="guide-block">
@@ -243,71 +243,83 @@ function delCourse(id) {
 
 function calculate() {
   const rows = document.querySelectorAll('#courseBody tr');
-  let totalCredits = 0, totalPoints = 0, courseCount = 0;
+  let gpaCredits = 0;
+  let earnedCredits = 0;
+  let totalPoints = 0;
+  let gradedCourseCount = 0;
+  let enteredCourseCount = 0;
 
   rows.forEach(row => {
     const credit = parseInt(row.querySelector('input[type="number"]').value) || 0;
     const gradeVal = row.querySelector('select').value;
     if (!gradeVal || credit <= 0) return;
 
+    enteredCourseCount++;
     const gp = GRADES[scale][gradeVal];
-    if (gp === -1) return; // P (Pass) — 제외
+    if (gp === -1) {
+      earnedCredits += credit;
+      return; // P: 취득 학점에는 포함, GPA에서는 제외
+    }
 
-    totalCredits += credit;
+    gpaCredits += credit;
     totalPoints += credit * gp;
-    courseCount++;
+    gradedCourseCount++;
+    if (gp > 0) earnedCredits += credit;
   });
 
   const card = document.getElementById('resultCard');
-  if (courseCount === 0 || totalCredits === 0) {
+  if (enteredCourseCount === 0) {
     card.innerHTML = '<div class="result-empty">과목을 입력하면 평점이 계산됩니다</div>';
-    updateReport({ courseCount: 0 });
+    updateReport({ enteredCourseCount: 0 });
     return;
   }
 
-  const gpa = totalPoints / totalCredits;
-  const emoji = gpa >= 4.0 ? '🏆' : gpa >= 3.5 ? '🎉' : gpa >= 3.0 ? '👍' : gpa >= 2.0 ? '📚' : '💪';
+  const hasGpa = gradedCourseCount > 0 && gpaCredits > 0;
+  const gpa = hasGpa ? totalPoints / gpaCredits : null;
+  const ratio = hasGpa ? (gpa / scale * 100).toFixed(1) : null;
+  const emoji = !hasGpa ? '➖' : gpa >= 4.0 ? '🏆' : gpa >= 3.5 ? '🎉' : gpa >= 3.0 ? '👍' : gpa >= 2.0 ? '📚' : '💪';
 
   let creditString = "";
-  if(totalCredits > 120) creditString = "졸업이 머지않은 고학년";
-  else if (totalCredits > 60) creditString = "전공 심화를 듣는 중반 학년";
+  if(earnedCredits > 120) creditString = "졸업이 머지않은 고학년";
+  else if (earnedCredits > 60) creditString = "전공 심화를 듣는 중반 학년";
   else creditString = "기반을 다지는 저학년";
 
   card.innerHTML = `
-    <div class="result-gpa" style="cursor:pointer" onclick="copyGpa('${gpa.toFixed(2)}')">${emoji} ${gpa.toFixed(2)}</div>
+    <div class="result-gpa"${hasGpa ? ` style="cursor:pointer" onclick="copyGpa('${gpa.toFixed(2)}')"` : ''}>${emoji} ${hasGpa ? gpa.toFixed(2) : 'GPA 미산출'}</div>
     <div class="result-scale">/ ${scale} 만점</div>
     <div class="result-stats">
-      <span>📘 ${courseCount}과목</span>
-      <span>📝 ${totalCredits}학점</span>
-      <span>📊 ${(gpa/scale*100).toFixed(1)}%</span>
+      <span>📘 입력 ${enteredCourseCount}과목</span>
+      <span>🧮 GPA 반영 ${gpaCredits}학점</span>
+      <span>✅ 취득 ${earnedCredits}학점</span>
+      ${hasGpa ? `<span>📊 만점 대비 ${ratio}%</span>` : ''}
     </div>
   `;
-    const reportParams = { gpa: gpa.toFixed(2), totalCredits, courseCount, pct: (gpa/scale*100).toFixed(1), creditString };
+    const reportParams = { gpa: hasGpa ? gpa.toFixed(2) : null, gpaCredits, earnedCredits, gradedCourseCount, enteredCourseCount, ratio, creditString };
 
     updateReport(reportParams);
 }
 
-function updateReport({ gpa, totalCredits, courseCount, pct, creditString }) {
+function updateReport({ gpa, gpaCredits, earnedCredits, gradedCourseCount, enteredCourseCount, ratio, creditString }) {
   const container = document.getElementById('reportContainer');
   const box = document.getElementById('reportBox');
-  if (courseCount === 0) {
+  if (enteredCourseCount === 0) {
     container.style.display = 'none';
     return;
   }
   
   container.style.display = 'block';
-  let evl = "";
-  if (gpa >= scale * 0.9) evl = "상위권 성적으로 장학금 지원 및 대기업 서류 패스에 매우 유리한 안정권입니다.";
-  else if (gpa >= scale * 0.8) evl = "준수한 성적을 유지 중이며, 추가적인 스펙 밸런스를 맞추면 취업 시장에서 경쟁력을 가질 수 있습니다.";
-  else evl = "졸업 요건을 위해 전공 학점 관리에 조금 더 주의를 기울이면 단기간 내에 리스크를 방어할 수 있습니다.";
-  
-  const gpaPerScale = `(<strong>${scale}</strong> 만점 기준)`;
+  const gpaSummary = gpa === null
+    ? '입력된 과목이 모두 P이므로 GPA는 산출되지 않았습니다.'
+    : `GPA 반영 ${gradedCourseCount}과목(${gpaCredits}학점)의 평균 평점은 <strong>${gpa}점</strong> (<strong>${scale}</strong> 만점)입니다.`;
+  const ratioSummary = gpa === null
+    ? 'P 과목은 취득 학점에만 반영됩니다.'
+    : `만점 대비 단순 비율은 <strong>${ratio}%</strong>입니다. 공식 백분위·100점 환산값은 학교나 제출 기관의 기준을 확인해야 합니다.`;
 
   box.innerHTML = `
     <ul class="report-list">
-      <li><strong>학위/GPA 분석:</strong> 현재까지 입력된 <strong>${courseCount}과목</strong>(${totalCredits}학점)에 대한 누적 평균 평점은 <strong>${gpa}점</strong> ${gpaPerScale}입니다.</li>
-      <li><strong>백분위 변환 데이터:</strong> 제출 및 이력서 기입을 위한 공식 100점 만점 백분율 변환 점수는 <strong>${pct}%</strong>로 평가되었습니다.</li>
-      <li><strong>성취도 자가 진단:</strong> ${evl}</li>
+      <li><strong>GPA 계산:</strong> ${gpaSummary}</li>
+      <li><strong>학점 구분:</strong> 총 취득 학점은 <strong>${earnedCredits}학점</strong>이며, GPA 반영 학점은 <strong>${gpaCredits}학점</strong>입니다.</li>
+      <li><strong>비율 안내:</strong> ${ratioSummary}</li>
       <li><strong>수강 전략 및 팁:</strong> 자소서 작성을 위해 <a href="https://teemozipsa.github.io/special-chars/char-counter/">글자수 세기 도구</a>를 활용해 개인의 성취 경험을 면밀히 분석해 두길 권장합니다.</li>
     </ul>
   `;
@@ -316,7 +328,7 @@ function updateReport({ gpa, totalCredits, courseCount, pct, creditString }) {
 function resetAll() {
   document.getElementById('courseBody').innerHTML = '';
   document.getElementById('resultCard').innerHTML = '<div class="result-empty">과목을 입력하면 평점이 계산됩니다</div>';
-  updateReport({ courseCount: 0 });
+  updateReport({ enteredCourseCount: 0 });
   for (let i = 0; i < 5; i++) addCourse();
   showToast('초기화되었습니다');
 }

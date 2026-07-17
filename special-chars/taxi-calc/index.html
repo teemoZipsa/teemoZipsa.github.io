@@ -9,9 +9,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>🚕 택시비 계산기 — 티모집사</title>
-<meta name="description" content="전국 시도별 택시 요금을 빠르게 계산합니다. 거리 입력만으로 예상 택시비를 확인하세요. 심야할증, 중형/대형/모범 택시 지원.">
+<meta name="description" content="전국 시도별 고시 요율을 바탕으로 거리, 저속·정차 시간, 심야·시계외 할증과 별도 비용을 반영한 택시비 예상액을 계산합니다.">
 <meta property="og:title" content="🚕 택시비 계산기 — 티모집사">
-<meta property="og:description" content="전국 지역별 택시 요금 계산. 거리·심야할증·차종 반영.">
+<meta property="og:description" content="거리·저속 시간·할증·통행료·호출료를 나눠 보는 전국 지역별 택시비 예상 계산기.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.github.io/special-chars/taxi-calc/">
 <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
@@ -35,6 +35,10 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .input-row input,.input-row select{flex:1;padding:10px 12px;background:var(--bg-guide);border:1.5px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:15px;font-family:inherit;font-weight:600;outline:none;transition:border-color .2s}
 .input-row input:focus,.input-row select:focus{border-color:var(--accent)}
 .input-row .unit{font-size:13px;color:var(--text-info);font-weight:600;white-space:nowrap;min-width:28px}
+.condition-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.condition-grid .input-row input{min-width:0}
+.input-help{font-size:10px;color:var(--text-muted);line-height:1.5}
+.estimate-note{padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-bar);font-size:11px;color:var(--text-info);line-height:1.55}
 .tabs{display:inline-flex;gap:4px;background:var(--bg-bar);border-radius:10px;padding:4px}
 .tab{padding:8px 18px;border:none;border-radius:8px;background:transparent;color:var(--text-info);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;text-align:center}
 .tab.active{background:var(--accent);color:var(--text-on-accent);box-shadow:0 2px 8px rgba(83,52,131,.3)}
@@ -63,6 +67,8 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .copy-btn{width:100%;padding:11px;background:var(--bg-header);color:var(--text-on-accent);border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .2s}
 .copy-btn:hover{opacity:.85}
 .copy-btn:active{transform:scale(.98)}
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.export-btn{background:var(--bg-btn);color:var(--text-primary);border:1px solid var(--border)}
 
 .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:10px}
 .report-box h3 {font-size:15px;font-weight:700;color:var(--accent);margin-bottom:4px}
@@ -93,7 +99,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
 .scroll-top-btn.visible{opacity:1;visibility:visible}
 .scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
-@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}.summary{grid-template-columns:1fr}.summary-card.highlight{grid-column:auto}.s-value{font-size:18px}}
+@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}.summary{grid-template-columns:1fr}.summary-card.highlight{grid-column:auto}.s-value{font-size:18px}.condition-grid{grid-template-columns:1fr}.action-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -144,6 +150,45 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
         <div class="toggle-switch" id="roundToggle" style="transform: scale(0.9); margin-right: -4px;"></div>
       </div>
     </div>
+    <div class="section-title">운행 조건 · 별도 비용 (편도 기준)</div>
+    <div class="condition-grid">
+      <div class="input-group">
+        <label for="lowSpeedMinutes">저속·정차 예상 시간</label>
+        <div class="input-row">
+          <input type="number" id="lowSpeedMinutes" value="0" min="0" max="1440" step="1" oninput="calc()">
+          <span class="unit">분</span>
+        </div>
+      </div>
+      <div class="input-group">
+        <label for="outSurcharge">시계외 할증률</label>
+        <div class="input-row">
+          <input type="number" id="outSurcharge" value="0" min="0" max="100" step="1" oninput="calc()">
+          <span class="unit">%</span>
+        </div>
+      </div>
+      <div class="input-group">
+        <label for="tollFee">통행료</label>
+        <div class="input-row">
+          <input type="number" id="tollFee" value="0" min="0" max="10000000" step="100" oninput="calc()">
+          <span class="unit">원</span>
+        </div>
+      </div>
+      <div class="input-group">
+        <label for="callFee">호출료</label>
+        <div class="input-row">
+          <input type="number" id="callFee" value="0" min="0" max="10000000" step="100" oninput="calc()">
+          <span class="unit">원</span>
+        </div>
+      </div>
+      <div class="input-group" style="grid-column:1/-1">
+        <label for="additionalFee">기타 추가비용</label>
+        <div class="input-row">
+          <input type="number" id="additionalFee" value="0" min="0" max="10000000" step="100" oninput="calc()">
+          <span class="unit">원</span>
+        </div>
+      </div>
+    </div>
+    <div class="estimate-note">저속·정차 시간은 선택 지역·차종의 시간요금 단위로 계산합니다. 시계외 할증은 기본·거리·시간 요금 합계에 입력한 비율을 단순 적용하며, 통행료·호출료·기타 비용은 할증 대상에서 제외합니다. 왕복을 켜면 모든 편도 입력값을 2배로 계산합니다.</div>
     <!-- 인원수 -->
     <div class="input-group">
       <label>인원수 (N빵)</label>
@@ -160,20 +205,23 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
     <div class="report-box" id="analysisReport" style="display:none;"></div>
 
-    <button class="copy-btn" onclick="copyResult()" style="margin-top:14px">📋 결과 복사</button>
+    <div class="action-row">
+      <button class="copy-btn" onclick="copyResult()">📋 상세 결과 복사</button>
+      <button class="copy-btn export-btn" onclick="exportResult()">⬇️ CSV 내보내기</button>
+    </div>
   </div>
 
   <details class="guide-section" open>
     <summary>💡 택시 이용 및 요금 절약 Q&A</summary>
     <div class="guide-content">
       <strong>Q. 시외 할증은 언제부터 붙나요?</strong>
-      <p>대부분의 택시는 사업 구역(시 단위)을 넘어가면 <strong>시계외 할증(약 20~30%)</strong>이 적용됩니다. 심야 시간에 시계를 넘어가게 되면 <strong>[심야 할증 + 시계외 할증]</strong>이 중복 적용되어 요금이 최소 40% 이상 폭주할 수 있으니 장거리 이동 시 주의가 필요합니다.</p>
+      <p>사업 구역을 벗어날 때 적용 여부와 요율은 지역·운행 조건에 따라 다릅니다. 실제 안내받은 비율이 있다면 <strong>시계외 할증률</strong>에 직접 입력하세요. 이 계산기는 입력한 심야·시계외 비율을 각각 미터 운임 추정액에 더하는 방식으로 단순 계산합니다.</p>
       <br>
       <strong>Q. 차가 막히면 택시 요금이 왜 더 빨리 오르나요?</strong>
-      <p>현행 택시 요금은 '거리 요금'과 '시간 요금'이 병행하여 올라가는 <strong>거리·시간 병산제</strong>를 채택하고 있습니다. 기준 속도(보통 시속 15km) 이하로 서행하거나 신호에 걸려 정차해 있을 때는 <strong>시간 요금(초당 일정 금액)</strong>이 추가로 차감되어 거리가 늘지 않아도 요금이 상승하게 됩니다.</p>
+      <p>기준 속도 이하로 서행하거나 정차한 구간에서는 지역별 <strong>시간 요금</strong>이 반영될 수 있습니다. 예상 저속·정차 시간을 분 단위로 넣으면 요금표의 시간 단위와 금액을 이용해 별도로 추정합니다.</p>
       <br>
       <strong>Q. 카카오 T 등 호출 수수료는 택시비와 별개인가요?</strong>
-      <p>네, 별개입니다. 본 계산기는 호출 플랫폼의 수수료(콜비)를 제외한 순수 미터기 예상 요금만 산출합니다. 블루, 벤티와 같은 특수 호출의 경우 시간대에 따라 천차만별의 호출 수수료가 배정되므로, 미터기 요금 + 콜비를 합산하여 예산을 짜는 것이 현명합니다.</p>
+      <p>대개 미터기 운임과 별도로 표시됩니다. 앱이나 호출 화면에서 확인한 금액을 <strong>호출료</strong>에 입력하면 총 예상액에 합산할 수 있습니다.</p>
     </div>
   </details>
 
@@ -187,8 +235,9 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="guide-content">
       <p><b>• 요금 산정 방식:</b> 기본요금(기본거리) + 추가거리요금 + 시간추가요금(서행/정차 시)</p>
       <p><b>• 심야 폭증 주의:</b> 보통 밤 10시부터 새벽 4시까지 세분화 적용되며, 피크 시간대(예: 밤 11시 ~ 새벽 2시)엔 관할 구역에 따라 최대 40% 할증 구간이 있습니다.</p>
-      <p><b>• 시계외 할증 부담:</b> 행정구역을 벗어날 경우 미터기가 올라가는 속도가 완전히 달라집니다. (시외 할증은 본 기초 계산기에는 구조상 반영되지 않았습니다.)</p>
-      <p><b>• 공지:</b> 본 계산 결과는 최적의 도로 상황을 가정한 거리 기준 단순 예상 요금이므로, 교통 체증 등 실운행 컨디션에 따라 편차가 명확히 존재합니다.</p>
+      <p><b>• 시계외 할증:</b> 실제 적용 여부와 요율을 확인한 뒤 직접 입력할 수 있습니다. 지역별 중복 할증 방식은 다를 수 있습니다.</p>
+      <p><b>• 별도 비용:</b> 통행료·호출료·기타 비용은 편도 기준으로 입력하며, 왕복 계산 시 2배로 반영됩니다.</p>
+      <p><b>• 공지:</b> 본 결과는 입력값과 수록 요율을 이용한 참고용 예상액입니다. 실제 미터기는 운행 경로, 저속 판정, 호출 상품, 지자체 세부 요율과 반올림 방식에 따라 달라질 수 있습니다.</p>
     </div>
   </details>
 
@@ -201,7 +250,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
   </div>
 
-  <div class="footer"><span>전국 시·도 택시비 · 실시간 요금 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+  <div class="footer"><span>전국 시·도 택시비 참고용 예상 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
 </div>
 
 <div class="toast" id="toast"></div>
