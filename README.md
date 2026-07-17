@@ -15,7 +15,7 @@
 ## ✨ 소개
 
 회원가입 없이, **브라우저에서 바로 사용**할 수 있는 웹 도구 모음입니다.  
-계산·텍스트·파일 변환은 가능한 한 **브라우저에서 로컬 처리**하며, 공인 IP 조회·응답 지연 측정·외부 라이브러리처럼 네트워크가 필요한 기능은 페이지에서 그 범위를 안내합니다.
+계산·텍스트·파일 변환은 가능한 한 **브라우저에서 로컬 처리**하며, 공인 IP 조회·응답 지연 측정이나 AI 모델처럼 네트워크가 필요한 기능은 페이지에서 범위와 최초 다운로드 크기를 안내합니다. PDF 엔진과 배경 제거 AI 코드·모델은 고정 버전을 저장소에 포함해 실행 중 제3자 CDN에 의존하지 않습니다.
 
 > 🔒 **로컬 우선 설계** — 사용자 파일과 계산 입력은 원칙적으로 브라우저 안에서 처리합니다
 
@@ -24,11 +24,11 @@
 ## 🎯 주요 기능
 
 - 🌓 **다크/라이트 모드** — 메인 포털에서 원클릭 테마 전환, 전체 사이트 일관 적용
-- 📱 **PWA 지원** — 모바일 홈 화면에 앱처럼 추가, 이전에 방문해 캐시된 페이지는 오프라인에서도 다시 열기 가능
+- 📱 **PWA 지원** — 192px·maskable 아이콘, 원자적 앱 셸 설치, 방문 페이지와 버전 고정 도구 엔진의 분리 캐시 지원
 - 💾 **선택적 자동 저장** — 일부 도구는 입력·설정·커스텀 문구 또는 생성 이력을 브라우저에 저장
 - ⭐ **즐겨찾기** — 자주 쓰는 도구에 별표 또는 드래그로 즐겨찾기 등록
 - 🔐 **로컬 우선 처리** — 계산·텍스트·파일 변환은 브라우저에서 처리하고 네트워크 기능은 별도 표시
-- ✅ **품질 검사** — `npm run verify`로 규칙·수식·SEO·브라우저 렌더링을 게시 전에 로컬 검증
+- ✅ **품질 검사** — `npm run verify`로 규칙·수식·SEO·접근성·Chromium/Firefox/WebKit·모바일 에뮬레이션을 게시 전에 로컬 검증
 
 <br>
 
@@ -85,9 +85,9 @@
 | [📷 QR 코드 생성기](https://teemozipsa.github.io/special-chars/qr-code/) | 오류 복원 수준과 스캔 여백을 반영한 QR 코드 생성 |
 | [🗜️ 이미지 용량 줄이기](https://teemozipsa.github.io/special-chars/image-compress/) | 브라우저에서 바로 사진 용량 압축 |
 | [🔄 이미지 포맷 변환](https://teemozipsa.github.io/special-chars/image-format-converter/) | GIF·BMP·SVG 등을 불러와 정적 JPG·PNG·WebP로 변환 |
-| [📄 PDF 도구](https://teemozipsa.github.io/special-chars/pdf-tool/) | PDF 합치기·나누기·회전·워터마크 |
+| [📄 PDF 도구](https://teemozipsa.github.io/special-chars/pdf-tool/) | 자체 호스팅 엔진으로 PDF 합치기·나누기·회전·워터마크 |
 | [🔑 비밀번호 생성기](https://teemozipsa.github.io/special-chars/password-gen/) | 안전한 랜덤 비밀번호 즉시 생성 |
-| [✂️ 이미지 배경(누끼) 제거](https://teemozipsa.github.io/special-chars/bg-remover/) | 브라우저용 AI 모델로 배경을 제거하고 PNG 저장 |
+| [✂️ 이미지 배경(누끼) 제거](https://teemozipsa.github.io/special-chars/bg-remover/) | 자체 호스팅 브라우저용 AI 모델로 배경을 제거하고 PNG 저장 |
 
 ### 🤖 AI & 마케팅
 | 도구 | 설명 |
@@ -108,11 +108,11 @@
 
 사용자 정의 GitHub Actions 없이 로컬 검증을 통과한 정적 파일을 `main` 브랜치 루트에서 GitHub Pages로 게시합니다. 저장소에는 workflow를 두지 않으며, Pages의 내장 배포만 GitHub가 관리합니다.
 
-최초 한 번 의존성과 Chromium을 준비합니다.
+최초 한 번 의존성과 로컬 브라우저 엔진을 준비합니다.
 
 ```powershell
 npm ci
-npx playwright install chromium
+npx playwright install chromium firefox webkit
 ```
 
 코드 변경을 검증할 때는 다음 한 명령을 실행합니다.
@@ -121,7 +121,11 @@ npx playwright install chromium
 npm run verify
 ```
 
-이 명령은 코드 규칙, 계산식 회귀 사례, SEO 색인, 핵심 사용자 조작 Playwright 회귀검사, 전체 정적 페이지의 Chromium 렌더링 및 Git diff 오류를 순서대로 검사합니다. 조작형 검사만 빠르게 다시 실행하려면 `npm run audit:interactions`를 사용합니다.
+이 명령은 코드 규칙, 계산식 회귀 사례, SEO 색인, 핵심 사용자 조작 45개, 전체 80개 도구의 라이트·다크 초기·탭 상태 WCAG 2.1 A/AA 감사 358회, 전체 정적 페이지 Chromium 렌더링, Chromium·Firefox·WebKit 데스크톱과 Pixel 7·iPhone 15 에뮬레이션의 색인 페이지 190회 렌더링과 브라우저별 고위험 조작 22개, Git diff 오류를 순서대로 검사합니다. 빠른 조작 회귀검사는 `npm run audit:interactions`, 접근성 전수 검사는 `npm run audit:accessibility`, 5개 환경 호환성 검사는 `npm run audit:browsers`로 따로 실행할 수 있습니다.
+
+모바일 프로필은 뷰포트·터치·브라우저 엔진 에뮬레이션입니다. 물리 기기의 OS 통합 동작과 Windows Playwright WebKit이 제공하지 않는 Safari/iOS Web Audio는 실제 Apple 기기에서 별도로 확인해야 합니다. Chromium과 Firefox에서는 메트로놈 AudioWorklet의 누적 프레임 간격·정지·재시작을 검증합니다.
+
+PDF와 배경 제거용 외부 구성요소의 정확한 버전·크기·라이선스·출처는 [`special-chars/vendor/README.md`](special-chars/vendor/README.md)에 기록합니다. 배경 제거 도구의 첫 진입과 최초 처리에는 이 사이트에서 JS 번들·양자화 모델·실행 환경에 맞는 WASM 합계 약 56.9MB를 받으며, 브라우저 저장 공간 정리나 축출 시 다시 받아야 합니다. `@imgly/background-removal`의 AGPL-3.0 고지, 대응 소스맵과 제3자 라이선스는 배포물에서 제거하면 안 됩니다.
 
 게시 전 검색 제안 주제까지 갱신하려면 다음 명령을 사용합니다. 검색 제안 내용이 같으면 데이터 파일을 수정하지 않으며, 모든 외부 요청이 실패하면 기존 데이터를 보존하고 명령을 실패 처리합니다.
 

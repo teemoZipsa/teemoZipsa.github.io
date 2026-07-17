@@ -64,7 +64,7 @@
   .guide-content p{margin-bottom:8px}
   .report-box{margin-top:16px;padding:16px;border-radius:8px;background:var(--bg-input);border:1px solid var(--accent);color:var(--text-primary);font-size:13px;line-height:1.6;display:none;animation:fadeIn .3s}
   @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-  .report-box strong{color:var(--accent)}
+  .report-box strong{color:var(--accent-text)}
   .related-tools{margin:12px;padding:16px;background:var(--bg-input);border-radius:8px;border:1px solid var(--border)}
   .related-tools h3{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text-primary);display:flex;align-items:center;gap:6px}
   .tool-tags{display:flex;flex-wrap:wrap;gap:8px}
@@ -91,7 +91,7 @@
     <textarea id="counterInput" placeholder="여기에 텍스트를 입력하세요..." oninput="updateCounter()"></textarea>
 
     <div class="limit-bar">
-      <select id="limitType" onchange="updateCounter()">
+      <select aria-label="글자 수 제한 기준" id="limitType" onchange="updateCounter()">
         <option value="none">제한 없음</option>
         <option value="chars">글자 수 제한</option>
         <option value="bytes-utf8">바이트 제한 (UTF-8)</option>
@@ -149,7 +149,7 @@
     </div>
   </div>
 
-    <div class="footer"><span>실시간 분석</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <footer class="footer"><span>실시간 분석</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>

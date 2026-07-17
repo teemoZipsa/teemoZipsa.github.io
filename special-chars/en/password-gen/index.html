@@ -69,7 +69,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 /* Dynamic Report & Guide standard CSS */
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .report-box { margin: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
-.report-box strong { color: var(--accent); }
+.report-box strong { color:var(--accent-text); }
 .guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
 .guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
 .guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
@@ -123,7 +123,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 
     <div class="section-title">Length</div>
     <div class="length-row">
-      <input type="range" id="pwLength" min="4" max="64" value="16" oninput="onLengthChange()">
+      <input aria-label="Password length" type="range" id="pwLength" min="4" max="64" value="16" oninput="onLengthChange()">
       <div class="length-value" id="lengthDisplay">16</div>
     </div>
 
@@ -209,7 +209,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       </div>
     </div>
   </section>
-    <div class="footer"><span>100% Local Generation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+    <footer class="footer"><span>100% Local Generation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -295,10 +295,10 @@ function updateStrength(pw) {
   if (/[^a-zA-Z0-9]/.test(pw)) score++;
 
   const levels = [
-    { max: 2, pct: '20%', color: '#ef4444', text: 'Weak' },
-    { max: 3, pct: '45%', color: '#f59e0b', text: 'Fair' },
-    { max: 4, pct: '70%', color: '#22c55e', text: 'Strong' },
-    { max: 99, pct: '100%', color: '#10b981', text: 'Very Strong' }
+    { max: 2, pct: '20%', color: 'var(--status-red-text)', text: 'Weak' },
+    { max: 3, pct: '45%', color: 'var(--status-orange-text)', text: 'Fair' },
+    { max: 4, pct: '70%', color: 'var(--status-green-text)', text: 'Strong' },
+    { max: 99, pct: '100%', color: 'var(--status-green-text)', text: 'Very Strong' }
   ];
   const lv = levels.find(l => score <= l.max);
   fill.style.width = lv.pct;

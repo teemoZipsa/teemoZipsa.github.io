@@ -67,7 +67,7 @@
   .guide-item .guide-content{padding:12px; font-size:13px; color:var(--text-info); line-height:1.6;}
   .related-tools{margin-top:16px; padding-top:16px; border-top:1px solid var(--border);}
   .tag-container{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
-  .tool-tag{padding:6px 12px; background:rgba(83,52,131,0.1); color:var(--accent); border-radius:16px; font-size:11px; font-weight:600; text-decoration:none; transition:all 0.2s;}
+  .tool-tag{padding:6px 12px; background:rgba(83,52,131,0.1); color:var(--accent-text); border-radius:16px; font-size:11px; font-weight:600; text-decoration:none; transition:all 0.2s;}
   .tool-tag:hover{background:var(--accent); color:var(--text-on-accent);}
 .scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
 .scroll-top-btn.visible{opacity:1;visibility:visible}
@@ -76,7 +76,7 @@
 </style>
 </head>
 <body>
-<div id="cdnError" style="display:none;background:#ff4444;color:var(--text-on-accent);text-align:center;padding:12px;font-size:14px;">외부 라이브러리 로드에 실패했습니다. 인터넷 연결을 확인하고 새로고침 해주세요.</div>
+<div id="cdnError" style="display:none;background:var(--status-red-bg);color:var(--text-on-accent);text-align:center;padding:12px;font-size:14px;">외부 라이브러리 로드에 실패했습니다. 인터넷 연결을 확인하고 새로고침 해주세요.</div>
 <script>if(window.__qrCdnError){document.getElementById('cdnError').style.display='block'}</script>
 <div class="app">
   <div class="header">
@@ -169,7 +169,7 @@
       </div>
     </div>
   </div>
-    <div class="footer"><span>100% 브라우저 로컬 생성 (서버 미전송)</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <footer class="footer"><span>100% 브라우저 로컬 생성 (서버 미전송)</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>

@@ -62,7 +62,7 @@
         .guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
         .guide-content ol{padding-left:20px}.guide-content li{margin-bottom:4px}
         .report-box{margin-top:16px;padding:16px;border-radius:8px;background:var(--bg-input);border:1px solid var(--accent);color:var(--text-primary);font-size:13px;line-height:1.6;display:none;animation:fadeIn .3s}
-        .report-box strong{color:var(--accent)}
+        .report-box strong{color:var(--accent-text)}
         .related-tools{margin:12px;padding:16px;background:var(--bg-guide);border-radius:8px;border:1px solid var(--border)}
         .related-tools h3{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text-primary);display:flex;align-items:center;gap:6px}
         .tool-tags{display:flex;flex-wrap:wrap;gap:8px}
@@ -96,7 +96,7 @@
         <div class="input-section">
             <label>생년월일을 입력하세요</label>
             <div class="date-row">
-                <input type="date" id="birthDate" onchange="calcZodiac()">
+                <input aria-label="생년월일" type="date" id="birthDate" onchange="calcZodiac()">
                 <button class="btn-today" onclick="setToday()">오늘 날짜</button>
             </div>
         </div>
@@ -155,7 +155,7 @@
             <a href="/special-chars/pet-age-calc/" class="tool-tag">🐶 강아지/고양이 나이 계산기</a>
         </div>
     </div>
-    <div class="footer"><span>생년월일 기반 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <footer class="footer"><span>생년월일 기반 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -220,7 +220,7 @@ function calcZodiac() {
 
 function updateReportBox(month, day, z) {
     const reportBox = document.getElementById('reportBox');
-    let traitsStr = z.traits.map(t => `<strong style="color:var(--accent)">[${t}]</strong>`).join(', ');
+    let traitsStr = z.traits.map(t => `<strong style="color:var(--accent-text)">[${t}]</strong>`).join(', ');
     let compatStr = z.compat.map(c => `<strong>${c}</strong>`).join(', ');
 
     let reportHTML = `입력하신 생일(<strong>${month}월 ${day}일</strong>) 기준 회원님의 별자리는 <strong>${z.symbol} ${z.name}(${z.en})</strong>입니다.<br><br>`;

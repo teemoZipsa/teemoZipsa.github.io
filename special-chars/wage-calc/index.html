@@ -51,8 +51,8 @@
   .r-card.after .r-value{color:var(--text-success)}
 
   .min-wage{background:var(--bg-success, #1a2a1a);border:1px solid var(--border-success, #2a4a2a);border-radius:10px;padding:10px 14px;font-size:11px;color:var(--text-success);display:flex;justify-content:space-between;align-items:center}
-  .min-wage button{background:var(--bg-success-hover, #2a4a2a);border:none;color:var(--text-success);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;transition:background .15s}
-  .min-wage button:hover{background:var(--bg-success-hover)}
+  .min-wage button{background:var(--status-green-bg);border:none;color:var(--text-on-accent);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;transition:filter .15s}
+  .min-wage button:hover{filter:brightness(.9)}
 
   /* 목표 위젯 */
   .goal-section{background:var(--bg-bar);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
@@ -74,7 +74,7 @@
   .related-tools{margin:0 12px 12px;padding:16px;background:var(--bg-guide);border-radius:8px;border:1px solid var(--border)}
   .related-tools h4{font-size:14px;margin-bottom:10px;font-weight:700;color:var(--text-primary)}
   .related-tools ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px}
-  .related-tools li a{font-size:13px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:6px;transition:opacity .2s}
+  .related-tools li a{font-size:13px;color:var(--accent-text);text-decoration:none;display:flex;align-items:center;gap:6px;transition:opacity .2s}
   .related-tools li a:hover{opacity:0.8;text-decoration:underline}
 
   .hint{font-size:10px;color:var(--text-muted);text-align:center;margin-top:10px}
@@ -106,15 +106,15 @@
       <div class="field-row">
         <div class="field">
           <label>일 근무시간</label>
-          <input type="number" id="hoursDay" value="8" min="1" max="24" oninput="calc()">
+          <input aria-label="하루 근무 시간" type="number" id="hoursDay" value="8" min="1" max="24" oninput="calc()">
         </div>
         <div class="field">
           <label>주 근무일수</label>
-          <input type="number" id="daysWeek" value="5" min="1" max="7" oninput="calc()">
+          <input aria-label="주당 근무일" type="number" id="daysWeek" value="5" min="1" max="7" oninput="calc()">
         </div>
         <div class="field">
           <label>주휴수당</label>
-          <select id="weeklyHol" onchange="calc()">
+          <select aria-label="주휴수당 포함 여부" id="weeklyHol" onchange="calc()">
             <option value="yes" selected>포함 (주 15시간 이상 시)</option>
             <option value="no">미포함</option>
           </select>
@@ -123,11 +123,11 @@
       <div class="field-row">
         <div class="field">
           <label>⏱️ 연장근로 (하루, 8h 초과분)</label>
-          <input type="number" id="overtime" value="0" min="0" max="16" step="0.5" oninput="calc()">
+          <input aria-label="주당 연장 근무 시간" type="number" id="overtime" value="0" min="0" max="16" step="0.5" oninput="calc()">
         </div>
         <div class="field">
           <label>🌙 야간근로 (22~06시)</label>
-          <input type="number" id="nighttime" value="0" min="0" max="8" step="0.5" oninput="calc()">
+          <input aria-label="주당 야간 근무 시간" type="number" id="nighttime" value="0" min="0" max="8" step="0.5" oninput="calc()">
         </div>
       </div>
     </div>
@@ -138,7 +138,7 @@
       <div class="field-row">
         <div class="field">
           <label>공제 유형</label>
-          <select id="taxType" onchange="calc()">
+          <select aria-label="공제 유형" id="taxType" onchange="calc()">
             <option value="none">세금 미공제 (세전)</option>
             <option value="insurance" selected>4대 보험 (약 9.39%)</option>
             <option value="freelance">프리랜서 (3.3%)</option>
@@ -153,17 +153,17 @@
       <div class="field-row">
         <div class="field">
           <label>시급 (원)</label>
-          <input type="text" id="hourly" value="10,320" oninput="formatAndCalc(this,'hourly')">
+          <input aria-label="시급" type="text" id="hourly" value="10,320" oninput="formatAndCalc(this,'hourly')">
         </div>
       </div>
       <div class="field-row">
         <div class="field">
           <label>월급 (원)</label>
-          <input type="text" id="monthly" placeholder="" oninput="formatAndCalc(this,'monthly')">
+          <input aria-label="월급" type="text" id="monthly" placeholder="" oninput="formatAndCalc(this,'monthly')">
         </div>
         <div class="field">
           <label>연봉 (원)</label>
-          <input type="text" id="yearly" placeholder="" oninput="formatAndCalc(this,'yearly')">
+          <input aria-label="연봉" type="text" id="yearly" placeholder="" oninput="formatAndCalc(this,'yearly')">
         </div>
       </div>
     </div>
@@ -288,7 +288,7 @@
     </ul>
   </div>
 
-    <div class="footer"><span>정당한 노동의 가치를 확인하세요</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <footer class="footer"><span>정당한 노동의 가치를 확인하세요</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 <script>
 let lastInput = '';

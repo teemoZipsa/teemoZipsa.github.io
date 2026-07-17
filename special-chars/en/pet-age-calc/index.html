@@ -47,7 +47,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 
 .result-card{border-radius:16px;padding:28px;text-align:center;background:var(--bg-guide);border:1px solid var(--border)}
 .result-emoji{font-size:60px;margin-bottom:8px}
-.result-age{font-size:48px;font-weight:800;color:var(--accent);letter-spacing:-2px}
+.result-age{font-size:48px;font-weight:800;color:var(--accent-text);letter-spacing:-2px}
 .result-label{font-size:14px;color:var(--text-info);margin-top:4px}
 .result-stage{font-size:16px;font-weight:700;margin-top:8px;padding:6px 16px;border-radius:20px;display:inline-block}
 
@@ -63,7 +63,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 /* Dynamic Report & Guide standard CSS */
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .report-box { margin: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
-.report-box strong { color: var(--accent); }
+.report-box strong { color:var(--accent-text); }
 .guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
 .guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
 .guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
@@ -121,7 +121,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <div class="input-group">
       <label>Pet Age</label>
       <div class="input-row">
-        <input type="number" id="petAge" value="3" min="0" max="30" step="1" oninput="calc()">
+        <input aria-label="Pet age" type="number" id="petAge" value="3" min="0" max="30" step="1" oninput="calc()">
         <span class="unit">yrs</span>
       </div>
     </div>
@@ -190,7 +190,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     </div>
   </section>
 
-  <div class="footer"><span>Educational age estimate</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+  <footer class="footer"><span>Educational age estimate</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -201,12 +201,12 @@ let petType = 'dog';
 let dogSize = 'medium';
 
 const STAGES = [
-  { maxAge: 6, name: 'Baby', emoji: '🍼', color: '#60a5fa' },
-  { maxAge: 12, name: 'Teen', emoji: '🌱', color: '#34d399' },
-  { maxAge: 30, name: 'Young Adult', emoji: '💪', color: '#22c55e' },
-  { maxAge: 50, name: 'Adult', emoji: '👔', color: '#facc15' },
-  { maxAge: 70, name: 'Middle-aged', emoji: '📖', color: '#f97316' },
-  { maxAge: 999, name: 'Senior', emoji: '🤍', color: '#a78bfa' },
+  { maxAge: 6, name: 'Baby', emoji: '🍼', color: '#1d4ed8' },
+  { maxAge: 12, name: 'Teen', emoji: '🌱', color: '#166534' },
+  { maxAge: 30, name: 'Young Adult', emoji: '💪', color: '#166534' },
+  { maxAge: 50, name: 'Adult', emoji: '👔', color: '#92400e' },
+  { maxAge: 70, name: 'Middle-aged', emoji: '📖', color: '#9a3412' },
+  { maxAge: 999, name: 'Senior', emoji: '🤍', color: '#6d28d9' },
 ];
 
 // Dog age to human age (by size)
@@ -295,7 +295,7 @@ function calc() {
     </div>
     <div class="info-item">
       <div class="label">Simple reference ratio</div>
-      <div class="value" style="color:${pct > 80 ? '#ef4444' : pct > 50 ? '#f97316' : '#22c55e'}">${pct}%</div>
+      <div class="value" style="color:${pct > 80 ? 'var(--status-red-text)' : pct > 50 ? 'var(--status-orange-text)' : 'var(--status-green-text)'}">${pct}%</div>
     </div>
     <div class="info-item">
       <div class="label">Life Stage</div>

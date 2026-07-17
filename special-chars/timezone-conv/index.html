@@ -49,7 +49,7 @@
         .report-box { margin-top: 16px; padding: 20px; background: var(--bg-bar); border: 1px solid var(--border); border-radius: 12px; display: none; animation: fadeIn 0.5s ease-out; }
         .report-box h3 { font-size: 15px; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
         .report-box p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 8px; }
-        .report-box .highlight { color: var(--accent); font-weight: 600; }
+        .report-box .highlight { color:var(--accent-text); font-weight: 600; }
         /* 가이드 & 관련 도구 (표준) */
         .guide-section{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
         .guide-section h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
@@ -65,7 +65,7 @@
         .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
         .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
         .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
-        .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+        .tool-card:hover{border-color:var(--accent);color:var(--accent-text);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .bottom-bar{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
@@ -96,11 +96,11 @@
         <!-- FROM -->
         <div class="tz-card">
             <div class="tz-label">🔵 기준 시간 (FROM)</div>
-            <select class="tz-select" id="fromTz" onchange="convert()">
+            <select aria-label="출발 시간대" class="tz-select" id="fromTz" onchange="convert()">
             </select>
             <div class="tz-datetime">
-                <input type="date" id="fromDate" onchange="convert()">
-                <input type="time" id="fromTime" step="60" onchange="convert()">
+                <input aria-label="변환할 날짜" type="date" id="fromDate" onchange="convert()">
+                <input aria-label="변환할 시간" type="time" id="fromTime" step="60" onchange="convert()">
             </div>
         </div>
 
@@ -112,7 +112,7 @@
         <!-- TO -->
         <div class="tz-card">
             <div class="tz-label">🔴 변환 시간 (TO)</div>
-            <select class="tz-select" id="toTz" onchange="convert()">
+            <select aria-label="도착 시간대" class="tz-select" id="toTz" onchange="convert()">
             </select>
             <div class="tz-result" id="toResult">--:--</div>
             <div class="tz-result-date" id="toResultDate"></div>
@@ -168,7 +168,7 @@
             <a href="/special-chars/date-calc/" class="tool-card">📅 디데이 계산기</a>
         </div>
     </section>
-    <div class="footer"><span>브라우저 시간대 규칙 반영</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <footer class="footer"><span>브라우저 시간대 규칙 반영</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 

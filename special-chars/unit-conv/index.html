@@ -67,7 +67,7 @@
   .guide-item .guide-content{padding:12px; font-size:13px; color:var(--text-info); line-height:1.6;}
   .related-tools{margin-top:16px; padding-top:16px; border-top:1px solid var(--border);}
   .tag-container{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
-  .tool-tag{padding:6px 12px; background:rgba(83,52,131,0.1); color:var(--accent); border-radius:16px; font-size:11px; font-weight:600; text-decoration:none; transition:all 0.2s;}
+  .tool-tag{padding:6px 12px; background:rgba(83,52,131,0.1); color:var(--accent-text); border-radius:16px; font-size:11px; font-weight:600; text-decoration:none; transition:all 0.2s;}
   .tool-tag:hover{background:var(--accent); color:var(--text-on-accent);}
 .scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
 .scroll-top-btn.visible{opacity:1;visibility:visible}
@@ -142,7 +142,7 @@
       </div>
     </div>
   </div>
-    <div class="footer"><span>양방향 실시간 변환</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <footer class="footer"><span>양방향 실시간 변환</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -216,7 +216,7 @@ function renderBasic(item){
 
 function renderOptions(item){
   let optHtml=item.options.map((o,i)=>`<option value="${i}">${o.label}</option>`).join('');
-  return `<div class="conv-fields"><div class="conv-field"><label>${item.a}</label><input type="number" id="conv-${item.id}-a" oninput="convSync('${item.id}','a')" placeholder="0"><select class="conv-option" id="conv-${item.id}-opt" onchange="convSync('${item.id}','a')">${optHtml}</select></div><span class="conv-arrow">↔</span><div class="conv-field"><label>${item.b}</label><input type="number" id="conv-${item.id}-b" oninput="convSync('${item.id}','b')" placeholder="0"></div></div>`;
+  return `<div class="conv-fields"><div class="conv-field"><label>${item.a}</label><input type="number" id="conv-${item.id}-a" oninput="convSync('${item.id}','a')" placeholder="0"><select aria-label="${item.a} 변환 기준" class="conv-option" id="conv-${item.id}-opt" onchange="convSync('${item.id}','a')">${optHtml}</select></div><span class="conv-arrow">↔</span><div class="conv-field"><label>${item.b}</label><input type="number" id="conv-${item.id}-b" oninput="convSync('${item.id}','b')" placeholder="0"></div></div>`;
 }
 
 function renderShoe(){
@@ -228,7 +228,7 @@ function renderData(){
 }
 
 function renderDpi(item){
-  return `<span class="conv-row-title">DPI 기반 변환</span><div class="conv-fields"><div class="conv-field"><label>${item.a}</label><input type="number" id="conv-${item.id}-a" oninput="convSync('${item.id}','a')" placeholder="0"></div><span class="conv-arrow">↔</span><div class="conv-field"><label>${item.b}</label><input type="number" id="conv-${item.id}-b" oninput="convSync('${item.id}','b')" placeholder="0"></div></div><div class="conv-extra"><label>DPI:</label><input type="number" id="conv-${item.id}-dpi" value="${item.dpiDefault}" oninput="convSync('${item.id}','a')"></div>`;
+  return `<span class="conv-row-title">DPI 기반 변환</span><div class="conv-fields"><div class="conv-field"><label>${item.a}</label><input type="number" id="conv-${item.id}-a" oninput="convSync('${item.id}','a')" placeholder="0"></div><span class="conv-arrow">↔</span><div class="conv-field"><label>${item.b}</label><input type="number" id="conv-${item.id}-b" oninput="convSync('${item.id}','b')" placeholder="0"></div></div><div class="conv-extra"><label>DPI:</label><input aria-label="DPI" type="number" id="conv-${item.id}-dpi" value="${item.dpiDefault}" oninput="convSync('${item.id}','a')"></div>`;
 }
 
 function convSync(id,side){

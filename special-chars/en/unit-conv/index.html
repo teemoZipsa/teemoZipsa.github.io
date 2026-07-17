@@ -57,7 +57,7 @@
   /* Dynamic Report & Guide standard CSS */
   @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   .report-box { margin-top: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
-  .report-box strong { color: var(--accent); }
+  .report-box strong { color:var(--accent-text); }
   .guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
   .guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
   .guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
@@ -145,7 +145,7 @@
       </div>
     </div>
   </section>
-    <div class="footer"><span>Bidirectional Real-time Conversion</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+    <footer class="footer"><span>Bidirectional Real-time Conversion</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -213,7 +213,7 @@ function renderBasic(item){
 
 function renderOptions(item){
   let optHtml=item.options.map((o,i)=>`<option value="${i}">${o.label}</option>`).join('');
-  return `<div class="conv-fields"><div class="conv-field"><label>${item.a}</label><input type="number" id="conv-${item.id}-a" oninput="convSync('${item.id}','a')" placeholder="0"><select class="conv-option" id="conv-${item.id}-opt" onchange="convSync('${item.id}','a')">${optHtml}</select></div><span class="conv-arrow">↔</span><div class="conv-field"><label>${item.b}</label><input type="number" id="conv-${item.id}-b" oninput="convSync('${item.id}','b')" placeholder="0"></div></div>`;
+  return `<div class="conv-fields"><div class="conv-field"><label>${item.a}</label><input type="number" id="conv-${item.id}-a" oninput="convSync('${item.id}','a')" placeholder="0"><select aria-label="${item.a} conversion basis" class="conv-option" id="conv-${item.id}-opt" onchange="convSync('${item.id}','a')">${optHtml}</select></div><span class="conv-arrow">↔</span><div class="conv-field"><label>${item.b}</label><input type="number" id="conv-${item.id}-b" oninput="convSync('${item.id}','b')" placeholder="0"></div></div>`;
 }
 
 function renderShoe(){
@@ -225,7 +225,7 @@ function renderData(){
 }
 
 function renderDpi(item){
-  return `<span class="conv-row-title">DPI Based Conversion</span><div class="conv-fields"><div class="conv-field"><label>${item.a}</label><input type="number" id="conv-${item.id}-a" oninput="convSync('${item.id}','a')" placeholder="0"></div><span class="conv-arrow">↔</span><div class="conv-field"><label>${item.b}</label><input type="number" id="conv-${item.id}-b" oninput="convSync('${item.id}','b')" placeholder="0"></div></div><div class="conv-extra"><label>DPI:</label><input type="number" id="conv-${item.id}-dpi" value="${item.dpiDefault}" oninput="convSync('${item.id}','a')"></div>`;
+  return `<span class="conv-row-title">DPI Based Conversion</span><div class="conv-fields"><div class="conv-field"><label>${item.a}</label><input type="number" id="conv-${item.id}-a" oninput="convSync('${item.id}','a')" placeholder="0"></div><span class="conv-arrow">↔</span><div class="conv-field"><label>${item.b}</label><input type="number" id="conv-${item.id}-b" oninput="convSync('${item.id}','b')" placeholder="0"></div></div><div class="conv-extra"><label>DPI:</label><input aria-label="DPI" type="number" id="conv-${item.id}-dpi" value="${item.dpiDefault}" oninput="convSync('${item.id}','a')"></div>`;
 }
 
 function convSync(id,side){

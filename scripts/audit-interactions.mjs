@@ -8,6 +8,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
 const failures = [];
 let passed = 0;
+let forcedFailurePath = null;
+let forcedFailureHits = 0;
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -33,6 +35,12 @@ function startServer() {
   const server = http.createServer((req, res) => {
     try {
       const pathname = decodeURIComponent(new URL(req.url, 'http://127.0.0.1').pathname);
+      if (forcedFailurePath && pathname === forcedFailurePath) {
+        forcedFailureHits += 1;
+        res.writeHead(503, { 'Content-Type': 'text/plain; charset=utf-8' });
+        res.end('Forced audit failure');
+        return;
+      }
       if (pathname === '/__blank') {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
         res.end('<!doctype html><title>audit blank</title>');
@@ -295,6 +303,194 @@ async function main() {
     assert(result.delay.includes('유효한 BPM'), `negative BPM produced ${result.delay}`);
   });
 
+  await scenario('sample-accurate metronome engine', '/special-chars/music-calc/', async page => {
+    await page.evaluate(() => {
+      switchTab(1);
+      window.__metroFrames = [];
+      const dots = document.querySelector('#beatDots');
+      new MutationObserver(() => {
+        const frame = Number(dots.dataset.lastAudioFrame);
+        if (Number.isFinite(frame) && window.__metroFrames.at(-1) !== frame) window.__metroFrames.push(frame);
+      }).observe(dots, { attributes: true, attributeFilter: ['data-last-audio-frame'] });
+      setMetroBpm(173);
+    });
+    await page.locator('#metroPlayBtn').click();
+    await page.waitForFunction(() => window.__metroFrames.length >= 17, null, { timeout: 7000 });
+    const state = await page.evaluate(() => {
+      const frames = window.__metroFrames.slice(0, 17);
+      const sampleRate = Number(document.querySelector('#beatDots').dataset.sampleRate);
+      return {
+        engine: document.querySelector('#beatDots').dataset.engine,
+        frames,
+        sampleRate,
+        pressed: document.querySelector('#metroPlayBtn').getAttribute('aria-pressed')
+      };
+    });
+    assert(state.engine === 'audio-worklet', `metronome fell back to ${state.engine}`);
+    assert(state.pressed === 'true', 'metronome play state is not exposed to assistive technology');
+    const expectedFrames = state.sampleRate * 60 / 173;
+    const intervals = state.frames.slice(1).map((frame, index) => frame - state.frames[index]);
+    assert(intervals.every(interval => Math.abs(interval - expectedFrames) <= 2), `metronome frame drift: ${intervals.join(', ')} vs ${expectedFrames}`);
+    assert(Math.abs((state.frames.at(-1) - state.frames[0]) - expectedFrames * 16) <= 2, 'metronome accumulated long-session frame drift');
+    await page.locator('#metroPlayBtn').click();
+    assert(await page.locator('#metroPlayBtn').getAttribute('aria-pressed') === 'false', 'metronome did not expose its stopped state');
+    await page.waitForFunction(() => metroCtx?.state === 'suspended');
+    const framesBeforeRestart = await page.evaluate(() => window.__metroFrames.length);
+    await page.locator('#metroPlayBtn').click();
+    await page.waitForFunction(previous => window.__metroFrames.length > previous, framesBeforeRestart);
+    assert(await page.locator('#metroPlayBtn').getAttribute('aria-pressed') === 'true', 'metronome did not restart cleanly');
+    await page.locator('#metroPlayBtn').click();
+    await page.waitForFunction(() => metroCtx?.state === 'suspended');
+  });
+
+  await scenario('metronome fallback mute and stop lifecycle', '/special-chars/music-calc/', async page => {
+    await page.evaluate(() => {
+      switchTab(1);
+      window.__fakeMetro = { oscillators: [], gains: [] };
+      class FakeAudioParam {
+        constructor() { this.value = 0; }
+        setValueAtTime(value) { this.value = value; }
+        exponentialRampToValueAtTime(value) { this.value = value; }
+      }
+      class FakeAudioContext {
+        constructor() {
+          this.currentTime = 1;
+          this.sampleRate = 48000;
+          this.state = 'suspended';
+          this.destination = {};
+          this.audioWorklet = null;
+        }
+        createOscillator() {
+          const oscillator = {
+            frequency: { value: 0 }, starts: [], stops: [], onended: null,
+            connect() {}, disconnect() {},
+            start(time) { this.starts.push(time); },
+            stop(time) { this.stops.push(time); }
+          };
+          window.__fakeMetro.oscillators.push(oscillator);
+          return oscillator;
+        }
+        createGain() {
+          const gain = { gain: new FakeAudioParam(), connect() {}, disconnect() {} };
+          window.__fakeMetro.gains.push(gain);
+          return gain;
+        }
+        resume() { this.state = 'running'; return Promise.resolve(); }
+        suspend() { this.state = 'suspended'; return Promise.resolve(); }
+      }
+      window.AudioContext = FakeAudioContext;
+      window.webkitAudioContext = undefined;
+      setMetroBpm(300);
+      setMetroVolume(0);
+    });
+    await page.locator('#metroPlayBtn').click();
+    await page.waitForFunction(() => document.querySelector('#beatDots').dataset.engine === 'audio-clock-fallback');
+    assert(await page.evaluate(() => window.__fakeMetro.oscillators.length) === 0, 'muted fallback still scheduled an oscillator');
+    await page.evaluate(() => setMetroVolume(80));
+    await page.waitForFunction(() => window.__fakeMetro.oscillators.length > 0);
+    await page.locator('#metroPlayBtn').click();
+    const fallbackState = await page.evaluate(() => ({
+      contextState: metroCtx.state,
+      scheduledSources: fallbackScheduledSources.size,
+      oscillators: window.__fakeMetro.oscillators.map(oscillator => ({ starts: oscillator.starts.length, stops: oscillator.stops.length }))
+    }));
+    assert(fallbackState.contextState === 'suspended', `fallback context stayed ${fallbackState.contextState}`);
+    assert(fallbackState.scheduledSources === 0, 'fallback left scheduled sources after stop');
+    assert(fallbackState.oscillators.every(oscillator => oscillator.starts === 1 && oscillator.stops >= 2), `fallback sources were not cancelled: ${JSON.stringify(fallbackState.oscillators)}`);
+  });
+
+  for (const [name, routePath] of [
+    ['Korean metronome pending-start cancellation', '/special-chars/music-calc/'],
+    ['English metronome pending-start cancellation', '/special-chars/en/music-calc/']
+  ]) {
+    await scenario(name, routePath, async page => {
+      const state = await page.evaluate(async () => {
+        switchTab(1);
+        window.__fakeMetroLifecycle = { resumes: 0, suspends: 0 };
+        class FakeAudioParam {
+          setValueAtTime() {}
+          exponentialRampToValueAtTime() {}
+        }
+        class DelayedAudioContext {
+          constructor() {
+            this.currentTime = 1;
+            this.sampleRate = 48000;
+            this.state = 'suspended';
+            this.destination = {};
+            this.audioWorklet = null;
+          }
+          createOscillator() {
+            return {
+              frequency: { value: 0 }, onended: null,
+              connect() {}, disconnect() {}, start() {}, stop() {}
+            };
+          }
+          createGain() {
+            return { gain: new FakeAudioParam(), connect() {}, disconnect() {} };
+          }
+          resume() {
+            window.__fakeMetroLifecycle.resumes += 1;
+            return new Promise(resolve => setTimeout(() => {
+              this.state = 'running';
+              resolve();
+            }, 100));
+          }
+          suspend() {
+            window.__fakeMetroLifecycle.suspends += 1;
+            this.state = 'suspended';
+            return Promise.resolve();
+          }
+        }
+        window.AudioContext = DelayedAudioContext;
+        window.webkitAudioContext = undefined;
+        const pendingStart = startMetronome();
+        await new Promise(resolve => setTimeout(resolve, 10));
+        window.dispatchEvent(new Event('pagehide'));
+        const started = await pendingStart;
+        await metroLifecyclePromise;
+        return {
+          started,
+          desiredPlaying: metroDesiredPlaying,
+          playing: metroPlaying,
+          contextState: metroCtx.state,
+          timerActive: fallbackTimerId !== null,
+          scheduledSources: fallbackScheduledSources.size,
+          lifecycle: window.__fakeMetroLifecycle
+        };
+      });
+      assert(state.started === false, `cancelled start reported success: ${JSON.stringify(state)}`);
+      assert(!state.desiredPlaying && !state.playing, `cancelled metronome restarted: ${JSON.stringify(state)}`);
+      assert(state.contextState === 'suspended', `cancelled metronome context stayed ${state.contextState}`);
+      assert(!state.timerActive && state.scheduledSources === 0, `cancelled metronome left fallback work: ${JSON.stringify(state)}`);
+      assert(state.lifecycle.resumes === 1 && state.lifecycle.suspends >= 1, `lifecycle race was not exercised: ${JSON.stringify(state.lifecycle)}`);
+    });
+  }
+
+  await scenario('English metronome AudioWorklet parity', '/special-chars/en/music-calc/', async page => {
+    await page.evaluate(() => {
+      switchTab(1);
+      window.__metroFrames = [];
+      const dots = document.querySelector('#beatDots');
+      new MutationObserver(() => {
+        const frame = Number(dots.dataset.lastAudioFrame);
+        if (Number.isFinite(frame) && window.__metroFrames.at(-1) !== frame) window.__metroFrames.push(frame);
+      }).observe(dots, { attributes: true, attributeFilter: ['data-last-audio-frame'] });
+      setMetroBpm(181);
+    });
+    await page.locator('#metroPlayBtn').click();
+    await page.waitForFunction(() => window.__metroFrames.length >= 11, null, { timeout: 5000 });
+    const state = await page.evaluate(() => ({
+      engine: document.querySelector('#beatDots').dataset.engine,
+      frames: window.__metroFrames.slice(0, 11),
+      sampleRate: Number(document.querySelector('#beatDots').dataset.sampleRate)
+    }));
+    const expectedFrames = state.sampleRate * 60 / 181;
+    assert(state.engine === 'audio-worklet', `English metronome fell back to ${state.engine}`);
+    assert(Math.abs((state.frames.at(-1) - state.frames[0]) - expectedFrames * 10) <= 2, 'English metronome accumulated frame drift');
+    await page.locator('#metroPlayBtn').click();
+    await page.waitForFunction(() => metroCtx?.state === 'suspended');
+  });
+
   for (const [name, routePath, input, resultSelector] of [
     ['calorie stale result', '/special-chars/calorie-calc/', '#weight', '#res-cal'],
     ['BMI stale result', '/special-chars/bmi-calc/', '#weight', '#bmiValue'],
@@ -500,7 +696,8 @@ async function main() {
     assert(imageRequests > 0 && imageRequests <= 8, `random fallback made ${imageRequests} image requests`);
   });
 
-  await scenario('PDF loader retry and image drop', '/special-chars/pdf-tool/', async page => {
+  await scenario('self-hosted PDF engine, offline render, and image drop', '/special-chars/pdf-tool/', async (page, context, base) => {
+    await page.waitForFunction(() => document.documentElement.dataset.pdfEngine === 'ready', null, { timeout: 10000 });
     const results = await page.evaluate(async () => {
       const settle = () => Promise.race([
         ensurePdfLibs().then(() => 'resolved', () => 'rejected'),
@@ -508,11 +705,22 @@ async function main() {
       ]);
       return [await settle(), await settle()];
     });
-    assert(results[0] === 'rejected' && results[1] === 'rejected', `PDF retries did not settle: ${results.join(', ')}`);
+    assert(results[0] === 'resolved' && results[1] === 'resolved', `local PDF engine did not settle: ${results.join(', ')}`);
+    const resourceOrigins = await page.evaluate(() => performance.getEntriesByType('resource').map(entry => new URL(entry.name).origin));
+    assert(resourceOrigins.every(origin => origin === new URL(base).origin), `PDF page loaded a third-party resource: ${resourceOrigins.join(', ')}`);
+    await context.setOffline(true);
+    const offlineResult = await page.evaluate(async () => {
+      const document = await PDFDocument.create();
+      const page = document.addPage([120, 120]);
+      page.drawText('offline', { x: 10, y: 60, size: 12 });
+      const bytes = await document.save();
+      const byteLength = bytes.length;
+      const thumb = await renderThumb(bytes, 1, 80);
+      return { bytes: byteLength, width: thumb.width, height: thumb.height };
+    });
+    assert(offlineResult.bytes > 0 && offlineResult.width === 80 && offlineResult.height > 0, `offline PDF render failed: ${JSON.stringify(offlineResult)}`);
+    await context.setOffline(false);
     await page.evaluate(() => {
-      // The drop filter itself is independent of the CDN. Mark libraries as
-      // ready so this assertion can exercise the accepted-file path offline.
-      pdfLibsPromise = Promise.resolve();
       const transfer = new DataTransfer();
       transfer.items.add(new File([new Uint8Array([137, 80, 78, 71])], 'sample.png', { type: 'image/png' }));
       document.querySelector('#img2pdfDropZone').dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer: transfer }));
@@ -527,12 +735,25 @@ async function main() {
     assert(reportState.marker === 0 && reportState.images === 0, `PDF report injected markup: ${JSON.stringify(reportState)}`);
   });
 
-  await scenario('background remover CDN failure', '/special-chars/bg-remover/', async page => {
-    const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAF/gL+X2NDWQAAAABJRU5ErkJggg==', 'base64');
-    await page.locator('#fileInput').setInputFiles({ name: 'one.png', mimeType: 'image/png', buffer: png });
-    await page.waitForFunction(() => getComputedStyle(document.querySelector('#retryBtn')).display !== 'none', null, { timeout: 5000 });
-    const message = await page.locator('#progressSub').innerText();
-    assert(message.includes('AI 모듈'), `missing actionable module error: ${message}`);
+  await scenario('self-hosted background-removal module', '/special-chars/bg-remover/', async (page, _context, base) => {
+    const moduleState = await page.evaluate(async () => {
+      const moduleUrl = '/special-chars/vendor/imgly-background-removal/1.5.5/background-removal.bundle.js';
+      const assetUrl = new URL('/special-chars/vendor/imgly-background-removal/1.5.5/data/', window.location.origin).href;
+      const module = await import(moduleUrl);
+      const manifest = await fetch(`${assetUrl}resources.json`).then(response => response.json());
+      return {
+        type: typeof module.removeBackground,
+        moduleUrl,
+        assetUrl,
+        model: 'isnet_quint8',
+        resources: Object.keys(manifest)
+      };
+    });
+    assert(moduleState.type === 'function', `local background-removal module did not load: ${JSON.stringify(moduleState)}`);
+    assert(moduleState.moduleUrl.startsWith('/special-chars/vendor/') && moduleState.assetUrl.startsWith(new URL(base).origin), `background remover is not self-hosted: ${JSON.stringify(moduleState)}`);
+    assert(moduleState.model === 'isnet_quint8' && moduleState.resources.includes('/models/isnet_quint8'), `quantized model manifest is incomplete: ${JSON.stringify(moduleState)}`);
+    const resourceOrigins = await page.evaluate(() => performance.getEntriesByType('resource').map(entry => new URL(entry.name).origin));
+    assert(resourceOrigins.every(origin => origin === new URL(base).origin), `background remover loaded a third-party resource: ${resourceOrigins.join(', ')}`);
     const moduleSource = (await page.locator('script[type="module"]').allTextContents()).join('\n');
     assert(moduleSource.includes('escapeHtml(origFile.name)'), 'background-remover report does not escape the selected filename');
   });
@@ -563,7 +784,33 @@ async function main() {
     assert(reportState.marker === 0 && reportState.images === 0, `image-compressor filename injected markup: ${JSON.stringify(reportState)}`);
   });
 
-  await scenario('PWA scope and cache ownership', '/__blank', async (page, context, baseUrl) => {
+  await scenario('PWA rejects an incomplete shell install', '/__blank', async (page, _context, baseUrl) => {
+    forcedFailurePath = '/special-chars/icon-maskable-512.png';
+    forcedFailureHits = 0;
+    try {
+      await page.goto(`${baseUrl}/special-chars/`, { waitUntil: 'domcontentloaded' });
+      for (let attempt = 0; attempt < 100 && forcedFailureHits === 0; attempt += 1) await page.waitForTimeout(50);
+      assert(forcedFailureHits > 0, 'service worker did not request the forced-failure shell asset');
+      await page.waitForTimeout(250);
+      const state = await page.evaluate(async () => {
+        const registration = await navigator.serviceWorker.getRegistration('/special-chars/');
+        const cacheNames = await caches.keys();
+        const shellName = cacheNames.find(name => name.startsWith('teemozipsa-shell-v'));
+        const entries = shellName ? (await (await caches.open(shellName)).keys()).length : 0;
+        return {
+          controller: Boolean(navigator.serviceWorker.controller),
+          active: Boolean(registration?.active || registration?.waiting),
+          shellEntries: entries
+        };
+      });
+      assert(!state.controller && !state.active && state.shellEntries === 0, `partial PWA shell activated: ${JSON.stringify(state)}`);
+    } finally {
+      forcedFailurePath = null;
+      forcedFailureHits = 0;
+    }
+  }, { serviceWorkers: 'allow' });
+
+  await scenario('PWA scope, installability, and cache ownership', '/__blank', async (page, context, baseUrl) => {
     await page.evaluate(async () => {
       await caches.open('emoji-kitchen-db-v1');
       await caches.open('teemozipsa-shell-v1.2');
@@ -574,18 +821,85 @@ async function main() {
     await page.goto(`${baseUrl}/special-chars/`, { waitUntil: 'domcontentloaded' });
     await page.evaluate(() => navigator.serviceWorker.ready);
     await page.waitForTimeout(300);
-    const state = await page.evaluate(async () => ({
-      caches: await caches.keys(),
-      scopes: (await navigator.serviceWorker.getRegistrations()).map(reg => reg.scope),
-      manifest: await fetch('/special-chars/manifest.json').then(response => response.json()),
-      theme: await fetch('/special-chars/theme.css').then(response => response.text())
-    }));
+    const state = await page.evaluate(async () => {
+      const manifest = await fetch('/special-chars/manifest.json').then(response => response.json());
+      const icons = await Promise.all(manifest.icons.map(async icon => {
+        const response = await fetch(new URL(icon.src, document.baseURI));
+        const bitmap = await createImageBitmap(await response.blob());
+        const result = { src: icon.src, purpose: icon.purpose, declared: icon.sizes, width: bitmap.width, height: bitmap.height };
+        if ((icon.purpose || '').split(/\s+/).includes('maskable')) {
+          const canvas = document.createElement('canvas');
+          canvas.width = bitmap.width;
+          canvas.height = bitmap.height;
+          const drawing = canvas.getContext('2d', { willReadFrequently: true });
+          drawing.drawImage(bitmap, 0, 0);
+          const pixels = drawing.getImageData(0, 0, bitmap.width, bitmap.height).data;
+          const background = [pixels[0], pixels[1], pixels[2]];
+          let maxForegroundRadius = 0;
+          let minAlpha = 255;
+          for (let y = 0; y < bitmap.height; y += 1) {
+            for (let x = 0; x < bitmap.width; x += 1) {
+              const offset = (y * bitmap.width + x) * 4;
+              minAlpha = Math.min(minAlpha, pixels[offset + 3]);
+              const colorDelta = Math.abs(pixels[offset] - background[0]) + Math.abs(pixels[offset + 1] - background[1]) + Math.abs(pixels[offset + 2] - background[2]);
+              if (colorDelta > 12) {
+                maxForegroundRadius = Math.max(maxForegroundRadius, Math.hypot(x + 0.5 - bitmap.width / 2, y + 0.5 - bitmap.height / 2));
+              }
+            }
+          }
+          result.maxForegroundRadius = maxForegroundRadius;
+          result.safeRadius = bitmap.width * 0.4;
+          result.minAlpha = minAlpha;
+        }
+        bitmap.close();
+        return result;
+      }));
+      const cacheNames = await caches.keys();
+      const ownedCacheName = cacheNames.find(name => name.startsWith('teemozipsa-shell-v'));
+      const ownedCache = ownedCacheName ? await caches.open(ownedCacheName) : null;
+      const cachedIcons = ownedCache ? await Promise.all(icons.map(icon => ownedCache.match(new URL(icon.src, document.baseURI)).then(Boolean))) : [];
+      return {
+        caches: cacheNames,
+        scopes: (await navigator.serviceWorker.getRegistrations()).map(reg => reg.scope),
+        manifest,
+        icons,
+        cachedIcons,
+        theme: await fetch('/special-chars/theme.css').then(response => response.text())
+      };
+    });
     assert(state.caches.includes('emoji-kitchen-db-v1'), `foreign cache was deleted: ${state.caches}`);
     assert(!state.caches.includes('teemozipsa-shell-v1.2'), `old owned cache was not deleted: ${state.caches}`);
     assert(!state.caches.includes('teemozipsa-v1.2'), `legacy cache was not migrated: ${state.caches}`);
     assert(state.caches.includes('foreign-cache') && state.theme !== 'foreign poison' && state.theme.includes('--bg-body'), 'service worker read a foreign cache entry');
     assert(state.scopes.every(scope => scope.endsWith('/special-chars/')), `unexpected service worker scope: ${state.scopes}`);
     assert(state.manifest.start_url === '/special-chars/' && state.manifest.scope === '/special-chars/', 'manifest and service-worker scope differ');
+    assert(state.icons.some(icon => icon.purpose === 'any' && icon.declared === '192x192' && icon.width === 192 && icon.height === 192), `missing valid 192px PWA icon: ${JSON.stringify(state.icons)}`);
+    assert(state.icons.some(icon => icon.purpose === 'maskable' && icon.declared === '512x512' && icon.width === 512 && icon.height === 512), `missing valid maskable PWA icon: ${JSON.stringify(state.icons)}`);
+    const maskableIcon = state.icons.find(icon => icon.purpose === 'maskable');
+    assert(maskableIcon.minAlpha === 255 && maskableIcon.maxForegroundRadius <= maskableIcon.safeRadius, `maskable artwork escapes its safe zone: ${JSON.stringify(maskableIcon)}`);
+    assert(state.cachedIcons.length === state.icons.length && state.cachedIcons.every(Boolean), `PWA icons were not precached: ${state.cachedIcons}`);
+    const vendorUrl = '/special-chars/vendor/pdf-lib/1.17.1/pdf-lib.min.js';
+    const onlineVendorBytes = await page.evaluate(async url => (await (await fetch(url)).arrayBuffer()).byteLength, vendorUrl);
+    const vendorCached = await page.evaluate(async url => Boolean(await (await caches.open('teemozipsa-vendor-v1')).match(url)), vendorUrl);
+    assert(onlineVendorBytes > 500000 && vendorCached, `vendor asset did not complete its stable cache write: ${onlineVendorBytes}, ${vendorCached}`);
+    const modelChunkUrl = await page.evaluate(async () => {
+      const dataPath = '/special-chars/vendor/imgly-background-removal/1.5.5/data/';
+      const resources = await fetch(`${dataPath}resources.json`).then(response => response.json());
+      return `${dataPath}${resources['/models/isnet_quint8'].chunks[0].hash}`;
+    });
+    const onlineModelChunkBytes = await page.evaluate(async url => (await (await fetch(url)).arrayBuffer()).byteLength, modelChunkUrl);
+    const modelChunkCached = await page.evaluate(async url => Boolean(await (await caches.open('teemozipsa-vendor-v1')).match(url)), modelChunkUrl);
+    assert(onlineModelChunkBytes === 4194304 && modelChunkCached, `model chunk did not complete its stable cache write: ${onlineModelChunkBytes}, ${modelChunkCached}`);
+    await context.setOffline(true);
+    const offlineVendorBytes = await page.evaluate(async url => (await (await fetch(url)).arrayBuffer()).byteLength, vendorUrl);
+    const offlineModelChunkBytes = await page.evaluate(async url => (await (await fetch(url)).arrayBuffer()).byteLength, modelChunkUrl);
+    await context.setOffline(false);
+    assert(offlineVendorBytes === onlineVendorBytes, `cached vendor asset failed offline: ${offlineVendorBytes} vs ${onlineVendorBytes}`);
+    assert(offlineModelChunkBytes === onlineModelChunkBytes, `cached model chunk failed offline: ${offlineModelChunkBytes} vs ${onlineModelChunkBytes}`);
+    const cdp = await context.newCDPSession(page);
+    await cdp.send('Page.enable');
+    const installability = await cdp.send('Page.getInstallabilityErrors');
+    assert(installability.installabilityErrors.length === 0, `PWA installability errors: ${JSON.stringify(installability.installabilityErrors)}`);
   }, { serviceWorkers: 'allow' });
 
   await browser.close().catch(() => {});

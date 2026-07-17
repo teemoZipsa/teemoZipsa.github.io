@@ -52,8 +52,8 @@
   .r-card.after .r-value{color:var(--text-success)}
 
   .min-wage{background:var(--bg-success, #1a2a1a);border:1px solid var(--border-success, #2a4a2a);border-radius:10px;padding:10px 14px;font-size:11px;color:var(--text-success);display:flex;justify-content:space-between;align-items:center}
-  .min-wage button{background:var(--bg-success-hover, #2a4a2a);border:none;color:var(--text-success);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;transition:background .15s}
-  .min-wage button:hover{background:var(--bg-success-hover)}
+  .min-wage button{background:var(--status-green-bg);border:none;color:var(--text-on-accent);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;transition:filter .15s}
+  .min-wage button:hover{filter:brightness(.9)}
 
   /* 목표 위젯 */
   .goal-section{background:var(--bg-bar);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
@@ -82,7 +82,7 @@
   .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
   .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
-  .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+  .tool-card:hover{border-color:var(--accent);color:var(--accent-text);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
 .scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
 .scroll-top-btn.visible{opacity:1;visibility:visible}
 .scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
@@ -103,15 +103,15 @@
       <div class="field-row">
         <div class="field">
           <label>Hours / Day</label>
-          <input type="number" id="hoursDay" value="8" min="1" max="24" oninput="calc()">
+          <input aria-label="Work hours per day" type="number" id="hoursDay" value="8" min="1" max="24" oninput="calc()">
         </div>
         <div class="field">
           <label>Days / Week</label>
-          <input type="number" id="daysWeek" value="5" min="1" max="7" oninput="calc()">
+          <input aria-label="Work days per week" type="number" id="daysWeek" value="5" min="1" max="7" oninput="calc()">
         </div>
         <div class="field">
           <label>Weekly Allowance</label>
-          <select id="weeklyHol" onchange="calc()">
+          <select aria-label="Weekly allowance inclusion" id="weeklyHol" onchange="calc()">
             <option value="yes" selected>Included (15+ hrs/week)</option>
             <option value="no">Excluded</option>
           </select>
@@ -120,11 +120,11 @@
       <div class="field-row">
         <div class="field">
           <label>⏱️ Overtime (daily, beyond 8h)</label>
-          <input type="number" id="overtime" value="0" min="0" max="16" step="0.5" oninput="calc()">
+          <input aria-label="Overtime hours per week" type="number" id="overtime" value="0" min="0" max="16" step="0.5" oninput="calc()">
         </div>
         <div class="field">
           <label>🌙 Night Shift (10pm–6am)</label>
-          <input type="number" id="nighttime" value="0" min="0" max="8" step="0.5" oninput="calc()">
+          <input aria-label="Night work hours per week" type="number" id="nighttime" value="0" min="0" max="8" step="0.5" oninput="calc()">
         </div>
       </div>
     </div>
@@ -135,7 +135,7 @@
       <div class="field-row">
         <div class="field">
           <label>Deduction Type</label>
-          <select id="taxType" onchange="calc()">
+          <select aria-label="Deduction type" id="taxType" onchange="calc()">
             <option value="none">No Deduction (Gross)</option>
             <option value="insurance" selected>Social Insurance (~9.4%)</option>
             <option value="freelance">Freelancer Tax (3.3%)</option>
@@ -150,17 +150,17 @@
       <div class="field-row">
         <div class="field">
           <label>Hourly Rate ($)</label>
-          <input type="text" id="hourly" value="15" oninput="formatAndCalc(this,'hourly')">
+          <input aria-label="Hourly wage" type="text" id="hourly" value="15" oninput="formatAndCalc(this,'hourly')">
         </div>
       </div>
       <div class="field-row">
         <div class="field">
           <label>Monthly Salary ($)</label>
-          <input type="text" id="monthly" placeholder="" oninput="formatAndCalc(this,'monthly')">
+          <input aria-label="Monthly wage" type="text" id="monthly" placeholder="" oninput="formatAndCalc(this,'monthly')">
         </div>
         <div class="field">
           <label>Annual Salary ($)</label>
-          <input type="text" id="yearly" placeholder="" oninput="formatAndCalc(this,'yearly')">
+          <input aria-label="Annual salary" type="text" id="yearly" placeholder="" oninput="formatAndCalc(this,'yearly')">
         </div>
       </div>
     </div>
@@ -211,7 +211,6 @@
       <div class="section-title">🎯 How many hours to buy this?</div>
       <div class="goal-input">
         <input type="text" id="goalAmount" placeholder="Enter target amount (e.g. 1,500)" oninput="formatGoal(this);calcGoal()">
-      </div>
       </div>
       <div class="goal-result" id="goalResult"></div>
     </div>
@@ -265,7 +264,7 @@
       </div>
     </section>
 
-    <div class="footer"><span>Wage Converter</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+    <footer class="footer"><span>Wage Converter</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 <script>
 let lastInput = '';

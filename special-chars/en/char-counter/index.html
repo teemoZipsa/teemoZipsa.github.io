@@ -58,7 +58,7 @@
   /* Dynamic Report & Guide standard CSS */
   @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   .report-box { margin-top: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
-  .report-box strong { color: var(--accent); }
+  .report-box strong { color:var(--accent-text); }
   .guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
   .guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
   .guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
@@ -102,7 +102,7 @@
     <textarea id="counterInput" placeholder="Type or paste your text here..." oninput="updateCounter()"></textarea>
 
     <div class="limit-bar">
-      <select id="limitType" onchange="updateCounter()">
+      <select aria-label="Character limit type" id="limitType" onchange="updateCounter()">
         <option value="none">No Limit</option>
         <option value="chars">Character Limit</option>
         <option value="bytes-utf8">Byte Limit (UTF-8)</option>
@@ -174,7 +174,7 @@
       </div>
     </div>
   </section>
-    <div class="footer"><span>Real-time Analysis</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+    <footer class="footer"><span>Real-time Analysis</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>

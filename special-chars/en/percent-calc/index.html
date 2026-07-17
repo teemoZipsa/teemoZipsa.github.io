@@ -45,7 +45,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .input-row .unit{font-size:14px;color:var(--text-info);font-weight:600}
 
 .result-box{background:var(--accent-bg);border:2px solid var(--accent);border-radius:12px;padding:16px;text-align:center;min-height:70px;display:flex;flex-direction:column;justify-content:center;gap:4px;transition:all .3s}
-.result-box .result-value{font-size:28px;font-weight:800;color:var(--accent);letter-spacing:-0.5px}
+.result-box .result-value{font-size:28px;font-weight:800;color:var(--accent-text);letter-spacing:-0.5px}
 .result-box .result-label{font-size:12px;color:var(--text-info);font-weight:500}
 .result-box .result-detail{font-size:13px;color:var(--text-secondary);margin-top:2px}
 .result-box.empty .result-value{font-size:16px;color:var(--text-placeholder);font-weight:400}
@@ -69,7 +69,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
   .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
   .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
-  .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+  .tool-card:hover{border-color:var(--accent);color:var(--accent-text);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
 
 .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
 .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
@@ -225,7 +225,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
         <a href="/special-chars/en/timer/" class="tool-card">⏱️ Timer & Stopwatch</a>
       </div>
     </section>
-    <div class="footer"><span>Real-time calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+    <footer class="footer"><span>Real-time calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 
 <div class="toast" id="toast"></div>

@@ -18,7 +18,6 @@
 <link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/pdf-tool/">
 <meta name="robots" content="noindex, follow">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
 .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:720px;max-width:100%;overflow:hidden}
@@ -29,7 +28,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .tool-body{padding:16px;display:flex;flex-direction:column;gap:14px}
 .mode-tabs{display:flex;gap:0;background:var(--bg-guide);border-radius:10px;overflow-x:auto;border:1px solid var(--border);-webkit-overflow-scrolling:touch}
 .mode-tabs::-webkit-scrollbar{display:none}
-.mode-tab{flex:0 0 auto;padding:10px 16px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--text-info);background:transparent;border:none;font-family:inherit;white-space:nowrap;}
+.mode-tab{flex:0 0 auto;padding:10px 16px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-info);background:transparent;border:none;font-family:inherit;white-space:nowrap;}
 .mode-tab:hover{color:var(--text-secondary);background:var(--bg-input)}
 .mode-tab.active{background:var(--accent);color:var(--text-on-accent)}
 .tab-panel{display:none}
@@ -54,7 +53,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .file-item .remove-btn:hover{color:#ff6666}
 
 .info-bar{background:var(--bg-bar);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--text-info);display:flex;align-items:center;gap:8px;border:1px solid var(--border)}
-.info-bar .highlight{color:var(--accent);font-weight:700}
+.info-bar .highlight{color:var(--accent-text);font-weight:700}
 
 .field-group{margin-bottom:14px}
 .field-label{font-size:13px;font-weight:500;color:var(--text-secondary);margin-bottom:6px;display:flex;align-items:center;gap:6px}
@@ -154,12 +153,12 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .report-row:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
 .report-label{width:110px;color:var(--text-info);font-weight:600;flex-shrink:0}
 .report-value{flex:1;color:var(--text-primary);font-family:monospace;word-break:break-all}
-.report-value.highlight{color:var(--accent)}
+.report-value.highlight{color:var(--accent-text)}
 
 </style>
 </head>
 <body>
-<div id="cdnError" style="display:none;background:#ff4444;color:var(--text-on-accent);text-align:center;padding:12px;font-size:14px;">Failed to load external libraries. Please check your internet connection and refresh the page.</div>
+<div id="cdnError" style="display:none;background:#ff4444;color:var(--text-on-accent);text-align:center;padding:12px;font-size:14px;">The local PDF engine failed to initialize. Refresh the page and try again.</div>
 <div class="app">
   <div class="header">
     <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
@@ -168,7 +167,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
   </div>
 
   <div class="tool-body">
-    <div class="mode-tabs">
+    <div class="mode-tabs" role="tablist" aria-label="PDF operation">
       <button class="mode-tab active" data-tab="merge">📎 <span class="tab-label">Merge</span></button>
       <button class="mode-tab" data-tab="split">✂️ <span class="tab-label">Split</span></button>
       <button class="mode-tab" data-tab="rotate">🔄 <span class="tab-label">Rotate</span></button>
@@ -422,81 +421,51 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <summary>❓ FAQ</summary>
     <div class="guide-content">
       <ul>
-        <li><strong>Are my files sent to a server?</strong><br>The app processes selected PDFs in your browser and does not upload them. Its PDF libraries are downloaded from a CDN, however, so this is not an absolute security guarantee for highly sensitive documents.</li>
+        <li><strong>Are my files sent to a server?</strong><br>The app processes selected PDFs in your browser and does not upload them. Its pinned PDF engine and rendering worker are served by this site, make no third-party CDN request, and remain available to the current tab if the network drops after the page has loaded. Browser extensions and the device itself remain outside this guarantee.</li>
+        <li><strong>Which libraries are used?</strong><br>pdf-lib 1.17.1 (MIT) and PDF.js 3.11.174 (Apache-2.0). See the <a href="/special-chars/vendor/README.md">vendored dependency record</a>.</li>
         <li><strong>Is there a file size limit?</strong><br>There is no hard limit, but performance depends on your device's memory. Very large files (hundreds of MBs) may process slowly or cause crashes.</li>
         <li><strong>Are all PDFs supported?</strong><br>Most standard PDFs are supported. However, encrypted or password-protected PDFs cannot be processed.</li>
         <li><strong>Will every PDF feature remain unchanged?</strong><br>Pages are not rasterized, so text and image quality are generally preserved. Digital signatures, encryption, and some forms, annotations, or metadata may change when the file is saved. Keep the original and verify the result.</li>
       </ul>
     </div>
   </details>
-  <div class="footer"><span>Browser processing without selected-file uploads</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+  <footer class="footer"><span>Browser processing without selected-file uploads</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="scroll-top-btn" id="scrollTopBtn" aria-label="Top">↑</button>
 
+<script src="/special-chars/vendor/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="/special-chars/vendor/pdfjs-dist/3.11.174/pdf.min.js"></script>
 <script>
-/* ===== Lazy PDF library loading ===== */
+/* ===== Self-hosted PDF engine ===== */
 let pdfLibsPromise = null;
 let PDFDocument, degrees, rgb, StandardFonts;
-
-function loadScriptOnce(src) {
-  return new Promise((resolve, reject) => {
-    let existing = document.querySelector(`script[data-src="${src}"]`);
-    if (existing) {
-      if (existing.dataset.loaded === 'true') {
-        resolve();
-        return;
-      }
-      else if (existing.dataset.state === 'failed') existing.remove();
-      else {
-        const timer = setTimeout(() => {
-          existing.remove();
-          reject(new Error('Timed out while loading the PDF library.'));
-        }, 15000);
-        existing.addEventListener('load', () => { clearTimeout(timer); resolve(); }, { once: true });
-        existing.addEventListener('error', () => { clearTimeout(timer); reject(new Error('Failed to load the PDF library.')); }, { once: true });
-        return;
-      }
-    }
-    const script = document.createElement('script');
-    script.src = src;
-    script.dataset.src = src;
-    script.dataset.state = 'loading';
-    const timer = setTimeout(() => {
-      script.dataset.state = 'failed';
-      script.remove();
-      reject(new Error('Timed out while loading the PDF library.'));
-    }, 15000);
-    script.onload = () => {
-      clearTimeout(timer);
-      script.dataset.loaded = 'true';
-      script.dataset.state = 'loaded';
-      resolve();
-    };
-    script.onerror = () => {
-      clearTimeout(timer);
-      script.dataset.state = 'failed';
-      script.remove();
-      reject(new Error('Failed to load the PDF library.'));
-    };
-    document.head.appendChild(script);
-  });
-}
+let pdfWorkerPort = null;
+let pdfWorkerProxy = null;
+const PDF_WORKER_URL = '/special-chars/vendor/pdfjs-dist/3.11.174/pdf.worker.min.js';
 
 async function ensurePdfLibs() {
   if (!pdfLibsPromise) {
     document.getElementById('cdnError').style.display = 'none';
     pdfLibsPromise = (async () => {
-      await Promise.all([
-        loadScriptOnce('https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js'),
-        loadScriptOnce('https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js')
-      ]);
       if (!window.PDFLib || !window.pdfjsLib) throw new Error('Failed to load PDF libraries.');
       ({ PDFDocument, degrees, rgb, StandardFonts } = window.PDFLib);
-      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDF_WORKER_URL;
+      if (!pdfWorkerPort) {
+        pdfWorkerPort = new Worker(PDF_WORKER_URL);
+        window.pdfjsLib.GlobalWorkerOptions.workerPort = pdfWorkerPort;
+        pdfWorkerProxy = window.pdfjsLib.PDFWorker.fromPort({ port: pdfWorkerPort });
+        await pdfWorkerProxy.promise;
+      }
+      document.documentElement.dataset.pdfEngine = 'ready';
       document.getElementById('cdnError').style.display = 'none';
     })().catch(err => {
+      if (pdfWorkerPort) pdfWorkerPort.terminate();
+      pdfWorkerPort = null;
+      pdfWorkerProxy = null;
+      if (window.pdfjsLib) window.pdfjsLib.GlobalWorkerOptions.workerPort = null;
       pdfLibsPromise = null;
+      document.documentElement.dataset.pdfEngine = 'failed';
       document.getElementById('cdnError').style.display = 'block';
       throw err;
     });
@@ -504,14 +473,43 @@ async function ensurePdfLibs() {
   return pdfLibsPromise;
 }
 
+ensurePdfLibs().catch(console.error);
+
 /* ===== Tab switching ===== */
-document.querySelectorAll('.mode-tab').forEach(tab => {
+const pdfModeTabs = [...document.querySelectorAll('.mode-tab')];
+pdfModeTabs.forEach((tab, index) => {
+  const panel = document.getElementById(tab.dataset.tab + 'Panel');
+  tab.id = `pdfModeTab${index}`;
+  tab.setAttribute('role', 'tab');
+  tab.setAttribute('aria-controls', panel.id);
+  tab.setAttribute('aria-selected', String(tab.classList.contains('active')));
+  tab.tabIndex = tab.classList.contains('active') ? 0 : -1;
+  panel.setAttribute('role', 'tabpanel');
+  panel.setAttribute('aria-labelledby', tab.id);
   tab.addEventListener('click', () => {
-    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
+    pdfModeTabs.forEach(t => {
+      const active = t === tab;
+      t.classList.toggle('active', active);
+      t.setAttribute('aria-selected', String(active));
+      t.tabIndex = active ? 0 : -1;
+    });
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    document.getElementById(tab.dataset.tab + 'Panel').classList.add('active');
+    panel.classList.add('active');
   });
+});
+
+document.querySelector('.mode-tabs').addEventListener('keydown', event => {
+  const current = pdfModeTabs.indexOf(document.activeElement);
+  if (current < 0) return;
+  let next = current;
+  if (event.key === 'ArrowRight') next = (current + 1) % pdfModeTabs.length;
+  else if (event.key === 'ArrowLeft') next = (current - 1 + pdfModeTabs.length) % pdfModeTabs.length;
+  else if (event.key === 'Home') next = 0;
+  else if (event.key === 'End') next = pdfModeTabs.length - 1;
+  else return;
+  event.preventDefault();
+  pdfModeTabs[next].click();
+  pdfModeTabs[next].focus();
 });
 
 /* ===== Helpers ===== */

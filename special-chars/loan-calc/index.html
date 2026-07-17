@@ -44,9 +44,9 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .summary-card{background:var(--accent-bg);border:1.5px solid var(--accent);border-radius:10px;padding:14px 10px;text-align:center}
 .summary-card.highlight{background:var(--accent);border-color:var(--accent)}
 .summary-card.highlight .s-value{color:var(--text-on-accent)}
-.summary-card.highlight .s-label{color:rgba(255,255,255,.8)}
+.summary-card.highlight .s-label{color:rgba(255,255,255,.95)}
 .s-label{font-size:11px;color:var(--text-info);margin-bottom:4px}
-.s-value{font-size:20px;font-weight:800;color:var(--accent)}
+.s-value{font-size:20px;font-weight:800;color:var(--accent-text)}
 .s-sub{font-size:11px;color:var(--text-info);margin-top:2px}
 
 .schedule-toggle{width:100%;padding:10px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;text-align:center}
@@ -59,14 +59,14 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .schedule th:first-child{text-align:center}
 .schedule td{padding:7px 6px;border-bottom:1px solid var(--border);text-align:right;font-variant-numeric:tabular-nums;color:var(--text-secondary)}
 .schedule td:first-child{text-align:center;color:var(--text-info)}
-.schedule tr:last-child td{font-weight:700;color:var(--accent);border-top:2px solid var(--accent)}
+.schedule tr:last-child td{font-weight:700;color:var(--accent-text);border-top:2px solid var(--accent)}
 .schedule-scroll{max-height:400px;overflow-y:auto}
 .schedule-scroll::-webkit-scrollbar{width:4px}
 .schedule-scroll::-webkit-scrollbar-thumb{background:var(--bg-btn-hover);border-radius:2px}
 
 .compare{background:var(--bg-guide);border-radius:10px;padding:14px;font-size:12px;color:var(--text-info);line-height:1.6}
 .compare strong{color:var(--text-primary)}
-.compare .diff{color:var(--accent);font-weight:700}
+.compare .diff{color:var(--accent-text);font-weight:700}
 
 .report-box{background:var(--bg-guide);padding:20px;border-radius:12px;border:1px solid var(--border);line-height:1.6;font-size:14px;color:var(--text-primary);margin-top:16px;margin-bottom:14px;animation:fadeIn 0.5s ease-out}
 .report-box h3{font-size:15px;margin-bottom:12px;font-weight:700}
@@ -79,7 +79,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .related-tools{margin:0 12px 12px;padding:16px;background:var(--bg-guide);border-radius:8px;border:1px solid var(--border)}
 .related-tools h4{font-size:14px;margin-bottom:10px;font-weight:700;color:var(--text-primary)}
 .related-tools ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px}
-.related-tools li a{font-size:13px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:6px;transition:opacity .2s}
+.related-tools li a{font-size:13px;color:var(--accent-text);text-decoration:none;display:flex;align-items:center;gap:6px;transition:opacity .2s}
 .related-tools li a:hover{opacity:0.8;text-decoration:underline}
 
 .guide-section{margin:0 12px 12px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
@@ -114,21 +114,21 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="input-group">
       <label>대출 금액</label>
       <div class="input-row">
-        <input type="number" id="principal" value="100000000" min="0" max="1000000000000000" step="10000000" oninput="calc()">
+        <input aria-label="대출 원금" type="number" id="principal" value="100000000" min="0" max="1000000000000000" step="10000000" oninput="calc()">
         <span class="unit">원</span>
       </div>
     </div>
     <div class="input-group">
       <label>연 이자율</label>
       <div class="input-row">
-        <input type="number" id="rate" value="4.5" min="0" max="30" step="0.1" oninput="calc()">
+        <input aria-label="연이율" type="number" id="rate" value="4.5" min="0" max="30" step="0.1" oninput="calc()">
         <span class="unit">%</span>
       </div>
     </div>
     <div class="input-group">
       <label>대출 기간</label>
       <div class="input-row">
-        <input type="number" id="years" value="30" min="1" max="50" step="1" oninput="calc()">
+        <input aria-label="대출 기간" type="number" id="years" value="30" min="1" max="50" step="1" oninput="calc()">
         <span class="unit">년</span>
       </div>
     </div>
@@ -149,7 +149,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
         입력하신 대출 조건(<strong>원금 <span class="highlight" id="r-principal">100,000,000</span>원</strong>, <strong>금리 연 <span class="highlight" id="r-rate">4.5</span>%</strong>)을 바탕으로 <span class="highlight" id="r-years">30</span>년 동안 <strong><span id="r-method" class="highlight">원리금균등</span></strong> 방식으로 상환할 경우의 세부 비용 분석 통계입니다.
       </p>
       <p>
-        대출 만기 시점까지 은행에 지급하게 되는 이자의 총누적액은 <strong><span id="r-interest">82,406,718</span>원</strong>으로 산출되며, 원금을 포함하여 지불하는 총 상환 금액은 <strong><span id="r-total">182,406,718</span>원</strong>입니다. 현 조건으로 대출을 실행할 경우, <span id="r-period">매월 일정한 금액</span>인 <strong>약 <span id="r-monthly" class="highlight" style="color:var(--accent);">506,685</span>원</strong>을 납입하게 됩니다.
+        대출 만기 시점까지 은행에 지급하게 되는 이자의 총누적액은 <strong><span id="r-interest">82,406,718</span>원</strong>으로 산출되며, 원금을 포함하여 지불하는 총 상환 금액은 <strong><span id="r-total">182,406,718</span>원</strong>입니다. 현 조건으로 대출을 실행할 경우, <span id="r-period">매월 일정한 금액</span>인 <strong>약 <span id="r-monthly" class="highlight" style="color:var(--accent-text);">506,685</span>원</strong>을 납입하게 됩니다.
       </p>
       <div class="report-tip" style="border-color:var(--accent);">
         <strong>💡 절약 팁:</strong> <span id="r-tip">원리금균등은 매월 납입액이 고정되어 자금 계획을 세우기에 좋습니다. 조금 더 이자를 아끼려면 '원금균등상환'과 첫 달 납입금을 비교해보세요.</span>
@@ -161,7 +161,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
     <button class="schedule-toggle" id="scheduleBtn" onclick="toggleSchedule()">📋 월별 상환 스케줄 보기</button>
     <div class="schedule-wrap" id="scheduleWrap">
-      <div class="schedule-scroll">
+      <div class="schedule-scroll" tabindex="0" aria-label="월별 상환 일정 표">
         <table class="schedule" id="scheduleTable"></table>
       </div>
     </div>
@@ -190,7 +190,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </ul>
   </div>
 
-    <div class="footer"><span>실시간 계산 · 이자 비교</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <footer class="footer"><span>실시간 계산 · 이자 비교</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast"></div>

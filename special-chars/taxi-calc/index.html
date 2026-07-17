@@ -54,10 +54,10 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .summary-card{background:var(--accent-bg);border:1.5px solid var(--accent);border-radius:10px;padding:14px 10px;text-align:center}
 .summary-card.highlight{background:var(--accent);border-color:var(--accent);grid-column:1/-1}
 .summary-card.highlight .s-value{color:var(--text-on-accent)}
-.summary-card.highlight .s-label{color:rgba(255,255,255,.8)}
+.summary-card.highlight .s-label{color:rgba(255,255,255,.95)}
 .summary-card.highlight .s-sub{color:rgba(255,255,255,.7)}
 .s-label{font-size:11px;color:var(--text-info);margin-bottom:4px}
-.s-value{font-size:22px;font-weight:800;color:var(--accent)}
+.s-value{font-size:22px;font-weight:800;color:var(--accent-text)}
 .s-sub{font-size:11px;color:var(--text-info);margin-top:2px}
 .detail-box{background:var(--bg-guide);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
 .detail-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
@@ -71,7 +71,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .export-btn{background:var(--bg-btn);color:var(--text-primary);border:1px solid var(--border)}
 
 .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:10px}
-.report-box h3 {font-size:15px;font-weight:700;color:var(--accent);margin-bottom:4px}
+.report-box h3 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
 .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
 .report-box strong {color:var(--text-primary);font-weight:600}
 
@@ -79,7 +79,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
 .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
-.related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent);transform:translateX(4px)}
+.related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
 
 @keyframes fadeIn {
   from { opacity:0; transform:translateY(10px) }
@@ -113,7 +113,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="input-group">
       <label>요율 프리셋</label>
       <div class="input-row">
-        <select id="region" onchange="calc()"></select>
+        <select aria-label="택시 요금 지역" id="region" onchange="calc()"></select>
       </div>
     </div>
     <div class="estimate-note"><strong>지원 범위: 서울 중형택시</strong><br>공식 요율과 병산 방식을 확인한 프리셋만 제공합니다. 지역별·차종별 요율을 검증 없이 추정하지 않습니다.</div>
@@ -121,7 +121,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="input-group">
       <label>예상 이동 거리</label>
       <div class="input-row">
-        <input type="number" id="distance" value="10" min="0.1" max="1000" step="0.5" oninput="calc()">
+        <input aria-label="이동 거리" type="number" id="distance" value="10" min="0.1" max="1000" step="0.5" oninput="calc()">
         <span class="unit">km</span>
       </div>
     </div>
@@ -187,7 +187,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="input-group">
       <label>인원수 (N빵)</label>
       <div class="input-row">
-        <input type="number" id="people" value="1" min="1" max="10" step="1" oninput="calc()">
+        <input aria-label="탑승 인원" type="number" id="people" value="1" min="1" max="10" step="1" oninput="calc()">
         <span class="unit">명</span>
       </div>
     </div>
@@ -244,7 +244,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
   </div>
 
-  <div class="footer"><span>서울 중형택시 공식 요율 기반 · 참고용 예상 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+  <footer class="footer"><span>서울 중형택시 공식 요율 기반 · 참고용 예상 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast"></div>

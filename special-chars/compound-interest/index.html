@@ -163,7 +163,7 @@
   .related-tools{margin:0 12px 12px;padding:16px;background:var(--bg-guide);border-radius:8px;border:1px solid var(--border)}
   .related-tools h4{font-size:14px;margin-bottom:10px;font-weight:700;color:var(--text-primary)}
   .related-tools ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px}
-  .related-tools li a{font-size:13px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:6px;transition:opacity .2s}
+  .related-tools li a{font-size:13px;color:var(--accent-text);text-decoration:none;display:flex;align-items:center;gap:6px;transition:opacity .2s}
   .related-tools li a:hover{opacity:0.8;text-decoration:underline}
 .scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
 .scroll-top-btn.visible{opacity:1;visibility:visible}
@@ -183,7 +183,7 @@
   <div class="inputs">
     <div class="input-group">
       <label>💵 원금 (원)</label>
-      <input type="text" id="principal" value="1,000,000" oninput="formatMoney(this)">
+      <input aria-label="초기 투자금" type="text" id="principal" value="1,000,000" oninput="formatMoney(this)">
     </div>
     <div class="input-row">
       <div class="input-group">
@@ -283,7 +283,7 @@
       <li><a href="/special-chars/avg-price/">📈 주식/코인 물타기 평단가 계산기</a></li>
     </ul>
   </div>
-    <div class="footer"><span>복리 효과 시뮬레이션</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <footer class="footer"><span>복리 효과 시뮬레이션</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <script>

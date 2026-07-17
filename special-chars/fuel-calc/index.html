@@ -48,10 +48,10 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .price-row{display:flex;align-items:center;gap:8px}
 .price-row input{flex:1}
 .price-source{font-size:10px;color:var(--text-info);display:flex;align-items:center;gap:4px;margin-top:2px}
-.price-source a{color:var(--accent);text-decoration:none;font-weight:600}
+.price-source a{color:var(--accent-text);text-decoration:none;font-weight:600}
 .price-source a:hover{text-decoration:underline}
 .price-date{background:var(--bg-btn);padding:2px 6px;border-radius:4px;font-size:10px;color:var(--text-info);font-weight:500}
-.price-warning{display:none;margin-top:7px;padding:8px 10px;border-radius:8px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.45);color:#d97706;font-size:11px;line-height:1.5}
+.price-warning{display:none;margin-top:7px;padding:8px 10px;border-radius:8px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.45);color:var(--status-orange-text);font-size:11px;line-height:1.5}
 .price-warning.show{display:block}
 
 /* 왕복 토글 */
@@ -70,10 +70,10 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .summary-card{background:var(--accent-bg);border:1.5px solid var(--accent);border-radius:10px;padding:14px 10px;text-align:center}
 .summary-card.highlight{background:var(--accent);border-color:var(--accent);grid-column:1 / -1}
 .summary-card.highlight .s-value{color:var(--text-on-accent)}
-.summary-card.highlight .s-label{color:rgba(255,255,255,.8)}
-.summary-card.highlight .s-sub{color:rgba(255,255,255,.7)}
+.summary-card.highlight .s-label{color:rgba(255,255,255,.95)}
+.summary-card.highlight .s-sub{color:rgba(255,255,255,.95)}
 .s-label{font-size:11px;color:var(--text-info);margin-bottom:4px}
-.s-value{font-size:22px;font-weight:800;color:var(--accent)}
+.s-value{font-size:22px;font-weight:800;color:var(--accent-text)}
 .s-sub{font-size:11px;color:var(--text-info);margin-top:2px}
 
 /* 상세 내역 */
@@ -88,7 +88,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .copy-btn:active{transform:scale(.98)}
 
 .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:10px}
-.report-box h3 {font-size:15px;font-weight:700;color:var(--accent);margin-bottom:4px}
+.report-box h3 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
 .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
 .report-box strong {color:var(--text-primary);font-weight:600}
 
@@ -96,7 +96,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
 .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
-.related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent);transform:translateX(4px)}
+.related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
 
 @keyframes fadeIn {
   from { opacity:0; transform:translateY(10px) }
@@ -148,7 +148,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <label>참고 유가 (원/L · 직접 수정 가능)</label>
       <div class="price-row">
         <div class="input-row" style="flex:1">
-          <input type="number" id="fuelPrice" min="1" max="1000000" step="10" oninput="markFuelInput('price')">
+          <input aria-label="연료 가격" type="number" id="fuelPrice" min="1" max="1000000" step="10" oninput="markFuelInput('price')">
           <span class="unit">원/L</span>
         </div>
       </div>
@@ -164,7 +164,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="input-group">
       <label>입력 거리 (왕복 선택 시 편도)</label>
       <div class="input-row">
-        <input type="number" id="distance" value="300" min="0.1" max="100000" step="10" oninput="calc()">
+        <input aria-label="이동 거리" type="number" id="distance" value="300" min="0.1" max="100000" step="10" oninput="calc()">
         <span class="unit">km</span>
       </div>
     </div>
@@ -173,7 +173,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="input-group">
       <label id="effLabel">차량 연비</label>
       <div class="input-row">
-        <input type="number" id="efficiency" value="12" min="0.1" max="1000" step="0.5" oninput="markFuelInput('efficiency')">
+        <input aria-label="연비" type="number" id="efficiency" value="12" min="0.1" max="1000" step="0.5" oninput="markFuelInput('efficiency')">
         <span class="unit">km/L</span>
       </div>
     </div>
@@ -182,7 +182,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="input-group">
       <label>인원수 (N빵)</label>
       <div class="input-row">
-        <input type="number" id="people" value="1" min="1" max="20" step="1" oninput="calc()">
+        <input aria-label="탑승 인원" type="number" id="people" value="1" min="1" max="20" step="1" oninput="calc()">
         <span class="unit">명</span>
       </div>
     </div>
@@ -191,7 +191,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="toggle-row" onclick="document.getElementById('roundTrip').click()">
       <span class="toggle-label">🔄 왕복 계산 (입력 거리 × 2)</span>
       <label class="toggle" onclick="event.stopPropagation()">
-        <input type="checkbox" id="roundTrip" onchange="calc()">
+        <input aria-label="왕복 계산" type="checkbox" id="roundTrip" onchange="calc()">
         <span class="slider"></span>
       </label>
     </div>
@@ -239,7 +239,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
   </div>
 
-  <div class="footer"><span>입력값 기준 즉시 계산 · 유가 직접 수정 가능</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+  <footer class="footer"><span>입력값 기준 즉시 계산 · 유가 직접 수정 가능</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -406,9 +406,9 @@ function calc() {
   detail += `
     <div class="detail-row"><span class="detail-label">차량 연비</span><span class="detail-value">${document.getElementById('efficiency').value} km/L</span></div>
     <div class="detail-row"><span class="detail-label">필요 연료량</span><span class="detail-value">${fmtLiters(fuelNeeded)} L</span></div>
-    <div class="detail-row"><span class="detail-label">총 유류비</span><span class="detail-value" style="color:var(--accent);font-size:15px">${fmt(totalCost)} 원</span></div>`;
+    <div class="detail-row"><span class="detail-label">총 유류비</span><span class="detail-value" style="color:var(--accent-text);font-size:15px">${fmt(totalCost)} 원</span></div>`;
   if (people > 1) {
-    detail += `<div class="detail-row"><span class="detail-label">1인당 (÷${people})</span><span class="detail-value" style="color:var(--accent);font-size:15px">${fmt(perPerson)} 원</span></div>`;
+    detail += `<div class="detail-row"><span class="detail-label">1인당 (÷${people})</span><span class="detail-value" style="color:var(--accent-text);font-size:15px">${fmt(perPerson)} 원</span></div>`;
   }
   // km당 비용
   const costPerKm = totalCost / actualDist;

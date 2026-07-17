@@ -51,7 +51,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .result-item:last-child{border-bottom:none}
 .result-label{font-size:13px;color:var(--text-section)}
 .result-value{font-size:18px;font-weight:700;color:var(--text-primary)}
-.result-value.highlight{color:var(--accent);font-size:22px}
+.result-value.highlight{color:var(--accent-text);font-size:22px}
 .result-value.tax{color:#f97316}
 .copy-btn{width:100%;padding:12px;background:var(--bg-header);color:var(--text-on-accent);border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .2s}
 .copy-btn:hover{opacity:.85}
@@ -59,7 +59,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 /* Dynamic Report & Guide standard CSS */
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .report-box { margin: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
-.report-box strong { color: var(--accent); }
+.report-box strong { color:var(--accent-text); }
   .guide-section{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
   .guide-section h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
@@ -74,7 +74,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
   .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
   .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
-  .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+  .tool-card:hover{border-color:var(--accent);color:var(--accent-text);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 .scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
@@ -116,14 +116,14 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       <div class="toggle-row" onclick="document.getElementById('vatToggle').click()">
         <span class="toggle-label">Include Sales Tax (10%)</span>
         <label class="toggle" onclick="event.stopPropagation()">
-          <input type="checkbox" id="vatToggle" onchange="calc()">
+          <input aria-label="Include 10 percent sales tax" type="checkbox" id="vatToggle" onchange="calc()">
           <span class="slider"></span>
         </label>
       </div>
       <div class="toggle-row" onclick="document.getElementById('vatExToggle').click()">
         <span class="toggle-label">Input price is pre-tax</span>
         <label class="toggle" onclick="event.stopPropagation()">
-          <input type="checkbox" id="vatExToggle" checked onchange="calc()">
+          <input aria-label="Input price is pre-tax" type="checkbox" id="vatExToggle" checked onchange="calc()">
           <span class="slider"></span>
         </label>
       </div>
@@ -187,7 +187,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       </div>
     </section>
   </div>
-  <div class="footer"><span>Real-time Calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+  <footer class="footer"><span>Real-time Calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>

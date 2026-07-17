@@ -113,7 +113,7 @@
     display:grid;grid-template-columns:1fr 1fr;gap:8px;
   }
   .r-stat{
-    background:rgba(0,0,0,.2);border-radius:8px;
+    background:var(--bg-app);border:1px solid var(--border);border-radius:8px;
     padding:10px;text-align:center;
   }
   .r-stat .r-label{font-size:10px;color:var(--calc-expr-text);margin-bottom:3px}
@@ -146,7 +146,7 @@
   .scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
 
   .report-box {background:var(--bg-guide);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:16px}
-  .report-box h3 {font-size:15px;font-weight:700;color:var(--accent);margin-bottom:4px}
+  .report-box h3 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
   .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
   .report-box strong {color:var(--text-primary);font-weight:600}
 
@@ -154,7 +154,7 @@
   .related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
   .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
-  .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent);transform:translateX(4px)}
+  .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
 
   @keyframes fadeIn {
     from { opacity:0; transform:translateY(10px) }
@@ -274,7 +274,7 @@
       <a href="/special-chars/broker-fee-calc/"><span>🏠 부동산 중개보수 계산기</span><span>바로가기 →</span></a>
     </div>
   </div>
-    <div class="footer"><span>숫자 입력 즉시 실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <footer class="footer"><span>숫자 입력 즉시 실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <script>

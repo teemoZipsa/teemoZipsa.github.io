@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { parse } from 'parse5';
 
 const targetDir = process.cwd();
 
@@ -25,6 +26,37 @@ function isToolPage(file) {
 
 function hasNoindex(content) {
   return /<meta\s+[^>]*(?:name|property)=["']robots["'][^>]*content=["'][^"']*noindex/i.test(content);
+}
+
+function parsedFooterState(content) {
+  const document = parse(content);
+  const semanticFooters = [];
+  let legacyDivFooter = false;
+
+  function walk(node, ancestors = []) {
+    const classValue = node.attrs?.find(attribute => attribute.name === 'class')?.value || '';
+    const classes = new Set(classValue.split(/\s+/).filter(Boolean));
+    const isElement = Boolean(node.tagName);
+    const nextAncestors = isElement ? [...ancestors, node] : ancestors;
+
+    if (classes.has('footer')) {
+      if (node.tagName === 'footer') semanticFooters.push({ node, ancestors });
+      if (node.tagName === 'div') legacyDivFooter = true;
+    }
+
+    for (const child of node.childNodes || []) walk(child, nextAncestors);
+  }
+
+  walk(document);
+
+  const footerInsideApp = semanticFooters.length === 1 && semanticFooters[0].ancestors.some(node => {
+    if (node.tagName !== 'div' && node.tagName !== 'main') return false;
+    const classValue = node.attrs?.find(attribute => attribute.name === 'class')?.value || '';
+    const classes = new Set(classValue.split(/\s+/).filter(Boolean));
+    return classes.has('app') || classes.has('calc-app');
+  });
+
+  return { footerInsideApp, legacyDivFooter, semanticFooters };
 }
 
 function findFilesByExt(dir, extList, ignoreDirs = ['node_modules', 'dist', '.git', '.github']) {
@@ -68,36 +100,31 @@ function findFileByName(dir, targetName, ignoreDirs = ['node_modules', 'dist', '
 
 console.log('🔍 프로젝트 구조를 자동으로 탐색하여 검사합니다...');
 
-// 1 & 2. footer가 .app 안에 위치하는지 검사
+// 1 & 2. 모든 도구 페이지가 .app 안에 의미론적 footer를 하나씩 갖는지 검사
 const componentFiles = findFilesByExt(targetDir, ['.tsx', '.jsx', '.vue', '.html']);
-let footerFoundInApp = false;
-let appComponentScanned = false;
+const toolPageFiles = componentFiles.filter(isToolPage);
+let validSemanticFooters = 0;
 
-for (const file of componentFiles) {
-  if (!isToolPage(file)) continue;
-
+for (const file of toolPageFiles) {
   const content = fs.readFileSync(file, 'utf8');
-  if (content.toLowerCase().includes('<footer')) {
-    appComponentScanned = true;
-    
-    // className="app" 또는 class="app" 내부에 <footer가 있는지 검증
-    const appRegex = /(?:className|class)\s*=\s*["']app["'][^>]*>[\s\S]*?<footer/i;
-    const generalAppRegex = /(?:className|class)\s*=\s*["']app["']/i;
-    
-    if (appRegex.test(content)) {
-      footerFoundInApp = true;
-      logSuccess(`[${rel(file)}] footer가 .app 내부에 잘 위치합니다.`);
-    } else if (generalAppRegex.test(content)) {
-      logError(`[${rel(file)}] .app 컨테이너는 존재하지만 내부에 footer 구조가 감지되지 않습니다.`);
-    } else {
-      // 순수 HTML 파일들(예: index.html 등)의 경우 .app 래퍼가 전체 페이지 기준인지 개별 컴포넌트인지 애매할 수 있으므로 에러 표시
-      logError(`[${rel(file)}] footer는 있지만 감싸고 있는 .app 클래스 컨테이너가 발견되지 않았습니다.`);
-    }
+  const { footerInsideApp, legacyDivFooter, semanticFooters } = parsedFooterState(content);
+
+  if (legacyDivFooter) {
+    logError(`[${rel(file)}] 레거시 div.footer가 남아 있습니다. 의미론적 footer 요소를 사용하세요.`);
+  }
+  if (semanticFooters.length !== 1) {
+    logError(`[${rel(file)}] footer.footer가 정확히 1개여야 하지만 ${semanticFooters.length}개입니다.`);
+  } else if (!footerInsideApp) {
+    logError(`[${rel(file)}] footer.footer가 HTML 파싱 DOM 기준 앱 컨테이너 안에 있지 않습니다.`);
+  } else if (!legacyDivFooter) {
+    validSemanticFooters++;
   }
 }
 
-if (!appComponentScanned) {
-  console.warn('⚠️ special-chars 도구 페이지에서 <footer> 태그를 찾지 못했습니다. footer 구조 검사를 건너뜁니다.');
+if (toolPageFiles.length === 0) {
+  logError('special-chars 도구 페이지를 찾지 못해 footer 구조를 검사할 수 없습니다.');
+} else if (validSemanticFooters === toolPageFiles.length) {
+  logSuccess(`모든 도구 페이지가 앱 컨테이너 안에 의미론적 footer를 포함합니다. (${validSemanticFooters}개)`);
 }
 
 // 3. align-items 속성이 CSS에 사용되었는지 검사

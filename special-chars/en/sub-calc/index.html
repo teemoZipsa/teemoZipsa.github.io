@@ -40,7 +40,7 @@
   .sub-name{flex:2}
   .sub-price{flex:1;text-align:right}
   .sub-del{background:none;border:none;color:var(--text-muted);font-size:16px;cursor:pointer;padding:0 4px;transition:color .15s}
-  .sub-del:hover{color:#f87171}
+  .sub-del:hover{color:var(--status-red-text)}
 
   .add-row{display:flex;gap:8px;margin-top:8px}
   .add-btn{background:var(--bg-input);border:1px solid var(--border);color:var(--text-info);padding:7px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s;flex-shrink:0}
@@ -59,17 +59,17 @@
   .result-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
   .r-card{background:var(--bg-input);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center}
   .r-label{font-size:10px;color:var(--calc-expr-text);margin-bottom:3px}
-  .r-value{font-size:15px;font-weight:800;color:#f87171}
+  .r-value{font-size:15px;font-weight:800;color:var(--status-red-text)}
   .r-sub{font-size:9px;color:var(--text-muted);margin-top:2px}
 
   /* 투자 비교 */
   .invest-section{background:var(--bg-success, #1a2a1a);border:1px solid var(--border-success, #2a4a2a);border-radius:12px;padding:14px 16px}
   .invest-title{font-size:12px;font-weight:700;color:var(--text-success);margin-bottom:8px}
   .invest-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-  .i-card{background:rgba(0,0,0,.2);border-radius:8px;padding:10px 8px;text-align:center}
-  .i-card .r-label{color:#2a6a2a}
+  .i-card{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;padding:10px 8px;text-align:center}
+  .i-card .r-label{color:var(--text-secondary)}
   .i-card .r-value{color:var(--text-success)}
-  .invest-note{font-size:10px;color:#2a5a2a;margin-top:8px;text-align:center}
+  .invest-note{font-size:10px;color:var(--text-success);margin-top:8px;text-align:center}
 
   /* 팩폭 */
   .punchline{display:none;text-align:center;padding:8px 16px;font-size:13px;color:var(--text-highlight);line-height:1.5;animation:fadeIn .6s ease}
@@ -216,7 +216,7 @@
       </div>
     </div>
   </section>
-    <div class="footer"><span>Subscription Cost Tracker</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+    <footer class="footer"><span>Subscription Cost Tracker</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 <script>
 let subs = [];

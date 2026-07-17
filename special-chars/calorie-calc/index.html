@@ -21,7 +21,7 @@
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:'Pretendard',sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
   .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
-  .header{background:linear-gradient(135deg,#ff4b2b,#ff416c);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .header{background:linear-gradient(135deg,var(--status-orange-bg),var(--status-red-bg));padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
   .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
   .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
   .header h1{font-size:15px;font-weight:600;color:#fff}
@@ -33,11 +33,11 @@
   .field{flex:1;display:flex;flex-direction:column;gap:4px}
   .field label{font-size:11px;color:var(--calc-expr-text);font-weight:600}
   .field input,.field select{background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);padding:9px 10px;font-size:14px;font-family:inherit;outline:none;width:100%}
-  .field input:focus,.field select:focus{border-color:var(--text-error, #ff4b2b)}
+  .field input:focus,.field select:focus{border-color:var(--status-orange-text)}
 
   .gender-toggle{display:flex;gap:4px;background:var(--bg-input);padding:4px;border-radius:8px;border:1px solid var(--border)}
   .gender-btn{flex:1;padding:6px;text-align:center;font-size:13px;border-radius:6px;cursor:pointer;color:var(--calc-expr-text);transition:all .2s;border:none;background:transparent}
-  .gender-btn.active{background:var(--bg-error, #ff4b2b);color:var(--text-on-accent);font-weight:bold}
+  .gender-btn.active{background:var(--status-orange-bg);color:var(--text-on-accent);font-weight:bold}
 
   .result-box{background:var(--bg-input);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;margin-top:4px}
   .result-title{font-size:11px;color:var(--text-info);margin-bottom:4px}
@@ -48,8 +48,8 @@
   .macros-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
   .macro-card{background:var(--bg-input);border:1px solid var(--border);border-radius:10px;padding:12px 8px;text-align:center}
   .m-label{font-size:11px;font-weight:600;margin-bottom:4px}
-  .m-carbs{color:#38bdf8}
-  .m-protein{color:#f472b6}
+  .m-carbs{color:var(--status-blue-text)}
+  .m-protein{color:var(--status-pink-text)}
   .m-fat{color:var(--text-highlight)}
   .m-val{font-size:16px;font-weight:800;color:var(--text-primary)}
   .m-g{font-size:10px;color:var(--text-muted);font-weight:normal}
@@ -61,14 +61,14 @@
   .report-box h3{font-size:15px;margin-bottom:12px;font-weight:700}
   .report-box p{margin-bottom:10px;color:var(--text-info);word-break:keep-all}
   .report-box .highlight{font-weight:700;color:var(--text-primary)}
-  .report-tip{background:var(--bg-body);border-left:4px solid var(--text-error, #ff4b2b);padding:12px 16px;margin:16px 0;border-radius:0 8px 8px 0;font-size:13.5px}
+  .report-tip{background:var(--bg-body);border-left:4px solid var(--status-orange-text);padding:12px 16px;margin:16px 0;border-radius:0 8px 8px 0;font-size:13.5px}
   .report-notice{font-size:12px;color:var(--text-muted)!important;margin-top:16px;padding-top:12px;border-top:1px dashed var(--border)}
   @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
   
   .related-tools{margin:0 12px 12px;padding:16px;background:var(--bg-input);border-radius:8px;border:1px solid var(--border)}
   .related-tools h4{font-size:14px;margin-bottom:10px;font-weight:700;color:var(--text-primary)}
   .related-tools ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px}
-  .related-tools li a{font-size:13px;color:var(--text-error, #ff4b2b);text-decoration:none;display:flex;align-items:center;gap:6px;transition:opacity .2s}
+  .related-tools li a{font-size:13px;color:var(--status-orange-text);text-decoration:none;display:flex;align-items:center;gap:6px;transition:opacity .2s}
   .related-tools li a:hover{opacity:0.8;text-decoration:underline}
 
   .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text)}
@@ -80,7 +80,7 @@
   .guide-section[open] summary{background:var(--bg-btn);border-bottom:1px solid var(--border)}
   .guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
   .guide-content ol{padding-left:20px}.guide-content li{margin-bottom:4px}
-.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--bg-error, #ff4b2b);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(255,75,43,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--status-orange-bg);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(255,75,43,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
 .scroll-top-btn.visible{opacity:1;visibility:visible}
 .scroll-top-btn:hover{transform:scale(1.1);background:#e0431f}
 @media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
@@ -108,17 +108,17 @@
         </div>
         <div class="field">
           <label>나이 (만)</label>
-          <input type="number" id="age" value="25" min="1" max="120" oninput="calc()">
+          <input aria-label="나이" type="number" id="age" value="25" min="1" max="120" oninput="calc()">
         </div>
       </div>
       <div class="field-row">
         <div class="field">
           <label>키 (cm)</label>
-          <input type="number" id="height" value="170" min="100" max="250" oninput="calc()">
+          <input aria-label="키 (센티미터)" type="number" id="height" value="170" min="100" max="250" oninput="calc()">
         </div>
         <div class="field">
           <label>몸무게 (kg)</label>
-          <input type="number" id="weight" value="65" min="30" max="200" oninput="calc()">
+          <input aria-label="몸무게 (킬로그램)" type="number" id="weight" value="65" min="30" max="200" oninput="calc()">
         </div>
       </div>
     </div>
@@ -129,7 +129,7 @@
       <div class="field-row">
         <div class="field">
           <label>평소 활동량</label>
-          <select id="activity" onchange="calc()">
+          <select aria-label="활동량" id="activity" onchange="calc()">
             <option value="1.2">거의 운동하지 않음 (앉아서 생활)</option>
             <option value="1.375">가벼운 활동 (주 1~3일 가벼운 운동)</option>
             <option value="1.55" selected>보통 활동 (주 3~5일 운동)</option>
@@ -141,7 +141,7 @@
       <div class="field-row">
         <div class="field">
           <label>나의 목표</label>
-          <select id="goal" onchange="calc()">
+          <select aria-label="체중 목표" id="goal" onchange="calc()">
             <option value="lose">다이어트 (체중 감량, -500kcal)</option>
             <option value="maintain" selected>현재 체중 유지</option>
             <option value="gain">벌크업 (체중 증량, +500kcal)</option>
@@ -184,9 +184,9 @@
         입력하신 정보(<span class="highlight" id="r-gender">남성</span>, <span class="highlight"><span id="r-age">25</span>세</span>, <span class="highlight"><span id="r-height">170</span>cm</span>, <span class="highlight"><span id="r-weight">65</span>kg</span>)를 바탕으로 계산 분석한 기초대사량(BMR)은 <strong><span id="r-bmr" class="highlight">1,593</span> kcal</strong>입니다. 기초대사량은 가만히 있어도 생명 유지를 위해 소모되는 최소 에너지입니다.
       </p>
       <p>
-        선택하신 활동량(<span class="highlight" id="r-activity">보통 활동</span>)을 반영한 총 에너지 소비량(TDEE)은 <strong><span id="r-tdee">2,468</span> kcal</strong>로 추정됩니다. 고객님의 현재 목표인 <strong><span id="r-goal" style="color:#22c55e;">[현재 체중 유지]</span></strong>를 달성하기 위해 권장되는 하루 섭취 칼로리는 <span class="highlight" style="color:#ff4b2b;"><span id="r-target">2,468</span> kcal</span>입니다.
+        선택하신 활동량(<span class="highlight" id="r-activity">보통 활동</span>)을 반영한 총 에너지 소비량(TDEE)은 <strong><span id="r-tdee">2,468</span> kcal</strong>로 추정됩니다. 고객님의 현재 목표인 <strong><span id="r-goal" style="color:var(--status-green-text);">[현재 체중 유지]</span></strong>를 달성하기 위해 권장되는 하루 섭취 칼로리는 <span class="highlight" style="color:var(--status-orange-text);"><span id="r-target">2,468</span> kcal</span>입니다.
       </p>
-      <div class="report-tip" style="border-color:#ff4b2b;">
+      <div class="report-tip" style="border-color:var(--status-orange-text);">
         <strong>💡 매크로(탄단지) 가이드:</strong> <span id="r-macro">다이어트를 위한 균형 잡힌 비율입니다. (탄5:단3:지2)</span>를 바탕으로 하루 탄수화물 <span id="r-tc">309</span>g, 단백질 <span id="r-tp">185</span>g, 지방 <span id="r-tf">55</span>g을 식단으로 섭취해 보세요.
       </div>
       <p class="report-notice">
@@ -235,7 +235,7 @@
       <li><a href="/special-chars/calorie-calc/">🔥 나의 다른 도구 보러가기 (작업 예정)</a></li>
     </ul>
   </div>
-    <div class="footer"><span>Mifflin-St Jeor 공식 기반</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <footer class="footer"><span>Mifflin-St Jeor 공식 기반</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <script>
@@ -337,9 +337,9 @@ function calc() {
   const goalText = goalSelect.options[goalSelect.selectedIndex].text.split(' (')[0];
   const rGoal = document.getElementById('r-goal');
   rGoal.textContent = `[${goalText}]`;
-  if(goal === 'lose') rGoal.style.color = '#38bdf8';
-  else if(goal === 'gain') rGoal.style.color = '#ff4b2b';
-  else rGoal.style.color = '#22c55e';
+  if(goal === 'lose') rGoal.style.color = 'var(--status-blue-text)';
+  else if(goal === 'gain') rGoal.style.color = 'var(--status-orange-text)';
+  else rGoal.style.color = 'var(--status-green-text)';
 
   document.getElementById('r-target').textContent = Math.round(targetCal).toLocaleString();
   document.getElementById('r-macro').textContent = mDesc;

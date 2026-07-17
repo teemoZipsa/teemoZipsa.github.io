@@ -54,7 +54,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .bmi-table th{background:var(--bg-btn);padding:8px;color:var(--text-secondary);font-weight:600;text-align:center}
 .bmi-table td{padding:8px;border-bottom:1px solid var(--border);text-align:center;color:var(--text-info)}
 .bmi-table tr.current{background:var(--accent-bg);font-weight:700}
-.bmi-table tr.current td{color:var(--accent)}
+.bmi-table tr.current td{color:var(--accent-text)}
 
 .guide-section{margin:0 12px 12px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
 .guide-section summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
@@ -73,7 +73,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .related-tools{margin:0 12px 12px;padding:16px;background:var(--bg-guide);border-radius:8px;border:1px solid var(--border)}
 .related-tools h4{font-size:14px;margin-bottom:10px;font-weight:700;color:var(--text-primary)}
 .related-tools ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px}
-.related-tools li a{font-size:13px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:6px;transition:opacity .2s}
+.related-tools li a{font-size:13px;color:var(--accent-text);text-decoration:none;display:flex;align-items:center;gap:6px;transition:opacity .2s}
 .related-tools li a:hover{opacity:0.8;text-decoration:underline}
 
 .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
@@ -98,14 +98,14 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="input-group">
       <label>키 (cm)</label>
       <div class="input-row">
-        <input type="number" id="height" value="170" min="50" max="250" step="1" oninput="calc()">
+        <input aria-label="키 (센티미터)" type="number" id="height" value="170" min="50" max="250" step="1" oninput="calc()">
         <span class="unit">cm</span>
       </div>
     </div>
     <div class="input-group">
       <label>몸무게 (kg)</label>
       <div class="input-row">
-        <input type="number" id="weight" value="65" min="10" max="300" step="0.1" oninput="calc()">
+        <input aria-label="몸무게 (킬로그램)" type="number" id="weight" value="65" min="10" max="300" step="0.1" oninput="calc()">
         <span class="unit">kg</span>
       </div>
     </div>
@@ -132,7 +132,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
         입력하신 <span class="highlight">신장 <span id="r-height">170</span>cm</span>, <span class="highlight">체중 <span id="r-weight">65</span>kg</span>을 바탕으로 분석한 결과, 고객님의 체질량지수(BMI)는 <span class="highlight"><span id="r-bmi">22.5</span></span>입니다.
       </p>
       <p>
-        이는 대한비만학회 기준 <span class="highlight" id="r-range" style="color:#22c55e;">[정상]</span> 구간에 해당합니다. 해당 신장에서 권장하는 표준 체중인 <span class="highlight"><span id="r-ideal">63.6</span>kg</span>을 기준으로 할 때, 현재 <span class="highlight" id="r-diff-wrap" style="color:#f97316;"><span id="r-diff">+1.4kg</span> 차이</span>가 나는 상태입니다.
+        이는 대한비만학회 기준 <span class="highlight" id="r-range" style="color:var(--status-green-text);">[정상]</span> 구간에 해당합니다. 해당 신장에서 권장하는 표준 체중인 <span class="highlight"><span id="r-ideal">63.6</span>kg</span>을 기준으로 할 때, 현재 <span class="highlight" id="r-diff-wrap" style="color:var(--status-orange-text);"><span id="r-diff">+1.4kg</span> 차이</span>가 나는 상태입니다.
       </p>
       <div class="report-tip">
         <strong>💡 건강 관리 가이드:</strong> <span id="r-tip">건강한 상태입니다! 현재의 건강한 체중을 유지하기 위해 꾸준한 운동과 균형 잡힌 식습관을 지속해 주세요.</span>
@@ -175,7 +175,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </ul>
   </div>
 
-    <div class="footer"><span>대한비만학회 기준</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <footer class="footer"><span>대한비만학회 기준</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -183,12 +183,12 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
 <script>
 const RANGES = [
-  { max: 18.5, name: '저체중', emoji: '🔵', color: '#3b82f6', range: 'under', tip: '근력 운동과 함께 질 좋은 단백질/탄수화물 섭취량을 늘려 건강하게 체중을 증량하는 것을 목표로 해보세요.' },
-  { max: 23, name: '정상', emoji: '🟢', color: '#22c55e', range: 'normal', tip: '건강한 상태입니다! 현재의 적정 몸무게를 유지하기 위해 올바른 식습관과 규칙적인 신체활동을 지속해 주세요.' },
-  { max: 25, name: '과체중', emoji: '🟡', color: '#facc15', range: 'over', tip: '비만 전단계에 해당합니다. 체중이 더 늘지 않도록 식습관을 점검하고 걷기 등 가벼운 유산소 운동부터 관리를 시작해 보세요.' },
-  { max: 30, name: '1단계 비만', emoji: '🟠', color: '#f97316', range: 'obese1', tip: '적극적인 체중 관리가 필요한 상태입니다. 규칙적인 운동 플랜과 체계적인 식단 관리를 통해 점진적 감량을 추천합니다.' },
-  { max: 35, name: '2단계 비만', emoji: '🔴', color: '#ef4444', range: 'obese2', tip: '장기적인 다이어트 계획이 필수적입니다. 무리하지 않는 선에서의 운동 스케줄 및 식이요법에 대해 전문가 상담을 권장합니다.' },
-  { max: Infinity, name: '3단계 비만', emoji: '🔴', color: '#dc2626', range: 'obese3', tip: '관절에 무리가 가지 않는 체중 감량 전문 플랜이 요구됩니다. 각종 대사성 질환 예방을 위해 의학적 상담과 병원에 내원하시는 것을 강하게 권장해 드립니다.' },
+  { max: 18.5, name: '저체중', emoji: '🔵', color: 'var(--status-blue-text)', range: 'under', tip: '근력 운동과 함께 질 좋은 단백질/탄수화물 섭취량을 늘려 건강하게 체중을 증량하는 것을 목표로 해보세요.' },
+  { max: 23, name: '정상', emoji: '🟢', color: 'var(--status-green-text)', range: 'normal', tip: '건강한 상태입니다! 현재의 적정 몸무게를 유지하기 위해 올바른 식습관과 규칙적인 신체활동을 지속해 주세요.' },
+  { max: 25, name: '과체중', emoji: '🟡', color: 'var(--status-orange-text)', range: 'over', tip: '비만 전단계에 해당합니다. 체중이 더 늘지 않도록 식습관을 점검하고 걷기 등 가벼운 유산소 운동부터 관리를 시작해 보세요.' },
+  { max: 30, name: '1단계 비만', emoji: '🟠', color: 'var(--status-orange-text)', range: 'obese1', tip: '적극적인 체중 관리가 필요한 상태입니다. 규칙적인 운동 플랜과 체계적인 식단 관리를 통해 점진적 감량을 추천합니다.' },
+  { max: 35, name: '2단계 비만', emoji: '🔴', color: 'var(--status-red-text)', range: 'obese2', tip: '장기적인 다이어트 계획이 필수적입니다. 무리하지 않는 선에서의 운동 스케줄 및 식이요법에 대해 전문가 상담을 권장합니다.' },
+  { max: Infinity, name: '3단계 비만', emoji: '🔴', color: 'var(--status-red-text)', range: 'obese3', tip: '관절에 무리가 가지 않는 체중 감량 전문 플랜이 요구됩니다. 각종 대사성 질환 예방을 위해 의학적 상담과 병원에 내원하시는 것을 강하게 권장해 드립니다.' },
 ];
 
 function clearResults() {
@@ -266,10 +266,10 @@ function calc() {
   const rDiff = document.getElementById('r-diff');
   
   if (Math.abs(diffToIdeal) < 0.1) {
-    rDiffWrap.style.color = '#22c55e';
+    rDiffWrap.style.color = 'var(--status-green-text)';
     rDiff.textContent = '정확히 일치(0kg)';
   } else {
-    rDiffWrap.style.color = diffToIdeal > 0 ? '#f97316' : '#3b82f6';
+    rDiffWrap.style.color = diffToIdeal > 0 ? 'var(--status-orange-text)' : 'var(--status-blue-text)';
     rDiff.textContent = `${diffToIdeal > 0 ? '+' : ''}${diffToIdeal.toFixed(1)}kg`;
   }
   

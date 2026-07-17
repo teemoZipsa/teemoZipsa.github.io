@@ -41,7 +41,7 @@
   .sub-name{flex:2}
   .sub-price{flex:1;text-align:right}
   .sub-del{background:none;border:none;color:var(--text-muted);font-size:16px;cursor:pointer;padding:0 4px;transition:color .15s}
-  .sub-del:hover{color:#f87171}
+  .sub-del:hover{color:var(--status-red-text)}
 
   .add-row{display:flex;gap:8px;margin-top:8px}
   .add-btn{background:var(--bg-input);border:1px solid var(--border);color:var(--text-info);padding:7px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s;flex-shrink:0}
@@ -60,25 +60,25 @@
   .result-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
   .r-card{background:var(--bg-input);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center}
   .r-label{font-size:10px;color:var(--calc-expr-text);margin-bottom:3px}
-  .r-value{font-size:15px;font-weight:800;color:#f87171}
+  .r-value{font-size:15px;font-weight:800;color:var(--status-red-text)}
   .r-sub{font-size:9px;color:var(--text-muted);margin-top:2px}
 
   /* 투자 비교 */
   .invest-section{background:var(--bg-success, #1a2a1a);border:1px solid var(--border-success, #2a4a2a);border-radius:12px;padding:14px 16px}
   .invest-title{font-size:12px;font-weight:700;color:var(--text-success);margin-bottom:8px}
   .invest-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-  .i-card{background:rgba(0,0,0,.2);border-radius:8px;padding:10px 8px;text-align:center}
-  .i-card .r-label{color:#2a6a2a}
+  .i-card{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;padding:10px 8px;text-align:center}
+  .i-card .r-label{color:var(--text-secondary)}
   .i-card .r-value{color:var(--text-success)}
-  .invest-note{font-size:10px;color:#2a5a2a;margin-top:8px;text-align:center}
+  .invest-note{font-size:10px;color:var(--text-success);margin-top:8px;text-align:center}
 
   /* 팩폭 */
   .punchline{display:none;text-align:center;padding:8px 16px;font-size:13px;color:var(--text-highlight);line-height:1.5;animation:fadeIn .6s ease}
   .punchline{display:none;text-align:center;padding:8px 16px;font-size:13px;color:var(--text-highlight);line-height:1.5;animation:fadeIn .6s ease}
   @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
-  .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid #f87171;animation:fadeIn .5s ease-in-out;margin-top:12px}
-  .report-box h3 {font-size:15px;font-weight:700;color:#f87171;margin-bottom:4px}
+  .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--status-red-text);animation:fadeIn .5s ease-in-out;margin-top:12px}
+  .report-box h3 {font-size:15px;font-weight:700;color:var(--status-red-text);margin-bottom:4px}
   .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
   .report-box strong {color:var(--text-primary);font-weight:600}
 
@@ -86,7 +86,7 @@
   .related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
   .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
-  .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent);transform:translateX(4px)}
+  .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
 
   .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text)}
   .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
@@ -192,7 +192,7 @@
       <a href="/special-chars/discount-calc/"><span>🛍️ 할인율 계산기</span><span>바로가기 →</span></a>
     </div>
   </div>
-    <div class="footer"><span>실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <footer class="footer"><span>실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 <script>
 let subs = [];

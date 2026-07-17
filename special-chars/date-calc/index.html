@@ -63,7 +63,7 @@
 @media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
 
 .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:16px;}
-.report-box h3 {font-size:14px;font-weight:700;color:var(--accent);margin-bottom:4px}
+.report-box h3 {font-size:14px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
 .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
 .report-box strong {color:var(--text-primary);font-weight:600}
 
@@ -71,7 +71,7 @@
 .related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
 .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
-.related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent);transform:translateX(4px)}
+.related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
 
 @keyframes fadeIn {
   from { opacity:0; transform:translateY(10px) }
@@ -95,8 +95,8 @@
   <div class="counter-body">
     <div class="date-section">
       <div class="date-section-title">📆 D-Day 계산</div>
-      <div class="date-row"><label>시작일</label><input type="date" id="ddayStart"></div>
-      <div class="date-row"><label>목표일</label><input type="date" id="ddayEnd"></div>
+      <div class="date-row"><label>시작일</label><input aria-label="시작일" type="date" id="ddayStart"></div>
+      <div class="date-row"><label>목표일</label><input aria-label="종료일" type="date" id="ddayEnd"></div>
       <div class="checkbox-row">
         <input type="checkbox" id="ddayInclusive">
         <label for="ddayInclusive">양끝 날짜 포함 (초일 산입)</label>
@@ -113,7 +113,7 @@
 
     <div class="date-section">
       <div class="date-section-title">🧮 날짜 계산 (기준일 ± 일수)</div>
-      <div class="date-row"><label>기준일</label><input type="date" id="dateBase"></div>
+      <div class="date-row"><label>기준일</label><input aria-label="기준일" type="date" id="dateBase"></div>
       <div class="date-row"><label>일수</label><input type="number" id="dateDays" placeholder="예: 100, -30"></div>
       <div class="quick-buttons">
         <button class="quick-btn" onclick="applyQuick(7)">+7일</button>
@@ -168,7 +168,7 @@
     </div>
   </div>
 
-  <div class="footer"><span>실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+  <footer class="footer"><span>실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>

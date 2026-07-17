@@ -43,7 +43,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 
 .result-card{border-radius:16px;padding:24px;text-align:center;background:var(--bg-guide);border:1px solid var(--border)}
 .result-emoji{font-size:48px;margin-bottom:8px}
-.result-main{font-size:42px;font-weight:800;color:var(--accent);letter-spacing:-2px}
+.result-main{font-size:42px;font-weight:800;color:var(--accent-text);letter-spacing:-2px}
 .result-sub{font-size:14px;color:var(--text-info);margin-top:4px}
 
 .meals-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -60,7 +60,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 /* Dynamic Report & Guide standard CSS */
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .report-box { margin: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
-.report-box strong { color: var(--accent); }
+.report-box strong { color:var(--accent-text); }
 .guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
 .guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
 .guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
@@ -109,7 +109,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <div class="input-group">
       <label>Weight</label>
       <div class="input-row">
-        <input type="number" id="weight" value="5" min="0.5" max="100" step="0.5" oninput="calc()">
+        <input aria-label="Pet weight" type="number" id="weight" value="5" min="0.5" max="100" step="0.5" oninput="calc()">
         <span class="unit">kg</span>
       </div>
     </div>
@@ -117,7 +117,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <div class="input-group">
       <label>Life Stage</label>
       <div class="input-row">
-        <select id="lifeStage" onchange="calc()">
+        <select aria-label="Life stage" id="lifeStage" onchange="calc()">
           <option value="puppy">Puppy/Kitten (under 1 yr)</option>
           <option value="adult" selected>Adult (1-7 yrs)</option>
           <option value="senior">Senior (7+ yrs)</option>
@@ -128,7 +128,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <div class="input-group">
       <label>Activity Level</label>
       <div class="input-row">
-        <select id="activity" onchange="calc()">
+        <select aria-label="Activity level" id="activity" onchange="calc()">
           <option value="low">Low (mostly indoor)</option>
           <option value="normal" selected>Normal (1-2 walks/day)</option>
           <option value="high">High (active/athletic)</option>
@@ -139,7 +139,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <div class="input-group">
       <label>Spay/Neuter Status</label>
       <div class="input-row">
-        <select id="neutered" onchange="calc()">
+        <select aria-label="Spay or neuter status" id="neutered" onchange="calc()">
           <option value="no">Not spayed/neutered</option>
           <option value="yes" selected>Spayed/neutered</option>
         </select>
@@ -208,7 +208,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     </div>
   </section>
 
-  <div class="footer"><span>Based on RER/DER calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+  <footer class="footer"><span>Based on RER/DER calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 
 <div class="toast" id="toast"></div>

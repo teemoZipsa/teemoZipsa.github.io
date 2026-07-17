@@ -42,7 +42,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
 .result-card{border-radius:16px;padding:24px;text-align:center;background:var(--bg-guide);border:1px solid var(--border)}
 .result-emoji{font-size:48px;margin-bottom:8px}
-.result-main{font-size:42px;font-weight:800;color:var(--accent);letter-spacing:-2px}
+.result-main{font-size:42px;font-weight:800;color:var(--accent-text);letter-spacing:-2px}
 .result-sub{font-size:14px;color:var(--text-info);margin-top:4px}
 
 .meals-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -74,7 +74,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .related-tools{margin:0 12px 12px;padding:16px;background:var(--bg-guide);border-radius:8px;border:1px solid var(--border)}
 .related-tools h4{font-size:14px;margin-bottom:10px;font-weight:700;color:var(--text-primary)}
 .related-tools ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px}
-.related-tools li a{font-size:13px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:6px;transition:opacity .2s}
+.related-tools li a{font-size:13px;color:var(--accent-text);text-decoration:none;display:flex;align-items:center;gap:6px;transition:opacity .2s}
 .related-tools li a:hover{opacity:0.8;text-decoration:underline}
 
 .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
@@ -102,7 +102,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="input-group">
       <label>체중</label>
       <div class="input-row">
-        <input type="number" id="weight" value="5" min="0.5" max="100" step="0.5" oninput="calc()">
+        <input aria-label="반려동물 몸무게" type="number" id="weight" value="5" min="0.5" max="100" step="0.5" oninput="calc()">
         <span class="unit">kg</span>
       </div>
     </div>
@@ -110,7 +110,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="input-group">
       <label>생애 단계</label>
       <div class="input-row">
-        <select id="lifeStage" onchange="calc()">
+        <select aria-label="생애 단계" id="lifeStage" onchange="calc()">
           <option value="puppy">성장기 (1세 미만)</option>
           <option value="adult" selected>성견/성묘 (1~7세)</option>
           <option value="senior">노령기 (7세 이상)</option>
@@ -121,7 +121,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="input-group">
       <label>활동량</label>
       <div class="input-row">
-        <select id="activity" onchange="calc()">
+        <select aria-label="활동 수준" id="activity" onchange="calc()">
           <option value="low">적음 (실내 위주)</option>
           <option value="normal" selected>보통 (산책 1~2회)</option>
           <option value="high">많음 (운동/활동적)</option>
@@ -132,7 +132,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="input-group">
       <label>중성화 여부</label>
       <div class="input-row">
-        <select id="neutered" onchange="calc()">
+        <select aria-label="중성화 여부" id="neutered" onchange="calc()">
           <option value="no">중성화 안 함</option>
           <option value="yes" selected>중성화 완료</option>
         </select>
@@ -185,7 +185,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </ul>
   </div>
 
-  <div class="footer"><span>RER/DER 기반 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+  <footer class="footer"><span>RER/DER 기반 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast"></div>

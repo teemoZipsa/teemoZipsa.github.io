@@ -30,12 +30,12 @@
 
         .field-group{margin-bottom:12px}
         .field-label{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text-secondary);margin-bottom:6px}
-        .field-label .required{color:#e74c7c;font-size:11px}
+        .field-label .required{color:var(--status-red-text);font-size:11px}
         .field-label .optional{color:var(--text-muted);font-size:11px}
         .field-input{width:100%;padding:10px 12px;background:var(--bg-guide);border:1.5px solid #333366;border-radius:8px;color:var(--text-primary);font-size:14px;font-family:inherit;transition:border-color .2s}
         .field-input:focus{outline:none;border-color:#7c5cbf}
         .field-input::placeholder{color:var(--text-muted)}
-        .field-input.error{border-color:#e74c7c}
+        .field-input.error{border-color:var(--status-red-text)}
 
         .presets{margin-bottom:16px}
         .presets-label{font-size:12px;color:var(--text-info);margin-bottom:8px}
@@ -55,7 +55,7 @@
         .param-table{width:100%;margin-top:12px;border-collapse:collapse}
         .param-table th{text-align:left;font-size:11px;color:var(--text-info);font-weight:500;padding:6px 8px;border-bottom:1px solid var(--border)}
         .param-table td{font-size:12px;padding:6px 8px;border-bottom:1px solid var(--border);color:var(--text-secondary);word-break:break-all}
-        .param-table td:first-child{color:var(--accent);font-weight:500;white-space:nowrap}
+        .param-table td:first-child{color:var(--accent-text);font-weight:500;white-space:nowrap}
         .param-table tr:last-child td{border-bottom:none}
 
         /* 가이드 & 관련 도구 (표준) */
@@ -72,12 +72,12 @@
         .guide-content strong{color:var(--text-secondary);display:block;margin-bottom:4px}
         .guide-content ul{padding-left:20px;margin-bottom:12px}
         .guide-content li{margin-bottom:4px}
-        .guide-content code{background:var(--bg-input);padding:2px 6px;border-radius:4px;font-size:12px;color:var(--accent)}
+        .guide-content code{background:var(--bg-input);padding:2px 6px;border-radius:4px;font-size:12px;color:var(--accent-text)}
         .related-tools{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
         .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
         .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
         .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
-        .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+        .tool-card:hover{border-color:var(--accent);color:var(--accent-text);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
 
         .bottom-bar{background:var(--bg-body);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #222250}
         .bottom-bar .info{font-size:11px;color:var(--text-muted)}
@@ -94,10 +94,10 @@
         .history-section{margin-top:12px}
         .history-label{font-size:12px;color:var(--text-info);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
         .history-clear{font-size:11px;color:var(--text-muted);cursor:pointer;background:none;border:none;font-family:inherit;transition:color .2s}
-        .history-clear:hover{color:#e74c7c}
+        .history-clear:hover{color:var(--status-red-text)}
         .history-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg-body);border-radius:6px;margin-bottom:4px;cursor:pointer;transition:background .2s}
         .history-item:hover{background:var(--bg-input)}
-        .history-item .hi-campaign{font-size:12px;color:var(--accent);font-weight:500;flex-shrink:0}
+        .history-item .hi-campaign{font-size:12px;color:var(--accent-text);font-weight:500;flex-shrink:0}
         .history-item .hi-url{font-size:11px;color:#7cc6fe;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
         .history-item .hi-copy{flex-shrink:0;font-size:11px;color:var(--text-muted);background:var(--bg-btn);border:none;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:inherit;transition:all .2s}
         .history-item .hi-copy:hover{background:var(--accent);color:var(--text-on-accent)}
@@ -238,7 +238,7 @@
             <a href="/special-chars/en/prompt-gen/" class="tool-card">🤖 AI Prompt Generator</a>
         </div>
     </section>
-    <div class="footer"><span>Marketing URL Tracking</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+    <footer class="footer"><span>Marketing URL Tracking</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>

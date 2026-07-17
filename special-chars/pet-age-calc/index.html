@@ -48,7 +48,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
 .result-card{border-radius:16px;padding:28px;text-align:center;background:var(--bg-guide);border:1px solid var(--border)}
 .result-emoji{font-size:60px;margin-bottom:8px}
-.result-age{font-size:48px;font-weight:800;color:var(--accent);letter-spacing:-2px}
+.result-age{font-size:48px;font-weight:800;color:var(--accent-text);letter-spacing:-2px}
 .result-label{font-size:14px;color:var(--text-info);margin-top:4px}
 .result-stage{font-size:16px;font-weight:700;margin-top:8px;padding:6px 16px;border-radius:20px;display:inline-block}
 
@@ -79,7 +79,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .related-tools{margin:0 12px 12px;padding:16px;background:var(--bg-guide);border-radius:8px;border:1px solid var(--border)}
 .related-tools h4{font-size:14px;margin-bottom:10px;font-weight:700;color:var(--text-primary)}
 .related-tools ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px}
-.related-tools li a{font-size:13px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:6px;transition:opacity .2s}
+.related-tools li a{font-size:13px;color:var(--accent-text);text-decoration:none;display:flex;align-items:center;gap:6px;transition:opacity .2s}
 .related-tools li a:hover{opacity:0.8;text-decoration:underline}
 
 .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
@@ -116,7 +116,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="input-group">
       <label>반려동물 나이</label>
       <div class="input-row">
-        <input type="number" id="petAge" value="3" min="0" max="30" step="1" oninput="calc()">
+        <input aria-label="반려동물 나이" type="number" id="petAge" value="3" min="0" max="30" step="1" oninput="calc()">
         <span class="unit">살</span>
       </div>
     </div>
@@ -139,7 +139,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
         입력하신 정보(<span class="highlight" id="r-type">🐶 강아지</span>, <span class="highlight" id="r-size">중형 (10~25kg)</span>, 실제 나이: <span class="highlight"><span id="r-age">3</span>살</span>)를 바탕으로 분석한 노화 진행 및 생애 주기 결과입니다.
       </p>
       <p>
-        단순 1:7 공식이 아닌 비선형 노화 추정 모델에 따르면, 현재 반려동물의 신체 나이는 사람 기준으로 약 <strong><span id="r-human-age" class="highlight" style="color:var(--accent);">29</span>세</strong>에 해당합니다. 이는 생애 주기 상 가장 건강하고 에너지가 넘치는 <strong><span id="r-stage-name">💪 청년기</span></strong>에 접어들었음을 의미합니다.
+        단순 1:7 공식이 아닌 비선형 노화 추정 모델에 따르면, 현재 반려동물의 신체 나이는 사람 기준으로 약 <strong><span id="r-human-age" class="highlight" style="color:var(--accent-text);">29</span>세</strong>에 해당합니다. 이는 생애 주기 상 가장 건강하고 에너지가 넘치는 <strong><span id="r-stage-name">💪 청년기</span></strong>에 접어들었음을 의미합니다.
       </p>
       <div class="report-tip" id="r-tip-box" style="border-color:#22c55e;">
         <strong>💡 생활 관리 가이드:</strong> <span id="r-tip">가장 건강하고 활발한 시기입니다! 많은 활동량과 균형 잡힌 영양 공급으로 뛰어난 컨디션을 제일 오래 유지할 수 있게 도와주세요.</span>
@@ -176,7 +176,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </ul>
   </div>
 
-  <div class="footer"><span>교육용 연령 추정</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+  <footer class="footer"><span>교육용 연령 추정</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -187,12 +187,12 @@ let petType = 'dog';
 let dogSize = 'medium';
 
 const STAGES = [
-  { maxAge: 6, name: '아기', emoji: '🍼', color: '#60a5fa' },
-  { maxAge: 12, name: '청소년', emoji: '🌱', color: '#34d399' },
-  { maxAge: 30, name: '청년', emoji: '💪', color: '#22c55e' },
-  { maxAge: 50, name: '장년', emoji: '👔', color: '#facc15' },
-  { maxAge: 70, name: '중년', emoji: '📖', color: '#f97316' },
-  { maxAge: 999, name: '노년', emoji: '🤍', color: '#a78bfa' },
+  { maxAge: 6, name: '아기', emoji: '🍼', color: '#1d4ed8' },
+  { maxAge: 12, name: '청소년', emoji: '🌱', color: '#166534' },
+  { maxAge: 30, name: '청년', emoji: '💪', color: '#166534' },
+  { maxAge: 50, name: '장년', emoji: '👔', color: '#92400e' },
+  { maxAge: 70, name: '중년', emoji: '📖', color: '#9a3412' },
+  { maxAge: 999, name: '노년', emoji: '🤍', color: '#6d28d9' },
 ];
 
 // Dog age to human age (by size)
@@ -284,7 +284,7 @@ function calc() {
     </div>
     <div class="info-item">
       <div class="label">참고값 대비 단순 비율</div>
-      <div class="value" style="color:${pct > 80 ? '#ef4444' : pct > 50 ? '#f97316' : '#22c55e'}">${pct}%</div>
+      <div class="value" style="color:${pct > 80 ? 'var(--status-red-text)' : pct > 50 ? 'var(--status-orange-text)' : 'var(--status-green-text)'}">${pct}%</div>
     </div>
     <div class="info-item">
       <div class="label">생애 단계</div>

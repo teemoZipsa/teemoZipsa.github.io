@@ -50,7 +50,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .result-item:last-child{border-bottom:none}
 .result-label{font-size:13px;color:var(--text-section)}
 .result-value{font-size:18px;font-weight:700;color:var(--text-primary)}
-.result-value.highlight{color:var(--accent);font-size:22px}
+.result-value.highlight{color:var(--accent-text);font-size:22px}
 .result-value.tax{color:#f97316}
 .copy-btn{width:100%;padding:12px;background:var(--bg-header);color:var(--text-on-accent);border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .2s}
 .copy-btn:hover{opacity:.85}
@@ -67,7 +67,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
 
 .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-bottom:10px}
-.report-box h3 {font-size:15px;font-weight:700;color:var(--accent);margin-bottom:4px}
+.report-box h3 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
 .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
 .report-box strong {color:var(--text-primary);font-weight:600}
 
@@ -75,7 +75,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
 .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
-.related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent);transform:translateX(4px)}
+.related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
 
 @keyframes fadeIn {
   from { opacity:0; transform:translateY(10px) }
@@ -117,14 +117,14 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <div class="toggle-row" onclick="document.getElementById('vatToggle').click()">
         <span class="toggle-label">부가세(10%) 포함</span>
         <label class="toggle" onclick="event.stopPropagation()">
-          <input type="checkbox" id="vatToggle" onchange="calc()">
+          <input aria-label="부가세 10퍼센트 포함" type="checkbox" id="vatToggle" onchange="calc()">
           <span class="slider"></span>
         </label>
       </div>
       <div class="toggle-row" onclick="document.getElementById('vatExToggle').click()">
         <span class="toggle-label">입력 가격이 세전 금액</span>
         <label class="toggle" onclick="event.stopPropagation()">
-          <input type="checkbox" id="vatExToggle" checked onchange="calc()">
+          <input aria-label="입력 가격이 세전 금액" type="checkbox" id="vatExToggle" checked onchange="calc()">
           <span class="slider"></span>
         </label>
       </div>
@@ -178,7 +178,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
   </div>
 
-  <div class="footer"><span>실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+  <footer class="footer"><span>실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>

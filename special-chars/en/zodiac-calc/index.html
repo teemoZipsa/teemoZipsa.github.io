@@ -70,7 +70,7 @@
   .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
   .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
-  .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+  .tool-card:hover{border-color:var(--accent);color:var(--accent-text);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
 
         .bottom-bar{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
         .bottom-bar .info{font-size:11px;color:var(--text-info)}
@@ -100,7 +100,7 @@
         <div class="input-section">
             <label>Enter your date of birth</label>
             <div class="date-row">
-                <input type="date" id="birthDate" onchange="calcZodiac()">
+                <input aria-label="Date of birth" type="date" id="birthDate" onchange="calcZodiac()">
                 <button class="btn-today" onclick="setToday()">Today</button>
             </div>
         </div>
@@ -166,7 +166,7 @@
         <a href="/special-chars/en/unit-conv/" class="tool-card">📐 Unit Converter</a>
       </div>
     </section>
-    <div class="footer"><span>Birthday-based calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+    <footer class="footer"><span>Birthday-based calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 

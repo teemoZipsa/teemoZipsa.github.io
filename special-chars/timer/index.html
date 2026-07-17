@@ -29,8 +29,9 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
 .mode-tabs{display:flex;background:var(--bg-bar);border-bottom:1px solid var(--border)}
 .mode-tab{flex:1;padding:12px;text-align:center;font-size:14px;font-weight:600;color:var(--text-muted);background:none;border:none;cursor:pointer;font-family:inherit;transition:all .2s;border-bottom:2px solid transparent}
-.mode-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.mode-tab:hover{color:#bbb}
+.mode-tab.active{color:var(--accent-text);border-bottom-color:var(--accent)}
+.mode-tab:hover:not(.active){color:var(--text-primary)}
+.mode-tab.active:hover{color:var(--accent-text)}
 
 .content{padding:24px 20px}
 
@@ -71,7 +72,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .laps::-webkit-scrollbar{width:4px}
 .laps::-webkit-scrollbar-thumb{background:var(--bg-btn-hover);border-radius:2px}
 .lap-item{display:flex;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--border);font-size:13px}
-.lap-item:first-child{color:var(--accent);font-weight:600}
+.lap-item:first-child{color:var(--accent-text);font-weight:600}
 .lap-num{color:var(--text-muted)}
 .lap-time{font-variant-numeric:tabular-nums}
 .lap-diff{color:var(--text-muted);font-size:12px}
@@ -97,7 +98,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
   .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
-  .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+  .tool-card:hover{border-color:var(--accent);color:var(--accent-text);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
 .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
 .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
 .footer a:hover{color:var(--text-secondary)}
@@ -125,15 +126,15 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div id="timerSection">
       <div class="timer-inputs">
         <div class="tfield">
-          <input type="number" id="tHour" value="0" min="0" max="99" oninput="clampInput(this,99)">
+          <input aria-label="시간" type="number" id="tHour" value="0" min="0" max="99" oninput="clampInput(this,99)">
           <span>시간</span>
         </div>
         <div class="tfield">
-          <input type="number" id="tMin" value="5" min="0" max="59" oninput="clampInput(this,59)">
+          <input aria-label="분" type="number" id="tMin" value="5" min="0" max="59" oninput="clampInput(this,59)">
           <span>분</span>
         </div>
         <div class="tfield">
-          <input type="number" id="tSec" value="0" min="0" max="59" oninput="clampInput(this,59)">
+          <input aria-label="초" type="number" id="tSec" value="0" min="0" max="59" oninput="clampInput(this,59)">
           <span>초</span>
         </div>
       </div>
@@ -223,7 +224,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <a href="/special-chars/timezone-conv/" class="tool-card">🌍 세계 시간 변환</a>
     </div>
   </section>
-    <div class="footer"><span>백그라운드 알림 지원</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <footer class="footer"><span>백그라운드 알림 지원</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>

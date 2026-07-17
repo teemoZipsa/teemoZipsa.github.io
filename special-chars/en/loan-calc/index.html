@@ -44,9 +44,9 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .summary-card{background:var(--accent-bg);border:1.5px solid var(--accent);border-radius:10px;padding:14px 10px;text-align:center}
 .summary-card.highlight{background:var(--accent);border-color:var(--accent)}
 .summary-card.highlight .s-value{color:var(--text-on-accent)}
-.summary-card.highlight .s-label{color:rgba(255,255,255,.8)}
+.summary-card.highlight .s-label{color:rgba(255,255,255,.95)}
 .s-label{font-size:11px;color:var(--text-info);margin-bottom:4px}
-.s-value{font-size:20px;font-weight:800;color:var(--accent)}
+.s-value{font-size:20px;font-weight:800;color:var(--accent-text)}
 .s-sub{font-size:11px;color:var(--text-info);margin-top:2px}
 
 .schedule-toggle{width:100%;padding:10px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;text-align:center}
@@ -59,19 +59,19 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .schedule th:first-child{text-align:center}
 .schedule td{padding:7px 6px;border-bottom:1px solid var(--border);text-align:right;font-variant-numeric:tabular-nums;color:var(--text-secondary)}
 .schedule td:first-child{text-align:center;color:var(--text-info)}
-.schedule tr:last-child td{font-weight:700;color:var(--accent);border-top:2px solid var(--accent)}
+.schedule tr:last-child td{font-weight:700;color:var(--accent-text);border-top:2px solid var(--accent)}
 .schedule-scroll{max-height:400px;overflow-y:auto}
 .schedule-scroll::-webkit-scrollbar{width:4px}
 .schedule-scroll::-webkit-scrollbar-thumb{background:var(--bg-btn-hover);border-radius:2px}
 
 .compare{background:var(--bg-guide);border-radius:10px;padding:14px;font-size:12px;color:var(--text-info);line-height:1.6}
 .compare strong{color:var(--text-primary)}
-.compare .diff{color:var(--accent);font-weight:700}
+.compare .diff{color:var(--accent-text);font-weight:700}
 
 /* Dynamic Report & Guide standard CSS */
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .report-box { margin: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
-.report-box strong { color: var(--accent); }
+.report-box strong { color:var(--accent-text); }
 .guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
 .guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
 .guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
@@ -121,21 +121,21 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <div class="input-group">
       <label>Loan Amount</label>
       <div class="input-row">
-        <input type="number" id="principal" value="100000" min="0" max="1000000000000000" step="10000" oninput="calc()">
+        <input aria-label="Loan principal" type="number" id="principal" value="100000" min="0" max="1000000000000000" step="10000" oninput="calc()">
         <span class="unit">$</span>
       </div>
     </div>
     <div class="input-group">
       <label>Annual Interest Rate</label>
       <div class="input-row">
-        <input type="number" id="rate" value="4.5" min="0" max="30" step="0.1" oninput="calc()">
+        <input aria-label="Annual interest rate" type="number" id="rate" value="4.5" min="0" max="30" step="0.1" oninput="calc()">
         <span class="unit">%</span>
       </div>
     </div>
     <div class="input-group">
       <label>Loan Term</label>
       <div class="input-row">
-        <input type="number" id="years" value="30" min="1" max="50" step="1" oninput="calc()">
+        <input aria-label="Loan term in years" type="number" id="years" value="30" min="1" max="50" step="1" oninput="calc()">
         <span class="unit">years</span>
       </div>
     </div>
@@ -151,7 +151,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 
     <button class="schedule-toggle" id="scheduleBtn" onclick="toggleSchedule()">📋 View Monthly Payment Schedule</button>
     <div class="schedule-wrap" id="scheduleWrap">
-      <div class="schedule-scroll">
+      <div class="schedule-scroll" tabindex="0" aria-label="Monthly repayment schedule table">
         <table class="schedule" id="scheduleTable"></table>
       </div>
     </div>
@@ -209,7 +209,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     </div>
   </section>
 
-    <div class="footer"><span>Real-time Calculation · Interest Comparison</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+    <footer class="footer"><span>Real-time Calculation · Interest Comparison</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 
 <div class="toast" id="toast"></div>

@@ -31,12 +31,12 @@
 
         .field-group{margin-bottom:12px}
         .field-label{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text-secondary);margin-bottom:6px}
-        .field-label .required{color:#e74c7c;font-size:11px}
+        .field-label .required{color:var(--status-red-text);font-size:11px}
         .field-label .optional{color:var(--text-muted);font-size:11px}
         .field-input{width:100%;padding:10px 12px;background:var(--bg-guide);border:1.5px solid #333366;border-radius:8px;color:var(--text-primary);font-size:14px;font-family:inherit;transition:border-color .2s}
         .field-input:focus{outline:none;border-color:#7c5cbf}
         .field-input::placeholder{color:var(--text-muted)}
-        .field-input.error{border-color:#e74c7c}
+        .field-input.error{border-color:var(--status-red-text)}
 
         .presets{margin-bottom:16px}
         .presets-label{font-size:12px;color:var(--text-info);margin-bottom:8px}
@@ -56,13 +56,13 @@
         .param-table{width:100%;margin-top:12px;border-collapse:collapse}
         .param-table th{text-align:left;font-size:11px;color:var(--text-info);font-weight:500;padding:6px 8px;border-bottom:1px solid var(--border)}
         .param-table td{font-size:12px;padding:6px 8px;border-bottom:1px solid var(--border);color:var(--text-secondary);word-break:break-all}
-        .param-table td:first-child{color:var(--accent);font-weight:500;white-space:nowrap}
+        .param-table td:first-child{color:var(--accent-text);font-weight:500;white-space:nowrap}
         .param-table tr:last-child td{border-bottom:none}
 
         .guide-section{background:var(--bg-bar);border-radius:12px;margin:16px;border:1px solid var(--border);transition:all .3s ease;overflow:hidden}
         .guide-section summary{padding:14px 18px;cursor:pointer;font-size:14px;font-weight:700;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:8px;background:var(--bg-guide);transition:background .2s}
         .guide-section summary::-webkit-details-marker{display:none}
-        .guide-section summary::before{content:'▶';font-size:11px;color:var(--accent);transition:transform .3s}
+        .guide-section summary::before{content:'▶';font-size:11px;color:var(--accent-text);transition:transform .3s}
         .guide-section[open] summary::before{transform:rotate(90deg)}
         .guide-section summary:hover{background:var(--bg-guide-hover)}
         .guide-section[open] summary{border-bottom:1px solid var(--border)}
@@ -80,9 +80,9 @@
         .report-box{background:var(--bg-body);border-radius:8px;padding:14px;border:1px solid var(--border)}
         .report-list{list-style:none;margin:0;padding:0}
         .report-list li{position:relative;padding-left:14px;margin-bottom:8px;font-size:13px;color:var(--text-info)}
-        .report-list li::before{content:'•';position:absolute;left:0;color:var(--accent);font-weight:bold}
+        .report-list li::before{content:'•';position:absolute;left:0;color:var(--accent-text);font-weight:bold}
         .report-list li:last-child{margin-bottom:0}
-        .report-list li a{color:var(--accent);text-decoration:none;font-weight:600;transition:opacity .2s}
+        .report-list li a{color:var(--accent-text);text-decoration:none;font-weight:600;transition:opacity .2s}
         .report-list li a:hover{opacity:.8;text-decoration:underline}
 
         .bottom-bar{background:var(--bg-body);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #222250}
@@ -100,10 +100,10 @@
         .history-section{margin-top:12px}
         .history-label{font-size:12px;color:var(--text-info);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
         .history-clear{font-size:11px;color:var(--text-muted);cursor:pointer;background:none;border:none;font-family:inherit;transition:color .2s}
-        .history-clear:hover{color:#e74c7c}
+        .history-clear:hover{color:var(--status-red-text)}
         .history-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg-body);border-radius:6px;margin-bottom:4px;cursor:pointer;transition:background .2s}
         .history-item:hover{background:var(--bg-input)}
-        .history-item .hi-campaign{font-size:12px;color:var(--accent);font-weight:500;flex-shrink:0}
+        .history-item .hi-campaign{font-size:12px;color:var(--accent-text);font-weight:500;flex-shrink:0}
         .history-item .hi-url{font-size:11px;color:#7cc6fe;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
         .history-item .hi-copy{flex-shrink:0;font-size:11px;color:var(--text-muted);background:var(--bg-btn);border:none;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:inherit;transition:all .2s}
         .history-item .hi-copy:hover{background:var(--accent);color:var(--text-on-accent)}
@@ -233,7 +233,7 @@
             </div>
         </div>
     </details>
-    <div class="footer"><span>마케팅 URL 추적 파라미터</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <footer class="footer"><span>마케팅 URL 추적 파라미터</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>

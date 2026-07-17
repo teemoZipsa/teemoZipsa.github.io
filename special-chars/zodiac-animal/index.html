@@ -101,7 +101,7 @@
         <div class="input-section">
             <label>생년월일을 입력하세요 (양력)</label>
             <div class="date-row">
-                <input type="date" id="birthDate" onchange="calcAnimal()">
+                <input aria-label="생년월일" type="date" id="birthDate" onchange="calcAnimal()">
                 <button class="btn-today" onclick="setToday()">오늘 날짜</button>
             </div>
             <div class="lunar-note" id="lunarNote"></div>
@@ -164,7 +164,7 @@
             <p style="margin-top:8px">💡 십이지신은 12년을 주기로 순환합니다. 천간(10개)과 지지(12개)가 조합되어 60갑자를 이루며, 60년마다 같은 간지가 돌아옵니다.</p>
         </div>
     </details>
-    <div class="footer"><span>음력 설 기준 자동 보정</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <footer class="footer"><span>음력 설 기준 자동 보정</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 

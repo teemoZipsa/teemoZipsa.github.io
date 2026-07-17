@@ -55,7 +55,7 @@
         .toggle-wrap input:checked+.toggle::after{left:18px;background:#fff}
         .toggle-label{font-size:12px;color:var(--text-guide)}
         .coverage-banner{margin-bottom:16px;padding:12px 14px;background:var(--bg-guide);border:1px solid var(--accent);border-radius:10px;font-size:12px;color:var(--text-secondary);line-height:1.65}
-        .coverage-banner strong{color:var(--accent)}
+        .coverage-banner strong{color:var(--accent-text)}
         .coverage-status{margin-bottom:12px;padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.55}
         .coverage-status.complete{background:var(--accent-bg);border:1px solid var(--accent);color:var(--text-secondary)}
         .coverage-status.warning{background:var(--bg-body);border:1px solid var(--text-error,#f87171);color:var(--text-primary)}
@@ -66,7 +66,7 @@
         .result-section{background:var(--bg-guide);border-radius:10px;padding:16px;margin-bottom:12px;display:none}
         .result-section.show{display:block}
         .result-main{text-align:center;margin-bottom:12px}
-        .result-date{font-size:28px;font-weight:700;color:var(--accent);margin-bottom:4px}
+        .result-date{font-size:28px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
         .result-day{font-size:14px;color:var(--text-info)}
         .result-detail{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
         .detail-box{background:var(--bg-body);border-radius:8px;padding:10px;text-align:center}
@@ -97,7 +97,7 @@
         .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 
         .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:16px;}
-        .report-box h3 {font-size:14px;font-weight:700;color:var(--accent);margin-bottom:4px}
+        .report-box h3 {font-size:14px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
         .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
         .report-box strong {color:var(--text-primary);font-weight:600}
 
@@ -105,7 +105,7 @@
         .related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
         .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
         .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
-        .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent);transform:translateX(4px)}
+        .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
 
         @keyframes fadeIn {
             from { opacity:0; transform:translateY(10px) }
@@ -253,7 +253,7 @@
       </div>
     </div>
 
-    <div class="footer"><span>한국 변동 공휴일 데이터: 2024~2027년</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <footer class="footer"><span>한국 변동 공휴일 데이터: 2024~2027년</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>

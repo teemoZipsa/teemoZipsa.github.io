@@ -47,17 +47,17 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .rent-group.visible{display:flex;flex-direction:column;gap:4px}
 
 /* 환산보증금 표시 */
-.converted-info{font-size:11px;color:var(--accent);font-weight:600;padding:4px 0}
+.converted-info{font-size:11px;color:var(--accent-text);font-weight:600;padding:4px 0}
 
 /* 결과 카드 */
 .summary{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .summary-card{background:var(--accent-bg);border:1.5px solid var(--accent);border-radius:10px;padding:14px 10px;text-align:center}
 .summary-card.highlight{background:var(--accent);border-color:var(--accent);grid-column:1 / -1}
 .summary-card.highlight .s-value{color:var(--text-on-accent)}
-.summary-card.highlight .s-label{color:rgba(255,255,255,.8)}
-.summary-card.highlight .s-sub{color:rgba(255,255,255,.7)}
+.summary-card.highlight .s-label{color:rgba(255,255,255,.95)}
+.summary-card.highlight .s-sub{color:rgba(255,255,255,.95)}
 .s-label{font-size:11px;color:var(--text-info);margin-bottom:4px}
-.s-value{font-size:22px;font-weight:800;color:var(--accent)}
+.s-value{font-size:22px;font-weight:800;color:var(--accent-text)}
 .s-sub{font-size:11px;color:var(--text-info);margin-top:2px}
 
 /* 상세 내역 */
@@ -72,7 +72,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .rate-table th{background:var(--bg-btn);padding:6px 8px;text-align:center;font-weight:600;color:var(--text-secondary);border:1px solid var(--border)}
 .rate-table td{padding:6px 8px;text-align:center;border:1px solid var(--border);color:var(--text-info)}
 .rate-table tr.current-row{background:var(--accent-bg);font-weight:700}
-.rate-table tr.current-row td{color:var(--accent)}
+.rate-table tr.current-row td{color:var(--accent-text)}
 
 .copy-btn{width:100%;padding:11px;background:var(--bg-header);color:var(--text-on-accent);border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .2s}
 .copy-btn:hover{opacity:.85}
@@ -94,7 +94,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
 
 .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:10px}
-.report-box h3 {font-size:15px;font-weight:700;color:var(--accent);margin-bottom:4px}
+.report-box h3 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
 .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
 .report-box strong {color:var(--text-primary);font-weight:600}
 
@@ -102,7 +102,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
 .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
-.related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent);transform:translateX(4px)}
+.related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
 
 @keyframes fadeIn {
   from { opacity:0; transform:translateY(10px) }
@@ -146,7 +146,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
     <!-- 오피스텔 전용면적 (오피스텔 선택 시만) -->
     <div class="input-group" id="areaGroup" style="display:none">
-      <label>오피스텔 전용면적</label>
+      <label for="area">오피스텔 전용면적</label>
       <div class="input-row">
         <input type="number" id="area" value="60" min="1" step="1" oninput="calc()">
         <span class="unit">㎡</span>
@@ -165,7 +165,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="input-group">
       <label id="priceLabel">매매가</label>
       <div class="input-row">
-        <input type="number" id="price" value="300000000" min="0" step="10000000" oninput="calc()">
+        <input aria-label="거래 금액" type="number" id="price" value="300000000" min="0" step="10000000" oninput="calc()">
         <span class="unit">원</span>
       </div>
       <div style="font-size:11px;color:var(--text-muted)" id="priceHint"></div>
@@ -173,7 +173,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
     <!-- 월세 입력 (월세 선택 시만) -->
     <div class="rent-group" id="rentGroup">
-      <label>월 차임 (월세)</label>
+      <label for="monthlyRent">월 차임 (월세)</label>
       <div class="input-row">
         <input type="number" id="monthlyRent" value="500000" min="0" step="10000" oninput="calc()">
         <span class="unit">원</span>
@@ -185,7 +185,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="input-group">
       <label>부가가치세 반영</label>
       <div class="input-row">
-        <select id="vatOption" onchange="calc()">
+        <select aria-label="부가가치세 반영 방식" id="vatOption" onchange="calc()">
           <option value="add">10% 별도 금액 추가</option>
           <option value="noadd">별도 금액 미포함 (견적 확인)</option>
         </select>
@@ -236,7 +236,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
   </div>
 
-  <div class="footer"><span>2021.10 개정 기준 · 실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+  <footer class="footer"><span>2021.10 개정 기준 · 실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -482,12 +482,12 @@ function calc() {
     detail += `<div class="detail-row"><span class="detail-label">⚠️ 한도액 적용</span><span class="detail-value" style="color:#e67e22">${fmt(limit)} 원</span></div>`;
   }
   
-  detail += `<div class="detail-row"><span class="detail-label">중개보수</span><span class="detail-value" style="color:var(--accent);font-size:15px">${fmt(fee)} 원</span></div>`;
+  detail += `<div class="detail-row"><span class="detail-label">중개보수</span><span class="detail-value" style="color:var(--accent-text);font-size:15px">${fmt(fee)} 원</span></div>`;
   
   if (addVat) {
     detail += `
     <div class="detail-row"><span class="detail-label">부가세 (10%)</span><span class="detail-value">${fmt(vat)} 원</span></div>
-    <div class="detail-row"><span class="detail-label">합계 (VAT 포함)</span><span class="detail-value" style="color:var(--accent);font-size:15px;font-weight:800">${fmt(total)} 원</span></div>`;
+    <div class="detail-row"><span class="detail-label">합계 (VAT 포함)</span><span class="detail-value" style="color:var(--accent-text);font-size:15px;font-weight:800">${fmt(total)} 원</span></div>`;
   }
   detailEl.innerHTML = detail;
   
@@ -561,7 +561,7 @@ function renderRateTable(currentAmount) {
       <tr><th>거래금액</th><th>상한요율</th><th>한도액</th></tr>
       ${rows}
     </table>
-    <p style="margin-top:8px;font-size:11px">* 현재 적용 구간이 <span style="color:var(--accent);font-weight:700">하이라이트</span> 됩니다</p>`;
+    <p style="margin-top:8px;font-size:11px">* 현재 적용 구간이 <span style="color:var(--accent-text);font-weight:700">하이라이트</span> 됩니다</p>`;
 }
 
 function copyResult() {

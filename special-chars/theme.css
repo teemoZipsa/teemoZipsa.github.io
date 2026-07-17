@@ -9,16 +9,17 @@ html[data-theme="light"] {
   --bg-app: #ffffff;
   --bg-card: #ffffff;
   --bg-input: #f1f5f9;
-  --bg-header: linear-gradient(135deg, #6366f1, #8b5cf6);
+  --bg-header: linear-gradient(135deg, #4f46e5, #6d28d9);
   --bg-hover: #f1f5f9;
 
   --text-primary: #1e293b;
   --text-secondary: #475569;
-  --text-muted: #94a3b8;
+  --text-muted: #475569;
   --text-on-accent: #ffffff;
 
-  --accent: #6366f1;
-  --accent-hover: #4f46e5;
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-text: #4f46e5;
   --accent-light: #eef2ff;
   --accent-bg: rgba(99, 102, 241, 0.08);
 
@@ -40,30 +41,30 @@ html[data-theme="light"] {
   --text-guide: #475569;
   --border-guide: #e2e8f0;
   --text-info: #475569;
-  --text-code: #6366f1;
+  --text-code: #4f46e5;
   --bg-tab: #e2e8f0;
   --bg-tab-hover: #cbd5e1;
-  --bg-tab-active: #6366f1;
-  --text-tab: #64748b;
+  --bg-tab-active: #4f46e5;
+  --text-tab: #475569;
   --text-tab-active: #ffffff;
   --bg-emoji-tab: #e8f5e9;
   --bg-emoji-tab-hover: #c8e6c9;
   --bg-emoji-tab-active: #e67e22;
   --bg-char-btn: #f1f5f9;
-  --bg-char-btn-hover: #6366f1;
+  --bg-char-btn-hover: #4f46e5;
   --border-char: #e2e8f0;
   --bg-emoji-cell: #f0fdf4;
   --border-emoji: #d1fae5;
   --bg-emoji-hover: #e67e22;
   --border-emoji-hover: #f39c12;
-  --toast-bg: #6366f1;
+  --toast-bg: #4f46e5;
   --scrollbar-track: #f1f5f9;
-  --scrollbar-thumb: #6366f1;
+  --scrollbar-thumb: #4f46e5;
   --progress-bg: #e2e8f0;
   --btn-clear-bg: #e2e8f0;
   --btn-clear-text: #475569;
   --btn-clear-hover: #cbd5e1;
-  --btn-copy-bg: #6366f1;
+  --btn-copy-bg: #4f46e5;
   --btn-copy-text: #ffffff;
   --btn-copy-hover: #4f46e5;
 
@@ -73,12 +74,12 @@ html[data-theme="light"] {
   --border-success: #a7f3d0;
 
   /* 의미적 텍스트 색상 */
-  --text-success: #16a34a;
-  --text-amount: #6366f1;
-  --text-highlight: #ca8a04;
-  --text-section: #6366f1;
+  --text-success: #166534;
+  --text-amount: #4f46e5;
+  --text-highlight: #854d0e;
+  --text-section: #4f46e5;
   --text-label: #475569;
-  --text-placeholder: #94a3b8;
+  --text-placeholder: #475569;
   --bg-item-hover: #f1f5f9;
   --bg-item-final: #eef2ff;
   --border-final: #c7d2fe;
@@ -93,12 +94,22 @@ html[data-theme="light"] {
   --calc-fn-bg: #f8fafc;
   --calc-fn-text: #64748b;
   --calc-fn-hover: #f1f5f9;
-  --calc-eq-bg: #6366f1;
+  --calc-eq-bg: #4f46e5;
   --calc-eq-hover: #4f46e5;
   --calc-eq-active: #4338ca;
   --calc-display-bg: #f8fafc;
-  --calc-expr-text: #64748b;
+  --calc-expr-text: #475569;
   --calc-result-text: #1e293b;
+
+  /* 상태 색상: 작은 본문 텍스트와 흰색 버튼 글자를 모두 AA로 유지 */
+  --status-blue-text: #075985;
+  --status-green-text: #166534;
+  --status-orange-text: #9a3412;
+  --status-pink-text: #9d174d;
+  --status-red-text: #b91c1c;
+  --status-green-bg: #166534;
+  --status-orange-bg: #9a3412;
+  --status-red-bg: #b91c1c;
 }
 
 /* ===== 다크 테마 ===== */
@@ -112,11 +123,12 @@ html[data-theme="dark"] {
 
   --text-primary: #e0e0e0;
   --text-secondary: #b0b0d0;
-  --text-muted: #8888bb;
+  --text-muted: #b0b0d0;
   --text-on-accent: #ffffff;
 
-  --accent: #a78bfa;
-  --accent-hover: #c4b5fd;
+  --accent: #7c3aed;
+  --accent-hover: #6d28d9;
+  --accent-text: #c4b5fd;
   --accent-light: #2a2a5a;
   --accent-bg: rgba(167, 139, 250, 0.15);
 
@@ -137,8 +149,8 @@ html[data-theme="dark"] {
   --bg-guide-hover: #2a2a5a;
   --text-guide: #b0b0e0;
   --border-guide: #333366;
-  --text-info: #8888bb;
-  --text-code: #bb88ff;
+  --text-info: #b0b0d0;
+  --text-code: #c4b5fd;
   --bg-tab: #2a2a5a;
   --bg-tab-hover: #3a3a7a;
   --bg-tab-active: #7c3aed;
@@ -171,12 +183,12 @@ html[data-theme="dark"] {
   --border-success: #2a4a2a;
 
   /* 의미적 텍스트 색상 */
-  --text-success: #4ade80;
+  --text-success: #86efac;
   --text-amount: #c4b5fd;
   --text-highlight: #facc15;
-  --text-section: #8888cc;
+  --text-section: #c4b5fd;
   --text-label: #aaaacc;
-  --text-placeholder: #444466;
+  --text-placeholder: #b0b0d0;
   --bg-item-hover: #1e2250;
   --bg-item-final: #1e1e50;
   --border-final: #7c3aed;
@@ -195,8 +207,22 @@ html[data-theme="dark"] {
   --calc-eq-hover: #8b5cf6;
   --calc-eq-active: #a78bfa;
   --calc-display-bg: #1a1a3e;
-  --calc-expr-text: #6666aa;
+  --calc-expr-text: #b0b0d0;
   --calc-result-text: #ffffff;
+
+  --status-blue-text: #7dd3fc;
+  --status-green-text: #86efac;
+  --status-orange-text: #fdba74;
+  --status-pink-text: #f9a8d4;
+  --status-red-text: #fca5a5;
+  --status-green-bg: #166534;
+  --status-orange-bg: #9a3412;
+  --status-red-bg: #b91c1c;
+}
+
+/* 클래스가 없는 본문 링크도 브라우저 기본 파랑 대신 테마 대비를 따른다. */
+html[data-theme] a:not([class]) {
+  color: var(--accent-text);
 }
 
 /* ===== 테마 토글 버튼 ===== */

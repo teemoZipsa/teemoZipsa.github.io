@@ -45,7 +45,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .input-row .unit{font-size:14px;color:var(--text-info);font-weight:600}
 
 .result-box{background:var(--accent-bg);border:2px solid var(--accent);border-radius:12px;padding:16px;text-align:center;min-height:70px;display:flex;flex-direction:column;justify-content:center;gap:4px;transition:all .3s}
-.result-box .result-value{font-size:28px;font-weight:800;color:var(--accent);letter-spacing:-0.5px}
+.result-box .result-value{font-size:28px;font-weight:800;color:var(--accent-text);letter-spacing:-0.5px}
 .result-box .result-label{font-size:12px;color:var(--text-info);font-weight:500}
 .result-box .result-detail{font-size:13px;color:var(--text-secondary);margin-top:2px}
 .result-box.empty .result-value{font-size:16px;color:var(--text-placeholder);font-weight:400}
@@ -71,7 +71,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
 
 .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:2px}
-.report-box h3 {font-size:15px;font-weight:700;color:var(--accent);margin-bottom:4px}
+.report-box h3 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
 .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
 .report-box strong {color:var(--text-primary);font-weight:600}
 
@@ -79,7 +79,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
 .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
-.related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent);transform:translateX(4px)}
+.related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
 
 @keyframes fadeIn {
   from { opacity:0; transform:translateY(10px) }
@@ -219,7 +219,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <a href="/special-chars/avg-price/"><span>⚖️ 주식 물타기(평단가) 계산기</span><span>바로가기 →</span></a>
     </div>
   </div>
-    <div class="footer"><span>실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <footer class="footer"><span>실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast"></div>

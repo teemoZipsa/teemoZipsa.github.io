@@ -18,7 +18,6 @@
 <link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/bg-remover/">
 <meta name="robots" content="noindex, follow">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
 .app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:600px;max-width:100%;overflow:hidden}
@@ -33,7 +32,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .dropzone:hover,.dropzone.dragover{border-color:var(--accent);background:var(--accent-bg)}
 .dropzone-icon{font-size:48px;margin-bottom:10px;display:block}
 .dropzone-text{font-size:14px;color:var(--text-info);font-weight:500;line-height:1.6}
-.dropzone-text strong{color:var(--accent)}
+.dropzone-text strong{color:var(--accent-text)}
 .dropzone-sub{font-size:11px;color:var(--text-muted);margin-top:6px}
 .dropzone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer}
 
@@ -80,12 +79,12 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 /* 정보 뱃지 */
 .info-badge{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--accent-bg);border:1px solid var(--accent);border-radius:10px;font-size:12px;color:var(--text-info)}
 .info-badge .badge-icon{font-size:16px;flex-shrink:0}
-.info-badge strong{color:var(--accent)}
+.info-badge strong{color:var(--accent-text)}
 
 /* Dynamic Report & Guide standard CSS */
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .report-box { margin-top: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
-.report-box strong { color: var(--accent); }
+.report-box strong { color:var(--accent-text); }
   .guide-section{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
   .guide-section h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
@@ -100,7 +99,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
   .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
   .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
-  .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+  .tool-card:hover{border-color:var(--accent);color:var(--accent-text);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
 .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
 .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
 .footer a:hover{color:var(--text-secondary)}
@@ -127,26 +126,26 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <!-- 프라이버시 뱃지 -->
     <div class="info-badge">
       <span class="badge-icon">🔒</span>
-      <span>The app does not upload your selected image. AI code and model files are downloaded from a CDN and run in your browser.</span>
+      <span>The app does not upload your selected image. AI code, model, and runtime files are served by this site rather than a third-party CDN.</span>
     </div>
 
     <!-- 업로드 영역 -->
     <div class="dropzone" id="dropzone">
-      <input type="file" id="fileInput" accept="image/*">
+      <input aria-label="Image file for background removal" type="file" id="fileInput" accept="image/*">
       <span class="dropzone-icon">🖼️</span>
       <div class="dropzone-text"><strong>Drag & drop</strong> or <strong>click</strong> to upload an image</div>
       <div class="dropzone-sub">Supports JPG, PNG, WebP · Max 10MB</div>
     </div>
     <div class="info-badge" id="dataWarning" style="display:none;border-color:#e67e22;background:rgba(230,126,34,.08)">
       <span class="badge-icon">📱</span>
-      <span>The AI model (~40MB) downloads on first use. <strong style="color:#e67e22">Wi-Fi is recommended.</strong> (Cached afterwards)</span>
+      <span>On first use, this site serves about 55MB of AI model and runtime files. <strong style="color:#e67e22">Wi-Fi is recommended.</strong></span>
     </div>
 
     <!-- 프로그레스 -->
     <div class="progress-wrap" id="progressWrap">
       <div class="progress-text" id="progressText"><span class="progress-spinner"></span>Loading AI model...</div>
       <div class="progress-bar-bg"><div class="progress-bar" id="progressBar"></div></div>
-      <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="progressSub">Downloading the AI model (~40MB) may take a moment on first use.</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="progressSub">The first self-hosted AI download (~55MB) may take a moment.</div>
       <button class="action-btn btn-reset" id="retryBtn" style="display:none;margin:12px auto 0" onclick="retryProcessing()">Try again</button>
     </div>
 
@@ -194,21 +193,22 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <details class="guide" open>
       <summary>1. Is this free, and what are the limits?</summary>
       <div class="guide-content">
-        <p>The tool is free to use and accepts images up to 10MB each. Processing speed and availability depend on your device memory, browser, and access to the model CDN.</p>
+        <p>The tool is free to use and accepts images up to 10MB each. Processing speed and availability depend on your device memory and browser. On first use, the model and one browser runtime total about 55MB.</p>
       </div>
     </details>
 
     <details class="guide">
       <summary>2. Are my images safe?</summary>
       <div class="guide-content">
-        <p>The app does not upload the selected image to a processing server. Inference runs in your browser, but the AI code and model are delivered by a third-party CDN. This is not an absolute security guarantee for highly sensitive images.</p>
+        <p>The app does not upload the selected image to a processing server. Inference runs in your browser, and pinned AI code, model, and runtime assets are served by this site without third-party CDN requests. Browser extensions and the device itself remain outside this guarantee.</p>
       </div>
     </details>
 
     <details class="guide">
-      <summary>3. Why is the AI model 40MB?</summary>
+      <summary>3. Why is the first download about 55MB?</summary>
       <div class="guide-content">
-        <p>To run without a remote image-processing API, your browser downloads a compressed neural-network model on first use. The browser may cache it for later sessions; if that cache is cleared or unavailable, CDN access is required again.</p>
+        <p>To run without a remote image-processing API, the browser downloads a 44.3MB quantized model plus an approximately 10MB WASM runtime from this site. The browser may reuse its cache, but storage cleanup or eviction can require another download.</p>
+        <p><small>@imgly/background-removal 1.5.5 is provided without warranty under AGPL-3.0. ONNX Runtime Web and the ISNET model use MIT licenses. See <a href="/special-chars/vendor/README.md">versions, source, and license details</a> · <a href="/special-chars/vendor/imgly-background-removal/1.5.5/LICENSE.md">AGPL-3.0 text</a>.</small></p>
       </div>
     </details>
   </section>
@@ -223,7 +223,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     </div>
   </section>
 
-  <div class="footer"><span>AI Background Removal · In-browser inference · Max 10MB</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+  <footer class="footer"><span>AI Background Removal · In-browser inference · Max 10MB</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -236,7 +236,14 @@ let resultBlob = null;
 let fileName = 'image';
 let lastFile = null;
 const MAX_INFERENCE_DIM = 2048;
-const BACKGROUND_REMOVAL_MODULE_URL = 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm';
+const BACKGROUND_REMOVAL_MODULE_URL = '/special-chars/vendor/imgly-background-removal/1.5.5/background-removal.bundle.js';
+const BACKGROUND_REMOVAL_ASSET_PATH = new URL('/special-chars/vendor/imgly-background-removal/1.5.5/data/', window.location.origin).href;
+const BACKGROUND_REMOVAL_CONFIG = Object.freeze({
+  publicPath: BACKGROUND_REMOVAL_ASSET_PATH,
+  model: 'isnet_quint8',
+  device: 'cpu',
+  proxyToWorker: true
+});
 let backgroundRemovalPromise = null;
 
 function ensureBackgroundRemoval() {
@@ -248,7 +255,7 @@ function ensureBackgroundRemoval() {
       })
       .catch(error => {
         backgroundRemovalPromise = null;
-        throw new Error('Could not load the AI module. Check your connection and try again.', { cause: error });
+        throw new Error('Could not load the local AI module. Refresh the page and try again.', { cause: error });
       });
   }
   return backgroundRemovalPromise;
@@ -340,7 +347,7 @@ async function handleFile(file) {
 
   // 모바일 데이터 경고
   if (checkMobileData()) {
-    const ok = confirm('📱 You are on a cellular connection.\n\nThe AI model (~40MB) needs to download on first use.\nWi-Fi is highly recommended.\n\nDo you want to continue?');
+    const ok = confirm('📱 You are on a cellular connection.\n\nOn first use, this site serves about 55MB of AI model and runtime files.\nWi-Fi is highly recommended.\n\nDo you want to continue?');
     if (!ok) return;
   }
 
@@ -366,13 +373,14 @@ async function handleFile(file) {
       document.getElementById('progressSub').textContent = `Inference runs at ${MAX_INFERENCE_DIM}px on the long edge, then restores the original output size.`;
     }
     const rawBlob = await removeBackground(prepared.input, {
+      ...BACKGROUND_REMOVAL_CONFIG,
       progress: (key, current, total) => {
         if (key === 'compute:inference') {
           const pct = Math.round((current / total) * 100);
           updateProgress(pct, 'Removing background...');
         } else if (key.startsWith('fetch:')) {
-          updateProgress(0, 'Downloading AI model...');
-          document.getElementById('progressSub').textContent = 'Downloading ~40MB on first use (cached afterwards)';
+          updateProgress(0, 'Downloading self-hosted AI files...');
+          document.getElementById('progressSub').textContent = 'About 55MB of model and WASM files on first use (browser cache may be reused)';
         }
       }
     });
@@ -470,7 +478,7 @@ window.resetAll = function() {
   progressWrap.classList.remove('active');
   dropzone.style.display = '';
   fileInput.value = '';
-  document.getElementById('progressSub').textContent = 'Downloading the AI model (~40MB) may take a moment on first use.';
+  document.getElementById('progressSub').textContent = 'The first self-hosted AI download (~55MB) may take a moment.';
   document.getElementById('reportBox').style.display = 'none';
 };
 

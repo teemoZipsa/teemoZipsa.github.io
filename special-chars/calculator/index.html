@@ -138,7 +138,7 @@
   .report-box { margin: 16px 12px 0; padding: 20px; background: var(--bg-bar); border: 1px solid var(--border); border-radius: 12px; }
   .report-box h3 { font-size: 15px; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
   .report-box p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 8px; }
-  .report-box .highlight { color: var(--accent); font-weight: 600; }
+  .report-box .highlight { color:var(--accent-text); font-weight: 600; }
   .guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
   .guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
   .guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
@@ -257,10 +257,10 @@
     </div>
   </section>
 
-  <div class="footer">
+  <footer class="footer">
     <span>키보드 입력 완벽 지원</span>
     <a href="https://teemozipsa.github.io/">😺 더 많은 도구</a>
-  </div>
+  </footer>
 </div>
 
 <script>
@@ -294,7 +294,7 @@ function updateReport() {
   let analysis = '';
   
   if (isNaN(val) || currentInput === 'Error') {
-    analysis = `<p style="color:var(--accent);">현재 계산 오류(Error) 상태입니다. 유효하지 않은 연산이 발생했습니다.</p>`;
+    analysis = `<p style="color:var(--accent-text);">현재 계산 오류(Error) 상태입니다. 유효하지 않은 연산이 발생했습니다.</p>`;
   } else {
     let absVal = Math.abs(val);
     let magnitude = '';

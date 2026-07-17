@@ -54,12 +54,12 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .bmi-table th{background:var(--bg-btn);padding:8px;color:var(--text-secondary);font-weight:600;text-align:center}
 .bmi-table td{padding:8px;border-bottom:1px solid var(--border);text-align:center;color:var(--text-info)}
 .bmi-table tr.current{background:var(--accent-bg);font-weight:700}
-.bmi-table tr.current td{color:var(--accent)}
+.bmi-table tr.current td{color:var(--accent-text)}
 
 /* Dynamic Report & Guide standard CSS */
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .report-box { margin-top: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
-.report-box strong { color: var(--accent); }
+.report-box strong { color:var(--accent-text); }
   .guide-section{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
   .guide-section h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
@@ -74,7 +74,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
   .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
   .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
-  .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+  .tool-card:hover{border-color:var(--accent);color:var(--accent-text);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
 
 .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
 .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
@@ -98,14 +98,14 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <div class="input-group">
       <label>Height (cm)</label>
       <div class="input-row">
-        <input type="number" id="height" value="170" min="50" max="250" step="1" oninput="calc()">
+        <input aria-label="Height in centimeters" type="number" id="height" value="170" min="50" max="250" step="1" oninput="calc()">
         <span class="unit">cm</span>
       </div>
     </div>
     <div class="input-group">
       <label>Weight (kg)</label>
       <div class="input-row">
-        <input type="number" id="weight" value="65" min="10" max="300" step="0.1" oninput="calc()">
+        <input aria-label="Weight in kilograms" type="number" id="weight" value="65" min="10" max="300" step="0.1" oninput="calc()">
         <span class="unit">kg</span>
       </div>
     </div>
@@ -174,7 +174,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     </div>
   </section>
 
-    <div class="footer"><span>WHO Standards</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+    <footer class="footer"><span>WHO Standards</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -182,12 +182,12 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 
 <script>
 const RANGES = [
-  { max: 18.5, name: 'Underweight', emoji: '🔵', color: '#3b82f6', range: 'under', tip: 'Consider increasing your calorie intake safely' },
-  { max: 25.0, name: 'Normal weight', emoji: '🟢', color: '#22c55e', range: 'normal', tip: 'Great job! Keep up the healthy lifestyle' },
-  { max: 30.0, name: 'Overweight', emoji: '🟡', color: '#facc15', range: 'over', tip: 'Consider a balanced diet and regular exercise' },
-  { max: 35.0, name: 'Obesity Class I', emoji: '🟠', color: '#f97316', range: 'obese1', tip: 'Consider weight management strategies' },
-  { max: 40.0, name: 'Obesity Class II', emoji: '🔴', color: '#ef4444', range: 'obese2', tip: 'Consulting a healthcare provider is recommended' },
-  { max: Infinity, name: 'Obesity Class III', emoji: '🔴', color: '#dc2626', range: 'obese3', tip: 'Consulting a healthcare provider is highly recommended' },
+  { max: 18.5, name: 'Underweight', emoji: '🔵', color: 'var(--status-blue-text)', range: 'under', tip: 'Consider increasing your calorie intake safely' },
+  { max: 25.0, name: 'Normal weight', emoji: '🟢', color: 'var(--status-green-text)', range: 'normal', tip: 'Great job! Keep up the healthy lifestyle' },
+  { max: 30.0, name: 'Overweight', emoji: '🟡', color: 'var(--status-orange-text)', range: 'over', tip: 'Consider a balanced diet and regular exercise' },
+  { max: 35.0, name: 'Obesity Class I', emoji: '🟠', color: 'var(--status-orange-text)', range: 'obese1', tip: 'Consider weight management strategies' },
+  { max: 40.0, name: 'Obesity Class II', emoji: '🔴', color: 'var(--status-red-text)', range: 'obese2', tip: 'Consulting a healthcare provider is recommended' },
+  { max: Infinity, name: 'Obesity Class III', emoji: '🔴', color: 'var(--status-red-text)', range: 'obese3', tip: 'Consulting a healthcare provider is highly recommended' },
 ];
 
 function clearResults() {
@@ -246,7 +246,7 @@ function calc() {
     </div>
     <div class="info-item">
       <div class="label">Difference from ideal</div>
-      <div class="value" style="color:${diffToIdeal > 0 ? '#f97316' : diffToIdeal < -3 ? '#3b82f6' : '#22c55e'}">${diffToIdeal > 0 ? '+' : ''}${diffToIdeal.toFixed(1)} kg</div>
+      <div class="value" style="color:${diffToIdeal > 0 ? 'var(--status-orange-text)' : diffToIdeal < -3 ? 'var(--status-blue-text)' : 'var(--status-green-text)'}">${diffToIdeal > 0 ? '+' : ''}${diffToIdeal.toFixed(1)} kg</div>
     </div>
     <div class="info-item">
       <div class="label">💡 Tip</div>

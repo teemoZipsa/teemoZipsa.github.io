@@ -17,7 +17,6 @@
 <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
 <link rel="canonical" href="https://teemozipsa.github.io/special-chars/pdf-tool/">
 <style>
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
 .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:720px;max-width:100%;overflow:hidden}
@@ -28,7 +27,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .tool-body{padding:16px;display:flex;flex-direction:column;gap:14px}
 .mode-tabs{display:flex;gap:0;background:var(--bg-guide);border-radius:10px;overflow-x:auto;border:1px solid var(--border);-webkit-overflow-scrolling:touch}
 .mode-tabs::-webkit-scrollbar{display:none}
-.mode-tab{flex:0 0 auto;padding:10px 16px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--text-info);background:transparent;border:none;font-family:inherit;white-space:nowrap;}
+.mode-tab{flex:0 0 auto;padding:10px 16px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-info);background:transparent;border:none;font-family:inherit;white-space:nowrap;}
 .mode-tab:hover{color:var(--text-secondary);background:var(--bg-input)}
 .mode-tab.active{background:var(--accent);color:var(--text-on-accent)}
 .tab-panel{display:none}
@@ -53,7 +52,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .file-item .remove-btn:hover{color:#ff6666}
 
 .info-bar{background:var(--bg-bar);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--text-info);display:flex;align-items:center;gap:8px;border:1px solid var(--border)}
-.info-bar .highlight{color:var(--accent);font-weight:700}
+.info-bar .highlight{color:var(--accent-text);font-weight:700}
 
 .field-group{margin-bottom:14px}
 .field-label{font-size:13px;font-weight:500;color:var(--text-secondary);margin-bottom:6px;display:flex;align-items:center;gap:6px}
@@ -105,7 +104,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   .report-box { margin-top: 20px; padding: 20px; background: var(--bg-bar); border: 1px solid var(--border); border-radius: 12px; }
   .report-box h3 { font-size: 15px; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
   .report-box p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 8px; }
-  .report-box .highlight { color: var(--accent); font-weight: 600; }
+  .report-box .highlight { color:var(--accent-text); font-weight: 600; }
   .guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
   .guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
   .guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
@@ -160,7 +159,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 </style>
 </head>
 <body>
-<div id="cdnError" style="display:none;background:#ff4444;color:var(--text-on-accent);text-align:center;padding:12px;font-size:14px;">외부 라이브러리 로드에 실패했습니다. 인터넷 연결을 확인하고 새로고침 해주세요.</div>
+<div id="cdnError" style="display:none;background:#ff4444;color:var(--text-on-accent);text-align:center;padding:12px;font-size:14px;">로컬 PDF 엔진 초기화에 실패했습니다. 새로고침 후 다시 시도해 주세요.</div>
 <div class="app">
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
@@ -169,7 +168,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </div>
 
   <div class="tool-body">
-    <div class="mode-tabs">
+    <div class="mode-tabs" role="tablist" aria-label="PDF 작업 선택">
       <button class="mode-tab active" data-tab="merge">📎 <span class="tab-label">합치기</span></button>
       <button class="mode-tab" data-tab="split">✂️ <span class="tab-label">나누기</span></button>
       <button class="mode-tab" data-tab="rotate">🔄 <span class="tab-label">회전</span></button>
@@ -410,7 +409,8 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <div class="guide-content">
         <p><b>PDF 작업은 브라우저 안에서 처리됩니다.</b></p>
         <p>온라인에 검색되는 대부분의 무료 PDF 편집 사이트들은 사용자의 파일을 그들의 클라우드 서버로 업로드하여 처리한 후 다시 다운로드하게 만듭니다. 이 경우 당신의 개인정보나 회사 기밀이 담긴 문서가 외부망에 노출될 위험이 있습니다.</p>
-        <p>본 도구는 <b><code>pdf-lib.js</code> 엔진을 통해 기기 브라우저 메모리에서 PDF를 조작</b>하며, 애플리케이션이 선택한 파일을 서버로 업로드하지 않습니다. 다만 실행 라이브러리는 CDN에서 내려받으므로 브라우저 확장 프로그램과 네트워크로 전달되는 코드까지 포함한 절대적인 보안을 보장하지는 않습니다. 매우 민감한 원본은 백업하고 신뢰할 수 있는 환경에서 사용하세요.</p>
+        <p>본 도구는 <b><code>pdf-lib.js</code> 엔진을 통해 기기 브라우저 메모리에서 PDF를 조작</b>하며, 애플리케이션이 선택한 파일을 서버로 업로드하지 않습니다. PDF 엔진과 렌더링 워커도 이 사이트에 고정 버전으로 포함되어 있어 제3자 CDN에 연결하지 않으며, 페이지를 불러온 뒤에는 네트워크가 끊겨도 현재 탭에서 작업할 수 있습니다. 다만 브라우저 확장 프로그램이나 기기 자체까지 포함한 절대적인 보안을 보장하지는 않으므로 매우 민감한 원본은 백업하고 신뢰할 수 있는 환경에서 사용하세요.</p>
+        <p><small>사용 라이브러리: pdf-lib 1.17.1 (MIT), PDF.js 3.11.174 (Apache-2.0). <a href="/special-chars/vendor/README.md">버전·라이선스 정보</a></small></p>
       </div>
     </details>
 
@@ -450,74 +450,43 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       </div>
     </div>
   </section>
-    <div class="footer"><span>선택 파일을 업로드하지 않는 브라우저 처리</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <footer class="footer"><span>선택 파일을 업로드하지 않는 브라우저 처리</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="scroll-top-btn" id="scrollTopBtn" aria-label="맨 위로">↑</button>
 
+<script src="/special-chars/vendor/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="/special-chars/vendor/pdfjs-dist/3.11.174/pdf.min.js"></script>
 <script>
-/* ===== Lazy PDF library loading ===== */
+/* ===== Self-hosted PDF engine ===== */
 let pdfLibsPromise = null;
 let PDFDocument, degrees, rgb, StandardFonts;
-
-function loadScriptOnce(src) {
-  return new Promise((resolve, reject) => {
-    let existing = document.querySelector(`script[data-src="${src}"]`);
-    if (existing) {
-      if (existing.dataset.loaded === 'true') {
-        resolve();
-        return;
-      }
-      else if (existing.dataset.state === 'failed') existing.remove();
-      else {
-        const timer = setTimeout(() => {
-          existing.remove();
-          reject(new Error('PDF 라이브러리 로딩 시간이 초과되었습니다.'));
-        }, 15000);
-        existing.addEventListener('load', () => { clearTimeout(timer); resolve(); }, { once: true });
-        existing.addEventListener('error', () => { clearTimeout(timer); reject(new Error('PDF 라이브러리를 불러오지 못했습니다.')); }, { once: true });
-        return;
-      }
-    }
-    const script = document.createElement('script');
-    script.src = src;
-    script.dataset.src = src;
-    script.dataset.state = 'loading';
-    const timer = setTimeout(() => {
-      script.dataset.state = 'failed';
-      script.remove();
-      reject(new Error('PDF 라이브러리 로딩 시간이 초과되었습니다.'));
-    }, 15000);
-    script.onload = () => {
-      clearTimeout(timer);
-      script.dataset.loaded = 'true';
-      script.dataset.state = 'loaded';
-      resolve();
-    };
-    script.onerror = () => {
-      clearTimeout(timer);
-      script.dataset.state = 'failed';
-      script.remove();
-      reject(new Error('PDF 라이브러리를 불러오지 못했습니다.'));
-    };
-    document.head.appendChild(script);
-  });
-}
+let pdfWorkerPort = null;
+let pdfWorkerProxy = null;
+const PDF_WORKER_URL = '/special-chars/vendor/pdfjs-dist/3.11.174/pdf.worker.min.js';
 
 async function ensurePdfLibs() {
   if (!pdfLibsPromise) {
     document.getElementById('cdnError').style.display = 'none';
     pdfLibsPromise = (async () => {
-      await Promise.all([
-        loadScriptOnce('https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js'),
-        loadScriptOnce('https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js')
-      ]);
       if (!window.PDFLib || !window.pdfjsLib) throw new Error('PDF 라이브러리를 불러오지 못했습니다.');
       ({ PDFDocument, degrees, rgb, StandardFonts } = window.PDFLib);
-      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDF_WORKER_URL;
+      if (!pdfWorkerPort) {
+        pdfWorkerPort = new Worker(PDF_WORKER_URL);
+        window.pdfjsLib.GlobalWorkerOptions.workerPort = pdfWorkerPort;
+        pdfWorkerProxy = window.pdfjsLib.PDFWorker.fromPort({ port: pdfWorkerPort });
+        await pdfWorkerProxy.promise;
+      }
+      document.documentElement.dataset.pdfEngine = 'ready';
       document.getElementById('cdnError').style.display = 'none';
     })().catch(err => {
+      if (pdfWorkerPort) pdfWorkerPort.terminate();
+      pdfWorkerPort = null;
+      pdfWorkerProxy = null;
+      if (window.pdfjsLib) window.pdfjsLib.GlobalWorkerOptions.workerPort = null;
       pdfLibsPromise = null;
+      document.documentElement.dataset.pdfEngine = 'failed';
       document.getElementById('cdnError').style.display = 'block';
       throw err;
     });
@@ -525,16 +494,45 @@ async function ensurePdfLibs() {
   return pdfLibsPromise;
 }
 
+ensurePdfLibs().catch(console.error);
+
 /* ===== Tab switching ===== */
-document.querySelectorAll('.mode-tab').forEach(tab => {
+const pdfModeTabs = [...document.querySelectorAll('.mode-tab')];
+pdfModeTabs.forEach((tab, index) => {
+  const panel = document.getElementById(tab.dataset.tab + 'Panel');
+  tab.id = `pdfModeTab${index}`;
+  tab.setAttribute('role', 'tab');
+  tab.setAttribute('aria-controls', panel.id);
+  tab.setAttribute('aria-selected', String(tab.classList.contains('active')));
+  tab.tabIndex = tab.classList.contains('active') ? 0 : -1;
+  panel.setAttribute('role', 'tabpanel');
+  panel.setAttribute('aria-labelledby', tab.id);
   tab.addEventListener('click', () => {
-    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
+    pdfModeTabs.forEach(t => {
+      const active = t === tab;
+      t.classList.toggle('active', active);
+      t.setAttribute('aria-selected', String(active));
+      t.tabIndex = active ? 0 : -1;
+    });
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    document.getElementById(tab.dataset.tab + 'Panel').classList.add('active');
+    panel.classList.add('active');
     const rep = document.getElementById('reportContainer');
     if(rep) rep.style.display = 'none';
   });
+});
+
+document.querySelector('.mode-tabs').addEventListener('keydown', event => {
+  const current = pdfModeTabs.indexOf(document.activeElement);
+  if (current < 0) return;
+  let next = current;
+  if (event.key === 'ArrowRight') next = (current + 1) % pdfModeTabs.length;
+  else if (event.key === 'ArrowLeft') next = (current - 1 + pdfModeTabs.length) % pdfModeTabs.length;
+  else if (event.key === 'Home') next = 0;
+  else if (event.key === 'End') next = pdfModeTabs.length - 1;
+  else return;
+  event.preventDefault();
+  pdfModeTabs[next].click();
+  pdfModeTabs[next].focus();
 });
 
 /* ===== Helpers ===== */

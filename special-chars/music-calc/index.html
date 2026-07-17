@@ -53,7 +53,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .tap-area{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;background:var(--accent-bg);border:2px dashed var(--accent);border-radius:16px;cursor:pointer;transition:all .15s;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
 .tap-area:active{transform:scale(.97);background:var(--accent);border-style:solid}
 .tap-area:active .tap-bpm,.tap-area:active .tap-hint{color:var(--text-on-accent)}
-.tap-bpm{font-size:56px;font-weight:900;color:var(--accent);line-height:1;transition:color .15s;font-variant-numeric:tabular-nums}
+.tap-bpm{font-size:56px;font-weight:900;color:var(--accent-text);line-height:1;transition:color .15s;font-variant-numeric:tabular-nums}
 .tap-label{font-size:14px;color:var(--text-muted);margin-top:4px;font-weight:600}
 .tap-hint{font-size:12px;color:var(--text-info);margin-top:12px;transition:color .15s}
 .tap-sub{display:flex;gap:12px;justify-content:center;margin-top:8px;font-size:12px;color:var(--text-muted)}
@@ -65,15 +65,15 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .result-table th{background:var(--bg-bar);padding:8px 10px;text-align:left;font-weight:700;color:var(--text-info);border-bottom:1.5px solid var(--border);font-size:11px;letter-spacing:.3px}
 .result-table td{padding:8px 10px;border-bottom:1px solid var(--border);font-variant-numeric:tabular-nums}
 .result-table tr:last-child td{border-bottom:none}
-.result-table .note-name{font-weight:700;color:var(--accent)}
+.result-table .note-name{font-weight:700;color:var(--accent-text)}
 .result-table .ms-value{font-weight:700;color:var(--text-primary)}
 .result-table .hz-value{color:var(--text-highlight);font-weight:600}
 
 /* === 하이라이트 카드 === */
 .highlight-card{background:var(--accent);border-radius:12px;padding:16px;text-align:center}
-.highlight-card .h-label{font-size:12px;color:rgba(255,255,255,.8);margin-bottom:4px}
+.highlight-card .h-label{font-size:12px;color:var(--text-on-accent);margin-bottom:4px}
 .highlight-card .h-value{font-size:28px;font-weight:900;color:var(--text-on-accent)}
-.highlight-card .h-sub{font-size:12px;color:rgba(255,255,255,.7);margin-top:4px}
+.highlight-card .h-sub{font-size:12px;color:var(--text-on-accent);margin-top:4px}
 
 /* === 음정 그리드 === */
 .note-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:3px}
@@ -86,7 +86,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .semitone-control{display:flex;align-items:center;gap:12px}
 .semitone-btn{width:36px;height:36px;border-radius:50%;background:var(--bg-btn);border:1.5px solid var(--border);color:var(--text-primary);font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:inherit;flex-shrink:0}
 .semitone-btn:hover{background:var(--accent);color:var(--text-on-accent);border-color:var(--accent)}
-.semitone-display{flex:1;text-align:center;font-size:24px;font-weight:900;color:var(--accent)}
+.semitone-display{flex:1;text-align:center;font-size:24px;font-weight:900;color:var(--accent-text)}
 
 /* === 결과 상세 박스 === */
 .detail-box{background:var(--bg-guide);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
@@ -120,7 +120,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .info-card{background:var(--accent-bg);border:1.5px solid var(--accent);border-radius:10px;padding:14px 10px;text-align:center}
 .info-card .ic-label{font-size:11px;color:var(--text-info);margin-bottom:4px}
-.info-card .ic-value{font-size:20px;font-weight:800;color:var(--accent)}
+.info-card .ic-value{font-size:20px;font-weight:800;color:var(--accent-text)}
 .info-card .ic-sub{font-size:11px;color:var(--text-info);margin-top:2px}
 
 /* === 옥타브 선택 === */
@@ -141,7 +141,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .beat-dot.active{transform:scale(1.3);border-color:var(--accent);box-shadow:0 0 16px rgba(99,102,241,.5)}
 .beat-dot.active.accent{background:var(--accent);box-shadow:0 0 20px rgba(99,102,241,.6)}
 .beat-dot.active:not(.accent){background:var(--accent-light);border-color:var(--accent)}
-.metro-bpm-display{text-align:center;font-size:48px;font-weight:900;color:var(--accent);font-variant-numeric:tabular-nums;line-height:1;margin:4px 0}
+.metro-bpm-display{text-align:center;font-size:48px;font-weight:900;color:var(--accent-text);font-variant-numeric:tabular-nums;line-height:1;margin:4px 0}
 .metro-bpm-label{text-align:center;font-size:13px;color:var(--text-muted);font-weight:600}
 .metro-slider{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:var(--bg-btn);outline:none;transition:opacity .2s}
 .metro-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 2px 8px rgba(99,102,241,.3)}
@@ -176,18 +176,18 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
   <!-- 메인 탭 -->
   <div style="padding:12px 16px 0">
-    <div class="main-tabs" id="mainTabs">
-      <button class="main-tab active" onclick="switchTab(0)">🥁 BPM 측정</button>
-      <button class="main-tab" onclick="switchTab(1)">🔊 메트로놈</button>
-      <button class="main-tab" onclick="switchTab(2)">⏱ 딜레이</button>
-      <button class="main-tab" onclick="switchTab(3)">📏 곡 길이</button>
-      <button class="main-tab" onclick="switchTab(4)">🎹 음정·Hz</button>
-      <button class="main-tab" onclick="switchTab(5)">🔀 키 변환</button>
+    <div class="main-tabs" id="mainTabs" role="tablist" aria-label="음악 계산 모드">
+      <button class="main-tab active" id="musicTab0" role="tab" aria-controls="panel0" aria-selected="true" tabindex="0" onclick="switchTab(0)">🥁 BPM 측정</button>
+      <button class="main-tab" id="musicTab1" role="tab" aria-controls="panel1" aria-selected="false" tabindex="-1" onclick="switchTab(1)">🔊 메트로놈</button>
+      <button class="main-tab" id="musicTab2" role="tab" aria-controls="panel2" aria-selected="false" tabindex="-1" onclick="switchTab(2)">⏱ 딜레이</button>
+      <button class="main-tab" id="musicTab3" role="tab" aria-controls="panel3" aria-selected="false" tabindex="-1" onclick="switchTab(3)">📏 곡 길이</button>
+      <button class="main-tab" id="musicTab4" role="tab" aria-controls="panel4" aria-selected="false" tabindex="-1" onclick="switchTab(4)">🎹 음정·Hz</button>
+      <button class="main-tab" id="musicTab5" role="tab" aria-controls="panel5" aria-selected="false" tabindex="-1" onclick="switchTab(5)">🔀 키 변환</button>
     </div>
   </div>
 
   <!-- ===== TAB 0: BPM 탭 측정 ===== -->
-  <div class="body tab-panel active" id="panel0">
+  <div class="body tab-panel active" id="panel0" role="tabpanel" aria-labelledby="musicTab0">
     <div class="tap-area" id="tapArea">
       <div class="tap-bpm" id="tapBpm">—</div>
       <div class="tap-label">BPM</div>
@@ -202,12 +202,12 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </div>
 
   <!-- ===== TAB 1: 메트로놈 ===== -->
-  <div class="body tab-panel" id="panel1">
+  <div class="body tab-panel" id="panel1" role="tabpanel" aria-labelledby="musicTab1">
     <div class="metro-bpm-display" id="metroBpmDisplay">120</div>
     <div class="metro-bpm-label">BPM</div>
-    <input type="range" class="metro-slider" id="metroSlider" min="20" max="300" value="120" oninput="setMetroBpm(this.value)">
+    <input aria-label="메트로놈 BPM 슬라이더" type="range" class="metro-slider" id="metroSlider" min="20" max="300" value="120" oninput="setMetroBpm(this.value)">
     <div class="input-row">
-      <input type="number" id="metroBpmInput" value="120" min="20" max="300" style="text-align:center;font-size:16px" oninput="setMetroBpm(this.value)">
+      <input aria-label="메트로놈 BPM" type="number" id="metroBpmInput" value="120" min="20" max="300" style="text-align:center;font-size:16px" oninput="setMetroBpm(this.value)">
       <span class="unit">BPM</span>
     </div>
     <div>
@@ -223,7 +223,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
     <div class="two-col">
       <div class="input-group">
-        <label>박자</label>
+        <label for="metroTimeSig">박자</label>
         <div class="input-row">
           <select id="metroTimeSig" onchange="updateMetroBeats()">
             <option value="4">4/4</option>
@@ -236,10 +236,10 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
         </div>
       </div>
       <div class="input-group">
-        <label>볼륨</label>
+        <label for="metroVol">볼륨</label>
         <div class="vol-row">
           <span class="vol-icon">🔈</span>
-          <input type="range" class="vol-slider" id="metroVol" min="0" max="100" value="80" oninput="metroVolume=this.value/100">
+          <input type="range" class="vol-slider" id="metroVol" min="0" max="100" value="80" oninput="setMetroVolume(this.value)">
           <span class="vol-icon">🔊</span>
         </div>
       </div>
@@ -249,9 +249,9 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </div>
 
   <!-- ===== TAB 2: BPM 딜레이 타이밍 ===== -->
-  <div class="body tab-panel" id="panel2">
+  <div class="body tab-panel" id="panel2" role="tabpanel" aria-labelledby="musicTab2">
     <div class="input-group">
-      <label>BPM 입력</label>
+      <label for="delayBpm">BPM 입력</label>
       <div class="input-row">
         <input type="number" id="delayBpm" value="120" min="1" max="999" oninput="calcDelay()">
         <span class="unit">BPM</span>
@@ -267,16 +267,16 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </div>
 
   <!-- ===== TAB 3: BPM ↔ 곡 길이 ===== -->
-  <div class="body tab-panel" id="panel3">
+  <div class="body tab-panel" id="panel3" role="tabpanel" aria-labelledby="musicTab3">
     <div class="two-col">
       <div class="input-group">
-        <label>BPM</label>
+        <label for="songBpm">BPM</label>
         <div class="input-row">
           <input type="number" id="songBpm" value="120" min="1" max="999" oninput="calcSong();calcReverse()">
         </div>
       </div>
       <div class="input-group">
-        <label>박자 (분자/분모)</label>
+        <label for="songTimeSig">박자 (분자/분모)</label>
         <div class="input-row">
           <select id="songTimeSig" onchange="calcSong();calcReverse()">
             <option value="4/4">4/4</option>
@@ -290,7 +290,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       </div>
     </div>
     <div class="input-group">
-      <label>마디 수</label>
+      <label for="songBars">마디 수</label>
       <div class="input-row">
         <input type="number" id="songBars" value="32" min="1" max="9999" oninput="calcSong()">
         <span class="unit">마디</span>
@@ -305,9 +305,9 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="input-group" style="margin-top:4px">
       <label>🔄 역방향: 곡 길이 → 마디 수</label>
       <div class="input-row">
-        <input type="number" id="songMin" value="3" min="0" max="99" style="max-width:70px" oninput="calcReverse()">
+        <input aria-label="곡 길이 분" type="number" id="songMin" value="3" min="0" max="99" style="max-width:70px" oninput="calcReverse()">
         <span class="unit">분</span>
-        <input type="number" id="songSec" value="30" min="0" max="59" style="max-width:70px" oninput="calcReverse()">
+        <input aria-label="곡 길이 초" type="number" id="songSec" value="30" min="0" max="59" style="max-width:70px" oninput="calcReverse()">
         <span class="unit">초</span>
       </div>
     </div>
@@ -315,9 +315,9 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </div>
 
   <!-- ===== TAB 4: 음정 ↔ Hz 변환 ===== -->
-  <div class="body tab-panel" id="panel4">
+  <div class="body tab-panel" id="panel4" role="tabpanel" aria-labelledby="musicTab4">
     <div class="input-group">
-      <label>기준 주파수 (A4)</label>
+      <label for="refHz">기준 주파수 (A4)</label>
       <div class="input-row">
         <input type="number" id="refHz" value="440" min="400" max="480" step="1" oninput="calcNote();calcHzToNote()">
         <span class="unit">Hz</span>
@@ -343,7 +343,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       </div>
     </div>
     <div class="input-group" style="margin-top:4px">
-      <label>🔄 Hz → 음정 변환</label>
+      <label for="hzInput">🔄 Hz → 음정 변환</label>
       <div class="input-row">
         <input type="number" id="hzInput" value="440" min="1" max="99999" step="0.01" oninput="calcHzToNote()">
         <span class="unit">Hz</span>
@@ -353,9 +353,9 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </div>
 
   <!-- ===== TAB 5: 키 변환 (Transpose) ===== -->
-  <div class="body tab-panel" id="panel5">
+  <div class="body tab-panel" id="panel5" role="tabpanel" aria-labelledby="musicTab5">
     <div class="input-group">
-      <label>원본 키</label>
+      <label for="transposeFrom">원본 키</label>
       <div class="input-row">
         <select id="transposeFrom" onchange="calcTranspose()"></select>
       </div>
@@ -378,7 +378,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <div class="detail-box" id="transposeScale"></div>
     </div>
     <div class="input-group" style="margin-top:4px">
-      <label>BPM 변환 (피치 변경 시)</label>
+      <label for="transposeBpm">BPM 변환 (피치 변경 시)</label>
       <div class="input-row">
         <input type="number" id="transposeBpm" value="120" min="1" max="999" oninput="calcTranspose()">
         <span class="unit">BPM</span>
@@ -400,7 +400,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
   </details>
 
-  <div class="footer"><span>🎵 음악 계산기 · 올인원</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+  <footer class="footer"><span>🎵 음악 계산기 · 올인원</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -413,8 +413,28 @@ const NOTE_LABELS = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 
 function switchTab(idx) {
   document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));
-  document.querySelectorAll('.main-tab').forEach((t,i)=>t.classList.toggle('active',i===idx));
+  document.querySelectorAll('.main-tab').forEach((t,i)=>{
+    const active = i === idx;
+    t.classList.toggle('active', active);
+    t.setAttribute('aria-selected', String(active));
+    t.tabIndex = active ? 0 : -1;
+  });
 }
+
+document.getElementById('mainTabs').addEventListener('keydown', event => {
+  const tabs = [...document.querySelectorAll('.main-tab')];
+  const current = tabs.indexOf(document.activeElement);
+  if (current < 0) return;
+  let next = current;
+  if (event.key === 'ArrowRight') next = (current + 1) % tabs.length;
+  else if (event.key === 'ArrowLeft') next = (current - 1 + tabs.length) % tabs.length;
+  else if (event.key === 'Home') next = 0;
+  else if (event.key === 'End') next = tabs.length - 1;
+  else return;
+  event.preventDefault();
+  switchTab(next);
+  tabs[next].focus();
+});
 
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),2000)}
 
@@ -471,7 +491,7 @@ tapArea.addEventListener('pointerdown', function(e) {
   // 상세 정보
   tapDetailEl.style.display = 'block';
   tapDetailEl.innerHTML = `
-    <div class="detail-row"><span class="detail-label">측정 BPM</span><span class="detail-value" style="color:var(--accent);font-size:16px;font-weight:800">${fmt(bpm,1)}</span></div>
+    <div class="detail-row"><span class="detail-label">측정 BPM</span><span class="detail-value" style="color:var(--accent-text);font-size:16px;font-weight:800">${fmt(bpm,1)}</span></div>
     <div class="detail-row"><span class="detail-label">탭 횟수</span><span class="detail-value">${taps.length}회</span></div>
     <div class="detail-row"><span class="detail-label">평균 간격</span><span class="detail-value">${fmt(avgMs,1)} ms</span></div>
     <div class="detail-row"><span class="detail-label">♩ 4분음표</span><span class="detail-value">${fmt(avgMs,1)} ms</span></div>
@@ -573,7 +593,7 @@ function calcSong() {
     <div class="detail-row"><span class="detail-label">마디 수</span><span class="detail-value">${bars}마디</span></div>
     <div class="detail-row"><span class="detail-label">총 박 수</span><span class="detail-value">${totalBeats}박</span></div>
     <div class="detail-row"><span class="detail-label">1마디 길이</span><span class="detail-value">${fmt(beatsPerBar*beatSec,2)}초</span></div>
-    <div class="detail-row"><span class="detail-label">총 길이</span><span class="detail-value" style="color:var(--accent);font-weight:800">${min}분 ${fmt(sec,1)}초</span></div>
+    <div class="detail-row"><span class="detail-label">총 길이</span><span class="detail-value" style="color:var(--accent-text);font-weight:800">${min}분 ${fmt(sec,1)}초</span></div>
   `;
 }
 
@@ -598,7 +618,7 @@ function calcReverse() {
   document.getElementById('reverseDetail').innerHTML = `
     <div class="detail-row"><span class="detail-label">입력 시간</span><span class="detail-value">${min}분 ${sec}초 (${totalSec}초)</span></div>
     <div class="detail-row"><span class="detail-label">총 박 수</span><span class="detail-value">${fmt(totalBeats,1)}박</span></div>
-    <div class="detail-row"><span class="detail-label">마디 수</span><span class="detail-value" style="color:var(--accent);font-weight:800">${fmt(bars,1)}마디</span></div>
+    <div class="detail-row"><span class="detail-label">마디 수</span><span class="detail-value" style="color:var(--accent-text);font-weight:800">${fmt(bars,1)}마디</span></div>
   `;
 }
 
@@ -684,7 +704,7 @@ function calcHzToNote() {
   const exactHz = midiToHz(midiRound, refHz);
 
   document.getElementById('hzToNoteResult').innerHTML = `
-    <div class="detail-row"><span class="detail-label">가장 가까운 음</span><span class="detail-value" style="color:var(--accent);font-weight:800;font-size:16px">${NOTES[noteIdx]}${octave}</span></div>
+    <div class="detail-row"><span class="detail-label">가장 가까운 음</span><span class="detail-value" style="color:var(--accent-text);font-weight:800;font-size:16px">${NOTES[noteIdx]}${octave}</span></div>
     <div class="detail-row"><span class="detail-label">정확한 주파수</span><span class="detail-value">${fmt(exactHz,2)} Hz</span></div>
     <div class="detail-row"><span class="detail-label">MIDI 번호</span><span class="detail-value">#${midiRound}</span></div>
     <div class="detail-row"><span class="detail-label">오차</span><span class="detail-value" style="color:${Math.abs(cents)<5?'var(--text-success)':'#e67e22'}">${cents>=0?'+':''}${fmt(cents,1)} cents</span></div>
@@ -734,7 +754,7 @@ function calcTranspose() {
   intervals.forEach(interval => {
     const fromNote = KEYS[(fromIdx + interval) % 12];
     const toNote = KEYS[(toIdx + interval) % 12];
-    html += `<div class="detail-row"><span class="detail-label">${fromNote}</span><span class="detail-value" style="color:var(--accent)">${toNote}</span></div>`;
+    html += `<div class="detail-row"><span class="detail-label">${fromNote}</span><span class="detail-value" style="color:var(--accent-text)">${toNote}</span></div>`;
   });
   document.getElementById('transposeScale').innerHTML = html;
 
@@ -748,32 +768,120 @@ function calcTranspose() {
     <div class="detail-row"><span class="detail-label">원본 BPM</span><span class="detail-value">${origBpm}</span></div>
     <div class="detail-row"><span class="detail-label">피치 비율</span><span class="detail-value">${fmt(ratio,4)}×</span></div>
     <div class="detail-row"><span class="detail-label">속도 변화</span><span class="detail-value" style="color:${percentChange>=0?'var(--text-success)':'#e67e22'}">${percentChange>=0?'+':''}${fmt(percentChange,2)}%</span></div>
-    <div class="detail-row"><span class="detail-label">변환 BPM</span><span class="detail-value" style="color:var(--accent);font-weight:800;font-size:15px">${fmt(newBpm,2)}</span></div>
+    <div class="detail-row"><span class="detail-label">변환 BPM</span><span class="detail-value" style="color:var(--accent-text);font-weight:800;font-size:15px">${fmt(newBpm,2)}</span></div>
   `;
 }
 
 // ========== TAB 1: 메트로놈 ==========
 let metroCtx = null;
+let metroNode = null;
+let metroEnginePromise = null;
+let metroLifecyclePromise = Promise.resolve();
+let metroLifecycleGeneration = 0;
+let metroDesiredPlaying = false;
+let metroEngineMode = 'pending';
 let metroBpm = 120;
 let metroVolume = 0.8;
 let metroPlaying = false;
-let metroIntervalId = null;
 let metroBeat = 0;
 let metroBeatsPerBar = 4;
+let fallbackTimerId = null;
+let fallbackNextNoteTime = 0;
+let fallbackBeat = 0;
+const fallbackVisualTimers = new Set();
+const fallbackScheduledSources = new Set();
+const METRO_LOOKAHEAD_SECONDS = 0.12;
+
+// AudioWorklet은 브라우저의 오디오 렌더링 스레드에서 샘플 단위로 박자를
+// 생성한다. 메인 스레드 타이머가 느려지는 백그라운드 탭에서도 소리가
+// 누적 지연되지 않으며, 지원하지 않는 브라우저만 아래 오디오 시계 기반
+// look-ahead 스케줄러를 사용한다.
+const METRONOME_WORKLET_SOURCE = `
+class PrecisionMetronomeProcessor extends AudioWorkletProcessor {
+  constructor() {
+    super();
+    this.bpm = 120;
+    this.volume = 0.8;
+    this.beatsPerBar = 4;
+    this.beat = 0;
+    this.running = false;
+    this.nextBeatFrame = 0;
+    this.clickFrames = Math.max(1, Math.floor(sampleRate * 0.055));
+    this.clickSamplesLeft = 0;
+    this.phase = 0;
+    this.frequency = 1000;
+    this.port.onmessage = event => this.handleMessage(event.data || {});
+  }
+
+  handleMessage(message) {
+    if (message.type === 'config') {
+      if (Number.isFinite(message.bpm)) this.bpm = Math.max(20, Math.min(300, message.bpm));
+      if (Number.isFinite(message.volume)) this.volume = Math.max(0, Math.min(1, message.volume));
+      if (Number.isFinite(message.beatsPerBar)) this.beatsPerBar = Math.max(1, Math.min(12, Math.round(message.beatsPerBar)));
+      if (message.resetBeat) this.beat = 0;
+    } else if (message.type === 'start') {
+      this.beat = 0;
+      this.nextBeatFrame = currentFrame;
+      this.running = true;
+    } else if (message.type === 'stop') {
+      this.running = false;
+      this.clickSamplesLeft = 0;
+    }
+  }
+
+  process(_inputs, outputs) {
+    const channel = outputs[0] && outputs[0][0];
+    if (!channel) return true;
+    channel.fill(0);
+    if (!this.running) return true;
+
+    const framesPerBeat = sampleRate * 60 / this.bpm;
+    for (let i = 0; i < channel.length; i += 1) {
+      const frame = currentFrame + i;
+      if (frame >= this.nextBeatFrame) {
+        const scheduledBeat = this.beat;
+        this.frequency = scheduledBeat === 0 ? 1000 : 700;
+        this.phase = 0;
+        this.clickSamplesLeft = this.clickFrames;
+        this.port.postMessage({ type: 'beat', beat: scheduledBeat, frame });
+        this.beat = (scheduledBeat + 1) % this.beatsPerBar;
+        this.nextBeatFrame += framesPerBeat;
+        if (this.nextBeatFrame <= frame) this.nextBeatFrame = frame + framesPerBeat;
+      }
+
+      if (this.clickSamplesLeft > 0) {
+        const progress = 1 - this.clickSamplesLeft / this.clickFrames;
+        const envelope = Math.exp(-8 * progress);
+        const accentGain = this.frequency === 1000 ? 1 : 0.6;
+        channel[i] = Math.sin(this.phase) * envelope * this.volume * accentGain;
+        this.phase += 2 * Math.PI * this.frequency / sampleRate;
+        this.clickSamplesLeft -= 1;
+      }
+    }
+    return true;
+  }
+}
+registerProcessor('precision-metronome', PrecisionMetronomeProcessor);
+`;
 
 function setMetroBpm(val) {
   metroBpm = Math.max(20, Math.min(300, parseInt(val) || 120));
   document.getElementById('metroBpmDisplay').textContent = metroBpm;
   document.getElementById('metroSlider').value = metroBpm;
   document.getElementById('metroBpmInput').value = metroBpm;
-  if (metroPlaying) { stopMetronome(); startMetronome(); }
+  syncMetronomeConfig(false);
+}
+
+function setMetroVolume(val) {
+  metroVolume = Math.max(0, Math.min(1, (Number(val) || 0) / 100));
+  syncMetronomeConfig(false);
 }
 
 function updateMetroBeats() {
   metroBeatsPerBar = parseInt(document.getElementById('metroTimeSig').value);
   metroBeat = 0;
   buildBeatDots();
-  if (metroPlaying) { stopMetronome(); startMetronome(); }
+  syncMetronomeConfig(true);
 }
 
 function buildBeatDots() {
@@ -787,66 +895,216 @@ function buildBeatDots() {
   }
 }
 
-function playClick(isAccent) {
-  if (!metroCtx) metroCtx = new (window.AudioContext || window.webkitAudioContext)();
+function renderMetroBeat(beat) {
+  metroBeat = beat;
+  for (let i = 0; i < metroBeatsPerBar; i++) {
+    const dot = document.getElementById('dot' + i);
+    if (dot) dot.classList.toggle('active', i === beat);
+  }
+}
+
+function playClickAt(isAccent, scheduledTime) {
+  if (metroVolume <= 0) return;
   const osc = metroCtx.createOscillator();
   const gain = metroCtx.createGain();
   osc.connect(gain);
   gain.connect(metroCtx.destination);
   osc.frequency.value = isAccent ? 1000 : 700;
-  gain.gain.value = metroVolume * (isAccent ? 1 : 0.6);
-  const now = metroCtx.currentTime;
-  osc.start(now);
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-  osc.stop(now + 0.08);
+  const startTime = Math.max(metroCtx.currentTime, scheduledTime);
+  gain.gain.setValueAtTime(metroVolume * (isAccent ? 1 : 0.6), startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.08);
+  const scheduledSource = { osc, gain };
+  fallbackScheduledSources.add(scheduledSource);
+  osc.onended = () => {
+    fallbackScheduledSources.delete(scheduledSource);
+    osc.disconnect();
+    gain.disconnect();
+  };
+  osc.start(startTime);
+  osc.stop(startTime + 0.08);
 }
 
-function metroTick() {
-  const isAccent = metroBeat === 0;
-  playClick(isAccent);
+function syncMetronomeConfig(resetBeat) {
+  if (metroNode) {
+    metroNode.port.postMessage({
+      type: 'config',
+      bpm: metroBpm,
+      volume: metroVolume,
+      beatsPerBar: metroBeatsPerBar,
+      resetBeat: Boolean(resetBeat)
+    });
+  } else if (metroPlaying && metroEngineMode === 'audio-clock-fallback') {
+    restartFallbackSchedule(resetBeat);
+  }
+}
 
-  // 비주얼 업데이트
-  for (let i = 0; i < metroBeatsPerBar; i++) {
-    const dot = document.getElementById('dot' + i);
-    if (dot) dot.classList.toggle('active', i === metroBeat);
+async function initializeMetronomeEngine() {
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) throw new Error('이 브라우저는 Web Audio를 지원하지 않습니다.');
+  if (!metroCtx) metroCtx = new AudioContextClass();
+
+  if (metroCtx.audioWorklet && typeof AudioWorkletNode === 'function') {
+    const moduleUrl = URL.createObjectURL(new Blob([METRONOME_WORKLET_SOURCE], { type: 'text/javascript' }));
+    try {
+      await metroCtx.audioWorklet.addModule(moduleUrl);
+      metroNode = new AudioWorkletNode(metroCtx, 'precision-metronome', {
+        numberOfInputs: 0,
+        numberOfOutputs: 1,
+        outputChannelCount: [1]
+      });
+      metroNode.connect(metroCtx.destination);
+      metroNode.port.onmessage = event => {
+        if (event.data && event.data.type === 'beat' && metroPlaying) {
+          document.getElementById('beatDots').dataset.lastAudioFrame = String(event.data.frame);
+          renderMetroBeat(event.data.beat);
+        }
+      };
+      metroEngineMode = 'audio-worklet';
+    } catch (_error) {
+      metroNode = null;
+      metroEngineMode = 'audio-clock-fallback';
+    } finally {
+      URL.revokeObjectURL(moduleUrl);
+    }
+  } else {
+    metroEngineMode = 'audio-clock-fallback';
   }
 
-  metroBeat = (metroBeat + 1) % metroBeatsPerBar;
+  document.getElementById('beatDots').dataset.engine = metroEngineMode;
+  document.getElementById('beatDots').dataset.sampleRate = String(metroCtx.sampleRate);
+  return metroEngineMode;
 }
 
-function startMetronome() {
+function ensureMetronomeEngine() {
+  if (!metroEnginePromise) {
+    metroEnginePromise = initializeMetronomeEngine().catch(error => {
+      metroEnginePromise = null;
+      throw error;
+    });
+  }
+  return metroEnginePromise;
+}
+
+function queueMetronomeLifecycle(operation) {
+  metroLifecyclePromise = metroLifecyclePromise.catch(() => {}).then(operation);
+  return metroLifecyclePromise;
+}
+
+function scheduleFallbackMetronome() {
+  if (!metroPlaying || !metroCtx || metroEngineMode !== 'audio-clock-fallback') return;
+  const now = metroCtx.currentTime;
+  if (fallbackNextNoteTime < now - 0.2) fallbackNextNoteTime = now;
+
+  while (fallbackNextNoteTime < now + METRO_LOOKAHEAD_SECONDS) {
+    const scheduledBeat = fallbackBeat;
+    const scheduledTime = fallbackNextNoteTime;
+    playClickAt(scheduledBeat === 0, scheduledTime);
+    const visualTimer = window.setTimeout(() => {
+      fallbackVisualTimers.delete(visualTimer);
+      if (metroPlaying) renderMetroBeat(scheduledBeat);
+    }, Math.max(0, (scheduledTime - now) * 1000));
+    fallbackVisualTimers.add(visualTimer);
+    fallbackBeat = (scheduledBeat + 1) % metroBeatsPerBar;
+    fallbackNextNoteTime += 60 / metroBpm;
+  }
+  fallbackTimerId = window.setTimeout(scheduleFallbackMetronome, 25);
+}
+
+function clearFallbackSchedule() {
+  window.clearTimeout(fallbackTimerId);
+  fallbackTimerId = null;
+  fallbackVisualTimers.forEach(timer => window.clearTimeout(timer));
+  fallbackVisualTimers.clear();
+  fallbackScheduledSources.forEach(({ osc, gain }) => {
+    try { osc.stop(); } catch (_error) {}
+    try { osc.disconnect(); } catch (_error) {}
+    try { gain.disconnect(); } catch (_error) {}
+  });
+  fallbackScheduledSources.clear();
+}
+
+function restartFallbackSchedule(resetBeat) {
+  clearFallbackSchedule();
+  fallbackBeat = resetBeat ? 0 : (metroBeat + 1) % metroBeatsPerBar;
+  fallbackNextNoteTime = metroCtx.currentTime + 0.03;
+  scheduleFallbackMetronome();
+}
+
+async function startMetronome() {
+  const generation = ++metroLifecycleGeneration;
+  metroDesiredPlaying = true;
+  await ensureMetronomeEngine();
+  if (!metroDesiredPlaying || generation !== metroLifecycleGeneration) return false;
+  await queueMetronomeLifecycle(async () => {
+    if (!metroDesiredPlaying || generation !== metroLifecycleGeneration) return;
+    if (metroCtx.state === 'suspended') await metroCtx.resume();
+    if ((!metroDesiredPlaying || generation !== metroLifecycleGeneration) && metroCtx.state === 'running') {
+      await metroCtx.suspend();
+    }
+  });
+  if (!metroDesiredPlaying || generation !== metroLifecycleGeneration) return false;
+  metroPlaying = true;
   metroBeat = 0;
-  metroTick();
-  const interval = 60000 / metroBpm;
-  metroIntervalId = setInterval(metroTick, interval);
+
+  if (metroNode) {
+    syncMetronomeConfig(true);
+    metroNode.port.postMessage({ type: 'start' });
+  } else {
+    restartFallbackSchedule(true);
+  }
+  return true;
 }
 
 function stopMetronome() {
-  clearInterval(metroIntervalId);
-  metroIntervalId = null;
+  metroDesiredPlaying = false;
+  metroLifecycleGeneration += 1;
+  metroPlaying = false;
+  if (metroNode) metroNode.port.postMessage({ type: 'stop' });
+  clearFallbackSchedule();
   for (let i = 0; i < metroBeatsPerBar; i++) {
     const dot = document.getElementById('dot' + i);
     if (dot) dot.classList.remove('active');
   }
+  if (!metroCtx) return Promise.resolve();
+  return queueMetronomeLifecycle(async () => {
+    if (!metroDesiredPlaying && metroCtx.state === 'running') await metroCtx.suspend();
+  });
 }
 
-function toggleMetronome() {
+async function toggleMetronome() {
   const btn = document.getElementById('metroPlayBtn');
   if (metroPlaying) {
-    stopMetronome();
+    await stopMetronome();
     btn.textContent = '▶ 시작';
     btn.className = 'metro-play-btn stopped';
+    btn.setAttribute('aria-pressed', 'false');
   } else {
-    if (!metroCtx) metroCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (metroCtx.state === 'suspended') metroCtx.resume();
-    startMetronome();
-    btn.textContent = '⏹ 정지';
-    btn.className = 'metro-play-btn playing';
+    btn.disabled = true;
+    try {
+      const started = await startMetronome();
+      if (!started) {
+        btn.textContent = '▶ 시작';
+        btn.className = 'metro-play-btn stopped';
+        btn.setAttribute('aria-pressed', 'false');
+        return;
+      }
+      btn.textContent = '⏹ 정지';
+      btn.className = 'metro-play-btn playing';
+      btn.setAttribute('aria-pressed', 'true');
+    } catch (_error) {
+      await stopMetronome();
+      btn.textContent = '오디오를 시작할 수 없습니다';
+      btn.className = 'metro-play-btn stopped';
+      btn.setAttribute('aria-pressed', 'false');
+    } finally {
+      btn.disabled = false;
+    }
   }
-  metroPlaying = !metroPlaying;
 }
 
 buildBeatDots();
+document.getElementById('metroPlayBtn').setAttribute('aria-pressed', 'false');
+window.addEventListener('pagehide', stopMetronome);
 
 // ========== 초기화 ==========
 buildNoteGrid();

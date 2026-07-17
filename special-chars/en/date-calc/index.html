@@ -54,7 +54,7 @@
   /* Dynamic Report & Guide standard CSS */
   @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   .report-box { margin: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
-  .report-box strong { color: var(--accent); }
+  .report-box strong { color:var(--accent-text); }
   .guide-section{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
   .guide-section h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
@@ -69,7 +69,7 @@
   .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
   .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
-  .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+  .tool-card:hover{border-color:var(--accent);color:var(--accent-text);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
 .scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
 .scroll-top-btn.visible{opacity:1;visibility:visible}
 .scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
@@ -91,8 +91,8 @@
   <div class="counter-body">
     <div class="date-section">
       <div class="date-section-title">📆 D-Day Countdown</div>
-      <div class="date-row"><label>Start</label><input type="date" id="ddayStart"></div>
-      <div class="date-row"><label>Target</label><input type="date" id="ddayEnd"></div>
+      <div class="date-row"><label>Start</label><input aria-label="Start date" type="date" id="ddayStart"></div>
+      <div class="date-row"><label>Target</label><input aria-label="End date" type="date" id="ddayEnd"></div>
       <div class="checkbox-row">
         <input type="checkbox" id="ddayInclusive">
         <label for="ddayInclusive">Include both endpoint dates</label>
@@ -108,7 +108,7 @@
 
     <div class="date-section">
       <div class="date-section-title">🧮 Date Math (Base Date ± Days)</div>
-      <div class="date-row"><label>Base Date</label><input type="date" id="dateBase"></div>
+      <div class="date-row"><label>Base Date</label><input aria-label="Base date" type="date" id="dateBase"></div>
       <div class="date-row"><label>Days</label><input type="number" id="dateDays" placeholder="e.g. 100, -30"></div>
       <div class="quick-buttons">
         <button class="quick-btn" onclick="applyQuick(7)">+7 days</button>
@@ -164,7 +164,7 @@
       <a href="/special-chars/en/calculator/" class="tool-card">🧮 Calculator</a>
     </div>
   </section>
-    <div class="footer"><span>Real-time calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+    <footer class="footer"><span>Real-time calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>

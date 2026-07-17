@@ -22,7 +22,7 @@
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:'Inter',sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
   .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
-  .header{background:linear-gradient(135deg,#ff4b2b,#ff416c);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .header{background:linear-gradient(135deg,var(--status-orange-bg),var(--status-red-bg));padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
   .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
   .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
   .header h1{font-size:15px;font-weight:600;color:#fff}
@@ -34,11 +34,11 @@
   .field{flex:1;display:flex;flex-direction:column;gap:4px}
   .field label{font-size:11px;color:var(--calc-expr-text);font-weight:600}
   .field input,.field select{background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);padding:9px 10px;font-size:14px;font-family:inherit;outline:none;width:100%}
-  .field input:focus,.field select:focus{border-color:var(--text-error, #ff4b2b)}
+  .field input:focus,.field select:focus{border-color:var(--status-orange-text)}
 
   .gender-toggle{display:flex;gap:4px;background:var(--bg-input);padding:4px;border-radius:8px;border:1px solid var(--border)}
   .gender-btn{flex:1;padding:6px;text-align:center;font-size:13px;border-radius:6px;cursor:pointer;color:var(--calc-expr-text);transition:all .2s;border:none;background:transparent}
-  .gender-btn.active{background:var(--bg-error, #ff4b2b);color:var(--text-on-accent);font-weight:bold}
+  .gender-btn.active{background:var(--status-orange-bg);color:var(--text-on-accent);font-weight:bold}
 
   .result-box{background:var(--bg-input);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;margin-top:4px}
   .result-title{font-size:11px;color:var(--text-info);margin-bottom:4px}
@@ -49,8 +49,8 @@
   .macros-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
   .macro-card{background:var(--bg-input);border:1px solid var(--border);border-radius:10px;padding:12px 8px;text-align:center}
   .m-label{font-size:11px;font-weight:600;margin-bottom:4px}
-  .m-carbs{color:#38bdf8}
-  .m-protein{color:#f472b6}
+  .m-carbs{color:var(--status-blue-text)}
+  .m-protein{color:var(--status-pink-text)}
   .m-fat{color:var(--text-highlight)}
   .m-val{font-size:16px;font-weight:800;color:var(--text-primary)}
   .m-g{font-size:10px;color:var(--text-muted);font-weight:normal}
@@ -64,7 +64,7 @@
   /* Dynamic Report & Guide standard CSS */
   @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   .report-box { margin: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
-  .report-box strong { color: var(--accent); }
+  .report-box strong { color:var(--accent-text); }
   .guide-section{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
   .guide-section h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
@@ -79,8 +79,8 @@
   .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
   .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
-  .tool-card:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
-.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--bg-error, #ff4b2b);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(255,75,43,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+  .tool-card:hover{border-color:var(--accent);color:var(--accent-text);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--status-orange-bg);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(255,75,43,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
 .scroll-top-btn.visible{opacity:1;visibility:visible}
 .scroll-top-btn:hover{transform:scale(1.1);background:#e0431f}
 @media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
@@ -108,17 +108,17 @@
         </div>
         <div class="field">
           <label>Age (years)</label>
-          <input type="number" id="age" value="25" min="1" max="120" oninput="calc()">
+          <input aria-label="Age" type="number" id="age" value="25" min="1" max="120" oninput="calc()">
         </div>
       </div>
       <div class="field-row">
         <div class="field">
           <label>Height (cm)</label>
-          <input type="number" id="height" value="170" min="100" max="250" oninput="calc()">
+          <input aria-label="Height in centimeters" type="number" id="height" value="170" min="100" max="250" oninput="calc()">
         </div>
         <div class="field">
           <label>Weight (kg)</label>
-          <input type="number" id="weight" value="65" min="30" max="200" oninput="calc()">
+          <input aria-label="Weight in kilograms" type="number" id="weight" value="65" min="30" max="200" oninput="calc()">
         </div>
       </div>
     </div>
@@ -129,7 +129,7 @@
       <div class="field-row">
         <div class="field">
           <label>Activity Level</label>
-          <select id="activity" onchange="calc()">
+          <select aria-label="Activity level" id="activity" onchange="calc()">
             <option value="1.2">Sedentary (little to no exercise)</option>
             <option value="1.375">Lightly active (light exercise 1-3 days/week)</option>
             <option value="1.55" selected>Moderately active (moderate exercise 3-5 days)</option>
@@ -141,7 +141,7 @@
       <div class="field-row">
         <div class="field">
           <label>My Goal</label>
-          <select id="goal" onchange="calc()">
+          <select aria-label="Weight goal" id="goal" onchange="calc()">
             <option value="lose">Weight Loss (-500kcal)</option>
             <option value="maintain" selected>Maintain Weight</option>
             <option value="gain">Weight Gain / Bulk Up (+500kcal)</option>
@@ -231,7 +231,7 @@
       <a href="/special-chars/en/pet-food-calc/" class="tool-card">🐕 Pet Food Calculator</a>
     </div>
   </section>
-    <div class="footer"><span>Mifflin-St Jeor formula</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+    <footer class="footer"><span>Mifflin-St Jeor formula</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 
 <script>
