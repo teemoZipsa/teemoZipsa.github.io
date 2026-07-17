@@ -151,7 +151,14 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
         <input type="number" id="area" value="60" min="1" step="1" oninput="calc()">
         <span class="unit">㎡</span>
       </div>
-      <div style="font-size:11px;color:var(--text-muted)">85㎡ 이하 + 주거요건 충족 시 주택 요율 적용</div>
+      <label for="residentialRequirements">주거 설비 요건</label>
+      <div class="input-row">
+        <select id="residentialRequirements" onchange="calc()">
+          <option value="no" selected>미충족 또는 확인하지 못함</option>
+          <option value="yes">충족함</option>
+        </select>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted)">전용입식 부엌, 전용수세식 화장실 및 목욕시설을 모두 갖추고 전용면적이 85㎡ 이하인 경우에만 0.5%/0.4% 특례를 적용합니다.</div>
     </div>
 
     <!-- 거래 금액 -->
@@ -176,13 +183,14 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
     <!-- 부가세 옵션 -->
     <div class="input-group">
-      <label>부가가치세</label>
+      <label>부가가치세 반영</label>
       <div class="input-row">
         <select id="vatOption" onchange="calc()">
-          <option value="general">일반과세자 (10% 별도)</option>
-          <option value="simple">간이과세자 (VAT 포함)</option>
+          <option value="add">10% 별도 금액 추가</option>
+          <option value="noadd">별도 금액 미포함 (견적 확인)</option>
         </select>
       </div>
+      <div style="font-size:11px;color:var(--text-muted)">서울시 요율표는 부가가치세 별도로 안내합니다. 실제 제시 금액의 포함 여부와 증빙은 중개사무소에 확인하세요.</div>
     </div>
 
     <!-- 결과 -->
@@ -215,7 +223,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <p>아닙니다. 법에서 정한 요율과 한도액은 <strong>법정 '최대 한도액(상한요율)'</strong>을 의미합니다. 공인중개사와 협의하여 한도액 범위 내에서 수수료를 낮출 수 있습니다. 특히 매매가가 높거나 상가/토지(0.9%)의 경우 금액 단위가 크기 때문에 계약 전 미리 수수료 협의를 하는 것이 실무적인 관례입니다.</p>
       <br>
       <strong>Q. 부가세는 별도로 줘야 하나요?</strong>
-      <p>중개사무소의 <strong>사업자 등록 유형</strong>에 따라 다릅니다. '일반과세자'라면 법정 중개보수 외에 <strong>10%의 부가세</strong>를 별도로 지불해야 합니다. (이때 현금영수증이나 세금계산서 발행을 요구하세요.) 반면 해당 중개소가 '간이과세자'인 경우, 추가적인 부가세를 청구할 수 없으며 계산된 중개보수 한도액만 지불하면 됩니다. 중개소 벽면에 걸린 사업자등록증을 통해 확인 가능합니다.</p>
+      <p><a href="https://land.seoul.go.kr/land/broker/brokerageCommission.do">서울시 중개보수 안내</a>는 요율표의 중개보수와 부가가치세를 별도로 안내합니다. 다만 실제 견적이 부가세 포함인지, 사업자가 어떤 증빙을 발급할 수 있는지는 과세유형과 매출 규모 등에 따라 달라질 수 있습니다. 간이과세자라는 이유만으로 추가 금액의 가능 여부를 단정하지 말고 사업자등록증, 견적서와 현금영수증·세금계산서 등 발급 가능한 증빙을 확인하세요.</p>
     </div>
   </details>
 
@@ -304,10 +312,10 @@ function fmtMan(n) {
 }
 
 function getConvertedAmount() {
-  const deposit = parseFloat(document.getElementById('price').value) || 0;
+  const deposit = Number(document.getElementById('price').value);
   
   if (tradeType === 2) {
-    const monthly = parseFloat(document.getElementById('monthlyRent').value) || 0;
+    const monthly = Number(document.getElementById('monthlyRent').value);
     let converted = deposit + (monthly * 100);
     // 5천만 미만이면 ×70으로 재계산
     if (converted < 50000000) {
@@ -317,6 +325,30 @@ function getConvertedAmount() {
   }
   
   return { amount: deposit, deposit, monthly: 0 };
+}
+
+function getInputError({ amount, deposit, monthly }) {
+  if (!Number.isFinite(deposit) || deposit < 0) return '거래 금액은 0 이상의 유한한 값이어야 합니다.';
+  if (tradeType !== 2 && deposit <= 0) return '거래 금액은 0보다 커야 합니다.';
+  if (tradeType === 2 && (!Number.isFinite(monthly) || monthly < 0)) return '월 차임은 0 이상의 유한한 값이어야 합니다.';
+  if (!Number.isFinite(amount) || amount <= 0) return '환산 거래금액은 0보다 커야 합니다.';
+  if (propType === 1) {
+    const area = Number(document.getElementById('area').value);
+    if (!Number.isFinite(area) || area <= 0) return '오피스텔 전용면적은 0보다 커야 합니다.';
+  }
+  return '';
+}
+
+function clearResultState(message) {
+  document.getElementById('summary').innerHTML = message
+    ? `<div class="summary-card highlight"><div class="s-label">입력 확인</div><div class="s-sub" style="color:var(--text-on-accent)">${message}</div></div>`
+    : '';
+  document.getElementById('detailBox').innerHTML = '';
+  document.getElementById('convertedInfo').textContent = '';
+  document.getElementById('priceHint').textContent = '';
+  const report = document.getElementById('analysisReport');
+  report.style.display = 'none';
+  report.innerHTML = '';
 }
 
 function calcFee(amount) {
@@ -329,16 +361,17 @@ function calcFee(amount) {
     matchLabel = '상가·토지 (0.9% 이내)';
   } else if (propType === 1) {
     // 오피스텔
-    const area = parseFloat(document.getElementById('area').value) || 0;
-    if (area <= 85) {
-      // 주거용 오피스텔 (85㎡ 이하)
+    const area = Number(document.getElementById('area').value);
+    const meetsResidentialRequirements = document.getElementById('residentialRequirements').value === 'yes';
+    if (area <= 85 && meetsResidentialRequirements) {
+      // 전용 85㎡ 이하이면서 필수 주거 설비를 모두 갖춘 오피스텔
       rate = (tradeType === 0) ? OFFICETEL_SALE_RATE : OFFICETEL_LEASE_RATE;
       limit = null;
-      matchLabel = `오피스텔 85㎡이하 (${(rate*100).toFixed(1)}%)`;
+      matchLabel = `오피스텔 85㎡ 이하·주거요건 충족 (${(rate*100).toFixed(1)}%)`;
     } else {
       rate = NON_HOUSING_RATE;
       limit = null;
-      matchLabel = '오피스텔 85㎡초과 (0.9% 이내)';
+      matchLabel = '오피스텔 85㎡ 초과 또는 주거요건 미충족 (0.9% 이내)';
     }
   } else {
     // 주택
@@ -366,10 +399,11 @@ function calcFee(amount) {
 
 function calc() {
   const { amount, deposit, monthly } = getConvertedAmount();
-  
-  if (amount <= 0) {
-    document.getElementById('summary').innerHTML = '';
-    document.getElementById('detailBox').innerHTML = '';
+  const inputError = getInputError({ amount, deposit, monthly });
+
+  if (inputError) {
+    clearResultState(inputError);
+    renderRateTable(NaN);
     return;
   }
   
@@ -388,7 +422,8 @@ function calc() {
   
   // 부가세
   const vatOpt = document.getElementById('vatOption').value;
-  const vat = (vatOpt === 'general') ? fee * 0.1 : 0;
+  const addVat = vatOpt === 'add';
+  const vat = addVat ? fee * 0.1 : 0;
   const total = fee + vat;
   
   // 가격 힌트
@@ -399,7 +434,7 @@ function calc() {
   const summaryEl = document.getElementById('summary');
   let html = `
     <div class="summary-card highlight">
-      <div class="s-label">중개수수료 ${vatOpt === 'general' ? '(VAT 포함)' : ''}</div>
+      <div class="s-label">중개수수료 ${addVat ? '(VAT 10% 포함)' : '(VAT 별도 금액 미포함)'}</div>
       <div class="s-value">${fmt(total)}<span style="font-size:14px;font-weight:600"> 원</span></div>
       <div class="s-sub">${fmtMan(total)}원</div>
     </div>
@@ -424,7 +459,10 @@ function calc() {
     <div class="detail-row"><span class="detail-label">부동산 유형</span><span class="detail-value">${propNames[propType]}</span></div>`;
   
   if (propType === 1) {
-    detail += `<div class="detail-row"><span class="detail-label">전용면적</span><span class="detail-value">${document.getElementById('area').value}㎡ (${(parseFloat(document.getElementById('area').value)*0.3025).toFixed(1)}평)</span></div>`;
+    const area = Number(document.getElementById('area').value);
+    const meetsResidentialRequirements = document.getElementById('residentialRequirements').value === 'yes';
+    detail += `<div class="detail-row"><span class="detail-label">전용면적</span><span class="detail-value">${area}㎡ (${(area*0.3025).toFixed(1)}평)</span></div>`;
+    detail += `<div class="detail-row"><span class="detail-label">주거 설비 요건</span><span class="detail-value">${meetsResidentialRequirements ? '충족' : '미충족 또는 미확인'}</span></div>`;
   }
   
   if (tradeType === 2) {
@@ -446,7 +484,7 @@ function calc() {
   
   detail += `<div class="detail-row"><span class="detail-label">중개보수</span><span class="detail-value" style="color:var(--accent);font-size:15px">${fmt(fee)} 원</span></div>`;
   
-  if (vatOpt === 'general') {
+  if (addVat) {
     detail += `
     <div class="detail-row"><span class="detail-label">부가세 (10%)</span><span class="detail-value">${fmt(vat)} 원</span></div>
     <div class="detail-row"><span class="detail-label">합계 (VAT 포함)</span><span class="detail-value" style="color:var(--accent);font-size:15px;font-weight:800">${fmt(total)} 원</span></div>`;
@@ -457,8 +495,6 @@ function calc() {
   const report = document.getElementById('analysisReport');
   report.style.display = 'flex';
   
-  const isVatGeneral = vatOpt === 'general';
-  
   let reportHTML = `<h3>💡 부동산 중개보수 진단 리포트</h3>`;
   reportHTML += `<p>선택하신 <strong>${propNames[propType]} ${tradeNames[tradeType]}</strong> 거래(기준금액 <strong>${fmt(amount)}원</strong>)에 적용되는 법정 최대 중개보수는 <strong>${fmt(fee)}원</strong>입니다.</p>`;
   
@@ -468,10 +504,10 @@ function calc() {
     reportHTML += `<p>적용 구간 요율은 <strong>${(rate * 100).toFixed(1)}%</strong>이며, 법정 한도액 제한이 없는 구간입니다. 해당 금액은 <strong>법정 최고치(상한액)</strong>이므로, 계약 전 해당 부동산과 최종 수수료 협의를 타진해 보시는 것을 적극 권장합니다.</p>`;
   }
 
-  if (isVatGeneral) {
-    reportHTML += `<p>설정된 옵션에 따라 중개소가 <strong>일반과세자</strong>인 상황을 가정하여 10%의 부가가치세(<strong>${fmt(vat)}원</strong>)가 추가되었습니다. 최종 지불 예상 금액은 부가세를 포함한 <strong>${fmt(total)}원</strong>이며, 결제 후 현금영수증이나 세금계산서 발급을 반드시 요구하세요.</p>`;
+  if (addVat) {
+    reportHTML += `<p><strong>10% 별도 금액 추가</strong> 옵션에 따라 부가가치세 예상액(<strong>${fmt(vat)}원</strong>)을 더했습니다. 최종 지불 예상 금액은 <strong>${fmt(total)}원</strong>입니다. 실제 견적의 부가세 포함 여부와 발급 가능한 증빙은 중개사무소에 확인하세요.</p>`;
   } else {
-    reportHTML += `<p>중개소가 <strong>간이과세자</strong>인 상태를 가정하여 산정되었습니다. 간이과세자는 별도의 10% 부가세를 청구할 권리가 없으므로, 총 지불 금액은 상기한 부가세 미포함 <strong>${fmt(total)}원</strong>을 초과할 수 없습니다.</p>`;
+    reportHTML += `<p><strong>별도 금액 미포함</strong> 옵션에 따라 부가가치세를 추가하지 않은 <strong>${fmt(total)}원</strong>을 표시했습니다. 이 값은 부가세가 없다는 법적 판단이 아니며, 제시받은 견적의 포함 여부와 증빙을 반드시 확인하세요.</p>`;
   }
 
   reportHTML += `<p>⚠️ <strong>유용한 팁:</strong> 상가/토지(0.9%)이거나 고가 주택의 경우 중개수수료 부담이 매우 크기 때문에, 가계약금을 입금하기 전 미리 수수료율 인하 및 쇼부를 협의해 두는 것이 추후의 감정싸움과 법적 분쟁을 예방하는 <strong>가장 스마트한 방법</strong>입니다.</p>`;
@@ -491,15 +527,16 @@ function renderRateTable(currentAmount) {
   }
   
   if (propType === 1) {
-    const area = parseFloat(document.getElementById('area').value) || 0;
+    const area = Number(document.getElementById('area').value);
+    const meetsResidentialRequirements = document.getElementById('residentialRequirements').value === 'yes';
     container.innerHTML = `
       <p><b>오피스텔 중개보수 요율</b></p>
       <table class="rate-table">
         <tr><th>구분</th><th>전용 85㎡ 이하<br>(주거요건 충족)</th><th>전용 85㎡ 초과<br>또는 주거요건 미충족</th></tr>
-        <tr ${area <= 85 && tradeType === 0 ? 'class="current-row"' : ''}><td>매매·교환</td><td>0.5% 이내</td><td>0.9% 이내</td></tr>
-        <tr ${area <= 85 && tradeType !== 0 ? 'class="current-row"' : ''}><td>임대차 등</td><td>0.4% 이내</td><td>0.9% 이내</td></tr>
+        <tr ${tradeType === 0 ? 'class="current-row"' : ''}><td>매매·교환</td><td>0.5% 이내</td><td>0.9% 이내</td></tr>
+        <tr ${tradeType !== 0 ? 'class="current-row"' : ''}><td>임대차 등</td><td>0.4% 이내</td><td>0.9% 이내</td></tr>
       </table>
-      <p style="margin-top:8px;font-size:11px">* 주거요건: 전용입식 부엌, 전용수세식 화장실 및 목욕시설 구비</p>`;
+      <p style="margin-top:8px;font-size:11px">* 현재 입력: 전용 ${Number.isFinite(area) ? area + '㎡' : '미입력'}, 주거요건 ${meetsResidentialRequirements ? '충족' : '미충족 또는 미확인'}<br>* 주거요건: 전용입식 부엌, 전용수세식 화장실 및 목욕시설 구비</p>`;
     return;
   }
   
@@ -529,9 +566,15 @@ function renderRateTable(currentAmount) {
 
 function copyResult() {
   const { amount, deposit, monthly } = getConvertedAmount();
+  const inputError = getInputError({ amount, deposit, monthly });
+  if (inputError) {
+    showToast(inputError);
+    return;
+  }
   const { fee, rate, limitApplied, matchLabel } = calcFee(amount);
   const vatOpt = document.getElementById('vatOption').value;
-  const vat = (vatOpt === 'general') ? fee * 0.1 : 0;
+  const addVat = vatOpt === 'add';
+  const vat = addVat ? fee * 0.1 : 0;
   const total = fee + vat;
   const tradeNames = ['매매', '전세', '월세'];
   const propNames = ['주택', '오피스텔', '상가·토지'];
@@ -547,10 +590,14 @@ function copyResult() {
   } else {
     lines.push(`거래금액: ${fmt(amount)}원`);
   }
+  if (propType === 1) {
+    const meetsResidentialRequirements = document.getElementById('residentialRequirements').value === 'yes';
+    lines.push(`전용면적: ${document.getElementById('area').value}㎡ / 주거요건: ${meetsResidentialRequirements ? '충족' : '미충족 또는 미확인'}`);
+  }
   lines.push(`적용요율: ${(rate*100).toFixed(1)}% (${matchLabel})`);
   if (limitApplied) lines.push(`⚠️ 한도액 적용`);
   lines.push(`중개보수: ${fmt(fee)}원`);
-  if (vatOpt === 'general') {
+  if (addVat) {
     lines.push(`부가세(10%): ${fmt(vat)}원`);
     lines.push(`합계: ${fmt(total)}원`);
   }

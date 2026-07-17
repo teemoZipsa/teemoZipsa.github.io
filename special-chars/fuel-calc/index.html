@@ -322,6 +322,8 @@ function applyFuel({ preserveUserInput = false } = {}) {
 }
 
 function fmt(n) { return Math.round(n).toLocaleString('ko-KR'); }
+function fmtDistance(n) { return Number(n).toLocaleString('ko-KR', { maximumFractionDigits: 3 }); }
+function fmtLiters(n) { return Number(n).toLocaleString('ko-KR', { maximumFractionDigits: n < 1 ? 3 : 2 }); }
 
 function readFuelInputs() {
   const dist = Number(document.getElementById('distance').value);
@@ -361,7 +363,7 @@ function calc() {
     <div class="summary-card highlight">
       <div class="s-label">${roundTrip ? '왕복 ' : ''}총 유류비</div>
       <div class="s-value">${fmt(totalCost)}<span style="font-size:14px;font-weight:600"> 원</span></div>
-      <div class="s-sub">${roundTrip ? '왕복 ' : ''}${fmt(actualDist)}km 기준</div>
+      <div class="s-sub">${roundTrip ? '왕복 ' : ''}${fmtDistance(actualDist)}km 기준</div>
     </div>`;
 
   if (people > 1) {
@@ -386,7 +388,7 @@ function calc() {
   html += `
     <div class="summary-card">
       <div class="s-label">필요 연료</div>
-      <div class="s-value">${fuelNeeded.toFixed(1)}</div>
+      <div class="s-value">${fmtLiters(fuelNeeded)}</div>
       <div class="s-sub">리터</div>
     </div>`;
 
@@ -397,13 +399,13 @@ function calc() {
   let detail = `
     <div class="detail-row"><span class="detail-label">유종</span><span class="detail-value">${FUEL_NAMES[currentFuel]}</span></div>
     <div class="detail-row"><span class="detail-label">유가</span><span class="detail-value">${fmt(price)} 원/L</span></div>
-    <div class="detail-row"><span class="detail-label">${roundTrip ? '편도 거리' : '주행 거리'}</span><span class="detail-value">${fmt(dist)} km</span></div>`;
+    <div class="detail-row"><span class="detail-label">${roundTrip ? '편도 거리' : '주행 거리'}</span><span class="detail-value">${fmtDistance(dist)} km</span></div>`;
   if (roundTrip) {
-    detail += `<div class="detail-row"><span class="detail-label">왕복 거리</span><span class="detail-value">${fmt(actualDist)} km</span></div>`;
+    detail += `<div class="detail-row"><span class="detail-label">왕복 거리</span><span class="detail-value">${fmtDistance(actualDist)} km</span></div>`;
   }
   detail += `
     <div class="detail-row"><span class="detail-label">차량 연비</span><span class="detail-value">${document.getElementById('efficiency').value} km/L</span></div>
-    <div class="detail-row"><span class="detail-label">필요 연료량</span><span class="detail-value">${fuelNeeded.toFixed(1)} L</span></div>
+    <div class="detail-row"><span class="detail-label">필요 연료량</span><span class="detail-value">${fmtLiters(fuelNeeded)} L</span></div>
     <div class="detail-row"><span class="detail-label">총 유류비</span><span class="detail-value" style="color:var(--accent);font-size:15px">${fmt(totalCost)} 원</span></div>`;
   if (people > 1) {
     detail += `<div class="detail-row"><span class="detail-label">1인당 (÷${people})</span><span class="detail-value" style="color:var(--accent);font-size:15px">${fmt(perPerson)} 원</span></div>`;
@@ -419,7 +421,7 @@ function calc() {
   
   let msg = `<h3>💡 주행 코스 유류비 분석 리포트</h3>`;
   
-  msg += `<p><strong>${FUEL_NAMES[currentFuel]}</strong>, 연비 <strong>${eff}km/L</strong>, 총 주행 거리 <strong>${fmt(actualDist)}km</strong>를 기준으로 필요한 연료를 <strong>${fuelNeeded.toFixed(1)}L</strong>로 계산했습니다.</p>`;
+  msg += `<p><strong>${FUEL_NAMES[currentFuel]}</strong>, 연비 <strong>${eff}km/L</strong>, 총 주행 거리 <strong>${fmtDistance(actualDist)}km</strong>를 기준으로 필요한 연료를 <strong>${fmtLiters(fuelNeeded)}L</strong>로 계산했습니다.</p>`;
   
   msg += `<p>입력 유가 <strong>${fmt(price)}원/L</strong>를 반영한 예상 유류비는 <strong>${fmt(totalCost)}원</strong>, 1km당 약 <strong>${fmt(costPerKm)}원</strong>입니다. 실제 소비량은 주행 조건에 따라 달라질 수 있습니다.</p>`;
   
@@ -446,9 +448,9 @@ function copyResult() {
     `⛽ 유류비 계산 결과`,
     `━━━━━━━━━━━━━━━`,
     `유종: ${FUEL_NAMES[currentFuel]} (${fmt(price)}원/L)`,
-    `${roundTrip ? '왕복' : '편도'} 거리: ${fmt(actualDist)}km`,
+    `${roundTrip ? '왕복' : '편도'} 거리: ${fmtDistance(actualDist)}km`,
     `차량 연비: ${eff}km/L`,
-    `필요 연료: ${fuelNeeded.toFixed(1)}L`,
+    `필요 연료: ${fmtLiters(fuelNeeded)}L`,
     `총 유류비: ${fmt(totalCost)}원`,
   ];
   if (people > 1) {

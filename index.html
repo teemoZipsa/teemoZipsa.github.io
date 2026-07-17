@@ -222,8 +222,10 @@
         .view-toggle button.active::before { display: none; }
         .view-toggle span { position: relative; z-index: 1; pointer-events: none; }
 
-        .tool-card::after { content: ''; position: absolute; inset: -15px; z-index: -1; pointer-events: auto; }
-        .tool-card>*{position:relative;z-index:1}
+        .tool-card { min-width: 0; width: 100%; max-width: 100%; padding-right: 44px; }
+        .tool-card::after { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+        .tool-card > :not(.fav-btn) { position: relative; z-index: 1; }
+        .tool-card > .fav-btn { position: absolute; z-index: 2; }
 
         /* 콘텐츠를 블롭 위에 */
         .update-banner,.hero,.today-widget,.search-wrap,.section-label,.view-controls,.tools-grid,.fav-drop-zone,.category-group,.tip-section,footer,.no-results{position:relative;z-index:1}

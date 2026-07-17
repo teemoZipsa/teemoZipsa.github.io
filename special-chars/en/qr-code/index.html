@@ -43,6 +43,12 @@
   .size-row label{font-size:11px;color:var(--calc-expr-text);font-weight:600;white-space:nowrap}
   .size-row select{background:var(--bg-bar);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:6px 10px;font-size:12px;font-family:inherit;outline:none}
   .setting-note{font-size:11px;color:var(--text-placeholder);line-height:1.5;margin-top:-8px}
+  .storage-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:-6px}
+  .storage-row .setting-note{margin:0;flex:1}
+  .storage-clear{flex:none;padding:6px 9px;border:1px solid var(--border);border-radius:6px;background:var(--bg-bar);color:var(--text-info);font:inherit;font-size:11px;cursor:pointer}
+  .storage-clear:hover{border-color:var(--accent)}
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
   .report-box{margin:2px 20px 14px;padding:16px;background:rgba(83,52,131,.05);border-left:4px solid var(--accent);border-radius:8px;font-size:13px;line-height:1.6;color:var(--text-primary);display:none}
   .report-box.show{display:block;animation:fadeIn .4s}
   @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -86,7 +92,11 @@
     <a href="/special-chars/qr-code/" class="back-btn">🌐 한국어</a>
   </div>
   <div class="body">
-    <textarea id="qrInput" maxlength="5000" placeholder="Enter URL, text, contact info, etc...&#10;e.g. https://teemozipsa.github.io/en/" oninput="scheduleGenerate()" aria-label="Content to encode as a QR code"></textarea>
+    <textarea id="qrInput" maxlength="5000" placeholder="Enter URL, text, contact info, etc...&#10;e.g. https://teemozipsa.github.io/en/" oninput="scheduleGenerate()" aria-label="Content to encode as a QR code" aria-describedby="storageNote"></textarea>
+    <div class="storage-row">
+      <p class="setting-note" id="storageNote">Your input is automatically saved only in this browser so it can be restored on your next visit.</p>
+      <button type="button" class="storage-clear" onclick="clearStoredInput()">Clear saved input</button>
+    </div>
     <div class="size-row">
       <label for="qrSize">Module Size:</label>
       <select id="qrSize" onchange="generate()">
@@ -180,6 +190,7 @@
   </section>
     <div class="footer"><span>100% Local Generation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
 </div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 let currentDataUrl = '';
 const QUIET_ZONE_MODULES = 4;
@@ -211,6 +222,16 @@ function invalidateOutput(message = '') {
     box.style.display = 'block';
   }
   document.getElementById('reportBox').classList.remove('show');
+}
+
+function clearStoredInput() {
+  clearTimeout(generateTimer);
+  generateTimer = 0;
+  document.getElementById('qrInput').value = '';
+  try { localStorage.removeItem('qrCode_text'); } catch(e) {}
+  document.getElementById('qrBox').style.display = 'none';
+  invalidateOutput();
+  showToast('Input and saved browser data cleared.');
 }
 
 function generate() {
@@ -304,8 +325,15 @@ async function copyQR() {
     const res = await fetch(currentDataUrl);
     const blob = await res.blob();
     await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
-    alert('QR code copied to clipboard!');
-  } catch(e) { alert('Copy failed: Browser not supported.'); }
+    showToast('QR code copied to clipboard!');
+  } catch(e) { showToast('Copy failed: Browser not supported.'); }
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>t.classList.remove('show'),1500);
 }
 </script>
 <button class="scroll-top-btn" aria-label="Top">↑</button>

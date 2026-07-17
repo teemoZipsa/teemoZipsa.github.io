@@ -443,7 +443,7 @@ function clearSlots() {
 }
 
 // === 랜덤 조합 ===
-function randomCombo() {
+function randomCombo(attemptsRemaining = 8) {
   if (!emojiData || !emojiData.data) return;
   const keys = Object.keys(emojiData.data);
   let validComboFound = false;
@@ -494,7 +494,12 @@ function randomCombo() {
             $btnCopy.disabled = false;
           };
           img.onerror = () => {
-             randomCombo();
+            if (attemptsRemaining > 1) {
+              setTimeout(() => randomCombo(attemptsRemaining - 1), 0);
+            } else {
+              showNoResult();
+              showToast('이미지 서버에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.');
+            }
           };
           img.src = url;
           
@@ -521,7 +526,7 @@ async function saveImage() {
     a.href = URL.createObjectURL(blob);
     a.download = 'emoji-mix-' + Date.now() + '.png';
     a.click();
-    URL.revokeObjectURL(a.href);
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     showToast('이미지 저장 완료!');
   } catch(e) {
     showToast('저장 실패 — 이미지를 길게 눌러 저장해보세요');

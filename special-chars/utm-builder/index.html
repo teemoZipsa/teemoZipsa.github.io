@@ -272,7 +272,9 @@ function generateURL() {
 
     let url;
     try {
-        url = new URL(base.startsWith('http') ? base : 'https://' + base);
+        const normalizedBase = /^[a-z][a-z\d+.-]*:\/\//i.test(base) ? base : 'https://' + base;
+        url = new URL(normalizedBase);
+        if (!/^https?:$/.test(url.protocol)) throw new Error('Unsupported URL protocol');
     } catch {
         document.getElementById('urlInput').classList.add('error');
         placeholder.textContent = '올바른 URL 형식이 아닙니다.';
@@ -456,10 +458,11 @@ function loadHistory(idx) {
     if (!history[idx]) return;
     try {
         const url = new URL(history[idx].url);
-        document.getElementById('urlInput').value = url.origin + url.pathname;
         ['source', 'medium', 'campaign', 'term', 'content'].forEach(key => {
             document.getElementById('utm_' + key).value = url.searchParams.get('utm_' + key) || '';
+            url.searchParams.delete('utm_' + key);
         });
+        document.getElementById('urlInput').value = url.toString();
         document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
         activePreset = null;
         generateURL();

@@ -115,7 +115,7 @@
         <div class="field">
           <label>주휴수당</label>
           <select id="weeklyHol" onchange="calc()">
-            <option value="yes" selected>포함</option>
+            <option value="yes" selected>포함 (주 15시간 이상 시)</option>
             <option value="no">미포함</option>
           </select>
         </div>
@@ -322,8 +322,10 @@ function calc() {
 
   // 주당 기본 시간
   const baseWeeklyHours = hpd * dpw;
-  // 주휴시간
-  const weeklyHolHours = inclHol ? hpd : 0;
+  // 주휴시간: 사용자가 포함을 선택해도 주 15시간 미만이면 적용하지 않는다.
+  const weeklyHolEligible = baseWeeklyHours >= 15;
+  const weeklyHolApplied = inclHol && weeklyHolEligible;
+  const weeklyHolHours = weeklyHolApplied ? hpd : 0;
   // 연장/야간 주당 시간 (근무일 기준)
   const otWeekly = ot * dpw;
   const ntWeekly = nt * dpw;
@@ -370,7 +372,9 @@ function calc() {
   // 리포트 바인딩 기본 설정
   document.getElementById('r-hpd').textContent = hpd;
   document.getElementById('r-dpw').textContent = dpw;
-  document.getElementById('r-hol').textContent = inclHol ? "포함" : "미포함";
+  document.getElementById('r-hol').textContent = weeklyHolApplied
+    ? "포함"
+    : (inclHol && !weeklyHolEligible ? "대상 아님 (주 15시간 미만)" : "미포함");
   
   if (ot > 0 || nt > 0) {
     document.getElementById('r-ot-text').style.display = 'block';
@@ -407,12 +411,14 @@ function calc() {
   }
 
   const rTip = document.getElementById('r-tip');
-  if (taxType === 'freelance') {
+  if (inclHol && !weeklyHolEligible) {
+    rTip.textContent = "주 소정근로시간이 15시간 미만이므로 주휴수당 포함을 선택해도 계산에는 반영되지 않습니다.";
+  } else if (taxType === 'freelance') {
     rTip.textContent = "프리랜서(3.3%) 계약 시 근로기준법상 퇴직금, 연차수당이 온전히 보장되지 않을 수 있으니 업무에서 실질적인 '근로자성'을 확인하는 것이 중요합니다.";
   } else if (ot > 0 || nt > 0) {
     rTip.textContent = "연장, 야간 근로 수당이 추가되었습니다. 근로자 수 5인 이상 사업장이라면 주 40시간 초과, 혹은 밤 10시 이후 근무 시 원래 통상임금의 50% 이상을 더 가산받아야 합니다.";
   } else {
-    rTip.textContent = "근로계약서 작성 전 월급이 '세전' 기준인지 '세후' 기준인지 명확히 짚고 가세요. 또한 주에 정해진 출근일을 100% 개근했다면 주휴수당은 자동으로 지급받는 당연한 권리입니다.";
+    rTip.textContent = "근로계약서 작성 전 월급이 '세전' 기준인지 '세후' 기준인지 명확히 짚고 가세요. 주휴수당은 주 소정근로시간이 15시간 이상이고 정해진 근무일을 충족하는 등 법정 요건을 확인해야 합니다.";
   }
 
   const rBox = document.getElementById('reportBox');

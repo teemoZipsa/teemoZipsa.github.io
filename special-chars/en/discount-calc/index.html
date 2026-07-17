@@ -137,7 +137,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
           <span class="result-value" id="resDiscount">0 원</span>
         </div>
         <div class="result-item">
-          <span class="result-label">After Discount</span>
+          <span class="result-label" id="afterDiscountLabel">After Discount</span>
           <span class="result-value" id="resAfterDiscount">0 원</span>
         </div>
         <div class="result-item" id="vatRow" style="display:none">
@@ -172,7 +172,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       <details class="guide">
         <summary>3. What is the "Input price is pre-tax" toggle used for?</summary>
         <div class="guide-content">
-          <p>If you have a price that <em>already includes</em> tax, but you need to know the base price and the tax amount separately (reverse calculation), turn this toggle <strong>off</strong>. The calculator will extract the tax value out of the given total for you.</p>
+          <p>If you have a price that <em>already includes</em> tax, but you need to know the base price and the tax amount separately (reverse calculation), turn this toggle <strong>off</strong>. The calculator extracts both the pre-tax price and the pre-tax portion of the discount, so a 10% discount on a tax-inclusive $11,000 total correctly produces a $9,900 final total.</p>
         </div>
       </details>
   
@@ -194,21 +194,54 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 <button class="scroll-top-btn" aria-label="Scroll to top">↑</button>
 
 <script>
+const MAX_PRICE = 1_000_000_000_000_000;
+
 function parseNum(s) {
-  return parseFloat(s.replace(/,/g, '')) || 0;
+  const normalized = String(s).replace(/,/g, '').trim();
+  if (normalized === '') return 0;
+  if (!/^\d+(?:\.\d+)?$/.test(normalized)) return NaN;
+  return Number(normalized);
 }
 function fmt(n) {
-  return Math.round(n).toLocaleString('en-US');
+  return Number.isFinite(n) ? Math.round(n).toLocaleString('en-US') : '—';
 }
 
 let _syncLock = false;
 
+function clearResults() {
+  document.getElementById('resDiscount').textContent = '—';
+  document.getElementById('resAfterDiscount').textContent = '—';
+  document.getElementById('resVat').textContent = '—';
+  document.getElementById('resFinal').textContent = '—';
+  document.getElementById('vatRow').style.display = 'none';
+}
+
+function setValidity(input, valid, message) {
+  input.setCustomValidity(valid ? '' : message);
+  input.setAttribute('aria-invalid', String(!valid));
+}
+
 function calc() {
   if (_syncLock) return;
-  const price = parseNum(document.getElementById('price').value);
-  const rate = parseFloat(document.getElementById('discountRate').value) || 0;
+  const priceInput = document.getElementById('price');
+  const rateInput = document.getElementById('discountRate');
+  const price = parseNum(priceInput.value);
+  const rate = parseNum(rateInput.value);
   const vat = document.getElementById('vatToggle').checked;
   const preTax = document.getElementById('vatExToggle').checked;
+
+  const validPrice = Number.isFinite(price) && price >= 0 && price <= MAX_PRICE;
+  const validRate = Number.isFinite(rate) && rate >= 0 && rate <= 100;
+  setValidity(priceInput, validPrice, 'Enter a price from 0 to 1 quadrillion.');
+  setValidity(rateInput, validRate, 'Enter a discount rate from 0% to 100%.');
+  setValidity(document.getElementById('discountAmt'), true, '');
+  if (!validPrice || !validRate) {
+    _syncLock = true;
+    document.getElementById('discountAmt').value = '';
+    _syncLock = false;
+    clearResults();
+    return;
+  }
 
   const discountAmt = price * rate / 100;
   _syncLock = true;
@@ -220,10 +253,25 @@ function calc() {
 
 function calcByAmt() {
   if (_syncLock) return;
-  const price = parseNum(document.getElementById('price').value);
-  const discountAmt = parseNum(document.getElementById('discountAmt').value);
+  const priceInput = document.getElementById('price');
+  const amountInput = document.getElementById('discountAmt');
+  const price = parseNum(priceInput.value);
+  const discountAmt = parseNum(amountInput.value);
   const vat = document.getElementById('vatToggle').checked;
   const preTax = document.getElementById('vatExToggle').checked;
+
+  const validPrice = Number.isFinite(price) && price >= 0 && price <= MAX_PRICE;
+  const validAmount = Number.isFinite(discountAmt) && discountAmt >= 0 && discountAmt <= price;
+  setValidity(priceInput, validPrice, 'Enter a price from 0 to 1 quadrillion.');
+  setValidity(amountInput, validAmount, 'The discount amount must be between 0 and the original price.');
+  setValidity(document.getElementById('discountRate'), true, '');
+  if (!validPrice || !validAmount) {
+    _syncLock = true;
+    document.getElementById('discountRate').value = '';
+    _syncLock = false;
+    clearResults();
+    return;
+  }
 
   const rate = price > 0 ? (discountAmt / price * 100) : 0;
   _syncLock = true;
@@ -234,17 +282,25 @@ function calcByAmt() {
 }
 
 function update(price, discountAmt, vat, preTax) {
+  if (!Number.isFinite(price) || price < 0 || price > MAX_PRICE || !Number.isFinite(discountAmt) || discountAmt < 0 || discountAmt > price) {
+    clearResults();
+    return;
+  }
   let base = price;
-  // 세후 금액 입력인 경우 세전으로 역산
+  let discountBeforeTax = discountAmt;
+  // When the entered price already includes tax, the entered discount is in
+  // the same tax-inclusive unit and must be converted to its pre-tax value.
   if (vat && !preTax) {
     base = price / 1.1;
+    discountBeforeTax = discountAmt / 1.1;
   }
 
-  const afterDiscount = base - discountAmt;
+  const afterDiscount = base - discountBeforeTax;
   const vatAmt = vat ? afterDiscount * 0.1 : 0;
   const finalAmt = afterDiscount + vatAmt;
 
   document.getElementById('resDiscount').textContent = '$' + fmt(discountAmt);
+  document.getElementById('afterDiscountLabel').textContent = vat ? 'After Discount (Pre-tax)' : 'After Discount';
   document.getElementById('resAfterDiscount').textContent = '$' + fmt(afterDiscount);
   document.getElementById('resVat').textContent = '$' + fmt(vatAmt);
   document.getElementById('resFinal').textContent = '$' + fmt(Math.max(0, finalAmt));

@@ -280,6 +280,13 @@ function clampInput(el, max) {
   if (v < 0) v = 0;
   if (v > max) v = max;
   el.value = v;
+  syncTimerFromInputs();
+}
+
+function syncTimerFromInputs() {
+  if (mode !== 'timer' || running) return;
+  timerRemaining = getTimerMs();
+  updateDisplay();
 }
 
 function setQuick(min) {
@@ -288,6 +295,7 @@ function setQuick(min) {
   document.getElementById('tHour').value = h;
   document.getElementById('tMin').value = m;
   document.getElementById('tSec').value = 0;
+  syncTimerFromInputs();
 }
 
 function getTimerMs() {

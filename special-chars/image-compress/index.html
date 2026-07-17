@@ -154,16 +154,15 @@
     <details class="guide" open>
       <summary>이미지 압축은 어떤 과정으로 진행되나요?</summary>
       <div class="guide-content">
-        <p>사용자가 선택한 사진을 최신 HTML5 Canvas API를 이용하여 브라우저 내부 메모리에서 실시간으로 재구성합니다. <b>웹 기반 표준 해상도 최적화 모듈과 트리밍 로직에 따라 물리적인 픽셀 밀도를 지능적으로 낮추면서</b>, 동시에 JPEG 렌더링 파일의 압축 품질 레벨을 집중 조작해 모니터상으로 식별하기 힘든 은닉 영역의 디지털 손실 데이터를 덜어냅니다.</p>
-        <p>기존 원본 사진 안에 포함되어 있던 헤비한 EXIF 데이터(위치 정보, 카메라 모델 등)나 불필요한 메타 정보 역시 초기화 시켜 용량이 매우 큰 폭으로 다이어트되는 구조입니다.</p>
+        <p>선택한 사진을 HTML Canvas로 다시 그린 뒤 지정한 가로 크기와 품질의 JPEG로 인코딩합니다. JPEG는 손실 압축 형식이며, 출력 파일에는 원본의 EXIF 등 메타데이터가 포함되지 않습니다.</p>
+        <p>PNG와 WebP 입력도 JPEG로 출력됩니다. 투명 영역은 검게 변하지 않도록 흰색 배경으로 합성되므로, 투명도를 유지해야 한다면 이 도구 대신 PNG 또는 WebP 변환 도구를 사용하세요.</p>
       </div>
     </details>
 
     <details class="guide">
       <summary>사생활 및 개인정보가 담긴 이미지도 안전한가요?</summary>
       <div class="guide-content">
-        <p>보안은 100% 보장됩니다. 본 도구는 타사의 압축 서비스들처럼 <b>이미지 원본을 외부 회사의 데이터베이스나 클라우드 서버망으로 업로드하여 처리한 뒤 다시 다운로드받는 핑퐁 방식이 아닙니다.</b></p>
-        <p>오작동이 적은 오프라인 웹앱(PWA 형식)처럼 즉각적으로 작동하여, 사용자 접속 디바이스(스마트폰 기기 본체 통신망, PC 내부의 RAM 공간 등) 단 한 곳에서만 파일 포맷 연산 컨버팅 작업이 수행됩니다. 따라서 민감한 주민등록증, 여권 사본, 카드 결제 내역서 영수증, 기업 기밀 설계도 초안 사진 등 외부로 절대 유출되어서는 안 되는 이미지의 화질 압축을 마음 놓고 진행하셔도 무방하며 완벽 프라이빗 환경을 약속합니다.</p>
+        <p>애플리케이션은 선택한 이미지를 압축 서버로 업로드하지 않고 현재 브라우저에서 처리합니다. 다만 브라우저 확장 프로그램이나 기기 자체의 보안까지 보장할 수는 없으므로 매우 민감한 파일은 신뢰할 수 있는 환경에서 처리하세요.</p>
       </div>
     </details>
 
@@ -205,24 +204,46 @@ dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
 dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('dragover'); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
 
 function handleFile(file) {
-  if (!file || !file.type.startsWith('image/')) return;
+  const supportedTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
+  if (!file || !supportedTypes.has(file.type.toLowerCase())) {
+    const savedEl = document.getElementById('saved');
+    savedEl.textContent = '⚠️ JPG, PNG 또는 WebP 이미지 파일을 선택해 주세요.';
+    savedEl.style.color = 'var(--text-error, #f87171)';
+    return;
+  }
   revokePreviewUrls();
   origFile = file;
   compressedBlob = null;
   origPreviewUrl = URL.createObjectURL(file);
   document.getElementById('origImg').src = origPreviewUrl;
   document.getElementById('origSize').textContent = fmtBytes(file.size);
-  origImg.onload = () => {
-    document.getElementById('origDim').textContent = origImg.width + ' × ' + origImg.height;
-    document.getElementById('maxWidth').value = Math.min(origImg.width, 1920);
-    compress();
-  };
-  origImg.src = origPreviewUrl;
   dz.style.display = 'none';
   document.getElementById('controls').style.display = 'flex';
   document.getElementById('preview').style.display = 'flex';
   document.getElementById('dlBtn').style.display = 'block';
   document.getElementById('resetBtn').style.display = 'block';
+  origImg.onload = () => {
+    origImg.onerror = null;
+    document.getElementById('origDim').textContent = origImg.width + ' × ' + origImg.height;
+    document.getElementById('maxWidth').value = Math.min(origImg.width, 1920);
+    compress();
+  };
+  origImg.onerror = () => {
+    origImg.onload = null;
+    origFile = null;
+    compressedBlob = null;
+    revokePreviewUrls();
+    dz.style.display = '';
+    document.getElementById('controls').style.display = 'none';
+    document.getElementById('preview').style.display = 'none';
+    document.getElementById('dlBtn').style.display = 'none';
+    document.getElementById('resetBtn').style.display = 'none';
+    document.getElementById('fileInput').value = '';
+    const savedEl = document.getElementById('saved');
+    savedEl.textContent = '⚠️ 이미지가 손상되었거나 브라우저에서 읽을 수 없습니다.';
+    savedEl.style.color = 'var(--text-error, #f87171)';
+  };
+  origImg.src = origPreviewUrl;
 }
 
 function updateQualLabel() {
@@ -239,9 +260,19 @@ function compress() {
   const canvas = document.createElement('canvas');
   canvas.width = w; canvas.height = h;
   const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, w, h);
   ctx.drawImage(origImg, 0, 0, w, h);
 
   canvas.toBlob(blob => {
+    if (!blob) {
+      const savedEl = document.getElementById('saved');
+      savedEl.textContent = '⚠️ 이 브라우저에서 JPEG 이미지를 만들 수 없습니다.';
+      savedEl.style.color = 'var(--text-error, #f87171)';
+      compressedBlob = null;
+      document.getElementById('dlBtn').style.display = 'none';
+      return;
+    }
     compressedBlob = blob;
     if (compPreviewUrl) URL.revokeObjectURL(compPreviewUrl);
     compPreviewUrl = URL.createObjectURL(blob);
@@ -276,37 +307,43 @@ function updateReport(origFile, compBlob, oW, oH, nW, nH, savedPercent) {
 
   let formatFeedback = '';
   if (origFile.type === 'image/png') {
-    formatFeedback = '무손실계 PNG 해상도 원본을 손실계 초고율 JPG 포맷으로 컨버팅 압축 처리하였습니다. 투명도(Alpha channel)가 필요한 누끼 개체가 아니라면 가장 효율적인 해상도 대비 용량 감축 최적화 방식입니다.';
+    formatFeedback = 'PNG 원본을 손실 압축 JPEG로 변환했습니다. JPEG는 투명도를 지원하지 않으므로 투명 픽셀은 흰색 배경으로 합성됩니다.';
   } else if (origFile.type === 'image/webp') {
-    formatFeedback = '웹용 초경량 WebP 포맷 원본 데이터를 로드하여 높은 호환성을 지난 고효율 JPG 렌더링 엔진으로 재추출하였습니다.';
+    formatFeedback = 'WebP 원본을 JPEG로 다시 인코딩했습니다. 원본의 투명 영역이 있다면 흰색 배경으로 합성됩니다.';
   } else {
-    formatFeedback = '웹 표준 규격인 JPG(JPEG) 포맷 파일을 자체 엔진으로 재압축하여 가성비가 높은 트래픽 최적화 용량 아웃풋으로 생성하였습니다.';
+    formatFeedback = 'JPEG 원본을 선택한 품질 값으로 다시 인코딩했습니다.';
   }
   
   let resFeedback = '';
   if (oW === nW && oH === nH) {
-    resFeedback = '전체 이미지의 물리적 캔버스 해상도를 100% 원본 스케일 그대로 유지하면서 내부 메타 데이터 포인트 구간과 픽셀 뎁스 컬러 데이터 매핑 품질만 효율적으로 집중 다이어트 시연시켰습니다.';
+    resFeedback = `픽셀 크기 ${oW}x${oH}px를 유지하고 JPEG 품질만 조정했습니다.`;
   } else {
-    resFeedback = `입력하신 사용자의 커스텀 최대 가로 픽셀 제한 셋업에 의해 원본 크기(${oW}x${oH} px)에서 스몰 사이즈의 최종 썸네일 해상도(${nW}x${nH} px)로 리사이징 단면 트리밍 되었습니다. 연산해야 할 브라우저측 픽셀 그리드 점의 총 갯수가 대폭 감소하여 높은 용량 감축률(Saving space)을 획득하게 됩니다.`;
+    resFeedback = `설정한 최대 가로 크기에 따라 ${oW}x${oH}px에서 ${nW}x${nH}px로 비율을 유지해 축소했습니다.`;
   }
   
   let resultMsg = '';
   if (savedPercent > 0) {
-    resultMsg = `디지털 분석 알고리즘 결과 총 <span class="highlight">${savedPercent}%</span> 의 불필요한 메타 트레이스 데이터와 여분 헤더 영역 용량이 성공적으로 트림 제거되었습니다.`;
+    resultMsg = `출력 파일 크기가 원본보다 <span class="highlight">${savedPercent}%</span> 감소했습니다.`;
   } else {
     resultMsg = `<span style="color:var(--text-error, #f87171)">[경고 문구]: 압축 진행 후 추출물 인코딩 용량이 전혀 감소하지 않았습니다.</span> 원석 소스가 이미 극한으로 최적화 및 크롭된 상태의 파일인 상태이거나, 현재 슬라이더의 [세부 품질 수준 레벨] 값이 한계선 너머로 너무 보수적(고화질/고용량)으로 설정되어 리소스의 역퍼포먼스가 발생했습니다.`;
   }
 
   container.innerHTML = `
     <h3>📊 실시간 이미지 프레이밍 최적화 분석 리포트</h3>
-    <p><b>처리 대상 객체명:</b> ${origFile.name}</p>
+    <p><b>처리 대상 객체명:</b> ${escapeHtml(origFile.name)}</p>
     <p><b>포맷 최적화:</b> ${formatFeedback}</p>
     <p><b>해상도 진단:</b> ${resFeedback}</p>
     <p><b>최종 스코어(ROI):</b> ${resultMsg}</p>
     <div style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);">
-      <p style="margin-bottom:0; color:var(--text-info);">💡 <b>업로드 운영 꿀팁:</b> 국내 굴지의 거대 포털사의 메인 블로그나 대형 메이저 스마트스토어의 상품 상세페이지 등록을 권장하는 단일 이미지당 최대 용량 쾌적 한계치는 보통 페이지 썸네일 한 장 전체를 합쳐 1MB 이하입니다. 현재 결과물이 해당 기준을 무리 없이 충족한다면 향후 소비자의 유저 모바일에서 페이지 체류율 증대(이탈률 저하, 빠른 로딩 체감)와 강력한 긍정적 구글 SEO 크롤링 가산점 획득이 보장됩니다.</p>
+      <p style="margin-bottom:0; color:var(--text-info);">💡 <b>확인 팁:</b> 파일 크기뿐 아니라 글자와 피사체의 가장자리 품질도 확대해서 확인하세요. 적절한 용량은 업로드할 서비스와 화면 표시 크기에 따라 달라집니다.</p>
     </div>
   `;
+}
+
+function escapeHtml(value) {
+  const node = document.createElement('div');
+  node.textContent = String(value);
+  return node.innerHTML;
 }
 
 function download() {

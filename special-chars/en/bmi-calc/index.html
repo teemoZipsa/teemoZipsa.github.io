@@ -187,14 +187,28 @@ const RANGES = [
   { max: 30.0, name: 'Overweight', emoji: '🟡', color: '#facc15', range: 'over', tip: 'Consider a balanced diet and regular exercise' },
   { max: 35.0, name: 'Obesity Class I', emoji: '🟠', color: '#f97316', range: 'obese1', tip: 'Consider weight management strategies' },
   { max: 40.0, name: 'Obesity Class II', emoji: '🔴', color: '#ef4444', range: 'obese2', tip: 'Consulting a healthcare provider is recommended' },
-  { max: 999.0, name: 'Obesity Class III', emoji: '🔴', color: '#dc2626', range: 'obese3', tip: 'Consulting a healthcare provider is highly recommended' },
+  { max: Infinity, name: 'Obesity Class III', emoji: '🔴', color: '#dc2626', range: 'obese3', tip: 'Consulting a healthcare provider is highly recommended' },
 ];
 
-function calc() {
-  const h = parseFloat(document.getElementById('height').value) / 100; // m
-  const w = parseFloat(document.getElementById('weight').value);
+function clearResults() {
+  document.getElementById('emoji').textContent = '⏳';
+  document.getElementById('bmiValue').textContent = '-';
+  document.getElementById('bmiLabel').textContent = 'Enter values';
+  document.getElementById('gaugeMarker').style.left = '0%';
+  document.getElementById('infoGrid').innerHTML = '';
+  document.getElementById('reportBox').style.display = 'none';
+  document.querySelectorAll('.bmi-table tbody tr').forEach(tr => tr.classList.remove('current'));
+}
 
-  if (!h || !w || h <= 0 || w <= 0) return;
+function calc() {
+  const hCm = Number(document.getElementById('height').value);
+  const w = Number(document.getElementById('weight').value);
+  const h = hCm / 100; // m
+
+  if (!Number.isFinite(hCm) || hCm < 50 || hCm > 250 || !Number.isFinite(w) || w < 10 || w > 300) {
+    clearResults();
+    return;
+  }
 
   const bmi = w / (h * h);
   const range = RANGES.find(r => bmi < r.max);

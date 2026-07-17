@@ -54,6 +54,7 @@
   .btn:hover{opacity:.85}
 
   .char-count{font-size:10px;color:var(--text-placeholder);text-align:right;margin-top:4px}
+  .storage-note{font-size:11px;color:var(--text-muted);line-height:1.5}
 
   .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text)}
   .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
@@ -88,7 +89,7 @@
 <body>
 <div class="app">
   <div class="header">
-    <a href="https://teemozipsa.github.io/" class="back-btn">← All Tools</a>
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
     <h1>🤖 AI Prompt Generator</h1>
     <a href="/special-chars/prompt-gen/" class="back-btn">🌐 한국어</a>
   </div>
@@ -109,32 +110,32 @@
       <div class="section-title">📝 Prompt Builder</div>
 
       <div class="field">
-        <label>🎭 Role <span class="tip">— Expert role for the AI</span></label>
+        <label for="role">🎭 Role <span class="tip">— Expert role for the AI</span></label>
         <input type="text" id="role" placeholder="e.g. Senior marketing strategist" oninput="build()">
       </div>
 
       <div class="field">
-        <label>🎯 Task <span class="tip">— What you want the AI to do</span></label>
+        <label for="task">🎯 Task <span class="tip">— What you want the AI to do</span></label>
         <textarea id="task" placeholder="e.g. Write 10 Instagram Reels captions for a product launch" oninput="build()"></textarea>
       </div>
 
       <div class="field">
-        <label>📌 Context <span class="tip">— Background info, audience, situation (optional)</span></label>
+        <label for="context">📌 Context <span class="tip">— Background info, audience, situation (optional)</span></label>
         <textarea id="context" placeholder="e.g. Target audience is women aged 20-30, product is a vegan cosmetics brand" oninput="build()"></textarea>
       </div>
 
       <div class="field">
-        <label>📐 Format <span class="tip">— Desired output format (optional)</span></label>
+        <label for="format">📐 Format <span class="tip">— Desired output format (optional)</span></label>
         <input type="text" id="format" placeholder="e.g. Numbered list, each item 2 lines or less" oninput="build()">
       </div>
 
       <div class="field">
-        <label>⚠️ Constraints <span class="tip">— Rules, limitations, do-nots (optional)</span></label>
+        <label for="constraints">⚠️ Constraints <span class="tip">— Rules, limitations, do-nots (optional)</span></label>
         <input type="text" id="constraints" placeholder="e.g. Include emojis, each copy under 50 words" oninput="build()">
       </div>
 
       <div class="field">
-        <label>🗣️ Tone <span class="tip">— Writing style (optional)</span></label>
+        <label for="tone">🗣️ Tone <span class="tip">— Writing style (optional)</span></label>
         <select id="tone" onchange="build()">
           <option value="">Not specified</option>
           <option value="Friendly & Casual">Friendly & Casual</option>
@@ -147,12 +148,14 @@
       </div>
     </div>
 
-    <div class="result-box" id="resultBox"></div>
+    <div class="result-box" id="resultBox" role="status" aria-live="polite"></div>
     <div class="char-count" id="charCount"></div>
+    <p class="storage-note" id="storageNote">Your draft fields are automatically saved only in this browser. The clear button removes both the visible input and saved data.</p>
+    <div id="storageStatus" class="storage-note" role="status" aria-live="polite"></div>
 
     <div class="btn-row">
       <button class="btn btn-primary" onclick="copyPrompt()">📋 Copy Prompt</button>
-      <button class="btn btn-secondary" onclick="clearAll()">🗑️ Reset</button>
+      <button class="btn btn-secondary" onclick="clearAll()">🗑️ Clear input & saved data</button>
     </div>
   </div>
   <section class="guide-section">
@@ -179,14 +182,14 @@
     <details class="guide">
       <summary>3. How do I use the preset templates?</summary>
       <div class="guide-content">
-        <p>Presets provide optimized defaults for common tasks (writing, coding, translation, summary, brainstorming). Select a preset, fill in the blanks, and you're ready to go. You can also freely modify each field. For example, select "Writing" and just enter a topic to instantly generate a blog writing prompt.</p>
+        <p>Presets provide starting points for common tasks such as writing, coding, translation, summarization, and brainstorming. Select one, fill in the details, then adapt the fields to your goal and AI service.</p>
       </div>
     </details>
 
     <details class="guide">
       <summary>4. Are prompts used differently in ChatGPT vs Claude?</summary>
       <div class="guide-content">
-        <p>The basic prompt structure works the same for both. However, ChatGPT works best with system messages for roles, while Claude performs better with XML tags (&lt;role&gt;, &lt;task&gt;). Prompts generated by this tool work well with both services.</p>
+        <p>The role, task, and context structure can be useful across AI services, but supported features and results vary by model, version, and settings. Verify important output and adapt the prompt to the service-specific guidance when needed.</p>
       </div>
     </details>
 
@@ -240,14 +243,15 @@ function loadPreset(key) {
 // Auto-restore previous input
 (function(){
   const FIELDS = ['role','task','context','format','constraints','tone'];
-  FIELDS.forEach(id => {
+  try{FIELDS.forEach(id => {
     const saved = localStorage.getItem('promptGen_' + id);
     if (saved) document.getElementById(id).value = saved;
-  });
+  });}catch(e){}
   setTimeout(build, 0);
 })();
 
 function build() {
+  document.getElementById('storageStatus').textContent = '';
   const role = document.getElementById('role').value.trim();
   const task = document.getElementById('task').value.trim();
   const context = document.getElementById('context').value.trim();
@@ -296,10 +300,12 @@ function clearAll() {
   ['role','task','context','format','constraints'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('tone').value = '';
   document.getElementById('resultBox').style.display = 'none';
+  document.getElementById('resultBox').textContent = '';
   document.getElementById('charCount').textContent = '';
   document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
   // Also clear auto-saved data
   try{['role','task','context','format','constraints','tone'].forEach(id => localStorage.removeItem('promptGen_' + id))}catch(e){}
+  document.getElementById('storageStatus').textContent = 'Visible input and saved browser data cleared.';
 }
 </script>
 <button class="scroll-top-btn" aria-label="Top">↑</button>

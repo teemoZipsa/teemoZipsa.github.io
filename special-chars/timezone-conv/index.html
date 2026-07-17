@@ -116,7 +116,7 @@
             </select>
             <div class="tz-result" id="toResult">--:--</div>
             <div class="tz-result-date" id="toResultDate"></div>
-            <div class="tz-result-info" id="toResultInfo"></div>
+            <div class="tz-result-info" id="toResultInfo" role="status" aria-live="polite"></div>
         </div>
 
         <!-- 동적 타임존 분석 리포트 -->
@@ -124,7 +124,7 @@
         
         <!-- 하단 액션 버튼 -->
         <div class="bottom-bar">
-            <div class="info">※ 서머타임(DST) 자동 고려</div>
+            <div class="info">※ 브라우저 시간대 규칙 반영 · DST 경계 시각 경고</div>
             <div style="display:flex; gap:8px;">
                 <button class="action-btn btn-clear" onclick="resetAll()">초기화</button>
                 <button class="action-btn btn-copy" onclick="copyResult()">결과 복사</button>
@@ -133,12 +133,12 @@
     </div>
 
     <section class="guide-section">
-        <h2>💡 타임존 변환기 완벽 사용 가이드</h2>
+        <h2>💡 타임존 변환기 사용 가이드</h2>
         
         <details class="guide" open>
             <summary>타임존(Timezone)이란 무엇이고 왜 변환해야 하나요?</summary>
             <div class="guide-content">
-                <p>세계는 지구의 자전으로 인해 경도 구역에 따라 서로 다른 로컬 시간대(타임존)를 사용하고 있습니다. <b>타임존 변환기</b>는 특정 기준 지역(예: 대한민국 서울)의 날짜와 시간을 입력하면 변환하고자 하는 목표 국가 및 지역(예: 미국 뉴욕)의 시간으로 오차 없이 정확히 계산해 주는 스마트 도구입니다.</p>
+                <p>세계는 지구의 자전으로 인해 경도 구역에 따라 서로 다른 로컬 시간대(타임존)를 사용하고 있습니다. <b>타임존 변환기</b>는 특정 기준 지역(예: 대한민국 서울)의 날짜와 시간을 입력하면 브라우저에 포함된 시간대 규칙을 사용해 목표 지역(예: 미국 뉴욕)의 시간으로 변환합니다.</p>
                 <p>글로벌 비즈니스의 화상 회의(Zoom 등), 해외 주식 시장의 개장 시간 파악, 해외 e스포츠 및 라이브 방송 시청 대기, 해외 여행 체류 일정 관리 등 현대의 전 세계적인 연결망 속에서 필수적으로 요구되는 <b>시차 정보를 누구나 쉽고 직관적으로 파악할 수 있도록 돕습니다.</b></p>
             </div>
         </details>
@@ -146,15 +146,15 @@
         <details class="guide">
             <summary>서머타임(DST, 일광 절약 시간제)은 어떻게 보정되나요?</summary>
             <div class="guide-content">
-                <p>본 타임존 변환기는 국제 표준 인터넷 인프라인 <b>IANA(Internet Assigned Numbers Authority) 타임존 데이터베이스</b> 엔진을 브라우저를 통해 실시간으로 참조합니다.</p>
-                <p>따라서 미국의 일광 절약 시간제나 유럽의 서머타임 등 <b>각 해당 대륙 및 국가별 정책에 따라 시시각각 도입/해제되는 서머타임 변동 규칙이 100% 자동으로 반영 계산</b>됩니다. 사용자가 별도로 인터넷 검색을 통해 서머타임 여부를 파악해 1시간을 미리 빼거나 더하실 필요 없이, 출력된 결과물을 그대로 믿고 예약 및 일정에 사용하시면 됩니다.</p>
+                <p>이 도구는 브라우저가 제공하는 <b>IANA 타임존 규칙</b>을 사용합니다. 규칙의 최신성은 브라우저와 운영체제 업데이트 상태에 따라 달라질 수 있습니다.</p>
+                <p>DST 시작으로 존재하지 않는 현지 시각은 변환하지 않고 오류를 표시합니다. DST 종료로 같은 시각이 두 번 발생하면 앞선 시각을 사용했다는 경고를 표시합니다. 항공편·예약처럼 중요한 일정은 해당 지역의 공식 안내도 확인하세요.</p>
             </div>
         </details>
 
         <details class="guide">
             <summary>오프라인에서도 사용이 가능한가요?</summary>
             <div class="guide-content">
-                <p>물론입니다. 저희 시스템의 모든 계산 로직은 사용자의 기기(브라우저 엔진) 자체에서 처리하는 <b>클라이언트 사이드 아키텍처</b>로 설계되었습니다. 따라서 PWA로 설치되어 있거나 캐시된 상태라면 외부 인터넷 연결 없이 오프라인 환경에서도 시차 변환기를 자유롭게 사용할 수 있으며 개인 정보 또한 철저하게 보호됩니다.</p>
+                <p>변환 계산은 브라우저에서 처리됩니다. 필요한 페이지 자원이 미리 캐시된 경우 오프라인에서도 사용할 수 있으며, 입력한 날짜와 시간은 이 변환을 위해 별도 서버로 전송하지 않습니다.</p>
             </div>
         </details>
 
@@ -168,7 +168,7 @@
             <a href="/special-chars/date-calc/" class="tool-card">📅 디데이 계산기</a>
         </div>
     </section>
-    <div class="footer"><span>서머타임 자동 반영</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <div class="footer"><span>브라우저 시간대 규칙 반영</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -222,11 +222,37 @@ function setNow() {
 }
 
 function getDateTimeInTz(date, tz) {
-    const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hour12:false });
+    const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hourCycle:'h23' });
     const parts = {};
     fmt.formatToParts(date).forEach(p => { parts[p.type] = p.value; });
-    const h = parts.hour === '24' ? '00' : parts.hour;
-    return { date: `${parts.year}-${parts.month}-${parts.day}`, time: `${h}:${parts.minute}` };
+    return { date: `${parts.year}-${parts.month}-${parts.day}`, time: `${parts.hour}:${parts.minute}` };
+}
+
+function resolveWallTime(dateVal, timeVal, tz) {
+    const [year, month, day] = dateVal.split('-').map(Number);
+    const [hour, minute] = timeVal.split(':').map(Number);
+    const wallTimeMs = Date.UTC(year, month - 1, day, hour, minute);
+    const offsets = new Set();
+    for (let hours = -36; hours <= 36; hours += 3) {
+        offsets.add(getOffsetMs(new Date(wallTimeMs + hours * 3600000), tz));
+    }
+    const candidates = [...offsets]
+        .map(offset => new Date(wallTimeMs - offset))
+        .filter(candidate => {
+            const roundTrip = getDateTimeInTz(candidate, tz);
+            return roundTrip.date === dateVal && roundTrip.time === timeVal.slice(0, 5);
+        })
+        .filter((candidate, index, all) => all.findIndex(other => other.getTime() === candidate.getTime()) === index)
+        .sort((a, b) => a - b);
+    return {
+        instant: candidates[0] || null,
+        status: candidates.length === 0 ? 'nonexistent' : candidates.length > 1 ? 'ambiguous' : 'valid',
+        candidates
+    };
+}
+
+function wallTimeToInstant(dateVal, timeVal, tz) {
+    return resolveWallTime(dateVal, timeVal, tz).instant;
 }
 
 function convert() {
@@ -241,36 +267,41 @@ function convert() {
         document.getElementById('toResultInfo').textContent = '';
         const rpc = document.getElementById('reportContainer');
         if (rpc) { rpc.style.display = 'none'; rpc.innerHTML = ''; }
+        document.getElementById('fromTime').setCustomValidity('');
+        document.getElementById('fromTime').removeAttribute('aria-invalid');
         return;
     }
 
-    // Create date in fromTz
-    const fromStr = `${dateVal}T${timeVal}:00`;
-    // Get UTC offset for fromTz at this date
-    const tempDate = new Date(fromStr);
-    const fromParts = getDateTimeInTz(tempDate, fromTz);
-    const localParts = { date: dateVal, time: timeVal };
-
-    // Simpler approach: construct a UTC date from the "from" inputs
-    const localDate = new Date(`${dateVal}T${timeVal}:00`);
-    const fromOffsetMs = getOffsetMs(localDate, fromTz);
-    const utcDate = new Date(localDate.getTime() - fromOffsetMs);
+    const resolution = resolveWallTime(dateVal, timeVal, fromTz);
+    const timeInput = document.getElementById('fromTime');
+    if (resolution.status === 'nonexistent') {
+        const message = '선택한 현지 시각은 DST 전환으로 존재하지 않습니다. 다른 시각을 선택하세요.';
+        timeInput.setCustomValidity(message);
+        timeInput.setAttribute('aria-invalid', 'true');
+        document.getElementById('toResult').textContent = '--:--';
+        document.getElementById('toResultDate').textContent = '';
+        document.getElementById('toResultInfo').textContent = message;
+        const rpc = document.getElementById('reportContainer');
+        if (rpc) { rpc.style.display = 'none'; rpc.replaceChildren(); }
+        return;
+    }
+    timeInput.setCustomValidity('');
+    timeInput.setAttribute('aria-invalid', 'false');
+    const utcDate = resolution.instant;
+    const fromOffsetMs = getOffsetMs(utcDate, fromTz);
     const toOffsetMs = getOffsetMs(utcDate, toTz);
-    const toDate = new Date(utcDate.getTime() + toOffsetMs);
-
-    const toParts = getDateTimeInTz(toDate, toTz);
+    const toParts = getDateTimeInTz(utcDate, toTz);
 
     // Display
     document.getElementById('toResult').textContent = toParts.time;
 
-    const days = ['일','월','화','수','목','금','토'];
-    const toD = new Date(toParts.date);
-    const dayName = days[toD.getDay()];
+    const dayName = new Intl.DateTimeFormat('ko-KR', { timeZone: toTz, weekday: 'short' }).format(utcDate);
     document.getElementById('toResultDate').textContent = `${toParts.date} (${dayName})`;
 
     // DST info
     const toTzInfo = TIMEZONES.find(t => t.id === toTz);
-    document.getElementById('toResultInfo').textContent = toTzInfo ? toTzInfo.label : '';
+    const ambiguityWarning = resolution.status === 'ambiguous' ? ' · 기준 시간이 DST 종료로 두 번 발생하여 앞선 시각으로 계산했습니다.' : '';
+    document.getElementById('toResultInfo').textContent = (toTzInfo ? toTzInfo.label : '') + ambiguityWarning;
 
     // Diff
     const diffMin = Math.round((toOffsetMs - fromOffsetMs) / 60000);
@@ -304,15 +335,25 @@ function updateReport(from, to, diffH) {
         <p style="margin-bottom:4px;"><b>시차 상승/하락 가이드:</b></p>
         <p>${analysis}</p>
         <div style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);">
-            <p style="margin-bottom:0; color:var(--text-info);">※ 현재 도출된 변환 결과는 IANA 최신 DB 규격을 기반으로 하며, 두 지역의 <b>서머타임(DST) 적용 유무가 자동으로 완벽하게 반영</b>되었습니다. 글로벌 소통 및 해외 여행 스케줄링 시 유용하게 사용하십시오.</p>
+            <p style="margin-bottom:0; color:var(--text-info);">※ 브라우저에 포함된 IANA 시간대 규칙을 적용했습니다. 정책 변경이나 중요한 예약은 해당 지역의 공식 안내와 함께 확인하세요.</p>
         </div>
     `;
 }
 
 function getOffsetMs(date, tz) {
-    const utcStr = date.toLocaleString('en-US', { timeZone: 'UTC' });
-    const tzStr = date.toLocaleString('en-US', { timeZone: tz });
-    return new Date(tzStr).getTime() - new Date(utcStr).getTime();
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: tz,
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hourCycle: 'h23'
+    });
+    const parts = {};
+    formatter.formatToParts(date).forEach(part => { parts[part.type] = part.value; });
+    const asUtc = Date.UTC(
+        Number(parts.year), Number(parts.month) - 1, Number(parts.day),
+        Number(parts.hour), Number(parts.minute), Number(parts.second)
+    );
+    return asUtc - date.getTime();
 }
 
 function getOffsetMinutes(date, tz) {
@@ -331,7 +372,10 @@ function swapTz() {
 
 function resetAll() {
     document.getElementById('fromDate').value = '';
-    document.getElementById('fromTime').value = '';
+    const timeInput = document.getElementById('fromTime');
+    timeInput.value = '';
+    timeInput.setCustomValidity('');
+    timeInput.removeAttribute('aria-invalid');
     document.getElementById('fromTz').value = 'Asia/Seoul';
     document.getElementById('toTz').value = 'America/New_York';
     document.getElementById('toResult').textContent = '--:--';
@@ -354,9 +398,8 @@ function copyResult() {
     const fromTime = document.getElementById('fromTime').value;
     const toResultDate = document.getElementById('toResultDate').textContent;
     
-    const tempDate = new Date(`${fromDate}T${fromTime}:00`);
-    const fromOffsetMs = getOffsetMs(tempDate, fromTzInfo.id);
-    const utcDate = new Date(tempDate.getTime() - fromOffsetMs);
+    const utcDate = wallTimeToInstant(fromDate, fromTime, fromTzInfo.id);
+    const fromOffsetMs = getOffsetMs(utcDate, fromTzInfo.id);
     const toOffsetMs = getOffsetMs(utcDate, toTzInfo.id);
     const diffMin = Math.round((toOffsetMs - fromOffsetMs) / 60000);
     const diffH = diffMin / 60;

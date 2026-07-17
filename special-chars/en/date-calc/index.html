@@ -95,8 +95,8 @@
       <div class="date-row"><label>Target</label><input type="date" id="ddayEnd"></div>
       <div class="checkbox-row">
         <input type="checkbox" id="ddayInclusive">
-        <label for="ddayInclusive">Include start date as day 1</label>
-        <span title="Check to count the start date as day 1 instead of day 0.&#10;e.g., Jan 1 to Jan 3 → 3 days if checked, 2 days if unchecked.&#10;Recommended for anniversaries." style="cursor:help;color:var(--text-info);">ⓘ</span>
+        <label for="ddayInclusive">Include both endpoint dates</label>
+        <span title="Check to include both the start and target dates.&#10;e.g., Jan 1 to Jan 3, in either direction → 3 days if checked, 2 days if unchecked.&#10;Recommended for anniversaries." style="cursor:help;color:var(--text-info);">ⓘ</span>
       </div>
       <div class="date-result-card" id="ddayResult">
         <div class="date-result-value" id="ddayValue">-</div>
@@ -134,7 +134,7 @@
       <summary>1. How do I calculate a D-Day countdown?</summary>
       <div class="guide-content">
         <p>Simply select your "Start" date (typically today) and your "Target" date. The calculator will instantly show the remaining days (e.g., D-100) or elapsed days (e.g., D+50) along with a breakdown in weeks and months.</p>
-        <p><strong>Anniversaries vs. Deadlines:</strong> For couple anniversaries or milestones (where the first day is "Day 1"), make sure to check the <em>"Include start date as day 1"</em> box. If it's a deadline (e.g., days remaining until a test), leave it unchecked.</p>
+        <p><strong>Anniversaries vs. Deadlines:</strong> For couple anniversaries or milestones (where the first day is "Day 1"), check <em>"Include both endpoint dates"</em>. It counts both dates in either chronological direction. For a deadline (e.g., days remaining until a test), leave it unchecked.</p>
       </div>
     </details>
 
@@ -172,15 +172,26 @@
 <script>
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),1500)}
 
+function parseDateInput(value){
+  const parts=value.split('-').map(Number);
+  if(parts.length!==3||parts.some(Number.isNaN))return null;
+  const [year,month,day]=parts;
+  const date=new Date(year,month-1,day,12);
+  return date.getFullYear()===year&&date.getMonth()===month-1&&date.getDate()===day?date:null;
+}
+
+function calendarDayNumber(value){
+  const [year,month,day]=value.split('-').map(Number);
+  return Date.UTC(year,month-1,day)/86400000;
+}
+
 function calcDday(){
   const start=document.getElementById('ddayStart').value;
   const end=document.getElementById('ddayEnd').value;
   if(!start||!end){document.getElementById('ddayValue').textContent='-';document.getElementById('ddaySub').textContent='Select dates';return}
-  const s=new Date(start),e=new Date(end);
-  let diff=Math.round((e-s)/86400000);
+  const diff=calendarDayNumber(end)-calendarDayNumber(start);
   const inclusive=document.getElementById('ddayInclusive').checked;
-  if(inclusive)diff+=1;
-  const absD=Math.abs(diff);
+  const absD=Math.abs(diff)+(inclusive?1:0);
   if(inclusive){document.getElementById('ddayValue').textContent=`${absD} days`}
   else{if(diff===0)document.getElementById('ddayValue').textContent='D-Day';else if(diff>0)document.getElementById('ddayValue').textContent=`D-${diff}`;else document.getElementById('ddayValue').textContent=`D+${Math.abs(diff)}`}
   const weeks=Math.floor(absD/7);const remain=absD%7;const months=Math.floor(absD/30);
@@ -192,7 +203,9 @@ function calcDateAdd(){
   const base=document.getElementById('dateBase').value;
   const days=parseInt(document.getElementById('dateDays').value);
   if(!base||isNaN(days)){document.getElementById('dateAddValue').textContent='-';document.getElementById('dateAddSub').textContent='Enter base date and days to adjust';return}
-  const d=new Date(base);d.setDate(d.getDate()+days);
+  const d=parseDateInput(base);
+  if(!d){document.getElementById('dateAddValue').textContent='-';document.getElementById('dateAddSub').textContent='Enter a valid base date';return}
+  d.setDate(d.getDate()+days);
   const yyyy=d.getFullYear();const mm=String(d.getMonth()+1).padStart(2,'0');const dd=String(d.getDate()).padStart(2,'0');
   const weekdays=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];const dayName=weekdays[d.getDay()];
   document.getElementById('dateAddValue').textContent=`${yyyy}-${mm}-${dd} (${dayName})`;

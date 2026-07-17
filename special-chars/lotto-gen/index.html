@@ -239,9 +239,9 @@ function generate() {
     return;
   }
 
-  // Shuffle pool (Fisher-Yates)
+  // Shuffle pool with an unbiased cryptographic index source.
   for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = secureRandomIndex(i + 1);
     [pool[i], pool[j]] = [pool[j], pool[i]];
   }
   
@@ -272,15 +272,23 @@ function generate() {
   if(fixedNums.size > 0 || exNums.size > 0) {
       msg += `고객님께서 직접 지정하신 <strong>고정수 ${fixedNums.size}개</strong>와 <strong>제외수 ${exNums.size}개</strong>의 필터링 조건이 추출 알고리즘에 엄격하게 반영되었습니다. `;
   } else {
-      msg += `완전한 무작위(Random) 난수 발생 알고리즘을 통해 필터링 편견 없이 순수 100% 랜덤 추출되었습니다. `;
+      msg += `브라우저의 암호학적 난수 생성기를 사용해 각 번호 조합이 균등하게 선택되도록 추출했습니다. `;
   }
   
   msg += `</p><p>통계적 흥미를 위해 이번 번호 세트의 패턴을 분석해 보면, <strong>짝수와 홀수의 비율은 ${evenCount}:${oddCount}</strong>로 구성되었으며, 1~22가 속하는 <strong>저고비율(낮은 수와 높은 수 비율)은 ${lowCount}:${highCount}</strong>입니다. `;
-  msg += `또한 선택된 6개 복권 숫자의 <strong>총합은 ${sum}</strong>을 기록했습니다. (역대 로또 1등 당첨 번호의 숫자 총합은 대체로 120~180 사이에 가장 많이 밀집되는 통계적 경향이 있으니 단순 참고용 패턴으로 확인해 보세요.)</p>`;
+  msg += `또한 선택된 6개 복권 숫자의 <strong>총합은 ${sum}</strong>입니다. 홀짝 비율이나 합계는 이번 조합을 설명할 뿐 다음 추첨의 당첨 가능성을 높이지 않습니다.</p>`;
   
   msg += `<p>위의 [번호 추첨하기] 버튼을 반복해서 누르시면 바로 아래 '추첨 이력 기록'란에 최대 10세트의 번호가 누적 보관되어 쉽게 비교하고 텍스트로 복사하실 수 있습니다. 동행복권의 당첨 기운이 깃들길 응원합니다!</p>`;
   
   report.innerHTML = msg;
+}
+
+function secureRandomIndex(max) {
+  const range = 0x100000000;
+  const limit = range - (range % max);
+  const value = new Uint32Array(1);
+  do { crypto.getRandomValues(value); } while (value[0] >= limit);
+  return value[0] % max;
 }
 
 function renderBalls(nums) {

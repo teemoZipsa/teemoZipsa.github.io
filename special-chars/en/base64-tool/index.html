@@ -31,7 +31,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .mode-tab{flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--bg-bar);color:var(--text-section);font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s;font-family:inherit}
 .mode-tab.active{background:var(--accent);border-color:var(--accent);color:var(--text-on-accent)}
 .mode-tab:hover:not(.active){background:var(--bg-hover);border-color:var(--border-hover)}
-.section-title{font-size:12px;color:var(--text-section);font-weight:600;margin-bottom:6px}
+.section-title{display:block;font-size:12px;color:var(--text-section);font-weight:600;margin-bottom:6px}
 .text-area{width:100%;min-height:100px;background:var(--bg-bar);border:2px solid var(--border);border-radius:12px;padding:14px;font-size:14px;color:var(--text-primary);resize:vertical;outline:none;font-family:inherit,monospace;line-height:1.5;transition:border-color .2s;margin-bottom:14px}
 .text-area:focus{border-color:var(--accent)}
 .text-area::placeholder{color:var(--text-placeholder)}
@@ -84,6 +84,9 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .footer a:hover{color:var(--text-guide)}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.limit-note{margin-top:6px;font-size:11px;line-height:1.5;color:var(--text-muted)}
+.input-error{display:none;margin-top:8px;padding:10px 12px;border:1px solid #ef4444;border-radius:8px;background:rgba(239,68,68,.08);color:#f87171;font-size:12px;line-height:1.5}
+.input-error.show{display:block}
 .scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
 .scroll-top-btn.visible{opacity:1;visibility:visible}
 .scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
@@ -105,8 +108,8 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 
     <!-- Text Mode -->
     <div id="textMode">
-      <div class="section-title">Source Text</div>
-      <textarea class="text-area" id="inputText" placeholder="Enter text to encode/decode..." oninput="autoConvert()"></textarea>
+      <label class="section-title" for="inputText">Source Text</label>
+      <textarea class="text-area" id="inputText" placeholder="Enter text to encode/decode..." oninput="autoConvert()" aria-describedby="textLimit textError"></textarea>
 
       <div class="actions">
         <button class="btn btn-primary" onclick="encode()">🔒 Encode</button>
@@ -114,8 +117,10 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
         <button class="btn btn-secondary" onclick="swapText()">🔄 Swap</button>
       </div>
 
-      <div class="section-title">Result</div>
-      <textarea class="text-area" id="outputText" placeholder="Output will appear here..." oninput="autoConvertReverse()"></textarea>
+      <label class="section-title" for="outputText">Result</label>
+      <textarea class="text-area" id="outputText" placeholder="Output will appear here..." oninput="autoConvertReverse()" aria-describedby="textLimit textError"></textarea>
+      <p class="limit-note" id="textLimit">Source text is limited to 1,000,000 characters; Base64 input for decoding is limited to 8,000,000 characters.</p>
+      <div class="input-error" id="textError" role="alert"></div>
 
       <div class="actions">
         <button class="btn btn-primary" onclick="copyOutput()">📋 Copy Result</button>
@@ -125,15 +130,16 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 
     <!-- Image Mode -->
     <div id="imageMode" class="image-section">
-      <div class="section-title">Select Image File</div>
-      <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+      <div class="section-title" id="imageFileLabel">Select Image File</div>
+      <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-labelledby="imageFileLabel imageFileHelp" onclick="document.getElementById('fileInput').click()">
         <div class="icon">📁</div>
         <div class="text">Click or drag an image here</div>
-        <div class="sub">Supports JPG, PNG, GIF, WebP, SVG</div>
-        <input type="file" id="fileInput" accept="image/*" onchange="handleFile(this.files[0])">
+        <div class="sub" id="imageFileHelp">JPG, PNG, GIF, WebP, SVG · 10 MB maximum</div>
+        <input type="file" id="fileInput" accept="image/*" aria-label="Image file to convert" onchange="handleFile(this.files[0])">
       </div>
+      <div class="input-error" id="fileError" role="alert"></div>
 
-      <img id="previewImg" class="preview-img" style="display:none">
+      <img id="previewImg" class="preview-img" style="display:none" alt="Selected image preview">
 
       <div id="imageResult" style="display:none">
         <div class="section-title">Base64 Data URL</div>
@@ -147,7 +153,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
         </div>
       </div>
     </div>
-    <div id="reportBox" class="report-box" style="display:none;"></div>
+    <div id="reportBox" class="report-box" style="display:none;" role="status" aria-live="polite"></div>
   </div>
 
   <section class="guide-section">
@@ -156,21 +162,21 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <details class="guide" open>
       <summary>1. What is Base64 encoding used for?</summary>
       <div class="guide-content">
-        <p>Base64 is a data representation format that translates binary data or unprintable characters into a standard ASCII string. It is widely used to embed images directly into HTML/CSS files (Data URIs), safely transmit data over HTTP, or store complex data in JSON format without breaking the syntax.</p>
+        <p>Base64 is a data representation format that translates binary data or unprintable characters into a standard ASCII string. It is used for Data URIs and text-only formats such as JSON, but it does not encrypt data or make an HTTP connection secure.</p>
       </div>
     </details>
 
     <details class="guide">
       <summary>2. Is my text or image uploaded to a server?</summary>
       <div class="guide-content">
-        <p><strong>Absolutely not.</strong> All encoding and decoding operations in this tool are executed <strong>100% on your device</strong> using JavaScript running inside your browser. No text data or image files are ever uploaded or saved to any external server.</p>
+        <p>The tool's conversion code runs in your browser and does not intentionally upload the selected text or image to an application server. Browser extensions, the device, and third-party page resources are outside that guarantee, so use a trusted environment for sensitive data.</p>
       </div>
     </details>
 
     <details class="guide">
       <summary>3. Why do emojis or foreign characters sometimes break when decoding?</summary>
       <div class="guide-content">
-        <p>This happens when the Base64 string was not encoded using a UTF-8 aware mechanism. Our tool leverages a modern engine that seamlessly converts strings to UTF-8 bytes before encoding, ensuring that emojis, Korean, Chinese, and other Unicode characters remain perfectly intact upon decoding.</p>
+        <p>This happens when the Base64 string was not encoded as UTF-8. This tool converts text to UTF-8 bytes before encoding, so valid strings produced by the tool preserve emojis, Korean, Chinese, and other Unicode characters when decoded with the same convention.</p>
       </div>
     </details>
 
@@ -196,14 +202,29 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       </div>
     </div>
   </section>
-    <div class="footer"><span>100% Local Processing</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+    <div class="footer"><span>In-browser conversion · no app-server upload</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
 </div>
 
-<div class="toast" id="toast"></div>
-<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<button class="scroll-top-btn" id="scrollTopBtn" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
 <script>
 let currentMode='text';
+const MAX_SOURCE_CHARS=1000000;
+const MAX_BASE64_CHARS=8000000;
+const MAX_FILE_BYTES=10*1024*1024;
+
+function setInputError(id,message=''){
+  const error=document.getElementById(id);
+  error.textContent=message;
+  error.classList.toggle('show',Boolean(message));
+}
+
+function validateTextLimit(value,limit,label){
+  if(value.length<=limit){setInputError('textError');return true;}
+  setInputError('textError',`${label} is limited to ${limit.toLocaleString()} characters. Shorten the input and try again.`);
+  return false;
+}
 
 function setMode(m){
   currentMode=m;
@@ -232,6 +253,7 @@ function base64ToUtf8(b64){
 function encode(){
   const input=document.getElementById('inputText').value;
   if(!input){showToast('Please enter text.');return;}
+  if(!validateTextLimit(input,MAX_SOURCE_CHARS,'Source text')) return;
   try{
     const encoded = utf8ToBase64(input);
     document.getElementById('outputText').value=encoded;
@@ -243,6 +265,7 @@ function encode(){
 function decode(){
   const input=document.getElementById('outputText').value||document.getElementById('inputText').value;
   if(!input){showToast('Please enter a Base64 string.');return;}
+  if(!validateTextLimit(input,MAX_BASE64_CHARS,'Base64 input')) return;
   try{
     const result=base64ToUtf8(input.trim());
     if(document.getElementById('outputText').value){
@@ -269,8 +292,12 @@ function swapText(){
   output.value=tmp;
 }
 
-function autoConvert(){/* 수동 */}
-function autoConvertReverse(){/* 수동 */}
+function autoConvert(){
+  if(document.getElementById('inputText').value.length<=MAX_SOURCE_CHARS) setInputError('textError');
+}
+function autoConvertReverse(){
+  if(document.getElementById('outputText').value.length<=MAX_BASE64_CHARS) setInputError('textError');
+}
 
 function copyOutput(){
   const text=document.getElementById('outputText').value;
@@ -282,10 +309,14 @@ function clearText(){
   document.getElementById('inputText').value='';
   document.getElementById('outputText').value='';
   document.getElementById('reportBox').style.display='none';
+  setInputError('textError');
 }
 
 // 이미지 모드
 const dropZone=document.getElementById('dropZone');
+dropZone.addEventListener('keydown',e=>{
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();document.getElementById('fileInput').click();}
+});
 dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('dragover');});
 dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('dragover'));
 dropZone.addEventListener('drop',e=>{
@@ -294,7 +325,9 @@ dropZone.addEventListener('drop',e=>{
 });
 
 function handleFile(file){
-  if(!file||!file.type.startsWith('image/')){showToast('Please select an image file.');return;}
+  setInputError('fileError');
+  if(!file||!file.type.startsWith('image/')){document.getElementById('fileInput').value='';setInputError('fileError','Choose a supported image file.');showToast('Please select an image file.');return;}
+  if(file.size>MAX_FILE_BYTES){document.getElementById('fileInput').value='';setInputError('fileError','This file exceeds the 10 MB limit. Choose a smaller image.');showToast('Choose an image up to 10 MB.');return;}
   const reader=new FileReader();
   reader.onload=function(e){
     const dataUrl=e.target.result;
@@ -306,7 +339,14 @@ function handleFile(file){
     showToast('Image converted!');
     updateImageReport(file.name, file.size, dataUrl.length);
   };
+  reader.onerror=function(){setInputError('fileError','The file could not be read. Choose another image.');};
   reader.readAsDataURL(file);
+}
+
+function escapeHtml(value) {
+  const node = document.createElement('div');
+  node.textContent = String(value);
+  return node.innerHTML;
 }
 
 function updateImageReport(filename, originSize, currentSize) {
@@ -314,7 +354,7 @@ function updateImageReport(filename, originSize, currentSize) {
   const sizeKb = (originSize/1024).toFixed(1);
   const b64Kb = (currentSize/1024).toFixed(1);
   const overhead = (((currentSize/(originSize||1))-1)*100).toFixed(1);
-  reportBox.innerHTML = `<strong>Image to Base64</strong> conversion completed for <em>${filename}</em>.<br>Original File Size: <strong>${sizeKb} KB</strong> ➔ Base64 String Size: <strong>${b64Kb} KB</strong>.<br>Due to ASCII representation, the size increased by approximately <strong>${overhead}%</strong>. Ready to be embedded via Data URI.`;
+  reportBox.innerHTML = `<strong>Image to Base64</strong> conversion completed for <em>${escapeHtml(filename)}</em>.<br>Original File Size: <strong>${sizeKb} KB</strong> ➔ Base64 String Size: <strong>${b64Kb} KB</strong>.<br>Due to ASCII representation, the size increased by approximately <strong>${overhead}%</strong>. Ready to be embedded via Data URI.`;
   reportBox.style.display = 'block';
 }
 
@@ -329,6 +369,9 @@ function clearImage(){
   document.getElementById('imageResult').style.display='none';
   document.getElementById('fileInput').value='';
   document.getElementById('reportBox').style.display='none';
+  document.getElementById('previewImg').removeAttribute('src');
+  document.getElementById('imageBase64').textContent='';
+  setInputError('fileError');
 }
 
 function showToast(msg){

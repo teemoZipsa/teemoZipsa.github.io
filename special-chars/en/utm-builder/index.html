@@ -124,7 +124,7 @@
 <body>
 <div class="app">
     <div class="header">
-        <a href="https://teemozipsa.github.io/" class="back-btn">← All Tools</a>
+        <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
         <h1>🔗 UTM Builder</h1>
     <a href="/special-chars/utm-builder/" class="back-btn">🌐 한국어</a>
   </div>
@@ -276,7 +276,9 @@ function generateURL() {
 
     let url;
     try {
-        url = new URL(base.startsWith('http') ? base : 'https://' + base);
+        const normalizedBase = /^[a-z][a-z\d+.-]*:\/\//i.test(base) ? base : 'https://' + base;
+        url = new URL(normalizedBase);
+        if (!/^https?:$/.test(url.protocol)) throw new Error('Unsupported URL protocol');
     } catch {
         document.getElementById('urlInput').classList.add('error');
         placeholder.textContent = 'Invalid URL format.';
@@ -435,10 +437,11 @@ function loadHistory(idx) {
     if (!history[idx]) return;
     try {
         const url = new URL(history[idx].url);
-        document.getElementById('urlInput').value = url.origin + url.pathname;
         ['source', 'medium', 'campaign', 'term', 'content'].forEach(key => {
             document.getElementById('utm_' + key).value = url.searchParams.get('utm_' + key) || '';
+            url.searchParams.delete('utm_' + key);
         });
+        document.getElementById('urlInput').value = url.toString();
         document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
         activePreset = null;
         generateURL();

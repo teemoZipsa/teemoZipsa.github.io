@@ -2,23 +2,18 @@
   "name": "티모집사 도구 모음",
   "short_name": "티모집사",
   "description": "일상과 업무에 필요한 무료 웹 도구 모음",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/special-chars/",
+  "scope": "/special-chars/",
   "display": "standalone",
   "background_color": "#1a1a2e",
   "theme_color": "#533483",
-  "id": "/",
+  "id": "/special-chars/",
   "icons": [
-    {
-      "src": "favicon.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
     {
       "src": "favicon.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }

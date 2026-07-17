@@ -157,7 +157,7 @@
           <li>Drag and drop your image (JPG, PNG, WebP) into the drop zone.</li>
           <li>Adjust the <strong>Quality</strong> slider. Lowering the quality reduces the file size more significantly.</li>
           <li>Set a <strong>Max Width</strong> to resize large photos automatically.</li>
-          <li>Compare the original and compressed sizes in real-time, then click <strong>Download</strong>.</li>
+          <li>Compare the original and compressed sizes in real-time, then click <strong>Download</strong>. All output is JPEG; transparent PNG/WebP areas are composited over white.</li>
         </ol>
       </div>
     </details>
@@ -165,7 +165,7 @@
     <details class="guide">
       <summary>2. Is my picture data safe? Do you upload it?</summary>
       <div class="guide-content">
-        <p>Yes, your privacy is 100% guaranteed. Because our tool uses <strong>local browser processing</strong>, your images are never uploaded to any server. All compression and resizing happens directly on your own device, making it safe for sensitive or private photos.</p>
+        <p>The app does not upload selected images to a compression server; compression and resizing run in this browser. Browser extensions and the security of your device are outside the app's control, so use a trusted environment for highly sensitive files.</p>
       </div>
     </details>
 
@@ -218,24 +218,46 @@ dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
 dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('dragover'); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
 
 function handleFile(file) {
-  if (!file || !file.type.startsWith('image/')) return;
+  const supportedTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
+  if (!file || !supportedTypes.has(file.type.toLowerCase())) {
+    const savedEl = document.getElementById('saved');
+    savedEl.textContent = '⚠️ Please choose a JPG, PNG, or WebP image.';
+    savedEl.style.color = 'var(--text-error, #f87171)';
+    return;
+  }
   revokePreviewUrls();
   origFile = file;
   compressedBlob = null;
   origPreviewUrl = URL.createObjectURL(file);
   document.getElementById('origImg').src = origPreviewUrl;
   document.getElementById('origSize').textContent = fmtBytes(file.size);
-  origImg.onload = () => {
-    document.getElementById('origDim').textContent = origImg.width + ' × ' + origImg.height;
-    document.getElementById('maxWidth').value = Math.min(origImg.width, 1920);
-    compress();
-  };
-  origImg.src = origPreviewUrl;
   dz.style.display = 'none';
   document.getElementById('controls').style.display = 'flex';
   document.getElementById('preview').style.display = 'flex';
   document.getElementById('dlBtn').style.display = 'block';
   document.getElementById('resetBtn').style.display = 'block';
+  origImg.onload = () => {
+    origImg.onerror = null;
+    document.getElementById('origDim').textContent = origImg.width + ' × ' + origImg.height;
+    document.getElementById('maxWidth').value = Math.min(origImg.width, 1920);
+    compress();
+  };
+  origImg.onerror = () => {
+    origImg.onload = null;
+    origFile = null;
+    compressedBlob = null;
+    revokePreviewUrls();
+    dz.style.display = '';
+    document.getElementById('controls').style.display = 'none';
+    document.getElementById('preview').style.display = 'none';
+    document.getElementById('dlBtn').style.display = 'none';
+    document.getElementById('resetBtn').style.display = 'none';
+    document.getElementById('fileInput').value = '';
+    const savedEl = document.getElementById('saved');
+    savedEl.textContent = '⚠️ The image is damaged or cannot be read by this browser.';
+    savedEl.style.color = 'var(--text-error, #f87171)';
+  };
+  origImg.src = origPreviewUrl;
 }
 
 function updateQualLabel() {
@@ -252,9 +274,19 @@ function compress() {
   const canvas = document.createElement('canvas');
   canvas.width = w; canvas.height = h;
   const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, w, h);
   ctx.drawImage(origImg, 0, 0, w, h);
 
   canvas.toBlob(blob => {
+    if (!blob) {
+      const savedEl = document.getElementById('saved');
+      savedEl.textContent = '⚠️ This browser could not create the JPEG image.';
+      savedEl.style.color = 'var(--text-error, #f87171)';
+      compressedBlob = null;
+      document.getElementById('dlBtn').style.display = 'none';
+      return;
+    }
     compressedBlob = blob;
     if (compPreviewUrl) URL.revokeObjectURL(compPreviewUrl);
     compPreviewUrl = URL.createObjectURL(blob);

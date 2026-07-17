@@ -272,13 +272,13 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <div class="input-group">
         <label>BPM</label>
         <div class="input-row">
-          <input type="number" id="songBpm" value="120" min="1" max="999" oninput="calcSong()">
+          <input type="number" id="songBpm" value="120" min="1" max="999" oninput="calcSong();calcReverse()">
         </div>
       </div>
       <div class="input-group">
         <label>박자 (분자/분모)</label>
         <div class="input-row">
-          <select id="songTimeSig" onchange="calcSong()">
+          <select id="songTimeSig" onchange="calcSong();calcReverse()">
             <option value="4/4">4/4</option>
             <option value="3/4">3/4</option>
             <option value="6/8">6/8</option>
@@ -319,7 +319,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="input-group">
       <label>기준 주파수 (A4)</label>
       <div class="input-row">
-        <input type="number" id="refHz" value="440" min="400" max="480" step="1" oninput="calcNote()">
+        <input type="number" id="refHz" value="440" min="400" max="480" step="1" oninput="calcNote();calcHzToNote()">
         <span class="unit">Hz</span>
       </div>
     </div>
@@ -501,7 +501,12 @@ function copyBpm() {
 
 // ========== TAB 1: BPM 딜레이 타이밍 ==========
 function calcDelay() {
-  const bpm = parseFloat(document.getElementById('delayBpm').value) || 120;
+  const bpm = Number(document.getElementById('delayBpm').value);
+  if (!Number.isFinite(bpm) || bpm < 1 || bpm > 999) {
+    document.getElementById('delayQuarter').textContent = '유효한 BPM을 입력하세요';
+    document.getElementById('delayTable').innerHTML = '';
+    return;
+  }
   const quarter = 60000 / bpm; // ms per quarter note
 
   document.getElementById('delayQuarter').textContent = fmt(quarter,1) + ' ms';
@@ -537,8 +542,14 @@ function calcDelay() {
 
 // ========== TAB 2: 곡 길이 ==========
 function calcSong() {
-  const bpm = parseFloat(document.getElementById('songBpm').value) || 120;
-  const bars = parseInt(document.getElementById('songBars').value) || 32;
+  const bpm = Number(document.getElementById('songBpm').value);
+  const bars = Number(document.getElementById('songBars').value);
+  if (!Number.isFinite(bpm) || bpm < 1 || bpm > 999 || !Number.isInteger(bars) || bars < 1 || bars > 9999) {
+    document.getElementById('songLength').textContent = '—';
+    document.getElementById('songLengthSub').textContent = 'BPM과 마디 수를 확인하세요';
+    document.getElementById('songDetail').innerHTML = '';
+    return;
+  }
   const ts = document.getElementById('songTimeSig').value.split('/');
   const beatsPerBar = parseInt(ts[0]);
   const beatUnit = parseInt(ts[1]);
@@ -567,12 +578,16 @@ function calcSong() {
 }
 
 function calcReverse() {
-  const bpm = parseFloat(document.getElementById('songBpm').value) || 120;
+  const bpm = Number(document.getElementById('songBpm').value);
   const ts = document.getElementById('songTimeSig').value.split('/');
   const beatsPerBar = parseInt(ts[0]);
   const beatUnit = parseInt(ts[1]);
-  const min = parseInt(document.getElementById('songMin').value) || 0;
-  const sec = parseInt(document.getElementById('songSec').value) || 0;
+  const min = Number(document.getElementById('songMin').value);
+  const sec = Number(document.getElementById('songSec').value);
+  if (!Number.isFinite(bpm) || bpm < 1 || bpm > 999 || !Number.isInteger(min) || min < 0 || min > 99 || !Number.isInteger(sec) || sec < 0 || sec > 59) {
+    document.getElementById('reverseDetail').innerHTML = '';
+    return;
+  }
   const totalSec = min * 60 + sec;
 
   const quarterSec = 60 / bpm;
@@ -624,7 +639,12 @@ function buildOctaveRow() {
 }
 
 function calcNote() {
-  const refHz = parseFloat(document.getElementById('refHz').value) || 440;
+  const refHz = Number(document.getElementById('refHz').value);
+  if (!Number.isFinite(refHz) || refHz < 400 || refHz > 480) {
+    document.getElementById('noteResultHz').textContent = '유효한 기준 주파수를 입력하세요';
+    document.getElementById('noteTable').innerHTML = '';
+    return;
+  }
   const midi = noteToMidi(selectedNote, selectedOctave);
   const hz = midiToHz(midi, refHz);
 
@@ -648,9 +668,12 @@ function calcNote() {
 }
 
 function calcHzToNote() {
-  const refHz = parseFloat(document.getElementById('refHz').value) || 440;
-  const inputHz = parseFloat(document.getElementById('hzInput').value);
-  if (!inputHz || inputHz <= 0) return;
+  const refHz = Number(document.getElementById('refHz').value);
+  const inputHz = Number(document.getElementById('hzInput').value);
+  if (!Number.isFinite(refHz) || refHz < 400 || refHz > 480 || !Number.isFinite(inputHz) || inputHz <= 0) {
+    document.getElementById('hzToNoteResult').innerHTML = '';
+    return;
+  }
 
   // Hz → MIDI (연속값)
   const midiFloat = 69 + 12 * Math.log2(inputHz / refHz);

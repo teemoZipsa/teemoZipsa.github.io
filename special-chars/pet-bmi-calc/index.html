@@ -71,7 +71,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .breed-search::placeholder{color:var(--text-muted)}
 .breed-count{font-size:10px;color:var(--text-muted);margin-bottom:4px}
 .breed-list{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:200px;overflow-y:auto;padding:4px}
-.breed-item{padding:8px 10px;background:var(--bg-guide);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--text-secondary);cursor:pointer;transition:all .2s;text-align:center}
+.breed-item{width:100%;padding:8px 10px;background:var(--bg-guide);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--text-secondary);cursor:pointer;transition:all .2s;text-align:center;font-family:inherit}
 .breed-item:hover{border-color:var(--accent);background:var(--bg-input)}
 .breed-item.active{border-color:var(--accent);background:var(--accent);color:var(--text-on-accent)}
 .breed-empty{grid-column:1/-1;text-align:center;padding:20px;font-size:12px;color:var(--text-muted)}
@@ -117,12 +117,12 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </div>
   <div class="body">
     <div class="type-tabs">
-      <button class="type-tab active" onclick="setType('dog')">🐶 강아지</button>
-      <button class="type-tab" onclick="setType('cat')">🐱 고양이</button>
+      <button type="button" class="type-tab active" onclick="setType('dog')" aria-pressed="true">🐶 강아지</button>
+      <button type="button" class="type-tab" onclick="setType('cat')" aria-pressed="false">🐱 고양이</button>
     </div>
 
     <div class="input-group">
-      <label>현재 체중 (선택)</label>
+      <label for="weight">현재 체중 (선택)</label>
       <div class="input-row">
         <input type="number" id="weight" min="0.1" max="200" step="0.1" inputmode="decimal" placeholder="예: 4.2" oninput="calc()">
         <span class="unit">kg</span>
@@ -137,13 +137,13 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
 
     <div class="breed-section" id="breedSection">
-      <label>품종별 성견·성묘 체중 범위 (선택·참고용)</label>
+      <label for="breedSearch" id="breedLabel">품종별 성견·성묘 체중 범위 (선택·참고용)</label>
       <input type="text" class="breed-search" id="breedSearch" placeholder="품종 검색 (예: 골든, 푸들, 랙돌...)" oninput="renderBreeds()">
-      <div class="breed-count" id="breedCount"></div>
-      <div class="breed-list" id="breedList"></div>
+      <div class="breed-count" id="breedCount" role="status" aria-live="polite"></div>
+      <div class="breed-list" id="breedList" role="group" aria-labelledby="breedLabel"></div>
     </div>
 
-    <div class="result-card" id="resultCard">
+    <div class="result-card" id="resultCard" role="status" aria-live="polite">
       <div class="result-emoji" id="emoji">⚖️</div>
       <div class="result-status" id="status">-</div>
       <div class="result-sub" id="statusDetail">BCS 점수를 선택하세요</div>
@@ -216,7 +216,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   <div class="footer"><span>9점 BCS 자가 점검 도구</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 
 <script>
@@ -417,7 +417,10 @@ function setType(t) {
   petType = t;
   selectedBreed = null;
   document.querySelectorAll('.type-tab').forEach(b => b.classList.remove('active'));
-  document.querySelector(`.type-tab[onclick*="${t}"]`).classList.add('active');
+  document.querySelectorAll('.type-tab').forEach(b => b.setAttribute('aria-pressed', 'false'));
+  const activeTab = document.querySelector(`.type-tab[onclick*="${t}"]`);
+  activeTab.classList.add('active');
+  activeTab.setAttribute('aria-pressed', 'true');
   document.getElementById('breedSearch').value = '';
   document.getElementById('catMagazineCta').style.display = t === 'cat' ? 'block' : 'none';
   renderBreeds();
@@ -443,7 +446,7 @@ function renderBreeds() {
   
   list.innerHTML = filtered.map(b => {
     const isActive = selectedBreed && selectedBreed.name === b.name;
-    return `<div class="breed-item${isActive ? ' active' : ''}" data-idx="${b.idx}" onclick="selectBreed(${b.idx})">${b.name}<br><span style="font-size:10px;color:var(--text-muted)">${b.min}~${b.max}kg</span></div>`;
+    return `<button type="button" class="breed-item${isActive ? ' active' : ''}" data-idx="${b.idx}" aria-pressed="${Boolean(isActive)}" onclick="selectBreed(${b.idx})">${b.name}<br><span style="font-size:10px;color:var(--text-muted)">${b.min}~${b.max}kg</span></button>`;
   }).join('');
 }
 

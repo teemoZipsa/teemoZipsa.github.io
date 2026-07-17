@@ -201,13 +201,25 @@ function setType(t) {
   calc();
 }
 
+function clearResults() {
+  document.getElementById('emoji').textContent = '🍖';
+  document.getElementById('dailyKcal').textContent = '-';
+  document.getElementById('mealsGrid').innerHTML = '';
+  document.getElementById('infoGrid').innerHTML = '';
+  const report = document.getElementById('reportBox');
+  if (report) report.style.display = 'none';
+}
+
 function calc() {
-  const w = parseFloat(document.getElementById('weight').value);
+  const w = Number(document.getElementById('weight').value);
   const stage = document.getElementById('lifeStage').value;
   const activity = document.getElementById('activity').value;
   const neutered = document.getElementById('neutered').value;
 
-  if (!w || w <= 0) return;
+  if (!Number.isFinite(w) || w < 0.5 || w > 100) {
+    clearResults();
+    return;
+  }
 
   // RER = 70 × w^0.75
   const rer = 70 * Math.pow(w, 0.75);
@@ -233,6 +245,8 @@ function calc() {
 
   document.getElementById('emoji').textContent = petType === 'dog' ? '🐶' : '🐱';
   document.getElementById('dailyKcal').textContent = Math.round(der) + ' kcal';
+  const report = document.getElementById('reportBox');
+  if (report) report.style.display = 'block';
 
   // Meals grid (2회/3회 급여)
   document.getElementById('mealsGrid').innerHTML = `

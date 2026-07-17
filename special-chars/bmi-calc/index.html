@@ -188,14 +188,28 @@ const RANGES = [
   { max: 25, name: '과체중', emoji: '🟡', color: '#facc15', range: 'over', tip: '비만 전단계에 해당합니다. 체중이 더 늘지 않도록 식습관을 점검하고 걷기 등 가벼운 유산소 운동부터 관리를 시작해 보세요.' },
   { max: 30, name: '1단계 비만', emoji: '🟠', color: '#f97316', range: 'obese1', tip: '적극적인 체중 관리가 필요한 상태입니다. 규칙적인 운동 플랜과 체계적인 식단 관리를 통해 점진적 감량을 추천합니다.' },
   { max: 35, name: '2단계 비만', emoji: '🔴', color: '#ef4444', range: 'obese2', tip: '장기적인 다이어트 계획이 필수적입니다. 무리하지 않는 선에서의 운동 스케줄 및 식이요법에 대해 전문가 상담을 권장합니다.' },
-  { max: 999, name: '3단계 비만', emoji: '🔴', color: '#dc2626', range: 'obese3', tip: '관절에 무리가 가지 않는 체중 감량 전문 플랜이 요구됩니다. 각종 대사성 질환 예방을 위해 의학적 상담과 병원에 내원하시는 것을 강하게 권장해 드립니다.' },
+  { max: Infinity, name: '3단계 비만', emoji: '🔴', color: '#dc2626', range: 'obese3', tip: '관절에 무리가 가지 않는 체중 감량 전문 플랜이 요구됩니다. 각종 대사성 질환 예방을 위해 의학적 상담과 병원에 내원하시는 것을 강하게 권장해 드립니다.' },
 ];
 
+function clearResults() {
+  document.getElementById('emoji').textContent = '⏳';
+  document.getElementById('bmiValue').textContent = '-';
+  document.getElementById('bmiLabel').textContent = '입력하세요';
+  document.getElementById('gaugeMarker').style.left = '0%';
+  document.getElementById('infoGrid').innerHTML = '';
+  document.getElementById('reportBox').style.display = 'none';
+  document.querySelectorAll('.bmi-table tbody tr').forEach(tr => tr.classList.remove('current'));
+}
+
 function calc() {
-  const h = parseFloat(document.getElementById('height').value) / 100; // m
-  const w = parseFloat(document.getElementById('weight').value);
+  const hCm = Number(document.getElementById('height').value);
+  const w = Number(document.getElementById('weight').value);
+  const h = hCm / 100; // m
   
-  if (!h || !w || h <= 0 || w <= 0) return;
+  if (!Number.isFinite(hCm) || hCm < 50 || hCm > 250 || !Number.isFinite(w) || w < 10 || w > 300) {
+    clearResults();
+    return;
+  }
   
   const bmi = w / (h * h);
   const range = RANGES.find(r => bmi < r.max);
@@ -206,6 +220,7 @@ function calc() {
   document.getElementById('bmiLabel').style.color = range.color;
   document.getElementById('bmiValue').style.color = range.color;
   document.getElementById('emoji').textContent = range.emoji;
+  document.getElementById('reportBox').style.display = 'block';
   
   // Gauge marker (BMI 15~40 mapped to 0~100%)
   const pct = Math.max(0, Math.min(100, ((bmi - 15) / 25) * 100));

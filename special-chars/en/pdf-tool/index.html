@@ -9,9 +9,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>📄 PDF Tools — TeemoZipsa</title>
-<meta name="description" content="Merge, split, rotate, reorder, and watermark PDFs directly in your browser. 100% local processing securely without server uploads.">
+<meta name="description" content="Merge, split, rotate, reorder, and watermark PDFs in your browser without uploading selected files to an application server.">
 <meta property="og:title" content="📄 PDF Tools — TeemoZipsa">
-<meta property="og:description" content="Merge, split, rotate, reorder, and watermark PDFs directly in your browser. 100% local processing securely without server uploads.">
+<meta property="og:description" content="Merge, split, rotate, reorder, and watermark PDFs in your browser without uploading selected files to an application server.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/pdf-tool/">
 <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
@@ -265,6 +265,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
         <div class="field-group">
           <div class="field-label">💧 Watermark Text</div>
           <input type="text" class="field-input" id="wmText" value="CONFIDENTIAL" oninput="updateWmPreview()">
+          <div style="font-size:11px;color:var(--text-muted);margin-top:5px">The built-in PDF font supports Latin text, numbers, and common symbols. Korean and other CJK text are not supported.</div>
         </div>
         <div class="control-row">
           <label>Font Size</label>
@@ -421,13 +422,14 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <summary>❓ FAQ</summary>
     <div class="guide-content">
       <ul>
-        <li><strong>Are my files sent to a server?</strong><br>No. All processing happens locally in your web browser. Your PDFs are never uploaded anywhere.</li>
+        <li><strong>Are my files sent to a server?</strong><br>The app processes selected PDFs in your browser and does not upload them. Its PDF libraries are downloaded from a CDN, however, so this is not an absolute security guarantee for highly sensitive documents.</li>
         <li><strong>Is there a file size limit?</strong><br>There is no hard limit, but performance depends on your device's memory. Very large files (hundreds of MBs) may process slowly or cause crashes.</li>
         <li><strong>Are all PDFs supported?</strong><br>Most standard PDFs are supported. However, encrypted or password-protected PDFs cannot be processed.</li>
+        <li><strong>Will every PDF feature remain unchanged?</strong><br>Pages are not rasterized, so text and image quality are generally preserved. Digital signatures, encryption, and some forms, annotations, or metadata may change when the file is saved. Keep the original and verify the result.</li>
       </ul>
     </div>
   </details>
-  <div class="footer"><span>100% Local Browser Processing</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+  <div class="footer"><span>Browser processing without selected-file uploads</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="scroll-top-btn" id="scrollTopBtn" aria-label="Top">↑</button>
@@ -439,24 +441,51 @@ let PDFDocument, degrees, rgb, StandardFonts;
 
 function loadScriptOnce(src) {
   return new Promise((resolve, reject) => {
-    const existing = document.querySelector(`script[data-src="${src}"]`);
+    let existing = document.querySelector(`script[data-src="${src}"]`);
     if (existing) {
-      existing.addEventListener('load', resolve, { once: true });
-      existing.addEventListener('error', reject, { once: true });
-      if (existing.dataset.loaded === 'true') resolve();
-      return;
+      if (existing.dataset.loaded === 'true') {
+        resolve();
+        return;
+      }
+      else if (existing.dataset.state === 'failed') existing.remove();
+      else {
+        const timer = setTimeout(() => {
+          existing.remove();
+          reject(new Error('Timed out while loading the PDF library.'));
+        }, 15000);
+        existing.addEventListener('load', () => { clearTimeout(timer); resolve(); }, { once: true });
+        existing.addEventListener('error', () => { clearTimeout(timer); reject(new Error('Failed to load the PDF library.')); }, { once: true });
+        return;
+      }
     }
     const script = document.createElement('script');
     script.src = src;
     script.dataset.src = src;
-    script.onload = () => { script.dataset.loaded = 'true'; resolve(); };
-    script.onerror = reject;
+    script.dataset.state = 'loading';
+    const timer = setTimeout(() => {
+      script.dataset.state = 'failed';
+      script.remove();
+      reject(new Error('Timed out while loading the PDF library.'));
+    }, 15000);
+    script.onload = () => {
+      clearTimeout(timer);
+      script.dataset.loaded = 'true';
+      script.dataset.state = 'loaded';
+      resolve();
+    };
+    script.onerror = () => {
+      clearTimeout(timer);
+      script.dataset.state = 'failed';
+      script.remove();
+      reject(new Error('Failed to load the PDF library.'));
+    };
     document.head.appendChild(script);
   });
 }
 
 async function ensurePdfLibs() {
   if (!pdfLibsPromise) {
+    document.getElementById('cdnError').style.display = 'none';
     pdfLibsPromise = (async () => {
       await Promise.all([
         loadScriptOnce('https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js'),
@@ -465,6 +494,7 @@ async function ensurePdfLibs() {
       if (!window.PDFLib || !window.pdfjsLib) throw new Error('Failed to load PDF libraries.');
       ({ PDFDocument, degrees, rgb, StandardFonts } = window.PDFLib);
       window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+      document.getElementById('cdnError').style.display = 'none';
     })().catch(err => {
       pdfLibsPromise = null;
       document.getElementById('cdnError').style.display = 'block';
@@ -499,7 +529,7 @@ function downloadPdf(bytes, filename) {
   a.href = URL.createObjectURL(blob);
   a.download = filename;
   a.click();
-  URL.revokeObjectURL(a.href);
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
 function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
@@ -546,8 +576,14 @@ function setupDropZone(zoneId, inputId, handler, multi) {
   }
   zone.addEventListener('drop', e => {
     e.preventDefault(); zone.classList.remove('dragover');
-    const files = Array.from(e.dataTransfer.files).filter(f => f.type === 'application/pdf');
+    const accepted = input.accept.split(',').map(v => v.trim().toLowerCase()).filter(Boolean);
+    const files = Array.from(e.dataTransfer.files).filter(file => accepted.some(rule => {
+      if (rule.startsWith('.')) return file.name.toLowerCase().endsWith(rule);
+      if (rule.endsWith('/*')) return file.type.toLowerCase().startsWith(rule.slice(0, -1));
+      return file.type.toLowerCase() === rule;
+    }));
     if (files.length) runHandler(multi ? files : [files[0]]);
+    else showToast('Please choose a file type supported by this area.');
   });
   input.addEventListener('change', () => {
     if (input.files.length) runHandler(multi ? Array.from(input.files) : [input.files[0]]);
@@ -858,6 +894,11 @@ async function doWatermark() {
   try {
     const doc = await PDFDocument.load(wmPdfBytes);
     const font = await doc.embedFont(StandardFonts.Helvetica);
+    try {
+      font.encodeText(text);
+    } catch (error) {
+      throw new Error('Watermarks currently support Latin text, numbers, and common symbols only. Korean and other CJK text cannot be used.');
+    }
     const pages = doc.getPages();
     pages.forEach(page => {
       const { width, height } = page.getSize();
@@ -883,12 +924,12 @@ async function doWatermark() {
 function updateReport(taskName, fileName, byteSize, sumTxt, techTxt) {
   document.getElementById('reportContainer').style.display = 'block';
   document.getElementById('reportContainer').innerHTML = `
-    <div class="report-header">⚙️ Operation Report: ${taskName}</div>
+    <div class="report-header">⚙️ Operation Report: ${escapeHtml(taskName)}</div>
     <div class="report-body">
-      <div class="report-row"><div class="report-label">File Output</div><div class="report-value">${fileName}</div></div>
+      <div class="report-row"><div class="report-label">File Output</div><div class="report-value">${escapeHtml(fileName)}</div></div>
       <div class="report-row"><div class="report-label">Byte Size</div><div class="report-value">${formatSize(byteSize)}</div></div>
-      <div class="report-row"><div class="report-label">Summary</div><div class="report-value highlight">${sumTxt}</div></div>
-      <div class="report-row"><div class="report-label">Engine Details</div><div class="report-value" style="color:var(--text-muted);font-size:12px">${techTxt}</div></div>
+      <div class="report-row"><div class="report-label">Summary</div><div class="report-value highlight">${escapeHtml(sumTxt)}</div></div>
+      <div class="report-row"><div class="report-label">Engine Details</div><div class="report-value" style="color:var(--text-muted);font-size:12px">${escapeHtml(techTxt)}</div></div>
     </div>
   `;
 }
@@ -924,7 +965,7 @@ async function doDelete() {
     const result = await doc.save();
     downloadPdf(result, 'deleted.pdf');
     showToast('Pages deleted successfully!');
-    updateReport('Delete Pages', 'deleted.pdf', result.byteLength, `Removed ${pages.length} outlier pages.`, 'Index reordered natively and exported as lossless byte array.');
+    updateReport('Delete Pages', 'deleted.pdf', result.byteLength, `Removed ${pages.length} pages.`, 'Page indexes were rebuilt and saved as a new PDF. Verify signatures, forms, and annotations in the result.');
   } catch (e) { showToast('Error: ' + e.message); }
   setLoading('deleteLoading', false);
 }

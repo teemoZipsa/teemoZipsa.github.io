@@ -188,7 +188,7 @@
     <div class="input-row">
       <div class="input-group">
         <label>📈 Interest Rate / Period (%)</label>
-        <input type="number" id="rate" placeholder="10" step="0.1" value="10">
+        <input type="number" id="rate" placeholder="10" min="-99.9" max="1000" step="0.1" value="10">
       </div>
       <div class="input-group">
         <label>🔄 Number of Periods</label>
@@ -285,11 +285,45 @@ function fmtNum(n) {
   return Math.round(n).toLocaleString('en-US');
 }
 
+function clearCalculation() {
+  document.getElementById('summary').style.display = 'none';
+  document.getElementById('chartWrap').style.display = 'none';
+  document.getElementById('tradesWrap').style.display = 'none';
+  document.getElementById('buffettMsg').style.display = 'none';
+  document.getElementById('chart').innerHTML = '';
+  document.getElementById('tradesList').innerHTML = '';
+}
+
+function signedNumber(value) {
+  return `${value > 0 ? '+' : ''}${fmtNum(value)}`;
+}
+
 function calculate() {
   const principal = parseMoney('principal');
-  const rate = parseFloat(document.getElementById('rate').value) || 0;
-  const times = parseInt(document.getElementById('times').value) || 0;
-  if (!principal || !rate || !times) return;
+  const rateInput = document.getElementById('rate');
+  const timesInput = document.getElementById('times');
+  const principalInput = document.getElementById('principal');
+  const rate = Number(rateInput.value);
+  const times = Number(timesInput.value);
+
+  principalInput.setCustomValidity('');
+  rateInput.setCustomValidity('');
+  timesInput.setCustomValidity('');
+  if (!Number.isFinite(principal) || principal <= 0 || principal > Number.MAX_SAFE_INTEGER) {
+    principalInput.setCustomValidity('Principal must be positive and within the safe calculation range.');
+    clearCalculation();
+    return;
+  }
+  if (!Number.isFinite(rate) || rate <= -100 || rate > 1000) {
+    rateInput.setCustomValidity('Rate must be greater than -100% and no more than 1,000%.');
+    clearCalculation();
+    return;
+  }
+  if (!Number.isInteger(times) || times < 1 || times > 200) {
+    timesInput.setCustomValidity('Periods must be an integer from 1 to 200.');
+    clearCalculation();
+    return;
+  }
 
   const r = rate / 100;
   const data = [{ round: 0, amount: principal, gain: 0 }];
@@ -303,12 +337,13 @@ function calculate() {
 
   const finalAmount = data[data.length - 1].amount;
   const totalProfit = finalAmount - principal;
-  const totalRate = ((totalProfit / principal) * 100).toFixed(1);
+  const totalRateNumber = (totalProfit / principal) * 100;
+  const totalRate = totalRateNumber.toFixed(1);
 
   // 요약
   document.getElementById('sumPrincipal').textContent = fmtNum(principal);
   document.getElementById('sumTotal').textContent = fmtNum(finalAmount);
-  document.getElementById('sumRate').textContent = '+' + totalRate + '%';
+  document.getElementById('sumRate').textContent = (totalRateNumber > 0 ? '+' : '') + totalRate + '%';
   document.getElementById('summary').style.display = 'block';
 
   // 이스터에그
@@ -395,9 +430,9 @@ function renderTrades(data, principal) {
         <div class="trade-num">P${d.round}</div>
         <div class="trade-info">
           <div class="trade-amount">${fmtNum(d.amount)}</div>
-          <div class="trade-detail">Profit +${fmtNum(d.gain)} · Total Return +${totalRate}%</div>
+          <div class="trade-detail">Profit ${signedNumber(d.gain)} · Total Return ${Number(totalRate) > 0 ? '+' : ''}${totalRate}%</div>
         </div>
-        <div class="trade-gain">+${fmtNum(d.gain)}</div>
+        <div class="trade-gain">${signedNumber(d.gain)}</div>
       `;
     }
     list.appendChild(item);

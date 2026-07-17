@@ -138,7 +138,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
           <span class="result-value" id="resDiscount">10,000 원</span>
         </div>
         <div class="result-item">
-          <span class="result-label">할인 적용 가격</span>
+          <span class="result-label" id="afterDiscountLabel">할인 적용 가격</span>
           <span class="result-value" id="resAfterDiscount">40,000 원</span>
         </div>
         <div class="result-item" id="vatRow" style="display:none">
@@ -164,7 +164,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
         <p>보통 쇼핑몰에서는 <strong>'판매가 - 쿠폰 할인'</strong>을 먼저 적용한 뒤, 그 결과값에서 <strong>적립금</strong>을 빼는 방식을 사용합니다. 5만 원짜리에 20% 쿠폰을 먹이고 5,000원 적립금을 쓰면, 4만 원에서 5,000원이 추가로 차감되어 최종 35,000원을 결제하게 됩니다. 퍼센트 할인이 항상 먼저 계산됨을 잊지 마세요!</p>
         <br>
         <strong>Q. 부가세 별도(전), 부가세 포함(후)의 차이가 뭔가요? (사업자 필수)</strong>
-        <p>B2B 거래나 프리랜서 견적서 작성 시 가장 중요합니다. <strong>'부가세 포함'</strong>(세단가)는 110%짜리 금액이고, <strong>'부가세 별도'</strong>(공급가액)은 100%짜리 금액입니다. 견적서에 50,000원(부가세 별도)라고 적혀있다면 실제 송금할 금액은 10%가 붙은 55,000원입니다. 본 계산기의 '부가세(10%) 포함' 토글을 켜서 원클릭으로 세금계산서 발행액을 맞출 수 있습니다.</p>
+        <p>B2B 거래나 프리랜서 견적서 작성 시 가장 중요합니다. <strong>'부가세 포함'</strong>(세단가)는 110%짜리 금액이고, <strong>'부가세 별도'</strong>(공급가액)은 100%짜리 금액입니다. 견적서에 50,000원(부가세 별도)라고 적혀있다면 실제 송금할 금액은 10%가 붙은 55,000원입니다. 이미 부가세가 포함된 가격이라면 '입력 가격이 세전 금액'을 끄세요. 예를 들어 11,000원에 10% 할인을 적용하면 공급가액과 세액을 함께 10% 줄여 최종 금액은 9,900원이 됩니다.</p>
       </div>
     </details>
   </div>
@@ -185,21 +185,57 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 
 <script>
+const MAX_PRICE = 1_000_000_000_000_000;
+
 function parseNum(s) {
-  return parseFloat(s.replace(/,/g, '')) || 0;
+  const normalized = String(s).replace(/,/g, '').trim();
+  if (normalized === '') return 0;
+  if (!/^\d+(?:\.\d+)?$/.test(normalized)) return NaN;
+  return Number(normalized);
 }
 function fmt(n) {
-  return Math.round(n).toLocaleString('ko-KR');
+  return Number.isFinite(n) ? Math.round(n).toLocaleString('ko-KR') : '—';
 }
 
 let _syncLock = false;
 
+function clearResults() {
+  document.getElementById('resDiscount').textContent = '—';
+  document.getElementById('resAfterDiscount').textContent = '—';
+  document.getElementById('resVat').textContent = '—';
+  document.getElementById('resFinal').textContent = '—';
+  document.getElementById('vatRow').style.display = 'none';
+  const report = document.getElementById('analysisReport');
+  report.replaceChildren();
+  report.style.display = 'none';
+}
+
+function setValidity(input, valid, message) {
+  input.setCustomValidity(valid ? '' : message);
+  input.setAttribute('aria-invalid', String(!valid));
+}
+
 function calc() {
   if (_syncLock) return;
-  const price = parseNum(document.getElementById('price').value);
-  const rate = parseFloat(document.getElementById('discountRate').value) || 0;
+  const priceInput = document.getElementById('price');
+  const rateInput = document.getElementById('discountRate');
+  const price = parseNum(priceInput.value);
+  const rate = parseNum(rateInput.value);
   const vat = document.getElementById('vatToggle').checked;
   const preTax = document.getElementById('vatExToggle').checked;
+
+  const validPrice = Number.isFinite(price) && price >= 0 && price <= MAX_PRICE;
+  const validRate = Number.isFinite(rate) && rate >= 0 && rate <= 100;
+  setValidity(priceInput, validPrice, '가격은 0원 이상 1,000조 원 이하의 숫자로 입력하세요.');
+  setValidity(rateInput, validRate, '할인율은 0% 이상 100% 이하로 입력하세요.');
+  setValidity(document.getElementById('discountAmt'), true, '');
+  if (!validPrice || !validRate) {
+    _syncLock = true;
+    document.getElementById('discountAmt').value = '';
+    _syncLock = false;
+    clearResults();
+    return;
+  }
 
   const discountAmt = price * rate / 100;
   _syncLock = true;
@@ -211,10 +247,25 @@ function calc() {
 
 function calcByAmt() {
   if (_syncLock) return;
-  const price = parseNum(document.getElementById('price').value);
-  const discountAmt = parseNum(document.getElementById('discountAmt').value);
+  const priceInput = document.getElementById('price');
+  const amountInput = document.getElementById('discountAmt');
+  const price = parseNum(priceInput.value);
+  const discountAmt = parseNum(amountInput.value);
   const vat = document.getElementById('vatToggle').checked;
   const preTax = document.getElementById('vatExToggle').checked;
+
+  const validPrice = Number.isFinite(price) && price >= 0 && price <= MAX_PRICE;
+  const validAmount = Number.isFinite(discountAmt) && discountAmt >= 0 && discountAmt <= price;
+  setValidity(priceInput, validPrice, '가격은 0원 이상 1,000조 원 이하의 숫자로 입력하세요.');
+  setValidity(amountInput, validAmount, '할인 금액은 0원 이상이며 기준 가격을 넘을 수 없습니다.');
+  setValidity(document.getElementById('discountRate'), true, '');
+  if (!validPrice || !validAmount) {
+    _syncLock = true;
+    document.getElementById('discountRate').value = '';
+    _syncLock = false;
+    clearResults();
+    return;
+  }
 
   const rate = price > 0 ? (discountAmt / price * 100) : 0;
   _syncLock = true;
@@ -225,17 +276,26 @@ function calcByAmt() {
 }
 
 function update(price, discountAmt, vat, preTax) {
+  if (!Number.isFinite(price) || price < 0 || price > MAX_PRICE || !Number.isFinite(discountAmt) || discountAmt < 0 || discountAmt > price) {
+    clearResults();
+    return;
+  }
   let base = price;
+  let discountBeforeVat = discountAmt;
   // 세후 금액 입력인 경우 세전으로 역산
   if (vat && !preTax) {
     base = price / 1.1;
+    // 입력 가격과 할인 금액은 모두 VAT 포함 기준이므로 같은 비율로
+    // 공급가액을 역산해야 할인율이 최종 결제액에도 그대로 적용된다.
+    discountBeforeVat = discountAmt / 1.1;
   }
 
-  const afterDiscount = base - discountAmt;
+  const afterDiscount = base - discountBeforeVat;
   const vatAmt = vat ? afterDiscount * 0.1 : 0;
   const finalAmt = afterDiscount + vatAmt;
 
   document.getElementById('resDiscount').textContent = fmt(discountAmt) + ' 원';
+  document.getElementById('afterDiscountLabel').textContent = vat ? '할인 후 공급가액' : '할인 적용 가격';
   document.getElementById('resAfterDiscount').textContent = fmt(afterDiscount) + ' 원';
   document.getElementById('resVat').textContent = fmt(vatAmt) + ' 원';
   document.getElementById('resFinal').textContent = fmt(Math.max(0, finalAmt)) + ' 원';
@@ -243,7 +303,8 @@ function update(price, discountAmt, vat, preTax) {
 
   // Dynamic Report Logic
   const report = document.getElementById('analysisReport');
-  const rateStr = document.getElementById('discountRate').value || '0';
+  const numericRate = price > 0 ? discountAmt / price * 100 : 0;
+  const rateStr = Number.isInteger(numericRate) ? String(numericRate) : numericRate.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
   
   if (price > 0 || discountAmt > 0) {
     report.style.display = 'flex';

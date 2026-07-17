@@ -32,7 +32,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .mode-tab{flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--bg-bar);color:var(--text-section);font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s;font-family:inherit}
 .mode-tab.active{background:var(--accent);border-color:var(--accent);color:var(--text-on-accent)}
 .mode-tab:hover:not(.active){background:var(--bg-hover);border-color:var(--border-hover)}
-.section-title{font-size:12px;color:var(--text-section);font-weight:600;margin-bottom:6px}
+.section-title{display:block;font-size:12px;color:var(--text-section);font-weight:600;margin-bottom:6px}
 .text-area{width:100%;min-height:100px;background:var(--bg-bar);border:2px solid var(--border);border-radius:12px;padding:14px;font-size:14px;color:var(--text-primary);resize:vertical;outline:none;font-family:'Pretendard',monospace;line-height:1.5;transition:border-color .2s;margin-bottom:14px}
 .text-area:focus{border-color:var(--accent)}
 .text-area::placeholder{color:var(--text-placeholder)}
@@ -77,6 +77,9 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .footer a:hover{color:var(--text-secondary)}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.limit-note{margin-top:6px;font-size:11px;line-height:1.5;color:var(--text-muted)}
+.input-error{display:none;margin-top:8px;padding:10px 12px;border:1px solid #ef4444;border-radius:8px;background:rgba(239,68,68,.08);color:#f87171;font-size:12px;line-height:1.5}
+.input-error.show{display:block}
 .scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
 .scroll-top-btn.visible{opacity:1;visibility:visible}
 .scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
@@ -98,8 +101,8 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
     <!-- 텍스트 모드 -->
     <div id="textMode">
-      <div class="section-title">원본 텍스트</div>
-      <textarea class="text-area" id="inputText" placeholder="인코딩할 텍스트를 입력하세요..." oninput="autoConvert()"></textarea>
+      <label class="section-title" for="inputText">원본 텍스트</label>
+      <textarea class="text-area" id="inputText" placeholder="인코딩할 텍스트를 입력하세요..." oninput="autoConvert()" aria-describedby="textLimit textError"></textarea>
 
       <div class="actions">
         <button class="btn btn-primary" onclick="encode()">🔒 인코딩</button>
@@ -107,8 +110,10 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
         <button class="btn btn-secondary" onclick="swapText()">🔄 교환</button>
       </div>
 
-      <div class="section-title">Base64 결과</div>
-      <textarea class="text-area" id="outputText" placeholder="결과가 여기에 표시됩니다..." oninput="autoConvertReverse()"></textarea>
+      <label class="section-title" for="outputText">Base64 결과</label>
+      <textarea class="text-area" id="outputText" placeholder="결과가 여기에 표시됩니다..." oninput="autoConvertReverse()" aria-describedby="textLimit textError"></textarea>
+      <p class="limit-note" id="textLimit">원본 텍스트는 100만 자, 디코딩할 Base64 문자열은 800만 자까지 처리합니다.</p>
+      <div class="input-error" id="textError" role="alert"></div>
 
       <div class="actions">
         <button class="btn btn-primary" onclick="copyOutput()">📋 결과 복사</button>
@@ -118,15 +123,16 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
     <!-- 이미지 모드 -->
     <div id="imageMode" class="image-section">
-      <div class="section-title">이미지 파일 선택</div>
-      <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+      <div class="section-title" id="imageFileLabel">이미지 파일 선택</div>
+      <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-labelledby="imageFileLabel imageFileHelp" onclick="document.getElementById('fileInput').click()">
         <div class="icon">📁</div>
         <div class="text">클릭하거나 이미지를 드래그하세요</div>
-        <div class="sub">JPG, PNG, GIF, WebP, SVG 지원</div>
-        <input type="file" id="fileInput" accept="image/*" onchange="handleFile(this.files[0])">
+        <div class="sub" id="imageFileHelp">JPG, PNG, GIF, WebP, SVG · 최대 10MB</div>
+        <input type="file" id="fileInput" accept="image/*" aria-label="변환할 이미지 파일" onchange="handleFile(this.files[0])">
       </div>
+      <div class="input-error" id="fileError" role="alert"></div>
 
-      <img id="previewImg" class="preview-img" style="display:none">
+      <img id="previewImg" class="preview-img" style="display:none" alt="선택한 이미지 미리보기">
 
       <div id="imageResult" style="display:none">
         <div class="section-title">Base64 데이터 URL</div>
@@ -142,14 +148,14 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
   </div>
   
-  <div id="reportBox" class="report-box" style="margin-left:20px; margin-right:20px;"></div>
+  <div id="reportBox" class="report-box" style="margin-left:20px; margin-right:20px;" role="status" aria-live="polite"></div>
 
   <div class="guide-section">
     <div class="guide-title">🤔 Base64 인코딩 관련 Q&A</div>
     <details class="guide-item">
       <summary>Base64 인코딩이란 무엇인가요?</summary>
       <div class="guide-content">
-        컴퓨터 분야에서 쓰이는 Base64(베이스 64) 코딩 기법은 8비트 이진 데이터(예: 이미지 파일, 실행파일, 일반 문자열 등)를 화면에 표시되는 문자 코드표(ASCII)의 일반적인 64개 아스키 문자로 변환하여 나타내는 방식입니다. 이렇게 변환하면 시스템 독립적으로 데이터를 안전하게 전송하거나 저장할 수 있습니다.
+        컴퓨터 분야에서 쓰이는 Base64(베이스 64) 코딩 기법은 8비트 이진 데이터(예: 이미지 파일, 실행파일, 일반 문자열 등)를 화면에 표시되는 문자 코드표(ASCII)의 일반적인 64개 아스키 문자로 변환하여 나타내는 방식입니다. 텍스트만 허용하는 형식에서 데이터를 표현하거나 저장하기 쉬워지지만, 암호화나 전송 보안을 제공하지는 않습니다.
       </div>
     </details>
     <details class="guide-item">
@@ -174,14 +180,29 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       </div>
     </div>
   </div>
-    <div class="footer"><span>100% 브라우저 로컬 처리 (서버 미전송)</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <div class="footer"><span>브라우저 내 변환 · 앱 서버 업로드 없음</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
 </div>
 
-<div class="toast" id="toast"></div>
-<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<button class="scroll-top-btn" id="scrollTopBtn" aria-label="맨 위로" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
 <script>
 let currentMode='text';
+const MAX_SOURCE_CHARS=1000000;
+const MAX_BASE64_CHARS=8000000;
+const MAX_FILE_BYTES=10*1024*1024;
+
+function setInputError(id,message=''){
+  const error=document.getElementById(id);
+  error.textContent=message;
+  error.classList.toggle('show',Boolean(message));
+}
+
+function validateTextLimit(value,limit,label){
+  if(value.length<=limit){setInputError('textError');return true;}
+  setInputError('textError',`${label}은(는) 최대 ${limit.toLocaleString()}자까지 처리할 수 있습니다. 입력을 줄인 뒤 다시 시도하세요.`);
+  return false;
+}
 
 function setMode(m){
   currentMode=m;
@@ -211,6 +232,7 @@ function base64ToUtf8(b64){
 function encode(){
   const input=document.getElementById('inputText').value;
   if(!input){showToast('텍스트를 입력하세요');return;}
+  if(!validateTextLimit(input,MAX_SOURCE_CHARS,'원본 텍스트')) return;
   try{
     const result=utf8ToBase64(input);
     document.getElementById('outputText').value=result;
@@ -222,6 +244,7 @@ function encode(){
 function decode(){
   const input=document.getElementById('outputText').value||document.getElementById('inputText').value;
   if(!input){showToast('Base64 문자열을 입력하세요');return;}
+  if(!validateTextLimit(input,MAX_BASE64_CHARS,'Base64 문자열')) return;
   try{
     const result=base64ToUtf8(input.trim());
     if(document.getElementById('outputText').value){
@@ -238,7 +261,7 @@ function updateReport(data) {
   const box = document.getElementById('reportBox');
   let text = '';
   if(data.type === 'encode') {
-    text = `🔒 <b>Base64 텍스트 인코딩 분석</b><br/>원본 텍스트가 총 <b>${data.length.toLocaleString()}자</b>의 Base64 데이터 문자열로 변환되었습니다. 생성된 Base64 코드는 ASCII 문자셋으로만 이루어져 있어 이메일이나 API 전송 환경에서 데이터 손실 없이 안전하게 전송할 수 있습니다.`;
+      text = `🔒 <b>Base64 텍스트 인코딩 분석</b><br/>원본 텍스트가 총 <b>${data.length.toLocaleString()}자</b>의 Base64 데이터 문자열로 변환되었습니다. ASCII 텍스트 형식으로 표현되므로 텍스트 전용 채널에서 다루기 쉽지만, Base64 자체는 암호화나 전송 보안을 제공하지 않습니다.`;
   } else if(data.type === 'decode') {
     text = `🔓 <b>Base64 텍스트 디코딩 분석</b><br/>입력하신 Base64 데이터가 성공적으로 파싱되어 총 <b>${data.length.toLocaleString()}자</b>의 원본 UTF-8 텍스트로 복원(디코딩)되었습니다.`;
   } else if(data.type === 'image') {
@@ -256,8 +279,12 @@ function swapText(){
   output.value=tmp;
 }
 
-function autoConvert(){/* 실시간 변환은 부담이 커서 수동으로 */}
-function autoConvertReverse(){/* 수동 */}
+function autoConvert(){
+  if(document.getElementById('inputText').value.length<=MAX_SOURCE_CHARS) setInputError('textError');
+}
+function autoConvertReverse(){
+  if(document.getElementById('outputText').value.length<=MAX_BASE64_CHARS) setInputError('textError');
+}
 
 function copyOutput(){
   const text=document.getElementById('outputText').value;
@@ -269,10 +296,14 @@ function clearText(){
   document.getElementById('inputText').value='';
   document.getElementById('outputText').value='';
   document.getElementById('reportBox').classList.remove('show');
+  setInputError('textError');
 }
 
 // 이미지 모드
 const dropZone=document.getElementById('dropZone');
+dropZone.addEventListener('keydown',e=>{
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();document.getElementById('fileInput').click();}
+});
 dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('dragover');});
 dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('dragover'));
 dropZone.addEventListener('drop',e=>{
@@ -281,7 +312,9 @@ dropZone.addEventListener('drop',e=>{
 });
 
 function handleFile(file){
-  if(!file||!file.type.startsWith('image/')){showToast('이미지 파일을 선택하세요');return;}
+  setInputError('fileError');
+  if(!file||!file.type.startsWith('image/')){document.getElementById('fileInput').value='';setInputError('fileError','지원되는 이미지 파일을 선택하세요.');showToast('이미지 파일을 선택하세요');return;}
+  if(file.size>MAX_FILE_BYTES){document.getElementById('fileInput').value='';setInputError('fileError','파일이 10MB 제한을 초과했습니다. 더 작은 이미지를 선택하세요.');showToast('10MB 이하 이미지를 선택하세요');return;}
   const reader=new FileReader();
   reader.onload=function(e){
     const dataUrl=e.target.result;
@@ -294,6 +327,7 @@ function handleFile(file){
     showToast('이미지 변환 완료!');
     updateReport({type:'image', kb:kbText});
   };
+  reader.onerror=function(){setInputError('fileError','파일을 읽지 못했습니다. 다른 이미지를 선택하세요.');};
   reader.readAsDataURL(file);
 }
 
@@ -308,6 +342,9 @@ function clearImage(){
   document.getElementById('imageResult').style.display='none';
   document.getElementById('fileInput').value='';
   document.getElementById('reportBox').classList.remove('show');
+  document.getElementById('previewImg').removeAttribute('src');
+  document.getElementById('imageBase64').textContent='';
+  setInputError('fileError');
 }
 
 function showToast(msg){

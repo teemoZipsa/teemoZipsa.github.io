@@ -188,7 +188,7 @@
     <div class="input-row">
       <div class="input-group">
         <label>📈 시도당 수익률 (%)</label>
-        <input type="number" id="rate" placeholder="10" step="0.1" value="10">
+        <input type="number" id="rate" placeholder="10" min="-99.9" max="1000" step="0.1" value="10">
       </div>
       <div class="input-group">
         <label>🔄 반복 횟수</label>
@@ -310,11 +310,45 @@ function fmtWon(n) {
   return Math.round(n).toLocaleString() + '원';
 }
 
+function clearCalculation() {
+  document.getElementById('summary').style.display = 'none';
+  document.getElementById('chartWrap').style.display = 'none';
+  document.getElementById('tradesWrap').style.display = 'none';
+  document.getElementById('buffettMsg').style.display = 'none';
+  document.getElementById('chart').innerHTML = '';
+  document.getElementById('tradesList').innerHTML = '';
+}
+
+function signedNumber(value) {
+  return `${value > 0 ? '+' : ''}${value.toLocaleString()}`;
+}
+
 function calculate() {
   const principal = parseMoney('principal');
-  const rate = parseFloat(document.getElementById('rate').value) || 0;
-  const times = parseInt(document.getElementById('times').value) || 0;
-  if (!principal || !rate || !times) return;
+  const rateInput = document.getElementById('rate');
+  const timesInput = document.getElementById('times');
+  const principalInput = document.getElementById('principal');
+  const rate = Number(rateInput.value);
+  const times = Number(timesInput.value);
+
+  principalInput.setCustomValidity('');
+  rateInput.setCustomValidity('');
+  timesInput.setCustomValidity('');
+  if (!Number.isFinite(principal) || principal <= 0 || principal > Number.MAX_SAFE_INTEGER) {
+    principalInput.setCustomValidity('원금은 0보다 크고 안전하게 계산 가능한 범위여야 합니다.');
+    clearCalculation();
+    return;
+  }
+  if (!Number.isFinite(rate) || rate <= -100 || rate > 1000) {
+    rateInput.setCustomValidity('수익률은 -100%보다 크고 1,000% 이하여야 합니다.');
+    clearCalculation();
+    return;
+  }
+  if (!Number.isInteger(times) || times < 1 || times > 200) {
+    timesInput.setCustomValidity('반복 횟수는 1~200 사이의 정수여야 합니다.');
+    clearCalculation();
+    return;
+  }
 
   const r = rate / 100;
   const data = [{ round: 0, amount: principal, gain: 0 }];
@@ -328,12 +362,13 @@ function calculate() {
 
   const finalAmount = data[data.length - 1].amount;
   const totalProfit = finalAmount - principal;
-  const totalRate = ((totalProfit / principal) * 100).toFixed(1);
+  const totalRateNumber = (totalProfit / principal) * 100;
+  const totalRate = totalRateNumber.toFixed(1);
 
   // 요약
   document.getElementById('sumPrincipal').textContent = fmtWon(principal);
   document.getElementById('sumTotal').textContent = fmtWon(finalAmount);
-  document.getElementById('sumRate').textContent = '+' + totalRate + '%';
+  document.getElementById('sumRate').textContent = (totalRateNumber > 0 ? '+' : '') + totalRate + '%';
   document.getElementById('summary').style.display = 'block';
 
   // 리포트 데이터 바인딩
@@ -342,12 +377,14 @@ function calculate() {
   document.getElementById('r-times').textContent = times;
   document.getElementById('r-final').textContent = fmtWon(finalAmount);
   document.getElementById('r-profit').textContent = fmtWon(totalProfit);
-  document.getElementById('r-total-rate').textContent = '+' + totalRate;
+  document.getElementById('r-total-rate').textContent = (totalRateNumber > 0 ? '+' : '') + totalRate;
 
   const tip = document.getElementById('r-tip');
-  if (totalRate > 100) {
+  if (totalRateNumber < 0) {
+    tip.textContent = "손실도 다음 계산의 기준 금액에 누적됩니다. 반복 횟수가 늘수록 원금 회복에 필요한 수익률이 커질 수 있으므로 손실 한도와 위험 관리를 함께 확인하세요.";
+  } else if (totalRateNumber > 100) {
     tip.textContent = "수익률이 원금의 2배(100%)를 돌파했습니다. 복리 그래프가 J커브를 그리며 기하급수적으로 폭발하고 있는 단계입니다.";
-  } else if (totalRate > 20) {
+  } else if (totalRateNumber > 20) {
     tip.textContent = "자산이 꾸준히 팽창하고 있습니다. 이자가 다음 계산의 기초 자산이 되는 '눈덩이 효과'가 점차 강해지는 훌륭한 상황입니다.";
   } else {
     tip.textContent = "아직은 눈덩이 효과가 미미하지만, 투자의 횟수(기간)가 누적될수록 복리의 진정한 마법이 발휘될 것입니다. 초기의 인내심이 중요합니다.";
@@ -442,9 +479,9 @@ function renderTrades(data, principal) {
         <div class="trade-num">${d.round}회</div>
         <div class="trade-info">
           <div class="trade-amount">${d.amount.toLocaleString()}원</div>
-          <div class="trade-detail">이번 수익 +${d.gain.toLocaleString()}원 · 원금 대비 +${totalRate}%</div>
+      <div class="trade-detail">이번 수익 ${signedNumber(d.gain)}원 · 원금 대비 ${Number(totalRate) > 0 ? '+' : ''}${totalRate}%</div>
         </div>
-        <div class="trade-gain">+${d.gain.toLocaleString()}</div>
+        <div class="trade-gain">${signedNumber(d.gain)}</div>
       `;
     }
     list.appendChild(item);

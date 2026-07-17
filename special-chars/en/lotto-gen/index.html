@@ -146,7 +146,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       <div class="guide-content">
         <p>Using our lottery number generator is very straightforward:</p>
         <ul>
-          <li><strong>Generate:</strong> Click the "Generate Numbers" button to instantly pick 6 completely random, unique numbers from 1 to 45.</li>
+          <li><strong>Generate:</strong> Click the "Generate Numbers" button to uniformly sample 6 unique numbers from 1 to 45.</li>
           <li><strong>Include (Blue):</strong> Click a number once in the options grid. This number will be <em>guaranteed</em> to appear in your final combination (You can include up to 5 numbers).</li>
           <li><strong>Exclude (Red):</strong> Click a number twice. This number gives you total control by being explicitly <em>excluded</em> from the drawing pool.</li>
         </ul>
@@ -156,7 +156,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <details class="guide">
       <summary>2. Are these random lottery numbers truly random?</summary>
       <div class="guide-content">
-        <p>Yes. We use a cryptographically strong mathematical formula (the Fisher-Yates shuffle algorithm) directly in your browser. This ensures that every possible combination of lottery numbers has an equal, mathematically fair chance of being generated.</p>
+        <p>The browser's cryptographic random-number generator supplies unbiased indices to a Fisher-Yates shuffle. This gives each allowed combination the same chance within this tool, but it cannot predict or improve the odds of a real lottery drawing.</p>
       </div>
     </details>
 
@@ -271,9 +271,9 @@ function generate() {
     return;
   }
 
-  // Shuffle pool (Fisher-Yates)
+  // Shuffle pool with an unbiased cryptographic index source.
   for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = secureRandomIndex(i + 1);
     [pool[i], pool[j]] = [pool[j], pool[i]];
   }
   
@@ -287,6 +287,14 @@ function generate() {
   
   renderBalls(result);
   addHistory(result);
+}
+
+function secureRandomIndex(max) {
+  const range = 0x100000000;
+  const limit = range - (range % max);
+  const value = new Uint32Array(1);
+  do { crypto.getRandomValues(value); } while (value[0] >= limit);
+  return value[0] % max;
 }
 
 function renderBalls(nums) {

@@ -250,10 +250,10 @@ function setResult(boxId, value, label, detail) {
   `;
 }
 
-function setEmpty(boxId) {
+function setEmpty(boxId, message = '숫자를 입력하세요') {
   const box = document.getElementById(boxId);
   box.classList.add('empty');
-  box.innerHTML = '<div class="result-value">숫자를 입력하세요</div>';
+  box.innerHTML = `<div class="result-value">${message}</div>`;
 }
 
 function calc0() {
@@ -320,6 +320,11 @@ function calc3() {
   if (isNaN(a) || isNaN(b)) { setEmpty('r3'); report.style.display = 'none'; return; }
   let original;
   if (m3type === 'discount') {
+    if (b < 0 || b >= 100) {
+      setEmpty('r3', '할인율은 0% 이상 100% 미만이어야 합니다');
+      report.style.display = 'none';
+      return;
+    }
     original = a / (1 - b/100);
     setResult('r3', fmt(original), `원래 가격 (${b}% 할인 전)`, `${fmt(original)} × ${100-b}% = ${fmt(a)}`);
     report.style.display = 'flex';
@@ -330,6 +335,11 @@ function calc3() {
       <p>단순히 ${fmt(a)}에 ${fmt(b)}%를 더해버리는 오류를 막기 위해, 공식 <strong>[적용 금액 / (1 - 할인율)]</strong>을 적용하여 산출된 정확한 데이터입니다.</p>
     `;
   } else {
+    if (b <= -100) {
+      setEmpty('r3', '인상률은 -100%보다 커야 합니다');
+      report.style.display = 'none';
+      return;
+    }
     original = a / (1 + b/100);
     setResult('r3', fmt(original), `원래 가격 (${b}% 인상 전)`, `${fmt(original)} × ${100+b}% = ${fmt(a)}`);
     report.style.display = 'flex';

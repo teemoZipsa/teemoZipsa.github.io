@@ -43,6 +43,10 @@
   .size-row label{font-size:11px;color:var(--calc-expr-text);font-weight:600;white-space:nowrap}
   .size-row select{background:var(--bg-bar);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:6px 10px;font-size:12px;font-family:inherit;outline:none}
   .setting-note{font-size:11px;color:var(--text-placeholder);line-height:1.5;margin-top:-8px}
+  .storage-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:-6px}
+  .storage-row .setting-note{margin:0;flex:1}
+  .storage-clear{flex:none;padding:6px 9px;border:1px solid var(--border);border-radius:6px;background:var(--bg-bar);color:var(--text-info);font:inherit;font-size:11px;cursor:pointer}
+  .storage-clear:hover{border-color:var(--accent)}
   .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
   .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
   .footer a:hover{color:var(--text-secondary)}
@@ -81,7 +85,11 @@
     <a href="/special-chars/en/qr-code/" class="back-btn">🌐 English</a>
   </div>
   <div class="body">
-    <textarea id="qrInput" maxlength="5000" placeholder="URL, 텍스트, 연락처 등을 입력하세요...&#10;예: https://teemozipsa.github.io/" oninput="scheduleGenerate()" aria-label="QR 코드로 만들 내용"></textarea>
+    <textarea id="qrInput" maxlength="5000" placeholder="URL, 텍스트, 연락처 등을 입력하세요...&#10;예: https://teemozipsa.github.io/" oninput="scheduleGenerate()" aria-label="QR 코드로 만들 내용" aria-describedby="storageNote"></textarea>
+    <div class="storage-row">
+      <p class="setting-note" id="storageNote">입력 내용은 다음 방문 때 복원할 수 있도록 이 브라우저에만 자동 저장됩니다.</p>
+      <button type="button" class="storage-clear" onclick="clearStoredInput()">저장된 입력 지우기</button>
+    </div>
     <div class="size-row">
       <label for="qrSize">모듈 크기:</label>
       <select id="qrSize" onchange="generate()">
@@ -163,7 +171,7 @@
   </div>
     <div class="footer"><span>100% 브라우저 로컬 생성 (서버 미전송)</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
 </div>
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 let currentDataUrl = '';
 const QUIET_ZONE_MODULES = 4;
@@ -195,6 +203,16 @@ function invalidateOutput(message = '') {
     box.style.display = 'block';
   }
   document.getElementById('reportBox').classList.remove('show');
+}
+
+function clearStoredInput() {
+  clearTimeout(generateTimer);
+  generateTimer = 0;
+  document.getElementById('qrInput').value = '';
+  try { localStorage.removeItem('qrCode_text'); } catch(e) {}
+  document.getElementById('qrBox').style.display = 'none';
+  invalidateOutput();
+  showToast('입력과 브라우저 저장 내용을 지웠습니다.');
 }
 
 function generate() {

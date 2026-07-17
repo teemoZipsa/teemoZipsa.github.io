@@ -48,7 +48,9 @@
         .msg-list{flex:1;overflow-y:auto;padding:0 16px 12px}
         .msg-list::-webkit-scrollbar{width:4px}
         .msg-list::-webkit-scrollbar-thumb{background:var(--bg-btn-hover);border-radius:2px}
-        .msg-card{display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--bg-guide);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:all .2s;position:relative}
+        .msg-card{display:flex;align-items:flex-start;gap:10px;padding:12px 68px 12px 12px;background:var(--bg-guide);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;transition:all .2s;position:relative}
+        .msg-copy{display:flex;align-items:flex-start;gap:10px;flex:1;min-width:0;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+        .msg-copy:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:4px}
         .msg-card:hover{background:var(--bg-input);border-color:var(--accent)}
         .msg-card.copied{background:rgba(76,175,80,.08);border-color:rgba(76,175,80,.3)}
         .msg-icon{font-size:20px;flex-shrink:0;width:28px;text-align:center;line-height:1.4}
@@ -259,7 +261,9 @@ function switchTab(id) {
 }
 
 function getAllMessages() {
-    const all = [...MESSAGES, ...customs.map(t => ({ cat:'custom', icon:'📝', text:t, isCustom:true }))];
+    const all = [...MESSAGES, ...customs.map((text, customIndex) => ({
+        cat:'custom', icon:'📝', text, isCustom:true, customIndex
+    }))];
     return all;
 }
 
@@ -281,16 +285,58 @@ function renderMessages() {
     if (msgs.length === 0) {
         list.innerHTML = `<div class="msg-empty">${currentTab === 'fav' ? '⭐ 즐겨찾기한 문구가 없습니다<br>문구 카드의 ❤️를 눌러 추가하세요' : currentTab === 'custom' ? '📝 커스텀 문구가 없습니다<br>아래 + 버튼으로 추가하세요' : '검색 결과가 없습니다'}</div>`;
     } else {
-        list.innerHTML = msgs.map((m, i) => {
+        list.replaceChildren(...msgs.map(m => {
             const isFav = favorites.includes(m.text);
-            const deleteBtn = m.isCustom ? `<button class="msg-fav" style="right:32px" onclick="event.stopPropagation();deleteCustom(${i})" title="삭제">🗑️</button>` : '';
-            return `<div class="msg-card" onclick="copyMsg(this, '${escapeJsString(m.text)}')">
-                <span class="msg-icon">${m.icon}</span>
-                <span class="msg-text">${escapeHtml(m.text).replace(/\n/g, '<br>')}</span>
-                ${deleteBtn}
-                <button class="msg-fav ${isFav ? 'active' : ''}" onclick="event.stopPropagation();toggleFav('${escapeJsString(m.text)}',this)" title="즐겨찾기">${isFav ? '❤️' : '🤍'}</button>
-            </div>`;
-        }).join('');
+            const card = document.createElement('div');
+            card.className = 'msg-card';
+
+            const copyBtn = document.createElement('button');
+            copyBtn.type = 'button';
+            copyBtn.className = 'msg-copy';
+            copyBtn.setAttribute('aria-label', `문구 복사: ${m.text}`);
+            copyBtn.addEventListener('click', () => copyMsg(card, m.text));
+
+            const icon = document.createElement('span');
+            icon.className = 'msg-icon';
+            icon.textContent = m.icon;
+            icon.setAttribute('aria-hidden', 'true');
+
+            const text = document.createElement('span');
+            text.className = 'msg-text';
+            text.textContent = m.text;
+            text.style.whiteSpace = 'pre-line';
+
+            copyBtn.append(icon, text);
+            card.appendChild(copyBtn);
+
+            if (m.isCustom) {
+                const deleteBtn = document.createElement('button');
+                deleteBtn.type = 'button';
+                deleteBtn.className = 'msg-fav';
+                deleteBtn.style.right = '32px';
+                deleteBtn.textContent = '🗑️';
+                deleteBtn.title = '삭제';
+                deleteBtn.setAttribute('aria-label', '커스텀 문구 삭제');
+                deleteBtn.addEventListener('click', event => {
+                    event.stopPropagation();
+                    deleteCustom(m.customIndex);
+                });
+                card.appendChild(deleteBtn);
+            }
+
+            const favBtn = document.createElement('button');
+            favBtn.type = 'button';
+            favBtn.className = `msg-fav${isFav ? ' active' : ''}`;
+            favBtn.textContent = isFav ? '❤️' : '🤍';
+            favBtn.title = '즐겨찾기';
+            favBtn.setAttribute('aria-label', isFav ? '즐겨찾기 해제' : '즐겨찾기 추가');
+            favBtn.addEventListener('click', event => {
+                event.stopPropagation();
+                toggleFav(m.text, favBtn);
+            });
+            card.appendChild(favBtn);
+            return card;
+        }));
     }
 
     const msgCount = document.getElementById('msgCount');
@@ -307,17 +353,7 @@ function escapeHtml(str) {
     }[ch]));
 }
 
-function escapeJsString(str) {
-    return String(str)
-        .replace(/\\/g, '\\\\')
-        .replace(/'/g, "\\'")
-        .replace(/\r?\n/g, '\\n')
-        .replace(/</g, '\\x3C')
-        .replace(/>/g, '\\x3E');
-}
-
 function copyMsg(card, text) {
-    text = text.replace(/\\'/g, "'").replace(/&quot;/g, '"');
     navigator.clipboard.writeText(text).then(() => {
         card.classList.add('copied');
         setTimeout(() => card.classList.remove('copied'), 800);
@@ -326,16 +362,17 @@ function copyMsg(card, text) {
 }
 
 function toggleFav(text, btn) {
-    text = text.replace(/\\'/g, "'").replace(/&quot;/g, '"');
     const idx = favorites.indexOf(text);
     if (idx >= 0) {
         favorites.splice(idx, 1);
         btn.classList.remove('active');
         btn.textContent = '🤍';
+        btn.setAttribute('aria-label', '즐겨찾기 추가');
     } else {
         favorites.push(text);
         btn.classList.add('active');
         btn.textContent = '❤️';
+        btn.setAttribute('aria-label', '즐겨찾기 해제');
     }
     try { localStorage.setItem('qr_favorites', JSON.stringify(favorites)); } catch {}
     if (currentTab === 'fav') renderMessages();
@@ -381,26 +418,12 @@ function saveCustom() {
     showToast('커스텀 문구가 추가되었습니다');
 }
 
-function deleteCustom(globalIdx) {
-    // Find the custom message by filtering
-    const allMsgs = getAllMessages();
-    const msg = allMsgs.filter(m => {
-        if (currentTab === 'fav') return favorites.includes(m.text);
-        if (currentTab !== 'all' && currentTab !== 'custom') return m.cat === currentTab;
-        if (currentTab === 'custom') return m.cat === 'custom';
-        return true;
-    });
-    // Find in customs array
-    const query = document.getElementById('searchInput').value.trim().toLowerCase();
-    let filtered = getAllMessages().filter(m => m.cat === 'custom');
-    if (query) filtered = filtered.filter(m => m.text.toLowerCase().includes(query));
-    const customMsgs = getAllMessages().filter(m => m.isCustom);
-    // Simple: find the text and remove from customs
-    const visibleCustoms = customs.filter(t => !query || t.toLowerCase().includes(query));
-    const adjustedIdx = globalIdx - MESSAGES.length;
-    if (adjustedIdx >= 0 && adjustedIdx < customs.length) {
-        customs.splice(adjustedIdx, 1);
+function deleteCustom(customIndex) {
+    if (Number.isInteger(customIndex) && customIndex >= 0 && customIndex < customs.length) {
+        const [removed] = customs.splice(customIndex, 1);
+        favorites = favorites.filter(text => text !== removed || getAllMessages().some(message => message.text === text));
         try { localStorage.setItem('qr_customs', JSON.stringify(customs)); } catch {}
+        try { localStorage.setItem('qr_favorites', JSON.stringify(favorites)); } catch {}
         renderMessages();
         showToast('삭제되었습니다');
     }

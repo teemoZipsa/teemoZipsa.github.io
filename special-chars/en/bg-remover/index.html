@@ -9,9 +9,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>✂️ AI Background Remover — TeemoZipsa</title>
-<meta name="description" content="Automatically remove image backgrounds using AI. 100% free, unlimited, and runs locally in your browser so your images stay private.">
+<meta name="description" content="Automatically remove image backgrounds using AI in your browser without uploading the selected image. Supports files up to 10MB.">
 <meta property="og:title" content="✂️ AI Background Remover — TeemoZipsa">
-<meta property="og:description" content="Automatically remove image backgrounds using AI. 100% free, unlimited, and runs locally in your browser.">
+<meta property="og:description" content="Remove image backgrounds in your browser without uploading the selected image. Supports files up to 10MB.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/bg-remover/">
 <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
@@ -127,7 +127,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <!-- 프라이버시 뱃지 -->
     <div class="info-badge">
       <span class="badge-icon">🔒</span>
-      <span>Your images are never sent to a server. <strong>100% local browser processing</strong> ensures complete privacy.</span>
+      <span>The app does not upload your selected image. AI code and model files are downloaded from a CDN and run in your browser.</span>
     </div>
 
     <!-- 업로드 영역 -->
@@ -192,23 +192,23 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <h2>💡 Comprehensive Guide to AI Background Remover</h2>
     
     <details class="guide" open>
-      <summary>1. Is this truly free and unlimited?</summary>
+      <summary>1. Is this free, and what are the limits?</summary>
       <div class="guide-content">
-        <p><strong>Yes, absolutely.</strong> Since the AI processing runs entirely on your device (using WebAssembly), there are no server costs on our end. This means you can use the tool as many times as you like, completely free.</p>
+        <p>The tool is free to use and accepts images up to 10MB each. Processing speed and availability depend on your device memory, browser, and access to the model CDN.</p>
       </div>
     </details>
 
     <details class="guide">
       <summary>2. Are my images safe?</summary>
       <div class="guide-content">
-        <p><strong>100% Secure.</strong> Your files are never uploaded to the cloud or saved on any external servers. The Web AI model runs strictly within your browser, ensuring maximum privacy for your sensitive or personal photos.</p>
+        <p>The app does not upload the selected image to a processing server. Inference runs in your browser, but the AI code and model are delivered by a third-party CDN. This is not an absolute security guarantee for highly sensitive images.</p>
       </div>
     </details>
 
     <details class="guide">
       <summary>3. Why is the AI model 40MB?</summary>
       <div class="guide-content">
-        <p>To deliver high-quality, professional edge detection without relying on a remote API, your browser securely downloads a compressed neural network model on your first visit. Once downloaded, your browser caches it, so subsequent uses are blazing fast even offline!</p>
+        <p>To run without a remote image-processing API, your browser downloads a compressed neural-network model on first use. The browser may cache it for later sessions; if that cache is cleared or unavailable, CDN access is required again.</p>
       </div>
     </details>
   </section>
@@ -223,21 +223,36 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     </div>
   </section>
 
-  <div class="footer"><span>AI Background Removal · 100% Local Processing</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+  <div class="footer"><span>AI Background Removal · In-browser inference · Max 10MB</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
 </div>
 
 <div class="toast" id="toast"></div>
 <button class="scroll-top-btn" aria-label="Top">↑</button>
 
 <script type="module">
-import { removeBackground } from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm';
-
 let originalURL = null;
 let resultURL = null;
 let resultBlob = null;
 let fileName = 'image';
 let lastFile = null;
 const MAX_INFERENCE_DIM = 2048;
+const BACKGROUND_REMOVAL_MODULE_URL = 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm';
+let backgroundRemovalPromise = null;
+
+function ensureBackgroundRemoval() {
+  if (!backgroundRemovalPromise) {
+    backgroundRemovalPromise = import(BACKGROUND_REMOVAL_MODULE_URL)
+      .then(module => {
+        if (typeof module.removeBackground !== 'function') throw new Error('The AI module has an unexpected format.');
+        return module.removeBackground;
+      })
+      .catch(error => {
+        backgroundRemovalPromise = null;
+        throw new Error('Could not load the AI module. Check your connection and try again.', { cause: error });
+      });
+  }
+  return backgroundRemovalPromise;
+}
 
 const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('fileInput');
@@ -345,6 +360,7 @@ async function handleFile(file) {
   updateProgress(0, 'Loading AI model...');
 
   try {
+    const removeBackground = await ensureBackgroundRemoval();
     const prepared = await prepareInferenceImage(file);
     if (prepared.resized) {
       document.getElementById('progressSub').textContent = `Inference runs at ${MAX_INFERENCE_DIM}px on the long edge, then restores the original output size.`;
@@ -380,14 +396,14 @@ async function handleFile(file) {
     const beforeKb = (file.size / 1024).toFixed(1);
     const afterKb = (resultBlob.size / 1024).toFixed(1);
     const reportBox = document.getElementById('reportBox');
-    reportBox.innerHTML = `<strong>Analysis summary:</strong> Background removed successfully.<br>Original size: <strong>${beforeKb} KB</strong> ➔ Result size: <strong>${afterKb} KB</strong>.<br>Processed securely and completely on your local device.`;
+    reportBox.innerHTML = `<strong>Analysis summary:</strong> Background removed successfully.<br>Original size: <strong>${beforeKb} KB</strong> ➔ Result size: <strong>${afterKb} KB</strong>.<br>The selected image was processed in this browser. Images over ${MAX_INFERENCE_DIM}px on the long edge are downscaled for inference and then restored to the original output dimensions.`;
     reportBox.style.display = 'block';
 
   } catch (err) {
     console.error('Background removal error:', err);
     progressWrap.classList.add('active');
     updateProgress(0, 'Processing failed');
-    document.getElementById('progressSub').textContent = 'This may be a network or browser memory issue. Please try again.';
+    document.getElementById('progressSub').textContent = err && err.message ? err.message : 'This may be a network or browser memory issue. Please try again.';
     dropzone.style.display = '';
     document.getElementById('retryBtn').style.display = '';
     showToast('❌ An error occurred during processing.');

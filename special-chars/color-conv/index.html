@@ -49,9 +49,10 @@
         .related-section{background:var(--bg-guide);border-radius:10px;padding:16px;margin-bottom:12px}
         .related-title{font-size:13px;font-weight:600;color:var(--text-guide);margin-bottom:10px}
         .related-colors{display:flex;gap:8px;flex-wrap:wrap}
-        .related-chip{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg-input);border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:all .2s}
+        .related-chip{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg-input);border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:all .2s;font-family:inherit;text-align:left}
         .related-chip:hover{border-color:var(--accent);transform:translateY(-1px)}
         .chip-swatch{width:28px;height:28px;border-radius:6px;border:1px solid rgba(255,255,255,.1);flex-shrink:0}
+        .chip-info,.chip-label,.chip-hex{display:block}
         .chip-info{font-size:11px}
         .chip-label{color:var(--text-info);margin-bottom:1px}
         .chip-hex{color:var(--text-primary);font-weight:600;font-family:monospace}
@@ -99,36 +100,36 @@
     </div>
     <div class="counter-body">
         <div class="preview-area">
-            <div class="color-preview" id="colorPreview" style="background:var(--accent)"></div>
+            <div class="color-preview" id="colorPreview" style="background:var(--accent)" role="img" aria-label="현재 색상 미리보기: #533483"></div>
             <div class="picker-wrap">
-                <label>컬러 피커</label>
+                <label for="colorPicker">컬러 피커</label>
                 <input type="color" id="colorPicker" value="#533483" oninput="fromPicker(this.value)">
             </div>
         </div>
 
         <div class="code-section">
             <div class="code-row">
-                <span class="code-label">HEX</span>
+                <label class="code-label" for="hexInput">HEX</label>
                 <input type="text" class="code-input" id="hexInput" value="#533483" placeholder="#RRGGBB" oninput="fromHex(this.value)">
                 <button class="btn-copy-small" onclick="copyVal('hexInput')">복사</button>
             </div>
             <div class="code-row">
-                <span class="code-label">RGB</span>
+                <label class="code-label" for="rgbInput">RGB</label>
                 <input type="text" class="code-input" id="rgbInput" placeholder="rgb(R, G, B)" oninput="fromRgb(this.value)">
                 <button class="btn-copy-small" onclick="copyVal('rgbInput')">복사</button>
             </div>
             <div class="code-row">
-                <span class="code-label">HSL</span>
+                <label class="code-label" for="hslInput">HSL</label>
                 <input type="text" class="code-input" id="hslInput" placeholder="hsl(H, S%, L%)" oninput="fromHsl(this.value)">
                 <button class="btn-copy-small" onclick="copyVal('hslInput')">복사</button>
             </div>
         </div>
 
         <div class="related-section">
-            <div class="related-title">관련 색상</div>
-            <div class="related-colors" id="relatedColors"></div>
+            <div class="related-title" id="relatedTitle">관련 색상</div>
+            <div class="related-colors" id="relatedColors" role="group" aria-labelledby="relatedTitle"></div>
         </div>
-        <div id="reportBox" class="report-box"></div>
+        <div id="reportBox" class="report-box" role="status" aria-live="polite"></div>
     </div>
 
     <div class="bottom-bar">
@@ -237,6 +238,7 @@ function updateUI(source) {
     const hsl = rgbToHsl(r, g, b);
 
     document.getElementById('colorPreview').style.background = hex;
+    document.getElementById('colorPreview').setAttribute('aria-label', `현재 색상 미리보기: ${hex.toUpperCase()}`);
     document.getElementById('colorPicker').value = hex;
 
     if (source !== 'hex') document.getElementById('hexInput').value = hex.toUpperCase();
@@ -290,6 +292,13 @@ function fromHex(val) {
     updateUI('hex');
 }
 
+function selectRelatedColor(val) {
+    const rgb = hexToRgb(val);
+    if (!rgb) return;
+    currentRgb = rgb;
+    updateUI('related');
+}
+
 function fromRgb(val) {
     const m = val.match(/(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})/);
     if (!m) return;
@@ -316,10 +325,10 @@ function updateRelated(hsl) {
     el.innerHTML = items.map(item => {
         const rgb = hslToRgb(item.h, item.s, item.l);
         const hex = rgbToHex(rgb.r, rgb.g, rgb.b).toUpperCase();
-        return `<div class="related-chip" onclick="fromHex('${hex}')">
-            <div class="chip-swatch" style="background:${hex}"></div>
-            <div class="chip-info"><div class="chip-label">${item.label}</div><div class="chip-hex">${hex}</div></div>
-        </div>`;
+        return `<button type="button" class="related-chip" aria-label="${item.label} ${hex} 선택" onclick="selectRelatedColor('${hex}')">
+            <span class="chip-swatch" style="background:${hex}"></span>
+            <span class="chip-info"><span class="chip-label">${item.label}</span><span class="chip-hex">${hex}</span></span>
+        </button>`;
     }).join('');
 }
 

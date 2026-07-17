@@ -248,6 +248,7 @@
         <li>현재 보유 수량과 평균 단가를 입력하세요.</li>
         <li>추가 매수할 수량과 매수 단가를 입력하면 새 평균 단가가 계산됩니다.</li>
         <li>여러 번 추가 매수하는 경우, 메모해두고 한 번에 합산하여 입력할 수도 있습니다. 금액 모드를 선택하여 원화 기준으로 바로 환산할 수 있습니다.</li>
+        <li>가격·수량·추가 금액은 모두 0보다 큰 유한한 값만 사용할 수 있습니다.</li>
       </ol>
     </div>
   </details>
@@ -293,7 +294,21 @@ function setMode(mode) {
 function parseNum(id) {
   const v = document.getElementById(id).value.replace(/,/g, '').trim();
   if (v === '' || v === '-') return NaN;
-  return parseFloat(v);
+  return Number(v);
+}
+
+function isPositiveFinite(value) {
+  return Number.isFinite(value) && value > 0;
+}
+
+function clearResults(message) {
+  document.getElementById('finalPrice').textContent = '-';
+  document.getElementById('finalInvest').textContent = '-';
+  document.getElementById('finalQty').textContent = '-';
+  const changeEl = document.getElementById('priceChange');
+  changeEl.textContent = message || '';
+  changeEl.className = 'result-change change-same';
+  document.getElementById('analysisReport').style.display = 'none';
 }
 
 function fmtNum(n, maxDec) {
@@ -329,7 +344,7 @@ function calc() {
   const rawInput = parseNum('addQtyOrAmt');
 
   // 보유 금액 표시
-  if (!isNaN(curPrice) && !isNaN(curQty)) {
+  if (isPositiveFinite(curPrice) && isPositiveFinite(curQty)) {
     const curTotal = curPrice * curQty;
     document.getElementById('curTotal').textContent = '보유 금액: ' + fmtWon(curTotal);
   } else {
@@ -340,7 +355,7 @@ function calc() {
   let addQty = NaN;
   if (inputMode === 'qty') {
     addQty = rawInput;
-    if (!isNaN(addQty) && !isNaN(addPrice) && addPrice > 0) {
+    if (isPositiveFinite(addQty) && isPositiveFinite(addPrice)) {
       const addTotal = addPrice * addQty;
       document.getElementById('addConvert').textContent = '= ' + fmtWon(addTotal);
     } else {
@@ -349,7 +364,7 @@ function calc() {
   } else {
     // 금액 → 수량 역산
     const addAmt = rawInput;
-    if (!isNaN(addAmt) && !isNaN(addPrice) && addPrice > 0) {
+    if (isPositiveFinite(addAmt) && isPositiveFinite(addPrice)) {
       addQty = addAmt / addPrice;
       document.getElementById('addConvert').textContent = '= ' + fmtNum(addQty, 8) + '개';
     } else {
@@ -360,10 +375,15 @@ function calc() {
   const report = document.getElementById('analysisReport');
 
   // 최종 계산
-  if (!isNaN(curPrice) && !isNaN(curQty) && !isNaN(addPrice) && !isNaN(addQty) && addQty > 0) {
+  if ([curPrice, curQty, addPrice, addQty].every(isPositiveFinite)) {
     const totalInvest = curPrice * curQty + addPrice * addQty;
     const totalQty = curQty + addQty;
     const finalAvg = totalInvest / totalQty;
+
+    if (![totalInvest, totalQty, finalAvg].every(isPositiveFinite)) {
+      clearResults('입력값이 너무 크거나 합계가 유효하지 않습니다.');
+      return;
+    }
 
     document.getElementById('finalPrice').textContent = fmtNum(finalAvg, 8);
     document.getElementById('finalInvest').textContent = fmtWon(totalInvest);
@@ -403,11 +423,9 @@ function calc() {
     `;
 
   } else {
-    document.getElementById('finalPrice').textContent = '-';
-    document.getElementById('finalInvest').textContent = '-';
-    document.getElementById('finalQty').textContent = '-';
-    document.getElementById('priceChange').textContent = '';
-    report.style.display = 'none';
+    const values = [curPrice, curQty, addPrice, rawInput];
+    const hasInvalidValue = values.some(value => !Number.isNaN(value) && !isPositiveFinite(value));
+    clearResults(hasInvalidValue ? '가격과 수량·금액은 모두 0보다 큰 유한한 값이어야 합니다.' : '');
   }
 }
 </script>

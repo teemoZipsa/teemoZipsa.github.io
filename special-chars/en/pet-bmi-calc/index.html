@@ -70,7 +70,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .breed-search::placeholder{color:var(--text-muted)}
 .breed-count{font-size:10px;color:var(--text-muted);margin-bottom:4px}
 .breed-list{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:200px;overflow-y:auto;padding:4px}
-.breed-item{padding:8px 10px;background:var(--bg-guide);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--text-secondary);cursor:pointer;transition:all .2s;text-align:center}
+.breed-item{width:100%;padding:8px 10px;background:var(--bg-guide);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--text-secondary);cursor:pointer;transition:all .2s;text-align:center;font-family:inherit}
 .breed-item:hover{border-color:var(--accent);background:var(--bg-input)}
 .breed-item.active{border-color:var(--accent);background:var(--accent);color:var(--text-on-accent)}
 .breed-empty{grid-column:1/-1;text-align:center;padding:20px;font-size:12px;color:var(--text-muted)}
@@ -121,18 +121,18 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 <body>
 <div class="app">
   <div class="header">
-    <a href="https://teemozipsa.github.io/" class="back-btn">← All Tools</a>
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
     <h1>🐾 Pet Body Condition Score</h1>
     <a href="/special-chars/pet-bmi-calc/" class="back-btn">🌐 한국어</a>
   </div>
   <div class="body">
     <div class="type-tabs">
-      <button class="type-tab active" onclick="setType('dog')">🐶 Dog</button>
-      <button class="type-tab" onclick="setType('cat')">🐱 Cat</button>
+      <button type="button" class="type-tab active" onclick="setType('dog')" aria-pressed="true">🐶 Dog</button>
+      <button type="button" class="type-tab" onclick="setType('cat')" aria-pressed="false">🐱 Cat</button>
     </div>
 
     <div class="input-group">
-      <label>Current Weight (Optional)</label>
+      <label for="weight">Current Weight (Optional)</label>
       <div class="input-row">
         <input type="number" id="weight" min="0.1" max="200" step="0.1" inputmode="decimal" placeholder="e.g. 5.0" oninput="calc()">
         <span class="unit">kg</span>
@@ -147,13 +147,13 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     </div>
 
     <div class="breed-section" id="breedSection">
-      <label>Adult Breed Weight Range (Optional Reference)</label>
+      <label for="breedSearch" id="breedLabel">Adult Breed Weight Range (Optional Reference)</label>
       <input type="text" class="breed-search" id="breedSearch" placeholder="Search breeds (e.g. Golden, Poodle, Ragdoll...)" oninput="renderBreeds()">
-      <div class="breed-count" id="breedCount"></div>
-      <div class="breed-list" id="breedList"></div>
+      <div class="breed-count" id="breedCount" role="status" aria-live="polite"></div>
+      <div class="breed-list" id="breedList" role="group" aria-labelledby="breedLabel"></div>
     </div>
 
-    <div class="result-card" id="resultCard">
+    <div class="result-card" id="resultCard" role="status" aria-live="polite">
       <div class="result-emoji" id="emoji">⚖️</div>
       <div class="result-status" id="status">-</div>
       <div class="result-sub" id="statusDetail">Choose a BCS score</div>
@@ -243,7 +243,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
   <div class="footer"><span>9-point BCS Self-check</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="scroll-top-btn" aria-label="Top">↑</button>
 
 <script>
@@ -444,7 +444,10 @@ function setType(t) {
   petType = t;
   selectedBreed = null;
   document.querySelectorAll('.type-tab').forEach(b => b.classList.remove('active'));
-  document.querySelector(`.type-tab[onclick*="${t}"]`).classList.add('active');
+  document.querySelectorAll('.type-tab').forEach(b => b.setAttribute('aria-pressed', 'false'));
+  const activeTab = document.querySelector(`.type-tab[onclick*="${t}"]`);
+  activeTab.classList.add('active');
+  activeTab.setAttribute('aria-pressed', 'true');
   document.getElementById('breedSearch').value = '';
   renderBreeds();
   calc();
@@ -469,7 +472,7 @@ function renderBreeds() {
   
   list.innerHTML = filtered.map(b => {
     const isActive = selectedBreed && selectedBreed.name === b.name;
-    return `<div class="breed-item${isActive ? ' active' : ''}" data-idx="${b.idx}" onclick="selectBreed(${b.idx})">${b.name}<br><span style="font-size:10px;color:var(--text-muted)">${b.min}~${b.max}kg</span></div>`;
+    return `<button type="button" class="breed-item${isActive ? ' active' : ''}" data-idx="${b.idx}" aria-pressed="${Boolean(isActive)}" onclick="selectBreed(${b.idx})">${b.name}<br><span style="font-size:10px;color:var(--text-muted)">${b.min}~${b.max}kg</span></button>`;
   }).join('');
 }
 

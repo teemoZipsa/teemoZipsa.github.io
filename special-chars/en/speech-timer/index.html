@@ -151,8 +151,9 @@
 
 <div class="app">
   <div class="header">
-    <a href="https://teemozipsa.github.io/" class="back-btn">← All Tools</a>
+    <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
     <h1>🎤 Speech Timer</h1>
+    <a href="/special-chars/speech-timer/" class="back-btn">🌐 한국어</a>
   </div>
 
   <div class="body">
@@ -276,16 +277,16 @@ function getSpeed() {
 function updateSpeed() {
   const speed = getSpeed();
   document.getElementById('speedDisplay').textContent = speed + ' chars/min';
-  // Toggle preset active state
-  document.querySelectorAll('.speed-preset').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.speed-preset').forEach(btn => {
+    const active = btn.textContent.includes('(' + speed + ')');
+    btn.classList.toggle('active', active);
+    btn.setAttribute('aria-pressed', String(active));
+  });
   calc();
 }
 
 function setSpeed(v) {
   document.getElementById('speedSlider').value = v;
-  document.querySelectorAll('.speed-preset').forEach(btn => {
-    btn.classList.toggle('active', btn.textContent.includes('(' + v + ')'));
-  });
   updateSpeed();
 }
 

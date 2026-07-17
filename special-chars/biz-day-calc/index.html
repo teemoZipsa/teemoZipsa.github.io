@@ -143,8 +143,8 @@
     <div class="tool-body">
         <!-- 모드 선택 -->
         <div class="mode-tabs">
-            <button class="mode-tab active" onclick="setMode('add')" id="modeAdd">📅 시작일 + 영업일</button>
-            <button class="mode-tab" onclick="setMode('between')" id="modeBetween">📊 두 날짜 사이</button>
+            <button type="button" class="mode-tab active" onclick="setMode('add')" id="modeAdd" aria-controls="addMode" aria-pressed="true">📅 시작일 + 영업일</button>
+            <button type="button" class="mode-tab" onclick="setMode('between')" id="modeBetween" aria-controls="betweenMode" aria-pressed="false">📊 두 날짜 사이</button>
         </div>
 
         <div class="coverage-banner" role="note"><strong>수록 공휴일 데이터 지원 범위: 2024.01.01~2027.12.31</strong><br>이 범위에서는 현재 수록된 고정·음력 변동·대체·추가 공휴일을 반영합니다. 향후 지정되는 임시공휴일은 갱신 전까지 빠질 수 있으며, 범위 밖에서는 음력·변동 공휴일도 불완전할 수 있습니다.</div>
@@ -152,14 +152,14 @@
         <!-- 모드1: 시작일 + 영업일 수 -->
         <div id="addMode">
             <div class="field-group">
-                <div class="field-label">📅 시작일</div>
+                <label class="field-label" for="startDate">📅 시작일</label>
                 <div class="field-row">
                     <input type="date" id="startDate" class="field-input" onchange="calculate()">
                     <button class="quick-btn" onclick="setToday('startDate')" style="white-space:nowrap">오늘</button>
                 </div>
             </div>
             <div class="field-group">
-                <div class="field-label">🔢 영업일 수</div>
+                <label class="field-label" for="bizDays">🔢 영업일 수</label>
                 <input type="number" id="bizDays" class="field-input" min="-100000" max="100000" step="1" placeholder="예: 10 (음수 입력 시 과거로 계산)" oninput="calculate()">
                 <div class="quick-btns">
                     <button class="quick-btn" onclick="setBizDays(5)">5일</button>
@@ -175,14 +175,14 @@
         <!-- 모드2: 두 날짜 사이 영업일 -->
         <div id="betweenMode" style="display:none">
             <div class="field-group">
-                <div class="field-label">📅 시작일</div>
+                <label class="field-label" for="fromDate">📅 시작일</label>
                 <div class="field-row">
                     <input type="date" id="fromDate" class="field-input" onchange="calculate()">
                     <button class="quick-btn" onclick="setToday('fromDate')" style="white-space:nowrap">오늘</button>
                 </div>
             </div>
             <div class="field-group">
-                <div class="field-label">📅 종료일</div>
+                <label class="field-label" for="toDate">📅 종료일</label>
                 <div class="field-row">
                     <input type="date" id="toDate" class="field-input" onchange="calculate()">
                     <button class="quick-btn" onclick="setToday('toDate')" style="white-space:nowrap">오늘</button>
@@ -215,7 +215,7 @@
             </div>
             <div class="result-detail" id="resultDetail"></div>
             <div class="result-holidays" id="resultHolidays"></div>
-            <div class="report-box" id="analysisReport" style="display:none;"></div>
+            <div class="report-box" id="analysisReport" style="display:none;" role="status" aria-live="polite"></div>
         </div>
     </div>
 
@@ -441,6 +441,8 @@ function setMode(m) {
     mode = m;
     document.getElementById('modeAdd').classList.toggle('active', m === 'add');
     document.getElementById('modeBetween').classList.toggle('active', m === 'between');
+    document.getElementById('modeAdd').setAttribute('aria-pressed', String(m === 'add'));
+    document.getElementById('modeBetween').setAttribute('aria-pressed', String(m === 'between'));
     document.getElementById('addMode').style.display = m === 'add' ? '' : 'none';
     document.getElementById('betweenMode').style.display = m === 'between' ? '' : 'none';
     document.getElementById('resultSection').classList.remove('show');

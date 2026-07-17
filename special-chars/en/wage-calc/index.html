@@ -112,7 +112,7 @@
         <div class="field">
           <label>Weekly Allowance</label>
           <select id="weeklyHol" onchange="calc()">
-            <option value="yes" selected>Included</option>
+            <option value="yes" selected>Included (15+ hrs/week)</option>
             <option value="no">Excluded</option>
           </select>
         </div>
@@ -297,8 +297,9 @@ function calc() {
 
   // 주당 기본 시간
   const baseWeeklyHours = hpd * dpw;
-  // 주휴시간
-  const weeklyHolHours = inclHol ? hpd : 0;
+  // The weekly allowance is only eligible from 15 scheduled hours per week.
+  const weeklyHolEligible = baseWeeklyHours >= 15;
+  const weeklyHolHours = (inclHol && weeklyHolEligible) ? hpd : 0;
   // 연장/야간 주당 시간 (근무일 기준)
   const otWeekly = ot * dpw;
   const ntWeekly = nt * dpw;

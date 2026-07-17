@@ -121,7 +121,7 @@ npx playwright install chromium
 npm run verify
 ```
 
-이 명령은 코드 규칙, 계산식 회귀 사례, SEO 색인, 전체 정적 페이지의 Chromium 렌더링 및 Git diff 오류를 순서대로 검사합니다.
+이 명령은 코드 규칙, 계산식 회귀 사례, SEO 색인, 핵심 사용자 조작 Playwright 회귀검사, 전체 정적 페이지의 Chromium 렌더링 및 Git diff 오류를 순서대로 검사합니다. 조작형 검사만 빠르게 다시 실행하려면 `npm run audit:interactions`를 사용합니다.
 
 게시 전 검색 제안 주제까지 갱신하려면 다음 명령을 사용합니다. 검색 제안 내용이 같으면 데이터 파일을 수정하지 않으며, 모든 외부 요청이 실패하면 기존 데이터를 보존하고 명령을 실패 처리합니다.
 

@@ -466,7 +466,7 @@ function clearSlots() {
 }
 
 // === Random combo ===
-function randomCombo() {
+function randomCombo(attemptsRemaining = 8) {
   if (!emojiData || !emojiData.data) return;
   const keys = Object.keys(emojiData.data);
   let validComboFound = false;
@@ -517,7 +517,12 @@ function randomCombo() {
             $btnCopy.disabled = false;
           };
           img.onerror = () => {
-             randomCombo();
+            if (attemptsRemaining > 1) {
+              setTimeout(() => randomCombo(attemptsRemaining - 1), 0);
+            } else {
+              showNoResult();
+              showToast('Could not reach the image server. Please try again later.');
+            }
           };
           img.src = url;
           
@@ -544,7 +549,7 @@ async function saveImage() {
     a.href = URL.createObjectURL(blob);
     a.download = 'emoji-mix-' + Date.now() + '.png';
     a.click();
-    URL.revokeObjectURL(a.href);
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     showToast('Image saved!');
   } catch(e) {
     showToast('Save failed — try long-pressing the image');

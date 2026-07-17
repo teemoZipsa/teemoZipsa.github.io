@@ -115,7 +115,7 @@
             </select>
             <div class="tz-result" id="toResult">--:--</div>
             <div class="tz-result-date" id="toResultDate"></div>
-            <div class="tz-result-info" id="toResultInfo"></div>
+            <div class="tz-result-info" id="toResultInfo" role="status" aria-live="polite"></div>
         </div>
 
         <!-- Diff -->
@@ -141,7 +141,7 @@
         <details class="guide">
             <summary>Does it handle Daylight Saving Time (DST)?</summary>
             <div class="guide-content">
-                Yes! DST (Daylight Saving Time) is handled entirely automatically based on the browser's internal IANA timezone database. You don't need to worry about when the clocks change.
+                The converter uses the IANA timezone rules bundled with your browser. A nonexistent local time during the spring transition is rejected. If a time occurs twice during the fall transition, the earlier occurrence is used and a warning is shown. Browser data can become outdated, so verify important bookings against an official local source.
             </div>
         </details>
     </section>
@@ -154,7 +154,7 @@
             <a href="/special-chars/en/date-calc/" class="tool-card">📅 D-Day Calc</a>
         </div>
     </section>
-    <div class="footer"><span>Auto DST Detection</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+    <div class="footer"><span>Browser timezone rules applied</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -208,11 +208,37 @@ function setNow() {
 }
 
 function getDateTimeInTz(date, tz) {
-    const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hour12:false });
+    const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hourCycle:'h23' });
     const parts = {};
     fmt.formatToParts(date).forEach(p => { parts[p.type] = p.value; });
-    const h = parts.hour === '24' ? '00' : parts.hour;
-    return { date: `${parts.year}-${parts.month}-${parts.day}`, time: `${h}:${parts.minute}` };
+    return { date: `${parts.year}-${parts.month}-${parts.day}`, time: `${parts.hour}:${parts.minute}` };
+}
+
+function resolveWallTime(dateVal, timeVal, tz) {
+    const [year, month, day] = dateVal.split('-').map(Number);
+    const [hour, minute] = timeVal.split(':').map(Number);
+    const wallTimeMs = Date.UTC(year, month - 1, day, hour, minute);
+    const offsets = new Set();
+    for (let hours = -36; hours <= 36; hours += 3) {
+        offsets.add(getOffsetMs(new Date(wallTimeMs + hours * 3600000), tz));
+    }
+    const candidates = [...offsets]
+        .map(offset => new Date(wallTimeMs - offset))
+        .filter(candidate => {
+            const roundTrip = getDateTimeInTz(candidate, tz);
+            return roundTrip.date === dateVal && roundTrip.time === timeVal.slice(0, 5);
+        })
+        .filter((candidate, index, all) => all.findIndex(other => other.getTime() === candidate.getTime()) === index)
+        .sort((a, b) => a - b);
+    return {
+        instant: candidates[0] || null,
+        status: candidates.length === 0 ? 'nonexistent' : candidates.length > 1 ? 'ambiguous' : 'valid',
+        candidates
+    };
+}
+
+function wallTimeToInstant(dateVal, timeVal, tz) {
+    return resolveWallTime(dateVal, timeVal, tz).instant;
 }
 
 function convert() {
@@ -226,40 +252,40 @@ function convert() {
         document.getElementById('toResultDate').textContent = '';
         document.getElementById('toResultInfo').textContent = '';
         document.getElementById('diffBanner').style.display = 'none';
+        document.getElementById('fromTime').setCustomValidity('');
+        document.getElementById('fromTime').removeAttribute('aria-invalid');
         return;
     }
 
-    // Create date in fromTz
-    const fromStr = `${dateVal}T${timeVal}:00`;
-    // Get UTC offset for fromTz at this date
-    const tempDate = new Date(fromStr);
-    const fromParts = getDateTimeInTz(tempDate, fromTz);
-    const localParts = { date: dateVal, time: timeVal };
-
-    // Calculate offset difference
-    const fromOffset = getOffsetMinutes(tempDate, fromTz);
-    const utcMs = tempDate.getTime() + (tempDate.getTimezoneOffset() * 60000) - (fromOffset * 60000) + (tempDate.getTimezoneOffset() * 60000);
-
-    // Simpler approach: construct a UTC date from the "from" inputs
-    const localDate = new Date(`${dateVal}T${timeVal}:00`);
-    const fromOffsetMs = getOffsetMs(localDate, fromTz);
-    const utcDate = new Date(localDate.getTime() - fromOffsetMs);
+    const resolution = resolveWallTime(dateVal, timeVal, fromTz);
+    const timeInput = document.getElementById('fromTime');
+    if (resolution.status === 'nonexistent') {
+        const message = 'This local time does not exist because of a DST transition. Choose another time.';
+        timeInput.setCustomValidity(message);
+        timeInput.setAttribute('aria-invalid', 'true');
+        document.getElementById('toResult').textContent = '--:--';
+        document.getElementById('toResultDate').textContent = '';
+        document.getElementById('toResultInfo').textContent = message;
+        document.getElementById('diffBanner').style.display = 'none';
+        return;
+    }
+    timeInput.setCustomValidity('');
+    timeInput.setAttribute('aria-invalid', 'false');
+    const utcDate = resolution.instant;
+    const fromOffsetMs = getOffsetMs(utcDate, fromTz);
     const toOffsetMs = getOffsetMs(utcDate, toTz);
-    const toDate = new Date(utcDate.getTime() + toOffsetMs);
-
-    const toParts = getDateTimeInTz(toDate, toTz);
+    const toParts = getDateTimeInTz(utcDate, toTz);
 
     // Display
     document.getElementById('toResult').textContent = toParts.time;
 
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const toD = new Date(toParts.date);
-    const dayName = days[toD.getDay()];
+    const dayName = new Intl.DateTimeFormat('en-US', { timeZone: toTz, weekday: 'short' }).format(utcDate);
     document.getElementById('toResultDate').textContent = `${toParts.date} (${dayName})`;
 
     // DST info
     const toTzInfo = TIMEZONES.find(t => t.id === toTz);
-    document.getElementById('toResultInfo').textContent = toTzInfo ? toTzInfo.label : '';
+    const ambiguityWarning = resolution.status === 'ambiguous' ? ' · The source time occurs twice at the DST transition; the earlier occurrence is used.' : '';
+    document.getElementById('toResultInfo').textContent = (toTzInfo ? toTzInfo.label : '') + ambiguityWarning;
 
     // Diff
     const diffMin = Math.round((toOffsetMs - fromOffsetMs) / 60000);
@@ -273,9 +299,19 @@ function convert() {
 }
 
 function getOffsetMs(date, tz) {
-    const utcStr = date.toLocaleString('en-US', { timeZone: 'UTC' });
-    const tzStr = date.toLocaleString('en-US', { timeZone: tz });
-    return new Date(tzStr).getTime() - new Date(utcStr).getTime();
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: tz,
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hourCycle: 'h23'
+    });
+    const parts = {};
+    formatter.formatToParts(date).forEach(part => { parts[part.type] = part.value; });
+    const asUtc = Date.UTC(
+        Number(parts.year), Number(parts.month) - 1, Number(parts.day),
+        Number(parts.hour), Number(parts.minute), Number(parts.second)
+    );
+    return asUtc - date.getTime();
 }
 
 function getOffsetMinutes(date, tz) {
@@ -294,7 +330,10 @@ function swapTz() {
 
 function resetAll() {
     document.getElementById('fromDate').value = '';
-    document.getElementById('fromTime').value = '';
+    const timeInput = document.getElementById('fromTime');
+    timeInput.value = '';
+    timeInput.setCustomValidity('');
+    timeInput.removeAttribute('aria-invalid');
     document.getElementById('fromTz').value = 'Asia/Seoul';
     document.getElementById('toTz').value = 'America/New_York';
     document.getElementById('toResult').textContent = '--:--';

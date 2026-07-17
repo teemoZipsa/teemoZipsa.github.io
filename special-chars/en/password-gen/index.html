@@ -223,29 +223,49 @@ const SPECIAL = '!@#$%^&*()_+-=[]{}|;:,.<>?';
 
 let history = [];
 
-function getCharset() {
-  let cs = '';
-  if (document.getElementById('optUpper').checked) cs += UPPER;
-  if (document.getElementById('optLower').checked) cs += LOWER;
-  if (document.getElementById('optNum').checked) cs += NUMS;
-  if (document.getElementById('optSpecial').checked) cs += SPECIAL;
-  return cs;
+function getSelectedGroups() {
+  const groups = [];
+  if (document.getElementById('optUpper').checked) groups.push(UPPER);
+  if (document.getElementById('optLower').checked) groups.push(LOWER);
+  if (document.getElementById('optNum').checked) groups.push(NUMS);
+  if (document.getElementById('optSpecial').checked) groups.push(SPECIAL);
+  return groups;
+}
+
+function secureRandomIndex(max) {
+  if (!Number.isInteger(max) || max <= 0) throw new RangeError('max must be a positive integer');
+  const range = 0x100000000;
+  const limit = range - (range % max);
+  const value = new Uint32Array(1);
+  do { crypto.getRandomValues(value); } while (value[0] >= limit);
+  return value[0] % max;
+}
+
+function secureShuffle(values) {
+  for (let i = values.length - 1; i > 0; i--) {
+    const j = secureRandomIndex(i + 1);
+    [values[i], values[j]] = [values[j], values[i]];
+  }
+  return values;
 }
 
 function generate() {
-  const charset = getCharset();
-  if (!charset) {
+  const groups = getSelectedGroups();
+  if (groups.length === 0) {
     document.getElementById('pwText').textContent = 'Select at least 1 option';
     updateStrength('');
     return;
   }
   const len = parseInt(document.getElementById('pwLength').value);
-  const arr = new Uint32Array(len);
-  crypto.getRandomValues(arr);
-  let pw = '';
-  for (let i = 0; i < len; i++) {
-    pw += charset[arr[i] % charset.length];
+  if (len < groups.length) {
+    document.getElementById('pwText').textContent = 'Use at least one character per selected type';
+    updateStrength('');
+    return;
   }
+  const charset = groups.join('');
+  const characters = groups.map(group => group[secureRandomIndex(group.length)]);
+  while (characters.length < len) characters.push(charset[secureRandomIndex(charset.length)]);
+  const pw = secureShuffle(characters).join('');
   document.getElementById('pwText').textContent = pw;
   updateStrength(pw);
 

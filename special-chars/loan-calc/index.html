@@ -114,7 +114,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="input-group">
       <label>대출 금액</label>
       <div class="input-row">
-        <input type="number" id="principal" value="100000000" min="0" step="10000000" oninput="calc()">
+        <input type="number" id="principal" value="100000000" min="0" max="1000000000000000" step="10000000" oninput="calc()">
         <span class="unit">원</span>
       </div>
     </div>
@@ -209,13 +209,13 @@ function setMethod(m) {
 function fmt(n) { return Math.round(n).toLocaleString('ko-KR'); }
 
 function calc() {
-  const P = parseFloat(document.getElementById('principal').value) || 0;
-  const annualRate = parseFloat(document.getElementById('rate').value) || 0;
-  const years = parseInt(document.getElementById('years').value) || 0;
+  const P = Number(document.getElementById('principal').value);
+  const annualRate = Number(document.getElementById('rate').value);
+  const years = Number(document.getElementById('years').value);
   const months = years * 12;
   const r = annualRate / 100 / 12; // monthly rate
 
-  if (P <= 0 || annualRate <= 0 || months <= 0) {
+  if (!Number.isFinite(P) || P <= 0 || P > 1_000_000_000_000_000 || !Number.isFinite(annualRate) || annualRate < 0 || annualRate > 30 || !Number.isInteger(years) || years < 1 || years > 50) {
     document.getElementById('summary').innerHTML = '';
     document.getElementById('compare').innerHTML = '';
     document.getElementById('scheduleTable').innerHTML = '';
@@ -232,7 +232,7 @@ function calc() {
 
   if (method === 0) {
     // 원리금균등
-    const monthly = P * r * Math.pow(1+r, months) / (Math.pow(1+r, months) - 1);
+    const monthly = r === 0 ? P / months : P * r * Math.pow(1+r, months) / (Math.pow(1+r, months) - 1);
     let remaining = P;
     for (let i = 1; i <= months; i++) {
       const interest = remaining * r;
@@ -331,6 +331,7 @@ function calc() {
 }
 
 function calcAllInterests(P, r, months) {
+  if (r === 0) return [0, 0, 0];
   // 원리금균등
   const m0 = P * r * Math.pow(1+r,months)/(Math.pow(1+r,months)-1);
   const ti0 = m0 * months - P;

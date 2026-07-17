@@ -256,10 +256,10 @@ function setResult(boxId, value, label, detail) {
   `;
 }
 
-function setEmpty(boxId) {
+function setEmpty(boxId, message = 'Enter numbers') {
   const box = document.getElementById(boxId);
   box.classList.add('empty');
-  box.innerHTML = '<div class="result-value">Enter numbers</div>';
+  box.innerHTML = `<div class="result-value">${message}</div>`;
 }
 
 function calc0() {
@@ -295,9 +295,17 @@ function calc3() {
   if (isNaN(a) || isNaN(b)) { setEmpty('r3'); return; }
   let original;
   if (m3type === 'discount') {
+    if (b < 0 || b >= 100) {
+      setEmpty('r3', 'Discount must be at least 0% and less than 100%');
+      return;
+    }
     original = a / (1 - b/100);
     setResult('r3', fmt(original), `Original value (before ${b}% discount)`, `${fmt(original)} × ${100-b}% = ${fmt(a)}`);
   } else {
+    if (b <= -100) {
+      setEmpty('r3', 'Markup must be greater than -100%');
+      return;
+    }
     original = a / (1 + b/100);
     setResult('r3', fmt(original), `Original value (before ${b}% markup)`, `${fmt(original)} × ${100+b}% = ${fmt(a)}`);
   }

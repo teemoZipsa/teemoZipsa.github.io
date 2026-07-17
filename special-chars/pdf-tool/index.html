@@ -9,9 +9,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>📄 PDF 도구 — 티모집사</title>
-<meta name="description" content="PDF 합치기, 나누기, 회전, 순서 변경, 워터마크 추가를 브라우저에서 바로. 서버 전송 없이 100% 로컬 처리.">
+<meta name="description" content="PDF 합치기, 나누기, 회전, 순서 변경, 워터마크 추가를 선택한 파일의 서버 업로드 없이 브라우저에서 처리합니다.">
 <meta property="og:title" content="📄 PDF 도구 — 티모집사">
-<meta property="og:description" content="PDF 합치기, 나누기, 회전, 순서 변경, 워터마크 추가를 브라우저에서 바로. 서버 전송 없이 100% 로컬 처리.">
+<meta property="og:description" content="PDF 합치기, 나누기, 회전, 순서 변경, 워터마크 추가를 선택한 파일의 서버 업로드 없이 브라우저에서 처리합니다.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.github.io/special-chars/pdf-tool/">
 <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
@@ -266,6 +266,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
         <div class="field-group">
           <div class="field-label">💧 워터마크 텍스트</div>
           <input type="text" class="field-input" id="wmText" value="CONFIDENTIAL" oninput="updateWmPreview()">
+          <div style="font-size:11px;color:var(--text-muted);margin-top:5px">현재 PDF 내장 글꼴은 영문·숫자·일반 기호만 지원합니다. 한글 워터마크는 지원하지 않습니다.</div>
         </div>
         <div class="control-row">
           <label>글자 크기</label>
@@ -402,14 +403,14 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </div>
 
   <section class="guide-section">
-    <h2>💡 온라인 무료 PDF 에디터 (합치기/나누기) 완벽 활용 가이드</h2>
+      <h2>💡 온라인 무료 PDF 에디터 (합치기/나누기) 활용 가이드</h2>
     
     <details class="guide" open>
       <summary>내 민감한 계약서나 증명서 PDF를 올려도 안전한가요?</summary>
       <div class="guide-content">
-        <p><b>가장 중요: 100% Client-side Processing (브라우저 로컬 구동)</b></p>
+        <p><b>PDF 작업은 브라우저 안에서 처리됩니다.</b></p>
         <p>온라인에 검색되는 대부분의 무료 PDF 편집 사이트들은 사용자의 파일을 그들의 클라우드 서버로 업로드하여 처리한 후 다시 다운로드하게 만듭니다. 이 경우 당신의 개인정보나 회사 기밀이 담긴 문서가 외부망에 노출될 위험이 있습니다.</p>
-        <p>하지만 본 툴은 <b><code>pdf-lib.js</code> 엔진을 통해 고객님의 기기(PC/모바일) 브라우저 메모리 상에서 직접 PDF 조작</b>합니다. 파일 정보는 저희 서버로 단 한 번도 전송되지 않으며, 서버를 거치지 않기 때문에 속도 면에서도 대용량 작업에 훨씬 유리합니다. 보안이 중요한 이력서, 계약서, 법적 증명 서류도 안심하고 처리하세요.</p>
+        <p>본 도구는 <b><code>pdf-lib.js</code> 엔진을 통해 기기 브라우저 메모리에서 PDF를 조작</b>하며, 애플리케이션이 선택한 파일을 서버로 업로드하지 않습니다. 다만 실행 라이브러리는 CDN에서 내려받으므로 브라우저 확장 프로그램과 네트워크로 전달되는 코드까지 포함한 절대적인 보안을 보장하지는 않습니다. 매우 민감한 원본은 백업하고 신뢰할 수 있는 환경에서 사용하세요.</p>
       </div>
     </details>
 
@@ -421,21 +422,21 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
           <li><strong>✂️ PDF 나누기 및 분할 (Split):</strong> 방대한 분량의 전공 서적이나 보고서 중에서 내가 필요한 특정 페이지(예: 1-3, 5, 7~10) 번호만 입력하여 별도의 PDF로 깔끔하게 잘라내고 추출(Extract)합니다.</li>
           <li><strong>🔄 PDF 회전 (Rotate):</strong> 스캐너나 휴대폰으로 문서 스캔 시 거꾸로 찍히거나 옆으로 누워버린 페이지를 개별 지정하거나 일괄 선택하여 정방향(90도, 180도, 270도)으로 올바르게 세웁니다.</li>
           <li><strong>↕️ 순서 재배치 (Reorder):</strong> 뒤죽박죽 섞인 페이지의 순서를 썸네일 그리드 화면을 보면서 마우스로 간단히 끌어다 놓아(Drag & Drop) 직관적으로 배열을 교정합니다.</li>
-          <li><strong>💧 워터마크 삽입 (Watermark):</strong> "CONFIDENTIAL", "외무비밀", "초안" 등의 기밀 유지용 투명 글씨 패치(Watermark)를 PDF의 모든 페이지 정중앙에 사선 다이아몬드 형태로 일괄 삽입하여 문서 도용을 방지합니다.</li>
-          <li><strong>🗑️ 페이지 삭제 (Delete):</strong> 불필요한 페이지나 광고 찌꺼기, 빈 칸 등을 특정하여 원본 PDF에서 완전히 삭제하고 가볍게 만듭니다.</li>
+          <li><strong>💧 워터마크 삽입 (Watermark):</strong> "CONFIDENTIAL", "DRAFT" 등의 영문 워터마크를 PDF의 모든 페이지 중앙에 삽입합니다. 현재 한글 등 CJK 문자는 지원하지 않습니다.</li>
+            <li><strong>🗑️ 페이지 삭제 (Delete):</strong> 선택한 페이지를 제외한 새 PDF를 만듭니다. 문서 구조에 따라 파일 용량이 반드시 줄어들지는 않으며 결과를 확인해야 합니다.</li>
           <li><strong>🖼️ 이미지 변환 (Img2PDF):</strong> JPG, PNG 등 여러 이미지 파일들을 하나로 모아 고품질의 PDF 카탈로그나 포트폴리오 문서로 변환합니다. 자동으로 페이지 크기에 맞게 중앙 정렬됩니다.</li>
           <li><strong>🔢 페이지 번호 삽입 (Page Numbering):</strong> 공식 문서 제출 시 누락된 하단 페이지 번호(1, 2, 3...)를 자동으로 원하는 글꼴 크기로 각 페이지 하단 중앙에 일괄 표기합니다.</li>
-          <li><strong>📝 메타데이터 변경 (Metadata):</strong> 문서의 제목(Title), 작성자(Author), 주제(Subject), 키워드(Keywords) 정보(Properties)를 삭제하거나 내 입맛에 맞게 편집하여 검색 최적화 및 보안성을 강화합니다.</li>
+            <li><strong>📝 메타데이터 변경 (Metadata):</strong> 문서의 제목(Title), 작성자(Author), 주제(Subject), 키워드(Keywords)를 편집하거나 불필요한 식별 정보를 정리합니다.</li>
           <li><strong>📄 빈 페이지 삽입 (Blank Page):</strong> 양면 인쇄나 새로운 챕터 구분을 위해 문서 중간중간 원하는 위치에 A4 사이즈 규격의 완전히 비어있는 여백 페이지를 추가합니다.</li>
         </ul>
       </div>
     </details>
 
     <details class="guide">
-      <summary>왜 파일 병합이나 분할 시 깨짐이나 용량 저하가 없나요?</summary>
+      <summary>파일 병합이나 분할 시 무엇이 유지되나요?</summary>
       <div class="guide-content">
         <p>일반적인 컨버터 툴들은 PDF를 한 번 이미지(JPG/PNG)로 렌더링(Rasterize)한 뒤 다시 PDF로 감싸는 방식을 취해 글씨가 흐려지거나 벡터 속성이 파괴되는 단점이 있습니다.</p>
-        <p>당사의 편집 엔진은 <b>원본 PDF의 바이트(Byte) 배열과 내부 오브젝트 트리(Cross-Reference Table) 수준을 직접 재구성(Re-indexing)</b>하므로, 문서 안에 박혀있는 텍스트 복사(DRM 등 제한 없는 경우)와 원본 이미지 압축 품질, 폰트 임베딩 등 메타데이터가 단 1%의 손실 없이 원형 그대로 유지되는 무손실(Lossless) 조작을 보장합니다.</p>
+        <p>페이지를 이미지로 다시 렌더링하지 않기 때문에 일반적으로 기존 텍스트와 이미지 품질은 유지됩니다. 다만 PDF 구조를 다시 저장하므로 전자서명, 암호화, 일부 양식·주석·메타데이터는 변경되거나 호환되지 않을 수 있습니다. 원본을 별도로 보관하고 결과를 확인하세요.</p>
       </div>
     </details>
 
@@ -449,7 +450,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       </div>
     </div>
   </section>
-  <div class="footer"><span>100% 브라우저 로컬 처리</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+    <div class="footer"><span>선택 파일을 업로드하지 않는 브라우저 처리</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="scroll-top-btn" id="scrollTopBtn" aria-label="맨 위로">↑</button>
@@ -461,24 +462,51 @@ let PDFDocument, degrees, rgb, StandardFonts;
 
 function loadScriptOnce(src) {
   return new Promise((resolve, reject) => {
-    const existing = document.querySelector(`script[data-src="${src}"]`);
+    let existing = document.querySelector(`script[data-src="${src}"]`);
     if (existing) {
-      existing.addEventListener('load', resolve, { once: true });
-      existing.addEventListener('error', reject, { once: true });
-      if (existing.dataset.loaded === 'true') resolve();
-      return;
+      if (existing.dataset.loaded === 'true') {
+        resolve();
+        return;
+      }
+      else if (existing.dataset.state === 'failed') existing.remove();
+      else {
+        const timer = setTimeout(() => {
+          existing.remove();
+          reject(new Error('PDF 라이브러리 로딩 시간이 초과되었습니다.'));
+        }, 15000);
+        existing.addEventListener('load', () => { clearTimeout(timer); resolve(); }, { once: true });
+        existing.addEventListener('error', () => { clearTimeout(timer); reject(new Error('PDF 라이브러리를 불러오지 못했습니다.')); }, { once: true });
+        return;
+      }
     }
     const script = document.createElement('script');
     script.src = src;
     script.dataset.src = src;
-    script.onload = () => { script.dataset.loaded = 'true'; resolve(); };
-    script.onerror = reject;
+    script.dataset.state = 'loading';
+    const timer = setTimeout(() => {
+      script.dataset.state = 'failed';
+      script.remove();
+      reject(new Error('PDF 라이브러리 로딩 시간이 초과되었습니다.'));
+    }, 15000);
+    script.onload = () => {
+      clearTimeout(timer);
+      script.dataset.loaded = 'true';
+      script.dataset.state = 'loaded';
+      resolve();
+    };
+    script.onerror = () => {
+      clearTimeout(timer);
+      script.dataset.state = 'failed';
+      script.remove();
+      reject(new Error('PDF 라이브러리를 불러오지 못했습니다.'));
+    };
     document.head.appendChild(script);
   });
 }
 
 async function ensurePdfLibs() {
   if (!pdfLibsPromise) {
+    document.getElementById('cdnError').style.display = 'none';
     pdfLibsPromise = (async () => {
       await Promise.all([
         loadScriptOnce('https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js'),
@@ -487,6 +515,7 @@ async function ensurePdfLibs() {
       if (!window.PDFLib || !window.pdfjsLib) throw new Error('PDF 라이브러리를 불러오지 못했습니다.');
       ({ PDFDocument, degrees, rgb, StandardFonts } = window.PDFLib);
       window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+      document.getElementById('cdnError').style.display = 'none';
     })().catch(err => {
       pdfLibsPromise = null;
       document.getElementById('cdnError').style.display = 'block';
@@ -523,7 +552,7 @@ function downloadPdf(bytes, filename) {
   a.href = URL.createObjectURL(blob);
   a.download = filename;
   a.click();
-  URL.revokeObjectURL(a.href);
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
 function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
@@ -542,12 +571,12 @@ function updateReport(title, filename, bytesSize, descriptionStr, highlightStr) 
   if (!container) return;
   container.style.display = 'block';
   container.innerHTML = `
-    <h3>🚀 ${title} 완료 리포트</h3>
-    <p><b>출력 파일명:</b> ${filename}</p>
+    <h3>🚀 ${escapeHtml(title)} 완료 리포트</h3>
+    <p><b>출력 파일명:</b> ${escapeHtml(filename)}</p>
     <p><b>최종 데이터 크기:</b> <span class="highlight">${formatSize(bytesSize)}</span></p>
-    <p><b>처리 내역:</b> ${descriptionStr}</p>
+    <p><b>처리 내역:</b> ${escapeHtml(descriptionStr)}</p>
     <div style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);">
-      <p style="margin-bottom:0; color:var(--text-info);">💡 <b>테크니컬 스펙:</b> ${highlightStr}</p>
+      <p style="margin-bottom:0; color:var(--text-info);">💡 <b>테크니컬 스펙:</b> ${escapeHtml(highlightStr)}</p>
     </div>
   `;
 }
@@ -585,8 +614,14 @@ function setupDropZone(zoneId, inputId, handler, multi) {
   }
   zone.addEventListener('drop', e => {
     e.preventDefault(); zone.classList.remove('dragover');
-    const files = Array.from(e.dataTransfer.files).filter(f => f.type === 'application/pdf');
+    const accepted = input.accept.split(',').map(v => v.trim().toLowerCase()).filter(Boolean);
+    const files = Array.from(e.dataTransfer.files).filter(file => accepted.some(rule => {
+      if (rule.startsWith('.')) return file.name.toLowerCase().endsWith(rule);
+      if (rule.endsWith('/*')) return file.type.toLowerCase().startsWith(rule.slice(0, -1));
+      return file.type.toLowerCase() === rule;
+    }));
     if (files.length) runHandler(multi ? files : [files[0]]);
+    else showToast('이 영역에서 지원하는 파일 형식을 선택해 주세요.');
   });
   input.addEventListener('change', () => {
     if (input.files.length) runHandler(multi ? Array.from(input.files) : [input.files[0]]);
@@ -655,7 +690,7 @@ async function doMerge() {
       'merged.pdf', 
       result.byteLength, 
       `총 ${mergeFiles.length}개의 개별 PDF 파일들을 바이너리 스트림으로 병합하여 단일 문서로 패키징했습니다.`,
-      `본 합치기 도구는 문서 내 텍스트, 이미지 폰트를 재렌더링하지 않고 페이지 트리(Page Tree) 구조만 이식하기 때문에 원래의 고품질 화질과 텍스트 복사 기능이 100% 무손실 리다이렉트 됩니다.`
+      `페이지를 이미지로 다시 렌더링하지 않아 일반적으로 기존 텍스트와 이미지 품질을 유지합니다. 전자서명·양식·주석 등은 결과 파일에서 확인하세요.`
     );
   } catch (e) {
     showToast('오류: ' + e.message);
@@ -719,8 +754,8 @@ async function doSplit() {
       'PDF 파일 나누기(Split)', 
       'split.pdf', 
       result.byteLength, 
-      `원본 ${splitPageTotal}페이지 중 고객님이 선택하신 [${pages.join(', ')}] 번째의 총 ${pages.length}개 페이지만을 정확히 타겟 추출하여 분리해냈습니다.`,
-      `불필요한 페이지 데이터 쓰레기를 완전히 소거한 최적화된 바이트 배열로 추출되었으므로 이메일 첨부나 관공서 업로드용으로 매우 적합합니다.`
+      `원본 ${splitPageTotal}페이지 중 선택하신 [${pages.join(', ')}] 번째의 총 ${pages.length}개 페이지를 새 PDF로 저장했습니다.`,
+      `분할 과정에서 전자서명·양식·주석 등 일부 기능이 유지되지 않을 수 있으므로 중요한 제출 전에 결과 파일을 확인하세요.`
     );
   } catch (e) { showToast('오류: ' + e.message); }
   setLoading('splitLoading', false);
@@ -925,6 +960,11 @@ async function doWatermark() {
   try {
     const doc = await PDFDocument.load(wmPdfBytes);
     const font = await doc.embedFont(StandardFonts.Helvetica);
+    try {
+      font.encodeText(text);
+    } catch (error) {
+      throw new Error('현재 워터마크는 영문·숫자·일반 기호만 지원합니다. 한글은 사용할 수 없습니다.');
+    }
     const pages = doc.getPages();
     pages.forEach(page => {
       const { width, height } = page.getSize();
@@ -942,11 +982,11 @@ async function doWatermark() {
     downloadPdf(result, 'watermarked.pdf');
     showToast('워터마크 적용 완료!');
     updateReport(
-      'PDF 워터마크 강제 삽입(Watermark)', 
+      'PDF 워터마크 삽입(Watermark)',
       'watermarked.pdf', 
       result.byteLength, 
-      `입력하신 기밀 보안 텍스트 "${text}" 인자를 문서 내 총 ${pages.length}장의 모든 페이지 중앙에 오버레이 렌더링하여 강제 워터마킹 처리했습니다.`,
-      `설정된 오파시티(Opacity ${opacity})와 회전각(${angle}도)으로 StandardFont 레이어를 최상단에 덮어씌움으로써, 타인의 무단 프린트 복제나 불법 스크린샷 캡쳐 도용을 심리적, 기술적으로 원천 차단하는 데 도움을 줍니다.`
+      `입력한 텍스트 "${text}"를 문서 내 총 ${pages.length}개 페이지 중앙에 오버레이로 추가했습니다.`,
+      `투명도 ${opacity}와 회전각 ${angle}도로 표식 레이어를 추가했습니다. 워터마크는 문서 상태를 알리는 표식이며 복사나 화면 캡처를 기술적으로 차단하지는 않습니다.`
     );
   } catch (e) { showToast('오류: ' + e.message); }
   setLoading('watermarkLoading', false);
@@ -984,7 +1024,7 @@ async function doDelete() {
     const result = await doc.save();
     downloadPdf(result, 'deleted.pdf');
     showToast('페이지 삭제 완료!');
-    updateReport('PDF 페이지 삭제(Delete)', 'deleted.pdf', result.byteLength, `총 ${pages.length}장의 아웃라이어 페이지를 파괴했습니다.`, '삭제 후 Page Tree 인덱스가 재정렬되며 무손실 바이트 어레이로 출력.');
+    updateReport('PDF 페이지 삭제(Delete)', 'deleted.pdf', result.byteLength, `총 ${pages.length}장의 페이지를 삭제했습니다.`, '삭제 후 페이지 인덱스를 재정렬해 새 PDF로 저장했습니다. 전자서명·양식·주석은 결과 파일에서 확인하세요.');
   } catch (e) { showToast('오류: ' + e.message); }
   setLoading('deleteLoading', false);
 }
