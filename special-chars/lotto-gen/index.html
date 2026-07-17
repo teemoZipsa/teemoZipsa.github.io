@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -17,7 +18,6 @@
 
 <meta name="robots" content="noindex, follow">
 <style>
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
 .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:540px;max-width:100%;overflow:hidden}
@@ -51,7 +51,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .num-btn.excluded{background:#ef4444;color:#fff;border-color:#ef4444;text-decoration:line-through;opacity:0.8}
 
 .opt-controls{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-muted)}
-.reset-opt{background:none;border:none;color:var(--text-info);cursor:pointer;text-decoration:underline;font-family:inherit}
+.reset-opt{background:none;border:none;color:var(--text-info);cursor:pointer;text-decoration:underline;font-family:inherit;min-width:44px;min-height:36px;padding:6px 10px;border-radius:6px}
 .reset-opt:hover{color:var(--text-secondary)}
 
 .history{border-top:1px solid var(--border);padding-top:16px}
@@ -66,12 +66,12 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .copy-btn:hover{background:var(--bg-btn-hover)}
 
 .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-bottom:20px;}
-.report-box h3 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
+.report-box h2 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
 .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
 .report-box strong {color:var(--text-primary);font-weight:600}
 
 .related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:20px}
-.related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.related-tools h2 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
 .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
 .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
@@ -94,6 +94,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
     <h1>🎰 로또 번호 추첨기</h1>
@@ -101,7 +102,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </div>
   
   <div class="content">
-    <div class="main-display">
+    <div class="main-display" role="status" aria-live="polite" aria-atomic="true">
       <div class="balls-container" id="ballsView">
         <div class="ball b-empty">?</div>
         <div class="ball b-empty">?</div>
@@ -119,10 +120,10 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <div class="opt-title">
         <span>⚙️ 추출 옵션 (선택)</span>
       </div>
-      <div style="font-size:11px;color:var(--text-info);margin-bottom:8px">번호를 클릭하여 <b>고정수(파란색)</b> 또는 <b>제외수(빨간색)</b>를 설정하세요.</div>
-      <div class="num-grid" id="numGrid"></div>
+      <div id="numberOptionHelp" style="font-size:11px;color:var(--text-info);margin-bottom:8px">번호를 클릭하여 <b>고정수(파란색)</b> 또는 <b>제외수(빨간색)</b>를 설정하세요.</div>
+      <div class="num-grid" id="numGrid" role="group" aria-label="로또 번호 추출 옵션" aria-describedby="numberOptionHelp"></div>
       <div class="opt-controls">
-        <span id="optCountInfo">고정수 0개 · 제외수 0개</span>
+        <span id="optCountInfo" role="status" aria-live="polite">고정수 0개 · 제외수 0개</span>
         <button class="reset-opt" onclick="resetOptions()">초기화</button>
       </div>
     </div>
@@ -156,7 +157,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </details>
 
   <div class="related-tools">
-    <h3>🔗 연관 생활 도구</h3>
+    <h2>🔗 연관 생활 도구</h2>
     <div class="tool-list">
       <a href="/special-chars/date-calc/"><span>📅 디데이/날짜 계산기</span><span>바로가기 →</span></a>
       <a href="/special-chars/zodiac-calc/"><span>🔮 띠/만세력 계산기</span><span>바로가기 →</span></a>
@@ -164,7 +165,8 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
   </div>
 
-  <footer class="footer"><span>대박을 기원합니다! 🍀</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+  </main>
+<footer class="footer"><span>대박을 기원합니다! 🍀</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <script>
@@ -180,6 +182,8 @@ function initGrid() {
     const btn = document.createElement('button');
     btn.className = 'num-btn';
     btn.textContent = i;
+    btn.setAttribute('aria-pressed', 'false');
+    btn.setAttribute('aria-label', `${i}번, 일반`);
     btn.onclick = () => toggleNum(i, btn);
     g.appendChild(btn);
   }
@@ -204,6 +208,9 @@ function toggleNum(n, btn) {
     fixedNums.add(n);
     btn.className = 'num-btn fixed';
   }
+  const state = fixedNums.has(n) ? '고정수' : exNums.has(n) ? '제외수' : '일반';
+  btn.setAttribute('aria-pressed', String(fixedNums.has(n)));
+  btn.setAttribute('aria-label', `${n}번, ${state}`);
   updateOptInfo();
 }
 
@@ -214,7 +221,11 @@ function updateOptInfo() {
 function resetOptions() {
   fixedNums.clear();
   exNums.clear();
-  document.querySelectorAll('.num-btn').forEach(b => b.className = 'num-btn');
+  document.querySelectorAll('.num-btn').forEach((b, index) => {
+    b.className = 'num-btn';
+    b.setAttribute('aria-pressed', 'false');
+    b.setAttribute('aria-label', `${index + 1}번, 일반`);
+  });
   updateOptInfo();
 }
 
@@ -266,7 +277,7 @@ function generate() {
   const highCount = result.filter(n=>n>22).length;
   const lowCount = 6 - highCount;
   
-  let msg = `<h3>💡 생성된 로또 번호 패턴 분석</h3>`;
+  let msg = `<h2>💡 생성된 로또 번호 패턴 분석</h2>`;
   msg += `<p>이번에 생성된 행운의 6자리 번호는 <strong>[${result.join(', ')}]</strong>입니다. `;
   
   if(fixedNums.size > 0 || exNums.size > 0) {

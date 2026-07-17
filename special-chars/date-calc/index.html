@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -18,7 +19,6 @@
 <link rel="canonical" href="https://teemozipsa.github.io/special-chars/date-calc/">
 
 <style>
-  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px}
   .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
@@ -63,12 +63,12 @@
 @media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
 
 .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:16px;}
-.report-box h3 {font-size:14px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
+.report-box h2 {font-size:14px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
 .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
 .report-box strong {color:var(--text-primary);font-weight:600}
 
 .related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:20px 12px}
-.related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.related-tools h2 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
 .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
 .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
@@ -86,6 +86,7 @@
 <body>
 
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
     <h1>📅 날짜/D-Day 계산기</h1>
@@ -114,7 +115,7 @@
     <div class="date-section">
       <div class="date-section-title">🧮 날짜 계산 (기준일 ± 일수)</div>
       <div class="date-row"><label>기준일</label><input aria-label="기준일" type="date" id="dateBase"></div>
-      <div class="date-row"><label>일수</label><input type="number" id="dateDays" placeholder="예: 100, -30"></div>
+      <div class="date-row"><label>일수</label><input type="number" id="dateDays" placeholder="예: 100, -30" min="-100000" max="100000" step="1"></div>
       <div class="quick-buttons">
         <button class="quick-btn" onclick="applyQuick(7)">+7일</button>
         <button class="quick-btn" onclick="applyQuick(30)">+30일</button>
@@ -160,7 +161,7 @@
   </details>
 
   <div class="related-tools">
-    <h3>🔗 연관 생활 도구</h3>
+    <h2>🔗 연관 생활 도구</h2>
     <div class="tool-list">
       <a href="/special-chars/biz-day-calc/"><span>🏢 영업일(근무일) 계산기</span><span>바로가기 →</span></a>
       <a href="/special-chars/zodiac-calc/"><span>🔮 띠/만세력 계산기</span><span>바로가기 →</span></a>
@@ -168,7 +169,8 @@
     </div>
   </div>
 
-  <footer class="footer"><span>실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+  </main>
+<footer class="footer"><span>실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -229,7 +231,7 @@ function calcDday(){
   const dDiff = end >= start ? `앞으로 <strong>${absD}일</strong> 남은 상황` : `시작일로부터 <strong>${absD}일</strong> 경과한 상황`;
   
   box.innerHTML = `
-      <h3>💡 맞춤형 D-Day 분석 리포트</h3>
+      <h2>💡 맞춤형 D-Day 분석 리포트</h2>
       <p>설정하신 시작일 <strong>${formatStart}</strong>부터 목표일 <strong>${formatEnd}</strong>까지의 기간을 계산한 결과, 현재 ${dDiff}입니다.</p>
       <p>초일 산입 옵션에 따라 산출된 이 기간은 어림잡아 <strong>약 ${months}개월</strong>의 시간에 속하며, 주 단위로 환산하면 <strong>${weeks}주 ${remain}일</strong>입니다. 수능 시험일이나 공무원 수험 준비, 연인 간의 100일, 1000일 주년 일정 등 중요한 일생일대의 계획을 단단히 세우고 실행하는 데 이 지표를 유용하게 활용하시기 바랍니다. 브라우저 엔진에 기반한 높은 정확도의 스크립트를 사용하여 윤달까지도 빈틈없이 정밀 반영되었습니다.</p>
   `;
@@ -237,12 +239,22 @@ function calcDday(){
 
 function calcDateAdd(){
   const base=document.getElementById('dateBase').value;
-  const days=parseInt(document.getElementById('dateDays').value);
+  const dayInput=document.getElementById('dateDays');
+  const dayRaw=dayInput.value.trim();
+  const days=Number(dayRaw);
   const box = document.getElementById('dateAddReport');
+  const validDays=dayRaw!==''&&Number.isInteger(days)&&Math.abs(days)<=100000;
+  dayInput.setAttribute('aria-invalid',String(dayRaw!==''&&!validDays));
   
-  if(!base||isNaN(days)){
+  if(!base||dayRaw===''){
     document.getElementById('dateAddValue').textContent='-';
     document.getElementById('dateAddSub').textContent='기준일과 일수를 입력하세요';
+    box.style.display='none';
+    return;
+  }
+  if(!validDays){
+    document.getElementById('dateAddValue').textContent='-';
+    document.getElementById('dateAddSub').textContent='-100,000부터 100,000 사이의 정수를 입력하세요';
     box.style.display='none';
     return;
   }
@@ -255,6 +267,12 @@ function calcDateAdd(){
     return;
   }
   d.setDate(d.getDate()+days);
+  if(!Number.isFinite(d.getTime())){
+    document.getElementById('dateAddValue').textContent='-';
+    document.getElementById('dateAddSub').textContent='계산 가능한 날짜 범위를 벗어났습니다';
+    box.style.display='none';
+    return;
+  }
   const yyyy=d.getFullYear();
   const mm=String(d.getMonth()+1).padStart(2,'0');
   const dd=String(d.getDate()).padStart(2,'0');
@@ -270,7 +288,7 @@ function calcDateAdd(){
   const formatBase = base.replace(/-/g, '.');
   
   box.innerHTML = `
-      <h3>💡 맞춤형 기준일 연산 리포트</h3>
+      <h2>💡 맞춤형 기준일 연산 리포트</h2>
       <p>입력하신 기준일 <strong>${formatBase}</strong>을(를) 모태로 <strong>${sign}${days}일</strong>의 시간 편차를 캘린더 알고리즘으로 엄밀하게 추적한 결과, 도달하게 되는 목표 시점은 확실한 <strong>${yyyy}년 ${mm}월 ${dd}일 ${dayName}요일</strong>입니다.</p>
       <p>이 결과는 부동산 계약 만료 통보기한을 산정하거나, 자동차 취등록세 유예기한(통상 60일), 상속세 신고 기한(6개월) 등 민감한 행정·법률 일정의 흐름을 짚어볼 때 든든한 기준점이 될 수 있습니다. 모든 연산은 웹 접근성 규격을 준수하는 강력한 Date 파싱 체계를 통해 즉시 도출되었습니다.</p>
   `;

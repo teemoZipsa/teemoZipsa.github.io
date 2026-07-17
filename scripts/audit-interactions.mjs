@@ -10,6 +10,14 @@ const failures = [];
 let passed = 0;
 let forcedFailurePath = null;
 let forcedFailureHits = 0;
+const cliFilter = process.argv.find(argument => argument.startsWith('--filter='))?.slice('--filter='.length) || '';
+const scenarioFilters = [process.env.AUDIT_INTERACTION_FILTER, cliFilter]
+  .filter(Boolean)
+  .join('|')
+  .split('|')
+  .map(value => value.trim().toLowerCase())
+  .filter(Boolean);
+const runBackgroundInference = process.env.AUDIT_BACKGROUND_INFERENCE === '1' || process.argv.includes('--background-inference');
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -27,7 +35,8 @@ function contentType(file) {
     '.jpg': 'image/jpeg',
     '.jpeg': 'image/jpeg',
     '.webp': 'image/webp',
-    '.svg': 'image/svg+xml'
+    '.svg': 'image/svg+xml',
+    '.wasm': 'application/wasm'
   })[ext] || 'application/octet-stream';
 }
 
@@ -74,6 +83,7 @@ async function main() {
   const browser = await chromium.launch({ headless: true });
 
   async function scenario(name, routePath, run, options = {}) {
+    if (scenarioFilters.length && !scenarioFilters.some(filter => name.toLowerCase().includes(filter))) return;
     const context = await browser.newContext({
       serviceWorkers: options.serviceWorkers || 'block',
       timezoneId: options.timezoneId,
@@ -100,6 +110,124 @@ async function main() {
     } finally {
       await context.close().catch(() => {});
     }
+  }
+
+  async function auditQrGeneration(page, baseUrl, locale) {
+    await page.waitForFunction(() => window.__qrUtf8Ready === true && typeof window.qrcode === 'function');
+    const state = await page.evaluate(text => {
+      document.querySelector('#qrInput').value = text;
+      generate();
+      const canvas = document.querySelector('#qrBox canvas');
+      const script = document.querySelector('script[src*="qrcode-generator"]');
+      const csp = document.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content || '';
+      return {
+        canvasWidth: canvas?.width || 0,
+        canvasHeight: canvas?.height || 0,
+        canvasRole: canvas?.getAttribute('role'),
+        canvasLabel: canvas?.getAttribute('aria-label') || '',
+        dataUrl: currentDataUrl.slice(0, 22),
+        libraryPath: script ? new URL(script.src).pathname : '',
+        errorVisible: getComputedStyle(document.querySelector('#cdnError')).display !== 'none',
+        csp,
+        resources: performance.getEntriesByType('resource').map(entry => entry.name)
+      };
+    }, locale === 'ko' ? '안녕하세요 https://example.com/한글' : 'Hello https://example.com/english');
+    assert(state.canvasWidth > 0 && state.canvasWidth === state.canvasHeight, `${locale} QR canvas was not generated: ${JSON.stringify(state)}`);
+    assert(state.canvasRole === 'img' && state.canvasLabel, `${locale} QR canvas lacks accessible image semantics`);
+    assert(state.dataUrl === 'data:image/png;base64,', `${locale} QR PNG data URL was not created: ${state.dataUrl}`);
+    assert(state.libraryPath === '/special-chars/vendor/qrcode-generator/1.4.4/qrcode.js', `${locale} QR loaded the wrong library: ${state.libraryPath}`);
+    assert(!state.errorVisible, `${locale} QR displayed a library-load error`);
+    assert(state.csp.includes("script-src 'self'") && state.csp.includes("font-src 'self'"), `${locale} QR CSP is missing self-hosted resource directives: ${state.csp}`);
+    assert(state.resources.every(resource => new URL(resource).origin === new URL(baseUrl).origin), `${locale} QR loaded a third-party resource: ${state.resources.join(', ')}`);
+  }
+
+  async function auditPdfKeyboardResetAndReorder(page, locale) {
+    await page.waitForFunction(() => document.documentElement.dataset.pdfEngine === 'ready', null, { timeout: 10000 });
+    await page.evaluate(() => {
+      document.body.dataset.pdfInputClicks = '0';
+      document.querySelector('#mergeFileInput').addEventListener('click', event => {
+        event.preventDefault();
+        document.body.dataset.pdfInputClicks = String(Number(document.body.dataset.pdfInputClicks) + 1);
+      });
+    });
+    await page.locator('#mergeDropZone').focus();
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Space');
+    assert(await page.locator('body').getAttribute('data-pdf-input-clicks') === '2', `${locale} PDF drop zone did not activate its file input with Enter and Space`);
+
+    const pdfBytes = Buffer.from(await page.evaluate(async () => {
+      const doc = await PDFDocument.create();
+      doc.addPage([240, 320]);
+      doc.addPage([320, 240]);
+      return Array.from(await doc.save());
+    }));
+    const first = { name: 'first.pdf', mimeType: 'application/pdf', buffer: pdfBytes };
+    const second = { name: 'second.pdf', mimeType: 'application/pdf', buffer: pdfBytes };
+
+    await page.locator('#mergeFileInput').setInputFiles([first, second]);
+    await page.waitForFunction(() => mergeFiles.length === 2 && document.querySelectorAll('#mergeFileList .file-item').length === 2);
+    await page.locator('#mergeFileList .file-item').nth(1).locator('[data-direction="-1"]').evaluate(button => button.click());
+    await page.waitForTimeout(30);
+    const mergeOrder = await page.evaluate(() => ({
+      names: mergeFiles.map(file => file.name),
+      focusInsideMovedItem: document.querySelector('#mergeFileList .file-item')?.contains(document.activeElement)
+    }));
+    assert(mergeOrder.names.join(',') === 'second.pdf,first.pdf', `${locale} PDF keyboard file reorder failed: ${JSON.stringify(mergeOrder)}`);
+    assert(mergeOrder.focusInsideMovedItem, `${locale} PDF file reorder lost keyboard focus`);
+
+    await page.evaluate(() => resetAll());
+    await page.locator('#rotateFileInput').setInputFiles(first);
+    await page.waitForFunction(() => rotateAngles.length === 2 && document.querySelectorAll('#rotateThumbs .thumb-card').length === 2, null, { timeout: 10000 });
+    const rotationState = await page.evaluate(async () => {
+      document.querySelector('#rotateThumbs .rotate-badge').remove();
+      rotateAll(90);
+      let download = null;
+      const originalDownload = downloadPdf;
+      downloadPdf = (bytes, filename) => { download = { bytes: bytes.byteLength ?? bytes.length, filename }; };
+      try { await doRotate(); } finally { downloadPdf = originalDownload; }
+      return {
+        angles: [...rotateAngles],
+        visibleBadges: document.querySelectorAll('#rotateThumbs .rotate-badge.show').length,
+        download
+      };
+    });
+    assert(rotationState.angles.every(angle => angle === 90), `${locale} rotateAll did not update every angle: ${JSON.stringify(rotationState)}`);
+    assert(rotationState.visibleBadges === 1, `${locale} rotateAll stopped after a missing badge: ${JSON.stringify(rotationState)}`);
+    assert(rotationState.download?.filename === 'rotated.pdf' && rotationState.download.bytes > 0, `${locale} rotated PDF was not produced: ${JSON.stringify(rotationState)}`);
+
+    await page.evaluate(() => {
+      resetAll();
+      document.querySelector('.mode-tab[data-tab="reorder"]').click();
+    });
+    await page.locator('#reorderFileInput').setInputFiles(first);
+    await page.waitForFunction(() => reorderPages.length === 2 && document.querySelectorAll('#reorderThumbs .thumb-card').length === 2, null, { timeout: 10000 });
+    await page.locator('#reorderThumbs .thumb-card').nth(1).locator('[data-direction="-1"]').evaluate(button => button.click());
+    await page.waitForTimeout(30);
+    const pageOrder = await page.evaluate(() => ({
+      order: [...reorderPages],
+      firstPage: document.querySelector('#reorderThumbs .thumb-card')?.dataset.page,
+      focusInsideMovedCard: document.querySelector('#reorderThumbs .thumb-card')?.contains(document.activeElement)
+    }));
+    assert(pageOrder.order.join(',') === '1,0' && pageOrder.firstPage === '1', `${locale} PDF keyboard page reorder failed: ${JSON.stringify(pageOrder)}`);
+    assert(pageOrder.focusInsideMovedCard, `${locale} PDF page reorder lost keyboard focus`);
+
+    const resetState = await page.evaluate(() => {
+      updateReport('audit', 'audit.pdf', 1, 'audit', 'audit');
+      resetAll();
+      return {
+        arrays: [mergeFiles.length, rotateAngles.length, reorderPages.length, img2pdfFiles.length],
+        bytes: [splitPdfBytes, rotatePdfBytes, reorderPdfBytes, wmPdfBytes, deletePdfBytes, pagenumPdfBytes, metadataPdfBytes, blankPdfBytes].map(value => value === null),
+        lists: ['mergeFileList','img2pdfFileList','rotateThumbs','reorderThumbs','wmPreview'].map(id => document.getElementById(id).children.length),
+        visibleControls: ['mergeBtn','splitInfo','rotateControls','reorderControls','watermarkControls','deleteInfo','img2pdfBtn','pagenumControls','metadataControls','blankControls'].filter(id => getComputedStyle(document.getElementById(id)).display !== 'none'),
+        reportChildren: document.querySelector('#reportContainer').children.length,
+        reportDisplay: getComputedStyle(document.querySelector('#reportContainer')).display,
+        pageCounts: ['splitPageCount','deletePageCount','blankPageCount'].map(id => document.getElementById(id).textContent),
+        loading: [...document.querySelectorAll('.loading.show')].length
+      };
+    });
+    assert(resetState.arrays.every(value => value === 0) && resetState.bytes.every(Boolean), `${locale} PDF reset left stale state: ${JSON.stringify(resetState)}`);
+    assert(resetState.lists.every(value => value === 0) && resetState.visibleControls.length === 0, `${locale} PDF reset left stale UI: ${JSON.stringify(resetState)}`);
+    assert(resetState.reportChildren === 0 && resetState.reportDisplay === 'none' && resetState.pageCounts.every(value => value === '0') && resetState.loading === 0, `${locale} PDF reset left report/count/loading state: ${JSON.stringify(resetState)}`);
   }
 
   await scenario('timezone conversion', '/special-chars/timezone-conv/', async page => {
@@ -315,7 +443,10 @@ async function main() {
       setMetroBpm(173);
     });
     await page.locator('#metroPlayBtn').click();
-    await page.waitForFunction(() => window.__metroFrames.length >= 17, null, { timeout: 7000 });
+    await page.waitForFunction(() => ['audio-worklet', 'audio-clock-fallback'].includes(document.querySelector('#beatDots').dataset.engine));
+    const initializedEngine = await page.locator('#beatDots').getAttribute('data-engine');
+    assert(initializedEngine === 'audio-worklet', `metronome fell back to ${initializedEngine}`);
+    await page.waitForFunction(() => window.__metroFrames.length >= 17, null, { timeout: 10000 });
     const state = await page.evaluate(() => {
       const frames = window.__metroFrames.slice(0, 17);
       const sampleRate = Number(document.querySelector('#beatDots').dataset.sampleRate);
@@ -326,7 +457,7 @@ async function main() {
         pressed: document.querySelector('#metroPlayBtn').getAttribute('aria-pressed')
       };
     });
-    assert(state.engine === 'audio-worklet', `metronome fell back to ${state.engine}`);
+    assert(state.engine === 'audio-worklet', `metronome changed engine mode to ${state.engine}`);
     assert(state.pressed === 'true', 'metronome play state is not exposed to assistive technology');
     const expectedFrames = state.sampleRate * 60 / 173;
     const intervals = state.frames.slice(1).map((frame, index) => frame - state.frames[index]);
@@ -478,7 +609,10 @@ async function main() {
       setMetroBpm(181);
     });
     await page.locator('#metroPlayBtn').click();
-    await page.waitForFunction(() => window.__metroFrames.length >= 11, null, { timeout: 5000 });
+    await page.waitForFunction(() => ['audio-worklet', 'audio-clock-fallback'].includes(document.querySelector('#beatDots').dataset.engine));
+    const initializedEngine = await page.locator('#beatDots').getAttribute('data-engine');
+    assert(initializedEngine === 'audio-worklet', `English metronome fell back to ${initializedEngine}`);
+    await page.waitForFunction(() => window.__metroFrames.length >= 11, null, { timeout: 8000 });
     const state = await page.evaluate(() => ({
       engine: document.querySelector('#beatDots').dataset.engine,
       frames: window.__metroFrames.slice(0, 11),
@@ -656,6 +790,12 @@ async function main() {
     assert(state.marker === 0 && state.images === 0, `Base64 filename injected markup: ${JSON.stringify(state)}`);
   });
 
+  for (const [locale, routePath] of [['ko', '/special-chars/qr-code/'], ['en', '/special-chars/en/qr-code/']]) {
+    await scenario(`${locale} QR local-library generation`, routePath, async (page, _context, baseUrl) => {
+      await auditQrGeneration(page, baseUrl, locale);
+    });
+  }
+
   await scenario('QR saved-input clearing', '/special-chars/qr-code/', async page => {
     const state = await page.evaluate(() => {
       document.querySelector('#qrInput').value = 'private value';
@@ -735,6 +875,12 @@ async function main() {
     assert(reportState.marker === 0 && reportState.images === 0, `PDF report injected markup: ${JSON.stringify(reportState)}`);
   });
 
+  for (const [locale, routePath] of [['ko', '/special-chars/pdf-tool/'], ['en', '/special-chars/en/pdf-tool/']]) {
+    await scenario(`${locale} PDF keyboard, rotate, reorder, and reset`, routePath, async page => {
+      await auditPdfKeyboardResetAndReorder(page, locale);
+    });
+  }
+
   await scenario('self-hosted background-removal module', '/special-chars/bg-remover/', async (page, _context, base) => {
     const moduleState = await page.evaluate(async () => {
       const moduleUrl = '/special-chars/vendor/imgly-background-removal/1.5.5/background-removal.bundle.js';
@@ -757,6 +903,69 @@ async function main() {
     const moduleSource = (await page.locator('script[type="module"]').allTextContents()).join('\n');
     assert(moduleSource.includes('escapeHtml(origFile.name)'), 'background-remover report does not escape the selected filename');
   });
+
+  if (runBackgroundInference) {
+    await scenario('background-removal real small-image inference', '/special-chars/bg-remover/', async (page, _context, baseUrl) => {
+      const encodedInput = await page.evaluate(() => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 64;
+        canvas.height = 64;
+        const context = canvas.getContext('2d');
+        context.fillStyle = '#f4f5f7';
+        context.fillRect(0, 0, 64, 64);
+        context.fillStyle = '#ef4444';
+        context.beginPath();
+        context.arc(32, 32, 20, 0, Math.PI * 2);
+        context.fill();
+        return canvas.toDataURL('image/png').split(',')[1];
+      });
+      await page.locator('#fileInput').setInputFiles({
+        name: 'background-removal-audit-64.png',
+        mimeType: 'image/png',
+        buffer: Buffer.from(encodedInput, 'base64')
+      });
+      await page.waitForFunction(() => (
+        document.querySelector('#resultArea')?.classList.contains('active')
+        || getComputedStyle(document.querySelector('#retryBtn')).display !== 'none'
+      ), null, { timeout: 150000 });
+      const result = await page.evaluate(async expectedOrigin => {
+        const success = document.querySelector('#resultArea')?.classList.contains('active') || false;
+        let output = { bytes: 0, type: '', width: 0, height: 0, pngSignature: false };
+        if (success) {
+          const blob = await fetch(document.querySelector('#resultImg').src).then(response => response.blob());
+          const bytes = new Uint8Array(await blob.arrayBuffer());
+          const bitmap = await createImageBitmap(blob);
+          output = {
+            bytes: bytes.byteLength,
+            type: blob.type,
+            width: bitmap.width,
+            height: bitmap.height,
+            pngSignature: bytes.length >= 8 && [137, 80, 78, 71, 13, 10, 26, 10].every((value, index) => bytes[index] === value)
+          };
+          bitmap.close();
+        }
+        const csp = document.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content || '';
+        const resources = performance.getEntriesByType('resource').map(entry => entry.name);
+        return {
+          success,
+          output,
+          error: document.querySelector('#progressSub')?.textContent || '',
+          retryVisible: getComputedStyle(document.querySelector('#retryBtn')).display !== 'none',
+          csp,
+          hasUnsafeEval: /(^|[\s;])'unsafe-eval'(?=[\s;]|$)/.test(csp),
+          externalResources: resources.filter(resource => {
+            const url = new URL(resource, location.href);
+            return !['blob:', 'data:'].includes(url.protocol) && url.origin !== expectedOrigin;
+          })
+        };
+      }, new URL(baseUrl).origin);
+      assert(result.success && !result.retryVisible, `background-removal inference failed: ${JSON.stringify(result)}`);
+      assert(result.output.type === 'image/png' && result.output.pngSignature && result.output.bytes > 0, `background-removal output is not a non-empty PNG: ${JSON.stringify(result.output)}`);
+      assert(result.output.width === 64 && result.output.height === 64, `background-removal changed the 64x64 output dimensions: ${JSON.stringify(result.output)}`);
+      assert(result.csp.includes("'wasm-unsafe-eval'") && !result.hasUnsafeEval, `background-removal CSP is broader than required: ${result.csp}`);
+      assert(result.externalResources.length === 0, `background-removal inference loaded third-party resources: ${result.externalResources.join(', ')}`);
+    });
+  }
 
   await scenario('image compression errors and transparency', '/special-chars/image-compress/', async page => {
     const transparent = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=', 'base64');
@@ -783,6 +992,69 @@ async function main() {
     const reportState = await page.evaluate(() => ({ marker: window.__compressFilenameXss, images: document.querySelectorAll('#reportContainer img').length }));
     assert(reportState.marker === 0 && reportState.images === 0, `image-compressor filename injected markup: ${JSON.stringify(reportState)}`);
   });
+
+  await scenario('PWA offline self-hosted QR and PDF engines', '/special-chars/', async (page, context, baseUrl) => {
+    await page.evaluate(() => navigator.serviceWorker.ready);
+    if (!await page.evaluate(() => Boolean(navigator.serviceWorker.controller))) {
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await page.waitForFunction(() => Boolean(navigator.serviceWorker.controller));
+    }
+
+    await page.goto(`${baseUrl}/special-chars/qr-code/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => window.__qrUtf8Ready === true && typeof window.qrcode === 'function');
+    const onlineQr = await page.evaluate(() => {
+      document.querySelector('#qrInput').value = 'online cache warmup';
+      generate();
+      return document.querySelector('#qrBox canvas')?.width || 0;
+    });
+    assert(onlineQr > 0, 'online QR cache warmup failed');
+
+    await page.goto(`${baseUrl}/special-chars/pdf-tool/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => document.documentElement.dataset.pdfEngine === 'ready', null, { timeout: 10000 });
+    const onlinePdf = await page.evaluate(async () => {
+      const doc = await PDFDocument.create();
+      doc.addPage([120, 120]);
+      const bytes = await doc.save();
+      const thumb = await renderThumb(bytes, 1, 64);
+      return { width: thumb.width, height: thumb.height };
+    });
+    assert(onlinePdf.width === 64 && onlinePdf.height > 0, `online PDF cache warmup failed: ${JSON.stringify(onlinePdf)}`);
+
+    const cached = await page.evaluate(async () => {
+      const paths = [
+        '/special-chars/vendor/qrcode-generator/1.4.4/qrcode.js',
+        '/special-chars/vendor/pdf-lib/1.17.1/pdf-lib.min.js',
+        '/special-chars/vendor/pdfjs-dist/4.2.67/pdf.min.mjs',
+        '/special-chars/vendor/pdfjs-dist/4.2.67/pdf.worker.min.mjs'
+      ];
+      const matches = await Promise.all(paths.map(async resource => Boolean(await caches.match(resource))));
+      return Object.fromEntries(paths.map((resource, index) => [resource, matches[index]]));
+    });
+    assert(Object.values(cached).every(Boolean), `self-hosted QR/PDF assets were not cached: ${JSON.stringify(cached)}`);
+
+    await context.setOffline(true);
+    await page.goto(`${baseUrl}/special-chars/qr-code/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => window.__qrUtf8Ready === true && typeof window.qrcode === 'function');
+    const offlineQr = await page.evaluate(() => {
+      document.querySelector('#qrInput').value = '오프라인 QR';
+      generate();
+      const canvas = document.querySelector('#qrBox canvas');
+      return { width: canvas?.width || 0, dataUrl: currentDataUrl.slice(0, 22) };
+    });
+    assert(offlineQr.width > 0 && offlineQr.dataUrl === 'data:image/png;base64,', `cached QR failed offline: ${JSON.stringify(offlineQr)}`);
+
+    await page.goto(`${baseUrl}/special-chars/pdf-tool/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => document.documentElement.dataset.pdfEngine === 'ready', null, { timeout: 10000 });
+    const offlinePdf = await page.evaluate(async () => {
+      const doc = await PDFDocument.create();
+      doc.addPage([100, 140]);
+      const bytes = await doc.save();
+      const thumb = await renderThumb(bytes, 1, 60);
+      return { width: thumb.width, height: thumb.height, engine: document.documentElement.dataset.pdfEngine };
+    });
+    await context.setOffline(false);
+    assert(offlinePdf.width === 60 && offlinePdf.height > 0 && offlinePdf.engine === 'ready', `cached PDF engine failed offline: ${JSON.stringify(offlinePdf)}`);
+  }, { serviceWorkers: 'allow' });
 
   await scenario('PWA rejects an incomplete shell install', '/__blank', async (page, _context, baseUrl) => {
     forcedFailurePath = '/special-chars/icon-maskable-512.png';
@@ -814,6 +1086,7 @@ async function main() {
     await page.evaluate(async () => {
       await caches.open('emoji-kitchen-db-v1');
       await caches.open('teemozipsa-shell-v1.2');
+      await caches.open('teemozipsa-vendor-v1');
       await caches.open('teemozipsa-v1.2');
       const foreign = await caches.open('foreign-cache');
       await foreign.put('/special-chars/theme.css', new Response('foreign poison', { headers: { 'Content-Type': 'text/css' } }));
@@ -869,6 +1142,7 @@ async function main() {
     });
     assert(state.caches.includes('emoji-kitchen-db-v1'), `foreign cache was deleted: ${state.caches}`);
     assert(!state.caches.includes('teemozipsa-shell-v1.2'), `old owned cache was not deleted: ${state.caches}`);
+    assert(!state.caches.includes('teemozipsa-vendor-v1'), `old vendor cache generation was not deleted: ${state.caches}`);
     assert(!state.caches.includes('teemozipsa-v1.2'), `legacy cache was not migrated: ${state.caches}`);
     assert(state.caches.includes('foreign-cache') && state.theme !== 'foreign poison' && state.theme.includes('--bg-body'), 'service worker read a foreign cache entry');
     assert(state.scopes.every(scope => scope.endsWith('/special-chars/')), `unexpected service worker scope: ${state.scopes}`);
@@ -880,7 +1154,7 @@ async function main() {
     assert(state.cachedIcons.length === state.icons.length && state.cachedIcons.every(Boolean), `PWA icons were not precached: ${state.cachedIcons}`);
     const vendorUrl = '/special-chars/vendor/pdf-lib/1.17.1/pdf-lib.min.js';
     const onlineVendorBytes = await page.evaluate(async url => (await (await fetch(url)).arrayBuffer()).byteLength, vendorUrl);
-    const vendorCached = await page.evaluate(async url => Boolean(await (await caches.open('teemozipsa-vendor-v1')).match(url)), vendorUrl);
+    const vendorCached = await page.evaluate(async url => Boolean(await (await caches.open('teemozipsa-vendor-v2')).match(url)), vendorUrl);
     assert(onlineVendorBytes > 500000 && vendorCached, `vendor asset did not complete its stable cache write: ${onlineVendorBytes}, ${vendorCached}`);
     const modelChunkUrl = await page.evaluate(async () => {
       const dataPath = '/special-chars/vendor/imgly-background-removal/1.5.5/data/';
@@ -888,7 +1162,7 @@ async function main() {
       return `${dataPath}${resources['/models/isnet_quint8'].chunks[0].hash}`;
     });
     const onlineModelChunkBytes = await page.evaluate(async url => (await (await fetch(url)).arrayBuffer()).byteLength, modelChunkUrl);
-    const modelChunkCached = await page.evaluate(async url => Boolean(await (await caches.open('teemozipsa-vendor-v1')).match(url)), modelChunkUrl);
+    const modelChunkCached = await page.evaluate(async url => Boolean(await (await caches.open('teemozipsa-vendor-v2')).match(url)), modelChunkUrl);
     assert(onlineModelChunkBytes === 4194304 && modelChunkCached, `model chunk did not complete its stable cache write: ${onlineModelChunkBytes}, ${modelChunkCached}`);
     await context.setOffline(true);
     const offlineVendorBytes = await page.evaluate(async url => (await (await fetch(url)).arrayBuffer()).byteLength, vendorUrl);

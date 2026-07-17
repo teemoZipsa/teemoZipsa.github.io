@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -19,7 +20,6 @@
 
 <meta name="robots" content="noindex, follow">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
 .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
@@ -87,6 +87,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
     <h1>🏷️ Discount & Tax Calculator</h1>
@@ -187,7 +188,8 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       </div>
     </section>
   </div>
-  <footer class="footer"><span>Real-time Calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
+  </main>
+<footer class="footer"><span>Real-time Calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -243,7 +245,8 @@ function calc() {
     return;
   }
 
-  const discountAmt = price * rate / 100;
+  const discountBase = vat && !preTax ? price / 1.1 : price;
+  const discountAmt = discountBase * rate / 100;
   _syncLock = true;
   document.getElementById('discountAmt').value = discountAmt ? fmt(discountAmt) : '';
   _syncLock = false;
@@ -261,7 +264,8 @@ function calcByAmt() {
   const preTax = document.getElementById('vatExToggle').checked;
 
   const validPrice = Number.isFinite(price) && price >= 0 && price <= MAX_PRICE;
-  const validAmount = Number.isFinite(discountAmt) && discountAmt >= 0 && discountAmt <= price;
+  const discountBase = vat && !preTax ? price / 1.1 : price;
+  const validAmount = Number.isFinite(discountAmt) && discountAmt >= 0 && discountAmt <= discountBase;
   setValidity(priceInput, validPrice, 'Enter a price from 0 to 1 quadrillion.');
   setValidity(amountInput, validAmount, 'The discount amount must be between 0 and the original price.');
   setValidity(document.getElementById('discountRate'), true, '');
@@ -273,7 +277,7 @@ function calcByAmt() {
     return;
   }
 
-  const rate = price > 0 ? (discountAmt / price * 100) : 0;
+  const rate = discountBase > 0 ? (discountAmt / discountBase * 100) : 0;
   _syncLock = true;
   document.getElementById('discountRate').value = rate ? rate.toFixed(1).replace(/\.0$/, '') : '';
   _syncLock = false;
@@ -287,12 +291,11 @@ function update(price, discountAmt, vat, preTax) {
     return;
   }
   let base = price;
-  let discountBeforeTax = discountAmt;
-  // When the entered price already includes tax, the entered discount is in
-  // the same tax-inclusive unit and must be converted to its pre-tax value.
+  const discountBeforeTax = discountAmt;
+  // The discount amount field is pre-tax. For a tax-inclusive original price,
+  // only the original price is converted back to its pre-tax base.
   if (vat && !preTax) {
     base = price / 1.1;
-    discountBeforeTax = discountAmt / 1.1;
   }
 
   const afterDiscount = base - discountBeforeTax;

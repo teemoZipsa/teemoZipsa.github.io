@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -18,7 +19,6 @@
 <link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/percent-calc/">
 <meta name="robots" content="noindex, follow">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
 .app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:540px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
@@ -46,6 +46,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 
 .result-box{background:var(--accent-bg);border:2px solid var(--accent);border-radius:12px;padding:16px;text-align:center;min-height:70px;display:flex;flex-direction:column;justify-content:center;gap:4px;transition:all .3s}
 .result-box .result-value{font-size:28px;font-weight:800;color:var(--accent-text);letter-spacing:-0.5px}
+.result-copy{align-self:center;background:none;border:0;padding:2px 6px;font-family:inherit;cursor:pointer;border-radius:6px}
 .result-box .result-label{font-size:12px;color:var(--text-info);font-weight:500}
 .result-box .result-detail{font-size:13px;color:var(--text-secondary);margin-top:2px}
 .result-box.empty .result-value{font-size:16px;color:var(--text-placeholder);font-weight:400}
@@ -89,6 +90,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
     <h1>🔢 Percentage Calculator</h1>
@@ -96,11 +98,11 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
   </div>
 
   <div class="body">
-    <div class="tabs">
-      <button class="tab active" onclick="switchTab(0)">X% of Y</button>
-      <button class="tab" onclick="switchTab(1)">Change (%)</button>
-      <button class="tab" onclick="switchTab(2)">Ratio</button>
-      <button class="tab" onclick="switchTab(3)">Reverse</button>
+    <div class="tabs" role="group" aria-label="Calculation mode">
+      <button type="button" class="tab active" aria-pressed="true" onclick="switchTab(0)">X% of Y</button>
+      <button type="button" class="tab" aria-pressed="false" onclick="switchTab(1)">Change (%)</button>
+      <button type="button" class="tab" aria-pressed="false" onclick="switchTab(2)">Ratio</button>
+      <button type="button" class="tab" aria-pressed="false" onclick="switchTab(3)">Reverse</button>
     </div>
 
     <!-- 모드 0: A의 B%는? -->
@@ -108,11 +110,11 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       <div class="calc-title">What is X% of Y?</div>
       <div class="calc-desc">e.g. What is 15% of 50,000?</div>
       <div class="input-row">
-        <label>Value (Y)</label>
+        <label for="m0a">Value (Y)</label>
         <input type="number" id="m0a" placeholder="50000" oninput="calc0()">
       </div>
       <div class="input-row">
-        <label>Percent (X)</label>
+        <label for="m0b">Percent (X)</label>
         <input type="number" id="m0b" placeholder="15" oninput="calc0()">
         <span class="unit">%</span>
       </div>
@@ -125,7 +127,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
         <button class="quick-btn" onclick="setQuick(0,'m0b',30)">30%</button>
         <button class="quick-btn" onclick="setQuick(0,'m0b',50)">50%</button>
       </div>
-      <div class="result-box empty" id="r0">
+      <div class="result-box empty" id="r0" aria-live="polite" aria-atomic="true">
         <div class="result-value">Enter numbers</div>
       </div>
     </div>
@@ -135,14 +137,14 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       <div class="calc-title">Percentage change from A to B?</div>
       <div class="calc-desc">e.g. From $40 to $52, how much did it increase?</div>
       <div class="input-row">
-        <label>Original Value</label>
+        <label for="m1a">Original Value</label>
         <input type="number" id="m1a" placeholder="40000" oninput="calc1()">
       </div>
       <div class="input-row">
-        <label>New Value</label>
+        <label for="m1b">New Value</label>
         <input type="number" id="m1b" placeholder="52000" oninput="calc1()">
       </div>
-      <div class="result-box empty" id="r1">
+      <div class="result-box empty" id="r1" aria-live="polite" aria-atomic="true">
         <div class="result-value">Enter numbers</div>
       </div>
     </div>
@@ -152,14 +154,14 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       <div class="calc-title">A is what percent of B?</div>
       <div class="calc-desc">e.g. 35 is what percent of 200?</div>
       <div class="input-row">
-        <label>Part (A)</label>
+        <label for="m2a">Part (A)</label>
         <input type="number" id="m2a" placeholder="35" oninput="calc2()">
       </div>
       <div class="input-row">
-        <label>Whole (B)</label>
+        <label for="m2b">Whole (B)</label>
         <input type="number" id="m2b" placeholder="200" oninput="calc2()">
       </div>
-      <div class="result-box empty" id="r2">
+      <div class="result-box empty" id="r2" aria-live="polite" aria-atomic="true">
         <div class="result-value">Enter numbers</div>
       </div>
     </div>
@@ -169,19 +171,19 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       <div class="calc-title">What was the original value if A is after a B% change?</div>
       <div class="calc-desc">e.g. If $40 is after a 20% discount, what was the original price?</div>
       <div class="input-row">
-        <label>Final Value</label>
+        <label for="m3a">Final Value</label>
         <input type="number" id="m3a" placeholder="40000" oninput="calc3()">
       </div>
       <div class="input-row">
-        <label>Applied %</label>
+        <label for="m3b">Applied %</label>
         <input type="number" id="m3b" placeholder="20" oninput="calc3()">
         <span class="unit">% Discount</span>
       </div>
-      <div class="quick-btns">
-        <button class="quick-btn" onclick="setM3Type('discount')">Discount (−)</button>
-        <button class="quick-btn" onclick="setM3Type('markup')">Markup (+)</button>
+      <div class="quick-btns" role="group" aria-label="Percentage change type">
+        <button type="button" class="quick-btn" data-m3-type="discount" aria-pressed="true" onclick="setM3Type('discount')">Discount (−)</button>
+        <button type="button" class="quick-btn" data-m3-type="markup" aria-pressed="false" onclick="setM3Type('markup')">Markup (+)</button>
       </div>
-      <div class="result-box empty" id="r3">
+      <div class="result-box empty" id="r3" aria-live="polite" aria-atomic="true">
         <div class="result-value">Enter numbers</div>
       </div>
     </div>
@@ -212,7 +214,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       <details class="guide">
         <summary>📋 How do I copy the results?</summary>
         <div class="guide-content">
-          <p>Simply click anywhere inside the result box. The calculated value will be automatically copied to your clipboard without any formatting, ready to paste.</p>
+          <p>Activate the displayed result value to copy it to your clipboard without formatting, ready to paste.</p>
         </div>
       </details>
     </section>
@@ -225,10 +227,11 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
         <a href="/special-chars/en/timer/" class="tool-card">⏱️ Timer & Stopwatch</a>
       </div>
     </section>
-    <footer class="footer"><span>Real-time calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
+    </main>
+<footer class="footer"><span>Real-time calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="scroll-top-btn" aria-label="Top">↑</button>
 
 <script>
@@ -237,7 +240,11 @@ let m3type = 'discount'; // discount or markup
 
 function switchTab(idx) {
   currentTab = idx;
-  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i===idx));
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    const active = i === idx;
+    t.classList.toggle('active', active);
+    t.setAttribute('aria-pressed', String(active));
+  });
   for(let i=0;i<4;i++) document.getElementById('mode'+i).style.display = i===idx ? '' : 'none';
 }
 
@@ -250,7 +257,7 @@ function setResult(boxId, value, label, detail) {
   const box = document.getElementById(boxId);
   box.classList.remove('empty');
   box.innerHTML = `
-    <div class="result-value" style="cursor:pointer" onclick="copyVal('${value}')">${value}</div>
+    <button type="button" class="result-value result-copy" onclick="copyVal('${value}')" aria-label="Copy result ${value}">${value}</button>
     ${label ? `<div class="result-label">${label}</div>` : ''}
     ${detail ? `<div class="result-detail">${detail}</div>` : ''}
   `;
@@ -319,6 +326,9 @@ function setQuick(mode, inputId, val) {
 
 function setM3Type(type) {
   m3type = type;
+  document.querySelectorAll('[data-m3-type]').forEach(btn => {
+    btn.setAttribute('aria-pressed', String(btn.dataset.m3Type === type));
+  });
   const unitEl = document.querySelector('#mode3 .unit');
   unitEl.textContent = type === 'discount' ? '% Discount' : '% Markup';
   calc3();

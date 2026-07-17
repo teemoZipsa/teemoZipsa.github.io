@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -18,7 +19,6 @@
 <link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/image-compress/">
 <meta name="robots" content="noindex, follow">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:'Inter',sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
   .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:500px;max-width:100%;overflow:hidden}
@@ -34,6 +34,7 @@
     background:var(--bg-bar);
   }
   .drop-zone:hover,.drop-zone.dragover{border-color:var(--accent);background:var(--bg-hover)}
+  .drop-zone:focus-visible,.btn:focus-visible,input:focus-visible{outline:3px solid #f7c948;outline-offset:3px}
   .drop-zone .icon{font-size:36px;margin-bottom:8px}
   .drop-zone .text{font-size:13px;color:var(--calc-expr-text)}
   .drop-zone .sub{font-size:11px;color:var(--text-placeholder);margin-top:4px}
@@ -99,13 +100,14 @@
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
     <h1>🗜️ Image Compressor</h1>
     <a href="/special-chars/image-compress/" class="back-btn">🌐 한국어</a>
   </div>
   <div class="body">
-    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+    <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-controls="fileInput" onclick="document.getElementById('fileInput').click()">
       <div class="icon">📁</div>
       <div class="text">Click or Drag image here</div>
       <div class="sub">Supports JPG, PNG, WebP · No server uploads</div>
@@ -139,7 +141,7 @@
         <div class="preview-dim" id="compDim">-</div>
       </div>
     </div>
-    <div class="saved" id="saved"></div>
+    <div class="saved" id="saved" role="status" aria-live="polite"></div>
 
     <button class="btn btn-dl" id="dlBtn" style="display:none" onclick="download()">📥 Download Compressed Image</button>
     <button class="btn btn-reset" id="resetBtn" style="display:none" onclick="reset()">🔄 Choose another image</button>
@@ -198,11 +200,15 @@
       </div>
     </div>
   </section>
-    <footer class="footer"><span>100% Local Browser Processing</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
+    </main>
+<footer class="footer"><span>100% Local Browser Processing</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 <script>
 let origFile = null, compressedBlob = null, origImg = new Image();
 let origPreviewUrl = null, compPreviewUrl = null;
+const MAX_FILE_BYTES = 20 * 1024 * 1024;
+const MAX_EDGE = 8000;
+const MAX_PIXELS = 24000000;
 
 function revokePreviewUrls() {
   if (origPreviewUrl) URL.revokeObjectURL(origPreviewUrl);
@@ -213,6 +219,7 @@ function revokePreviewUrls() {
 
 // 드래그 앤 드롭
 const dz = document.getElementById('dropZone');
+dz.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); document.getElementById('fileInput').click(); } });
 dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
 dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
 dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('dragover'); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
@@ -225,11 +232,16 @@ function handleFile(file) {
     savedEl.style.color = 'var(--text-error, #f87171)';
     return;
   }
+  if (!file.size || file.size > MAX_FILE_BYTES) {
+    const savedEl = document.getElementById('saved');
+    savedEl.textContent = file && file.size ? '⚠️ Files are limited to 20 MB.' : '⚠️ Empty files cannot be processed.';
+    savedEl.style.color = 'var(--text-error, #f87171)';
+    return;
+  }
   revokePreviewUrls();
   origFile = file;
   compressedBlob = null;
   origPreviewUrl = URL.createObjectURL(file);
-  document.getElementById('origImg').src = origPreviewUrl;
   document.getElementById('origSize').textContent = fmtBytes(file.size);
   dz.style.display = 'none';
   document.getElementById('controls').style.display = 'flex';
@@ -238,6 +250,15 @@ function handleFile(file) {
   document.getElementById('resetBtn').style.display = 'block';
   origImg.onload = () => {
     origImg.onerror = null;
+    const pixels = origImg.width * origImg.height;
+    if (!origImg.width || !origImg.height || origImg.width > MAX_EDGE || origImg.height > MAX_EDGE || pixels > MAX_PIXELS) {
+      reset();
+      const savedEl = document.getElementById('saved');
+      savedEl.textContent = '⚠️ Images are limited to 8,000 pixels per edge and 24 million pixels.';
+      savedEl.style.color = 'var(--text-error, #f87171)';
+      return;
+    }
+    document.getElementById('origImg').src = origPreviewUrl;
     document.getElementById('origDim').textContent = origImg.width + ' × ' + origImg.height;
     document.getElementById('maxWidth').value = Math.min(origImg.width, 1920);
     compress();
@@ -267,13 +288,19 @@ function updateQualLabel() {
 function compress() {
   if (!origImg.width) return;
   const quality = parseInt(document.getElementById('quality').value) / 100;
-  const maxW = parseInt(document.getElementById('maxWidth').value) || origImg.width;
+  const maxW = Math.min(MAX_EDGE, parseInt(document.getElementById('maxWidth').value) || origImg.width);
   let w = origImg.width, h = origImg.height;
   if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
 
   const canvas = document.createElement('canvas');
   canvas.width = w; canvas.height = h;
   const ctx = canvas.getContext('2d');
+  if (!ctx) {
+    const savedEl = document.getElementById('saved');
+    savedEl.textContent = '⚠️ Could not create the image canvas.';
+    savedEl.style.color = 'var(--text-error, #f87171)';
+    return;
+  }
   ctx.fillStyle = '#FFFFFF';
   ctx.fillRect(0, 0, w, h);
   ctx.drawImage(origImg, 0, 0, w, h);

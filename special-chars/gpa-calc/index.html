@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -19,7 +20,6 @@
 
 <meta name="robots" content="noindex, follow">
 <style>
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
 .app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:640px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
@@ -36,7 +36,8 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .scale-btn:hover:not(.active){background:var(--bg-btn-hover)}
 
 .result-card{background:var(--accent-bg);border:2px solid var(--accent);border-radius:12px;padding:20px;text-align:center;display:flex;flex-direction:column;gap:4px}
-.result-gpa{font-size:42px;font-weight:800;color:var(--accent-text);letter-spacing:-1px}
+.result-gpa{font-size:42px;font-weight:800;color:var(--accent-text);letter-spacing:-1px;background:none;border:0;width:100%;padding:0;font-family:inherit}
+.result-gpa[type="button"]{cursor:pointer}
 .result-scale{font-size:14px;color:var(--text-info);font-weight:500}
 .result-stats{display:flex;justify-content:center;gap:10px 18px;margin-top:6px;font-size:12px;color:var(--text-secondary);flex-wrap:wrap}
 .result-stats span{display:flex;align-items:center;gap:4px}
@@ -111,20 +112,21 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
     <h1>🎓 학점 계산기</h1>
   </div>
 
   <div class="body">
-    <div class="scale-row">
+    <div class="scale-row" role="group" aria-label="만점 기준">
       <span class="scale-label">만점 기준</span>
-      <button class="scale-btn active" data-scale="4.5" onclick="setScale(4.5)">4.5 만점</button>
-      <button class="scale-btn" data-scale="4.3" onclick="setScale(4.3)">4.3 만점</button>
-      <button class="scale-btn" data-scale="4.0" onclick="setScale(4.0)">4.0 만점</button>
+      <button class="scale-btn active" data-scale="4.5" aria-pressed="true" onclick="setScale(4.5)">4.5 만점</button>
+      <button class="scale-btn" data-scale="4.3" aria-pressed="false" onclick="setScale(4.3)">4.3 만점</button>
+      <button class="scale-btn" data-scale="4.0" aria-pressed="false" onclick="setScale(4.0)">4.0 만점</button>
     </div>
 
-    <div class="result-card" id="resultCard">
+    <div class="result-card" id="resultCard" role="status" aria-live="polite" aria-atomic="true">
       <div class="result-empty">과목을 입력하면 평점이 계산됩니다</div>
     </div>
 
@@ -134,7 +136,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
           <th class="name-col">과목명</th>
           <th class="credit-col">학점</th>
           <th class="grade-col">성적</th>
-          <th class="del-col"></th>
+          <th class="del-col">삭제</th>
         </tr>
       </thead>
       <tbody id="courseBody"></tbody>
@@ -194,10 +196,11 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       </div>
     </div>
   </details>
-    <footer class="footer"><span>4.5 / 4.3 / 4.0 만점제 지원</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+    </main>
+<footer class="footer"><span>4.5 / 4.3 / 4.0 만점제 지원</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 
 <script>
@@ -211,7 +214,9 @@ const GRADES = {
 function setScale(s) {
   scale = s;
   document.querySelectorAll('.scale-btn').forEach(b => {
-    b.classList.toggle('active', Number(b.dataset.scale) === s);
+    const active = Number(b.dataset.scale) === s;
+    b.classList.toggle('active', active);
+    b.setAttribute('aria-pressed', String(active));
   });
   calculate();
 }
@@ -295,7 +300,9 @@ function calculate() {
   const emoji = !hasGpa ? '➖' : gpa >= 4.0 ? '🏆' : gpa >= 3.5 ? '🎉' : gpa >= 3.0 ? '👍' : gpa >= 2.0 ? '📚' : '💪';
 
   card.innerHTML = `
-    <div class="result-gpa"${hasGpa ? ` style="cursor:pointer" onclick="copyGpa('${gpa.toFixed(2)}')"` : ''}>${emoji} ${hasGpa ? gpa.toFixed(2) : 'GPA 미산출'}</div>
+    ${hasGpa
+      ? `<button type="button" class="result-gpa" onclick="copyGpa('${gpa.toFixed(2)}')" aria-label="평점 ${gpa.toFixed(2)} 복사">${emoji} ${gpa.toFixed(2)}</button>`
+      : `<div class="result-gpa">${emoji} GPA 미산출</div>`}
     <div class="result-scale">/ ${scale} 만점</div>
     <div class="result-stats">
       <span>📘 입력 ${enteredCourseCount}과목</span>

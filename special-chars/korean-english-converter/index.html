@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -19,7 +20,6 @@
 
 <meta name="robots" content="noindex, follow">
 <style>
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
 .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:520px;max-width:100%;overflow:hidden}
@@ -92,6 +92,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
     <h1>⌨️ 한영 타자 변환기</h1>
@@ -114,7 +115,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="input-group">
       <label>변환 결과</label>
       <div class="result-box">
-        <div class="result-text" id="resultText"><span class="result-placeholder">입력하면 자동으로 변환됩니다</span></div>
+        <div class="result-text" id="resultText" role="status" aria-live="polite" aria-atomic="true"><span class="result-placeholder">입력하면 자동으로 변환됩니다</span></div>
       </div>
     </div>
 
@@ -160,7 +161,8 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       </div>
     </div>
   </details>
-    <footer class="footer"><span>실시간 변환</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+    </main>
+<footer class="footer"><span>실시간 변환</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast"></div>

@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -19,7 +20,6 @@
 
 <meta name="robots" content="noindex, follow">
 <style>
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:start;padding:20px}
 .app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
@@ -85,7 +85,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
 .report-box{background:var(--bg-guide);padding:20px;border-radius:12px;border:1px solid var(--border);line-height:1.6;font-size:14px;color:var(--text-primary);margin-top:16px;animation:fadeIn 0.5s ease-out;display:none}
 .report-box.active{display:block}
-.report-box h3{font-size:15px;margin-bottom:12px;font-weight:700}
+.report-box h2{font-size:15px;margin-bottom:12px;font-weight:700}
 .report-box p{margin-bottom:10px;color:var(--text-info);word-break:keep-all}
 .report-box .highlight{font-weight:700;color:var(--text-primary)}
 .report-tip{background:var(--bg-body);border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0;border-radius:0 8px 8px 0;font-size:13.5px}
@@ -93,7 +93,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
 .related-tools{margin:0 12px 12px;padding:16px;background:var(--bg-guide);border-radius:8px;border:1px solid var(--border)}
-.related-tools h4{font-size:14px;margin-bottom:10px;font-weight:700;color:var(--text-primary)}
+.related-tools h2{font-size:14px;margin-bottom:10px;font-weight:700;color:var(--text-primary)}
 .related-tools ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px}
 .related-tools li a{font-size:13px;color:var(--accent-text);text-decoration:none;display:flex;align-items:center;gap:6px;transition:opacity .2s}
 .related-tools li a:hover{opacity:0.8;text-decoration:underline}
@@ -111,6 +111,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
     <h1>🐾 반려동물 BCS 체형 점수</h1>
@@ -160,7 +161,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
     <!-- SEO 친화적 사전 렌더링된 BCS 자가 점검 리포트 -->
     <div class="report-box" id="reportBox">
-      <h3>📋 BCS 자가 점검 리포트</h3>
+      <h2>📋 BCS 자가 점검 리포트</h2>
       <p>
         반려동물 종류: <span class="highlight" id="r-type">🐶 강아지</span>, 현재 체중: <span class="highlight" id="r-weight">미입력</span>, 선택한 BCS: <span class="highlight"><span id="r-bcs">—</span>/9</span>
       </p>
@@ -200,20 +201,21 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </details>
 
   <div class="magazine-cta" id="catMagazineCta" style="display:none; margin: 0 12px 12px; padding: 16px; background: linear-gradient(135deg, var(--bg-hover), var(--bg-guide)); border: 2px solid var(--accent); border-radius: 8px; text-align: center;">
-    <h4 style="font-size:14px; margin-bottom:8px; font-weight:700; color:var(--text-primary)">우리 고양이 비만일까? 원시주머니일까? 🐱</h4>
+    <h2 style="font-size:14px; margin-bottom:8px; font-weight:700; color:var(--text-primary)">우리 고양이 비만일까? 원시주머니일까? 🐱</h2>
     <p style="font-size:12px; color:var(--text-info); margin-bottom:12px; word-break:keep-all;">고양이의 원시주머니와 체지방을 구분해 살펴보는 체형 평가(BCS) 가이드를 티모 매거진에서 확인해보세요.</p>
     <a href="/blog/cat-bmi-guide/" style="display:inline-block; padding:8px 16px; background:var(--accent); color:var(--text-on-accent); border-radius:8px; text-decoration:none; font-size:13px; font-weight:700;">가이드 읽어보기 ➔</a>
   </div>
 
   <div class="related-tools">
-    <h4>🔗 추천 관련 계산 도구</h4>
+    <h2>🔗 추천 관련 계산 도구</h2>
     <ul>
       <li><a href="/special-chars/pet-food-calc/">🥩 반려동물 맞춤 일일 권장 사료량 계산기</a></li>
       <li><a href="/special-chars/pet-age-calc/">🐾 강아지/고양이 사람 나이 환산기</a></li>
     </ul>
   </div>
 
-  <footer class="footer"><span>9점 BCS 자가 점검 도구</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+  </main>
+<footer class="footer"><span>9점 BCS 자가 점검 도구</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>

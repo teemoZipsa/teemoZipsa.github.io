@@ -17,7 +17,6 @@
     
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3501868770820650" crossorigin="anonymous"></script>
 <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
@@ -542,34 +541,71 @@
 <script>
 // === localStorage wrapper ===
 function safeGet(key, fallback) { try { return localStorage.getItem(key); } catch(e) { return fallback !== undefined ? fallback : null; } }
-function safeSet(key, val) { try { localStorage.setItem(key, val); } catch(e) {} }
+function safeSet(key, val) { try { localStorage.setItem(key, val); return true; } catch(e) { return false; } }
+function safeRemove(key) { try { localStorage.removeItem(key); return true; } catch(e) { return false; } }
+function safeJsonArray(key) { try { const value = JSON.parse(safeGet(key) || '[]'); return Array.isArray(value) ? value.filter(item => typeof item === 'string') : []; } catch(e) { return []; } }
+function safeJsonObject(key) { try { const value = JSON.parse(safeGet(key) || '{}'); return value && typeof value === 'object' && !Array.isArray(value) ? value : {}; } catch(e) { return {}; } }
+function canUseLocalStorage() { const key = '__storage_test__' + Math.random(); return safeSet(key, '1') && safeRemove(key); }
 
 // === Today's Info Widget ===
 const FB_DB = 'https://teemozipsa-default-rtdb.firebaseio.com';
 let globalVisitCount = null;
 
-(function initVisitCounter() {
+function normalizeVisitCount(value) {
+    const count = Number(value);
+    return Number.isFinite(count) && count >= 0 ? Math.floor(count) : 0;
+}
+
+async function readVisitCount() {
+    const response = await fetch(FB_DB + '/stats/visitCount.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error('visit count read failed');
+    return normalizeVisitCount(await response.json());
+}
+
+async function incrementVisitCountAtomic() {
+    const url = FB_DB + '/stats/visitCount.json';
+    for (let attempt = 0; attempt < 4; attempt++) {
+        const currentResponse = await fetch(url, { headers: { 'X-Firebase-ETag': 'true' }, cache: 'no-store' });
+        if (!currentResponse.ok) throw new Error('visit count read failed');
+        const etag = currentResponse.headers.get('ETag');
+        const nextCount = normalizeVisitCount(await currentResponse.json()) + 1;
+        if (!etag) throw new Error('visit count ETag unavailable');
+        const updateResponse = await fetch(url, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'If-Match': etag },
+            body: JSON.stringify(nextCount)
+        });
+        if (updateResponse.status === 412) continue;
+        if (!updateResponse.ok) throw new Error('visit count update failed');
+        return normalizeVisitCount(await updateResponse.json());
+    }
+    throw new Error('visit count update conflicted repeatedly');
+}
+
+async function updateVisitCount() {
     const lastVisitKey = 'last_visit_timestamp';
-    const lastVisit = localStorage.getItem(lastVisitKey);
     const now = Date.now();
     const oneDay = 24 * 60 * 60 * 1000;
-
-    if (!lastVisit || (now - parseInt(lastVisit, 10)) > oneDay) {
-        fetch(FB_DB + '/stats/visitCount.json')
-            .then(r => r.json())
-            .then(count => {
-                globalVisitCount = (count || 0) + 1;
-                fetch(FB_DB + '/stats/visitCount.json', { method: 'PUT', body: JSON.stringify(globalVisitCount) });
-                localStorage.setItem(lastVisitKey, now.toString());
-                updateVisitDisplay();
-            })
-            .catch(() => { globalVisitCount = null; updateVisitDisplay(); });
-    } else {
-        fetch(FB_DB + '/stats/visitCount.json')
-            .then(r => r.json())
-            .then(count => { globalVisitCount = count || 0; updateVisitDisplay(); })
-            .catch(() => { globalVisitCount = null; updateVisitDisplay(); });
+    const storageAvailable = canUseLocalStorage();
+    const lastVisit = Number(safeGet(lastVisitKey));
+    const recentlyCounted = storageAvailable && Number.isFinite(lastVisit) && lastVisit > 0 && lastVisit <= now && (now - lastVisit) <= oneDay;
+    try {
+        if (storageAvailable && !recentlyCounted) {
+            globalVisitCount = await incrementVisitCountAtomic();
+            safeSet(lastVisitKey, String(now));
+        } else {
+            globalVisitCount = await readVisitCount();
+        }
+    } catch (error) {
+        try { globalVisitCount = await readVisitCount(); } catch (readError) { globalVisitCount = null; }
     }
+    updateVisitDisplay();
+}
+
+(function initVisitCounter() {
+    const run = () => updateVisitCount();
+    if (navigator.locks && typeof navigator.locks.request === 'function') navigator.locks.request('teemozipsa-visit-counter', run).catch(() => run());
+    else run();
 })();
 
 function updateVisitDisplay() {
@@ -629,8 +665,7 @@ function toggleFaqAll() {
 // === FAQ read state ===
 (function(){
   var key = 'faq_read';
-  var read = {};
-  try { read = JSON.parse(localStorage.getItem(key)) || {}; } catch(e) {}
+  var read = safeJsonObject(key);
   var items = document.querySelectorAll('.faq-item');
   items.forEach(function(el, i) {
     if (read[i]) el.classList.add('faq-read');
@@ -638,7 +673,7 @@ function toggleFaqAll() {
       if (el.open) {
         el.classList.add('faq-read');
         read[i] = 1;
-        try { localStorage.setItem(key, JSON.stringify(read)); } catch(e) {}
+        safeSet(key, JSON.stringify(read));
       }
     });
   });
@@ -675,7 +710,7 @@ document.getElementById('tipContent').textContent = TIPS[Math.floor(Math.random(
 
 
 
-let favorites = JSON.parse(safeGet('favorites') || '[]');
+let favorites = safeJsonArray('favorites');
 
 function toggleFav(href, e) {
     e.preventDefault();
@@ -904,7 +939,7 @@ function renderFavGrid() {
   });
 })();
 
-let recentTools = JSON.parse(safeGet('recentTools') || '[]');
+let recentTools = safeJsonArray('recentTools');
 
 function trackRecent(href) {
     recentTools = recentTools.filter(h => h !== href);
@@ -1040,7 +1075,7 @@ const CATEGORIES = [
     { id: 'pet', label: '🐾 Pets' }
 ];
 
-let currentView = safeGet('viewMode') || 'card';
+let currentView = safeGet('viewMode') === 'category' ? 'category' : 'card';
 
 function switchView(mode) {
     currentView = mode;
@@ -1060,7 +1095,7 @@ function renderCategoryView() {
         let matching = cards.filter(c => c.getAttribute('data-category') === cat.id && !favorites.includes(c.href));
         if (matching.length === 0) return;
         
-        const savedOrder = JSON.parse(safeGet('catOrder_' + cat.id) || '[]');
+        const savedOrder = safeJsonArray('catOrder_' + cat.id);
         if (savedOrder.length) {
             const map = {}; matching.forEach(c => { map[c.href] = c; });
             const ordered = [];
@@ -1099,7 +1134,7 @@ function saveCatOrder(grid, catId) {
 (function initDragDrop() {
     const grid = document.getElementById('toolsGrid');
     let dragEl = null;
-    const saved = JSON.parse(safeGet('toolOrder') || '[]');
+    const saved = safeJsonArray('toolOrder');
     if (saved.length) {
         const cards = [...grid.querySelectorAll('.tool-card')];
         const map = {};

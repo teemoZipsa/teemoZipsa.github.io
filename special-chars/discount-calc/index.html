@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -18,7 +19,6 @@
 <link rel="canonical" href="https://teemozipsa.github.io/special-chars/discount-calc/">
 
 <style>
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
 .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
@@ -67,12 +67,12 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
 
 .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-bottom:10px}
-.report-box h3 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
+.report-box h2 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
 .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
 .report-box strong {color:var(--text-primary);font-weight:600}
 
 .related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:0 12px 12px}
-.related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.related-tools h2 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
 .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
 .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
@@ -89,6 +89,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
     <h1>🏷️ 할인/세금 계산기</h1>
@@ -170,7 +171,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </div>
 
   <div class="related-tools">
-    <h3>🔗 연관 쇼핑/비즈니스 계산기</h3>
+    <h2>🔗 연관 쇼핑/비즈니스 계산기</h2>
     <div class="tool-list">
       <a href="/special-chars/percent-calc/"><span>🔢 퍼센트 계산기</span><span>바로가기 →</span></a>
       <a href="/special-chars/wage-calc/"><span>💼 시급 ↔ 월급 변환기</span><span>바로가기 →</span></a>
@@ -178,7 +179,8 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
   </div>
 
-  <footer class="footer"><span>실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+  </main>
+<footer class="footer"><span>실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -237,7 +239,8 @@ function calc() {
     return;
   }
 
-  const discountAmt = price * rate / 100;
+  const discountBase = vat && !preTax ? price / 1.1 : price;
+  const discountAmt = discountBase * rate / 100;
   _syncLock = true;
   document.getElementById('discountAmt').value = discountAmt ? fmt(discountAmt) : '';
   _syncLock = false;
@@ -255,7 +258,8 @@ function calcByAmt() {
   const preTax = document.getElementById('vatExToggle').checked;
 
   const validPrice = Number.isFinite(price) && price >= 0 && price <= MAX_PRICE;
-  const validAmount = Number.isFinite(discountAmt) && discountAmt >= 0 && discountAmt <= price;
+  const discountBase = vat && !preTax ? price / 1.1 : price;
+  const validAmount = Number.isFinite(discountAmt) && discountAmt >= 0 && discountAmt <= discountBase;
   setValidity(priceInput, validPrice, '가격은 0원 이상 1,000조 원 이하의 숫자로 입력하세요.');
   setValidity(amountInput, validAmount, '할인 금액은 0원 이상이며 기준 가격을 넘을 수 없습니다.');
   setValidity(document.getElementById('discountRate'), true, '');
@@ -267,7 +271,7 @@ function calcByAmt() {
     return;
   }
 
-  const rate = price > 0 ? (discountAmt / price * 100) : 0;
+  const rate = discountBase > 0 ? (discountAmt / discountBase * 100) : 0;
   _syncLock = true;
   document.getElementById('discountRate').value = rate ? rate.toFixed(1).replace(/\.0$/, '') : '';
   _syncLock = false;
@@ -281,13 +285,12 @@ function update(price, discountAmt, vat, preTax) {
     return;
   }
   let base = price;
-  let discountBeforeVat = discountAmt;
+  const discountBeforeVat = discountAmt;
   // 세후 금액 입력인 경우 세전으로 역산
   if (vat && !preTax) {
     base = price / 1.1;
-    // 입력 가격과 할인 금액은 모두 VAT 포함 기준이므로 같은 비율로
-    // 공급가액을 역산해야 할인율이 최종 결제액에도 그대로 적용된다.
-    discountBeforeVat = discountAmt / 1.1;
+    // 할인 금액 입력란은 공급가액 기준이다. VAT 포함 판매가는 가격만
+    // 공급가액으로 역산하고 입력한 할인 금액은 다시 나누지 않는다.
   }
 
   const afterDiscount = base - discountBeforeVat;
@@ -303,12 +306,12 @@ function update(price, discountAmt, vat, preTax) {
 
   // Dynamic Report Logic
   const report = document.getElementById('analysisReport');
-  const numericRate = price > 0 ? discountAmt / price * 100 : 0;
+  const numericRate = base > 0 ? discountAmt / base * 100 : 0;
   const rateStr = Number.isInteger(numericRate) ? String(numericRate) : numericRate.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
   
   if (price > 0 || discountAmt > 0) {
     report.style.display = 'flex';
-    let msg = `<h3>💡 맞춤형 할인/세금 분석 리포트</h3>`;
+    let msg = `<h2>💡 맞춤형 할인/세금 분석 리포트</h2>`;
     
     if (discountAmt > 0) {
         msg += `<p>입력하신 기준 원금 <strong>${fmt(price)}원</strong>에 대해 <strong>${rateStr}%</strong>의 할인이 적용되었습니다. 이로 인해 총 <strong>${fmt(discountAmt)}원</strong>이 절감되어, 순수 상품가(할인가)는 <strong>${fmt(afterDiscount)}원</strong>으로 산출되었습니다.</p>`;

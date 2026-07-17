@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -19,7 +20,6 @@
 
 <meta name="robots" content="noindex, follow">
 <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:start;padding:20px}
         .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
@@ -91,6 +91,7 @@
 </head>
 <body>
 <div class="app">
+<main>
     <div class="header">
         <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
         <h1>⭐ Zodiac Calculator</h1>
@@ -166,7 +167,8 @@
         <a href="/special-chars/en/unit-conv/" class="tool-card">📐 Unit Converter</a>
       </div>
     </section>
-    <footer class="footer"><span>Birthday-based calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
+    </main>
+<footer class="footer"><span>Birthday-based calculation</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -198,12 +200,21 @@ function getZodiac(month, day) {
     return ZODIAC[11]; // fallback Capricorn
 }
 
+function parseDateOnly(value) {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+    if (!match) return null;
+    const year = Number(match[1]), month = Number(match[2]), day = Number(match[3]);
+    const check = new Date(Date.UTC(year, month - 1, day));
+    if (check.getUTCFullYear() !== year || check.getUTCMonth() + 1 !== month || check.getUTCDate() !== day) return null;
+    return { year, month, day };
+}
+
 function calcZodiac() {
     const input = document.getElementById('birthDate').value;
     if (!input) return;
-    const d = new Date(input);
-    const month = d.getMonth() + 1;
-    const day = d.getDate();
+    const parsed = parseDateOnly(input);
+    if (!parsed) return;
+    const { month, day } = parsed;
     const z = getZodiac(month, day);
 
     document.getElementById('resultImage').src = '/special-chars/zodiac-calc/images/' + z.img;

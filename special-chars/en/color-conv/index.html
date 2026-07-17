@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -19,7 +20,6 @@
     
 <meta name="robots" content="noindex, follow">
 <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:start;padding:20px}
         .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
@@ -102,6 +102,7 @@
 </head>
 <body>
 <div class="app">
+<main>
     <div class="header">
         <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
         <h1>🎨 Color Converter</h1>
@@ -186,18 +187,18 @@
             </div>
         </div>
     </section>
-    <footer class="footer"><span>One-click copy supported</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
+    </main>
+<footer class="footer"><span>One-click copy supported</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 // --- Conversion helpers ---
 function hexToRgb(hex) {
-    hex = hex.replace('#','');
+    if (!/^#?(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(hex)) return null;
+    hex = hex.replace(/^#/,'');
     if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
-    if (hex.length !== 6) return null;
     const n = parseInt(hex, 16);
-    if (isNaN(n)) return null;
     return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
 }
 
@@ -241,6 +242,10 @@ function hslToRgb(h, s, l) {
 let currentRgb = { r: 83, g: 52, b: 131 };
 let _updating = false;
 
+function setInputValidity(id, valid) {
+    document.getElementById(id).setAttribute('aria-invalid', String(!valid));
+}
+
 function updateUI(source) {
     if (_updating) return;
     _updating = true;
@@ -264,16 +269,18 @@ function fromPicker(val) {
     const rgb = hexToRgb(val);
     if (!rgb) return;
     currentRgb = rgb;
+    ['hexInput','rgbInput','hslInput'].forEach(id => setInputValidity(id, true));
     updateUI('picker');
 }
 
 function fromHex(val) {
     val = val.trim();
-    if (!val.startsWith('#')) val = '#' + val;
     const rgb = hexToRgb(val);
-    if (!rgb) return;
+    setInputValidity('hexInput', Boolean(rgb));
+    if (!rgb) return false;
     currentRgb = rgb;
     updateUI('hex');
+    return true;
 }
 
 function selectRelatedColor(val) {
@@ -284,17 +291,33 @@ function selectRelatedColor(val) {
 }
 
 function fromRgb(val) {
-    const m = val.match(/(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})/);
-    if (!m) return;
-    currentRgb = { r: parseInt(m[1]), g: parseInt(m[2]), b: parseInt(m[3]) };
+    const input = val.trim();
+    const m = /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/i.exec(input)
+        || /^(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})$/.exec(input);
+    const values = m ? m.slice(1).map(Number) : [];
+    const valid = values.length === 3 && values.every(value => value >= 0 && value <= 255);
+    setInputValidity('rgbInput', valid);
+    if (!valid) return false;
+    currentRgb = { r: values[0], g: values[1], b: values[2] };
     updateUI('rgb');
+    return true;
 }
 
 function fromHsl(val) {
-    const m = val.match(/(\d{1,3})\s*,\s*(\d{1,3})%?\s*,\s*(\d{1,3})%?/);
-    if (!m) return;
-    currentRgb = hslToRgb(parseInt(m[1]), parseInt(m[2]), parseInt(m[3]));
+    const number = '(\\d+(?:\\.\\d+)?)';
+    const wrapped = new RegExp(`^hsl\\(\\s*${number}\\s*,\\s*${number}%\\s*,\\s*${number}%\\s*\\)$`, 'i');
+    const plain = new RegExp(`^${number}\\s*,\\s*${number}%\\s*,\\s*${number}%$`);
+    const m = wrapped.exec(val.trim()) || plain.exec(val.trim());
+    const values = m ? m.slice(1).map(Number) : [];
+    const valid = values.length === 3 && values.every(Number.isFinite)
+        && values[0] >= 0 && values[0] <= 360
+        && values[1] >= 0 && values[1] <= 100
+        && values[2] >= 0 && values[2] <= 100;
+    setInputValidity('hslInput', valid);
+    if (!valid) return false;
+    currentRgb = hslToRgb(values[0] === 360 ? 0 : values[0], values[1], values[2]);
     updateUI('hsl');
+    return true;
 }
 
 function updateRelated(hsl) {

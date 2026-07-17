@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -17,7 +18,6 @@
 <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
 <link rel="canonical" href="https://teemozipsa.github.io/special-chars/calorie-calc/">
 <style>
-  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:'Pretendard',sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
   .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
@@ -58,7 +58,7 @@
   .progress-bar{height:100%;background:linear-gradient(90deg,#38bdf8,#f472b6,#facc15);width:100%}
 
   .report-box{background:var(--bg-input);padding:20px;border-radius:12px;border:1px solid var(--border);line-height:1.6;font-size:14px;color:var(--text-primary);margin-top:16px;animation:fadeIn 0.5s ease-out}
-  .report-box h3{font-size:15px;margin-bottom:12px;font-weight:700}
+  .report-box h2{font-size:15px;margin-bottom:12px;font-weight:700}
   .report-box p{margin-bottom:10px;color:var(--text-info);word-break:keep-all}
   .report-box .highlight{font-weight:700;color:var(--text-primary)}
   .report-tip{background:var(--bg-body);border-left:4px solid var(--status-orange-text);padding:12px 16px;margin:16px 0;border-radius:0 8px 8px 0;font-size:13.5px}
@@ -66,7 +66,7 @@
   @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
   
   .related-tools{margin:0 12px 12px;padding:16px;background:var(--bg-input);border-radius:8px;border:1px solid var(--border)}
-  .related-tools h4{font-size:14px;margin-bottom:10px;font-weight:700;color:var(--text-primary)}
+  .related-tools h2{font-size:14px;margin-bottom:10px;font-weight:700;color:var(--text-primary)}
   .related-tools ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px}
   .related-tools li a{font-size:13px;color:var(--status-orange-text);text-decoration:none;display:flex;align-items:center;gap:6px;transition:opacity .2s}
   .related-tools li a:hover{opacity:0.8;text-decoration:underline}
@@ -89,6 +89,7 @@
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
     <h1>🔥 칼로리 계산기</h1>
@@ -151,7 +152,7 @@
     </div>
 
     <!-- 결과 -->
-    <div class="result-box">
+    <div class="result-box" role="status" aria-live="polite" aria-atomic="true">
       <div class="result-title" id="res-title">하루 목표 칼로리 (유지)</div>
       <div class="result-value" id="res-cal">0 <span>kcal</span></div>
       <div class="result-desc">기초대사량(BMR): <span id="res-bmr">0</span> kcal</div>
@@ -179,7 +180,7 @@
 
     <!-- SEO 친화적 사전 렌더링된 상세 분석 리포트 -->
     <div class="report-box" id="reportBox">
-      <h3>📋 맞춤형 칼로리 분석 리포트</h3>
+      <h2>📋 맞춤형 칼로리 분석 리포트</h2>
       <p>
         입력하신 정보(<span class="highlight" id="r-gender">남성</span>, <span class="highlight"><span id="r-age">25</span>세</span>, <span class="highlight"><span id="r-height">170</span>cm</span>, <span class="highlight"><span id="r-weight">65</span>kg</span>)를 바탕으로 계산 분석한 기초대사량(BMR)은 <strong><span id="r-bmr" class="highlight">1,593</span> kcal</strong>입니다. 기초대사량은 가만히 있어도 생명 유지를 위해 소모되는 최소 에너지입니다.
       </p>
@@ -229,13 +230,14 @@
     </div>
   </details>
   <div class="related-tools">
-    <h4>🔗 추천 다이어트 & 운동 도구</h4>
+    <h2>🔗 추천 다이어트 & 운동 도구</h2>
     <ul>
       <li><a href="/special-chars/bmi-calc/">📊 체질량지수(BMI) 정밀 분석 계산기</a></li>
-      <li><a href="/special-chars/calorie-calc/">🔥 나의 다른 도구 보러가기 (작업 예정)</a></li>
+      <li><a href="/special-chars/timer/">⏱️ 운동 시간 타이머</a></li>
     </ul>
   </div>
-    <footer class="footer"><span>Mifflin-St Jeor 공식 기반</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+    </main>
+<footer class="footer"><span>Mifflin-St Jeor 공식 기반</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <script>

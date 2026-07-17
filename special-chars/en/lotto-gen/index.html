@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -16,7 +17,6 @@
 <link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/lotto-gen/">
 <meta name="robots" content="noindex, follow">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
 .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:540px;max-width:100%;overflow:hidden}
@@ -50,7 +50,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .num-btn.excluded{background:#ef4444;color:#fff;border-color:#ef4444;text-decoration:line-through;opacity:0.8}
 
 .opt-controls{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-muted)}
-.reset-opt{background:none;border:none;color:var(--text-info);cursor:pointer;text-decoration:underline;font-family:inherit}
+.reset-opt{background:none;border:none;color:var(--text-info);cursor:pointer;text-decoration:underline;font-family:inherit;min-width:44px;min-height:36px;padding:6px 10px;border-radius:6px}
 .reset-opt:hover{color:var(--text-secondary)}
 
 .history{border-top:1px solid var(--border);padding-top:16px}
@@ -99,6 +99,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
     <h1>🎰 Lotto Generator</h1>
@@ -106,7 +107,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
   </div>
   
   <div class="content">
-    <div class="main-display">
+    <div class="main-display" role="status" aria-live="polite" aria-atomic="true">
       <div class="balls-container" id="ballsView">
         <div class="ball b-empty">?</div>
         <div class="ball b-empty">?</div>
@@ -124,10 +125,10 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       <div class="opt-title">
         <span>⚙️ Options (Optional)</span>
       </div>
-      <div style="font-size:11px;color:var(--text-info);margin-bottom:8px">Click to set <b>Include (Blue)</b> or <b>Exclude (Red)</b>.</div>
-      <div class="num-grid" id="numGrid"></div>
+      <div id="numberOptionHelp" style="font-size:11px;color:var(--text-info);margin-bottom:8px">Click to set <b>Include (Blue)</b> or <b>Exclude (Red)</b>.</div>
+      <div class="num-grid" id="numGrid" role="group" aria-label="Lotto number options" aria-describedby="numberOptionHelp"></div>
       <div class="opt-controls">
-        <span id="optCountInfo">Fixed: 0 · Excluded: 0</span>
+        <span id="optCountInfo" role="status" aria-live="polite">Fixed: 0 · Excluded: 0</span>
         <button class="reset-opt" onclick="resetOptions()">Reset</button>
       </div>
     </div>
@@ -196,7 +197,8 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       </div>
     </div>
   </section>
-  <footer class="footer"><span>Good luck! 🍀</span><a href="https://teemozipsa.github.io/en/">😺 More tools</a></footer>
+  </main>
+<footer class="footer"><span>Good luck! 🍀</span><a href="https://teemozipsa.github.io/en/">😺 More tools</a></footer>
 </div>
 
 <script>
@@ -212,6 +214,8 @@ function initGrid() {
     const btn = document.createElement('button');
     btn.className = 'num-btn';
     btn.textContent = i;
+    btn.setAttribute('aria-pressed', 'false');
+    btn.setAttribute('aria-label', `Number ${i}, normal`);
     btn.onclick = () => toggleNum(i, btn);
     g.appendChild(btn);
   }
@@ -236,6 +240,9 @@ function toggleNum(n, btn) {
     fixedNums.add(n);
     btn.className = 'num-btn fixed';
   }
+  const state = fixedNums.has(n) ? 'included' : exNums.has(n) ? 'excluded' : 'normal';
+  btn.setAttribute('aria-pressed', String(fixedNums.has(n)));
+  btn.setAttribute('aria-label', `Number ${n}, ${state}`);
   updateOptInfo();
 }
 
@@ -246,7 +253,11 @@ function updateOptInfo() {
 function resetOptions() {
   fixedNums.clear();
   exNums.clear();
-  document.querySelectorAll('.num-btn').forEach(b => b.className = 'num-btn');
+  document.querySelectorAll('.num-btn').forEach((b, index) => {
+    b.className = 'num-btn';
+    b.setAttribute('aria-pressed', 'false');
+    b.setAttribute('aria-label', `Number ${index + 1}, normal`);
+  });
   updateOptInfo();
 }
 

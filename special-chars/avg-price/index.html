@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -19,7 +20,6 @@
 
 <meta name="robots" content="noindex, follow">
 <style>
-  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
   *{margin:0;padding:0;box-sizing:border-box}
   body{
     font-family:'Pretendard',-apple-system,sans-serif;
@@ -79,7 +79,7 @@
   .toggle-opt{
     padding:5px 12px;font-size:11px;cursor:pointer;
     font-family:inherit;border:none;background:none;
-    color:var(--calc-expr-text);transition:all .15s;font-weight:600;
+    color:var(--calc-expr-text);transition:all .15s;font-weight:600;min-height:24px;
   }
   .toggle-opt.active{background:var(--accent);color:var(--text-on-accent)}
 
@@ -146,12 +146,12 @@
   .scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
 
   .report-box {background:var(--bg-guide);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:16px}
-  .report-box h3 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
+  .report-box h2 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
   .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
   .report-box strong {color:var(--text-primary);font-weight:600}
 
   .related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:0 12px 12px}
-  .related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .related-tools h2 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
   .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
   .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
@@ -167,6 +167,7 @@
 <body>
 
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
     <h1>📉 물타기/불타기 계산기</h1>
@@ -217,7 +218,7 @@
     </div>
 
     <!-- 3단: 결과 -->
-    <div class="result-section">
+    <div class="result-section" role="status" aria-live="polite" aria-atomic="true">
       <div class="result-title">
         📊 최종 결과
       </div>
@@ -267,14 +268,15 @@
   </details>
 
   <div class="related-tools">
-    <h3>🔗 연관 금융/생활 계산기</h3>
+    <h2>🔗 연관 금융/생활 계산기</h2>
     <div class="tool-list">
       <a href="/special-chars/percent-calc/"><span>🔢 퍼센트 계산기</span><span>바로가기 →</span></a>
       <a href="/special-chars/compound-interest/"><span>📈 복리 이자 계산기</span><span>바로가기 →</span></a>
       <a href="/special-chars/broker-fee-calc/"><span>🏠 부동산 중개보수 계산기</span><span>바로가기 →</span></a>
     </div>
   </div>
-    <footer class="footer"><span>숫자 입력 즉시 실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+    </main>
+<footer class="footer"><span>숫자 입력 즉시 실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <script>
@@ -416,7 +418,7 @@ function calc() {
 
     report.style.display = 'flex';
     report.innerHTML = `
-      <h3>💡 ${actionType} 시뮬레이션 분석 리포트</h3>
+      <h2>💡 ${actionType} 시뮬레이션 분석 리포트</h2>
       <p>입력하신 매매 데이터를 기반으로, 총 <strong>${fmtWon(totalInvest)}</strong>의 누적 투자금이 투입되어 <strong>${fmtNum(totalQty, 8)}개</strong>의 물량을 확보하게 됩니다.</p>
       <p>${reportDesc}</p>
       <p>⚠️ <strong>투자 인사이트:</strong> 이 종목의 비중이 포트폴리오에 치명적 리스크를 주지 않는 선인지 잔고를 다시 한번 확인하세요.</p>

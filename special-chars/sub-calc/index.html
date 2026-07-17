@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -19,7 +20,6 @@
 
 <meta name="robots" content="noindex, follow">
 <style>
-  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:'Pretendard',sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
   .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:500px;max-width:100%;overflow:hidden}
@@ -40,7 +40,7 @@
   .sub-item input::placeholder{color:var(--text-muted)}
   .sub-name{flex:2}
   .sub-price{flex:1;text-align:right}
-  .sub-del{background:none;border:none;color:var(--text-muted);font-size:16px;cursor:pointer;padding:0 4px;transition:color .15s}
+  .sub-del{background:none;border:none;color:var(--text-muted);font-size:16px;cursor:pointer;padding:0;min-width:36px;min-height:36px;border-radius:6px;transition:color .15s}
   .sub-del:hover{color:var(--status-red-text)}
 
   .add-row{display:flex;gap:8px;margin-top:8px}
@@ -49,7 +49,7 @@
 
   /* 빠른 추가 */
   .quick-adds{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
-  .quick-add{background:var(--bg-bar);border:1px solid var(--border);color:var(--calc-expr-text);padding:4px 10px;border-radius:6px;font-size:10px;cursor:pointer;font-family:inherit;transition:all .15s}
+  .quick-add{background:var(--bg-bar);border:1px solid var(--border);color:var(--calc-expr-text);padding:7px 10px;min-height:36px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;transition:all .15s}
   .quick-add:hover{border-color:var(--accent);color:var(--text-amount)}
 
   /* 월 합계 */
@@ -78,12 +78,12 @@
   @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
   .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--status-red-text);animation:fadeIn .5s ease-in-out;margin-top:12px}
-  .report-box h3 {font-size:15px;font-weight:700;color:var(--status-red-text);margin-bottom:4px}
+  .report-box h2 {font-size:15px;font-weight:700;color:var(--status-red-text);margin-bottom:4px}
   .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
   .report-box strong {color:var(--text-primary);font-weight:600}
 
   .related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:12px}
-  .related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .related-tools h2 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
   .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
   .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
@@ -105,6 +105,7 @@
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
     <h1>💸 구독료 팩폭 계산기</h1>
@@ -128,7 +129,7 @@
       </div>
     </div>
 
-    <div class="monthly-total" id="monthlyTotal">월 합계: <strong>0원</strong></div>
+    <div class="monthly-total" id="monthlyTotal" role="status" aria-live="polite" aria-atomic="true">월 합계: <strong>0원</strong></div>
 
     <div class="section">
       <div class="section-title">💀 누적 지출 (이 돈이 그냥 사라집니다)</div>
@@ -185,14 +186,15 @@
   </details>
 
   <div class="related-tools">
-    <h3>🔗 연관 금융/생활 계산기</h3>
+    <h2>🔗 연관 금융/생활 계산기</h2>
     <div class="tool-list">
       <a href="/special-chars/compound-interest/"><span>📈 복리 이자 계산기</span><span>바로가기 →</span></a>
       <a href="/special-chars/loan-calc/"><span>💰 대출 이자 계산기</span><span>바로가기 →</span></a>
       <a href="/special-chars/discount-calc/"><span>🛍️ 할인율 계산기</span><span>바로가기 →</span></a>
     </div>
   </div>
-    <footer class="footer"><span>실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+    </main>
+<footer class="footer"><span>실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 <script>
 let subs = [];
@@ -317,7 +319,7 @@ function calc() {
   const report = document.getElementById('analysisReport');
   if (total > 0) {
     report.style.display = 'flex';
-    let msg = `<h3>💡 구독 다이어트 팩폭 진단서</h3>`;
+    let msg = `<h2>💡 구독 다이어트 팩폭 진단서</h2>`;
     msg += `<p>현재 고객님께서 매달 지출하는 숨만 쉬어도 나가는 고정 구독료는 <strong>${total.toLocaleString()}원</strong>입니다. 이것을 1년 동안 유지하면 <strong>${fmtWon(y1)}</strong>, 5년 동안 아무 생각 없이 자동결제하면 자그마치 <strong>${fmtWon(y5)}</strong>이라는 거금이 완전히 공중으로 증발하게 됩니다.</p>`;
     
     const inv5 = calcInvest(total, 5);

@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -29,6 +30,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 /* 드롭존 */
 .dropzone{border:2.5px dashed var(--border);border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .3s;background:var(--bg-guide);position:relative}
 .dropzone:hover,.dropzone.dragover{border-color:var(--accent);background:var(--accent-bg)}
+.dropzone:focus-within,.action-btn:focus-visible,.compare-tab:focus-visible{outline:3px solid #f7c948;outline-offset:3px}
 .dropzone-icon{font-size:48px;margin-bottom:10px;display:block}
 .dropzone-text{font-size:14px;color:var(--text-info);font-weight:500;line-height:1.6}
 .dropzone-text strong{color:var(--accent-text)}
@@ -121,6 +123,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
     <h1>✂️ 이미지 배경(누끼) 제거 도구</h1>
@@ -135,7 +138,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
     <!-- 업로드 영역 -->
     <div class="dropzone" id="dropzone">
-      <input aria-label="배경을 제거할 이미지 파일" type="file" id="fileInput" accept="image/*">
+      <input aria-label="배경을 제거할 이미지 파일" type="file" id="fileInput" accept="image/jpeg,image/png,image/webp">
       <span class="dropzone-icon">🖼️</span>
       <div class="dropzone-text">이미지를 <strong>드래그하거나 클릭</strong>하여 업로드</div>
       <div class="dropzone-sub">JPG, PNG, WebP 지원 · 최대 10MB</div>
@@ -146,7 +149,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
 
     <!-- 프로그레스 -->
-    <div class="progress-wrap" id="progressWrap">
+    <div class="progress-wrap" id="progressWrap" role="status" aria-live="polite">
       <div class="progress-text" id="progressText"><span class="progress-spinner"></span>AI 모델 로딩 중...</div>
       <div class="progress-bar-bg"><div class="progress-bar" id="progressBar"></div></div>
       <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="progressSub">첫 실행 시 자체 호스팅 AI 파일(약 55MB)을 받는 데 시간이 걸릴 수 있습니다</div>
@@ -188,7 +191,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       </div>
 
       <!-- 동적 AI 누끼 분석 리포트 -->
-      <div id="reportContainer" class="report-box" style="display:none; animation: fadeIn 0.5s ease;"></div>
+      <div id="reportContainer" class="report-box" role="status" aria-live="polite" style="display:none; animation: fadeIn 0.5s ease;"></div>
     </div>
   </div>
 
@@ -235,10 +238,11 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
   </section>
 
-  <footer class="footer"><span>AI 배경 제거 · 브라우저 내 추론 · 최대 10MB</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+  </main>
+<footer class="footer"><span>AI 배경 제거 · 브라우저 내 추론 · 최대 10MB</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 
 <script type="module">
@@ -248,6 +252,10 @@ let resultBlob = null;
 let fileName = 'image';
 let lastFile = null;
 const MAX_INFERENCE_DIM = 2048;
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
+const MAX_IMAGE_EDGE = 8000;
+const MAX_IMAGE_PIXELS = 24000000;
+const SUPPORTED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const BACKGROUND_REMOVAL_MODULE_URL = '/special-chars/vendor/imgly-background-removal/1.5.5/background-removal.bundle.js';
 const BACKGROUND_REMOVAL_ASSET_PATH = new URL('/special-chars/vendor/imgly-background-removal/1.5.5/data/', window.location.origin).href;
 const BACKGROUND_REMOVAL_CONFIG = Object.freeze({
@@ -285,7 +293,7 @@ dropzone.addEventListener('drop', e => {
   e.preventDefault();
   dropzone.classList.remove('dragover');
   const file = e.dataTransfer.files[0];
-  if (file && file.type.startsWith('image/')) handleFile(file);
+  if (file) handleFile(file);
 });
 
 fileInput.addEventListener('change', e => {
@@ -316,6 +324,10 @@ async function prepareInferenceImage(file) {
   const img = await loadImageFromBlob(file);
   const maxSide = Math.max(img.naturalWidth, img.naturalHeight);
   const originalSize = { width: img.naturalWidth, height: img.naturalHeight };
+  const pixels = originalSize.width * originalSize.height;
+  if (!originalSize.width || !originalSize.height || originalSize.width > MAX_IMAGE_EDGE || originalSize.height > MAX_IMAGE_EDGE || pixels > MAX_IMAGE_PIXELS) {
+    throw new Error('이미지는 최대 8,000px/2,400만 픽셀까지 처리할 수 있습니다.');
+  }
   if (maxSide <= MAX_INFERENCE_DIM) return { input: file, originalSize, resized: false };
 
   const scale = MAX_INFERENCE_DIM / maxSide;
@@ -323,10 +335,11 @@ async function prepareInferenceImage(file) {
   canvas.width = Math.round(img.naturalWidth * scale);
   canvas.height = Math.round(img.naturalHeight * scale);
   const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('추론용 이미지 캔버스를 만들 수 없습니다.');
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  const input = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  const input = await new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('추론용 이미지를 만들 수 없습니다.')), 'image/png'));
   return { input, originalSize, resized: true };
 }
 
@@ -337,10 +350,11 @@ async function restoreOriginalSize(blob, originalSize, resized) {
   canvas.width = originalSize.width;
   canvas.height = originalSize.height;
   const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('출력 이미지 캔버스를 만들 수 없습니다.');
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  return new Promise((resolve, reject) => canvas.toBlob(result => result ? resolve(result) : reject(new Error('출력 이미지를 만들 수 없습니다.')), 'image/png'));
 }
 
 // 첫 사용 시 모바일 데이터 경고 표시
@@ -352,8 +366,20 @@ async function restoreOriginalSize(blob, originalSize, resized) {
 })();
 
 async function handleFile(file) {
-  if (file.size > 10 * 1024 * 1024) {
-    showToast('⚠️ 파일 크기가 10MB를 초과합니다');
+  if (!SUPPORTED_IMAGE_TYPES.has((file.type || '').toLowerCase())) {
+    showToast('⚠️ JPG, PNG 또는 WebP 이미지를 선택해 주세요.');
+    return;
+  }
+  if (!file.size || file.size > MAX_FILE_BYTES) {
+    showToast(file.size ? '⚠️ 파일 크기가 10MB를 초과합니다' : '⚠️ 비어 있는 파일은 처리할 수 없습니다.');
+    return;
+  }
+
+  let prepared;
+  try {
+    prepared = await prepareInferenceImage(file);
+  } catch (error) {
+    showToast('⚠️ ' + (error.message || '이미지를 읽을 수 없습니다.'));
     return;
   }
 
@@ -380,7 +406,6 @@ async function handleFile(file) {
 
   try {
     const removeBackground = await ensureBackgroundRemoval();
-    const prepared = await prepareInferenceImage(file);
     if (prepared.resized) {
       document.getElementById('progressSub').textContent = `긴 변 ${MAX_INFERENCE_DIM}px로 추론 후 원본 해상도로 복원합니다`;
     }

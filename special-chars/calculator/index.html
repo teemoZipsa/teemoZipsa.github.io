@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -19,7 +20,6 @@
 
 <meta name="robots" content="noindex, follow">
 <style>
-  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     font-family: 'Pretendard', -apple-system, sans-serif;
@@ -165,6 +165,7 @@
 <body>
 
 <div class="calc-app">
+<main>
   <div class="calc-header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
     <h1>🧮 계산기</h1>
@@ -173,7 +174,7 @@
 
   <div class="calc-display">
     <div class="calc-expr" id="expr"></div>
-    <div class="calc-result" id="result">0</div>
+    <div class="calc-result" id="result" role="status" aria-live="polite" aria-atomic="true">0</div>
   </div>
 
   <div class="calc-buttons">
@@ -257,7 +258,8 @@
     </div>
   </section>
 
-  <footer class="footer">
+  </main>
+<footer class="footer">
     <span>키보드 입력 완벽 지원</span>
     <a href="https://teemozipsa.github.io/">😺 더 많은 도구</a>
   </footer>

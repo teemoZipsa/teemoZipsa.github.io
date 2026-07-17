@@ -28,205 +28,24 @@ var __toESM = (mod2, isNodeMode, target) => (target = mod2 != null ? __create(__
   mod2
 ));
 
-// node_modules/iota-array/iota.js
-var require_iota = __commonJS({
-  "node_modules/iota-array/iota.js"(exports2, module2) {
+// csp-safe-ndarray:ndarray-csp.cjs
+var require_ndarray_csp = __commonJS({
+  "csp-safe-ndarray:ndarray-csp.cjs"(exports2, module2) {
     "use strict";
-    function iota(n) {
-      var result = new Array(n);
-      for (var i = 0; i < n; ++i) {
-        result[i] = i;
-      }
-      return result;
-    }
-    module2.exports = iota;
-  }
-});
-
-// node_modules/is-buffer/index.js
-var require_is_buffer = __commonJS({
-  "node_modules/is-buffer/index.js"(exports2, module2) {
-    module2.exports = function(obj) {
-      return obj != null && (isBuffer(obj) || isSlowBuffer(obj) || !!obj._isBuffer);
-    };
-    function isBuffer(obj) {
-      return !!obj.constructor && typeof obj.constructor.isBuffer === "function" && obj.constructor.isBuffer(obj);
-    }
-    function isSlowBuffer(obj) {
-      return typeof obj.readFloatLE === "function" && typeof obj.slice === "function" && isBuffer(obj.slice(0, 0));
-    }
-  }
-});
-
-// node_modules/ndarray/ndarray.js
-var require_ndarray = __commonJS({
-  "node_modules/ndarray/ndarray.js"(exports2, module2) {
-    var iota = require_iota();
-    var isBuffer = require_is_buffer();
     var hasTypedArrays = typeof Float64Array !== "undefined";
-    function compare1st(a, b) {
+    function compareFirst(a, b) {
       return a[0] - b[0];
     }
     function order() {
-      var stride = this.stride;
-      var terms = new Array(stride.length);
-      var i;
-      for (i = 0; i < terms.length; ++i) {
-        terms[i] = [Math.abs(stride[i]), i];
-      }
-      terms.sort(compare1st);
-      var result = new Array(terms.length);
-      for (i = 0; i < result.length; ++i) {
-        result[i] = terms[i][1];
-      }
-      return result;
+      const terms = this.stride.map((stride, index) => [Math.abs(stride), index]);
+      terms.sort(compareFirst);
+      return terms.map((term) => term[1]);
     }
-    function compileConstructor(dtype, dimension) {
-      var className = ["View", dimension, "d", dtype].join("");
-      if (dimension < 0) {
-        className = "View_Nil" + dtype;
-      }
-      var useGetters = dtype === "generic";
-      if (dimension === -1) {
-        var code = "function " + className + "(a){this.data=a;};var proto=" + className + ".prototype;proto.dtype='" + dtype + "';proto.index=function(){return -1};proto.size=0;proto.dimension=-1;proto.shape=proto.stride=proto.order=[];proto.lo=proto.hi=proto.transpose=proto.step=function(){return new " + className + "(this.data);};proto.get=proto.set=function(){};proto.pick=function(){return null};return function construct_" + className + "(a){return new " + className + "(a);}";
-        var procedure = new Function(code);
-        return procedure();
-      } else if (dimension === 0) {
-        var code = "function " + className + "(a,d) {this.data = a;this.offset = d};var proto=" + className + ".prototype;proto.dtype='" + dtype + "';proto.index=function(){return this.offset};proto.dimension=0;proto.size=1;proto.shape=proto.stride=proto.order=[];proto.lo=proto.hi=proto.transpose=proto.step=function " + className + "_copy() {return new " + className + "(this.data,this.offset)};proto.pick=function " + className + "_pick(){return TrivialArray(this.data);};proto.valueOf=proto.get=function " + className + "_get(){return " + (useGetters ? "this.data.get(this.offset)" : "this.data[this.offset]") + "};proto.set=function " + className + "_set(v){return " + (useGetters ? "this.data.set(this.offset,v)" : "this.data[this.offset]=v") + "};return function construct_" + className + "(a,b,c,d){return new " + className + "(a,d)}";
-        var procedure = new Function("TrivialArray", code);
-        return procedure(CACHED_CONSTRUCTORS[dtype][0]);
-      }
-      var code = ["'use strict'"];
-      var indices = iota(dimension);
-      var args = indices.map(function(i2) {
-        return "i" + i2;
-      });
-      var index_str = "this.offset+" + indices.map(function(i2) {
-        return "this.stride[" + i2 + "]*i" + i2;
-      }).join("+");
-      var shapeArg = indices.map(function(i2) {
-        return "b" + i2;
-      }).join(",");
-      var strideArg = indices.map(function(i2) {
-        return "c" + i2;
-      }).join(",");
-      code.push(
-        "function " + className + "(a," + shapeArg + "," + strideArg + ",d){this.data=a",
-        "this.shape=[" + shapeArg + "]",
-        "this.stride=[" + strideArg + "]",
-        "this.offset=d|0}",
-        "var proto=" + className + ".prototype",
-        "proto.dtype='" + dtype + "'",
-        "proto.dimension=" + dimension
-      );
-      code.push(
-        "Object.defineProperty(proto,'size',{get:function " + className + "_size(){return " + indices.map(function(i2) {
-          return "this.shape[" + i2 + "]";
-        }).join("*"),
-        "}})"
-      );
-      if (dimension === 1) {
-        code.push("proto.order=[0]");
-      } else {
-        code.push("Object.defineProperty(proto,'order',{get:");
-        if (dimension < 4) {
-          code.push("function " + className + "_order(){");
-          if (dimension === 2) {
-            code.push("return (Math.abs(this.stride[0])>Math.abs(this.stride[1]))?[1,0]:[0,1]}})");
-          } else if (dimension === 3) {
-            code.push(
-              "var s0=Math.abs(this.stride[0]),s1=Math.abs(this.stride[1]),s2=Math.abs(this.stride[2]);if(s0>s1){if(s1>s2){return [2,1,0];}else if(s0>s2){return [1,2,0];}else{return [1,0,2];}}else if(s0>s2){return [2,0,1];}else if(s2>s1){return [0,1,2];}else{return [0,2,1];}}})"
-            );
-          }
-        } else {
-          code.push("ORDER})");
-        }
-      }
-      code.push(
-        "proto.set=function " + className + "_set(" + args.join(",") + ",v){"
-      );
-      if (useGetters) {
-        code.push("return this.data.set(" + index_str + ",v)}");
-      } else {
-        code.push("return this.data[" + index_str + "]=v}");
-      }
-      code.push("proto.get=function " + className + "_get(" + args.join(",") + "){");
-      if (useGetters) {
-        code.push("return this.data.get(" + index_str + ")}");
-      } else {
-        code.push("return this.data[" + index_str + "]}");
-      }
-      code.push(
-        "proto.index=function " + className + "_index(",
-        args.join(),
-        "){return " + index_str + "}"
-      );
-      code.push("proto.hi=function " + className + "_hi(" + args.join(",") + "){return new " + className + "(this.data," + indices.map(function(i2) {
-        return ["(typeof i", i2, "!=='number'||i", i2, "<0)?this.shape[", i2, "]:i", i2, "|0"].join("");
-      }).join(",") + "," + indices.map(function(i2) {
-        return "this.stride[" + i2 + "]";
-      }).join(",") + ",this.offset)}");
-      var a_vars = indices.map(function(i2) {
-        return "a" + i2 + "=this.shape[" + i2 + "]";
-      });
-      var c_vars = indices.map(function(i2) {
-        return "c" + i2 + "=this.stride[" + i2 + "]";
-      });
-      code.push("proto.lo=function " + className + "_lo(" + args.join(",") + "){var b=this.offset,d=0," + a_vars.join(",") + "," + c_vars.join(","));
-      for (var i = 0; i < dimension; ++i) {
-        code.push(
-          "if(typeof i" + i + "==='number'&&i" + i + ">=0){d=i" + i + "|0;b+=c" + i + "*d;a" + i + "-=d}"
-        );
-      }
-      code.push("return new " + className + "(this.data," + indices.map(function(i2) {
-        return "a" + i2;
-      }).join(",") + "," + indices.map(function(i2) {
-        return "c" + i2;
-      }).join(",") + ",b)}");
-      code.push("proto.step=function " + className + "_step(" + args.join(",") + "){var " + indices.map(function(i2) {
-        return "a" + i2 + "=this.shape[" + i2 + "]";
-      }).join(",") + "," + indices.map(function(i2) {
-        return "b" + i2 + "=this.stride[" + i2 + "]";
-      }).join(",") + ",c=this.offset,d=0,ceil=Math.ceil");
-      for (var i = 0; i < dimension; ++i) {
-        code.push(
-          "if(typeof i" + i + "==='number'){d=i" + i + "|0;if(d<0){c+=b" + i + "*(a" + i + "-1);a" + i + "=ceil(-a" + i + "/d)}else{a" + i + "=ceil(a" + i + "/d)}b" + i + "*=d}"
-        );
-      }
-      code.push("return new " + className + "(this.data," + indices.map(function(i2) {
-        return "a" + i2;
-      }).join(",") + "," + indices.map(function(i2) {
-        return "b" + i2;
-      }).join(",") + ",c)}");
-      var tShape = new Array(dimension);
-      var tStride = new Array(dimension);
-      for (var i = 0; i < dimension; ++i) {
-        tShape[i] = "a[i" + i + "]";
-        tStride[i] = "b[i" + i + "]";
-      }
-      code.push(
-        "proto.transpose=function " + className + "_transpose(" + args + "){" + args.map(function(n, idx) {
-          return n + "=(" + n + "===undefined?" + idx + ":" + n + "|0)";
-        }).join(";"),
-        "var a=this.shape,b=this.stride;return new " + className + "(this.data," + tShape.join(",") + "," + tStride.join(",") + ",this.offset)}"
-      );
-      code.push("proto.pick=function " + className + "_pick(" + args + "){var a=[],b=[],c=this.offset");
-      for (var i = 0; i < dimension; ++i) {
-        code.push("if(typeof i" + i + "==='number'&&i" + i + ">=0){c=(c+this.stride[" + i + "]*i" + i + ")|0}else{a.push(this.shape[" + i + "]);b.push(this.stride[" + i + "])}");
-      }
-      code.push("var ctor=CTOR_LIST[a.length+1];return ctor(this.data,a,b,c)}");
-      code.push("return function construct_" + className + "(data,shape,stride,offset){return new " + className + "(data," + indices.map(function(i2) {
-        return "shape[" + i2 + "]";
-      }).join(",") + "," + indices.map(function(i2) {
-        return "stride[" + i2 + "]";
-      }).join(",") + ",offset)}");
-      var procedure = new Function("CTOR_LIST", "ORDER", code.join("\n"));
-      return procedure(CACHED_CONSTRUCTORS[dtype], order);
+    function isBuffer(data) {
+      return Boolean(data && data.constructor && typeof data.constructor.isBuffer === "function" && data.constructor.isBuffer(data));
     }
     function arrayDType(data) {
-      if (isBuffer(data)) {
-        return "buffer";
-      }
+      if (isBuffer(data)) return "buffer";
       if (hasTypedArrays) {
         switch (Object.prototype.toString.call(data)) {
           case "[object Float64Array]":
@@ -253,69 +72,177 @@ var require_ndarray = __commonJS({
             return "biguint64";
         }
       }
-      if (Array.isArray(data)) {
-        return "array";
-      }
+      if (Array.isArray(data)) return "array";
       return "generic";
     }
-    var CACHED_CONSTRUCTORS = {
-      "float32": [],
-      "float64": [],
-      "int8": [],
-      "int16": [],
-      "int32": [],
-      "uint8": [],
-      "uint16": [],
-      "uint32": [],
-      "array": [],
-      "uint8_clamped": [],
-      "bigint64": [],
-      "biguint64": [],
-      "buffer": [],
-      "generic": []
+    var cachedConstructors = {
+      float32: [],
+      float64: [],
+      int8: [],
+      int16: [],
+      int32: [],
+      uint8: [],
+      uint16: [],
+      uint32: [],
+      array: [],
+      uint8_clamped: [],
+      bigint64: [],
+      biguint64: [],
+      buffer: [],
+      generic: []
     };
-    function wrappedNDArrayCtor(data, shape, stride, offset) {
+    function compileConstructor(dtype, dimension) {
+      const useGetters = dtype === "generic";
+      function View(data, shape, stride, offset) {
+        this.data = data;
+        this.shape = dimension < 0 ? [] : Array.prototype.slice.call(shape || []);
+        this.stride = dimension < 0 ? [] : Array.prototype.slice.call(stride || []);
+        this.offset = dimension < 0 ? 0 : offset | 0;
+      }
+      function construct(data, shape, stride, offset) {
+        return new View(data, shape, stride, offset);
+      }
+      const proto = View.prototype;
+      proto.dtype = dtype;
+      proto.dimension = dimension;
+      if (dimension < 0) {
+        proto.index = () => -1;
+        proto.size = 0;
+        proto.shape = proto.stride = proto.order = [];
+        proto.lo = proto.hi = proto.transpose = proto.step = function copyNil() {
+          return construct(this.data);
+        };
+        proto.get = proto.set = () => void 0;
+        proto.pick = () => null;
+        return construct;
+      }
+      Object.defineProperty(proto, "size", {
+        get() {
+          let result = 1;
+          for (let index = 0; index < this.shape.length; index += 1) result *= this.shape[index];
+          return result;
+        }
+      });
+      Object.defineProperty(proto, "order", {
+        get() {
+          if (dimension === 0) return [];
+          if (dimension === 1) return [0];
+          return order.call(this);
+        }
+      });
+      proto.index = function index(...indices) {
+        let result = this.offset;
+        for (let axis = 0; axis < dimension; axis += 1) result += this.stride[axis] * indices[axis];
+        return result;
+      };
+      proto.get = function get(...indices) {
+        const index = this.index(...indices);
+        return useGetters ? this.data.get(index) : this.data[index];
+      };
+      proto.set = function set(...args) {
+        const value = args.pop();
+        const index = this.index(...args);
+        if (useGetters) return this.data.set(index, value);
+        return this.data[index] = value;
+      };
+      if (dimension === 0) proto.valueOf = proto.get;
+      proto.hi = function hi3(...limits) {
+        const shape = this.shape.slice();
+        for (let axis = 0; axis < dimension; axis += 1) {
+          if (typeof limits[axis] === "number" && limits[axis] >= 0) shape[axis] = limits[axis] | 0;
+        }
+        return construct(this.data, shape, this.stride, this.offset);
+      };
+      proto.lo = function lo3(...starts) {
+        const shape = this.shape.slice();
+        const stride = this.stride.slice();
+        let offset = this.offset;
+        for (let axis = 0; axis < dimension; axis += 1) {
+          if (typeof starts[axis] !== "number" || starts[axis] < 0) continue;
+          const start = starts[axis] | 0;
+          offset += stride[axis] * start;
+          shape[axis] -= start;
+        }
+        return construct(this.data, shape, stride, offset);
+      };
+      proto.step = function step(...steps) {
+        const shape = this.shape.slice();
+        const stride = this.stride.slice();
+        let offset = this.offset;
+        for (let axis = 0; axis < dimension; axis += 1) {
+          if (typeof steps[axis] !== "number") continue;
+          const amount = steps[axis] | 0;
+          if (amount < 0) {
+            offset += stride[axis] * (shape[axis] - 1);
+            shape[axis] = Math.ceil(-shape[axis] / amount);
+          } else {
+            shape[axis] = Math.ceil(shape[axis] / amount);
+          }
+          stride[axis] *= amount;
+        }
+        return construct(this.data, shape, stride, offset);
+      };
+      proto.transpose = function transpose(...axes) {
+        const shape = new Array(dimension);
+        const stride = new Array(dimension);
+        for (let axis = 0; axis < dimension; axis += 1) {
+          const source = axes[axis] === void 0 ? axis : axes[axis] | 0;
+          shape[axis] = this.shape[source];
+          stride[axis] = this.stride[source];
+        }
+        return construct(this.data, shape, stride, this.offset);
+      };
+      proto.pick = function pick(...indices) {
+        if (dimension === 0) return cachedConstructors[dtype][0](this.data);
+        const shape = [];
+        const stride = [];
+        let offset = this.offset;
+        for (let axis = 0; axis < dimension; axis += 1) {
+          if (typeof indices[axis] === "number" && indices[axis] >= 0) {
+            offset = offset + this.stride[axis] * indices[axis] | 0;
+          } else {
+            shape.push(this.shape[axis]);
+            stride.push(this.stride[axis]);
+          }
+        }
+        return cachedConstructors[dtype][shape.length + 1](this.data, shape, stride, offset);
+      };
+      return construct;
+    }
+    function ndarray5(data, shape, stride, offset) {
       if (data === void 0) {
-        var ctor = CACHED_CONSTRUCTORS.array[0];
-        return ctor([]);
-      } else if (typeof data === "number") {
-        data = [data];
+        while (cachedConstructors.array.length < 1) cachedConstructors.array.push(compileConstructor("array", -1));
+        return cachedConstructors.array[0]([]);
       }
-      if (shape === void 0) {
-        shape = [data.length];
-      }
-      var d = shape.length;
+      if (typeof data === "number") data = [data];
+      if (shape === void 0) shape = [data.length];
+      const dimension = shape.length;
       if (stride === void 0) {
-        stride = new Array(d);
-        for (var i = d - 1, sz = 1; i >= 0; --i) {
-          stride[i] = sz;
-          sz *= shape[i];
+        stride = new Array(dimension);
+        for (let axis = dimension - 1, size = 1; axis >= 0; axis -= 1) {
+          stride[axis] = size;
+          size *= shape[axis];
         }
       }
       if (offset === void 0) {
         offset = 0;
-        for (var i = 0; i < d; ++i) {
-          if (stride[i] < 0) {
-            offset -= (shape[i] - 1) * stride[i];
-          }
+        for (let axis = 0; axis < dimension; axis += 1) {
+          if (stride[axis] < 0) offset -= (shape[axis] - 1) * stride[axis];
         }
       }
-      var dtype = arrayDType(data);
-      var ctor_list = CACHED_CONSTRUCTORS[dtype];
-      while (ctor_list.length <= d + 1) {
-        ctor_list.push(compileConstructor(dtype, ctor_list.length - 1));
-      }
-      var ctor = ctor_list[d + 1];
-      return ctor(data, shape, stride, offset);
+      const dtype = arrayDType(data);
+      const constructors = cachedConstructors[dtype];
+      while (constructors.length <= dimension + 1) constructors.push(compileConstructor(dtype, constructors.length - 1));
+      return constructors[dimension + 1](data, shape, stride, offset);
     }
-    module2.exports = wrappedNDArrayCtor;
+    module2.exports = ndarray5;
   }
 });
 
 // node_modules/@imgly/background-removal/dist/index.mjs
-var import_ndarray = __toESM(require_ndarray(), 1);
-var import_ndarray2 = __toESM(require_ndarray(), 1);
-var import_ndarray3 = __toESM(require_ndarray(), 1);
+var import_ndarray = __toESM(require_ndarray_csp(), 1);
+var import_ndarray2 = __toESM(require_ndarray_csp(), 1);
+var import_ndarray3 = __toESM(require_ndarray_csp(), 1);
 
 // node_modules/onnxruntime-web/dist/esm/ort.min.js
 var ort_min_exports = {};
@@ -28552,7 +28479,7 @@ var coerce = {
 var NEVER = INVALID;
 
 // node_modules/@imgly/background-removal/dist/index.mjs
-var import_ndarray4 = __toESM(require_ndarray(), 1);
+var import_ndarray4 = __toESM(require_ndarray_csp(), 1);
 var __create2 = Object.create;
 var __defProp2 = Object.defineProperty;
 var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
@@ -34777,14 +34704,6 @@ export {
   segmentForeground
 };
 /*! Bundled license information:
-
-is-buffer/index.js:
-  (*!
-   * Determine if an object is a Buffer
-   *
-   * @author   Feross Aboukhadijeh <https://feross.org>
-   * @license  MIT
-   *)
 
 onnxruntime-web/dist/esm/ort.min.js:
 onnxruntime-web/dist/esm/ort.webgpu.min.js:

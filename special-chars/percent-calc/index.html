@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -18,7 +19,6 @@
 <link rel="canonical" href="https://teemozipsa.github.io/special-chars/percent-calc/">
 
 <style>
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
 .app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:540px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
@@ -46,6 +46,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
 .result-box{background:var(--accent-bg);border:2px solid var(--accent);border-radius:12px;padding:16px;text-align:center;min-height:70px;display:flex;flex-direction:column;justify-content:center;gap:4px;transition:all .3s}
 .result-box .result-value{font-size:28px;font-weight:800;color:var(--accent-text);letter-spacing:-0.5px}
+.result-copy{align-self:center;background:none;border:0;padding:2px 6px;font-family:inherit;cursor:pointer;border-radius:6px}
 .result-box .result-label{font-size:12px;color:var(--text-info);font-weight:500}
 .result-box .result-detail{font-size:13px;color:var(--text-secondary);margin-top:2px}
 .result-box.empty .result-value{font-size:16px;color:var(--text-placeholder);font-weight:400}
@@ -71,12 +72,12 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
 
 .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:2px}
-.report-box h3 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
+.report-box h2 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
 .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
 .report-box strong {color:var(--text-primary);font-weight:600}
 
 .related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:0 12px 12px}
-.related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.related-tools h2 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
 .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
 .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
@@ -95,6 +96,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
     <h1>🔢 퍼센트 계산기</h1>
@@ -102,11 +104,11 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </div>
 
   <div class="body">
-    <div class="tabs">
-      <button class="tab active" onclick="switchTab(0)">A의 B%</button>
-      <button class="tab" onclick="switchTab(1)">변화율</button>
-      <button class="tab" onclick="switchTab(2)">비율</button>
-      <button class="tab" onclick="switchTab(3)">역산</button>
+    <div class="tabs" role="group" aria-label="계산 방식">
+      <button type="button" class="tab active" aria-pressed="true" onclick="switchTab(0)">A의 B%</button>
+      <button type="button" class="tab" aria-pressed="false" onclick="switchTab(1)">변화율</button>
+      <button type="button" class="tab" aria-pressed="false" onclick="switchTab(2)">비율</button>
+      <button type="button" class="tab" aria-pressed="false" onclick="switchTab(3)">역산</button>
     </div>
 
     <!-- 모드 0: A의 B%는? -->
@@ -114,11 +116,11 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <div class="calc-title">A의 B%는 얼마?</div>
       <div class="calc-desc">예: 50,000원의 15%는?</div>
       <div class="input-row">
-        <label>값 A</label>
+        <label for="m0a">값 A</label>
         <input type="number" id="m0a" placeholder="50000" oninput="calc0()">
       </div>
       <div class="input-row">
-        <label>퍼센트</label>
+        <label for="m0b">퍼센트</label>
         <input type="number" id="m0b" placeholder="15" oninput="calc0()">
         <span class="unit">%</span>
       </div>
@@ -131,7 +133,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
         <button class="quick-btn" onclick="setQuick(0,'m0b',30)">30%</button>
         <button class="quick-btn" onclick="setQuick(0,'m0b',50)">50%</button>
       </div>
-      <div class="result-box empty" id="r0">
+      <div class="result-box empty" id="r0" aria-live="polite" aria-atomic="true">
         <div class="result-value">숫자를 입력하세요</div>
       </div>
       <div class="report-box" id="report0" style="display:none"></div>
@@ -142,14 +144,14 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <div class="calc-title">A에서 B로 몇 % 변화?</div>
       <div class="calc-desc">예: 40,000원 → 52,000원이면 몇 % 올랐나?</div>
       <div class="input-row">
-        <label>이전 값</label>
+        <label for="m1a">이전 값</label>
         <input type="number" id="m1a" placeholder="40000" oninput="calc1()">
       </div>
       <div class="input-row">
-        <label>이후 값</label>
+        <label for="m1b">이후 값</label>
         <input type="number" id="m1b" placeholder="52000" oninput="calc1()">
       </div>
-      <div class="result-box empty" id="r1">
+      <div class="result-box empty" id="r1" aria-live="polite" aria-atomic="true">
         <div class="result-value">숫자를 입력하세요</div>
       </div>
       <div class="report-box" id="report1" style="display:none"></div>
@@ -160,14 +162,14 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <div class="calc-title">A는 B의 몇 %?</div>
       <div class="calc-desc">예: 35명은 200명의 몇 %?</div>
       <div class="input-row">
-        <label>부분 (A)</label>
+        <label for="m2a">부분 (A)</label>
         <input type="number" id="m2a" placeholder="35" oninput="calc2()">
       </div>
       <div class="input-row">
-        <label>전체 (B)</label>
+        <label for="m2b">전체 (B)</label>
         <input type="number" id="m2b" placeholder="200" oninput="calc2()">
       </div>
-      <div class="result-box empty" id="r2">
+      <div class="result-box empty" id="r2" aria-live="polite" aria-atomic="true">
         <div class="result-value">숫자를 입력하세요</div>
       </div>
       <div class="report-box" id="report2" style="display:none"></div>
@@ -178,19 +180,19 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <div class="calc-title">B%를 적용하면 A가 되는 원래 값은?</div>
       <div class="calc-desc">예: 20% 할인돼서 40,000원이면 원가는?</div>
       <div class="input-row">
-        <label>결과 값</label>
+        <label for="m3a">결과 값</label>
         <input type="number" id="m3a" placeholder="40000" oninput="calc3()">
       </div>
       <div class="input-row">
-        <label>적용된 %</label>
+        <label for="m3b">적용된 %</label>
         <input type="number" id="m3b" placeholder="20" oninput="calc3()">
         <span class="unit">% 할인</span>
       </div>
-      <div class="quick-btns">
-        <button class="quick-btn" onclick="setM3Type('discount')">할인 (−)</button>
-        <button class="quick-btn" onclick="setM3Type('markup')">인상 (+)</button>
+      <div class="quick-btns" role="group" aria-label="퍼센트 적용 방식">
+        <button type="button" class="quick-btn" data-m3-type="discount" aria-pressed="true" onclick="setM3Type('discount')">할인 (−)</button>
+        <button type="button" class="quick-btn" data-m3-type="markup" aria-pressed="false" onclick="setM3Type('markup')">인상 (+)</button>
       </div>
-      <div class="result-box empty" id="r3">
+      <div class="result-box empty" id="r3" aria-live="polite" aria-atomic="true">
         <div class="result-value">숫자를 입력하세요</div>
       </div>
       <div class="report-box" id="report3" style="display:none"></div>
@@ -212,17 +214,18 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </details>
 
   <div class="related-tools">
-    <h3>🔗 연관 금융/생활 계산기</h3>
+    <h2>🔗 연관 금융/생활 계산기</h2>
     <div class="tool-list">
       <a href="/special-chars/discount-calc/"><span>🛍️ 할인율 계산기</span><span>바로가기 →</span></a>
       <a href="/special-chars/compound-interest/"><span>📈 복리 이자 계산기</span><span>바로가기 →</span></a>
       <a href="/special-chars/avg-price/"><span>⚖️ 주식 물타기(평단가) 계산기</span><span>바로가기 →</span></a>
     </div>
   </div>
-    <footer class="footer"><span>실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+    </main>
+<footer class="footer"><span>실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 
 <script>
@@ -231,7 +234,11 @@ let m3type = 'discount'; // discount or markup
 
 function switchTab(idx) {
   currentTab = idx;
-  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i===idx));
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    const active = i === idx;
+    t.classList.toggle('active', active);
+    t.setAttribute('aria-pressed', String(active));
+  });
   for(let i=0;i<4;i++) document.getElementById('mode'+i).style.display = i===idx ? '' : 'none';
 }
 
@@ -244,7 +251,7 @@ function setResult(boxId, value, label, detail) {
   const box = document.getElementById(boxId);
   box.classList.remove('empty');
   box.innerHTML = `
-    <div class="result-value" style="cursor:pointer" onclick="copyVal('${value}')">${value}</div>
+    <button type="button" class="result-value result-copy" onclick="copyVal('${value}')" aria-label="결과 ${value} 복사">${value}</button>
     ${label ? `<div class="result-label">${label}</div>` : ''}
     ${detail ? `<div class="result-detail">${detail}</div>` : ''}
   `;
@@ -267,7 +274,7 @@ function calc0() {
   
   report.style.display = 'flex';
   report.innerHTML = `
-    <h3>💡 퍼센트 분석 리포트</h3>
+    <h2>💡 퍼센트 분석 리포트</h2>
     <p>입력하신 기준 금액 <strong>${fmt(a)}</strong>의 <strong>${fmt(b)}%</strong>에 해당하는 값은 <strong>${fmt(result)}</strong>입니다.</p>
     <p>만약 이 퍼센트가 <strong>할인율</strong>을 의미한다면, <strong>${fmt(a)}</strong>에서 <strong>${fmt(result)}</strong>을 뺀 <strong>${fmt(diff)}</strong>이(가) 최종 가격이 됩니다.</p>
     <p>반대로 이 값이 <strong>세금이나 추가 비용</strong>을 의미한다면, 지불해야 할 총 금액은 <strong>${fmt(a + result)}</strong>입니다.</p>
@@ -288,7 +295,7 @@ function calc1() {
   report.style.display = 'flex';
   const status = pct > 0 ? "성장 및 증가" : (pct < 0 ? "하락 및 감소" : "변화 없음");
   report.innerHTML = `
-    <h3>💡 증감률 분석 리포트</h3>
+    <h2>💡 증감률 분석 리포트</h2>
     <p>이전 값 <strong>${fmt(a)}</strong>에서 <strong>${fmt(b)}</strong>(으)로 <strong>${fmt(Math.abs(diff))}</strong>만큼 변동했습니다.</p>
     <p>이를 증감률로 평가하면 <strong>${sign}${fmt(pct)}%</strong> 수준의 <strong>${status}</strong>폭을 보여줍니다.</p>
     <p>이 지표는 주식 수익률, 영업 이익률, 상품의 가격 변동 등 <strong>"과거 대비 얼마나 달라졌는가"</strong>를 객관적으로 평가할 때 핵심 역할을 합니다.</p>
@@ -306,7 +313,7 @@ function calc2() {
   report.style.display = 'flex';
   const remaining = 100 - pct;
   report.innerHTML = `
-    <h3>💡 비율 점유율 리포트</h3>
+    <h2>💡 비율 점유율 리포트</h2>
     <p>기준 데이터 분석 결과, 전체 <strong>${fmt(b)}</strong> 중 부분 <strong>${fmt(a)}</strong>이(가) 차지하는 비중은 <strong>${fmt(pct)}%</strong>입니다.</p>
     <p>나머지 구간은 전체의 <strong>${fmt(remaining)}%</strong>를 구성하고 있습니다.</p>
     <p>이 계산식은 구성원의 성비 분석, 목표 달성률, 투표 득표율 등 <strong>"전체 대비 파이의 크기"</strong>를 한눈에 파악하는 데 유용합니다.</p>
@@ -329,7 +336,7 @@ function calc3() {
     setResult('r3', fmt(original), `원래 가격 (${b}% 할인 전)`, `${fmt(original)} × ${100-b}% = ${fmt(a)}`);
     report.style.display = 'flex';
     report.innerHTML = `
-      <h3>💡 할인 역산 분석 리포트</h3>
+      <h2>💡 할인 역산 분석 리포트</h2>
       <p>결과 값 <strong>${fmt(a)}</strong>은(는) 이미 <strong>${fmt(b)}% 할인</strong>이 반영된 적용 금액입니다.</p>
       <p>할인이 적용되기 전 순수 원가나 기준점을 수학적 역산으로 도출하면 <strong>${fmt(original)}</strong>이(가) 됩니다.</p>
       <p>단순히 ${fmt(a)}에 ${fmt(b)}%를 더해버리는 오류를 막기 위해, 공식 <strong>[적용 금액 / (1 - 할인율)]</strong>을 적용하여 산출된 정확한 데이터입니다.</p>
@@ -344,7 +351,7 @@ function calc3() {
     setResult('r3', fmt(original), `원래 가격 (${b}% 인상 전)`, `${fmt(original)} × ${100+b}% = ${fmt(a)}`);
     report.style.display = 'flex';
     report.innerHTML = `
-      <h3>💡 인상 및 마진 역산 리포트</h3>
+      <h2>💡 인상 및 마진 역산 리포트</h2>
       <p>해당 결과 값 <strong>${fmt(a)}</strong>은(는) 원래 가격에 <strong>${fmt(b)}%의 인상률(또는 부가세, 마진)</strong>이 더해진 형태입니다.</p>
       <p>인상 전의 퓨어한 원래 비용/단가를 도출하면 <strong>${fmt(original)}</strong>입니다.</p>
       <p>가장 흔히 <strong>부가세 10% 제외 금액</strong>을 유추하거나 매출 단가에서 <strong>마진/수수료율이 포함되기 전의 금액</strong>을 역산해낼 때 이와 같은 수식이 핵심입니다.</p>
@@ -360,6 +367,9 @@ function setQuick(mode, inputId, val) {
 
 function setM3Type(type) {
   m3type = type;
+  document.querySelectorAll('[data-m3-type]').forEach(btn => {
+    btn.setAttribute('aria-pressed', String(btn.dataset.m3Type === type));
+  });
   const unitEl = document.querySelector('#mode3 .unit');
   unitEl.textContent = type === 'discount' ? '% 할인' : '% 인상';
   calc3();

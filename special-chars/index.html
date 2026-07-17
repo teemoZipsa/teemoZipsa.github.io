@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -21,7 +22,6 @@
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <meta name="theme-color" content="#533483">
 <style>
-  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     font-family: 'Pretendard', -apple-system, sans-serif;
@@ -214,12 +214,17 @@
 @media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
   .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
   .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
-  .footer a:hover{color:var(--text-secondary)}
+.footer a:hover{color:var(--text-secondary)}
+.skip-link{position:fixed;left:12px;top:8px;z-index:1000;padding:10px 14px;border-radius:8px;background:var(--accent);color:var(--text-on-accent);font-weight:700;transform:translateY(-150%);transition:transform .15s}
+.skip-link:focus{transform:translateY(0)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#guide-start">긴 문자 목록을 건너뛰고 사용 안내로 이동</a>
 
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
     <h1>⌨ 특수 문자 & 이모지</h1>
@@ -241,13 +246,14 @@
       </div>
     </div>
 
-    <div class="tab-groups" id="tabBar"></div>
+    <div class="tab-groups" id="tabBar" role="tablist" aria-label="문자 카테고리"></div>
 
-    <div class="grid-container">
-      <div class="char-grid" id="charGrid"></div>
+    <div class="grid-container" id="charPanel" role="tabpanel">
+      <div class="char-grid" id="charGrid" role="group" aria-label="복사할 문자 목록"></div>
+      <div class="sr-only" id="gridStatus" role="status" aria-live="polite" aria-atomic="true"></div>
     </div>
 
-    <details class="guide-section">
+    <details class="guide-section" id="guide-start" tabindex="-1">
       <summary>📖 사용 방법</summary>
       <div class="guide-content">
         <p>자주 쓰는 특수문자, 수학 기호, 화살표, 괄호, 통화 기호, 이모지를 한 화면에서 찾고 바로 복사하는 도구입니다. 검색창에는 문자 이름, 초성, 영문 키워드, 유니코드 값을 입력할 수 있습니다.</p>
@@ -299,7 +305,8 @@
     </div>
 
   </div>
-  <footer class="footer"><span>클릭 한 번으로 복사</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+  </main>
+<footer class="footer"><span>클릭 한 번으로 복사</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -645,6 +652,68 @@ function isEmojiTab(name) {
   return EMOJI_KEYS.includes(name);
 }
 
+function selectTab(name) {
+  currentTab = name;
+  renderTabs();
+  renderGrid();
+  requestAnimationFrame(() => document.querySelector('.tab.active')?.focus());
+}
+
+function configureTabButton(btn, name) {
+  const selected = name === currentTab;
+  const tabIndex = [...SPECIAL_KEYS, ...EMOJI_KEYS].indexOf(name);
+  btn.type = 'button';
+  btn.id = `character-tab-${tabIndex}`;
+  btn.setAttribute('role', 'tab');
+  btn.setAttribute('aria-selected', String(selected));
+  btn.setAttribute('aria-controls', 'charPanel');
+  btn.tabIndex = selected ? 0 : -1;
+  if (selected) document.getElementById('charPanel').setAttribute('aria-labelledby', btn.id);
+  btn.onclick = () => selectTab(name);
+  btn.onkeydown = event => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    const names = [...SPECIAL_KEYS, ...EMOJI_KEYS];
+    const index = names.indexOf(name);
+    const targetIndex = event.key === 'Home' ? 0 : event.key === 'End' ? names.length - 1 :
+      (index + (event.key === 'ArrowRight' ? 1 : -1) + names.length) % names.length;
+    selectTab(names[targetIndex]);
+  };
+}
+
+function configureCharacterButton(btn, ch) {
+  const code = ch.codePointAt(0).toString(16).toUpperCase().padStart(4, '0');
+  btn.type = 'button';
+  btn.title = `${ch}  (U+${code})`;
+  btn.setAttribute('aria-label', `${ch} 복사, 유니코드 U+${code}`);
+  btn.onclick = () => copyChar(ch, btn);
+  btn.onmouseenter = () => { document.getElementById('codeInfo').textContent = `U+${code}`; };
+}
+
+function applyGridRovingTabindex() {
+  const grid = document.getElementById('charGrid');
+  const buttons = [...grid.querySelectorAll('.char-btn')];
+  buttons.forEach((button, index) => { button.tabIndex = index === 0 ? 0 : -1; });
+  grid.onclick = event => {
+    const button = event.target.closest('.char-btn');
+    if (!button || !grid.contains(button)) return;
+    buttons.forEach(item => { item.tabIndex = item === button ? 0 : -1; });
+  };
+  grid.onkeydown = event => {
+    if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) return;
+    const current = event.target.closest('.char-btn');
+    const index = buttons.indexOf(current);
+    if (index < 0 || !buttons.length) return;
+    event.preventDefault();
+    const step = event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 1;
+    const targetIndex = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 :
+      (index + step + buttons.length) % buttons.length;
+    buttons.forEach((button, buttonIndex) => { button.tabIndex = buttonIndex === targetIndex ? 0 : -1; });
+    buttons[targetIndex].focus();
+  };
+  document.getElementById('gridStatus').textContent = `${buttons.length}개 문자가 표시되었습니다. 화살표 키로 이동할 수 있습니다.`;
+}
+
 function renderTabs() {
   const bar = document.getElementById('tabBar');
   bar.innerHTML = '';
@@ -652,33 +721,38 @@ function renderTabs() {
   const lbl1 = document.createElement('div');
   lbl1.className = 'tab-group-label';
   lbl1.textContent = '특수 문자';
+  lbl1.setAttribute('aria-hidden', 'true');
   bar.appendChild(lbl1);
   const row1 = document.createElement('div');
   row1.className = 'tab-row';
+  row1.setAttribute('role', 'presentation');
   SPECIAL_KEYS.forEach(name => {
     const btn = document.createElement('button');
     btn.className = 'tab' + (name === currentTab ? ' active' : '');
     btn.textContent = name;
-    btn.onclick = () => { currentTab = name; renderTabs(); renderGrid(); };
+    configureTabButton(btn, name);
     row1.appendChild(btn);
   });
   bar.appendChild(row1);
   // 구분선
   const hr = document.createElement('hr');
   hr.className = 'tab-divider';
+  hr.setAttribute('aria-hidden', 'true');
   bar.appendChild(hr);
   // 이모지 그룹
   const lbl2 = document.createElement('div');
   lbl2.className = 'tab-group-label';
   lbl2.textContent = '이모지';
+  lbl2.setAttribute('aria-hidden', 'true');
   bar.appendChild(lbl2);
   const row2 = document.createElement('div');
   row2.className = 'tab-row';
+  row2.setAttribute('role', 'presentation');
   EMOJI_KEYS.forEach(name => {
     const btn = document.createElement('button');
     btn.className = 'tab emoji-tab' + (name === currentTab ? ' active' : '');
     btn.textContent = name;
-    btn.onclick = () => { currentTab = name; renderTabs(); renderGrid(); };
+    configureTabButton(btn, name);
     row2.appendChild(btn);
   });
   bar.appendChild(row2);
@@ -704,14 +778,11 @@ function renderGrid(filter = '') {
       const btn = document.createElement('button');
       btn.className = 'char-btn' + (isEmoji ? ' emoji-cell' : '');
       btn.textContent = ch;
-      btn.title = `${ch}  (U+${ch.codePointAt(0).toString(16).toUpperCase().padStart(4,'0')})`;
-      btn.onmouseenter = () => {
-        document.getElementById('codeInfo').textContent = 'U+' + ch.codePointAt(0).toString(16).toUpperCase().padStart(4,'0');
-      };
-      btn.onclick = () => copyChar(ch, btn);
+      configureCharacterButton(btn, ch);
       grid.appendChild(btn);
     });
   }
+  applyGridRovingTabindex();
 }
 
 function copyChar(ch, btnEl) {
@@ -856,11 +927,7 @@ function filterChars() {
         const btn = document.createElement('button');
         btn.className = 'char-btn';
         btn.textContent = ch;
-        btn.title = `${ch}  (U+${ch.codePointAt(0).toString(16).toUpperCase().padStart(4,'0')})`;
-        btn.onmouseenter = () => {
-          document.getElementById('codeInfo').textContent = 'U+' + ch.codePointAt(0).toString(16).toUpperCase().padStart(4,'0');
-        };
-        btn.onclick = () => copyChar(ch, btn);
+        configureCharacterButton(btn, ch);
         grid.appendChild(btn);
       });
     }
@@ -898,11 +965,7 @@ function filterChars() {
           const btn = document.createElement('button');
           btn.className = 'char-btn' + (isEmoji ? ' emoji-cell' : '');
           btn.textContent = ch;
-          btn.title = `${ch}  (U+${ch.codePointAt(0).toString(16).toUpperCase().padStart(4,'0')})`;
-          btn.onmouseenter = () => {
-            document.getElementById('codeInfo').textContent = 'U+' + ch.codePointAt(0).toString(16).toUpperCase().padStart(4,'0');
-          };
-          btn.onclick = () => copyChar(ch, btn);
+          configureCharacterButton(btn, ch);
           grid.appendChild(btn);
         });
       }
@@ -916,6 +979,7 @@ function filterChars() {
       noResult.style.padding = '40px 0';
       grid.appendChild(noResult);
     }
+    applyGridRovingTabindex();
   } else {
     renderGrid();
   }

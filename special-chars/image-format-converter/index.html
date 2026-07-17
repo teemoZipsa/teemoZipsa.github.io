@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -19,7 +20,6 @@
 
 <meta name="robots" content="noindex, follow">
 <style>
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
 .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:540px;max-width:100%;overflow:hidden}
@@ -31,6 +31,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
 .drop-zone{border:2px dashed var(--border);border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg-bar)}
 .drop-zone:hover,.drop-zone.dragover{border-color:var(--accent);background:var(--bg-hover)}
+.drop-zone:focus-visible,.btn:focus-visible,.format-btn:focus-visible{outline:3px solid #f7c948;outline-offset:3px}
 .drop-zone .icon{font-size:36px;margin-bottom:8px}
 .drop-zone .text{font-size:13px;color:var(--calc-expr-text)}
 .drop-zone .sub{font-size:11px;color:var(--text-placeholder);margin-top:4px}
@@ -114,21 +115,22 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
     <h1>🖼️ 이미지 포맷 변환기</h1>
     <a href="/special-chars/en/image-format-converter/" class="back-btn">🌐 English</a>
   </div>
   <div class="content">
-    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+    <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-controls="fileInput" onclick="document.getElementById('fileInput').click()">
       <div class="icon">📁</div>
       <div class="text">클릭하거나 이미지를 드래그하세요</div>
-      <div class="sub">입력: JPG · PNG · WebP · GIF · BMP · SVG (최대 25MB)</div>
+      <div class="sub">입력: JPG · PNG · WebP · GIF · BMP · SVG (최대 20MB)</div>
       <div class="sub">출력: JPG · PNG · WebP</div>
       <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.svg,image/jpeg,image/png,image/webp,image/gif,image/bmp,image/svg+xml" onchange="handleFile(this.files[0])">
     </div>
 
-    <div class="support-info"><strong>입력과 출력 범위가 다릅니다.</strong> GIF·BMP·SVG는 불러오기 전용입니다. 결과는 JPG·PNG·WebP 중 하나로 저장되며, 긴 변 기준 12,000px 또는 총 4,000만 픽셀을 넘는 이미지는 기기 보호를 위해 처리하지 않습니다.</div>
+    <div class="support-info"><strong>입력과 출력 범위가 다릅니다.</strong> GIF·BMP·SVG는 불러오기 전용입니다. 결과는 JPG·PNG·WebP 중 하나로 저장되며, 긴 변 기준 8,000px 또는 총 2,400만 픽셀을 넘는 이미지는 기기 보호를 위해 처리하지 않습니다.</div>
 
     <div class="controls" id="controls">
       <div class="control-row">
@@ -225,10 +227,11 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       </div>
     </div>
   </section>
-    <footer class="footer"><span>100% 브라우저 로컬 처리</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+    </main>
+<footer class="footer"><span>100% 브라우저 로컬 처리</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
 <script>
@@ -244,9 +247,9 @@ let conversionSequence=0;
 let decodedImage=null;
 let reconvertTimer=null;
 
-const MAX_FILE_SIZE=25*1024*1024;
-const MAX_EDGE=12000;
-const MAX_PIXELS=40000000;
+const MAX_FILE_SIZE=20*1024*1024;
+const MAX_EDGE=8000;
+const MAX_PIXELS=24000000;
 const RECONVERT_DELAY_MS=200;
 const INPUT_MIME_INFO={
   'image/jpeg':{mime:'image/jpeg',label:'JPG'},
@@ -266,6 +269,7 @@ const INPUT_EXTENSION_INFO={
 };
 
 const dropZone=document.getElementById('dropZone');
+dropZone.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();document.getElementById('fileInput').click();}});
 dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('dragover');});
 dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('dragover'));
 dropZone.addEventListener('drop',e=>{
@@ -278,7 +282,7 @@ function handleFile(file){
   const inputType=detectInputType(file);
   if(!inputType){rejectFile('지원하지 않는 입력 형식입니다. JPG, PNG, WebP, GIF, BMP, SVG를 선택하세요.');return;}
   if(file.size===0){rejectFile('비어 있는 파일은 변환할 수 없습니다.');return;}
-  if(file.size>MAX_FILE_SIZE){rejectFile('파일이 25MB를 초과해 처리할 수 없습니다.');return;}
+  if(file.size>MAX_FILE_SIZE){rejectFile('파일이 20MB를 초과해 처리할 수 없습니다.');return;}
 
   clearLoadedState();
   const currentLoad=++loadSequence;
@@ -296,7 +300,7 @@ function handleFile(file){
       const width=img.naturalWidth||img.width;
       const height=img.naturalHeight||img.height;
       if(!isDimensionAllowed(width,height)){
-        rejectFile(`이미지 크기 ${width} × ${height}px는 처리 한도(긴 변 12,000px, 총 4,000만 픽셀)를 초과합니다.`);
+        rejectFile(`이미지 크기 ${width} × ${height}px는 처리 한도(긴 변 8,000px, 총 2,400만 픽셀)를 초과합니다.`);
         return;
       }
       decodedImage=img;

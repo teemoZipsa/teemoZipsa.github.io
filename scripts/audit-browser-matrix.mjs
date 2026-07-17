@@ -8,6 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
 const failures = [];
 const results = [];
+let interactionScenarioTotal = 0;
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -74,6 +75,37 @@ function indexedPaths() {
   return urls.map(url => `${url.pathname}${url.search}`);
 }
 
+function toolPaths() {
+  const toolsRoot = path.join(rootDir, 'special-chars');
+  const paths = [];
+
+  function walk(directory) {
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+      const target = path.join(directory, entry.name);
+      if (entry.isDirectory()) {
+        walk(target);
+      } else if (entry.name.toLowerCase() === 'index.html') {
+        const relativeDirectory = path.relative(rootDir, directory).split(path.sep).join('/');
+        paths.push(`/${relativeDirectory}/`);
+      }
+    }
+  }
+
+  walk(toolsRoot);
+  assert(paths.length > 0, 'No special-chars tool pages were found');
+  return paths.sort();
+}
+
+function auditedPaths() {
+  const indexed = indexedPaths();
+  const tools = toolPaths();
+  return {
+    indexedCount: indexed.length,
+    toolCount: tools.length,
+    paths: [...new Set([...indexed, ...tools])]
+  };
+}
+
 async function layoutState(page) {
   return page.evaluate(() => {
     const viewportWidth = document.documentElement.clientWidth;
@@ -92,13 +124,28 @@ async function layoutState(page) {
         const classes = [...element.classList].slice(0, 2);
         return `${tag}${classes.length ? `.${classes.join('.')}` : ''}`;
       });
+    const smallTargets = [...document.querySelectorAll('button, [role="button"], [role="tab"]')]
+      .filter(element => {
+        const style = getComputedStyle(element);
+        const rect = element.getBoundingClientRect();
+        return !element.disabled && style.display !== 'none' && style.visibility !== 'hidden' &&
+          rect.width > 0 && rect.height > 0 && (rect.width < 24 || rect.height < 24);
+      })
+      .slice(0, 8)
+      .map(element => {
+        const rect = element.getBoundingClientRect();
+        const name = element.id ? `#${element.id}` :
+          (element.getAttribute('aria-label') || element.textContent || element.tagName).trim().replace(/\s+/g, ' ').slice(0, 30);
+        return `${name} (${rect.width.toFixed(1)}x${rect.height.toFixed(1)})`;
+      });
     return {
       bodyChars: document.body?.innerText.trim().length || 0,
       hasViewportMeta: Boolean(document.querySelector('meta[name="viewport"]')),
       viewportWidth,
       scrollWidth,
       overflow: Math.max(0, scrollWidth - viewportWidth),
-      offenders
+      offenders,
+      smallTargets
     };
   });
 }
@@ -142,7 +189,7 @@ async function openPage(context, base, routePath) {
   return { page, problems };
 }
 
-async function smokeIndexedPages(context, base, paths, config) {
+async function smokeAuditedPages(context, base, paths, config) {
   let passed = 0;
   for (const routePath of paths) {
     let page;
@@ -157,6 +204,12 @@ async function smokeIndexedPages(context, base, paths, config) {
         layout.overflow <= 1,
         `${routePath} overflows horizontally by ${layout.overflow}px${layout.offenders.length ? ` (${layout.offenders.join(', ')})` : ''}`
       );
+      if (config.hasTouch) {
+        assert(
+          layout.smallTargets.length === 0,
+          `${routePath} has touch targets smaller than 24px: ${layout.smallTargets.join(', ')}`
+        );
+      }
       assert(problems.length === 0, `${routePath}: ${problems.slice(0, 4).join(' | ')}`);
       passed += 1;
     } catch (error) {
@@ -165,7 +218,7 @@ async function smokeIndexedPages(context, base, paths, config) {
       await page?.close().catch(() => {});
     }
   }
-  results.push(`${config.name}: ${passed}/${paths.length} indexed pages rendered without errors or horizontal overflow`);
+  results.push(`${config.name}: ${passed}/${paths.length} audited pages rendered without errors or horizontal overflow`);
 }
 
 async function runScenario(context, base, config, name, routePath, run) {
@@ -266,6 +319,7 @@ async function runInteractions(context, base, config) {
   }
 
   let passed = 0;
+  interactionScenarioTotal += scenarios.length;
   for (const [name, routePath, run] of scenarios) {
     if (await runScenario(context, base, config, name, routePath, run)) passed += 1;
   }
@@ -290,10 +344,10 @@ async function auditConfiguration(config, base, paths) {
       return route.abort('blockedbyclient');
     });
     try {
-      await smokeIndexedPages(context, base, paths, config);
+      await smokeAuditedPages(context, base, paths, config);
       await runInteractions(context, base, config);
     } catch (error) {
-      failures.push(`${config.name} / indexed-page smoke: ${error.message || error}`);
+      failures.push(`${config.name} / audited-page smoke: ${error.message || error}`);
     } finally {
       await context.close();
     }
@@ -306,7 +360,8 @@ async function main() {
   const server = await startServer();
   const address = server.address();
   const base = `http://127.0.0.1:${address.port}`;
-  const paths = indexedPaths();
+  const auditState = auditedPaths();
+  const { paths } = auditState;
   const configurations = [
     {
       name: 'Chromium desktop',
@@ -361,7 +416,11 @@ async function main() {
     failures.forEach(failure => console.error(`- ${failure}`));
     process.exit(1);
   }
-  console.log(`Browser matrix audit passed: ${paths.length} indexed pages across 5 desktop/mobile configurations and 22 interaction scenarios.`);
+  console.log(
+    `Browser matrix audit passed: ${paths.length} unique pages (${auditState.toolCount} tool pages, ` +
+    `${auditState.indexedCount} sitemap paths) across 5 desktop/mobile configurations and ` +
+    `${interactionScenarioTotal} browser-profile interaction runs.`
+  );
 }
 
 main().catch(error => {

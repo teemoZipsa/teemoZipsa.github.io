@@ -89,7 +89,7 @@ async function runAxe(page) {
     resultTypes: ['violations'],
     runOnly: {
       type: 'tag',
-      values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']
+      values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice']
     }
   }));
 }
@@ -134,7 +134,7 @@ async function main() {
 
   try {
     for (const theme of themes) {
-      const context = await browser.newContext({ colorScheme: theme, serviceWorkers: 'block' });
+      const context = await browser.newContext({ colorScheme: theme, reducedMotion: 'reduce', serviceWorkers: 'block' });
       await context.addInitScript(selectedTheme => {
         try {
           localStorage.setItem('theme', selectedTheme);
@@ -192,7 +192,7 @@ async function main() {
 
   if (findings.length) {
     console.error(
-      `Accessibility audit failed (${findings.length} WCAG violation or runtime finding(s), ` +
+      `Accessibility audit failed (${findings.length} enabled WCAG/best-practice violation or runtime finding(s), ` +
       `${violationCount} axe violation(s) affecting ${affectedNodeCount} node(s)):`
     );
     findings.forEach(item => console.error(`\n${item}`));
@@ -201,7 +201,7 @@ async function main() {
 
   console.log(
     `Accessibility audit passed: ${files.length} tool pages in ${themes.length} themes, ` +
-    `${stateScanCount} initial/tab state scans, 0 WCAG A/AA violations.`
+    `${stateScanCount} initial/tab state scans, 0 enabled WCAG A/AA or best-practice violations.`
   );
 }
 

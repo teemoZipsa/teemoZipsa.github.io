@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -19,7 +20,6 @@
 
 <meta name="robots" content="noindex, follow">
 <style>
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
 .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:500px;max-width:100%;overflow:hidden}
@@ -31,7 +31,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 /* 조합 영역 */
 .combo-area{padding:20px 16px;text-align:center}
 .combo-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px}
-.emoji-slot{width:64px;height:64px;border-radius:16px;background:var(--bg-guide);border:2px dashed #3a3a6a;display:flex;align-items:center;justify-content:center;font-size:36px;cursor:pointer;transition:all .2s;user-select:none}
+.emoji-slot{width:64px;height:64px;padding:0;border-radius:16px;background:var(--bg-guide);border:2px dashed #3a3a6a;color:var(--text-primary);font-family:inherit;display:flex;align-items:center;justify-content:center;font-size:36px;cursor:pointer;transition:all .2s;user-select:none}
 .emoji-slot:hover{border-color:var(--accent);background:#252560}
 .emoji-slot.filled{border-style:solid;border-color:var(--accent)}
 .emoji-slot.active{border-color:var(--accent);box-shadow:0 0 12px rgba(167,139,250,.3)}
@@ -112,13 +112,14 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
     <h1>🎨 이모지 합치기</h1>
   </div>
 
   <!-- 초기 로딩 -->
-  <div class="init-loading" id="initLoading">
+  <div class="init-loading" id="initLoading" role="status" aria-live="polite">
     <div class="spinner-lg"></div>
     <p>이모지 데이터 로딩 중...</p>
   </div>
@@ -128,14 +129,14 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <!-- 조합 영역 -->
     <div class="combo-area">
       <div class="combo-row">
-        <div class="emoji-slot active" id="slot1" onclick="activateSlot(1)" title="이모지 선택">?</div>
+        <button type="button" class="emoji-slot active" id="slot1" onclick="activateSlot(1)" aria-pressed="true" aria-label="첫 번째 이모지 슬롯 선택됨, 비어 있음">?</button>
         <span class="combo-op">+</span>
-        <div class="emoji-slot" id="slot2" onclick="activateSlot(2)" title="이모지 선택">?</div>
+        <button type="button" class="emoji-slot" id="slot2" onclick="activateSlot(2)" aria-pressed="false" aria-label="두 번째 이모지 슬롯, 비어 있음">?</button>
         <span class="combo-op">=</span>
         <div style="width:64px;height:64px;display:flex;align-items:center;justify-content:center;font-size:36px" id="resultMini">?</div>
       </div>
 
-      <div class="result-area" id="resultArea">
+      <div class="result-area" id="resultArea" role="status" aria-live="polite" aria-atomic="true">
         <div class="result-placeholder" id="placeholder">이모지 두 개를 선택하세요 ☝️</div>
         <div class="result-loading" id="resultLoading"><div class="spinner"></div></div>
         <img class="result-img" id="resultImg" alt="조합 결과">
@@ -151,18 +152,18 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
 
     <!-- 카테고리 탭 -->
-    <div class="cat-tabs" id="catTabs">
-      <button class="cat-tab active" data-cat="face" title="표정">😀</button>
-      <button class="cat-tab" data-cat="animal" title="동물">🐱</button>
-      <button class="cat-tab" data-cat="food" title="음식">🍕</button>
-      <button class="cat-tab" data-cat="nature" title="자연">🌸</button>
-      <button class="cat-tab" data-cat="object" title="활동·물건">⚽</button>
-      <button class="cat-tab" data-cat="heart" title="하트·기호">❤️</button>
+    <div class="cat-tabs" id="catTabs" role="group" aria-label="이모지 카테고리">
+      <button class="cat-tab active" data-cat="face" aria-label="표정" aria-pressed="true">😀</button>
+      <button class="cat-tab" data-cat="animal" aria-label="동물" aria-pressed="false">🐱</button>
+      <button class="cat-tab" data-cat="food" aria-label="음식" aria-pressed="false">🍕</button>
+      <button class="cat-tab" data-cat="nature" aria-label="자연" aria-pressed="false">🌸</button>
+      <button class="cat-tab" data-cat="object" aria-label="활동과 물건" aria-pressed="false">⚽</button>
+      <button class="cat-tab" data-cat="heart" aria-label="하트와 기호" aria-pressed="false">❤️</button>
     </div>
 
     <!-- 이모지 그리드 -->
     <div class="emoji-grid-wrap">
-      <div class="emoji-grid" id="emojiGrid"></div>
+      <div class="emoji-grid" id="emojiGrid" role="group" aria-label="선택할 이모지"></div>
     </div>
   </div>
 
@@ -193,7 +194,8 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <p>인터넷 연결 상태를 확인해주세요. 이모지 데이터와 조합 이미지를 외부 서버에서 불러오기 때문에 인터넷 연결이 필요합니다.</p>
     </div>
   </details>
-    <footer class="footer"><span>Google Emoji Kitchen 기반</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+    </main>
+<footer class="footer"><span>Google Emoji Kitchen 기반</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -296,8 +298,11 @@ function renderGrid(cat) {
   emojis.forEach(em => {
     const btn = document.createElement('button');
     btn.className = 'emoji-btn';
+    btn.type = 'button';
     btn.textContent = em;
-    if (em === slot1Emoji || em === slot2Emoji) btn.classList.add('selected');
+    const selected = em === slot1Emoji || em === slot2Emoji;
+    btn.classList.toggle('selected', selected);
+    btn.setAttribute('aria-pressed', String(selected));
     btn.addEventListener('click', () => selectEmoji(em));
     $emojiGrid.appendChild(btn);
   });
@@ -307,8 +312,11 @@ function renderGrid(cat) {
 document.getElementById('catTabs').addEventListener('click', e => {
   const tab = e.target.closest('.cat-tab');
   if (!tab) return;
-  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-  tab.classList.add('active');
+  document.querySelectorAll('.cat-tab').forEach(t => {
+    const active = t === tab;
+    t.classList.toggle('active', active);
+    t.setAttribute('aria-pressed', String(active));
+  });
   renderGrid(tab.dataset.cat);
 });
 
@@ -317,6 +325,14 @@ function activateSlot(n) {
   activeSlot = n;
   $slot1.classList.toggle('active', n === 1);
   $slot2.classList.toggle('active', n === 2);
+  updateSlotAccessibility();
+}
+
+function updateSlotAccessibility() {
+  $slot1.setAttribute('aria-pressed', String(activeSlot === 1));
+  $slot2.setAttribute('aria-pressed', String(activeSlot === 2));
+  $slot1.setAttribute('aria-label', `첫 번째 이모지 슬롯${activeSlot === 1 ? ' 선택됨' : ''}, ${slot1Emoji || '비어 있음'}`);
+  $slot2.setAttribute('aria-label', `두 번째 이모지 슬롯${activeSlot === 2 ? ' 선택됨' : ''}, ${slot2Emoji || '비어 있음'}`);
 }
 
 // === 이모지 선택 ===
@@ -332,13 +348,16 @@ function selectEmoji(emoji) {
     $slot2.textContent = emoji;
     $slot2.classList.add('filled');
   }
+  updateSlotAccessibility();
   updateSelectedHighlight();
   if (slot1Emoji && slot2Emoji) tryCombo();
 }
 
 function updateSelectedHighlight() {
   document.querySelectorAll('.emoji-btn').forEach(btn => {
-    btn.classList.toggle('selected', btn.textContent === slot1Emoji || btn.textContent === slot2Emoji);
+    const selected = btn.textContent === slot1Emoji || btn.textContent === slot2Emoji;
+    btn.classList.toggle('selected', selected);
+    btn.setAttribute('aria-pressed', String(selected));
   });
 }
 
@@ -360,8 +379,9 @@ function tryCombo() {
     img.onload = () => {
       $resultLoading.style.display = 'none';
       $resultImg.src = url;
+      $resultImg.alt = `${slot1Emoji}와 ${slot2Emoji} 조합 결과`;
       $resultImg.style.display = 'block';
-      $resultMini.innerHTML = '<img src="'+url+'" style="width:48px;height:48px;object-fit:contain">';
+      $resultMini.innerHTML = '<img src="'+url+'" alt="" style="width:48px;height:48px;object-fit:contain">';
       $btnSave.disabled = false;
       $btnCopy.disabled = false;
     };

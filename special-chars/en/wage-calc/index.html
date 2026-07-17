@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -18,7 +19,6 @@
 <link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/wage-calc/">
 <meta name="robots" content="noindex, follow">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:'Inter',sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
   .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
@@ -52,7 +52,7 @@
   .r-card.after .r-value{color:var(--text-success)}
 
   .min-wage{background:var(--bg-success, #1a2a1a);border:1px solid var(--border-success, #2a4a2a);border-radius:10px;padding:10px 14px;font-size:11px;color:var(--text-success);display:flex;justify-content:space-between;align-items:center}
-  .min-wage button{background:var(--status-green-bg);border:none;color:var(--text-on-accent);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;transition:filter .15s}
+  .min-wage button{background:var(--status-green-bg);border:none;color:var(--text-on-accent);min-height:32px;padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;transition:filter .15s}
   .min-wage button:hover{filter:brightness(.9)}
 
   /* 목표 위젯 */
@@ -91,6 +91,7 @@
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
     <h1>💵 Wage Converter</h1>
@@ -109,36 +110,30 @@
           <label>Days / Week</label>
           <input aria-label="Work days per week" type="number" id="daysWeek" value="5" min="1" max="7" oninput="calc()">
         </div>
-        <div class="field">
-          <label>Weekly Allowance</label>
-          <select aria-label="Weekly allowance inclusion" id="weeklyHol" onchange="calc()">
-            <option value="yes" selected>Included (15+ hrs/week)</option>
-            <option value="no">Excluded</option>
-          </select>
-        </div>
       </div>
       <div class="field-row">
         <div class="field">
-          <label>⏱️ Overtime (daily, beyond 8h)</label>
-          <input aria-label="Overtime hours per week" type="number" id="overtime" value="0" min="0" max="16" step="0.5" oninput="calc()">
+          <label>⏱️ Extra overtime hours / week</label>
+          <input aria-label="Extra overtime hours per week" type="number" id="overtime" value="0" min="0" max="168" step="0.5" oninput="calc()">
         </div>
         <div class="field">
-          <label>🌙 Night Shift (10pm–6am)</label>
-          <input aria-label="Night work hours per week" type="number" id="nighttime" value="0" min="0" max="8" step="0.5" oninput="calc()">
+          <label>➕ Hours with 0.5× premium / week</label>
+          <input aria-label="Hours receiving an additional half-rate premium per week" type="number" id="nighttime" value="0" min="0" max="168" step="0.5" oninput="calc()">
         </div>
       </div>
     </div>
 
     <!-- 세금 공제 -->
     <div class="section">
-      <div class="section-title">🧾 Tax Deduction</div>
+      <div class="section-title">🧾 Estimated Deduction</div>
       <div class="field-row">
         <div class="field">
-          <label>Deduction Type</label>
-          <select aria-label="Deduction type" id="taxType" onchange="calc()">
-            <option value="none">No Deduction (Gross)</option>
-            <option value="insurance" selected>Social Insurance (~9.4%)</option>
-            <option value="freelance">Freelancer Tax (3.3%)</option>
+          <label>Illustrative Rate</label>
+          <select aria-label="Illustrative deduction rate" id="taxType" onchange="calc()">
+            <option value="none" selected>No Deduction (Gross)</option>
+            <option value="10">10% estimate</option>
+            <option value="20">20% estimate</option>
+            <option value="30">30% estimate</option>
           </select>
         </div>
       </div>
@@ -166,13 +161,13 @@
     </div>
 
     <div class="min-wage">
-      <span>2024 US Federal Min. Wage: <strong>$7.25/hr</strong></span>
+      <span>Quick rate: <strong>$7.25/hr</strong> (check local rules)</span>
       <button onclick="applyMinWage()">Apply</button>
     </div>
 
     <!-- 세전 결과 -->
     <div class="section-title" style="padding:0 4px;margin-top:4px">📊 Gross Pay (Before Tax)</div>
-    <div class="result-grid">
+    <div class="result-grid" role="status" aria-live="polite" aria-atomic="true">
       <div class="r-card" onclick="copyVal(this)">
         <div class="r-label">Hourly</div>
         <div class="r-value" id="rHourly">-</div>
@@ -189,7 +184,7 @@
 
     <!-- 세후 결과 -->
     <div class="after-tax" id="afterTax">
-      <div class="at-label" id="atLabel">💚 After Tax (Social Insurance Deducted)</div>
+      <div class="at-label" id="atLabel">💚 After Estimated Deduction</div>
       <div class="result-grid">
         <div class="r-card after" onclick="copyVal(this)">
           <div class="r-label">Net Hourly</div>
@@ -226,7 +221,7 @@
           <ol>
             <li>Enter any one of: hourly rate, monthly salary, or annual salary — the others auto-calculate.</li>
             <li>Adjust hours per day and days per week for accurate conversion.</li>
-            <li>Toggle the tax deduction type to see your take-home (net) pay.</li>
+            <li>Select an illustrative deduction rate to compare gross and estimated net pay.</li>
             <li>Use the "How many hours" feature to see how long you'd need to work for any purchase.</li>
           </ol>
         </div>
@@ -235,21 +230,21 @@
       <details class="guide">
         <summary>⏰ How is overtime pay calculated?</summary>
         <div class="guide-content">
-          <p>Overtime hours (beyond the standard 8-hour workday) are typically compensated at 1.5x the regular hourly rate. Night-shift hours (10pm–6am) receive an additional 0.5x premium. These multipliers are applied automatically in this calculator.</p>
+          <p>Extra overtime hours are valued at 1.5× the regular rate. The optional premium field adds another 0.5× for hours that already form part of the regular schedule. Overtime and premium rules vary by jurisdiction and contract, so enter only the hours and multiplier that apply to you.</p>
         </div>
       </details>
 
       <details class="guide">
-        <summary>📅 What is the Weekly Allowance?</summary>
+        <summary>📅 How are weekly and monthly hours converted?</summary>
         <div class="guide-content">
-          <p>In some labor systems, workers who work 15+ hours per week receive an additional paid day off equivalent. Toggle this on or off depending on your employment terms.</p>
+          <p>Scheduled weekly hours are hours per day × days per week. Monthly values use 52 weeks ÷ 12 months. The calculator does not add country-specific paid-weekly-holiday allowances automatically.</p>
         </div>
       </details>
 
       <details class="guide">
         <summary>🧾 How does the tax deduction work?</summary>
         <div class="guide-content">
-          <p>Social Insurance (~9.4%) covers pension, health, long-term care, and employment insurance. Freelancer Tax (3.3%) is a simplified withholding for independent contractors. Your actual tax rate may vary based on your jurisdiction and circumstances.</p>
+          <p>The deduction selector is only a simple percentage estimate. It does not calculate tax brackets, credits, insurance, filing status, or local rules, and should not be treated as payroll or tax advice.</p>
         </div>
       </details>
     </section>
@@ -264,22 +259,38 @@
       </div>
     </section>
 
-    <footer class="footer"><span>Wage Converter</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
+    </main>
+<footer class="footer"><span>Wage Converter</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 <script>
 let lastInput = '';
 
 function formatMoney(el) {
-  let v = el.value.replace(/[^0-9]/g,'');
-  if(v) el.value = parseInt(v).toLocaleString('en-US');
-  else el.value = '';
+  const raw = el.value.replace(/,/g, '').replace(/[^0-9.]/g, '');
+  const dot = raw.indexOf('.');
+  const wholeRaw = (dot >= 0 ? raw.slice(0, dot) : raw).replace(/^0+(?=\d)/, '');
+  const whole = wholeRaw || (dot >= 0 ? '0' : '');
+  const fraction = dot >= 0 ? raw.slice(dot + 1).replace(/\./g, '').slice(0, 2) : '';
+  const grouped = whole ? Number(whole).toLocaleString('en-US') : '';
+  el.value = grouped + (dot >= 0 ? '.' + fraction : '');
 }
 function formatGoal(el) { formatMoney(el); }
 function parseNum(id) {
-  return parseInt(document.getElementById(id).value.replace(/[^0-9]/g,'')) || 0;
+  const value = Number(document.getElementById(id).value.replace(/,/g, ''));
+  return Number.isFinite(value) && value >= 0 ? value : 0;
 }
 function fmt(n) {
-  return '$' + Math.round(n).toLocaleString('en-US');
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+}
+function fmtInput(n) {
+  return Number(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+}
+function readRange(id, min, max) {
+  const el = document.getElementById(id);
+  const value = Number(el.value);
+  const valid = Number.isFinite(value) && value >= min && value <= max;
+  el.setAttribute('aria-invalid', String(!valid));
+  return valid ? value : null;
 }
 function formatAndCalc(el, src) {
   formatMoney(el);
@@ -287,46 +298,31 @@ function formatAndCalc(el, src) {
   calc();
 }
 function calc() {
-  const hpd = parseFloat(document.getElementById('hoursDay').value)||8;
-  const dpw = parseInt(document.getElementById('daysWeek').value)||5;
-  const inclHol = document.getElementById('weeklyHol').value === 'yes';
-  const ot = parseFloat(document.getElementById('overtime').value)||0;
-  const nt = parseFloat(document.getElementById('nighttime').value)||0;
+  const hpd = readRange('hoursDay', 1, 24);
+  const dpw = readRange('daysWeek', 1, 7);
+  const ot = readRange('overtime', 0, 168);
+  const nt = readRange('nighttime', 0, 168);
   const taxType = document.getElementById('taxType').value;
+  if ([hpd, dpw, ot, nt].some(value => value === null)) return;
 
-  // 주당 기본 시간
   const baseWeeklyHours = hpd * dpw;
-  // The weekly allowance is only eligible from 15 scheduled hours per week.
-  const weeklyHolEligible = baseWeeklyHours >= 15;
-  const weeklyHolHours = (inclHol && weeklyHolEligible) ? hpd : 0;
-  // 연장/야간 주당 시간 (근무일 기준)
-  const otWeekly = ot * dpw;
-  const ntWeekly = nt * dpw;
-
-  // 기본 급여 시간 (월)
-  const weeksPerMonth = 4.345;
-  const baseMonthlyHours = (baseWeeklyHours + weeklyHolHours) * weeksPerMonth;
-  // 연장수당 시간 (1.5배)
-  const otMonthlyValue = otWeekly * 1.5 * weeksPerMonth;
-  // 야간수당 시간 (0.5배 추가, 기본급 포함이므로 총 1.5배 효과)
-  const ntMonthlyValue = ntWeekly * 0.5 * weeksPerMonth;
-  // 총 유효 시간 (시급 × 이 시간 = 월급)
-  const effectiveMonthlyHours = baseMonthlyHours + otMonthlyValue + ntMonthlyValue;
+  const weeksPerMonth = 52 / 12;
+  const effectiveMonthlyHours = (baseWeeklyHours + (ot * 1.5) + (nt * 0.5)) * weeksPerMonth;
 
   let hourly=0, monthly=0, yearly=0;
 
   if(lastInput==='hourly'){
     hourly = parseNum('hourly');
-    monthly = Math.round(hourly * effectiveMonthlyHours);
+    monthly = hourly * effectiveMonthlyHours;
     yearly = monthly * 12;
   } else if(lastInput==='monthly'){
     monthly = parseNum('monthly');
-    hourly = Math.round(monthly / effectiveMonthlyHours);
+    hourly = monthly / effectiveMonthlyHours;
     yearly = monthly * 12;
   } else if(lastInput==='yearly'){
     yearly = parseNum('yearly');
-    monthly = Math.round(yearly / 12);
-    hourly = Math.round(monthly / effectiveMonthlyHours);
+    monthly = yearly / 12;
+    hourly = monthly / effectiveMonthlyHours;
   } else return;
 
   // 세전 결과
@@ -335,9 +331,9 @@ function calc() {
   document.getElementById('rYearly').textContent = yearly ? fmt(yearly) : '-';
 
   // 다른 필드 자동 채움
-  if(lastInput!=='hourly' && hourly) document.getElementById('hourly').value = hourly.toLocaleString('en-US');
-  if(lastInput!=='monthly' && monthly) document.getElementById('monthly').value = monthly.toLocaleString('en-US');
-  if(lastInput!=='yearly' && yearly) document.getElementById('yearly').value = yearly.toLocaleString('en-US');
+  if(lastInput!=='hourly' && hourly) document.getElementById('hourly').value = fmtInput(hourly);
+  if(lastInput!=='monthly' && monthly) document.getElementById('monthly').value = fmtInput(monthly);
+  if(lastInput!=='yearly' && yearly) document.getElementById('yearly').value = fmtInput(yearly);
 
   // 세후 계산
   const afterTaxEl = document.getElementById('afterTax');
@@ -345,13 +341,12 @@ function calc() {
     afterTaxEl.style.display = 'none';
   } else {
     afterTaxEl.style.display = 'block';
-    let rate = taxType === 'insurance' ? 0.0939 : 0.033;
-    let label = taxType === 'insurance' ? '💚 After Tax (Social Insurance 9.4%)' : '💚 After Tax (Freelancer 3.3%)';
-    document.getElementById('atLabel').textContent = label;
+    const rate = Number(taxType) / 100;
+    document.getElementById('atLabel').textContent = `💚 After Estimated ${taxType}% Deduction`;
 
-    const atHourly = Math.round(hourly * (1 - rate));
-    const atMonthly = Math.round(monthly * (1 - rate));
-    const atYearly = Math.round(yearly * (1 - rate));
+    const atHourly = hourly * (1 - rate);
+    const atMonthly = monthly * (1 - rate);
+    const atYearly = yearly * (1 - rate);
 
     document.getElementById('rHourlyAt').textContent = atHourly ? fmt(atHourly) : '-';
     document.getElementById('rMonthlyAt').textContent = atMonthly ? fmt(atMonthly) : '-';
@@ -371,12 +366,12 @@ function applyMinWage() {
 }
 
 function calcGoal() {
-  const goalRaw = parseInt(document.getElementById('goalAmount').value.replace(/[^0-9]/g,''));
+  const goalRaw = Number(document.getElementById('goalAmount').value.replace(/,/g, ''));
   const hourly = window._currentHourly || 0;
   const hpd = window._currentHpd || 8;
   const el = document.getElementById('goalResult');
 
-  if(!goalRaw || !hourly) { el.style.display = 'none'; return; }
+  if(!Number.isFinite(goalRaw) || goalRaw <= 0 || !hourly) { el.style.display = 'none'; return; }
 
   const hours = goalRaw / hourly;
   const days = hours / hpd;

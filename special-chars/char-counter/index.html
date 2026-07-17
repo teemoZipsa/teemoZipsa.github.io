@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -19,7 +20,6 @@
 
 <meta name="robots" content="noindex, follow">
 <style>
-  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px}
   .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
@@ -66,7 +66,7 @@
   @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
   .report-box strong{color:var(--accent-text)}
   .related-tools{margin:12px;padding:16px;background:var(--bg-input);border-radius:8px;border:1px solid var(--border)}
-  .related-tools h3{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text-primary);display:flex;align-items:center;gap:6px}
+  .related-tools h2{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text-primary);display:flex;align-items:center;gap:6px}
   .tool-tags{display:flex;flex-wrap:wrap;gap:8px}
   .tool-tag{padding:6px 12px;background:var(--bg-app);border:1px solid var(--border);border-radius:20px;font-size:12px;font-weight:600;color:var(--text-secondary);text-decoration:none;transition:all .2s}
   .tool-tag:hover{background:var(--accent);color:var(--text-on-accent);border-color:var(--accent)}
@@ -82,6 +82,7 @@
 <body>
 
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
     <h1>📏 글자 수 계산기</h1>
@@ -125,22 +126,25 @@
     <summary>✅ 글자 수 및 바이트 계산기 완벽 가이드</summary>
     <div class="guide-content">
       <strong>1. 자기소개서 바이트 계산, 왜 중요한가요?</strong>
-      <p>이력서나 자소서를 작성할 때 기업(사람인, 잡코리아 등)마다 요구하는 바이트 기준이 다릅니다. 이는 내부 데이터베이스 시스템이 한글을 처리하는 방식(인코딩)이 다르기 때문입니다. 우리 툴은 <strong>UTF-8과 EUC-KR</strong> 두 가지 기준을 모두 제공하여 어떤 제출처에도 완벽하게 대응할 수 있도록 돕습니다.</p>
+      <p>이력서나 자소서를 작성할 때 제출처마다 요구하는 바이트 기준이 다릅니다. 이 도구는 <strong>UTF-8</strong> 바이트와 브라우저의 웹 호환 <strong>EUC-KR</strong> 문자표를 구분해 계산합니다. 제출처가 별도 계산 규칙을 안내한다면 그 규칙을 우선 확인하세요.</p>
       
       <strong>2. EUC-KR과 UTF-8의 차이점 (한글 2바이트 vs 3바이트)</strong>
-      <p>• <strong>EUC-KR (취업포털 기준):</strong> 한글 및 한자 1글자를 <strong>2바이트</strong>로, 영문/숫자/띄어쓰기는 1바이트로 계산합니다. 과거 시스템이나 일부 채용 포털이 주로 채택한 방식입니다.<br>
-      • <strong>UTF-8 (웹 최신 표준):</strong> 한글 및 한자 1글자를 <strong>3바이트</strong>로, 영문/숫자는 1바이트로 계산합니다. 최신 시스템(네이버, 카카오 등)에서 주로 사용하는 방식입니다.</p>
+      <p>• <strong>EUC-KR:</strong> 표현 가능한 한글·한자는 보통 2바이트이고 ASCII는 1바이트입니다. 이모지와 일부 현대 유니코드 문자는 표현할 수 없으므로, 그런 문자가 있으면 가짜 합계 대신 ‘지원 불가’를 표시합니다.<br>
+      • <strong>UTF-8:</strong> 모든 유니코드 텍스트를 인코딩할 수 있으며 글자에 따라 바이트 수가 달라집니다.</p>
 
-      <strong>3. 단어 수는 어떻게 계산되나요?</strong>
+      <strong>3. 이모지나 결합 문자는 몇 글자인가요?</strong>
+      <p>사용자가 화면에서 한 글자로 보는 결합 이모지와 결합 문자를 유니코드 grapheme 기준으로 셉니다. 브라우저가 이 기준을 지원하지 않는 경우에는 유니코드 코드 포인트 단위로 대체 계산합니다.</p>
+
+      <strong>4. 단어 수는 어떻게 계산되나요?</strong>
       <p>띄어쓰기나 줄바꿈으로 구분된 문자열의 덩어리를 1개 단어로 셉니다. 영문 에세이(word count)나 논문 작성 시 자주 사용되며, 번역 단가 기준이나 구글 SEO 요건인 "1,000단어 이상"을 확인할 때 유용한 지표입니다.</p>
 
-      <strong>4. 글자 수 제한 설정 시 최적의 팁</strong>
+      <strong>5. 글자 수 제한 설정 시 최적의 팁</strong>
       <p>제한 설정에서 목표 글자 수나 바이트를 지정하면, 실시간 진행률(Progress 바)과 동적 리포트가 함께 나타납니다. <strong>실시간 잔여량 및 초과 알림</strong>을 통해 퇴고 작업을 훨씬 빠르고 정확하게 마무리할 수 있습니다.</p>
     </div>
   </details>
 
   <div class="related-tools">
-    <h3>💡 유용한 업무/문서 도구</h3>
+    <h2>💡 유용한 업무/문서 도구</h2>
     <div class="tool-tags">
       <a href="/special-chars/biz-day-calc/" class="tool-tag">📅 영업일 계산기</a>
       <a href="/special-chars/date-calc/" class="tool-tag">⏳ D-Day 계산기</a>
@@ -149,7 +153,8 @@
     </div>
   </div>
 
-    <footer class="footer"><span>실시간 분석</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+    </main>
+<footer class="footer"><span>실시간 분석</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -157,15 +162,54 @@
 <script>
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),1500)}
 
+const graphemeSegmenter=typeof Intl.Segmenter==='function'?new Intl.Segmenter(undefined,{granularity:'grapheme'}):null;
+let euckrCharset;
+
+function splitGraphemes(text){return graphemeSegmenter?Array.from(graphemeSegmenter.segment(text),item=>item.segment):[...text]}
+function countGraphemes(text){return splitGraphemes(text).length}
+
+function getEuckrCharset(){
+  if(euckrCharset!==undefined)return euckrCharset;
+  try{
+    const trails=[];
+    for(let value=0x41;value<=0x5a;value++)trails.push(value);
+    for(let value=0x61;value<=0x7a;value++)trails.push(value);
+    for(let value=0x81;value<=0xfe;value++)trails.push(value);
+    const encoded=new Uint8Array(126*trails.length*3);
+    let offset=0;
+    for(let lead=0x81;lead<=0xfe;lead++)for(const trail of trails){encoded[offset++]=lead;encoded[offset++]=trail;encoded[offset++]=0}
+    const decoded=new TextDecoder('euc-kr').decode(encoded).split('\0');
+    euckrCharset=new Set(decoded.filter(value=>value&&!value.includes('\uFFFD')&&[...value].length===1));
+  }catch(error){euckrCharset=null}
+  return euckrCharset;
+}
+
+function calcEuckrBytes(text){
+  const charset=getEuckrCharset();
+  const graphemes=splitGraphemes(text);
+  if(!charset)return{bytes:0,unsupported:graphemes.length,available:false};
+  let bytes=0,unsupported=0;
+  for(const grapheme of graphemes){
+    let graphemeBytes=0,representable=true;
+    for(const character of grapheme){
+      if(character.codePointAt(0)<=0x7f)graphemeBytes+=1;
+      else if(charset.has(character))graphemeBytes+=2;
+      else representable=false;
+    }
+    if(representable)bytes+=graphemeBytes;else unsupported++;
+  }
+  return{bytes,unsupported,available:true};
+}
+
 // 자동 저장: 페이지 로드 시 이전 입력 복원
-(function(){const saved=localStorage.getItem('charCounter_text');if(saved){document.getElementById('counterInput').value=saved;updateCounter()}})();
+(function(){try{const saved=localStorage.getItem('charCounter_text');if(saved){document.getElementById('counterInput').value=saved;updateCounter()}}catch(error){}})();
 
 function updateCounter(){
   const text=document.getElementById('counterInput').value;
   // 자동 저장: 입력할 때마다 localStorage에 저장
   try{localStorage.setItem('charCounter_text',text)}catch(e){}
-  const chars=[...text].length;
-  const noSpace=[...text.replace(/\s/g,'')].length;
+  const chars=countGraphemes(text);
+  const noSpace=countGraphemes(text.replace(/\s/g,''));
   const words=text.trim()?text.trim().split(/\s+/).length:0;
   const lines=text?text.split('\n').length:0;
   const utf8Bytes=new TextEncoder().encode(text).length;
@@ -175,7 +219,10 @@ function updateCounter(){
   document.getElementById('statWords').textContent=words.toLocaleString();
   document.getElementById('statLines').textContent=lines.toLocaleString();
   const limitType=document.getElementById('limitType').value;
-  if(limitType==='bytes-euckr'){document.getElementById('statBytes').textContent=euckrBytes.toLocaleString();document.getElementById('statBytesType').textContent='EUC-KR'}
+  if(limitType==='bytes-euckr'){
+    document.getElementById('statBytes').textContent=euckrBytes.available&&euckrBytes.unsupported===0?euckrBytes.bytes.toLocaleString():'—';
+    document.getElementById('statBytesType').textContent=!euckrBytes.available?'EUC-KR 미지원':euckrBytes.unsupported?`EUC-KR 불가 ${euckrBytes.unsupported}자`:'EUC-KR';
+  }
   else{document.getElementById('statBytes').textContent=utf8Bytes.toLocaleString();document.getElementById('statBytesType').textContent='UTF-8'}
   document.getElementById('limitValue').style.display=limitType==='none'?'none':'';
   updateProgress(limitType,chars,utf8Bytes,euckrBytes);
@@ -192,12 +239,15 @@ function updateReportBox(text, chars, noSpace, words, limitType) {
   const euckr = calcEuckrBytes(text);
   const utf8 = new TextEncoder().encode(text).length;
   let reportHTML = `입력하신 텍스트는 총 <strong>${chars.toLocaleString()}자</strong>(공백 제외 <strong>${noSpace.toLocaleString()}자</strong>) 분량이며, <strong>${words.toLocaleString()}개</strong>의 단어로 구성되어 있습니다.<br>`;
-  reportHTML += `이력서 및 자소서 제출 시 자주 쓰이는 바이트 기준, <strong>EUC-KR(한글 2바이트)로는 ${euckr.toLocaleString()} Byte</strong>, <strong>UTF-8(한글 3바이트)로는 ${utf8.toLocaleString()} Byte</strong>를 차지합니다.`;
+  reportHTML += euckr.available&&euckr.unsupported===0
+    ? `웹 호환 <strong>EUC-KR로는 ${euckr.bytes.toLocaleString()} Byte</strong>, <strong>UTF-8로는 ${utf8.toLocaleString()} Byte</strong>를 차지합니다.`
+    : `웹 호환 EUC-KR로 표현할 수 없는 글자가 <strong>${euckr.unsupported.toLocaleString()}자</strong> 포함되어 EUC-KR 합계를 제공하지 않습니다. <strong>UTF-8로는 ${utf8.toLocaleString()} Byte</strong>입니다.`;
   
   const limit = parseInt(document.getElementById('limitValue').value)||0;
   if(limitType !== 'none' && limit > 0) {
-    let current = limitType==='chars' ? chars : (limitType==='bytes-utf8' ? utf8 : euckr);
+    let current = limitType==='chars' ? chars : (limitType==='bytes-utf8' ? utf8 : (euckr.available&&euckr.unsupported===0?euckr.bytes:null));
     let unit = limitType==='chars' ? '자' : 'Byte';
+    if(current===null){reportHTML += `<br><br>👉 EUC-KR로 표현할 수 없는 글자를 제거하거나 UTF-8 제한을 선택해야 정확한 잔여량을 계산할 수 있습니다.`;reportBox.innerHTML=reportHTML;reportBox.style.display='block';return}
     let diff = limit - current;
     if(diff > 0) {
        reportHTML += `<br><br>👉 설정한 제한(${limit.toLocaleString()}${unit})까지 <strong>${diff.toLocaleString()}${unit} 남았습니다.</strong>`;
@@ -212,15 +262,18 @@ function updateReportBox(text, chars, noSpace, words, limitType) {
   reportBox.style.display = 'block';
 }
 
-function calcEuckrBytes(text){let bytes=0;for(const ch of text){bytes+=ch.codePointAt(0)<=0x7F?1:2}return bytes}
-
 function updateProgress(limitType,chars,utf8,euckr){
   const wrap=document.getElementById('progressWrap');
   if(limitType==='none'){wrap.style.display='none';return}
   const limit=parseInt(document.getElementById('limitValue').value)||0;
   if(!limit){wrap.style.display='none';return}
   wrap.style.display='';
-  let current=limitType==='chars'?chars:limitType==='bytes-utf8'?utf8:euckr;
+  if(limitType==='bytes-euckr'&&(!euckr.available||euckr.unsupported>0)){
+    const fill=document.getElementById('progressFill');fill.style.width='0%';fill.className='progress-fill over';
+    document.getElementById('progressText').textContent=`EUC-KR 지원 불가 ${euckr.unsupported.toLocaleString()}자`;
+    return;
+  }
+  let current=limitType==='chars'?chars:limitType==='bytes-utf8'?utf8:euckr.bytes;
   const pct=Math.min((current/limit)*100,100);
   const fill=document.getElementById('progressFill');
   fill.style.width=pct+'%';
@@ -232,10 +285,11 @@ function clearCounter(){document.getElementById('counterInput').value='';try{loc
 
 function copyStats(){
   const text=document.getElementById('counterInput').value;
-  const chars=[...text].length;const noSpace=[...text.replace(/\s/g,'')].length;
+  const chars=countGraphemes(text);const noSpace=countGraphemes(text.replace(/\s/g,''));
   const words=text.trim()?text.trim().split(/\s+/).length:0;const lines=text?text.split('\n').length:0;
   const utf8=new TextEncoder().encode(text).length;const euckr=calcEuckrBytes(text);
-  const result=`전체 글자: ${chars}\n공백 제외: ${noSpace}\n단어 수: ${words}\n줄 수: ${lines}\nUTF-8 바이트: ${utf8}\nEUC-KR 바이트: ${euckr}`;
+  const euckrText=euckr.available&&euckr.unsupported===0?`${euckr.bytes}`:`지원 불가 (${euckr.unsupported}자)`;
+  const result=`전체 글자: ${chars}\n공백 제외: ${noSpace}\n단어 수: ${words}\n줄 수: ${lines}\nUTF-8 바이트: ${utf8}\nEUC-KR 바이트: ${euckrText}`;
   navigator.clipboard.writeText(result).then(()=>showToast('결과가 복사되었습니다!'));
 }
 </script>

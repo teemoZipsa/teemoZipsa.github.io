@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -19,7 +20,6 @@
 
 <meta name="robots" content="noindex, follow">
 <style>
-  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
   *{margin:0;padding:0;box-sizing:border-box}
   body{
     font-family:'Pretendard',-apple-system,sans-serif;
@@ -145,29 +145,30 @@
 <body>
 
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
     <h1>🎤 발표시간 계산기</h1>
   </div>
 
   <div class="body">
-    <textarea class="script-area" id="script" placeholder="여기에 발표 스크립트를 붙여넣으세요...&#10;&#10;입력하는 즉시 예상 발표 시간이 계산됩니다." oninput="calc()"></textarea>
+    <textarea class="script-area" id="script" aria-label="발표 대본" placeholder="여기에 발표 스크립트를 붙여넣으세요...&#10;&#10;입력하는 즉시 예상 발표 시간이 계산됩니다." oninput="calc()"></textarea>
 
     <div class="speed-row">
       <span class="speed-label">🗣️ 말하기 속도</span>
-      <input aria-label="말하기 속도" type="range" class="speed-slider" id="speedSlider" min="200" max="500" value="330" step="10" oninput="updateSpeed()">
-      <span class="speed-value" id="speedDisplay">330 글자/분</span>
+      <input aria-label="말하기 속도" aria-describedby="speedDisplay" type="range" class="speed-slider" id="speedSlider" min="200" max="500" value="330" step="10" oninput="updateSpeed()">
+      <output class="speed-value" id="speedDisplay" for="speedSlider">330 글자/분</output>
     </div>
 
-    <div class="speed-presets">
-      <button class="speed-preset" onclick="setSpeed(250)">🐢 느리게 (250)</button>
-      <button class="speed-preset active" onclick="setSpeed(330)">🙂 보통 (330)</button>
-      <button class="speed-preset" onclick="setSpeed(400)">🐇 빠르게 (400)</button>
-      <button class="speed-preset" onclick="setSpeed(470)">⚡ 매우 빠르게 (470)</button>
+    <div class="speed-presets" role="group" aria-label="말하기 속도 프리셋">
+      <button type="button" class="speed-preset" aria-pressed="false" onclick="setSpeed(250)">🐢 느리게 (250)</button>
+      <button type="button" class="speed-preset active" aria-pressed="true" onclick="setSpeed(330)">🙂 보통 (330)</button>
+      <button type="button" class="speed-preset" aria-pressed="false" onclick="setSpeed(400)">🐇 빠르게 (400)</button>
+      <button type="button" class="speed-preset" aria-pressed="false" onclick="setSpeed(470)">⚡ 매우 빠르게 (470)</button>
     </div>
 
     <div class="result" id="result">
-      <div class="result-main">
+      <div class="result-main" role="status" aria-live="polite" aria-atomic="true">
         <div class="result-time" id="resultTime">0:00</div>
         <div class="result-sub" id="resultSub">예상 발표 시간</div>
       </div>
@@ -239,7 +240,8 @@
       </div>
     </div>
   </section>
-    <footer class="footer"><span>한국어 평균 말하기 속도: 약 330자/분</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+    </main>
+<footer class="footer"><span>한국어 평균 말하기 속도: 약 330자/분</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <script>

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -19,7 +20,6 @@
 
 <meta name="robots" content="noindex, follow">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
 .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
@@ -112,6 +112,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
     <h1>⏱️ Timer / Stopwatch</h1>
@@ -190,6 +191,12 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
         </ul>
       </div>
     </details>
+    <details class="guide">
+      <summary>Will the alarm work in the background?</summary>
+      <div class="guide-content">
+        The countdown is corrected against the actual end time, but a browser cannot guarantee sound while a tab or mobile device is fully suspended. When you return, the page immediately reconciles the elapsed time and attempts the alarm. Keep the tab open and use a system alarm as a backup for anything critical.
+      </div>
+    </details>
     <div class="related-tools">
       <h3>🛠️ Recommended Utility Tools</h3>
       <div class="tools-grid">
@@ -208,7 +215,8 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       </div>
     </div>
   </section>
-    <footer class="footer"><span>Supports background audio alarms</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
+    </main>
+<footer class="footer"><span>Corrected against actual elapsed time</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -221,16 +229,40 @@ let intervalId = null;
 
 // Timer state
 let timerRemaining = 0; // ms
+let timerEndTime = 0;
+let timerFinished = false;
 
 // Stopwatch state
 let swElapsed = 0; // ms
 let swStart = 0;
 let laps = [];
 
-// Audio context for alarm
+// Prime audio from the user's Start gesture so completion has the best chance
+// of sounding. Browsers may still suspend a fully backgrounded page.
+let alarmAudioContext = null;
+function getAlarmAudioContext() {
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) return null;
+  if (!alarmAudioContext || alarmAudioContext.state === 'closed') alarmAudioContext = new AudioContextClass();
+  return alarmAudioContext;
+}
+
+function primeAlarmAudio() {
+  try {
+    const ctx = getAlarmAudioContext();
+    if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {});
+  } catch (e) { /* silent fallback */ }
+}
+
+function suspendAlarmAudio() {
+  try { if (alarmAudioContext && alarmAudioContext.state === 'running') alarmAudioContext.suspend().catch(() => {}); } catch (e) {}
+}
+
 function playAlarm() {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = getAlarmAudioContext();
+    if (!ctx) return;
+    const sound = () => {
     [0, 200, 400].forEach(delay => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -242,6 +274,9 @@ function playAlarm() {
       osc.start(ctx.currentTime + delay / 1000);
       osc.stop(ctx.currentTime + delay / 1000 + 0.15);
     });
+    setTimeout(() => { if (ctx.state === 'running') ctx.suspend().catch(() => {}); }, 1000);
+    };
+    if (ctx.state === 'suspended') ctx.resume().then(sound).catch(() => {}); else sound();
   } catch (e) { /* silent fallback */ }
 }
 
@@ -271,6 +306,7 @@ function clampInput(el, max) {
 function syncTimerFromInputs() {
   if (mode !== 'timer' || running) return;
   timerRemaining = getTimerMs();
+  timerFinished = false;
   updateDisplay();
 }
 
@@ -306,7 +342,7 @@ function formatTime(ms, showMs) {
 
 function updateDisplay() {
   let ms = mode === 'timer' ? timerRemaining : swElapsed;
-  if (mode === 'timer' && !running && timerRemaining === 0) {
+  if (mode === 'timer' && !running && timerRemaining === 0 && !timerFinished) {
     ms = getTimerMs();
   }
   const f = formatTime(ms, mode === 'stopwatch');
@@ -322,54 +358,73 @@ function updateDisplay() {
   }
 }
 
+function finishTimer() {
+  if (mode !== 'timer') return;
+  timerRemaining = 0;
+  timerEndTime = 0;
+  timerFinished = true;
+  running = false;
+  clearInterval(intervalId);
+  intervalId = null;
+  document.getElementById('btnStart').textContent = '▶';
+  document.getElementById('btnStart').classList.remove('running');
+  updateDisplay();
+  playAlarm();
+  showToast('⏰ Timer Complete!');
+}
+
+function reconcileRunningClock() {
+  if (!running) return;
+  if (mode === 'timer') {
+    timerRemaining = Math.max(0, timerEndTime - Date.now());
+    if (timerRemaining === 0) { finishTimer(); return; }
+    updateDisplay();
+    return;
+  }
+  const current = swElapsed + (Date.now() - swStart);
+  const f = formatTime(current, true);
+  document.getElementById('display').textContent = f.main;
+  document.getElementById('displayMs').textContent = f.ms;
+  document.title = f.main + f.ms + ' — Stopwatch';
+}
+
 function doStartStop() {
   if (running) {
     // Stop
+    if (mode === 'timer') {
+      timerRemaining = Math.max(0, timerEndTime - Date.now());
+      if (timerRemaining === 0) { finishTimer(); return; }
+      timerEndTime = 0;
+    }
     running = false;
     clearInterval(intervalId);
+    intervalId = null;
     if (mode === 'stopwatch') {
       swElapsed += Date.now() - swStart;
     }
     document.getElementById('btnStart').textContent = '▶';
     document.getElementById('btnStart').classList.remove('running');
+    if (mode === 'timer') suspendAlarmAudio();
     updateDisplay();
     return;
   }
 
   // Start
   if (mode === 'timer') {
+    primeAlarmAudio();
     if (timerRemaining === 0) {
       timerRemaining = getTimerMs();
     }
     if (timerRemaining <= 0) return;
-    const endTime = Date.now() + timerRemaining;
+    timerFinished = false;
+    timerEndTime = Date.now() + timerRemaining;
     running = true;
-    intervalId = setInterval(() => {
-      timerRemaining = endTime - Date.now();
-      if (timerRemaining <= 0) {
-        timerRemaining = 0;
-        running = false;
-        clearInterval(intervalId);
-        document.getElementById('btnStart').textContent = '▶';
-        document.getElementById('btnStart').classList.remove('running');
-        updateDisplay();
-        playAlarm();
-        showToast('⏰ Timer Complete!');
-        return;
-      }
-      updateDisplay();
-    }, 50);
+    intervalId = setInterval(reconcileRunningClock, 100);
   } else {
     // Stopwatch
     swStart = Date.now();
     running = true;
-    intervalId = setInterval(() => {
-      const current = swElapsed + (Date.now() - swStart);
-      const f = formatTime(current, true);
-      document.getElementById('display').textContent = f.main;
-      document.getElementById('displayMs').textContent = f.ms;
-      if (running) document.title = f.main + f.ms + ' — Stopwatch';
-    }, 30);
+    intervalId = setInterval(reconcileRunningClock, 30);
   }
 
   document.getElementById('btnStart').textContent = '■';
@@ -379,12 +434,16 @@ function doStartStop() {
 function doReset() {
   running = false;
   clearInterval(intervalId);
+  intervalId = null;
   timerRemaining = 0;
+  timerEndTime = 0;
+  timerFinished = false;
   swElapsed = 0;
   laps = [];
   document.getElementById('lapsContainer').innerHTML = '';
   document.getElementById('btnStart').textContent = '▶';
   document.getElementById('btnStart').classList.remove('running');
+  suspendAlarmAudio();
   document.title = '⏱️ Timer / Stopwatch — TeemoZipsa';
   updateDisplay();
 }
@@ -424,6 +483,9 @@ document.addEventListener('keydown', e => {
   if (e.code === 'KeyR') doReset();
   if (e.code === 'KeyL' && mode === 'stopwatch') doLap();
 });
+
+document.addEventListener('visibilitychange', reconcileRunningClock);
+window.addEventListener('pageshow', reconcileRunningClock);
 
 updateDisplay();
 

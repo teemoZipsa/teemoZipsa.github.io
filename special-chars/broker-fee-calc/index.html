@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -18,7 +19,6 @@
 <link rel="canonical" href="https://teemozipsa.github.io/special-chars/broker-fee-calc/">
 
 <style>
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
 .app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:520px;max-width:100%;overflow:hidden}
@@ -94,12 +94,12 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
 
 .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:10px}
-.report-box h3 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
+.report-box h2 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
 .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
 .report-box strong {color:var(--text-primary);font-weight:600}
 
 .related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:0 12px 12px}
-.related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.related-tools h2 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
 .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
 .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
@@ -119,6 +119,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
     <h1>🏠 부동산 중개수수료 계산기</h1>
@@ -194,7 +195,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
 
     <!-- 결과 -->
-    <div class="summary" id="summary"></div>
+    <div class="summary" id="summary" role="status" aria-live="polite" aria-atomic="true"></div>
 
     <!-- 상세 내역 -->
     <div class="detail-box" id="detailBox"></div>
@@ -228,7 +229,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </details>
 
   <div class="related-tools">
-    <h3>🔗 연관 금융/생활 계산기</h3>
+    <h2>🔗 연관 금융/생활 계산기</h2>
     <div class="tool-list">
       <a href="/special-chars/loan-calc/"><span>💰 대출 이자 계산기</span><span>바로가기 →</span></a>
       <a href="/special-chars/compound-interest/"><span>📈 복리 이자 계산기</span><span>바로가기 →</span></a>
@@ -236,7 +237,8 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
   </div>
 
-  <footer class="footer"><span>2021.10 개정 기준 · 실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+  </main>
+<footer class="footer"><span>2021.10 개정 기준 · 실시간 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -495,7 +497,7 @@ function calc() {
   const report = document.getElementById('analysisReport');
   report.style.display = 'flex';
   
-  let reportHTML = `<h3>💡 부동산 중개보수 진단 리포트</h3>`;
+  let reportHTML = `<h2>💡 부동산 중개보수 진단 리포트</h2>`;
   reportHTML += `<p>선택하신 <strong>${propNames[propType]} ${tradeNames[tradeType]}</strong> 거래(기준금액 <strong>${fmt(amount)}원</strong>)에 적용되는 법정 최대 중개보수는 <strong>${fmt(fee)}원</strong>입니다.</p>`;
   
   if (limitApplied) {

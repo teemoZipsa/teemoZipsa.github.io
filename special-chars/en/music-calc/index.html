@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -18,7 +19,6 @@
 <link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/music-calc/">
 <meta name="robots" content="noindex, follow">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
 .app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:560px;max-width:100%;overflow:hidden}
@@ -186,6 +186,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/en/" class="lang-btn">← All Tools</a>
     <h1>🎵 Music Calculator</h1>
@@ -206,7 +207,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 
   <!-- ===== TAB 0: BPM Tap Tempo ===== -->
   <div class="body tab-panel active" id="panel0" role="tabpanel" aria-labelledby="musicTab0">
-    <div class="tap-area" id="tapArea">
+    <div class="tap-area" id="tapArea" role="status" aria-live="polite" aria-atomic="true">
       <div class="tap-bpm" id="tapBpm">—</div>
       <div class="tap-label">BPM</div>
       <div class="tap-hint" id="tapHint">Tap to the beat</div>
@@ -257,7 +258,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
         <label for="metroVol">Volume</label>
         <div class="vol-row">
           <span class="vol-icon">🔈</span>
-          <input type="range" class="vol-slider" id="metroVol" min="0" max="100" value="80" oninput="setMetroVolume(this.value)">
+          <input aria-label="Metronome volume" type="range" class="vol-slider" id="metroVol" min="0" max="100" value="80" oninput="setMetroVolume(this.value)">
           <span class="vol-icon">🔊</span>
         </div>
       </div>
@@ -275,7 +276,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
         <span class="unit">BPM</span>
       </div>
     </div>
-    <div class="highlight-card" id="delayHighlight">
+    <div class="highlight-card" id="delayHighlight" role="status" aria-live="polite" aria-atomic="true">
       <div class="h-label">♩ Quarter Note Delay</div>
       <div class="h-value" id="delayQuarter">500 ms</div>
     </div>
@@ -314,7 +315,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
         <span class="unit">bars</span>
       </div>
     </div>
-    <div class="highlight-card">
+    <div class="highlight-card" role="status" aria-live="polite" aria-atomic="true">
       <div class="h-label">Estimated Song Length</div>
       <div class="h-value" id="songLength">1:04</div>
       <div class="h-sub" id="songLengthSub">64.0s · 128 beats</div>
@@ -329,7 +330,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
         <span class="unit">sec</span>
       </div>
     </div>
-    <div class="detail-box" id="reverseDetail"></div>
+    <div class="detail-box" id="reverseDetail" role="status" aria-live="polite" aria-atomic="true"></div>
   </div>
 
   <!-- ===== TAB 4: Note ↔ Hz ===== -->
@@ -349,7 +350,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       <div class="section-title">Octave</div>
       <div class="octave-row" id="octaveRow"></div>
     </div>
-    <div class="highlight-card" id="noteResult">
+    <div class="highlight-card" id="noteResult" role="status" aria-live="polite" aria-atomic="true">
       <div class="h-label" id="noteResultLabel">C4</div>
       <div class="h-value" id="noteResultHz">261.63 Hz</div>
       <div class="h-sub" id="noteResultMidi">MIDI #60</div>
@@ -367,7 +368,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
         <span class="unit">Hz</span>
       </div>
     </div>
-    <div class="detail-box" id="hzToNoteResult"></div>
+    <div class="detail-box" id="hzToNoteResult" role="status" aria-live="polite" aria-atomic="true"></div>
   </div>
 
   <!-- ===== TAB 5: Key Transpose ===== -->
@@ -386,7 +387,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
         <button class="semitone-btn" onclick="changeSemitone(1)">+</button>
       </div>
     </div>
-    <div class="highlight-card">
+    <div class="highlight-card" role="status" aria-live="polite" aria-atomic="true">
       <div class="h-label">Transposed Key</div>
       <div class="h-value" id="transposeTo">C</div>
       <div class="h-sub" id="transposeSub"></div>
@@ -402,7 +403,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
         <span class="unit">BPM</span>
       </div>
     </div>
-    <div class="detail-box" id="transposeBpmResult"></div>
+    <div class="detail-box" id="transposeBpmResult" role="status" aria-live="polite" aria-atomic="true"></div>
   </div>
 
   <!-- Guide -->
@@ -460,10 +461,11 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     </div>
   </section>
 
+</main>
 <footer class="footer"><span>🎵 Music Calculator · All-in-One</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="scroll-top-btn" aria-label="Back to top">↑</button>
 
 <script>
@@ -843,73 +845,7 @@ const METRO_LOOKAHEAD_SECONDS = 0.12;
 // AudioWorklet renders beats on the browser's audio thread. The sound remains
 // sample-accurate when main-thread timers are throttled in a background tab;
 // older browsers use the audio-clock look-ahead fallback below.
-const METRONOME_WORKLET_SOURCE = `
-class PrecisionMetronomeProcessor extends AudioWorkletProcessor {
-  constructor() {
-    super();
-    this.bpm = 120;
-    this.volume = 0.8;
-    this.beatsPerBar = 4;
-    this.beat = 0;
-    this.running = false;
-    this.nextBeatFrame = 0;
-    this.clickFrames = Math.max(1, Math.floor(sampleRate * 0.055));
-    this.clickSamplesLeft = 0;
-    this.phase = 0;
-    this.frequency = 1000;
-    this.port.onmessage = event => this.handleMessage(event.data || {});
-  }
-
-  handleMessage(message) {
-    if (message.type === 'config') {
-      if (Number.isFinite(message.bpm)) this.bpm = Math.max(20, Math.min(300, message.bpm));
-      if (Number.isFinite(message.volume)) this.volume = Math.max(0, Math.min(1, message.volume));
-      if (Number.isFinite(message.beatsPerBar)) this.beatsPerBar = Math.max(1, Math.min(12, Math.round(message.beatsPerBar)));
-      if (message.resetBeat) this.beat = 0;
-    } else if (message.type === 'start') {
-      this.beat = 0;
-      this.nextBeatFrame = currentFrame;
-      this.running = true;
-    } else if (message.type === 'stop') {
-      this.running = false;
-      this.clickSamplesLeft = 0;
-    }
-  }
-
-  process(_inputs, outputs) {
-    const channel = outputs[0] && outputs[0][0];
-    if (!channel) return true;
-    channel.fill(0);
-    if (!this.running) return true;
-
-    const framesPerBeat = sampleRate * 60 / this.bpm;
-    for (let i = 0; i < channel.length; i += 1) {
-      const frame = currentFrame + i;
-      if (frame >= this.nextBeatFrame) {
-        const scheduledBeat = this.beat;
-        this.frequency = scheduledBeat === 0 ? 1000 : 700;
-        this.phase = 0;
-        this.clickSamplesLeft = this.clickFrames;
-        this.port.postMessage({ type: 'beat', beat: scheduledBeat, frame });
-        this.beat = (scheduledBeat + 1) % this.beatsPerBar;
-        this.nextBeatFrame += framesPerBeat;
-        if (this.nextBeatFrame <= frame) this.nextBeatFrame = frame + framesPerBeat;
-      }
-
-      if (this.clickSamplesLeft > 0) {
-        const progress = 1 - this.clickSamplesLeft / this.clickFrames;
-        const envelope = Math.exp(-8 * progress);
-        const accentGain = this.frequency === 1000 ? 1 : 0.6;
-        channel[i] = Math.sin(this.phase) * envelope * this.volume * accentGain;
-        this.phase += 2 * Math.PI * this.frequency / sampleRate;
-        this.clickSamplesLeft -= 1;
-      }
-    }
-    return true;
-  }
-}
-registerProcessor('precision-metronome', PrecisionMetronomeProcessor);
-`;
+const METRONOME_WORKLET_MODULE_URL = '/special-chars/metronome-worklet.js';
 
 function setMetroBpm(val) {
   metroBpm = Math.max(20, Math.min(300, parseInt(val) || 120));
@@ -991,9 +927,8 @@ async function initializeMetronomeEngine() {
   if (!metroCtx) metroCtx = new AudioContextClass();
 
   if (metroCtx.audioWorklet && typeof AudioWorkletNode === 'function') {
-    const moduleUrl = URL.createObjectURL(new Blob([METRONOME_WORKLET_SOURCE], { type: 'text/javascript' }));
     try {
-      await metroCtx.audioWorklet.addModule(moduleUrl);
+      await metroCtx.audioWorklet.addModule(METRONOME_WORKLET_MODULE_URL);
       metroNode = new AudioWorkletNode(metroCtx, 'precision-metronome', {
         numberOfInputs: 0,
         numberOfOutputs: 1,
@@ -1010,8 +945,6 @@ async function initializeMetronomeEngine() {
     } catch (_error) {
       metroNode = null;
       metroEngineMode = 'audio-clock-fallback';
-    } finally {
-      URL.revokeObjectURL(moduleUrl);
     }
   } else {
     metroEngineMode = 'audio-clock-fallback';

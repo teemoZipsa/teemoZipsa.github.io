@@ -2,15 +2,20 @@
   "scripts": {
     "check:rules": "node scripts/check-rules.mjs",
     "check:diff": "git diff --check HEAD",
+    "audit:vendor": "node scripts/audit-vendor.mjs",
+    "audit:vendor:integrity": "node scripts/audit-vendor.mjs --integrity-only",
     "audit:formulas": "node scripts/audit-formulas.mjs",
+    "audit:formula-pages": "node scripts/audit-formula-pages.mjs",
+    "audit:functional": "node scripts/audit-functional-edges.mjs",
     "audit:accessibility": "node scripts/audit-accessibility.mjs",
     "audit:browsers": "node scripts/audit-browser-matrix.mjs",
     "audit:interactions": "node scripts/audit-interactions.mjs",
+    "audit:background-inference": "node scripts/audit-interactions.mjs --background-inference --filter=background-removal",
     "audit:pages": "node scripts/audit-pages.mjs",
     "audit:seo": "node scripts/audit-seo-index.mjs",
     "trends:update": "python scripts/fetch_trends.py",
-    "verify": "npm run check:rules && npm run audit:formulas && npm run audit:seo && npm run audit:interactions && npm run audit:accessibility && npm run audit:pages && npm run audit:browsers && npm run check:diff",
-    "release:check": "npm run trends:update && npm run verify"
+    "verify": "npm run check:rules && npm run audit:vendor:integrity && npm run audit:formulas && npm run audit:formula-pages && npm run audit:functional && npm run audit:seo && npm run audit:interactions && npm run audit:accessibility && npm run audit:pages && npm run audit:browsers && npm run check:diff",
+    "release:check": "npm run trends:update && npm run audit:vendor && npm run verify"
   },
   "devDependencies": {
     "axe-core": "^4.12.1",

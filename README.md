@@ -15,7 +15,7 @@
 ## ✨ 소개
 
 회원가입 없이, **브라우저에서 바로 사용**할 수 있는 웹 도구 모음입니다.  
-계산·텍스트·파일 변환은 가능한 한 **브라우저에서 로컬 처리**하며, 공인 IP 조회·응답 지연 측정이나 AI 모델처럼 네트워크가 필요한 기능은 페이지에서 범위와 최초 다운로드 크기를 안내합니다. PDF 엔진과 배경 제거 AI 코드·모델은 고정 버전을 저장소에 포함해 실행 중 제3자 CDN에 의존하지 않습니다.
+계산·텍스트·파일 변환은 가능한 한 **브라우저에서 로컬 처리**하며, 공인 IP 조회·응답 지연 측정이나 AI 모델처럼 네트워크가 필요한 기능은 페이지에서 범위와 최초 다운로드 크기를 안내합니다. PDF·QR 엔진, 배경 제거 AI 코드·모델과 사이트 글꼴은 고정 버전을 저장소에 포함해 핵심 도구가 제3자 CDN 장애 때문에 멈추지 않게 합니다.
 
 > 🔒 **로컬 우선 설계** — 사용자 파일과 계산 입력은 원칙적으로 브라우저 안에서 처리합니다
 
@@ -28,7 +28,7 @@
 - 💾 **선택적 자동 저장** — 일부 도구는 입력·설정·커스텀 문구 또는 생성 이력을 브라우저에 저장
 - ⭐ **즐겨찾기** — 자주 쓰는 도구에 별표 또는 드래그로 즐겨찾기 등록
 - 🔐 **로컬 우선 처리** — 계산·텍스트·파일 변환은 브라우저에서 처리하고 네트워크 기능은 별도 표시
-- ✅ **품질 검사** — `npm run verify`로 규칙·수식·SEO·접근성·Chromium/Firefox/WebKit·모바일 에뮬레이션을 게시 전에 로컬 검증
+- ✅ **품질 검사** — `npm run verify`로 구조·보안 정책·수식·실제 페이지 회귀·SEO·접근성·Chromium/Firefox/WebKit·모바일 에뮬레이션을 게시 전에 로컬 검증
 
 <br>
 
@@ -121,11 +121,13 @@ npx playwright install chromium firefox webkit
 npm run verify
 ```
 
-이 명령은 코드 규칙, 계산식 회귀 사례, SEO 색인, 핵심 사용자 조작 45개, 전체 80개 도구의 라이트·다크 초기·탭 상태 WCAG 2.1 A/AA 감사 358회, 전체 정적 페이지 Chromium 렌더링, Chromium·Firefox·WebKit 데스크톱과 Pixel 7·iPhone 15 에뮬레이션의 색인 페이지 190회 렌더링과 브라우저별 고위험 조작 22개, Git diff 오류를 순서대로 검사합니다. 빠른 조작 회귀검사는 `npm run audit:interactions`, 접근성 전수 검사는 `npm run audit:accessibility`, 5개 환경 호환성 검사는 `npm run audit:browsers`로 따로 실행할 수 있습니다.
+이 명령은 구조·외부 실행 의존성·CSP 규칙, 계산식 오라클과 실제 페이지 회귀, SEO 색인, 핵심 사용자 조작, 80개 도구 페이지의 라이트·다크 초기·탭 상태 WCAG 2.1 A/AA 및 자동화 가능한 모범 사례, 전체 정적 페이지 Chromium 렌더링, Chromium·Firefox·WebKit 데스크톱과 Pixel 7·iPhone 15 에뮬레이션의 전체 도구·색인 페이지 렌더링, 모바일 터치 타깃과 Git diff 오류를 순서대로 검사합니다. 자동화 검사는 실제 스크린 리더·물리 모바일·OS 백그라운드 동작을 대체하지 않습니다. 빠른 조작 회귀검사는 `npm run audit:interactions`, 자동 접근성 검사는 `npm run audit:accessibility`, 5개 환경 호환성 검사는 `npm run audit:browsers`로 따로 실행할 수 있습니다.
+
+약 85MB로 고정된 전체 AI 모델·WASM 구성 중 현재 Chromium 실행 경로 약 56.9MB를 실제로 읽는 배경 제거 추론은 일반 검증의 실행 시간과 메모리 사용을 늘리므로 선택 검사로 분리했습니다. 배경 제거 번들·모델·CSP를 바꾼 뒤에는 `npm run audit:background-inference`를 실행해 64×64 PNG의 실제 추론 결과와 제3자 요청 부재를 확인합니다.
 
 모바일 프로필은 뷰포트·터치·브라우저 엔진 에뮬레이션입니다. 물리 기기의 OS 통합 동작과 Windows Playwright WebKit이 제공하지 않는 Safari/iOS Web Audio는 실제 Apple 기기에서 별도로 확인해야 합니다. Chromium과 Firefox에서는 메트로놈 AudioWorklet의 누적 프레임 간격·정지·재시작을 검증합니다.
 
-PDF와 배경 제거용 외부 구성요소의 정확한 버전·크기·라이선스·출처는 [`special-chars/vendor/README.md`](special-chars/vendor/README.md)에 기록합니다. 배경 제거 도구의 첫 진입과 최초 처리에는 이 사이트에서 JS 번들·양자화 모델·실행 환경에 맞는 WASM 합계 약 56.9MB를 받으며, 브라우저 저장 공간 정리나 축출 시 다시 받아야 합니다. `@imgly/background-removal`의 AGPL-3.0 고지, 대응 소스맵과 제3자 라이선스는 배포물에서 제거하면 안 됩니다.
+PDF·QR·배경 제거·글꼴 구성요소의 정확한 버전·크기·무결성·라이선스·출처는 [`special-chars/vendor/README.md`](special-chars/vendor/README.md)에 기록합니다. 배경 제거 도구의 첫 진입과 최초 처리에는 이 사이트에서 JS 번들·양자화 모델·실행 환경에 맞는 WASM 합계 약 56.9MB를 받으며, 브라우저 저장 공간 정리나 축출 시 다시 받아야 합니다. `@imgly/background-removal`의 AGPL-3.0 고지, 대응 소스맵과 제3자 라이선스는 배포물에서 제거하면 안 됩니다.
 
 게시 전 검색 제안 주제까지 갱신하려면 다음 명령을 사용합니다. 검색 제안 내용이 같으면 데이터 파일을 수정하지 않으며, 모든 외부 요청이 실패하면 기존 데이터를 보존하고 명령을 실패 처리합니다.
 
@@ -152,7 +154,7 @@ npm run release:check
 
 ## 📜 라이선스
 
-MIT License. See [LICENSE](LICENSE) for details.
+이 저장소에서 직접 작성한 코드는 [MIT License](LICENSE)를 따릅니다. `special-chars/vendor/`에 포함된 제3자 코드·모델·글꼴은 각 디렉터리의 원본 라이선스와 [`special-chars/vendor/README.md`](special-chars/vendor/README.md)가 우선하며, 여기에는 AGPL-3.0·Apache-2.0·OFL-1.1 구성요소가 포함됩니다.
 
 ---
 

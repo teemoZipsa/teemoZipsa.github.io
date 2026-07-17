@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -18,7 +19,6 @@
 <link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/gpa-calc/">
 <meta name="robots" content="noindex, follow">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
 .app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:640px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
@@ -35,7 +35,8 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .scale-btn:hover:not(.active){background:var(--bg-btn-hover)}
 
 .result-card{background:var(--accent-bg);border:2px solid var(--accent);border-radius:12px;padding:20px;text-align:center;display:flex;flex-direction:column;gap:4px}
-.result-gpa{font-size:42px;font-weight:800;color:var(--accent-text);letter-spacing:-1px}
+.result-gpa{font-size:42px;font-weight:800;color:var(--accent-text);letter-spacing:-1px;background:none;border:0;width:100%;padding:0;font-family:inherit}
+.result-gpa[type="button"]{cursor:pointer}
 .result-scale{font-size:14px;color:var(--text-info);font-weight:500}
 .result-stats{display:flex;justify-content:center;gap:10px 18px;margin-top:6px;font-size:12px;color:var(--text-secondary);flex-wrap:wrap}
 .result-stats span{display:flex;align-items:center;gap:4px}
@@ -108,6 +109,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
     <h1>🎓 GPA Calculator</h1>
@@ -115,14 +117,14 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
   </div>
 
   <div class="body">
-    <div class="scale-row">
+    <div class="scale-row" role="group" aria-label="GPA scale">
       <span class="scale-label">Scale</span>
-      <button class="scale-btn active" data-scale="4.5" onclick="setScale(4.5)">4.5 Scale</button>
-      <button class="scale-btn" data-scale="4.3" onclick="setScale(4.3)">4.3 Scale</button>
-      <button class="scale-btn" data-scale="4.0" onclick="setScale(4.0)">4.0 Scale</button>
+      <button class="scale-btn active" data-scale="4.5" aria-pressed="true" onclick="setScale(4.5)">4.5 Scale</button>
+      <button class="scale-btn" data-scale="4.3" aria-pressed="false" onclick="setScale(4.3)">4.3 Scale</button>
+      <button class="scale-btn" data-scale="4.0" aria-pressed="false" onclick="setScale(4.0)">4.0 Scale</button>
     </div>
 
-    <div class="result-card" id="resultCard">
+    <div class="result-card" id="resultCard" role="status" aria-live="polite" aria-atomic="true">
       <div class="result-empty">Enter courses to calculate your GPA</div>
     </div>
 
@@ -132,7 +134,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
           <th class="name-col">Course</th>
           <th class="credit-col">Credits</th>
           <th class="grade-col">Grade</th>
-          <th class="del-col"></th>
+          <th class="del-col">Remove</th>
         </tr>
       </thead>
       <tbody id="courseBody"></tbody>
@@ -192,10 +194,11 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       </div>
     </div>
   </section>
-    <footer class="footer"><span>4.5 / 4.3 / 4.0 Scale</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
+    </main>
+<footer class="footer"><span>4.5 / 4.3 / 4.0 Scale</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="scroll-top-btn" aria-label="Scroll to top">↑</button>
 
 <script>
@@ -209,7 +212,9 @@ const GRADES = {
 function setScale(s) {
   scale = s;
   document.querySelectorAll('.scale-btn').forEach(b => {
-    b.classList.toggle('active', Number(b.dataset.scale) === s);
+    const active = Number(b.dataset.scale) === s;
+    b.classList.toggle('active', active);
+    b.setAttribute('aria-pressed', String(active));
   });
   calculate();
 }
@@ -292,7 +297,9 @@ function calculate() {
   const emoji = !hasGpa ? '➖' : gpa >= 4.0 ? '🏆' : gpa >= 3.5 ? '🎉' : gpa >= 3.0 ? '👍' : gpa >= 2.0 ? '📚' : '💪';
 
   card.innerHTML = `
-    <div class="result-gpa"${hasGpa ? ` style="cursor:pointer" onclick="copyGpa('${gpa.toFixed(2)}')"` : ''}>${emoji} ${hasGpa ? gpa.toFixed(2) : 'No GPA'}</div>
+    ${hasGpa
+      ? `<button type="button" class="result-gpa" onclick="copyGpa('${gpa.toFixed(2)}')" aria-label="Copy GPA ${gpa.toFixed(2)}">${emoji} ${gpa.toFixed(2)}</button>`
+      : `<div class="result-gpa">${emoji} No GPA</div>`}
     <div class="result-scale">/ ${scale} Scale</div>
     <div class="result-stats">
       <span>📘 ${enteredCourseCount} entered</span>

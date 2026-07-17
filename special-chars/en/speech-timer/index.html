@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -18,7 +19,6 @@
 <link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/speech-timer/">
 <meta name="robots" content="noindex, follow">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
   *{margin:0;padding:0;box-sizing:border-box}
   body{
     font-family:'Inter',-apple-system,sans-serif;
@@ -150,6 +150,7 @@
 <body>
 
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
     <h1>🎤 Speech Timer</h1>
@@ -157,23 +158,23 @@
   </div>
 
   <div class="body">
-    <textarea class="script-area" id="script" placeholder="Paste your speech script here...&#10;&#10;Estimated time will be calculated instantly." oninput="calc()"></textarea>
+    <textarea class="script-area" id="script" aria-label="Speech script" placeholder="Paste your speech script here...&#10;&#10;Estimated time will be calculated instantly." oninput="calc()"></textarea>
 
     <div class="speed-row">
       <span class="speed-label">🗣️ Speaking Speed</span>
-      <input aria-label="Speaking speed" type="range" class="speed-slider" id="speedSlider" min="200" max="500" value="330" step="10" oninput="updateSpeed()">
-      <span class="speed-value" id="speedDisplay">330 chars/min</span>
+      <input aria-label="Speaking speed" aria-describedby="speedDisplay" type="range" class="speed-slider" id="speedSlider" min="200" max="500" value="330" step="10" oninput="updateSpeed()">
+      <output class="speed-value" id="speedDisplay" for="speedSlider">330 chars/min</output>
     </div>
 
-    <div class="speed-presets">
-      <button class="speed-preset" onclick="setSpeed(250)">🐢 Slow (250)</button>
-      <button class="speed-preset active" onclick="setSpeed(330)">🙂 Normal (330)</button>
-      <button class="speed-preset" onclick="setSpeed(400)">🐇 Fast (400)</button>
-      <button class="speed-preset" onclick="setSpeed(470)">⚡ Very Fast (470)</button>
+    <div class="speed-presets" role="group" aria-label="Speaking speed presets">
+      <button type="button" class="speed-preset" aria-pressed="false" onclick="setSpeed(250)">🐢 Slow (250)</button>
+      <button type="button" class="speed-preset active" aria-pressed="true" onclick="setSpeed(330)">🙂 Normal (330)</button>
+      <button type="button" class="speed-preset" aria-pressed="false" onclick="setSpeed(400)">🐇 Fast (400)</button>
+      <button type="button" class="speed-preset" aria-pressed="false" onclick="setSpeed(470)">⚡ Very Fast (470)</button>
     </div>
 
     <div class="result" id="result">
-      <div class="result-main">
+      <div class="result-main" role="status" aria-live="polite" aria-atomic="true">
         <div class="result-time" id="resultTime">0:00</div>
         <div class="result-sub" id="resultSub">Estimated Speech Time</div>
       </div>
@@ -266,7 +267,8 @@
       </div>
     </div>
   </section>
-    <footer class="footer"><span>Avg. speaking speed: ~330 chars/min</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
+    </main>
+<footer class="footer"><span>Avg. speaking speed: ~330 chars/min</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 
 <script>

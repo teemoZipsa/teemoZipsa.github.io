@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -19,7 +20,6 @@
 
 <meta name="robots" content="noindex, follow">
 <style>
-        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:start;padding:20px}
         .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
@@ -93,6 +93,7 @@
 </head>
 <body>
 <div class="app">
+<main>
     <div class="header">
         <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
         <h1>🐉 띠(십이지신) 계산기</h1>
@@ -164,7 +165,8 @@
             <p style="margin-top:8px">💡 십이지신은 12년을 주기로 순환합니다. 천간(10개)과 지지(12개)가 조합되어 60갑자를 이루며, 60년마다 같은 간지가 돌아옵니다.</p>
         </div>
     </details>
-    <footer class="footer"><span>음력 설 기준 자동 보정</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+    </main>
+<footer class="footer"><span>음력 설 기준 자동 보정</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -212,13 +214,21 @@ const LUNAR_NEW_YEAR = {
     2060:[2,2]
 };
 
+function parseDateOnly(value) {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+    if (!match) return null;
+    const year = Number(match[1]), month = Number(match[2]), day = Number(match[3]);
+    const check = new Date(Date.UTC(year, month - 1, day));
+    if (check.getUTCFullYear() !== year || check.getUTCMonth() + 1 !== month || check.getUTCDate() !== day) return null;
+    return { year, month, day };
+}
+
 function calcAnimal() {
     const input = document.getElementById('birthDate').value;
     if (!input) { document.getElementById('resultCard').classList.remove('show'); return; }
-    const d = new Date(input);
-    let year = d.getFullYear();
-    const month = d.getMonth() + 1;
-    const day = d.getDate();
+    const parsed = parseDateOnly(input);
+    if (!parsed) { document.getElementById('resultCard').classList.remove('show'); return; }
+    let { year, month, day } = parsed;
     const originalYear = year;
     let lunarAdjusted = false;
 

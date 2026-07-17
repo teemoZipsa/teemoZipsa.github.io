@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -19,7 +20,6 @@
 
 <meta name="robots" content="noindex, follow">
 <style>
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
 .app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:520px;max-width:100%;overflow:hidden}
@@ -71,12 +71,12 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .export-btn{background:var(--bg-btn);color:var(--text-primary);border:1px solid var(--border)}
 
 .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:10px}
-.report-box h3 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
+.report-box h2 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
 .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
 .report-box strong {color:var(--text-primary);font-weight:600}
 
 .related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:0 12px 12px}
-.related-tools h3 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.related-tools h2 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
 .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
 .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
@@ -104,6 +104,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
     <h1>🚕 서울 중형 택시비 예상 계산기</h1>
@@ -236,7 +237,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </details>
 
   <div class="related-tools">
-    <h3>🔗 맞춤형 교통/생활 계산기</h3>
+    <h2>🔗 맞춤형 교통/생활 계산기</h2>
     <div class="tool-list">
       <a href="/special-chars/fuel-calc/"><span>⛽ 유류비 계산기</span><span>바로가기 →</span></a>
       <a href="/special-chars/broker-fee-calc/"><span>🏠 부동산 중개보수 계산기</span><span>바로가기 →</span></a>
@@ -244,7 +245,8 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
   </div>
 
-  <footer class="footer"><span>서울 중형택시 공식 요율 기반 · 참고용 예상 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+  </main>
+<footer class="footer"><span>서울 중형택시 공식 요율 기반 · 참고용 예상 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -453,7 +455,7 @@ function calc() {
 
   const report = document.getElementById('analysisReport');
   report.style.display = 'flex';
-  let msg = `<h3>💡 택시비 예상 내역 안내</h3>`;
+  let msg = `<h2>💡 택시비 예상 내역 안내</h2>`;
   msg += `<p><strong>${regionName} 중형택시</strong> 공식 참고 요율과 입력한 편도 거리 <strong>${dist}km</strong>${result.lowSpeedMinutes>0?`, 저속·정차 <strong>${result.lowSpeedMinutes}분</strong>`:''}을 기준으로 계산했습니다. ${isRound?'왕복 입력값을 2배 적용한 ':''}총 예상액은 <strong>${fmt(result.total)}원</strong>입니다.</p>`;
   msg += `<p>미터 운임 추정에는 기본·거리·시간 요금${isNight?`과 심야 ${Math.round(result.nightRate*100)}%`:''}${result.outRatePercent>0?`, 시계외 ${result.outRatePercent}%`:''}를 반영했고, 별도 비용 ${fmt(result.separateFeesOne * result.multiplier)}원을 합산했습니다.${people>1?` ${people}명 균등 분담 시 1인당 올림 금액은 <strong>${fmt(perPerson)}원</strong>입니다.`:''}</p>`;
   msg += `<p>이 값은 실제 호출 견적이나 택시 미터기 확정 요금이 아닙니다. 총 거리와 저속 시간만으로 실제 주행 펄스의 순서를 재현할 수 없고, 운행 경로·심야 구간별 주행 비중·호출 상품에 따라 달라질 수 있습니다.</p>`;

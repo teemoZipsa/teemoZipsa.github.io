@@ -59,6 +59,42 @@ function parsedFooterState(content) {
   return { footerInsideApp, legacyDivFooter, semanticFooters };
 }
 
+function parsedToolPolicyState(content) {
+  const document = parse(content);
+  const mainLandmarks = [];
+  const externalScripts = [];
+  let hasContentSecurityPolicy = false;
+  let hasSharedTheme = false;
+
+  function walk(node) {
+    const attributes = new Map((node.attrs || []).map(attribute => [attribute.name, attribute.value]));
+    const role = (attributes.get('role') || '').toLowerCase();
+    if (node.tagName === 'main' || role === 'main') mainLandmarks.push(node);
+
+    if (node.tagName === 'script') {
+      const src = attributes.get('src') || '';
+      if (/^https?:\/\//i.test(src)) externalScripts.push(src);
+    }
+
+    if (node.tagName === 'meta' && (attributes.get('http-equiv') || '').toLowerCase() === 'content-security-policy') {
+      hasContentSecurityPolicy = true;
+    }
+    if (node.tagName === 'link' && attributes.get('href') === '/special-chars/theme.css') {
+      hasSharedTheme = true;
+    }
+
+    for (const child of node.childNodes || []) walk(child);
+  }
+
+  walk(document);
+  const externalStyles = [
+    ...content.matchAll(/<link\b[^>]*\brel=["']stylesheet["'][^>]*\bhref=["'](https?:\/\/[^"']+)/gi),
+    ...content.matchAll(/@import\s+(?:url\()?\s*["']?(https?:\/\/[^"')\s;]+)/gi)
+  ].map(match => match[1]);
+
+  return { externalScripts, externalStyles, hasContentSecurityPolicy, hasSharedTheme, mainLandmarks };
+}
+
 function findFilesByExt(dir, extList, ignoreDirs = ['node_modules', 'dist', '.git', '.github']) {
   let results = [];
   if (!fs.existsSync(dir)) return results;
@@ -108,6 +144,7 @@ let validSemanticFooters = 0;
 for (const file of toolPageFiles) {
   const content = fs.readFileSync(file, 'utf8');
   const { footerInsideApp, legacyDivFooter, semanticFooters } = parsedFooterState(content);
+  const { externalScripts, externalStyles, hasContentSecurityPolicy, hasSharedTheme, mainLandmarks } = parsedToolPolicyState(content);
 
   if (legacyDivFooter) {
     logError(`[${rel(file)}] 레거시 div.footer가 남아 있습니다. 의미론적 footer 요소를 사용하세요.`);
@@ -118,6 +155,22 @@ for (const file of toolPageFiles) {
     logError(`[${rel(file)}] footer.footer가 HTML 파싱 DOM 기준 앱 컨테이너 안에 있지 않습니다.`);
   } else if (!legacyDivFooter) {
     validSemanticFooters++;
+  }
+
+  if (mainLandmarks.length !== 1) {
+    logError(`[${rel(file)}] main 랜드마크가 정확히 1개여야 하지만 ${mainLandmarks.length}개입니다.`);
+  }
+  if (!hasContentSecurityPolicy) {
+    logError(`[${rel(file)}] Content-Security-Policy 메타 정책이 없습니다.`);
+  }
+  if (!hasSharedTheme) {
+    logError(`[${rel(file)}] 공통 theme.css가 연결되어 있지 않습니다.`);
+  }
+  if (externalScripts.length) {
+    logError(`[${rel(file)}] 외부 실행 스크립트를 자체 호스팅해야 합니다: ${externalScripts.join(', ')}`);
+  }
+  if (externalStyles.length) {
+    logError(`[${rel(file)}] 외부 스타일/폰트를 자체 호스팅해야 합니다: ${externalStyles.join(', ')}`);
   }
 }
 
@@ -141,6 +194,19 @@ for (const cssFile of styleFiles) {
 }
 if (!alignItemsFound) {
   logError('프로젝트 내 어떠한 스타일 파일(.css, .scss 등)에서도 align-items 속성이 누락되었습니다!');
+}
+
+const sharedThemeFile = path.join(targetDir, 'special-chars', 'theme.css');
+if (!fs.existsSync(sharedThemeFile)) {
+  logError('공통 도구 테마 파일 special-chars/theme.css가 없습니다.');
+} else {
+  const sharedTheme = fs.readFileSync(sharedThemeFile, 'utf8');
+  if (!/:focus-visible\b/.test(sharedTheme)) {
+    logError('공통 테마에 키보드 :focus-visible 표시가 없습니다.');
+  }
+  if (!/@media\s*\(prefers-reduced-motion:\s*reduce\)/.test(sharedTheme)) {
+    logError('공통 테마에 prefers-reduced-motion 대응이 없습니다.');
+  }
 }
 
 

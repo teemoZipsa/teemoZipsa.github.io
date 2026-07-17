@@ -21,7 +21,6 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"티모집사","url":"https://teemozipsa.github.io/","description":"일상과 업무에 필요한 무료 웹 도구 모음","inLanguage":"ko-KR","publisher":{"@type":"Organization","name":"티모집사","url":"https://teemozipsa.github.io/","sameAs":["https://www.instagram.com/seon_7yu/"]},"potentialAction":{"@type":"SearchAction","target":"https://teemozipsa.github.io/?q={search_term_string}","query-input":"required name=search_term_string"}}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"티모집사","url":"https://teemozipsa.github.io/","contactPoint":{"@type":"ContactPoint","contactType":"customer support","url":"https://teemozipsa.github.io/contact.html","availableLanguage":["ko"]}}</script>
     <style>
-        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, 'Noto Sans KR', 'Malgun Gothic', sans-serif;
@@ -39,7 +38,8 @@
         .banner-close {
             position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
             background: none; border: none; color: rgba(255,255,255,.7); font-size: 18px;
-            cursor: pointer; padding: 4px; line-height: 1;
+            cursor: pointer; padding: 4px; line-height: 1; min-width: 24px; min-height: 24px;
+            display: inline-flex; align-items: center; justify-content: center;
         }
         .banner-close:hover { color: #fff; }
 
@@ -724,42 +724,71 @@
 <script>
 // === localStorage 안전 래퍼 ===
 function safeGet(key, fallback) { try { return localStorage.getItem(key); } catch(e) { return fallback !== undefined ? fallback : null; } }
-function safeSet(key, val) { try { localStorage.setItem(key, val); } catch(e) {} }
+function safeSet(key, val) { try { localStorage.setItem(key, val); return true; } catch(e) { return false; } }
+function safeRemove(key) { try { localStorage.removeItem(key); return true; } catch(e) { return false; } }
+function safeJsonArray(key) { try { const value = JSON.parse(safeGet(key) || '[]'); return Array.isArray(value) ? value.filter(item => typeof item === 'string') : []; } catch(e) { return []; } }
+function safeJsonObject(key) { try { const value = JSON.parse(safeGet(key) || '{}'); return value && typeof value === 'object' && !Array.isArray(value) ? value : {}; } catch(e) { return {}; } }
+function canUseLocalStorage() { const key = '__storage_test__' + Math.random(); return safeSet(key, '1') && safeRemove(key); }
 
 // === 오늘의 정보 위젯 ===
 const FB_DB = 'https://teemozipsa-default-rtdb.firebaseio.com';
 let globalVisitCount = null;
 
-// Firebase에서 방문 수 가져오기 + 24시간당 1회 증가 (localStorage 기반)
-(function initVisitCounter() {
-    const lastVisitKey = 'last_visit_timestamp';
-    const lastVisit = localStorage.getItem(lastVisitKey);
-    const now = Date.now();
-    const oneDay = 24 * 60 * 60 * 1000; // 24시간 (밀리초)
+function normalizeVisitCount(value) {
+    const count = Number(value);
+    return Number.isFinite(count) && count >= 0 ? Math.floor(count) : 0;
+}
 
-    // 마지막 방문 접속 기록이 없거나, 24시간 이상 지난 경우에만 카운트 증가
-    if (!lastVisit || (now - parseInt(lastVisit, 10)) > oneDay) {
-        // 현재 값 읽고 +1 증가 (REST API)
-        fetch(FB_DB + '/stats/visitCount.json')
-            .then(r => r.json())
-            .then(count => {
-                globalVisitCount = (count || 0) + 1;
-                fetch(FB_DB + '/stats/visitCount.json', {
-                    method: 'PUT',
-                    body: JSON.stringify(globalVisitCount)
-                });
-                // localStorage에 현재 접속 시간을 도장처럼 찍어둡니다
-                localStorage.setItem(lastVisitKey, now.toString());
-                updateVisitDisplay();
-            })
-            .catch(() => { globalVisitCount = null; updateVisitDisplay(); });
-    } else {
-        // 24시간 이내에 이미 방문했던 브라우저: 카운트를 올리지 않고 값만 읽어옴
-        fetch(FB_DB + '/stats/visitCount.json')
-            .then(r => r.json())
-            .then(count => { globalVisitCount = count || 0; updateVisitDisplay(); })
-            .catch(() => { globalVisitCount = null; updateVisitDisplay(); });
+async function readVisitCount() {
+    const response = await fetch(FB_DB + '/stats/visitCount.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error('visit count read failed');
+    return normalizeVisitCount(await response.json());
+}
+
+async function incrementVisitCountAtomic() {
+    const url = FB_DB + '/stats/visitCount.json';
+    for (let attempt = 0; attempt < 4; attempt++) {
+        const currentResponse = await fetch(url, { headers: { 'X-Firebase-ETag': 'true' }, cache: 'no-store' });
+        if (!currentResponse.ok) throw new Error('visit count read failed');
+        const etag = currentResponse.headers.get('ETag');
+        const nextCount = normalizeVisitCount(await currentResponse.json()) + 1;
+        if (!etag) throw new Error('visit count ETag unavailable');
+        const updateResponse = await fetch(url, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'If-Match': etag },
+            body: JSON.stringify(nextCount)
+        });
+        if (updateResponse.status === 412) continue;
+        if (!updateResponse.ok) throw new Error('visit count update failed');
+        return normalizeVisitCount(await updateResponse.json());
     }
+    throw new Error('visit count update conflicted repeatedly');
+}
+
+async function updateVisitCount() {
+    const lastVisitKey = 'last_visit_timestamp';
+    const now = Date.now();
+    const oneDay = 24 * 60 * 60 * 1000;
+    const storageAvailable = canUseLocalStorage();
+    const lastVisit = Number(safeGet(lastVisitKey));
+    const recentlyCounted = storageAvailable && Number.isFinite(lastVisit) && lastVisit > 0 && lastVisit <= now && (now - lastVisit) <= oneDay;
+    try {
+        if (storageAvailable && !recentlyCounted) {
+            globalVisitCount = await incrementVisitCountAtomic();
+            safeSet(lastVisitKey, String(now));
+        } else {
+            globalVisitCount = await readVisitCount();
+        }
+    } catch (error) {
+        try { globalVisitCount = await readVisitCount(); } catch (readError) { globalVisitCount = null; }
+    }
+    updateVisitDisplay();
+}
+
+(function initVisitCounter() {
+    const run = () => updateVisitCount();
+    if (navigator.locks && typeof navigator.locks.request === 'function') navigator.locks.request('teemozipsa-visit-counter', run).catch(() => run());
+    else run();
 })();
 
 function updateVisitDisplay() {
@@ -868,7 +897,7 @@ function dismissBanner() {
 }
 
 // === 즐겨찾기 ===
-let favorites = JSON.parse(safeGet('favorites') || '[]');
+let favorites = safeJsonArray('favorites');
 
 function toggleFav(href, e) {
     e.preventDefault();
@@ -1099,7 +1128,7 @@ function renderFavGrid() {
 })();
 
 // === 최근 사용 ===
-let recentTools = JSON.parse(safeGet('recentTools') || '[]');
+let recentTools = safeJsonArray('recentTools');
 
 function trackRecent(href) {
     recentTools = recentTools.filter(h => h !== href);
@@ -1237,7 +1266,7 @@ const CATEGORIES = [
     { id: 'pet', label: '🐾 반려동물' }
 ];
 
-let currentView = safeGet('viewMode') || 'card';
+let currentView = safeGet('viewMode') === 'category' ? 'category' : 'card';
 
 function switchView(mode) {
     currentView = mode;
@@ -1257,7 +1286,7 @@ function renderCategoryView() {
         let matching = cards.filter(c => c.getAttribute('data-category') === cat.id && !favorites.includes(c.href));
         if (matching.length === 0) return;
         // 저장된 카테고리 내 순서 적용
-        const savedOrder = JSON.parse(safeGet('catOrder_' + cat.id) || '[]');
+        const savedOrder = safeJsonArray('catOrder_' + cat.id);
         if (savedOrder.length) {
             const map = {}; matching.forEach(c => { map[c.href] = c; });
             const ordered = [];
@@ -1297,7 +1326,7 @@ function saveCatOrder(grid, catId) {
 (function initDragDrop() {
     const grid = document.getElementById('toolsGrid');
     let dragEl = null;
-    const saved = JSON.parse(safeGet('toolOrder') || '[]');
+    const saved = safeJsonArray('toolOrder');
     if (saved.length) {
         const cards = [...grid.querySelectorAll('.tool-card')];
         const map = {};

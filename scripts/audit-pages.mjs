@@ -89,6 +89,7 @@ async function main() {
   const server = await startServer();
   const browser = await chromium.launch({ headless: true });
   const failures = [];
+  let auditedPageCount = 0;
   try {
     const context = await browser.newContext();
     await context.addInitScript(async () => {
@@ -102,6 +103,7 @@ async function main() {
       }
     });
     const files = discoverPages();
+    auditedPageCount = files.length;
     for (const file of files) {
       const relFile = path.relative(rootDir, file).replace(/\\/g, '/');
       const rel = relFile.endsWith('/index.html') ? relFile.slice(0, -'index.html'.length) : relFile;
@@ -137,7 +139,7 @@ async function main() {
     failures.forEach(f => console.error(`- ${f}`));
     process.exit(1);
   }
-  console.log('Page audit passed: all indexed static pages render without console errors.');
+  console.log(`Page audit passed: all ${auditedPageCount} discovered static pages render without console errors.`);
 }
 
 main().catch(err => {

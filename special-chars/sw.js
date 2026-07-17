@@ -4,10 +4,14 @@
  * 오프라인 재사용성과 대용량 AI 자산의 수명을 독립적으로 관리한다.
  */
 const OWNED_CACHE_PREFIX = 'teemozipsa-';
-const SHELL_CACHE_NAME = 'teemozipsa-shell-v1.5';
+const SHELL_CACHE_NAME = 'teemozipsa-shell-v1.7';
 const PAGE_CACHE_NAME = 'teemozipsa-pages-v1';
 const RUNTIME_CACHE_NAME = 'teemozipsa-runtime-v1';
-const VENDOR_CACHE_NAME = 'teemozipsa-vendor-v1';
+// Vendor responses are immutable cache-first. Bump this generation whenever
+// bytes change under an existing vendor URL, otherwise existing clients keep
+// the previous artifact indefinitely. v2 invalidates the CSP-patched IMG.LY
+// bundle that retained its upstream 1.5.5 URL.
+const VENDOR_CACHE_NAME = 'teemozipsa-vendor-v2';
 const CURRENT_CACHE_NAMES = new Set([
   SHELL_CACHE_NAME,
   PAGE_CACHE_NAME,
@@ -23,10 +27,12 @@ const PRECACHE_URLS = [
   '/special-chars/',
   '/special-chars/theme.css',
   '/special-chars/theme-toggle.js',
+  '/special-chars/metronome-worklet.js',
   '/special-chars/favicon.png',
   '/special-chars/icon-192.png',
   '/special-chars/icon-maskable-512.png',
-  '/special-chars/manifest.json'
+  '/special-chars/manifest.json',
+  '/special-chars/vendor/qrcode-generator/1.4.4/qrcode.js'
 ];
 const PRECACHE_PATHS = new Set(PRECACHE_URLS.map(url => new URL(url, self.location.origin).pathname));
 
@@ -52,11 +58,11 @@ function pageCacheKey(url) {
 }
 
 function cacheTargetFor(url) {
-  if (url.pathname.startsWith('/special-chars/vendor/')) {
-    return { name: VENDOR_CACHE_NAME, maxEntries: MAX_VENDOR_ENTRIES, immutable: true };
-  }
   if (PRECACHE_PATHS.has(url.pathname)) {
     return { name: SHELL_CACHE_NAME, maxEntries: 0, immutable: false };
+  }
+  if (url.pathname.startsWith('/special-chars/vendor/')) {
+    return { name: VENDOR_CACHE_NAME, maxEntries: MAX_VENDOR_ENTRIES, immutable: true };
   }
   return { name: RUNTIME_CACHE_NAME, maxEntries: MAX_RUNTIME_ENTRIES, immutable: false };
 }

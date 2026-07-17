@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -18,7 +19,6 @@
 <link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/image-format-converter/">
 <meta name="robots" content="noindex, follow">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
 .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:540px;max-width:100%;overflow:hidden}
@@ -30,6 +30,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 
 .drop-zone{border:2px dashed var(--border);border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg-bar)}
 .drop-zone:hover,.drop-zone.dragover{border-color:var(--accent);background:var(--bg-hover)}
+.drop-zone:focus-visible,.btn:focus-visible,.format-btn:focus-visible{outline:3px solid #f7c948;outline-offset:3px}
 .drop-zone .icon{font-size:36px;margin-bottom:8px}
 .drop-zone .text{font-size:13px;color:var(--calc-expr-text)}
 .drop-zone .sub{font-size:11px;color:var(--text-placeholder);margin-top:4px}
@@ -115,21 +116,22 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
     <h1>🖼️ Image Format Converter</h1>
     <a href="/special-chars/image-format-converter/" class="back-btn">🌐 한국어</a>
   </div>
   <div class="content">
-    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+    <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-controls="fileInput" onclick="document.getElementById('fileInput').click()">
       <div class="icon">📁</div>
       <div class="text">Click or Drag image here</div>
-      <div class="sub">Input: JPG · PNG · WebP · GIF · BMP · SVG (up to 25 MB)</div>
+      <div class="sub">Input: JPG · PNG · WebP · GIF · BMP · SVG (up to 20 MB)</div>
       <div class="sub">Output: JPG · PNG · WebP</div>
       <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.svg,image/jpeg,image/png,image/webp,image/gif,image/bmp,image/svg+xml" onchange="handleFile(this.files[0])">
     </div>
 
-    <div class="support-info"><strong>Input and output support are different.</strong> GIF, BMP, and SVG are input-only. Results can be saved as JPG, PNG, or WebP. Images over 12,000px on either edge or 40 megapixels are blocked to protect your device.</div>
+    <div class="support-info"><strong>Input and output support are different.</strong> GIF, BMP, and SVG are input-only. Results can be saved as JPG, PNG, or WebP. Images over 8,000px on either edge or 24 megapixels are blocked to protect your device.</div>
 
     <div class="controls" id="controls">
       <div class="control-row">
@@ -234,10 +236,11 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       </div>
     </div>
   </section>
-    <footer class="footer"><span>100% Local Browser Processing</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
+    </main>
+<footer class="footer"><span>100% Local Browser Processing</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></footer>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
 <script>
@@ -253,9 +256,9 @@ let conversionSequence=0;
 let decodedImage=null;
 let reconvertTimer=null;
 
-const MAX_FILE_SIZE=25*1024*1024;
-const MAX_EDGE=12000;
-const MAX_PIXELS=40000000;
+const MAX_FILE_SIZE=20*1024*1024;
+const MAX_EDGE=8000;
+const MAX_PIXELS=24000000;
 const RECONVERT_DELAY_MS=200;
 const INPUT_MIME_INFO={
   'image/jpeg':{mime:'image/jpeg',label:'JPG'},
@@ -275,6 +278,7 @@ const INPUT_EXTENSION_INFO={
 };
 
 const dropZone=document.getElementById('dropZone');
+dropZone.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();document.getElementById('fileInput').click();}});
 dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('dragover');});
 dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('dragover'));
 dropZone.addEventListener('drop',e=>{
@@ -287,7 +291,7 @@ function handleFile(file){
   const inputType=detectInputType(file);
   if(!inputType){rejectFile('Unsupported input. Choose a JPG, PNG, WebP, GIF, BMP, or SVG file.');return;}
   if(file.size===0){rejectFile('An empty file cannot be converted.');return;}
-  if(file.size>MAX_FILE_SIZE){rejectFile('This file is larger than the 25 MB processing limit.');return;}
+  if(file.size>MAX_FILE_SIZE){rejectFile('This file is larger than the 20 MB processing limit.');return;}
 
   clearLoadedState();
   const currentLoad=++loadSequence;
@@ -305,7 +309,7 @@ function handleFile(file){
       const width=img.naturalWidth||img.width;
       const height=img.naturalHeight||img.height;
       if(!isDimensionAllowed(width,height)){
-        rejectFile(`The image is ${width} × ${height}px and exceeds the limit (12,000px per edge or 40 megapixels).`);
+        rejectFile(`The image is ${width} × ${height}px and exceeds the limit (8,000px per edge or 24 megapixels).`);
         return;
       }
       decodedImage=img;

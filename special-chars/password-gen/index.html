@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -18,7 +19,6 @@
 <link rel="canonical" href="https://teemozipsa.github.io/special-chars/password-gen/">
 
 <style>
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
 .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
@@ -49,10 +49,11 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .length-value{background:var(--bg-btn);padding:6px 12px;border-radius:8px;font-size:16px;font-weight:700;min-width:44px;text-align:center;color:var(--text-primary)}
 
 .options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
-.option{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg-btn);border-radius:10px;cursor:pointer;user-select:none;transition:background .2s}
+.option{position:relative;display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg-btn);border-radius:10px;cursor:pointer;user-select:none;transition:background .2s}
 .option:hover{background:var(--bg-btn-hover)}
-.option input{display:none}
+.option input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
 .checkbox{width:22px;height:22px;border:2px solid #555;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s;flex-shrink:0}
+.option input:focus-visible~.checkbox{outline:3px solid var(--focus-ring);outline-offset:3px}
 .option input:checked~.checkbox{background:var(--accent);border-color:var(--accent)}
 .option-label{font-size:13px;line-height:1.3}
 .option-label small{display:block;color:var(--text-muted);font-size:11px;margin-top:2px}
@@ -61,7 +62,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .history-list{max-height:160px;overflow-y:auto}
 .history-list::-webkit-scrollbar{width:4px}
 .history-list::-webkit-scrollbar-thumb{background:var(--bg-btn-hover);border-radius:2px}
-.history-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--border);font-size:13px;font-family:monospace;color:var(--text-label);cursor:pointer;transition:background .2s}
+.history-item{display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;border:0;border-bottom:1px solid var(--border);background:none;text-align:left;font-size:13px;font-family:monospace;color:var(--text-label);cursor:pointer;transition:background .2s}
 .history-item:hover{background:rgba(83,52,131,.15);color:var(--text-primary)}
 .history-item .idx{color:var(--text-muted);font-size:11px;width:16px}
 .history-empty{text-align:center;color:var(--text-muted);padding:16px;font-size:13px}
@@ -95,6 +96,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 </head>
 <body>
 <div class="app">
+<main>
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
     <h1>🔐 비밀번호 생성기</h1>
@@ -102,10 +104,10 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </div>
   <div class="content">
     <div class="pw-display">
-      <div class="pw-text" id="pwText">-</div>
+      <output class="pw-text" id="pwText" aria-label="생성된 비밀번호" aria-live="polite" aria-atomic="true">-</output>
       <div class="pw-actions">
-        <button class="pw-btn btn-copy" onclick="copyPw()" title="복사">📋</button>
-        <button class="pw-btn btn-regen" onclick="generate()" title="재생성">🔄</button>
+        <button type="button" class="pw-btn btn-copy" onclick="copyPw()" title="복사" aria-label="비밀번호 복사">📋</button>
+        <button type="button" class="pw-btn btn-regen" onclick="generate()" title="재생성" aria-label="비밀번호 재생성">🔄</button>
       </div>
     </div>
 
@@ -144,7 +146,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
     <div class="history-section">
       <div class="section-title">최근 생성 기록</div>
-      <div class="history-list" id="historyList">
+      <div class="history-list" id="historyList" aria-label="최근 생성된 비밀번호">
         <div class="history-empty">아직 생성된 비밀번호가 없습니다</div>
       </div>
     </div>
@@ -206,7 +208,8 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       </div>
     </div>
   </div>
-    <footer class="footer"><span>100% 브라우저 로컬 생성</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+    </main>
+<footer class="footer"><span>100% 브라우저 로컬 생성</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -219,6 +222,7 @@ const NUMS = '0123456789';
 const SPECIAL = '!@#$%^&*()_+-=[]{}|;:,.<>?';
 
 let history = [];
+let currentPassword = '';
 
 function getSelectedGroups() {
   const groups = [];
@@ -249,12 +253,14 @@ function secureShuffle(values) {
 function generate() {
   const groups = getSelectedGroups();
   if (groups.length === 0) {
+    currentPassword = '';
     document.getElementById('pwText').textContent = '최소 1개 옵션을 선택하세요';
     updateStrength('');
     return;
   }
   const len = parseInt(document.getElementById('pwLength').value);
   if (len < groups.length) {
+    currentPassword = '';
     document.getElementById('pwText').textContent = '선택한 문자 종류 수 이상으로 길이를 설정하세요';
     updateStrength('');
     return;
@@ -263,6 +269,7 @@ function generate() {
   const characters = groups.map(group => group[secureRandomIndex(group.length)]);
   while (characters.length < len) characters.push(charset[secureRandomIndex(charset.length)]);
   const pw = secureShuffle(characters).join('');
+  currentPassword = pw;
   document.getElementById('pwText').textContent = pw;
   updateStrength(pw);
 
@@ -329,9 +336,8 @@ function updateReport(pw, score, lvText) {
 }
 
 function copyPw() {
-  const pw = document.getElementById('pwText').textContent;
-  if (!pw || pw === '-' || pw.includes('선택하세요')) return;
-  navigator.clipboard.writeText(pw).then(() => showToast('📋 비밀번호가 복사되었습니다'));
+  if (!currentPassword) return;
+  navigator.clipboard.writeText(currentPassword).then(() => showToast('📋 비밀번호가 복사되었습니다'));
 }
 
 function renderHistory() {
@@ -341,7 +347,7 @@ function renderHistory() {
     return;
   }
   container.innerHTML = history.map((pw, i) =>
-    `<div class="history-item" onclick="copyHistoryItem(${i})" title="클릭하여 복사"><span class="idx">${i + 1}</span><span>${escapeHtml(pw)}</span></div>`
+    `<button type="button" class="history-item" onclick="copyHistoryItem(${i})" aria-label="${i + 1}번째 비밀번호 복사"><span class="idx">${i + 1}</span><span>${escapeHtml(pw)}</span></button>`
   ).join('');
 }
 

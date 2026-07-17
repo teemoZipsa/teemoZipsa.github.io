@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="/special-chars/favicon.png">
@@ -19,7 +20,6 @@
 
 <meta name="robots" content="noindex, follow">
 <style>
-        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:start;padding:20px}
         .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
@@ -87,6 +87,7 @@
 
         .bottom-bar{background:var(--bg-body);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #222250}
         .bottom-bar .info{font-size:11px;color:var(--text-muted)}
+        .bottom-actions{display:flex;gap:8px}
         .action-btn{padding:8px 16px;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .2s}
         .btn-clear{background:var(--bg-btn);color:var(--text-secondary)}
         .btn-clear:hover{background:var(--bg-btn-hover)}
@@ -99,13 +100,14 @@
 
         .history-section{margin-top:12px}
         .history-label{font-size:12px;color:var(--text-info);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
-        .history-clear{font-size:11px;color:var(--text-muted);cursor:pointer;background:none;border:none;font-family:inherit;transition:color .2s}
+        .history-clear{font-size:11px;color:var(--text-muted);cursor:pointer;background:none;border:none;font-family:inherit;transition:color .2s;min-height:36px;padding:4px 8px}
         .history-clear:hover{color:var(--status-red-text)}
-        .history-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg-body);border-radius:6px;margin-bottom:4px;cursor:pointer;transition:background .2s}
+        .history-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg-body);border-radius:6px;margin-bottom:4px;transition:background .2s}
         .history-item:hover{background:var(--bg-input)}
+        .history-item .hi-load{display:flex;align-items:center;gap:8px;flex:1;min-width:0;background:none;border:0;padding:4px;color:inherit;font:inherit;text-align:left;cursor:pointer}
         .history-item .hi-campaign{font-size:12px;color:var(--accent-text);font-weight:500;flex-shrink:0}
         .history-item .hi-url{font-size:11px;color:#7cc6fe;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-        .history-item .hi-copy{flex-shrink:0;font-size:11px;color:var(--text-muted);background:var(--bg-btn);border:none;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:inherit;transition:all .2s}
+        .history-item .hi-copy{flex-shrink:0;font-size:11px;color:var(--text-muted);background:var(--bg-btn);border:none;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:inherit;transition:all .2s;min-width:44px;min-height:36px}
         .history-item .hi-copy:hover{background:var(--accent);color:var(--text-on-accent)}
 
         @media(max-width:640px){
@@ -129,6 +131,7 @@
 </head>
 <body>
 <div class="app">
+<main>
     <div class="header">
         <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
         <h1>🔗 UTM 파라미터 생성기</h1>
@@ -137,21 +140,21 @@
     <div class="tool-body">
         <!-- URL 입력 -->
         <div class="field-group">
-            <div class="field-label">🌐 웹사이트 URL <span class="required">필수</span></div>
+            <label class="field-label" for="urlInput">🌐 웹사이트 URL <span class="required">필수</span></label>
             <input type="url" id="urlInput" class="field-input" placeholder="https://example.com/page" oninput="generateURL()">
         </div>
 
         <!-- 프리셋 -->
         <div class="presets">
             <div class="presets-label">⚡ 빠른 입력 (프리셋)</div>
-            <div class="preset-btns">
-                <button class="preset-btn" onclick="applyPreset('google','cpc',this)">Google 검색광고</button>
-                <button class="preset-btn" onclick="applyPreset('facebook','paid_social',this)">Facebook 광고</button>
-                <button class="preset-btn" onclick="applyPreset('instagram','social',this)">Instagram</button>
-                <button class="preset-btn" onclick="applyPreset('naver_blog','referral',this)">네이버 블로그</button>
-                <button class="preset-btn" onclick="applyPreset('newsletter','email',this)">이메일 뉴스레터</button>
-                <button class="preset-btn" onclick="applyPreset('youtube','video',this)">YouTube</button>
-                <button class="preset-btn" onclick="applyPreset('kakao','social',this)">카카오톡</button>
+            <div class="preset-btns" role="group" aria-label="UTM 빠른 입력 프리셋">
+                <button type="button" class="preset-btn" aria-pressed="false" onclick="applyPreset('google','cpc',this)">Google 검색광고</button>
+                <button type="button" class="preset-btn" aria-pressed="false" onclick="applyPreset('facebook','paid_social',this)">Facebook 광고</button>
+                <button type="button" class="preset-btn" aria-pressed="false" onclick="applyPreset('instagram','social',this)">Instagram</button>
+                <button type="button" class="preset-btn" aria-pressed="false" onclick="applyPreset('naver_blog','referral',this)">네이버 블로그</button>
+                <button type="button" class="preset-btn" aria-pressed="false" onclick="applyPreset('newsletter','email',this)">이메일 뉴스레터</button>
+                <button type="button" class="preset-btn" aria-pressed="false" onclick="applyPreset('youtube','video',this)">YouTube</button>
+                <button type="button" class="preset-btn" aria-pressed="false" onclick="applyPreset('kakao','social',this)">카카오톡</button>
             </div>
         </div>
 
@@ -159,23 +162,23 @@
 
         <!-- UTM 파라미터 입력 -->
         <div class="field-group">
-            <div class="field-label">utm_source <span class="required">필수</span></div>
+            <label class="field-label" for="utm_source">utm_source <span class="required">필수</span></label>
             <input type="text" id="utm_source" class="field-input" placeholder="트래픽 소스 (예: google, facebook, newsletter)" oninput="generateURL()">
         </div>
         <div class="field-group">
-            <div class="field-label">utm_medium <span class="required">필수</span></div>
+            <label class="field-label" for="utm_medium">utm_medium <span class="required">필수</span></label>
             <input type="text" id="utm_medium" class="field-input" placeholder="매체 유형 (예: cpc, email, social, banner)" oninput="generateURL()">
         </div>
         <div class="field-group">
-            <div class="field-label">utm_campaign <span class="required">필수</span></div>
+            <label class="field-label" for="utm_campaign">utm_campaign <span class="required">필수</span></label>
             <input type="text" id="utm_campaign" class="field-input" placeholder="캠페인 이름 (예: spring_sale, launch_2026)" oninput="generateURL()">
         </div>
         <div class="field-group">
-            <div class="field-label">utm_term <span class="optional">선택</span></div>
+            <label class="field-label" for="utm_term">utm_term <span class="optional">선택</span></label>
             <input type="text" id="utm_term" class="field-input" placeholder="검색 키워드 (예: running_shoes)" oninput="generateURL()">
         </div>
         <div class="field-group">
-            <div class="field-label">utm_content <span class="optional">선택</span></div>
+            <label class="field-label" for="utm_content">utm_content <span class="optional">선택</span></label>
             <input type="text" id="utm_content" class="field-input" placeholder="광고 콘텐츠 구분 (예: header_banner, cta_button)" oninput="generateURL()">
         </div>
 
@@ -183,9 +186,9 @@
 
         <!-- 결과 -->
         <div class="result-section">
-            <div class="result-label">📋 생성된 URL</div>
+            <label class="result-label" for="resultURL">📋 생성된 URL</label>
             <div id="resultPlaceholder" class="result-placeholder">위에서 URL과 UTM 파라미터를 입력하면 여기에 결과가 표시됩니다.</div>
-            <textarea id="resultURL" class="result-url" readonly style="display:none"></textarea>
+            <textarea id="resultURL" class="result-url" readonly aria-describedby="bottomInfo" style="display:none"></textarea>
             <table class="param-table" id="paramTable" style="display:none">
                 <thead><tr><th>파라미터</th><th>값</th></tr></thead>
                 <tbody id="paramBody"></tbody>
@@ -202,9 +205,17 @@
         <div class="history-section" id="historySection" style="display:none">
             <div class="history-label">
                 <span>🕒 최근 생성 기록</span>
-                <button class="history-clear" onclick="clearHistory()">전체 삭제</button>
+                <button type="button" class="history-clear" onclick="clearHistory()">전체 삭제</button>
             </div>
-            <div id="historyList"></div>
+            <div id="historyList" aria-label="최근 생성 기록"></div>
+        </div>
+    </div>
+
+    <div class="bottom-bar">
+        <span class="info" id="bottomInfo" role="status" aria-live="polite" aria-atomic="true">URL과 필수 파라미터를 입력하세요</span>
+        <div class="bottom-actions">
+            <button type="button" class="action-btn btn-clear" onclick="clearAll()">초기화</button>
+            <button type="button" class="action-btn btn-copy" id="copyBtn" onclick="copyURL()" disabled>URL 복사</button>
         </div>
     </div>
 
@@ -233,7 +244,8 @@
             </div>
         </div>
     </details>
-    <footer class="footer"><span>마케팅 URL 추적 파라미터</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
+    </main>
+<footer class="footer"><span>마케팅 URL 추적 파라미터</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -260,7 +272,9 @@ function generateURL() {
 
     // URL 유효성
     document.getElementById('urlInput').classList.remove('error');
+    document.getElementById('urlInput').setAttribute('aria-invalid', 'false');
     if (!base) {
+        placeholder.textContent = '위에서 URL과 UTM 파라미터를 입력하면 여기에 결과가 표시됩니다.';
         placeholder.style.display = '';
         resultEl.style.display = 'none';
         tableEl.style.display = 'none';
@@ -277,6 +291,7 @@ function generateURL() {
         if (!/^https?:$/.test(url.protocol)) throw new Error('Unsupported URL protocol');
     } catch {
         document.getElementById('urlInput').classList.add('error');
+        document.getElementById('urlInput').setAttribute('aria-invalid', 'true');
         placeholder.textContent = '올바른 URL 형식이 아닙니다.';
         placeholder.style.display = '';
         resultEl.style.display = 'none';
@@ -357,11 +372,15 @@ function applyPreset(source, medium, btn) {
     document.getElementById('utm_medium').value = medium;
 
     // 활성 프리셋 표시
-    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.preset-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+    });
     if (activePreset === btn) {
         activePreset = null;
     } else {
         btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
         activePreset = btn;
     }
 
@@ -394,7 +413,10 @@ function clearAll() {
         document.getElementById(id).value = '';
         document.getElementById(id).classList.remove('error');
     });
-    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.preset-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+    });
     activePreset = null;
     document.getElementById('resultPlaceholder').textContent = '위에서 URL과 UTM 파라미터를 입력하면 여기에 결과가 표시됩니다.';
     generateURL();
@@ -445,10 +467,12 @@ function renderHistory() {
 
     section.style.display = '';
     list.innerHTML = history.map((h, i) => `
-        <div class="history-item" onclick="loadHistory(${i})">
-            <span class="hi-campaign">${escapeHtml(h.label)}</span>
-            <span class="hi-url">${escapeHtml(h.url)}</span>
-            <button class="hi-copy" onclick="event.stopPropagation();copyHistoryItem(${i})">복사</button>
+        <div class="history-item">
+            <button type="button" class="hi-load" onclick="loadHistory(${i})" aria-label="${escapeHtml(h.label)} 기록 불러오기">
+                <span class="hi-campaign">${escapeHtml(h.label)}</span>
+                <span class="hi-url">${escapeHtml(h.url)}</span>
+            </button>
+            <button type="button" class="hi-copy" onclick="copyHistoryItem(${i})" aria-label="${escapeHtml(h.label)} URL 복사">복사</button>
         </div>
     `).join('');
 }
@@ -463,7 +487,10 @@ function loadHistory(idx) {
             url.searchParams.delete('utm_' + key);
         });
         document.getElementById('urlInput').value = url.toString();
-        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.preset-btn').forEach(b => {
+            b.classList.remove('active');
+            b.setAttribute('aria-pressed', 'false');
+        });
         activePreset = null;
         generateURL();
         window.scrollTo({ top: 0, behavior: 'smooth' });
