@@ -7,7 +7,6 @@
 [![Website](https://img.shields.io/badge/🌐_사이트_바로가기-teemoZipsa.github.io-FF6B6B?style=for-the-badge)](https://teemozipsa.github.io)
 [![도구 개수](https://img.shields.io/badge/도구_개수-44개-6C5CE7?style=for-the-badge)](#-도구-목록)
 [![PWA](https://img.shields.io/badge/PWA-방문_페이지_캐시-00C853?style=for-the-badge)](#-주요-기능)
-[![CI](https://github.com/teemoZipsa/teemoZipsa.github.io/actions/workflows/check-rules.yml/badge.svg)](https://github.com/teemoZipsa/teemoZipsa.github.io/actions/workflows/check-rules.yml)
 
 </div>
 
@@ -29,7 +28,7 @@
 - 💾 **선택적 자동 저장** — 일부 도구는 입력·설정·커스텀 문구 또는 생성 이력을 브라우저에 저장
 - ⭐ **즐겨찾기** — 자주 쓰는 도구에 별표 또는 드래그로 즐겨찾기 등록
 - 🔐 **로컬 우선 처리** — 계산·텍스트·파일 변환은 브라우저에서 처리하고 네트워크 기능은 별도 표시
-- ✅ **품질 검사** — 로컬 검사 스크립트를 우선 실행하고, 필요할 때 수동 GitHub Actions로 같은 범위를 확인
+- ✅ **품질 검사** — `npm run verify`로 규칙·수식·SEO·브라우저 렌더링을 게시 전에 로컬 검증
 
 <br>
 
@@ -105,6 +104,35 @@
 
 <br>
 
+## ✅ 로컬 검증과 배포 준비
+
+사용자 정의 GitHub Actions 없이 로컬 검증을 통과한 정적 파일을 `main` 브랜치 루트에서 GitHub Pages로 게시합니다. 저장소에는 workflow를 두지 않으며, Pages의 내장 배포만 GitHub가 관리합니다.
+
+최초 한 번 의존성과 Chromium을 준비합니다.
+
+```powershell
+npm ci
+npx playwright install chromium
+```
+
+코드 변경을 검증할 때는 다음 한 명령을 실행합니다.
+
+```powershell
+npm run verify
+```
+
+이 명령은 코드 규칙, 계산식 회귀 사례, SEO 색인, 전체 정적 페이지의 Chromium 렌더링 및 Git diff 오류를 순서대로 검사합니다.
+
+게시 전 검색 제안 주제까지 갱신하려면 다음 명령을 사용합니다. 검색 제안 내용이 같으면 데이터 파일을 수정하지 않으며, 모든 외부 요청이 실패하면 기존 데이터를 보존하고 명령을 실패 처리합니다.
+
+```powershell
+npm run release:check
+```
+
+검색 제안은 검색량이나 인기 순위가 아니며, 배포 준비 시 수동으로 갱신합니다. 위 명령은 커밋이나 푸시를 자동으로 수행하지 않습니다.
+
+<br>
+
 ## 🏗️ 기술 스택
 
 <div align="center">
@@ -113,7 +141,6 @@
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-222222?style=for-the-badge&logo=githubpages&logoColor=white)
-![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
 
 </div>
 

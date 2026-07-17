@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-17T17:38:31+09:00",
-  "refresh_minutes": 360,
+  "last_updated": "2026-07-17T23:47:18+09:00",
+  "refresh_policy": "manual_on_release",
   "source": "google_suggest_with_editorial_fallback",
   "methodology": "Suggestion order is not search volume or popularity. Editorial keywords are fallback only.",
   "items": [

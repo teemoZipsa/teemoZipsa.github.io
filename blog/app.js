@@ -25,11 +25,9 @@
     if(isNaN(d.getTime())) return iso;
     return pad(d.getMonth()+1)+'.'+pad(d.getDate());
   }
-  function fmtRefresh(minutes){
-    var value = Number(minutes);
-    if(!Number.isFinite(value) || value <= 0) return '주기 미표시';
-    if(value % 60 === 0) return (value / 60) + '시간';
-    return value + '분';
+  function refreshLabel(policy){
+    if(policy === 'manual_on_release') return '배포 전 수동 갱신';
+    return '갱신 방식 미표시';
   }
 
   function itemPosition(item, index){
@@ -240,10 +238,10 @@
 
   // ---------- update timestamps ----------
   function updateMeta(trends){
-    var meta = trends.last_updated || new Date().toISOString();
+    var meta = trends.last_updated || '';
     var rel = fmtRelative(meta);
     var heroMeta = $('#heroMeta');
-    if(heroMeta && rel) heroMeta.textContent = rel + ' 데이터 변경 · 갱신 설정 ' + fmtRefresh(trends.refresh_minutes);
+    if(heroMeta && rel) heroMeta.textContent = rel + ' 데이터 변경 · ' + refreshLabel(trends.refresh_policy);
     var sideMeta = $('#sideMeta');
     if(sideMeta && rel) sideMeta.textContent = rel.split('·').pop().trim();
     var tickerMeta = $('#tickerMeta');

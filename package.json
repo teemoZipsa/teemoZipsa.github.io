@@ -1,9 +1,13 @@
 {
   "scripts": {
     "check:rules": "node scripts/check-rules.mjs",
+    "check:diff": "git diff --check HEAD",
     "audit:formulas": "node scripts/audit-formulas.mjs",
     "audit:pages": "node scripts/audit-pages.mjs",
-    "audit:seo": "node scripts/audit-seo-index.mjs"
+    "audit:seo": "node scripts/audit-seo-index.mjs",
+    "trends:update": "python scripts/fetch_trends.py",
+    "verify": "npm run check:rules && npm run audit:formulas && npm run audit:seo && npm run audit:pages && npm run check:diff",
+    "release:check": "npm run trends:update && npm run verify"
   },
   "devDependencies": {
     "playwright": "^1.53.0"
