@@ -25,35 +25,21 @@
     if(isNaN(d.getTime())) return iso;
     return pad(d.getMonth()+1)+'.'+pad(d.getDate());
   }
-
-  // sparkline SVG path from array of values
-  function sparkPath(values, w, h){
-    if(!values || !values.length) return '';
-    var min = Math.min.apply(null, values);
-    var max = Math.max.apply(null, values);
-    var range = max - min || 1;
-    var step = w / Math.max(values.length - 1, 1);
-    var pts = values.map(function(v, i){
-      var x = i * step;
-      var y = h - ((v - min) / range) * h;
-      return x.toFixed(1)+' '+y.toFixed(1);
-    });
-    return 'M' + pts.join(' L');
+  function fmtRefresh(minutes){
+    var value = Number(minutes);
+    if(!Number.isFinite(value) || value <= 0) return '주기 미표시';
+    if(value % 60 === 0) return (value / 60) + '시간';
+    return value + '분';
   }
 
-  function changeLabel(item){
-    switch(item.change){
-      case 'up':   return '▲ ' + (item.delta || '');
-      case 'down': return '▼ ' + Math.abs(item.delta || 0);
-      case 'new':  return 'NEW';
-      case 'flat': default: return '—';
-    }
+  function itemPosition(item, index){
+    var value = Number(item && item.position);
+    return Number.isFinite(value) && value > 0 ? value : index + 1;
   }
-  function changeClass(c){
-    return ({ up:'ch-up', down:'ch-down', new:'ch-new', flat:'ch-flat' })[c] || 'ch-flat';
-  }
-  function changeColor(c){
-    return ({ up:'#fb7185', down:'#7dd3fc', new:'#3ed6ba', flat:'#94a3b8' })[c] || '#94a3b8';
+  function originLabel(item){
+    if(item && item.origin === 'google_suggest') return '검색 제안';
+    if(item && item.origin === 'editorial_fallback') return '편집 추천';
+    return '출처 미표시';
   }
 
   // ---------- mapping resolver ----------
@@ -79,39 +65,24 @@
   // ---------- INDEX: trend spotlight + list ----------
   function renderTrendHero(root, trends, resolve){
     if(!root) return;
-    var items = (trends.items || []).slice().sort(function(a,b){ return a.rank - b.rank; });
+    var items = (trends.items || []).slice().sort(function(a,b){ return itemPosition(a, 0) - itemPosition(b, 0); });
     if(!items.length) return;
 
     var top = items[0];
     var rest = items.slice(1, 10);
     var topMap = resolve(top.keyword);
 
-    var spotPath = sparkPath(top.sparkline || [], 240, 50);
+    var topPosition = itemPosition(top, 0);
 
     var spot =
       '<article class="spot">'+
-        '<div class="spot-rank">'+ pad(top.rank) +'</div>'+
+        '<div class="spot-rank">'+ pad(topPosition) +'</div>'+
         '<div class="spot-body">'+
           '<div class="spot-meta">'+
-            (top.change==='new'
-              ? '<span class="badge-new">NEW</span>'
-              : '<span class="badge-rise">'+ escapeHTML(changeLabel(top)) +' ranks</span>')+
-            (top.growth24h ? '<span>지난 24시간 '+ escapeHTML(top.growth24h) +' 검색량</span>' : '')+
+            '<span class="badge-new">'+ escapeHTML(originLabel(top)) +'</span>'+
+            '<span>검색량 순위가 아닌 주제 목록</span>'+
           '</div>'+
           '<h2 class="spot-kw">'+ escapeHTML(top.keyword) +'</h2>'+
-          '<div class="spot-spark">'+
-            '<svg viewBox="0 0 240 54" preserveAspectRatio="none" aria-hidden="true">'+
-              '<defs><linearGradient id="spotGradJ" x1="0" x2="0" y1="0" y2="1">'+
-                '<stop offset="0%" stop-color="#3ed6ba" stop-opacity=".6"/>'+
-                '<stop offset="100%" stop-color="#3ed6ba" stop-opacity="0"/>'+
-              '</linearGradient></defs>'+
-              '<path d="'+ spotPath +'" fill="none" stroke="#3ed6ba" stroke-width="2.5" stroke-linecap="round"/>'+
-              '<path d="'+ spotPath +' L240 54 L0 54 Z" fill="url(#spotGradJ)"/>'+
-            '</svg>'+
-            '<div class="spot-stats">'+
-              (top.growth24h ? '<span>24h <b>'+ escapeHTML(top.growth24h) +'</b></span>' : '')+
-            '</div>'+
-          '</div>'+
           '<div class="spot-cta">'+
             (topMap.article
               ? '<a href="'+ escapeHTML(topMap.article.url) +'" class="primary">관련 가이드 읽기 →</a>'
@@ -123,33 +94,39 @@
         '</div>'+
       '</article>';
 
-    var rows = rest.map(function(it){
-      var path = sparkPath(it.sparkline || [], 80, 18);
-      var stroke = changeColor(it.change);
-      var nb = it.change==='new' ? '<span class="nb">NEW</span>' : '';
-      var topCls = it.rank <= 3 ? ' t' : '';
+    var rows = rest.map(function(it, index){
+      var position = itemPosition(it, index + 1);
       var map = resolve(it.keyword);
-      var href = (map.article && map.article.url) || (map.tool && map.tool.url) || '/blog/';
-      return '<li class="ri'+topCls+'">'+
-        '<span class="rk">'+ it.rank +'</span>'+
-        '<a class="kw" href="'+ escapeHTML(href) +'"><span>'+ escapeHTML(it.keyword) +'</span>'+ nb +'</a>'+
-        '<span class="spk"><svg viewBox="0 0 80 22" preserveAspectRatio="none">'+
-          '<path d="'+ path +'" fill="none" stroke="'+ stroke +'" stroke-width="1.8" stroke-linecap="round"/>'+
-        '</svg></span>'+
-        '<span class="ch '+ changeClass(it.change) +'">'+ escapeHTML(changeLabel(it)) +'</span>'+
+      var href = (map.article && map.article.url) || (map.tool && map.tool.url) || '';
+      var keywordNode = href
+        ? '<a class="kw" href="'+ escapeHTML(href) +'"><span>'+ escapeHTML(it.keyword) +'</span></a>'
+        : '<span class="kw" aria-disabled="true"><span>'+ escapeHTML(it.keyword) +'</span></span>';
+      return '<li class="ri">'+
+        '<span class="rk">'+ position +'</span>'+
+        keywordNode+
+        '<span class="ch ch-flat">'+ escapeHTML(href ? originLabel(it) : '관련 콘텐츠 없음') +'</span>'+
       '</li>';
     }).join('');
 
-    var list = '<ol class="rank-list" aria-label="2위~10위 키워드">'+ rows +'</ol>';
+    var list = '<ol class="rank-list" aria-label="검색 주제 2~10">'+ rows +'</ol>';
     root.innerHTML = spot + list;
   }
 
   // ---------- INDEX: keyword mapping cards ----------
   function renderKwMapping(root, trends, resolve){
     if(!root) return;
-    var items = (trends.items || []).slice(0, 3);
+    var seenArticles = {};
+    var items = [];
+    (trends.items || []).some(function(item){
+      var mapped = resolve(item.keyword);
+      var articleUrl = mapped.article && mapped.article.url;
+      if(!articleUrl || seenArticles[articleUrl]) return false;
+      seenArticles[articleUrl] = true;
+      items.push(item);
+      return items.length >= 3;
+    });
     if(!items.length) return;
-    var html = items.map(function(it){
+    var html = items.map(function(it, index){
       var map = resolve(it.keyword);
       var art = map.article;
       var tool = map.tool;
@@ -158,21 +135,21 @@
       if(art.thumbnail){
         thumb = '<img src="'+ escapeHTML(art.thumbnail) +'" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>';
       }
-      var chCls = it.change==='new' ? 'new' : (it.change==='up' ? 'up' : '');
-      return '<a class="kw-card" href="'+ escapeHTML(art.url) +'">'+
-        '<div class="kw-hd"><span class="rk">#'+ it.rank +'</span><span class="kw">'+ escapeHTML(it.keyword) +'</span>'+
-          '<span class="ch '+ chCls +'">'+ escapeHTML(changeLabel(it)) +'</span></div>'+
-        '<div class="thumb">'+ thumb +'</div>'+
-        '<div class="body">'+
-          '<span class="tag">'+ escapeHTML(art.tag || '') +'</span>'+
-          '<h3>'+ escapeHTML(art.title) +'</h3>'+
-          '<p>'+ escapeHTML(art.summary || '') +'</p>'+
-        '</div>'+
+      return '<article class="kw-card">'+
+        '<a class="article-link" href="'+ escapeHTML(art.url) +'">'+
+          '<div class="kw-hd"><span class="rk">주제 '+ itemPosition(it, index) +'</span><span class="kw">'+ escapeHTML(it.keyword) +'</span></div>'+
+          '<div class="thumb">'+ thumb +'</div>'+
+          '<div class="body">'+
+            '<span class="tag">'+ escapeHTML(art.tag || '') +'</span>'+
+            '<h3>'+ escapeHTML(art.title) +'</h3>'+
+            '<p>'+ escapeHTML(art.summary || '') +'</p>'+
+          '</div>'+
+        '</a>'+
         (tool
-          ? '<div class="related-tool"><div class="ic">'+ escapeHTML(tool.icon||'') +'</div>'+
-              '<div><b>'+ escapeHTML(tool.name) +'</b></div><span class="arr">바로 →</span></div>'
+          ? '<a class="related-tool" href="'+ escapeHTML(tool.url) +'"><div class="ic">'+ escapeHTML(tool.icon||'') +'</div>'+
+              '<div><b>'+ escapeHTML(tool.name) +'</b></div><span class="arr">바로 →</span></a>'
           : '')+
-      '</a>';
+      '</article>';
     }).join('');
     if(html) root.innerHTML = html;
   }
@@ -246,16 +223,16 @@
   // ---------- ARTICLE: sidebar trends ----------
   function renderSidebarTrends(roots, trends){
     if(!roots.length) return;
-    var items = (trends.items || []).slice().sort(function(a,b){ return a.rank - b.rank; });
+    var items = (trends.items || []).slice().sort(function(a,b){ return itemPosition(a, 0) - itemPosition(b, 0); });
     roots.forEach(function(root){
       var limit = parseInt(root.getAttribute('data-limit') || '7', 10);
       var slice = items.slice(0, limit);
-      root.innerHTML = slice.map(function(it){
-        var topCls = it.rank <= 3 ? ' top' : '';
+      root.innerHTML = slice.map(function(it, index){
+        var position = itemPosition(it, index);
         return '<li>'+
-          '<span class="rk'+topCls+'">'+ it.rank +'</span>'+
+          '<span class="rk">'+ position +'</span>'+
           '<span class="kw">'+ escapeHTML(it.keyword) +'</span>'+
-          '<span class="ch '+ changeClass(it.change) +'">'+ escapeHTML(changeLabel(it)) +'</span>'+
+          '<span class="ch ch-flat">'+ escapeHTML(originLabel(it)) +'</span>'+
         '</li>';
       }).join('');
     });
@@ -266,11 +243,11 @@
     var meta = trends.last_updated || new Date().toISOString();
     var rel = fmtRelative(meta);
     var heroMeta = $('#heroMeta');
-    if(heroMeta && rel) heroMeta.textContent = rel + ' 갱신 · 매 '+ (trends.refresh_minutes||10) +'분';
+    if(heroMeta && rel) heroMeta.textContent = rel + ' 데이터 변경 · 갱신 설정 ' + fmtRefresh(trends.refresh_minutes);
     var sideMeta = $('#sideMeta');
     if(sideMeta && rel) sideMeta.textContent = rel.split('·').pop().trim();
     var tickerMeta = $('#tickerMeta');
-    if(tickerMeta && rel) tickerMeta.textContent = rel.split('·').pop().trim() + ' 갱신';
+    if(tickerMeta && rel) tickerMeta.textContent = rel.split('·').pop().trim() + ' 데이터';
   }
 
   // ---------- boot ----------
@@ -315,7 +292,7 @@
       updateMeta(trends);
     })
     .catch(function(err){
-      // Silent: leave static fallback HTML alone. Still update timestamps to "now".
+      // Silent: leave static fallback HTML and its original timestamp unchanged.
       console.warn('[blog] data load failed, keeping static fallback:', err.message);
     });
 })();

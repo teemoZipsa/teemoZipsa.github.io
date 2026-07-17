@@ -122,9 +122,9 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
 
     <div class="input-group">
-      <label>현재 체중</label>
+      <label>현재 체중 (선택)</label>
       <div class="input-row">
-        <input type="number" id="weight" value="3.5" min="0.1" max="200" step="0.1" inputmode="decimal" oninput="calc()">
+        <input type="number" id="weight" min="0.1" max="200" step="0.1" inputmode="decimal" placeholder="예: 4.2" oninput="calc()">
         <span class="unit">kg</span>
       </div>
     </div>
@@ -159,13 +159,13 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="info-grid" id="infoGrid"></div>
 
     <!-- SEO 친화적 사전 렌더링된 BCS 자가 점검 리포트 -->
-    <div class="report-box active" id="reportBox">
+    <div class="report-box" id="reportBox">
       <h3>📋 BCS 자가 점검 리포트</h3>
       <p>
-        반려동물 종류: <span class="highlight" id="r-type">🐶 강아지</span>, 현재 체중: <span class="highlight" id="r-weight">3.5kg</span>, 선택한 BCS: <span class="highlight"><span id="r-bcs">5</span>/9</span>
+        반려동물 종류: <span class="highlight" id="r-type">🐶 강아지</span>, 현재 체중: <span class="highlight" id="r-weight">미입력</span>, 선택한 BCS: <span class="highlight"><span id="r-bcs">—</span>/9</span>
       </p>
       <p>
-        선택한 BCS는 <strong><span id="r-status" style="color:#22c55e;">[이상적]</span></strong> 구간입니다. 이 구간은 현재 체중이나 품종 평균이 아니라 보호자가 선택한 9점 BCS를 기준으로 표시합니다.
+        BCS 구간: <strong><span id="r-status">[점수 선택 전]</span></strong>. 이 구간은 현재 체중이나 품종 평균이 아니라 보호자가 선택한 9점 BCS를 기준으로 표시합니다.
       </p>
       <p id="r-breed-note">품종별 체중 범위를 선택하지 않았습니다. 품종 정보는 BCS 결과에 영향을 주지 않습니다.</p>
       <div class="report-tip" id="r-tip-box" style="border-color:#22c55e;">
@@ -185,7 +185,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <strong>4~5점 · 이상적:</strong> 갈비뼈가 과도한 지방 없이 만져지고 위에서 허리, 옆에서 복부 들어감이 확인됩니다.<br>
       <strong>6~7점 · 이상 체형 초과:</strong> 갈비뼈 위 지방층이 늘어 만지기 어려워지고 허리와 복부선이 덜 뚜렷합니다.<br>
       <strong>8~9점 · 비만 구간:</strong> 갈비뼈가 두꺼운 지방층 아래 잘 만져지지 않고 허리선 소실과 지방 축적이 뚜렷합니다.<br><br>
-      기준 자료: <a href="https://www.aaha.org/resources/2021-aaha-nutrition-and-weight-management-guidelines/screening-evaluation/" target="_blank" rel="noopener noreferrer">AAHA 9점 BCS 안내</a> · <a href="https://wsava.org/wp-content/uploads/2025/06/WSAVA_BCSCat_BCSDog_Nutrition_250612.pdf" target="_blank" rel="noopener noreferrer">WSAVA 개·고양이 BCS 도표</a>
+      기준 자료: <a href="https://www.aaha.org/resources/2021-aaha-nutrition-and-weight-management-guidelines/screening-evaluation/" target="_blank" rel="noopener noreferrer">AAHA 9점 BCS 안내</a> · <a href="https://wsava.org/wp-content/uploads/2025/06/WSAVA_BCSCat_BCSDog_Nutrition_250612.pdf" target="_blank" rel="noopener noreferrer">WSAVA 개 BCS 도표</a> · <a href="https://wsava.org/wp-content/uploads/2025/06/WSAVA_BCSCat_BCSCat_Nutrition_250612.pdf" target="_blank" rel="noopener noreferrer">WSAVA 고양이 BCS 도표</a>
     </div>
   </details>
 
@@ -201,7 +201,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
   <div class="magazine-cta" id="catMagazineCta" style="display:none; margin: 0 12px 12px; padding: 16px; background: linear-gradient(135deg, var(--bg-hover), var(--bg-guide)); border: 2px solid var(--accent); border-radius: 8px; text-align: center;">
     <h4 style="font-size:14px; margin-bottom:8px; font-weight:700; color:var(--text-primary)">우리 고양이 비만일까? 원시주머니일까? 🐱</h4>
-    <p style="font-size:12px; color:var(--text-info); margin-bottom:12px; word-break:keep-all;">2025년 최신 수의학 연구에 기반한 고양이 눈대중 체형 평가(BCS) 가이드를 티모 매거진에서 확인해보세요!</p>
+    <p style="font-size:12px; color:var(--text-info); margin-bottom:12px; word-break:keep-all;">고양이의 원시주머니와 체지방을 구분해 살펴보는 체형 평가(BCS) 가이드를 티모 매거진에서 확인해보세요.</p>
     <a href="/blog/cat-bmi-guide/" style="display:inline-block; padding:8px 16px; background:var(--accent); color:var(--text-on-accent); border-radius:8px; text-decoration:none; font-size:13px; font-weight:700;">가이드 읽어보기 ➔</a>
   </div>
 
@@ -360,7 +360,58 @@ const CAT_BREEDS = [
   { name: '픽시밥', min: 4, max: 8 },
 ];
 
-const BCS_DATA = [];
+let selectedBcs = null;
+
+const BCS_DATA = [
+  { score: 1, description: '갈비뼈·척추·골반이 멀리서도 뚜렷하고 체지방이 거의 느껴지지 않는 상태' },
+  { score: 2, description: '갈비뼈와 뼈 돌출이 쉽게 보이며 지방과 근육이 매우 적게 느껴지는 상태' },
+  { score: 3, description: '갈비뼈가 쉽게 만져지고 허리와 복부 들어감이 뚜렷한 상태' },
+  { score: 4, description: '갈비뼈가 쉽게 만져지며 얇은 지방층, 뚜렷한 허리와 복부 들어감이 있는 상태' },
+  { score: 5, description: '갈비뼈가 과도한 지방 없이 만져지고 위에서 허리, 옆에서 복부 들어감이 보이는 상태' },
+  { score: 6, description: '갈비뼈 위에 약간의 지방이 느껴지고 허리와 복부선이 덜 뚜렷한 상태' },
+  { score: 7, description: '갈비뼈를 만지기 어려우며 허리선이 거의 없고 복부 지방이 늘어난 상태' },
+  { score: 8, description: '두꺼운 지방층 때문에 갈비뼈가 잘 만져지지 않고 허리선이 없는 상태' },
+  { score: 9, description: '매우 두꺼운 지방층 아래 갈비뼈가 만져지지 않고 복부 지방 축적이 뚜렷한 상태' },
+];
+
+function getBcsAssessment(score) {
+  if (score <= 3) {
+    return {
+      statusText: '이상 체형 미만', statusColor: '#3b82f6', emoji: '🦴', labelIndex: 0,
+      tip: '식사량을 임의로 크게 바꾸기보다 수의사에게 BCS와 근육 상태(MCS), 질환 가능성을 확인하세요.'
+    };
+  }
+  if (score <= 5) {
+    return {
+      statusText: '이상적', statusColor: '#22c55e', emoji: '✅', labelIndex: 1,
+      tip: '현재 급여량과 활동을 기록하며 정기적으로 같은 방법으로 재확인하세요.'
+    };
+  }
+  if (score <= 7) {
+    return {
+      statusText: '이상 체형 초과', statusColor: '#f97316', emoji: '⚠️', labelIndex: 2,
+      tip: '급여량·간식·활동 기록을 준비해 수의사와 안전한 관리 목표를 상의하세요.'
+    };
+  }
+  return {
+    statusText: '비만 구간', statusColor: '#ef4444', emoji: '🔴', labelIndex: 3,
+    tip: '수의사 평가 후 단계적인 체중 관리 계획을 세우세요. 특히 고양이는 급격한 절식을 피해야 합니다.'
+  };
+}
+
+function renderBcs() {
+  const selector = document.getElementById('bcsSelector');
+  selector.innerHTML = BCS_DATA.map(item => {
+    const active = item.score === selectedBcs;
+    return `<button type="button" class="bcs-btn${active ? ' active' : ''}" aria-label="BCS ${item.score}점" aria-pressed="${active}" title="${item.description}" onclick="selectBcs(${item.score})">${item.score}</button>`;
+  }).join('');
+}
+
+function selectBcs(score) {
+  selectedBcs = score;
+  renderBcs();
+  calc();
+}
 
 function setType(t) {
   petType = t;
@@ -398,166 +449,101 @@ function renderBreeds() {
 
 function selectBreed(idx) {
   const breeds = petType === 'dog' ? DOG_BREEDS : CAT_BREEDS;
-  selectedBreed = breeds[idx];
-  document.querySelectorAll('.breed-item').forEach(b => b.classList.remove('active'));
-  document.querySelector(`.breed-item[data-idx="${idx}"]`).classList.add('active');
-  // Set weight to midpoint
-  const mid = (selectedBreed.min + selectedBreed.max) / 2;
-  document.getElementById('weight').value = mid.toFixed(1);
+  selectedBreed = selectedBreed && selectedBreed.name === breeds[idx].name ? null : breeds[idx];
+  renderBreeds();
   calc();
 }
 
 function calc() {
-  const w = parseFloat(document.getElementById('weight').value);
-  if (!w || w <= 0) return;
+  const weightInput = document.getElementById('weight');
+  const hasWeightInput = weightInput.value.trim() !== '';
+  const weightValue = Number(weightInput.value);
+  const hasTenthPrecision = Math.abs(weightValue * 10 - Math.round(weightValue * 10)) < 1e-9;
+  const hasWeight = Number.isFinite(weightValue) && weightValue >= 0.1 && weightValue <= 200 && hasTenthPrecision;
+  if (hasWeightInput && !hasWeight) weightInput.setAttribute('aria-invalid', 'true');
+  else weightInput.removeAttribute('aria-invalid');
+  const weightText = hasWeight ? `${weightValue.toFixed(1)}kg` : (hasWeightInput ? '0.1kg 단위·범위 확인 필요' : '미입력');
 
-  if (!selectedBreed) {
-    document.getElementById('emoji').textContent = '🤷';
-    document.getElementById('status').textContent = '품종을 선택하세요';
-    document.getElementById('statusDetail').textContent = '표준 체중과 비교하기 위해 위에서 품종을 먼저 검색하고 선택해주세요.';
-    document.getElementById('infoGrid').innerHTML = '';
-    const labelSpans = document.querySelectorAll('.gauge-labels span');
-    labelSpans.forEach(s => s.style.fontWeight = 'normal');
-    document.getElementById('gaugeMarker').style.display = 'none';
+  if (!selectedBcs) {
     document.getElementById('reportBox').classList.remove('active');
+    document.getElementById('gaugeMarker').style.display = 'none';
+    document.getElementById('emoji').textContent = '⚖️';
+    document.getElementById('status').textContent = 'BCS를 선택하세요';
+    document.getElementById('status').style.color = '';
+    document.getElementById('statusDetail').textContent = '갈비뼈, 허리선과 복부선을 확인한 뒤 1~9점 중 가장 가까운 점수를 선택하세요.';
+    document.getElementById('bcsHint').textContent = '점수 버튼에 마우스를 올리거나 선택하면 체형 설명을 확인할 수 있습니다.';
+    document.getElementById('infoGrid').innerHTML = `
+      <div class="info-item"><div class="label">현재 체중</div><div class="value">${weightText}</div></div>
+      <div class="info-item"><div class="label">체형 점수</div><div class="value">미선택</div></div>
+    `;
+    document.querySelectorAll('.gauge-labels span').forEach(span => {
+      span.style.fontWeight = '400';
+      span.style.color = '';
+    });
     return;
   }
-  
+
+  const bcsData = BCS_DATA.find(item => item.score === selectedBcs);
+  const assessment = getBcsAssessment(selectedBcs);
+
   document.getElementById('reportBox').classList.add('active');
   document.getElementById('gaugeMarker').style.display = 'block';
+  document.getElementById('emoji').textContent = assessment.emoji;
+  document.getElementById('status').textContent = assessment.statusText;
+  document.getElementById('status').style.color = assessment.statusColor;
+  document.getElementById('statusDetail').textContent = `BCS ${selectedBcs}/9 · ${bcsData.description}`;
+  document.getElementById('bcsHint').textContent = `${selectedBcs}점: ${bcsData.description}`;
 
-  // Determine ideal weight
-  const idealWeight = (selectedBreed.min + selectedBreed.max) / 2;
-  const idealSource = selectedBreed.name + ' 기준';
-  
-  const diff = w - idealWeight;
-  const diffPct = ((w - idealWeight) / idealWeight * 100);
-
-  // Combined assessment
-  let statusText, statusColor, emoji, tip;
-
-  // Weight sanity check
-  const maxSane = petType === 'dog' ? 90 : 15;
-  const weightInsane = w > maxSane;
-
-  if (weightInsane) {
-    statusText = '⚠️ 체중 확인 필요';
-    statusColor = '#ef4444';
-    emoji = '❓';
-    tip = petType === 'dog' ? '강아지 체중이 ' + maxSane + 'kg 이상입니다. 입력을 확인해주세요.' : '고양이 체중이 ' + maxSane + 'kg 이상입니다. 입력을 확인해주세요.';
-  } else {
-    // Breed-based assessment
-    if (w < selectedBreed.min * 0.8) {
-      statusText = '심각한 저체중';
-      statusColor = '#3b82f6'; emoji = '🦴';
-      tip = '수의사 상담을 권장합니다';
-    } else if (w < selectedBreed.min) {
-      statusText = '저체중';
-      statusColor = '#60a5fa'; emoji = '🦴';
-      tip = '사료량을 약간 늘려보세요';
-    } else if (w <= selectedBreed.max) {
-      statusText = '이상적';
-      statusColor = '#22c55e'; emoji = '✅';
-      tip = '건강한 정상 체중이에요!';
-    } else if (w <= selectedBreed.max * 1.15) {
-      statusText = '약간 과체중';
-      statusColor = '#facc15'; emoji = '⚠️';
-      tip = '사료량을 약간 줄여보세요';
-    } else if (w <= selectedBreed.max * 1.3) {
-      statusText = '과체중';
-      statusColor = '#f97316'; emoji = '⚠️';
-      tip = '사료량을 줄이고 운동량을 늘려보세요';
-    } else {
-      statusText = '비만';
-      statusColor = '#ef4444'; emoji = '🔴';
-      tip = '수의사와 다이어트 계획을 세워보세요';
-    }
-  }
-
-  document.getElementById('emoji').textContent = emoji;
-  document.getElementById('status').textContent = statusText;
-  document.getElementById('status').style.color = statusColor;
-
-  let detail = '';
-  if (selectedBreed && !weightInsane) {
-    if (w >= selectedBreed.min && w <= selectedBreed.max) {
-      detail = `📋 ${selectedBreed.name} 표준 범위 내 ✅`;
-    } else {
-      detail = `📋 ${selectedBreed.name} 표준: ${selectedBreed.min}~${selectedBreed.max}kg`;
-      detail += `<br>표준 대비 <strong style="color:${statusColor}">${diff > 0 ? '+' : ''}${diff.toFixed(1)}kg</strong>`;
-    }
-  } else if (weightInsane) {
-    detail = `<strong style="color:#ef4444">${petType === 'dog' ? '🐶' : '🐱'} 체중을 다시 확인해주세요</strong>`;
-  }
-  document.getElementById('statusDetail').innerHTML = detail;
-
-  // Gauge: use weight-based position relative to breed standard
-  let gaugePct = 50;
-  if (selectedBreed && !weightInsane) {
-    const mid = (selectedBreed.min + selectedBreed.max) / 2;
-    const range = selectedBreed.max - selectedBreed.min;
-    gaugePct = 50 + ((w - mid) / (range * 2)) * 100;
-    gaugePct = Math.max(0, Math.min(100, gaugePct));
-  }
+  const gaugePct = ((selectedBcs - 1) / 8) * 100;
   document.getElementById('gaugeMarker').style.left = gaugePct + '%';
+  document.querySelectorAll('.gauge-labels span').forEach((span, index) => {
+    span.style.fontWeight = index === assessment.labelIndex ? '700' : '400';
+    span.style.color = index === assessment.labelIndex ? assessment.statusColor : '';
+  });
 
-  // Info grid
-  let breedInfo = `
-    <div class="info-item">
-      <div class="label">📋 품종 표준 체중</div>
-      <div class="value">${selectedBreed.min}~${selectedBreed.max} kg</div>
-    </div>
-    <div class="info-item">
-      <div class="label">${w >= selectedBreed.min && w <= selectedBreed.max ? '✅ 범위 내' : '⚠️ 범위 밖'}</div>
-      <div class="value" style="color:${w >= selectedBreed.min && w <= selectedBreed.max ? '#22c55e' : '#f97316'}">${selectedBreed.name}</div>
-    </div>
-  `;
-
+  const breedReference = selectedBreed
+    ? `<div class="value">${selectedBreed.min}~${selectedBreed.max} kg</div>`
+    : '<div class="value">선택 안 함</div>';
   document.getElementById('infoGrid').innerHTML = `
     <div class="info-item">
       <div class="label">현재 체중</div>
-      <div class="value">${w.toFixed(1)} kg</div>
+      <div class="value">${weightText}</div>
     </div>
     <div class="info-item">
-      <div class="label">이상 체중 (${idealSource})</div>
-      <div class="value" style="color:#22c55e">${idealWeight.toFixed(1)} kg</div>
-    </div>
-    ${breedInfo}
-    <div class="info-item">
-      <div class="label">${diff > 0.5 ? '🏋️ 감량 목표' : diff < -0.5 ? '🍖 증량 목표' : '👍 유지'}</div>
-      <div class="value">${Math.abs(diff) < 0.5 ? '현재 유지 🎉' : Math.abs(diff).toFixed(1) + 'kg ' + (diff > 0 ? '감량' : '증량')}</div>
+      <div class="label">선택한 체형 점수</div>
+      <div class="value" style="color:${assessment.statusColor}">BCS ${selectedBcs}/9</div>
     </div>
     <div class="info-item">
-      <div class="label">💡 팁</div>
-      <div class="value" style="font-size:11px;font-weight:500">${tip || ''}</div>
+      <div class="label">주요 판정 기준</div>
+      <div class="value">9점 BCS</div>
+    </div>
+    <div class="info-item">
+      <div class="label">${selectedBreed ? `${selectedBreed.name} 체중 참고` : '품종 체중 참고'}</div>
+      ${breedReference}
     </div>
   `;
 
-  // Dynamic Report UI Updates
   document.getElementById('reportBox').style.animation = 'none';
   void document.getElementById('reportBox').offsetWidth;
   document.getElementById('reportBox').style.animation = 'fadeIn 0.5s ease-out';
 
   document.getElementById('r-type').textContent = petType === 'dog' ? '🐶 강아지' : '🐱 고양이';
-  document.getElementById('r-breed').textContent = selectedBreed.name;
-  document.getElementById('r-weight').textContent = w.toFixed(1);
-  document.getElementById('r-breed-name').textContent = selectedBreed.name;
-  document.getElementById('r-range-min').textContent = selectedBreed.min.toFixed(1);
-  document.getElementById('r-range-max').textContent = selectedBreed.max.toFixed(1);
-  
+  document.getElementById('r-weight').textContent = weightText;
+  document.getElementById('r-bcs').textContent = selectedBcs;
   const rStatus = document.getElementById('r-status');
-  rStatus.textContent = `[${statusText}]`;
-  rStatus.style.color = statusColor;
-  
-  document.getElementById('r-ideal').textContent = idealWeight.toFixed(1);
-  
+  rStatus.textContent = `[${assessment.statusText}]`;
+  rStatus.style.color = assessment.statusColor;
+  document.getElementById('r-breed-note').textContent = selectedBreed
+    ? `${selectedBreed.name}의 일반적인 성체 체중 참고 범위는 ${selectedBreed.min}~${selectedBreed.max}kg입니다. 성별·골격·나이·근육량에 따라 달라질 수 있으며 BCS 결과에는 영향을 주지 않습니다.`
+    : '품종별 체중 범위를 선택하지 않았습니다. 품종 정보는 BCS 결과에 영향을 주지 않습니다.';
   const rTipBox = document.getElementById('r-tip-box');
-  rTipBox.style.borderColor = statusColor;
-  document.getElementById('r-tip').textContent = tip || '정상 범위 내 체중 유지를 목표로 하세요.';
+  rTipBox.style.borderColor = assessment.statusColor;
+  document.getElementById('r-tip').textContent = assessment.tip;
 }
 
 renderBreeds();
-selectBreed(2); // default: Maltese
+renderBcs();
+calc();
 
 (function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
 </script>

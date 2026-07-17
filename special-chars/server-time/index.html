@@ -98,7 +98,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     
     <div class="quick-urls">
       <button class="q-btn" onclick="setQuick('https://ticket.interpark.com')">인터파크</button>
-      <button class="q-btn" onclick="setQuick('http://ticket.yes24.com')">YES24</button>
+      <button class="q-btn" onclick="setQuick('https://ticket.yes24.com')">YES24</button>
       <button class="q-btn" onclick="setQuick('https://www.melon.com')">멜론티켓</button>
       <button class="q-btn" onclick="setQuick('https://www.letskorail.com')">코레일</button>
       <button class="q-btn" onclick="setQuick('https://sugang.snu.ac.kr')">수강신청</button>
@@ -117,7 +117,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     
     <div class="options">
       <label class="opt-label"><input type="checkbox" id="sndTick"> 매초 틱 소리</label>
-      <label class="opt-label"><input type="checkbox" id="sndAlarm" checked> 59초/정각 알림</label>
+      <label class="opt-label"><input type="checkbox" id="sndAlarm" checked> 58·59초/정각 알림</label>
       <label class="opt-label"><input type="checkbox" id="showMs" checked> 밀리초 표시</label>
     </div>
 
@@ -160,6 +160,15 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       </div>
     </details>
 
+    <details class="guide">
+      <summary>틱 소리와 정각 알림은 언제 울리나요?</summary>
+      <div class="guide-content">
+        <p>‘매초 틱 소리’는 표시 시계의 초가 바뀔 때 짧게 울립니다. 정각 알림을 켜면 58초와 59초에 서로 다른 예고음이 나고, 00초에 정각 알림과 화면 효과가 실행됩니다.</p>
+        <p>브라우저의 자동 재생 정책 때문에 페이지를 연 뒤 한 번은 클릭하거나 키를 눌러야 소리가 활성화될 수 있습니다. 수동 시계 보정값은 이 알림 시점에도 적용됩니다.</p>
+        <p>알림은 페이지가 화면에 표시되고 브라우저가 정상적으로 갱신할 때 가장 잘 동작합니다. 백그라운드 탭, 기기 절전, 메인 스레드 지연에서는 58·59·00초 프레임을 건너뛰어 소리를 놓칠 수 있으므로 중요한 접수 시각을 이 알림에만 의존하지 마세요.</p>
+      </div>
+    </details>
+
     <div class="related-tools">
       <h3>🛠️ 함께 쓰면 좋은 도구</h3>
       <div class="tags">
@@ -176,6 +185,8 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 <script>
 let manualOffset = 0;
 let lastSec = -1;
+let measurementSequence = 0;
+let activeMeasurementController = null;
 
 function setQuick(u) {
   document.getElementById('urlInput').value = u;
@@ -188,6 +199,9 @@ function getCtx() {
   if(!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
   if(audioCtx.state === 'suspended') audioCtx.resume();
   return audioCtx;
+}
+function primeAudio() {
+  try { getCtx(); } catch(e) {}
 }
 function beep(freq, duration, vol=0.1, type='sine') {
   try {
@@ -265,15 +279,19 @@ function parseTarget(raw) {
   let value = raw.trim();
   if (!value) throw new Error('측정할 웹사이트 주소를 입력하세요.');
   if (!/^https?:\/\//i.test(value)) value = 'https://' + value;
-  const url = new URL(value);
+  let url;
+  try { url = new URL(value); } catch(e) { throw new Error('올바른 웹사이트 주소를 입력하세요.'); }
   if (url.protocol !== 'http:' && url.protocol !== 'https:') throw new Error('HTTP 또는 HTTPS 주소만 측정할 수 있습니다.');
   if (location.protocol === 'https:' && url.protocol === 'http:') throw new Error('HTTPS 페이지에서는 브라우저 보안 정책상 HTTP 주소를 측정할 수 없습니다. HTTPS 주소를 사용하세요.');
   return url;
 }
 
-async function measureOnce(url) {
+async function measureOnce(url, runSignal) {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 8000);
+  const abortCurrent = () => controller.abort();
+  if (runSignal.aborted) controller.abort();
+  else runSignal.addEventListener('abort', abortCurrent, { once: true });
+  const timeoutId = setTimeout(abortCurrent, 8000);
   const start = performance.now();
   try {
     await fetch(url.href, {
@@ -288,19 +306,27 @@ async function measureOnce(url) {
     return performance.now() - start;
   } finally {
     clearTimeout(timeoutId);
+    runSignal.removeEventListener('abort', abortCurrent);
   }
 }
 
 async function measureLatency() {
   const container = document.getElementById('reportContainer');
   const button = document.getElementById('measureBtn');
+  const currentMeasurement = ++measurementSequence;
+  if (activeMeasurementController) activeMeasurementController.abort();
+  activeMeasurementController = null;
   let url;
   try {
     url = parseTarget(document.getElementById('urlInput').value);
   } catch(e) {
     showMeasureError(e.message);
+    button.disabled = false;
+    button.textContent = '응답속도 측정';
     return;
   }
+  const runController = new AbortController();
+  activeMeasurementController = runController;
   document.getElementById('urlInput').value = url.href;
   button.disabled = true;
   button.textContent = '측정 중…';
@@ -308,16 +334,23 @@ async function measureLatency() {
   container.innerHTML = '<h3>📡 HTTP 응답속도 측정 중</h3><p>동일한 주소에 HEAD 요청을 최대 3회 보내고 있습니다.</p>';
   const samples = [];
   try {
-    for (let i = 0; i < 3; i++) samples.push(await measureOnce(url));
+    for (let i = 0; i < 3; i++) {
+      samples.push(await measureOnce(url, runController.signal));
+      if (currentMeasurement !== measurementSequence) return;
+    }
     updateReport(url, samples);
   } catch(e) {
+    if (currentMeasurement !== measurementSequence) return;
     showMeasureError(e.name === 'AbortError'
       ? '8초 안에 응답을 받지 못해 측정을 중단했습니다.'
       : '브라우저 보안 정책 또는 네트워크 오류로 측정하지 못했습니다. 대상 사이트는 정상이어도 측정이 차단될 수 있습니다.');
   } finally {
-    button.disabled = false;
-    button.textContent = '응답속도 측정';
-    updateOffsetState();
+    if (currentMeasurement === measurementSequence) {
+      if (activeMeasurementController === runController) activeMeasurementController = null;
+      button.disabled = false;
+      button.textContent = '응답속도 측정';
+      updateOffsetState();
+    }
   }
 }
 
@@ -351,8 +384,8 @@ function updateReport(url, samples) {
     <p><b>대상:</b> <span class="highlight">${url.hostname}</span></p>
     <p><b>3회 측정:</b> ${rounded.join('ms · ')}ms</p>
     <p><b>최소 / 평균 / 최대:</b> <span class="highlight">${Math.round(min)} / ${Math.round(average)} / ${Math.round(max)}ms</span></p>
-    <p><b>현재 평가:</b> <span style="color:${latencyColor};font-weight:600">${latencyEval}</span></p>
-    <p style="margin-bottom:0">브라우저가 HEAD 응답을 받기까지의 경과 시간입니다. 서버 시각·핑·클릭 성공 시점을 의미하지 않으며 네트워크 상태에 따라 달라집니다.</p>
+    <p><b>참고 분류:</b> <span style="color:${latencyColor};font-weight:600">${latencyEval}</span></p>
+    <p style="margin-bottom:0">브라우저가 HEAD 응답을 받기까지의 경과 시간입니다. 100ms·300ms 경계는 이 도구의 단순 휴리스틱이며 보편적인 품질 기준이 아닙니다. 서버 시각·핑·클릭 성공 시점을 의미하지 않고 네트워크 상태에 따라 달라집니다.</p>
   `;
 }
 
@@ -383,6 +416,8 @@ function updateClock() {
   document.getElementById('offsetInput').value = String(Math.max(-60000, Math.min(60000, Math.round(saved))));
   applyManualOffset();
 })();
+document.addEventListener('pointerdown', primeAudio, { once: true });
+document.addEventListener('keydown', primeAudio, { once: true });
 requestAnimationFrame(updateClock);
 </script>
 <script src="/special-chars/theme-toggle.js"></script>

@@ -119,9 +119,9 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   <div class="body">
     <div class="scale-row">
       <span class="scale-label">만점 기준</span>
-      <button class="scale-btn active" onclick="setScale(4.5)">4.5 만점</button>
-      <button class="scale-btn" onclick="setScale(4.3)">4.3 만점</button>
-      <button class="scale-btn" onclick="setScale(4.0)">4.0 만점</button>
+      <button class="scale-btn active" data-scale="4.5" onclick="setScale(4.5)">4.5 만점</button>
+      <button class="scale-btn" data-scale="4.3" onclick="setScale(4.3)">4.3 만점</button>
+      <button class="scale-btn" data-scale="4.0" onclick="setScale(4.0)">4.0 만점</button>
     </div>
 
     <div class="result-card" id="resultCard">
@@ -162,7 +162,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
       <div class="guide-block">
         <h3>🔒 성적 정보는 안전하게 보호되나요?</h3>
-        <p>네, 완벽하게 안전합니다. 대학교 학위, 수강 과목명 및 성적 데이터 등 매우 민감한 개인정보는 외부 웹 서버나 데이터베이스로 전송되지 않습니다. 이 도구는 HTML5 로컬 스토리지도 사용하지 않으며 메모리 내(클라이언트 샌드박스 영역)에서 100% 로컬 연산으로 구동되므로 브라우저를 닫으면 어떠한 흔적도 남지 않습니다.</p>
+        <p>과목명과 성적 계산은 현재 브라우저에서 처리하며 이 도구가 입력값을 서버나 localStorage에 저장하지는 않습니다. 다만 공용 기기에서는 화면·클립보드·브라우저 자체 기록을 직접 관리하세요.</p>
       </div>
 
       <div class="guide-block">
@@ -171,16 +171,17 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       </div>
 
       <div class="guide-block">
-        <h3>📖 성적 환산표 참조</h3>
+        <h3>📖 이 계산기에서 사용하는 예시 평점표</h3>
+        <p>학교마다 같은 만점제에서도 +/- 성적 배점이 다를 수 있습니다. 아래 표는 이 도구의 계산 규칙이며 공식 환산표가 아닙니다.</p>
         <table>
           <tr><th>성적</th><th>4.5 만점</th><th>4.3 만점</th><th>4.0 만점</th></tr>
           <tr><td>A+</td><td>4.5</td><td>4.3</td><td>4.0</td></tr>
           <tr><td>A0</td><td>4.0</td><td>4.0</td><td>4.0</td></tr>
-          <tr><td>B+</td><td>3.5</td><td>3.3</td><td>3.0</td></tr>
+          <tr><td>B+</td><td>3.5</td><td>3.3</td><td>3.3</td></tr>
           <tr><td>B0</td><td>3.0</td><td>3.0</td><td>3.0</td></tr>
-          <tr><td>C+</td><td>2.5</td><td>2.3</td><td>2.0</td></tr>
+          <tr><td>C+</td><td>2.5</td><td>2.3</td><td>2.3</td></tr>
           <tr><td>C0</td><td>2.0</td><td>2.0</td><td>2.0</td></tr>
-          <tr><td>D+</td><td>1.5</td><td>1.3</td><td>1.0</td></tr>
+          <tr><td>D+</td><td>1.5</td><td>1.3</td><td>1.3</td></tr>
           <tr><td>D0</td><td>1.0</td><td>1.0</td><td>1.0</td></tr>
           <tr><td>F</td><td>0.0</td><td>0.0</td><td>0.0</td></tr>
         </table>
@@ -204,13 +205,13 @@ let scale = 4.5;
 const GRADES = {
   4.5: { 'A+':4.5,'A0':4.0,'B+':3.5,'B0':3.0,'C+':2.5,'C0':2.0,'D+':1.5,'D0':1.0,'F':0,'P':-1 },
   4.3: { 'A+':4.3,'A0':4.0,'B+':3.3,'B0':3.0,'C+':2.3,'C0':2.0,'D+':1.3,'D0':1.0,'F':0,'P':-1 },
-  4.0: { 'A+':4.0,'A0':4.0,'B+':3.0,'B0':3.0,'C+':2.0,'C0':2.0,'D+':1.0,'D0':1.0,'F':0,'P':-1 }
+  4.0: { 'A+':4.0,'A0':4.0,'B+':3.3,'B0':3.0,'C+':2.3,'C0':2.0,'D+':1.3,'D0':1.0,'F':0,'P':-1 }
 };
 
 function setScale(s) {
   scale = s;
   document.querySelectorAll('.scale-btn').forEach(b => {
-    b.classList.toggle('active', b.textContent.includes(s));
+    b.classList.toggle('active', Number(b.dataset.scale) === s);
   });
   calculate();
 }
@@ -227,7 +228,7 @@ function addCourse() {
   tr.id = 'course' + courseId;
   tr.innerHTML = `
     <td class="name-col"><input type="text" placeholder="과목명" oninput="calculate()"></td>
-    <td class="credit-col"><input type="number" min="1" max="9" value="3" oninput="calculate()"></td>
+    <td class="credit-col"><input type="number" min="0.5" max="9" step="0.5" value="3" oninput="calculate()"></td>
     <td class="grade-col"><select onchange="calculate()">${gradeOptions()}</select></td>
     <td class="del-col"><button class="del-btn" onclick="delCourse('course${courseId}')">✕</button></td>
   `;
@@ -248,11 +249,23 @@ function calculate() {
   let totalPoints = 0;
   let gradedCourseCount = 0;
   let enteredCourseCount = 0;
+  let invalidCreditCount = 0;
 
   rows.forEach(row => {
-    const credit = parseInt(row.querySelector('input[type="number"]').value) || 0;
+    const creditInput = row.querySelector('input[type="number"]');
+    const credit = Number(creditInput.value);
     const gradeVal = row.querySelector('select').value;
-    if (!gradeVal || credit <= 0) return;
+    if (!gradeVal) {
+      creditInput.removeAttribute('aria-invalid');
+      return;
+    }
+    const validCredit = Number.isFinite(credit) && credit >= 0.5 && credit <= 9 && Number.isInteger(credit * 2);
+    if (!validCredit) {
+      creditInput.setAttribute('aria-invalid', 'true');
+      invalidCreditCount++;
+      return;
+    }
+    creditInput.removeAttribute('aria-invalid');
 
     enteredCourseCount++;
     const gp = GRADES[scale][gradeVal];
@@ -269,7 +282,9 @@ function calculate() {
 
   const card = document.getElementById('resultCard');
   if (enteredCourseCount === 0) {
-    card.innerHTML = '<div class="result-empty">과목을 입력하면 평점이 계산됩니다</div>';
+    card.innerHTML = invalidCreditCount
+      ? '<div class="result-empty">학점은 0.5~9 범위에서 0.5 단위로 입력하세요</div>'
+      : '<div class="result-empty">과목을 입력하면 평점이 계산됩니다</div>';
     updateReport({ enteredCourseCount: 0 });
     return;
   }
@@ -279,11 +294,6 @@ function calculate() {
   const ratio = hasGpa ? (gpa / scale * 100).toFixed(1) : null;
   const emoji = !hasGpa ? '➖' : gpa >= 4.0 ? '🏆' : gpa >= 3.5 ? '🎉' : gpa >= 3.0 ? '👍' : gpa >= 2.0 ? '📚' : '💪';
 
-  let creditString = "";
-  if(earnedCredits > 120) creditString = "졸업이 머지않은 고학년";
-  else if (earnedCredits > 60) creditString = "전공 심화를 듣는 중반 학년";
-  else creditString = "기반을 다지는 저학년";
-
   card.innerHTML = `
     <div class="result-gpa"${hasGpa ? ` style="cursor:pointer" onclick="copyGpa('${gpa.toFixed(2)}')"` : ''}>${emoji} ${hasGpa ? gpa.toFixed(2) : 'GPA 미산출'}</div>
     <div class="result-scale">/ ${scale} 만점</div>
@@ -292,14 +302,15 @@ function calculate() {
       <span>🧮 GPA 반영 ${gpaCredits}학점</span>
       <span>✅ 취득 ${earnedCredits}학점</span>
       ${hasGpa ? `<span>📊 만점 대비 ${ratio}%</span>` : ''}
+      ${invalidCreditCount ? `<span>⚠️ 무효 학점 ${invalidCreditCount}개 제외</span>` : ''}
     </div>
   `;
-    const reportParams = { gpa: hasGpa ? gpa.toFixed(2) : null, gpaCredits, earnedCredits, gradedCourseCount, enteredCourseCount, ratio, creditString };
+    const reportParams = { gpa: hasGpa ? gpa.toFixed(2) : null, gpaCredits, earnedCredits, gradedCourseCount, enteredCourseCount, ratio, invalidCreditCount };
 
     updateReport(reportParams);
 }
 
-function updateReport({ gpa, gpaCredits, earnedCredits, gradedCourseCount, enteredCourseCount, ratio, creditString }) {
+function updateReport({ gpa, gpaCredits, earnedCredits, gradedCourseCount, enteredCourseCount, ratio, invalidCreditCount = 0 }) {
   const container = document.getElementById('reportContainer');
   const box = document.getElementById('reportBox');
   if (enteredCourseCount === 0) {
@@ -320,6 +331,7 @@ function updateReport({ gpa, gpaCredits, earnedCredits, gradedCourseCount, enter
       <li><strong>GPA 계산:</strong> ${gpaSummary}</li>
       <li><strong>학점 구분:</strong> 총 취득 학점은 <strong>${earnedCredits}학점</strong>이며, GPA 반영 학점은 <strong>${gpaCredits}학점</strong>입니다.</li>
       <li><strong>비율 안내:</strong> ${ratioSummary}</li>
+      ${invalidCreditCount ? `<li><strong>입력 경고:</strong> 0.5~9 범위의 0.5 단위가 아닌 학점 ${invalidCreditCount}개는 계산에서 제외했습니다.</li>` : ''}
       <li><strong>수강 전략 및 팁:</strong> 자소서 작성을 위해 <a href="https://teemozipsa.github.io/special-chars/char-counter/">글자수 세기 도구</a>를 활용해 개인의 성취 경험을 면밀히 분석해 두길 권장합니다.</li>
     </ul>
   `;
@@ -334,7 +346,9 @@ function resetAll() {
 }
 
 function copyGpa(val) {
-  navigator.clipboard.writeText(val).then(() => showToast('평점이 복사되었습니다! 📋'));
+  navigator.clipboard.writeText(val)
+    .then(() => showToast('평점이 복사되었습니다! 📋'))
+    .catch(() => showToast('복사 권한을 확인해 주세요'));
 }
 
 function showToast(msg) {

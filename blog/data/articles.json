@@ -220,15 +220,15 @@
   },
   {
     "id": "cat-age-guide",
-    "title": "\"1년 = 7년\"이라는 거짓말 — AAFP 기준으로 다시 보는 고양이 나이",
+    "title": "고양이 사람 나이 환산과 2021 생애 단계 구분",
     "url": "/blog/cat-age-guide/",
     "thumbnail": "https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=1200&auto=format&fit=crop",
     "thumbnailLabel": "CAT · AGE",
     "tag": "팩트체크",
     "category": "고양이 건강/생활",
-    "summary": "첫 해 +15세, 둘째 해 +9세, 이후 매년 +4세. 우리집 묘의 진짜 사람 나이를 다시 계산합니다.",
-    "author": "티모 스튜디오",
-    "date": "2026-05-18",
+    "summary": "사람 나이 환산은 교육용 추정값입니다. 2021 AAFP·AAHA의 네 생애 단계와 임종기 구분을 별도로 확인합니다.",
+    "author": "티모집사",
+    "date": "2026-04-13",
     "readMinutes": 6,
     "size": "tall",
     "isFeatured": true,
@@ -236,27 +236,28 @@
     "relatedToolName": "반려동물 나이 계산기",
     "relatedToolIcon": "🐾",
     "sources": [
-      "AAFP/AAHA Feline Life Stage Guidelines 2024"
+      "2021 AAHA/AAFP Feline Life Stage Guidelines"
     ]
   },
   {
     "id": "cat-bmi-guide",
-    "title": "비만일까 원시주머니일까 — 9점 척도 시각 평가법",
+    "title": "비만일까 원시주머니일까? 고양이 BCS 체형 관리 가이드",
     "url": "/blog/cat-bmi-guide/",
     "thumbnail": "https://images.unsplash.com/photo-1574231164645-d6f0e8553590?w=800&auto=format&fit=crop",
     "thumbnailLabel": "CAT · BCS",
     "tag": "건강관리",
     "category": "고양이 건강/생활",
-    "summary": "위에서·옆에서·만져서. 3단 평가로 우리 고양이 체형을 정확히 점수화합니다.",
-    "author": "닥터 티모",
-    "date": "2026-05-16",
+    "summary": "위에서 보고, 옆에서 보고, 직접 만져보며 9점 BCS를 기록하는 방법을 안내합니다.",
+    "author": "티모집사",
+    "date": "2026-04-13",
     "readMinutes": 5,
     "size": "med",
     "relatedTool": "/special-chars/pet-bmi-calc/",
     "relatedToolName": "반려동물 체중 관리 도구",
     "relatedToolIcon": "⚖️",
     "sources": [
-      "Preventive Veterinary Medicine 2025"
+      "WSAVA Cat 9-point BCS chart (2025-06)",
+      "AAHA 2021 Nutrition and Weight Management Guidelines"
     ]
   }
 ]

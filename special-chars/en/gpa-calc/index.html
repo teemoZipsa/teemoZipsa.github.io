@@ -18,7 +18,7 @@
 <link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/gpa-calc/">
 <meta name="robots" content="noindex, follow">
 <style>
-@import url('https://cdn.jsdelivr.net/gh/fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
 .app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:640px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
@@ -117,9 +117,9 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
   <div class="body">
     <div class="scale-row">
       <span class="scale-label">Scale</span>
-      <button class="scale-btn active" onclick="setScale(4.5)">4.5 Scale</button>
-      <button class="scale-btn" onclick="setScale(4.3)">4.3 Scale</button>
-      <button class="scale-btn" onclick="setScale(4.0)">4.0 Scale</button>
+      <button class="scale-btn active" data-scale="4.5" onclick="setScale(4.5)">4.5 Scale</button>
+      <button class="scale-btn" data-scale="4.3" onclick="setScale(4.3)">4.3 Scale</button>
+      <button class="scale-btn" data-scale="4.0" onclick="setScale(4.0)">4.0 Scale</button>
     </div>
 
     <div class="result-card" id="resultCard">
@@ -157,23 +157,23 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <details class="guide">
       <summary>2. What is the difference between 4.5, 4.3, and 4.0 scales?</summary>
       <div class="guide-content">
-        <p>Universities globally use different grading scales. The 4.0 scale is heavily standard in the US, where an 'A' equals 4.0. The 4.3 and 4.5 scales are widely used in Asia and specific institutions, allowing for an A+ grade to exceed 4.0. You can toggle between tracking systems using the buttons above.</p>
+        <p>Institutions use different grade-point mappings even when the maximum is the same. This tool offers three example mappings; its 4.0 option caps A+/A at 4.0 and uses 3.3, 2.3, and 1.3 for B+, C+, and D+. Always compare the table with your official transcript policy.</p>
       </div>
     </details>
 
     <details class="guide">
-      <summary>3. Universal Grade Conversion Table</summary>
+      <summary>3. Grade-point table used by this calculator</summary>
       <div class="guide-content">
-        <p>Use the table below to see how standard letter grades translate into grade points across different scales.</p>
+        <p>This is the calculator's example mapping, not a universal conversion table. Schools and application services may use different values.</p>
         <table style="width:100%;border-collapse:collapse;margin:8px 0;font-size:11px">
           <tr><th style="background:var(--bg-btn);padding:6px;border:1px solid var(--border);color:var(--text-secondary);font-weight:600">Grade</th><th style="background:var(--bg-btn);padding:6px;border:1px solid var(--border);color:var(--text-secondary);font-weight:600">4.5 Scale</th><th style="background:var(--bg-btn);padding:6px;border:1px solid var(--border);color:var(--text-secondary);font-weight:600">4.3 Scale</th><th style="background:var(--bg-btn);padding:6px;border:1px solid var(--border);color:var(--text-secondary);font-weight:600">4.0 Scale</th></tr>
           <tr><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">A+</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">4.5</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">4.3</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">4.0</td></tr>
           <tr><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">A0</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">4.0</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">4.0</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">4.0</td></tr>
-          <tr><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">B+</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">3.5</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">3.3</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">3.0</td></tr>
+          <tr><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">B+</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">3.5</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">3.3</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">3.3</td></tr>
           <tr><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">B0</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">3.0</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">3.0</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">3.0</td></tr>
-          <tr><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">C+</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">2.5</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">2.3</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">2.0</td></tr>
+          <tr><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">C+</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">2.5</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">2.3</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">2.3</td></tr>
           <tr><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">C0</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">2.0</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">2.0</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">2.0</td></tr>
-          <tr><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">D+</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">1.5</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">1.3</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">1.0</td></tr>
+          <tr><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">D+</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">1.5</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">1.3</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">1.3</td></tr>
           <tr><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">D0</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">1.0</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">1.0</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">1.0</td></tr>
           <tr><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">F</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">0.0</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">0.0</td><td style="padding:6px;border:1px solid var(--border);text-align:center;color:var(--text-info)">0.0</td></tr>
         </table>
@@ -203,13 +203,13 @@ let scale = 4.5;
 const GRADES = {
   4.5: { 'A+':4.5,'A0':4.0,'B+':3.5,'B0':3.0,'C+':2.5,'C0':2.0,'D+':1.5,'D0':1.0,'F':0,'P':-1 },
   4.3: { 'A+':4.3,'A0':4.0,'B+':3.3,'B0':3.0,'C+':2.3,'C0':2.0,'D+':1.3,'D0':1.0,'F':0,'P':-1 },
-  4.0: { 'A+':4.0,'A0':4.0,'B+':3.0,'B0':3.0,'C+':2.0,'C0':2.0,'D+':1.0,'D0':1.0,'F':0,'P':-1 }
+  4.0: { 'A+':4.0,'A0':4.0,'B+':3.3,'B0':3.0,'C+':2.3,'C0':2.0,'D+':1.3,'D0':1.0,'F':0,'P':-1 }
 };
 
 function setScale(s) {
   scale = s;
   document.querySelectorAll('.scale-btn').forEach(b => {
-    b.classList.toggle('active', b.textContent.includes(s));
+    b.classList.toggle('active', Number(b.dataset.scale) === s);
   });
   calculate();
 }
@@ -226,7 +226,7 @@ function addCourse() {
   tr.id = 'course' + courseId;
   tr.innerHTML = `
     <td class="name-col"><input type="text" placeholder="Course name" oninput="calculate()"></td>
-    <td class="credit-col"><input type="number" min="1" max="9" value="3" oninput="calculate()"></td>
+    <td class="credit-col"><input type="number" min="0.5" max="9" step="0.5" value="3" oninput="calculate()"></td>
     <td class="grade-col"><select onchange="calculate()">${gradeOptions()}</select></td>
     <td class="del-col"><button class="del-btn" onclick="delCourse('course${courseId}')">✕</button></td>
   `;
@@ -247,11 +247,23 @@ function calculate() {
   let totalPoints = 0;
   let gradedCourseCount = 0;
   let enteredCourseCount = 0;
+  let invalidCreditCount = 0;
 
   rows.forEach(row => {
-    const credit = parseInt(row.querySelector('input[type="number"]').value) || 0;
+    const creditInput = row.querySelector('input[type="number"]');
+    const credit = Number(creditInput.value);
     const gradeVal = row.querySelector('select').value;
-    if (!gradeVal || credit <= 0) return;
+    if (!gradeVal) {
+      creditInput.removeAttribute('aria-invalid');
+      return;
+    }
+    const validCredit = Number.isFinite(credit) && credit >= 0.5 && credit <= 9 && Number.isInteger(credit * 2);
+    if (!validCredit) {
+      creditInput.setAttribute('aria-invalid', 'true');
+      invalidCreditCount++;
+      return;
+    }
+    creditInput.removeAttribute('aria-invalid');
 
     enteredCourseCount++;
     const gp = GRADES[scale][gradeVal];
@@ -268,7 +280,9 @@ function calculate() {
 
   const card = document.getElementById('resultCard');
   if (enteredCourseCount === 0) {
-    card.innerHTML = '<div class="result-empty">Enter courses to calculate your GPA</div>';
+    card.innerHTML = invalidCreditCount
+      ? '<div class="result-empty">Enter credits from 0.5 to 9 in 0.5 increments</div>'
+      : '<div class="result-empty">Enter courses to calculate your GPA</div>';
     return;
   }
 
@@ -285,6 +299,7 @@ function calculate() {
       <span>🧮 ${gpaCredits} GPA credits</span>
       <span>✅ ${earnedCredits} earned</span>
       ${hasGpa ? `<span>📊 ${ratio}% of scale</span>` : ''}
+      ${invalidCreditCount ? `<span>⚠️ ${invalidCreditCount} invalid credit entr${invalidCreditCount===1?'y':'ies'} ignored</span>` : ''}
     </div>
   `;
 }
@@ -297,7 +312,9 @@ function resetAll() {
 }
 
 function copyGpa(val) {
-  navigator.clipboard.writeText(val).then(() => showToast('GPA copied to clipboard! 📋'));
+  navigator.clipboard.writeText(val)
+    .then(() => showToast('GPA copied to clipboard! 📋'))
+    .catch(() => showToast('Check clipboard permission'));
 }
 
 function showToast(msg) {

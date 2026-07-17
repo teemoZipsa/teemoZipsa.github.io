@@ -9,9 +9,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>🖼️ Image Format Converter — TeemoZipsa</title>
-<meta name="description" content="Convert image formats between JPG, PNG, WebP, etc. 100% local processing in your browser without server uploads.">
+<meta name="description" content="Open JPG, PNG, WebP, GIF, BMP, or SVG images and export JPG, PNG, or WebP locally in your browser. GIF becomes a still frame and SVG is rasterized.">
 <meta property="og:title" content="🖼️ Image Format Converter — TeemoZipsa">
-<meta property="og:description" content="Convert image formats between JPG, PNG, WebP, etc. 100% local processing in your browser without server uploads.">
+<meta property="og:description" content="Convert JPG, PNG, WebP, GIF, BMP, or SVG input to JPG, PNG, or WebP output locally in your browser.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/image-format-converter/">
 <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
@@ -34,6 +34,10 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .drop-zone .text{font-size:13px;color:var(--calc-expr-text)}
 .drop-zone .sub{font-size:11px;color:var(--text-placeholder);margin-top:4px}
 .drop-zone input{display:none}
+.support-info{padding:10px 12px;background:var(--bg-bar);border:1px solid var(--border);border-radius:10px;font-size:11px;color:var(--text-info);line-height:1.65}
+.support-info strong{color:var(--text-primary)}
+.format-warning{padding:11px 13px;border:1px solid var(--text-error,#f87171);border-radius:10px;background:var(--bg-guide);color:var(--text-primary);font-size:12px;line-height:1.55}
+.format-warning[hidden]{display:none}
 
 .controls{display:none;gap:14px;flex-direction:column}
 .control-row{display:flex;align-items:center;gap:12px;background:var(--bg-bar);border-radius:10px;padding:12px 16px}
@@ -120,9 +124,12 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
       <div class="icon">📁</div>
       <div class="text">Click or Drag image here</div>
-      <div class="sub">Supports JPG, PNG, WebP, GIF, BMP, SVG</div>
-      <input type="file" id="fileInput" accept="image/*" onchange="handleFile(this.files[0])">
+      <div class="sub">Input: JPG · PNG · WebP · GIF · BMP · SVG (up to 25 MB)</div>
+      <div class="sub">Output: JPG · PNG · WebP</div>
+      <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.svg,image/jpeg,image/png,image/webp,image/gif,image/bmp,image/svg+xml" onchange="handleFile(this.files[0])">
     </div>
+
+    <div class="support-info"><strong>Input and output support are different.</strong> GIF, BMP, and SVG are input-only. Results can be saved as JPG, PNG, or WebP. Images over 12,000px on either edge or 40 megapixels are blocked to protect your device.</div>
 
     <div class="controls" id="controls">
       <div class="control-row">
@@ -139,6 +146,8 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
         <div class="val" id="qualityVal">90%</div>
       </div>
     </div>
+
+    <div class="format-warning" id="formatWarning" role="alert" hidden></div>
 
     <div class="preview" id="preview">
       <div class="preview-card">
@@ -163,6 +172,8 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <button class="btn btn-reset" id="resetBtn" style="display:none" onclick="resetAll()">🗑️ Reset</button>
 
     <div class="privacy">⚠️ 100% Local Browser Processing — Images are never sent to a server</div>
+
+    <div id="reportContainer" class="report-box"></div>
   </div>
 
   <section class="guide-section">
@@ -171,11 +182,11 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <details class="guide" open>
       <summary>1. Which image format should I use?</summary>
       <div class="guide-content">
-        <p>Choosing the right format depends on your needs:</p>
+        <p><strong>Accepted inputs are JPG, PNG, WebP, GIF, BMP, and SVG.</strong> Available outputs are <strong>JPG, PNG, and WebP only.</strong></p>
         <ul>
           <li><strong>JPG (JPEG):</strong> Extremely common. Best for standard photographs. It uses lossy compression, resulting in significantly smaller file sizes. It does not support transparent backgrounds.</li>
-          <li><strong>PNG:</strong> Essential for graphics, logos, and images requiring transparency. It uses lossless compression, meaning no detail is lost, but the file size is generally larger.</li>
-          <li><strong>WebP:</strong> The modern web standard developed by Google. It offers superior compression logic relative to both JPG and PNG, preserving high quality while deeply cutting file size.</li>
+          <li><strong>PNG:</strong> Useful for graphics, screenshots, and images requiring transparency. Output encoding is lossless, though canvas re-encoding can remove metadata from the source file.</li>
+          <li><strong>WebP:</strong> A web-oriented format that supports photos and transparency. It may be smaller than JPG or PNG, but conversion does not guarantee a smaller file.</li>
         </ul>
       </div>
     </details>
@@ -183,14 +194,21 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <details class="guide">
       <summary>2. Does converting image formats reduce file size?</summary>
       <div class="guide-content">
-        <p>Sometimes. Converting from PNG to JPG usually drastically cuts file size due to compression algorithms. Converting anything to WebP generally yields a file 25-35% smaller than standard formats. You can also manipulate the <strong>Quality Slider</strong> (for JPG and WebP) to further shrink the final file size.</p>
+        <p>Sometimes. JPG and WebP use the selected <strong>Quality</strong> setting and may reduce a large source, while PNG can become larger. The result panel reports the actual before-and-after size; no format guarantees a fixed saving.</p>
       </div>
     </details>
 
     <details class="guide">
-      <summary>3. Is my privacy protected during conversion?</summary>
+      <summary>3. Are GIF animation and SVG vectors preserved?</summary>
       <div class="guide-content">
-        <p>Absolutely. Unlike many online tools that upload your files to external servers, our Image Format Converter relies strictly on <strong>local browser processing</strong>. Your images never leave your desktop or mobile device.</p>
+        <p>No. The browser draws the source onto a canvas before encoding it. <strong>An animated GIF becomes one still frame</strong>, and <strong>SVG is rasterized at its displayed pixel dimensions</strong>, so scalable vector information is not preserved. A visible warning appears when either source type is selected.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>4. Is my privacy protected during conversion?</summary>
+      <div class="guide-content">
+        <p>The selected image is read and converted in your current browser and is not uploaded for conversion. On a shared device, remember to manage the downloaded result and browser history yourself.</p>
       </div>
     </details>
 
@@ -229,6 +247,32 @@ let convertedBlob=null;
 let convertedUrl=null;
 let selectedFormat='image/png';
 let quality=0.9;
+let originalInputType=null;
+let loadSequence=0;
+let conversionSequence=0;
+let decodedImage=null;
+let reconvertTimer=null;
+
+const MAX_FILE_SIZE=25*1024*1024;
+const MAX_EDGE=12000;
+const MAX_PIXELS=40000000;
+const RECONVERT_DELAY_MS=200;
+const INPUT_MIME_INFO={
+  'image/jpeg':{mime:'image/jpeg',label:'JPG'},
+  'image/jpg':{mime:'image/jpeg',label:'JPG'},
+  'image/png':{mime:'image/png',label:'PNG'},
+  'image/x-png':{mime:'image/png',label:'PNG'},
+  'image/webp':{mime:'image/webp',label:'WebP'},
+  'image/gif':{mime:'image/gif',label:'GIF'},
+  'image/bmp':{mime:'image/bmp',label:'BMP'},
+  'image/x-ms-bmp':{mime:'image/bmp',label:'BMP'},
+  'image/svg+xml':{mime:'image/svg+xml',label:'SVG'}
+};
+const INPUT_EXTENSION_INFO={
+  jpg:INPUT_MIME_INFO['image/jpeg'],jpeg:INPUT_MIME_INFO['image/jpeg'],
+  png:INPUT_MIME_INFO['image/png'],webp:INPUT_MIME_INFO['image/webp'],
+  gif:INPUT_MIME_INFO['image/gif'],bmp:INPUT_MIME_INFO['image/bmp'],svg:INPUT_MIME_INFO['image/svg+xml']
+};
 
 const dropZone=document.getElementById('dropZone');
 dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('dragover');});
@@ -239,51 +283,126 @@ dropZone.addEventListener('drop',e=>{
 });
 
 function handleFile(file){
-  if(!file||!file.type.startsWith('image/')){showToast('Please select an image file.');return;}
+  if(!file)return;
+  const inputType=detectInputType(file);
+  if(!inputType){rejectFile('Unsupported input. Choose a JPG, PNG, WebP, GIF, BMP, or SVG file.');return;}
+  if(file.size===0){rejectFile('An empty file cannot be converted.');return;}
+  if(file.size>MAX_FILE_SIZE){rejectFile('This file is larger than the 25 MB processing limit.');return;}
+
+  clearLoadedState();
+  const currentLoad=++loadSequence;
   originalFile=file;
+  originalInputType=inputType;
 
   const reader=new FileReader();
   reader.onload=function(e){
+    if(currentLoad!==loadSequence)return;
     originalDataUrl=e.target.result;
-    document.getElementById('origImg').src=originalDataUrl;
-    document.getElementById('origFormat').textContent=file.type.split('/')[1].toUpperCase();
-    document.getElementById('origSize').textContent=formatSize(file.size);
 
     const img=new Image();
     img.onload=function(){
-      document.getElementById('origDim').textContent=`${img.width} × ${img.height}px`;
+      if(currentLoad!==loadSequence)return;
+      const width=img.naturalWidth||img.width;
+      const height=img.naturalHeight||img.height;
+      if(!isDimensionAllowed(width,height)){
+        rejectFile(`The image is ${width} × ${height}px and exceeds the limit (12,000px per edge or 40 megapixels).`);
+        return;
+      }
+      decodedImage=img;
+      document.getElementById('origImg').src=originalDataUrl;
+      document.getElementById('origFormat').textContent=inputType.label;
+      document.getElementById('origSize').textContent=formatSize(file.size);
+      document.getElementById('origDim').textContent=`${width} × ${height}px`;
       document.getElementById('controls').style.display='flex';
       document.getElementById('preview').style.display='flex';
-      document.getElementById('dlBtn').style.display='block';
       document.getElementById('resetBtn').style.display='block';
+      showInputWarning(inputType.mime);
 
-      // 원본과 다른 포맷 자동 선택
-      autoSelectFormat(file.type);
+      autoSelectFormat(inputType.mime);
       convertImage(img);
+    };
+    img.onerror=function(){
+      if(currentLoad===loadSequence)rejectFile('The browser could not decode this image. Check for file damage or an unsupported encoding.');
     };
     img.src=originalDataUrl;
   };
+  reader.onerror=function(){
+    if(currentLoad===loadSequence)rejectFile('The file could not be read. Please select it again.');
+  };
   reader.readAsDataURL(file);
+}
+
+function detectInputType(file){
+  const mime=(file.type||'').toLowerCase();
+  if(INPUT_MIME_INFO[mime])return INPUT_MIME_INFO[mime];
+  const match=(file.name||'').toLowerCase().match(/\.([a-z0-9]+)$/);
+  return match ? (INPUT_EXTENSION_INFO[match[1]]||null) : null;
+}
+
+function isDimensionAllowed(width,height){
+  return Number.isFinite(width)&&Number.isFinite(height)&&width>0&&height>0&&
+    width<=MAX_EDGE&&height<=MAX_EDGE&&width*height<=MAX_PIXELS;
+}
+
+function showInputWarning(mime){
+  const warning=document.getElementById('formatWarning');
+  if(mime==='image/gif'){
+    warning.textContent='⚠️ Animated GIF motion is not preserved. The browser converts one displayed frame into a still image.';
+    warning.hidden=false;
+  }else if(mime==='image/svg+xml'){
+    warning.textContent='⚠️ SVG is rasterized at its current pixel dimensions. The result does not preserve scalable or editable vector data.';
+    warning.hidden=false;
+  }else{
+    warning.textContent='';
+    warning.hidden=true;
+  }
+}
+
+function rejectFile(message){
+  clearLoadedState();
+  document.getElementById('fileInput').value='';
+  showToast(message);
+}
+
+function clearLoadedState(){
+  if(reconvertTimer!==null){
+    clearTimeout(reconvertTimer);
+    reconvertTimer=null;
+  }
+  loadSequence++;
+  conversionSequence++;
+  originalFile=null;
+  originalDataUrl=null;
+  originalInputType=null;
+  decodedImage=null;
+  convertedBlob=null;
+  if(convertedUrl)URL.revokeObjectURL(convertedUrl);
+  convertedUrl=null;
+  ['controls','preview','dlBtn','resetBtn','savedInfo','reportContainer'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.style.display='none';
+  });
+  const warning=document.getElementById('formatWarning');
+  warning.textContent='';warning.hidden=true;
+  document.getElementById('origImg').removeAttribute('src');
+  document.getElementById('convImg').removeAttribute('src');
 }
 
 function autoSelectFormat(origType){
   const formats=document.querySelectorAll('.format-btn');
   const origMime=origType.toLowerCase();
 
-  // 원본과 다른 첫번째 포맷 선택
-  let selected=false;
+  const outputMimes=['image/jpeg','image/png','image/webp'];
+  const preferred=outputMimes.includes(origMime)
+    ? outputMimes.find(format=>format!==origMime)
+    : 'image/png';
   formats.forEach(btn=>{
     btn.classList.remove('active');
-    if(!selected && btn.dataset.format!==origMime){
+    if(btn.dataset.format===preferred){
       btn.classList.add('active');
       selectedFormat=btn.dataset.format;
-      selected=true;
     }
   });
-  if(!selected){
-    formats[1].classList.add('active');
-    selectedFormat=formats[1].dataset.format;
-  }
   updateQualityVisibility();
 }
 
@@ -292,7 +411,7 @@ function setFormat(btn){
   btn.classList.add('active');
   selectedFormat=btn.dataset.format;
   updateQualityVisibility();
-  reconvert();
+  scheduleReconvert();
 }
 
 function updateQualityVisibility(){
@@ -303,32 +422,70 @@ function updateQualityVisibility(){
 function onQualityChange(){
   quality=document.getElementById('qualitySlider').value/100;
   document.getElementById('qualityVal').textContent=Math.round(quality*100)+'%';
-  reconvert();
+  scheduleReconvert();
+}
+
+function invalidateConvertedOutput(){
+  conversionSequence++;
+  convertedBlob=null;
+  if(convertedUrl)URL.revokeObjectURL(convertedUrl);
+  convertedUrl=null;
+  document.getElementById('convImg').removeAttribute('src');
+  document.getElementById('dlBtn').style.display='none';
+  document.getElementById('savedInfo').style.display='none';
+  document.getElementById('reportContainer').style.display='none';
+}
+
+function scheduleReconvert(){
+  if(!originalDataUrl||!decodedImage)return;
+  invalidateConvertedOutput();
+  if(reconvertTimer!==null)clearTimeout(reconvertTimer);
+  reconvertTimer=setTimeout(()=>{
+    reconvertTimer=null;
+    reconvert();
+  },RECONVERT_DELAY_MS);
 }
 
 function reconvert(){
-  if(!originalDataUrl)return;
-  const img=new Image();
-  img.onload=()=>convertImage(img);
-  img.src=originalDataUrl;
+  if(!originalDataUrl||!decodedImage)return;
+  convertImage(decodedImage);
 }
 
 function convertImage(img){
-  const canvas=document.createElement('canvas');
-  canvas.width=img.width;
-  canvas.height=img.height;
-  const ctx=canvas.getContext('2d');
-
-  // JPG는 투명 배경을 흰색으로
-  if(selectedFormat==='image/jpeg'){
-    ctx.fillStyle='#ffffff';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
+  const width=img.naturalWidth||img.width;
+  const height=img.naturalHeight||img.height;
+  if(!isDimensionAllowed(width,height)){
+    showConversionError('The image dimensions exceed the processing limit.');
+    return;
+  }
+  invalidateConvertedOutput();
+  const currentConversion=conversionSequence;
+  let canvas;
+  let ctx;
+  try{
+    canvas=document.createElement('canvas');
+    canvas.width=width;
+    canvas.height=height;
+    ctx=canvas.getContext('2d');
+    if(!ctx||canvas.width!==width||canvas.height!==height)throw new Error('canvas unavailable');
+    if(selectedFormat==='image/jpeg'){
+      ctx.fillStyle='#ffffff';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+    }
+    ctx.drawImage(img,0,0);
+  }catch(error){
+    showConversionError('The browser could not draw an image of this size on a canvas.');
+    return;
   }
 
-  ctx.drawImage(img,0,0);
-
-  canvas.toBlob(function(blob){
-    if(!blob){showToast('Conversion failed.');return;}
+  try{
+    canvas.toBlob(function(blob){
+    if(currentConversion!==conversionSequence)return;
+    if(!blob){showConversionError('Encoding failed. Try another output format.');return;}
+    if((blob.type||'').toLowerCase()!==selectedFormat){
+      showConversionError('This browser does not support the selected output encoder.');
+      return;
+    }
     convertedBlob=blob;
     if(convertedUrl) URL.revokeObjectURL(convertedUrl);
     convertedUrl=URL.createObjectURL(blob);
@@ -337,7 +494,8 @@ function convertImage(img){
     const ext=selectedFormat.split('/')[1];
     document.getElementById('convFormat').textContent=(ext==='jpeg'?'JPG':ext.toUpperCase());
     document.getElementById('convSize').textContent=formatSize(blob.size);
-    document.getElementById('convDim').textContent=`${img.width} × ${img.height}px`;
+    document.getElementById('convDim').textContent=`${width} × ${height}px`;
+    document.getElementById('dlBtn').style.display='block';
 
     // 용량 비교
     const diff=blob.size-originalFile.size;
@@ -357,7 +515,61 @@ function convertImage(img){
       savedEl.className='saved';
     }
     savedEl.style.display='block';
+
+    updateReport(originalFile,blob,selectedFormat,width,height,pct,diff);
   }, selectedFormat, selectedFormat==='image/png'?undefined:quality);
+  }catch(error){
+    showConversionError('An error occurred during conversion. Check the dimensions or output format.');
+  }
+}
+
+function showConversionError(message){
+  conversionSequence++;
+  convertedBlob=null;
+  if(convertedUrl)URL.revokeObjectURL(convertedUrl);
+  convertedUrl=null;
+  document.getElementById('convImg').removeAttribute('src');
+  document.getElementById('dlBtn').style.display='none';
+  document.getElementById('savedInfo').style.display='none';
+  document.getElementById('reportContainer').style.display='none';
+  showToast(message);
+}
+
+function updateReport(origFile,convBlob,format,w,h,pct,diff){
+  const container=document.getElementById('reportContainer');
+  if(!container||!origFile||!convBlob)return;
+  container.style.display='block';
+  const outputLabel=format==='image/jpeg'?'JPG':format.split('/')[1].toUpperCase();
+  let resultMessage;
+  if(diff<0){
+    resultMessage=`The result is <strong>${formatSize(Math.abs(diff))} (${Math.abs(pct)}%) smaller</strong> than the source.`;
+  }else if(diff>0){
+    resultMessage=`The result is <strong>${formatSize(diff)} (${pct}%) larger</strong> than the source. Format conversion does not guarantee a smaller file.`;
+  }else{
+    resultMessage='The displayed file size is unchanged.';
+  }
+
+  let formatNote='PNG lossless output encoding was used.';
+  if(format==='image/jpeg')formatNote='JPG lossy compression was used, and transparent areas were flattened onto white.';
+  if(format==='image/webp')formatNote=`WebP lossy compression was applied at ${Math.round(quality*100)}% quality.`;
+
+  let sourceCaveat='Canvas re-encoding may remove EXIF and other source metadata.';
+  if(originalInputType?.mime==='image/gif')sourceCaveat='<strong>GIF animation was reduced to one still frame.</strong>';
+  if(originalInputType?.mime==='image/svg+xml')sourceCaveat='<strong>SVG was rasterized and no longer contains scalable vector data.</strong>';
+
+  container.innerHTML=`
+    <strong>Conversion report</strong><br>
+    File: ${escapeHtml(origFile.name)} (${originalInputType?.label||'Image'}) → ${outputLabel}<br>
+    Dimensions: ${w} × ${h}px retained<br>
+    Size: ${formatSize(origFile.size)} → ${formatSize(convBlob.size)}<br>
+    ${resultMessage}<br>
+    Output: ${formatNote}<br>
+    Note: ${sourceCaveat}
+  `;
+}
+
+function escapeHtml(value){
+  return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 }
 
 function download(){
@@ -372,14 +584,8 @@ function download(){
 }
 
 function resetAll(){
-  originalFile=null;originalDataUrl=null;convertedBlob=null;
-  if(convertedUrl)URL.revokeObjectURL(convertedUrl);convertedUrl=null;
+  clearLoadedState();
   document.getElementById('fileInput').value='';
-  document.getElementById('controls').style.display='none';
-  document.getElementById('preview').style.display='none';
-  document.getElementById('dlBtn').style.display='none';
-  document.getElementById('resetBtn').style.display='none';
-  document.getElementById('savedInfo').style.display='none';
 }
 
 function formatSize(bytes){

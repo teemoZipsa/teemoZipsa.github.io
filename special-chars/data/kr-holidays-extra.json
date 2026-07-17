@@ -1,14 +1,46 @@
 {
   "meta": {
     "description": "Manual Korean public-holiday additions that are not safely derived from fixed/lunar rules alone, including term-end election days and government-designated special holidays.",
-    "checkedAt": "2026-05-27",
+    "checkedAt": "2026-07-17",
     "minimumReviewCadence": "Review at least once per year and whenever the government announces a temporary public holiday.",
     "source": [
       "https://law.go.kr/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1018770085",
-      "https://law.go.kr/LSW/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1027161473"
+      "https://law.go.kr/LSW/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1027161473",
+      "https://www.nec.go.kr/site/nec/ex/bbs/View.do?bcIdx=192949&cbIdx=1104",
+      "https://www.korea.kr/news/policyNewsView.do?newsId=148934578",
+      "https://www.korea.kr/news/policyNewsView.do?newsId=148938559",
+      "https://www.korea.kr/news/policyNewsView.do?newsId=148941443"
     ]
   },
   "years": {
+    "2024": [
+      {
+        "date": "2024-04-10",
+        "name": "제22대 국회의원선거일",
+        "type": "term-end-election",
+        "source": "공직선거법 제34조에 따른 임기만료 국회의원선거일"
+      },
+      {
+        "date": "2024-10-01",
+        "name": "국군의 날 임시공휴일",
+        "type": "temporary-holiday",
+        "source": "2024년 국군의 날 임시공휴일 지정"
+      }
+    ],
+    "2025": [
+      {
+        "date": "2025-01-27",
+        "name": "설 연휴 임시공휴일",
+        "type": "temporary-holiday",
+        "source": "2025년 1월 14일 국무회의 의결"
+      },
+      {
+        "date": "2025-06-03",
+        "name": "제21대 대통령선거일",
+        "type": "temporary-election-holiday",
+        "source": "정부 지정 제21대 대통령선거 임시공휴일"
+      }
+    ],
     "2026": [
       {
         "date": "2026-06-03",

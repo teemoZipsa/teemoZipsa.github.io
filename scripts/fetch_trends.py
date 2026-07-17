@@ -1,6 +1,5 @@
 import json
 import os
-import random
 import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
@@ -15,23 +14,21 @@ CAT_SEEDS = [
     "고양이 사료",
     "고양이 간식",
     "고양이 건강",
-    "고양이 양치",
     "고양이 신장",
-    "고양이 발톱",
     "노묘",
     "원시주머니",
 ]
 
-PINNED_KEYWORDS = [
+EDITORIAL_FALLBACK_KEYWORDS = [
     "고양이 나이 계산",
     "고양이 BCS 측정법",
     "츄르 권장량 하루",
-    "고양이 양치질 거부",
+    "고양이 체중 관리",
     "고양이 사료 급여량",
     "고양이 신장 질환 증상",
     "원시주머니 vs 비만",
     "다묘 가정 사료",
-    "고양이 발톱 정리 주기",
+    "고양이 건강검진 비용",
     "노묘 건강검진 항목",
 ]
 
@@ -69,131 +66,69 @@ def load_previous_data():
         return {}
 
 
-def load_previous_ranks(data):
-    if not isinstance(data, dict):
-        return {}
-
-    ranks = {}
-    for idx, item in enumerate(data.get("items", []), start=1):
-        keyword = normalize_keyword(item.get("keyword"))
-        if keyword:
-            ranks[keyword] = int(item.get("rank") or idx)
-    return ranks
-
-
-def stable_rng(keyword):
-    seed = sum((idx + 1) * ord(ch) for idx, ch in enumerate(keyword))
-    return random.Random(seed)
-
-
-def make_sparkline(keyword, change):
-    rng = stable_rng(keyword)
-    base = rng.randint(18, 44)
-    values = []
-    for idx in range(13):
-        noise = rng.randint(-3, 3)
-        if change == "up":
-            value = base + idx * rng.uniform(1.4, 2.6) + noise
-        elif change == "down":
-            value = base + (12 - idx) * rng.uniform(1.2, 2.2) + noise
-        elif change == "new":
-            value = base + max(0, idx - 4) * rng.uniform(2.2, 3.4) + noise
-        else:
-            value = base + rng.randint(-4, 4)
-        values.append(max(1, round(value)))
-    return values
-
-
-def growth_label(keyword, change, delta):
-    rng = stable_rng(keyword + change)
-    if change == "new":
-        return "+∞"
-    if change == "up":
-        return f"+{max(8, delta * rng.randint(18, 36))}%"
-    if change == "down":
-        return f"-{max(6, abs(delta) * rng.randint(8, 18))}%"
-    return f"+{rng.randint(0, 3)}%"
-
-
 def collect_keywords():
-    scores = {}
+    items = []
+    seen = set()
 
-    for idx, keyword in enumerate(PINNED_KEYWORDS):
-        scores[keyword] = max(scores.get(keyword, 0), 240 - idx * 8)
-
-    for seed_idx, seed in enumerate(CAT_SEEDS):
+    # Google Suggest exposes suggestion text and order, not search volume.
+    # Keep at most two suggestions per seed so one broad seed cannot dominate.
+    for seed in CAT_SEEDS:
         try:
             suggestions = fetch_suggestions(seed)
         except Exception:
             suggestions = []
 
-        for pos, suggestion in enumerate(suggestions[:10]):
+        accepted_for_seed = 0
+        for pos, suggestion in enumerate(suggestions):
             keyword = normalize_keyword(suggestion)
-            if not keyword or not is_cat_keyword(keyword):
+            if not keyword or keyword in seen or not is_cat_keyword(keyword):
                 continue
-            score = 190 - seed_idx * 7 - pos * 3
-            scores[keyword] = max(scores.get(keyword, 0), score)
+            seen.add(keyword)
+            items.append(
+                {
+                    "keyword": keyword,
+                    "origin": "google_suggest",
+                    "seed": seed,
+                    "suggestion_position": pos + 1,
+                }
+            )
+            accepted_for_seed += 1
+            if accepted_for_seed >= 2 or len(items) >= 10:
+                break
+        if len(items) >= 10:
+            break
 
-    ranked = sorted(scores.items(), key=lambda item: (-item[1], item[0]))
-    return [keyword for keyword, _score in ranked[:10]]
+    for keyword in EDITORIAL_FALLBACK_KEYWORDS:
+        if len(items) >= 10:
+            break
+        if keyword in seen:
+            continue
+        seen.add(keyword)
+        items.append({"keyword": keyword, "origin": "editorial_fallback"})
 
-
-def build_items(keywords, previous):
-    items = []
-    for rank, keyword in enumerate(keywords, start=1):
-        previous_rank = previous.get(keyword)
-        if previous_rank is None:
-            change = "new"
-            delta = 0
-        elif previous_rank > rank:
-            change = "up"
-            delta = previous_rank - rank
-        elif previous_rank < rank:
-            change = "down"
-            delta = previous_rank - rank
-        else:
-            change = "flat"
-            delta = 0
-
-        items.append(
-            {
-                "keyword": keyword,
-                "rank": rank,
-                "previousRank": previous_rank,
-                "change": change,
-                "delta": delta,
-                "growth24h": growth_label(keyword, change, delta),
-                "sparkline": make_sparkline(keyword, change),
-            }
-        )
+    for position, item in enumerate(items, start=1):
+        item["position"] = position
     return items
 
 
 def fetch_trends():
     previous_data = load_previous_data()
-    previous = load_previous_ranks(previous_data)
-    keywords = collect_keywords()
-    if len(keywords) < 10:
-        for keyword in PINNED_KEYWORDS:
-            if keyword not in keywords:
-                keywords.append(keyword)
-            if len(keywords) >= 10:
-                break
-
-    items = build_items(keywords[:10], previous)
+    items = collect_keywords()
     output_data = {
         "last_updated": now_kst().isoformat(timespec="seconds"),
         "refresh_minutes": REFRESH_MINUTES,
-        "source": "google_suggest_cat_keywords",
+        "source": "google_suggest_with_editorial_fallback",
+        "methodology": "Suggestion order is not search volume or popularity. Editorial keywords are fallback only.",
         "items": items,
     }
 
     if (
         previous_data.get("refresh_minutes") == REFRESH_MINUTES
         and previous_data.get("source") == output_data["source"]
+        and previous_data.get("methodology") == output_data["methodology"]
         and previous_data.get("items") == items
     ):
-        print(f"No trend changes; leaving {OUTPUT_FILE} untouched")
+        print(f"No topic changes; leaving {OUTPUT_FILE} untouched")
         return
 
     os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
@@ -201,7 +136,7 @@ def fetch_trends():
         json.dump(output_data, f, ensure_ascii=False, indent=2)
         f.write("\n")
 
-    print(f"Saved {len(output_data['items'])} cat trend keywords to {OUTPUT_FILE}")
+    print(f"Saved {len(output_data['items'])} cat search-suggestion topics to {OUTPUT_FILE}")
 
 
 if __name__ == "__main__":

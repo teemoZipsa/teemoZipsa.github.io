@@ -8,10 +8,10 @@
 <link rel="stylesheet" href="/special-chars/theme.css">
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
-<title>⚖️ Pet Weight Manager — TeemoZipsa</title>
-<meta name="description" content="Pet weight management tool. Evaluate your dog or cat's weight and body condition. Breed-specific standard weight reference.">
-<meta property="og:title" content="⚖️ Pet Weight Manager — TeemoZipsa">
-<meta property="og:description" content="Evaluate your dog or cat's weight and body condition.">
+<title>🐾 Pet Body Condition Score (BCS) Check — TeemoZipsa</title>
+<meta name="description" content="Record your dog or cat's 1–9 body condition score by checking the ribs, waist, and abdominal tuck. Breed weight ranges are optional reference information only.">
+<meta property="og:title" content="🐾 Pet Body Condition Score (BCS) Check — TeemoZipsa">
+<meta property="og:description" content="Use the 9-point BCS scale for a pet body-condition self-check; breed weight ranges remain reference-only.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/pet-bmi-calc/">
 <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
@@ -41,11 +41,13 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .input-row .unit{font-size:14px;color:var(--text-info);font-weight:600;min-width:24px}
 .input-row select{cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%23999' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
 
-.bcs-selector{display:flex;gap:4px}
-.bcs-btn{flex:1;padding:8px 4px;text-align:center;font-size:11px;font-weight:600;cursor:pointer;border:2px solid var(--border);border-radius:8px;background:var(--bg-guide);color:var(--text-info);font-family:inherit;transition:all .2s}
+.bcs-selector{display:grid;grid-template-columns:repeat(9,1fr);gap:4px}
+.bcs-btn{min-width:0;padding:10px 4px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;border:2px solid var(--border);border-radius:8px;background:var(--bg-guide);color:var(--text-info);font-family:inherit;transition:all .2s}
 .bcs-btn:hover{border-color:var(--accent)}
 .bcs-btn.active{border-color:var(--accent);background:var(--accent);color:var(--text-on-accent)}
 .bcs-emoji{font-size:20px;display:block;margin-bottom:2px}
+.bcs-helper{font-size:11px;color:var(--text-muted);line-height:1.6;margin:2px 0 6px}
+.bcs-hint{font-size:12px;color:var(--text-info);line-height:1.6;padding:10px 12px;background:var(--bg-guide);border:1px solid var(--border);border-radius:8px;margin-top:6px}
 
 .result-card{border-radius:16px;padding:24px;text-align:center;background:var(--bg-guide);border:1px solid var(--border)}
 .result-emoji{font-size:56px;margin-bottom:8px}
@@ -53,8 +55,8 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .result-sub{font-size:13px;color:var(--text-info);margin-top:6px;line-height:1.6}
 
 .gauge-wrap{width:100%;padding:0 8px}
-.gauge-bar{height:14px;border-radius:7px;background:linear-gradient(to right,#3b82f6 0%,#22c55e 35%,#facc15 60%,#f97316 80%,#ef4444 100%);position:relative;margin:8px 0}
-.gauge-marker{position:absolute;top:-4px;width:4px;height:22px;background:var(--text-primary);border-radius:2px;transition:left .4s ease;box-shadow:0 0 4px rgba(0,0,0,.3)}
+.gauge-bar{height:14px;border-radius:7px;background:linear-gradient(to right,#3b82f6 0%,#3b82f6 31.25%,#22c55e 31.25%,#22c55e 56.25%,#f97316 56.25%,#f97316 81.25%,#ef4444 81.25%,#ef4444 100%);position:relative;margin:8px 0}
+.gauge-marker{position:absolute;top:-4px;width:4px;height:22px;background:var(--text-primary);border-radius:2px;transform:translateX(-50%);transition:left .4s ease;box-shadow:0 0 4px rgba(0,0,0,.3)}
 .gauge-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);padding:0 2px}
 
 .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -75,8 +77,14 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 
 /* Dynamic Report & Guide standard CSS */
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.report-box { margin: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
+.report-box { margin-top: 16px; padding: 16px; background: var(--bg-input); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 13px; line-height: 1.6; display: none; animation: fadeIn 0.3s; }
+.report-box.active { display: block; }
+.report-box h3 { font-size: 15px; margin-bottom: 12px; }
+.report-box p { margin-bottom: 10px; color: var(--text-info); }
+.report-box .highlight { color: var(--text-primary); font-weight: 700; }
 .report-box strong { color: var(--accent); }
+.report-tip { background: var(--bg-body); border-left: 4px solid var(--accent); padding: 12px 16px; margin: 14px 0; border-radius: 0 8px 8px 0; }
+.report-notice { font-size: 12px; color: var(--text-muted)!important; margin: 0!important; padding-top: 12px; border-top: 1px dashed var(--border); }
 .guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
 .guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
 .guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
@@ -107,13 +115,14 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
 .scroll-top-btn.visible{opacity:1;visibility:visible}
 .scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+@media(max-width:390px){.bcs-selector{grid-template-columns:repeat(5,1fr)}}
 </style>
 </head>
 <body>
 <div class="app">
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← All Tools</a>
-    <h1>⚖️ Pet Weight Manager</h1>
+    <h1>🐾 Pet Body Condition Score</h1>
     <a href="/special-chars/pet-bmi-calc/" class="back-btn">🌐 한국어</a>
   </div>
   <div class="body">
@@ -122,67 +131,89 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       <button class="type-tab" onclick="setType('cat')">🐱 Cat</button>
     </div>
 
+    <div class="input-group">
+      <label>Current Weight (Optional)</label>
+      <div class="input-row">
+        <input type="number" id="weight" min="0.1" max="200" step="0.1" inputmode="decimal" placeholder="e.g. 5.0" oninput="calc()">
+        <span class="unit">kg</span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label id="bcsLabel">9-point Body Condition Score (BCS)</label>
+      <p class="bcs-helper">Look at the waist from above and abdominal tuck from the side, then gently feel the ribs. Choose the closest score.</p>
+      <div class="bcs-selector" id="bcsSelector" role="group" aria-labelledby="bcsLabel"></div>
+      <div class="bcs-hint" id="bcsHint" aria-live="polite"></div>
+    </div>
+
     <div class="breed-section" id="breedSection">
-      <label>Breed (Standard Weight Reference)</label>
+      <label>Adult Breed Weight Range (Optional Reference)</label>
       <input type="text" class="breed-search" id="breedSearch" placeholder="Search breeds (e.g. Golden, Poodle, Ragdoll...)" oninput="renderBreeds()">
       <div class="breed-count" id="breedCount"></div>
       <div class="breed-list" id="breedList"></div>
     </div>
 
-    <div class="input-group">
-      <label>Current Weight</label>
-      <div class="input-row">
-        <input type="number" id="weight" value="5" min="0.5" max="100" step="0.1" oninput="calc()">
-        <span class="unit">kg</span>
-      </div>
-    </div>
-
-    <!-- BCS input removed -->
-
     <div class="result-card" id="resultCard">
       <div class="result-emoji" id="emoji">⚖️</div>
       <div class="result-status" id="status">-</div>
-      <div class="result-sub" id="statusDetail">Enter weight and body type</div>
+      <div class="result-sub" id="statusDetail">Choose a BCS score</div>
     </div>
 
     <div class="gauge-wrap">
       <div class="gauge-bar"><div class="gauge-marker" id="gaugeMarker" style="left:40%"></div></div>
       <div class="gauge-labels">
-        <span>Under</span><span>Ideal</span><span>Over</span><span>Obese</span>
+        <span>1–3 Under ideal</span><span>4–5 Ideal</span><span>6–7 Over ideal</span><span>8–9 Obese</span>
       </div>
     </div>
 
     <div class="info-grid" id="infoGrid"></div>
+
+    <div class="report-box" id="reportBox">
+      <h3>📋 BCS Self-check Report</h3>
+      <p>
+        Pet: <span class="highlight" id="r-type">🐶 Dog</span>, current weight: <span class="highlight" id="r-weight">Not entered</span>, selected BCS: <span class="highlight"><span id="r-bcs">—</span>/9</span>
+      </p>
+      <p>
+        BCS group: <strong><span id="r-status">[Not selected]</span></strong>. This group comes only from the BCS you selected—not from current weight or a breed average.
+      </p>
+      <p id="r-breed-note">No breed range is selected. Breed information does not change the BCS result.</p>
+      <div class="report-tip" id="r-tip-box">
+        <strong>💡 Next check:</strong> <span id="r-tip">Keep a record of food and activity, and repeat the same hands-on check regularly.</span>
+      </div>
+      <p class="report-notice">
+        This educational result groups the score you selected; it is not an automated diagnosis. Coat, posture, frame, age, and muscle mass can affect a home estimate, and BCS does not replace a muscle condition score (MCS). Ask a veterinarian for a hands-on assessment after an unexplained weight change or when the score appears to be 1–3 or 6–9.
+      </p>
+    </div>
   </div>
 
-    <!-- BCS guide removed -->
-
   <section class="guide-section">
-    <h2>💡 Understanding Your Pet's Weight & Health</h2>
+    <h2>💡 Understanding the 9-point BCS Scale</h2>
     
     <details class="guide" open>
-      <summary>1. Is this a real BMI calculator for pets?</summary>
+      <summary>1. How do I choose a BCS?</summary>
       <div class="guide-content">
-        <p>Unlike humans, pets have massive variations in body structure (compare a Chihuahua to a Great Dane!). Therefore, a standard "BMI" math formula doesn't work well for animals. Instead, our <strong>pet weight manager</strong> compares your pet's current weight against the established standard weight ranges for their specific breed to determine if they are underweight, ideal, or overweight.</p>
-      </div>
-    </details>
-
-    <details class="guide">
-      <summary>2. Why is maintaining an ideal dog or cat weight important?</summary>
-      <div class="guide-content">
-        <p>Pet obesity is a leading cause of preventable diseases. Keeping your dog or cat at their <strong>ideal weight</strong> can:</p>
+        <p>View your pet from above and from the side, then use both hands to feel the ribs. A visual check alone can be misleading under a long or dense coat.</p>
         <ul>
-          <li>Reduce the risk of osteoarthritis and joint injuries.</li>
-          <li>Lower the chance of developing diabetes (especially in cats) and heart disease.</li>
-          <li>Extend their lifespan by up to 2 years compared to overweight pets.</li>
+          <li><strong>1–3, under ideal:</strong> ribs and bony points are easy to see or feel; the waist and abdominal tuck are pronounced.</li>
+          <li><strong>4–5, ideal:</strong> ribs are easy to feel without excess fat; a waist and abdominal tuck are visible.</li>
+          <li><strong>6–7, over ideal:</strong> added fat makes the ribs harder to feel and the waist less distinct.</li>
+          <li><strong>8–9, obese:</strong> ribs are difficult to feel under a heavy fat layer, with little or no waist.</li>
         </ul>
+        <p>Reference: <a href="https://www.aaha.org/resources/2021-aaha-nutrition-and-weight-management-guidelines/screening-evaluation/" target="_blank" rel="noopener noreferrer">AAHA 9-point BCS guidance</a>, the <a href="https://wsava.org/wp-content/uploads/2025/06/WSAVA_BCSCat_BCSDog_Nutrition_250612.pdf" target="_blank" rel="noopener noreferrer">WSAVA dog BCS chart</a>, and the <a href="https://wsava.org/wp-content/uploads/2025/06/WSAVA_BCSCat_BCSCat_Nutrition_250612.pdf" target="_blank" rel="noopener noreferrer">WSAVA cat BCS chart</a>.</p>
       </div>
     </details>
 
     <details class="guide">
-      <summary>3. What should I do if my pet is overweight?</summary>
+      <summary>2. Does a breed weight range determine the result?</summary>
       <div class="guide-content">
-        <p>If the calculator shows your pet is above their <strong>ideal weight</strong>, consult your veterinarian before starting a diet. They can rule out medical conditions (like thyroid issues) and recommend a safe, gradual weight loss plan involving controlled portions of a specialized diet and increased exercise.</p>
+        <p>No. Healthy weight varies with sex, frame, age, and muscle mass even within one breed. The breed table is optional context for recording weight; it never changes the BCS group shown above.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>3. Is BCS the same as human BMI?</summary>
+      <div class="guide-content">
+        <p>No. Dogs and cats vary greatly in frame and body shape, so a single human-style weight-and-height formula is not appropriate. Veterinary teams use visual and hands-on BCS assessment for body fat and assess muscle separately with MCS.</p>
       </div>
     </details>
 
@@ -209,7 +240,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     </div>
   </section>
 
-  <div class="footer"><span>Breed-specific Weight Comparison</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+  <div class="footer"><span>9-point BCS Self-check</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -356,7 +387,58 @@ const CAT_BREEDS = [
   { name: 'Pixiebob', min: 4, max: 8 },
 ];
 
-const BCS_DATA = [];
+let selectedBcs = null;
+
+const BCS_DATA = [
+  { score: 1, description: 'Ribs, spine, and pelvis are obvious from a distance, with almost no body fat felt' },
+  { score: 2, description: 'Ribs and bony points are easy to see, with very little fat or muscle felt' },
+  { score: 3, description: 'Ribs are easy to feel, with a pronounced waist and abdominal tuck' },
+  { score: 4, description: 'Ribs are easy to feel under a thin fat layer, with a clear waist and abdominal tuck' },
+  { score: 5, description: 'Ribs are felt without excess fat, with a waist from above and abdominal tuck from the side' },
+  { score: 6, description: 'A slight fat layer covers the ribs, and the waist and abdominal line are less distinct' },
+  { score: 7, description: 'Ribs are difficult to feel, the waist is barely visible, and abdominal fat has increased' },
+  { score: 8, description: 'Ribs are difficult to feel under a thick fat layer, with no visible waist' },
+  { score: 9, description: 'Ribs cannot be felt under a very heavy fat layer, with marked abdominal fat deposits' },
+];
+
+function getBcsAssessment(score) {
+  if (score <= 3) {
+    return {
+      statusText: 'Under ideal', statusColor: '#3b82f6', emoji: '🦴', labelIndex: 0,
+      tip: 'Avoid making a large food change on your own; ask a veterinarian to confirm BCS, muscle condition (MCS), and possible medical causes.'
+    };
+  }
+  if (score <= 5) {
+    return {
+      statusText: 'Ideal', statusColor: '#22c55e', emoji: '✅', labelIndex: 1,
+      tip: 'Keep a record of food and activity, and repeat the same hands-on check regularly.'
+    };
+  }
+  if (score <= 7) {
+    return {
+      statusText: 'Over ideal', statusColor: '#f97316', emoji: '⚠️', labelIndex: 2,
+      tip: 'Bring a record of meals, treats, and activity to your veterinarian and discuss a safe management goal.'
+    };
+  }
+  return {
+    statusText: 'Obese range', statusColor: '#ef4444', emoji: '🔴', labelIndex: 3,
+    tip: 'Have a veterinarian assess your pet before starting a gradual weight-management plan; avoid sudden food restriction, especially in cats.'
+  };
+}
+
+function renderBcs() {
+  const selector = document.getElementById('bcsSelector');
+  selector.innerHTML = BCS_DATA.map(item => {
+    const active = item.score === selectedBcs;
+    return `<button type="button" class="bcs-btn${active ? ' active' : ''}" aria-label="BCS score ${item.score}" aria-pressed="${active}" title="${item.description}" onclick="selectBcs(${item.score})">${item.score}</button>`;
+  }).join('');
+}
+
+function selectBcs(score) {
+  selectedBcs = score;
+  renderBcs();
+  calc();
+}
 
 function setType(t) {
   petType = t;
@@ -393,141 +475,95 @@ function renderBreeds() {
 
 function selectBreed(idx) {
   const breeds = petType === 'dog' ? DOG_BREEDS : CAT_BREEDS;
-  selectedBreed = breeds[idx];
-  document.querySelectorAll('.breed-item').forEach(b => b.classList.remove('active'));
-  document.querySelector(`.breed-item[data-idx="${idx}"]`).classList.add('active');
-  // Set weight to midpoint
-  const mid = (selectedBreed.min + selectedBreed.max) / 2;
-  document.getElementById('weight').value = mid.toFixed(1);
+  selectedBreed = selectedBreed && selectedBreed.name === breeds[idx].name ? null : breeds[idx];
+  renderBreeds();
   calc();
 }
 
 function calc() {
-  const w = parseFloat(document.getElementById('weight').value);
-  if (!w || w <= 0) return;
+  const weightInput = document.getElementById('weight');
+  const hasWeightInput = weightInput.value.trim() !== '';
+  const weightValue = Number(weightInput.value);
+  const hasTenthPrecision = Math.abs(weightValue * 10 - Math.round(weightValue * 10)) < 1e-9;
+  const hasWeight = Number.isFinite(weightValue) && weightValue >= 0.1 && weightValue <= 200 && hasTenthPrecision;
+  if (hasWeightInput && !hasWeight) weightInput.setAttribute('aria-invalid', 'true');
+  else weightInput.removeAttribute('aria-invalid');
+  const weightText = hasWeight ? `${weightValue.toFixed(1)}kg` : (hasWeightInput ? 'Use 0.1kg steps within 0.1–200kg' : 'Not entered');
 
-  if (!selectedBreed) {
-    document.getElementById('emoji').textContent = '🤷';
-    document.getElementById('status').textContent = 'Select a breed';
-    document.getElementById('statusDetail').textContent = 'Search and select a breed above to compare with standard weight.';
-    document.getElementById('infoGrid').innerHTML = '';
-    const labelSpans = document.querySelectorAll('.gauge-labels span');
-    labelSpans.forEach(s => s.style.fontWeight = 'normal');
+  if (!selectedBcs) {
+    document.getElementById('reportBox').classList.remove('active');
     document.getElementById('gaugeMarker').style.display = 'none';
+    document.getElementById('emoji').textContent = '⚖️';
+    document.getElementById('status').textContent = 'Choose a BCS score';
+    document.getElementById('status').style.color = '';
+    document.getElementById('statusDetail').textContent = 'Check the ribs, waist, and abdominal tuck, then choose the closest score from 1 to 9.';
+    document.getElementById('bcsHint').textContent = 'Hover over or choose a score button to read its body-condition description.';
+    document.getElementById('infoGrid').innerHTML = `
+      <div class="info-item"><div class="label">Current Weight</div><div class="value">${weightText}</div></div>
+      <div class="info-item"><div class="label">Body Condition Score</div><div class="value">Not selected</div></div>
+    `;
+    document.querySelectorAll('.gauge-labels span').forEach(span => {
+      span.style.fontWeight = '400';
+      span.style.color = '';
+    });
     return;
   }
-  
+
+  const bcsData = BCS_DATA.find(item => item.score === selectedBcs);
+  const assessment = getBcsAssessment(selectedBcs);
+
+  document.getElementById('reportBox').classList.add('active');
   document.getElementById('gaugeMarker').style.display = 'block';
+  document.getElementById('emoji').textContent = assessment.emoji;
+  document.getElementById('status').textContent = assessment.statusText;
+  document.getElementById('status').style.color = assessment.statusColor;
+  document.getElementById('statusDetail').textContent = `BCS ${selectedBcs}/9 · ${bcsData.description}`;
+  document.getElementById('bcsHint').textContent = `Score ${selectedBcs}: ${bcsData.description}`;
 
-  // Determine ideal weight
-  const idealWeight = (selectedBreed.min + selectedBreed.max) / 2;
-  const idealSource = selectedBreed.name + ' std.';
-  
-  const diff = w - idealWeight;
-  const diffPct = ((w - idealWeight) / idealWeight * 100);
-
-  // Combined assessment
-  let statusText, statusColor, emoji, tip;
-
-  // Weight sanity check
-  const maxSane = petType === 'dog' ? 90 : 15;
-  const weightInsane = w > maxSane;
-
-  if (weightInsane) {
-    statusText = '⚠️ Weight check needed';
-    statusColor = '#ef4444';
-    emoji = '❓';
-    tip = petType === 'dog' ? 'Dog weight is over ' + maxSane + 'kg. Please verify input.' : 'Cat weight is over ' + maxSane + 'kg. Please verify input.';
-  } else {
-    // Breed-based assessment
-    if (w < selectedBreed.min * 0.8) {
-      statusText = 'Severely Underweight';
-      statusColor = '#3b82f6'; emoji = '🦴';
-      tip = 'Vet consultation recommended';
-    } else if (w < selectedBreed.min) {
-      statusText = 'Underweight';
-      statusColor = '#60a5fa'; emoji = '🦴';
-      tip = 'Try increasing food portions slightly';
-    } else if (w <= selectedBreed.max) {
-      statusText = 'Ideal';
-      statusColor = '#22c55e'; emoji = '✅';
-      tip = 'Healthy weight!';
-    } else if (w <= selectedBreed.max * 1.15) {
-      statusText = 'Slightly Overweight';
-      statusColor = '#facc15'; emoji = '⚠️';
-      tip = 'Try reducing food portions slightly';
-    } else if (w <= selectedBreed.max * 1.3) {
-      statusText = 'Overweight';
-      statusColor = '#f97316'; emoji = '⚠️';
-      tip = 'Reduce food and increase exercise';
-    } else {
-      statusText = 'Obese';
-      statusColor = '#ef4444'; emoji = '🔴';
-      tip = 'Consult your vet for a diet plan';
-    }
-  }
-
-  document.getElementById('emoji').textContent = emoji;
-  document.getElementById('status').textContent = statusText;
-  document.getElementById('status').style.color = statusColor;
-
-  let detail = '';
-  if (selectedBreed && !weightInsane) {
-    if (w >= selectedBreed.min && w <= selectedBreed.max) {
-      detail = `📋 Within ${selectedBreed.name} standard range ✅`;
-    } else {
-      detail = `📋 ${selectedBreed.name} standard: ${selectedBreed.min}-${selectedBreed.max}kg`;
-      detail += `<br>vs standard: <strong style="color:${statusColor}">${diff > 0 ? '+' : ''}${diff.toFixed(1)}kg</strong>`;
-    }
-  } else if (weightInsane) {
-    detail = `<strong style="color:#ef4444">${petType === 'dog' ? '🐶' : '🐱'} Please verify weight</strong>`;
-  }
-  document.getElementById('statusDetail').innerHTML = detail;
-
-  // Gauge: use weight-based position relative to breed standard
-  let gaugePct = 50;
-  if (selectedBreed && !weightInsane) {
-    const mid = (selectedBreed.min + selectedBreed.max) / 2;
-    const range = selectedBreed.max - selectedBreed.min;
-    gaugePct = 50 + ((w - mid) / (range * 2)) * 100;
-    gaugePct = Math.max(0, Math.min(100, gaugePct));
-  }
+  const gaugePct = ((selectedBcs - 1) / 8) * 100;
   document.getElementById('gaugeMarker').style.left = gaugePct + '%';
+  document.querySelectorAll('.gauge-labels span').forEach((span, index) => {
+    span.style.fontWeight = index === assessment.labelIndex ? '700' : '400';
+    span.style.color = index === assessment.labelIndex ? assessment.statusColor : '';
+  });
 
-  // Info grid
-  let breedInfo = `
-    <div class="info-item">
-      <div class="label">📋 Breed Standard Weight</div>
-      <div class="value">${selectedBreed.min}~${selectedBreed.max} kg</div>
-    </div>
-    <div class="info-item">
-      <div class="label">${w >= selectedBreed.min && w <= selectedBreed.max ? '✅ In Range' : '⚠️ Out of Range'}</div>
-      <div class="value" style="color:${w >= selectedBreed.min && w <= selectedBreed.max ? '#22c55e' : '#f97316'}">${selectedBreed.name}</div>
-    </div>
-  `;
-
+  const breedReference = selectedBreed
+    ? `<div class="value">${selectedBreed.min}~${selectedBreed.max} kg</div>`
+    : '<div class="value">Not selected</div>';
   document.getElementById('infoGrid').innerHTML = `
     <div class="info-item">
       <div class="label">Current Weight</div>
-      <div class="value">${w.toFixed(1)} kg</div>
+      <div class="value">${weightText}</div>
     </div>
     <div class="info-item">
-      <div class="label">Ideal Weight (${idealSource})</div>
-      <div class="value" style="color:#22c55e">${idealWeight.toFixed(1)} kg</div>
-    </div>
-    ${breedInfo}
-    <div class="info-item">
-      <div class="label">${diff > 0.5 ? '🏋️ Weight Loss Goal' : diff < -0.5 ? '🍖 Weight Gain Goal' : '👍 Maintain'}</div>
-      <div class="value">${Math.abs(diff) < 0.5 ? 'Maintain current 🎉' : Math.abs(diff).toFixed(1) + 'kg ' + (diff > 0 ? 'to lose' : 'to gain')}</div>
+      <div class="label">Selected Body Score</div>
+      <div class="value" style="color:${assessment.statusColor}">BCS ${selectedBcs}/9</div>
     </div>
     <div class="info-item">
-      <div class="label">💡 Tip</div>
-      <div class="value" style="font-size:11px;font-weight:500">${tip || ''}</div>
+      <div class="label">Primary Basis</div>
+      <div class="value">9-point BCS</div>
+    </div>
+    <div class="info-item">
+      <div class="label">${selectedBreed ? `${selectedBreed.name} Weight Reference` : 'Breed Weight Reference'}</div>
+      ${breedReference}
     </div>
   `;
+
+  document.getElementById('r-type').textContent = petType === 'dog' ? '🐶 Dog' : '🐱 Cat';
+  document.getElementById('r-weight').textContent = weightText;
+  document.getElementById('r-bcs').textContent = selectedBcs;
+  const rStatus = document.getElementById('r-status');
+  rStatus.textContent = `[${assessment.statusText}]`;
+  rStatus.style.color = assessment.statusColor;
+  document.getElementById('r-breed-note').textContent = selectedBreed
+    ? `The general adult weight reference for ${selectedBreed.name} is ${selectedBreed.min}–${selectedBreed.max}kg. Sex, frame, age, and muscle mass can change an individual's healthy weight, and this range does not affect the BCS result.`
+    : 'No breed range is selected. Breed information does not change the BCS result.';
+  document.getElementById('r-tip-box').style.borderColor = assessment.statusColor;
+  document.getElementById('r-tip').textContent = assessment.tip;
 }
 
 renderBreeds();
+renderBcs();
 calc();
 
 (function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();

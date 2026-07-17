@@ -5,7 +5,9 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
-const port = Number(process.env.AUDIT_PORT || 4173);
+// Default to an OS-assigned free port so local audits do not collide with an
+// already-running preview server. AUDIT_PORT can still pin a port when needed.
+let port = Number(process.env.AUDIT_PORT || 0);
 
 function walk(dir, out = []) {
   for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -65,7 +67,14 @@ function startServer() {
       res.end(String(err.message || err));
     }
   });
-  return new Promise(resolve => server.listen(port, '127.0.0.1', () => resolve(server)));
+  return new Promise((resolve, reject) => {
+    server.on('error', reject);
+    server.listen(port, '127.0.0.1', () => {
+      const address = server.address();
+      if (address && typeof address === 'object') port = address.port;
+      resolve(server);
+    });
+  });
 }
 
 async function main() {

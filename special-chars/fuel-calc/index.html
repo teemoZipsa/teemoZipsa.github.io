@@ -148,7 +148,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <label>참고 유가 (원/L · 직접 수정 가능)</label>
       <div class="price-row">
         <div class="input-row" style="flex:1">
-          <input type="number" id="fuelPrice" min="0" step="10" oninput="calc()">
+          <input type="number" id="fuelPrice" min="1" max="1000000" step="10" oninput="markFuelInput('price')">
           <span class="unit">원/L</span>
         </div>
       </div>
@@ -162,9 +162,9 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
     <!-- 거리 -->
     <div class="input-group">
-      <label>주행 거리</label>
+      <label>입력 거리 (왕복 선택 시 편도)</label>
       <div class="input-row">
-        <input type="number" id="distance" value="300" min="0" step="10" oninput="calc()">
+        <input type="number" id="distance" value="300" min="0.1" max="100000" step="10" oninput="calc()">
         <span class="unit">km</span>
       </div>
     </div>
@@ -173,7 +173,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="input-group">
       <label id="effLabel">차량 연비</label>
       <div class="input-row">
-        <input type="number" id="efficiency" value="12" min="0.1" step="0.5" oninput="calc()">
+        <input type="number" id="efficiency" value="12" min="0.1" max="1000" step="0.5" oninput="markFuelInput('efficiency')">
         <span class="unit">km/L</span>
       </div>
     </div>
@@ -189,7 +189,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
     <!-- 왕복 토글 -->
     <div class="toggle-row" onclick="document.getElementById('roundTrip').click()">
-      <span class="toggle-label">🔄 왕복 계산</span>
+      <span class="toggle-label">🔄 왕복 계산 (입력 거리 × 2)</span>
       <label class="toggle" onclick="event.stopPropagation()">
         <input type="checkbox" id="roundTrip" onchange="calc()">
         <span class="slider"></span>
@@ -212,25 +212,21 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <summary>💡 장거리 운전 & 유류비 절약 Q&A</summary>
     <div class="guide-content">
       <strong>Q. 고속도로 정속 주행이 진짜 연비에 도움이 되나요?</strong>
-      <p>네, 절대적입니다. 자동차 연비는 보통 시속 <strong>80~90km/h</strong> 구간에서 가장 높습니다. 100km/h를 넘어 120km/h로 밟게 되면 공기 저항이 기하급수적으로 커져 연비가 20% 이상 급감합니다. 장거리 여행 시 크루즈 컨트롤을 활용하여 정속 주행을 유지하면 기름값을 크게 아낄 수 있습니다.</p>
+      <p>급가속·급제동을 줄이고 교통 흐름 안에서 일정하게 주행하면 연비에 도움이 될 수 있습니다. 효율적인 속도와 절감 폭은 차량, 노면, 경사, 바람, 적재량과 정체에 따라 달라지므로 고정 속도나 절감률로 단정할 수 없습니다. 항상 제한속도와 안전을 우선하세요.</p>
       <br>
       <strong>Q. 에어컨을 켜는 것과 창문을 여는 것 중 어느 쪽이 연비가 좋나요?</strong>
-      <p>속도에 따라 다릅니다. <strong>저속(시내 주행)</strong>에서는 에어컨을 끄고 창문을 여는 것이 연비에 조금 유리합니다. 하지만 <strong>고속 주행(80km/h 이상)</strong>에서는 창문을 열면 발생하는 '공기 저항'이 에어컨 압축기를 돌리는 힘보다 훨씬 커지기 때문에, 마음 편하게 창문을 닫고 에어컨을 켜는 것이 효율적입니다.</p>
+      <p>차량과 속도, 외기 온도에 따라 달라 일률적인 전환 속도는 없습니다. 창문을 열면 공기 저항이 늘 수 있고 에어컨도 에너지를 사용합니다. 운전자 집중과 탑승자 안전·쾌적성을 우선하고, 차량 설명서의 효율 운전 안내를 참고하세요.</p>
       <br>
       <strong>Q. 휴가철 카풀(N빵)할 때 톨게이트 비용은 어떻게 하나요?</strong>
-      <p>본 유류비 계산기는 순수 '기름값'만을 계산합니다. 카풀 시 깔끔한 정산을 위해서는 본 계산기에서 나온 <strong>(총 유류비 ÷ 인원수)</strong> 금액에 <strong>(왕복 톨게이트 비용 ÷ 인원수)</strong>를 더해서 정산하는 것이 국룰입니다. 고속도로 통행료는 네이버 지도나 카카오내비에서 경로 탐색 시 함께 확인할 수 있습니다.</p>
+      <p>이 계산기는 기름값만 계산합니다. 통행료·주차료 등은 별도로 확인해 동승자끼리 합의한 방식으로 나누세요. 결과의 1인당 금액에는 이런 추가 비용이 포함되지 않습니다.</p>
     </div>
   </details>
 
   <details class="guide-section">
-    <summary>📖 차종별 평균 연비 및 공임 참고</summary>
+    <summary>📖 연비 입력값을 정하는 방법</summary>
     <div class="guide-content">
-      <p><b>차종별 평균 연비 (복합 기준)</b></p>
-      <p>🚗 경차 (모닝 등): 14~16 km/L</p>
-      <p>🚙 소형차 (아반떼 등): 12~15 km/L</p>
-      <p>🚕 중형차 (쏘나타 등): 10~13 km/L</p>
-      <p>🚐 SUV (투싼 등): 9~12 km/L</p>
-      <p>🚌 대형 SUV (팰리세이드 등): 8~10 km/L</p>
+      <p>같은 차종도 엔진·구동 방식·타이어·주행 환경에 따라 실제 연비가 크게 달라집니다. 차량의 공인 복합연비는 계획 단계의 참고값으로, 최근 트립 컴퓨터나 주유 기록으로 계산한 실연비는 실제 정산에 가까운 값으로 사용할 수 있습니다.</p>
+      <p>계절·정체·고속도로 비중이 다른 여행이라면 보수적인 연비를 넣고 여러 시나리오를 비교하세요.</p>
     </div>
   </details>
 
@@ -260,6 +256,8 @@ let currentFuel = 0;
 let fuelPrices = { ...DEFAULT_PRICES };
 let priceDate = '';
 let priceLoadFailed = false;
+let fuelPriceDirty = false;
+let efficiencyDirty = false;
 
 // 오피넷 유가 JSON 로드
 (async function loadPrices() {
@@ -276,20 +274,28 @@ let priceLoadFailed = false;
     priceLoadFailed = true;
     console.warn('유가 데이터 로드 실패, 기본값 사용', e);
   }
-  applyFuel();
+  applyFuel({ preserveUserInput: true });
 })();
 
 function setFuel(idx) {
   currentFuel = idx;
+  fuelPriceDirty = false;
+  efficiencyDirty = false;
   document.querySelectorAll('.fuel-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
   applyFuel();
 }
 
-function applyFuel() {
+function markFuelInput(field) {
+  if (field === 'price') fuelPriceDirty = true;
+  if (field === 'efficiency') efficiencyDirty = true;
+  calc();
+}
+
+function applyFuel({ preserveUserInput = false } = {}) {
   const key = FUEL_KEYS[currentFuel];
   const price = fuelPrices[key] || DEFAULT_PRICES[key];
-  document.getElementById('fuelPrice').value = price;
-  document.getElementById('efficiency').value = DEFAULT_EFF[key];
+  if (!preserveUserInput || !fuelPriceDirty) document.getElementById('fuelPrice').value = price;
+  if (!preserveUserInput || !efficiencyDirty) document.getElementById('efficiency').value = DEFAULT_EFF[key];
 
   // 업데이트 날짜
   const dateEl = document.getElementById('priceDate');
@@ -317,16 +323,30 @@ function applyFuel() {
 
 function fmt(n) { return Math.round(n).toLocaleString('ko-KR'); }
 
-function calc() {
-  const dist = parseFloat(document.getElementById('distance').value) || 0;
-  const eff = parseFloat(document.getElementById('efficiency').value) || 0;
-  const price = parseFloat(document.getElementById('fuelPrice').value) || 0;
-  const people = parseInt(document.getElementById('people').value) || 1;
-  const roundTrip = document.getElementById('roundTrip').checked;
+function readFuelInputs() {
+  const dist = Number(document.getElementById('distance').value);
+  const eff = Number(document.getElementById('efficiency').value);
+  const price = Number(document.getElementById('fuelPrice').value);
+  const people = Number(document.getElementById('people').value);
+  const valid = Number.isFinite(dist) && dist >= 0.1 && dist <= 100000 &&
+    Number.isFinite(eff) && eff >= 0.1 && eff <= 1000 &&
+    Number.isFinite(price) && price >= 1 && price <= 1000000 &&
+    Number.isInteger(people) && people >= 1 && people <= 20;
+  return { valid, dist, eff, price, people, roundTrip: document.getElementById('roundTrip').checked };
+}
 
-  if (dist <= 0 || eff <= 0 || price <= 0) {
-    document.getElementById('summary').innerHTML = '';
-    document.getElementById('detailBox').innerHTML = '';
+function clearFuelResult() {
+  document.getElementById('summary').innerHTML = '';
+  document.getElementById('detailBox').innerHTML = '';
+  const report = document.getElementById('analysisReport');
+  report.innerHTML = '';
+  report.style.display = 'none';
+}
+
+function calc() {
+  const { valid, dist, eff, price, people, roundTrip } = readFuelInputs();
+  if (!valid) {
+    clearFuelResult();
     return;
   }
 
@@ -399,25 +419,25 @@ function calc() {
   
   let msg = `<h3>💡 주행 코스 유류비 분석 리포트</h3>`;
   
-  msg += `<p>선택하신 <strong>${FUEL_NAMES[currentFuel]}</strong> 차량(연비 ${eff}km/L)으로 <strong>${roundTrip ? '왕복 ' : '편도 '}${fmt(actualDist)}km</strong> 거리를 이동할 경우, 총 <strong>${fuelNeeded.toFixed(1)}리터</strong>의 연료가 연소되어 회복할 수 없는 비용으로 소모됩니다.</p>`;
+  msg += `<p><strong>${FUEL_NAMES[currentFuel]}</strong>, 연비 <strong>${eff}km/L</strong>, 총 주행 거리 <strong>${fmt(actualDist)}km</strong>를 기준으로 필요한 연료를 <strong>${fuelNeeded.toFixed(1)}L</strong>로 계산했습니다.</p>`;
   
-  msg += `<p>현재 지정된 유가(${fmt(price)}원/L)를 반영한 총 주유 예상액은 <strong>${fmt(totalCost)}원</strong>으로 집계되었습니다. 1km를 전진할 때마다 주머니에서 대략 <strong>${fmt(costPerKm)}원</strong>이 길바닥에 지속적으로 뿌려지고 있는 셈입니다.</p>`;
+  msg += `<p>입력 유가 <strong>${fmt(price)}원/L</strong>를 반영한 예상 유류비는 <strong>${fmt(totalCost)}원</strong>, 1km당 약 <strong>${fmt(costPerKm)}원</strong>입니다. 실제 소비량은 주행 조건에 따라 달라질 수 있습니다.</p>`;
   
   if (people > 1) {
-      msg += `<p>입력하신 동승자 <strong>${people}명</strong>과 연료비를 똑같이 분배(N빵)하면, 1인당 <strong>경비 ${fmt(perPerson)}원</strong>씩만 각출하여 이체하면 정산은 매우 깔끔하게 마무리됩니다. (단, 고속도로 톨비나 휴게소 식사 비용은 포함되지 않은 순수 구동 연료비 체계라는 점을 동승자들에게 인지시키세요)</p>`;
+      msg += `<p><strong>${people}명</strong>이 균등 분담하면 1인당 약 <strong>${fmt(perPerson)}원</strong>입니다. 통행료·주차료 등은 포함되지 않습니다.</p>`;
   } else {
-      msg += `<p>현재 동승자 없이 단독 운행 조건이므로 출력되는 위 비용 전액을 온전히 홀로 부담하게 됩니다. 장거리 운행 출발 전 타이어 공기압을 제조사 권장 수치로 맞추고 트렁크에서 꼭 필요하지 않은 무거운 짐을 빼두시면 복합 연비를 유효하게 5~10% 수준 끌어올릴 수 있어 약간 금액이 세이브 될 수 있습니다.</p>`;
+      msg += `<p>현재 1명 기준이므로 1인당 금액은 총 유류비와 같습니다. 출발 전 차량 상태와 제조사 권장 타이어 공기압을 확인하세요.</p>`;
   }
   
   report.innerHTML = msg;
 }
 
 function copyResult() {
-  const dist = parseFloat(document.getElementById('distance').value) || 0;
-  const eff = parseFloat(document.getElementById('efficiency').value) || 0;
-  const price = parseFloat(document.getElementById('fuelPrice').value) || 0;
-  const people = parseInt(document.getElementById('people').value) || 1;
-  const roundTrip = document.getElementById('roundTrip').checked;
+  const { valid, dist, eff, price, people, roundTrip } = readFuelInputs();
+  if (!valid) {
+    showToast('거리·연비·유가·인원수를 유효한 범위로 입력하세요');
+    return;
+  }
   const actualDist = roundTrip ? dist * 2 : dist;
   const fuelNeeded = actualDist / eff;
   const totalCost = fuelNeeded * price;
@@ -434,7 +454,9 @@ function copyResult() {
   if (people > 1) {
     lines.push(`1인당 (${people}명): ${fmt(totalCost / people)}원`);
   }
-  navigator.clipboard.writeText(lines.join('\n')).then(() => showToast('📋 결과가 복사되었습니다'));
+  navigator.clipboard.writeText(lines.join('\n'))
+    .then(() => showToast('📋 결과가 복사되었습니다'))
+    .catch(() => showToast('복사 권한을 확인해 주세요'));
 }
 
 function showToast(msg) {

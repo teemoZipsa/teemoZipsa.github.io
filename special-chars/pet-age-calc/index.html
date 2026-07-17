@@ -9,9 +9,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>🐾 반려동물 나이 계산기 — 티모집사</title>
-<meta name="description" content="강아지, 고양이 나이를 사람 나이로 환산하세요. 소형·중형·대형견 구분, 고양이 전용 계산 지원. 100% 무료 온라인 도구.">
+<meta name="description" content="강아지·고양이 나이를 교육용 비선형 모델로 사람 나이에 환산합니다. 0~30세 정수 입력과 소형·중형·대형견 구분을 지원하며 공식 수의학 진단 기준은 아닙니다.">
 <meta property="og:title" content="🐾 반려동물 나이 계산기 — 티모집사">
-<meta property="og:description" content="강아지, 고양이 나이를 사람 나이로 환산해보세요.">
+<meta property="og:description" content="강아지·고양이 나이를 교육용 추정 모델로 사람 나이에 환산합니다.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.github.io/special-chars/pet-age-calc/">
 <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
@@ -145,7 +145,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
         <strong>💡 생활 관리 가이드:</strong> <span id="r-tip">가장 건강하고 활발한 시기입니다! 많은 활동량과 균형 잡힌 영양 공급으로 뛰어난 컨디션을 제일 오래 유지할 수 있게 도와주세요.</span>
       </div>
       <p class="report-notice">
-        ※ 해당 그룹군의 평균 기대 수명은 약 <span id="r-avg-lifespan">12</span>년으로 추산되며, 현재 수명 진행률의 약 <span id="r-percent">25</span>% 지점을 지나고 있습니다. 대형견일수록 체내 노화 속도가 빠르며 7살(약 사람 40~50대)부터는 1년에 1~2회 이상의 정기적인 종합 건강검진이 필수적입니다.
+        ※ 내부 예시 기대수명 <span id="r-avg-lifespan">12</span>년과 비교한 단순 비율은 약 <span id="r-percent">25</span>%입니다. 실제 수명·건강 상태·검진 주기를 뜻하지 않으며, 품종과 병력에 맞는 검진 일정은 수의사와 상의하세요.
       </p>
     </div>
   </div>
@@ -156,13 +156,13 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <strong>Q. "강아지 1살 = 사람 7살" 공식은 틀린 건가요?</strong><br>
       네, ×7은 과단순화된 참고식입니다. 이 도구는 생후 1~2년 차에 빠르게 성장하고 이후 크기별로 다른 속도로 노화한다는 교육용 추정 모델을 사용합니다. 고양이 역시 생후 첫 2년 동안 사람 나이 24세까지 성장하며 이후 매년 4세씩 증가한다고 계산합니다.<br><br>
       <strong>Q. 왜 소형견이 대형견보다 장수하나요?</strong><br>
-      일반적으로 야생과 달리 가정에서 자라는 강아지들은 아이러니하게도 체격이 작을수록 기대 수명이 더 깁니다. 대형견 군집(골든 리트리버, 허스키 등)은 신진대사 및 세포 분열 속도가 훨씬 빨라 내부 장기의 상대적 노화가 더 빠르게 시작되기 때문입니다.
+      집단 수준에서는 체격에 따라 노화 양상과 기대수명이 다르게 관찰될 수 있지만, 품종·유전·질환·생활환경의 영향도 큽니다. 이 도구의 소형·중형·대형 선택은 교육용 모델의 넓은 환산 속도만 바꾸며 개별 반려견의 수명이나 건강을 예측하지 않습니다.
     </div>
   </details>
 
   <div class="article-cta" id="magazineWidget" style="display: none; margin: 0 12px 16px; padding: 24px; background: linear-gradient(135deg, var(--bg-card), var(--bg-hover)); border: 2px solid var(--accent); border-radius: 12px; text-align: center; position: relative; overflow: hidden; animation: fadeIn 0.5s ease-out;">
-    <h3 style="margin-top: 0; color: var(--text-primary); margin-bottom: 8px; font-size: 16px; font-weight: 800;">💡 고양이 1년이 7년이라는 거짓말</h3>
-    <p style="margin-bottom: 16px; color: var(--text-muted); font-size: 13px; line-height: 1.4; word-break: keep-all;">고양이의 노화 주기에 감춰진 팩트와 수의학적 진실을 매거진에서 바로 확인하세요.</p>
+    <h3 style="margin-top: 0; color: var(--text-primary); margin-bottom: 8px; font-size: 16px; font-weight: 800;">💡 고양이 나이 환산과 생애 단계</h3>
+    <p style="margin-bottom: 16px; color: var(--text-muted); font-size: 13px; line-height: 1.4; word-break: keep-all;">교육용 사람 나이 환산과 2021 AAHA/AAFP 생애 단계 구분을 나눠 확인하세요.</p>
     <a href="/blog/cat-age-guide/" style="display: inline-flex; align-items: center; gap: 6px; background: var(--accent); color: var(--text-on-accent); padding: 10px 20px; font-size: 14px; font-weight: 700; border-radius: 8px; text-decoration: none; box-shadow: 0 4px 10px var(--shadow-accent);">
       🐾 티모 매거진 읽기 ➔
     </a>
@@ -172,7 +172,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <h4>🔗 추천 관련 계산 도구</h4>
     <ul>
       <li><a href="/special-chars/pet-food-calc/">🥩 반려동물 맞춤 일일 권장 사료량 계산기</a></li>
-      <li><a href="/special-chars/pet-bmi-calc/">⚖️ 반려동물 비만도(BCS) 및 표준 체중 계산기</a></li>
+      <li><a href="/special-chars/pet-bmi-calc/">⚖️ 반려동물 체형 점수(BCS) 참고</a></li>
     </ul>
   </div>
 
@@ -234,9 +234,29 @@ function setSize(s) {
   calc();
 }
 
+function clearAgeResult(input) {
+  input.setAttribute('aria-invalid', 'true');
+  document.getElementById('emoji').textContent = '🐾';
+  document.getElementById('humanAge').textContent = '-';
+  const stageEl = document.getElementById('stage');
+  stageEl.textContent = '-';
+  stageEl.removeAttribute('style');
+  document.getElementById('stageBar').innerHTML = '';
+  document.getElementById('infoGrid').innerHTML = '';
+  document.getElementById('reportBox').style.display = 'none';
+  const magWidget = document.getElementById('magazineWidget');
+  if (magWidget) magWidget.style.display = 'none';
+}
+
 function calc() {
-  const age = parseFloat(document.getElementById('petAge').value);
-  if (isNaN(age) || age < 0) return;
+  const input = document.getElementById('petAge');
+  const rawAge = input.value.trim();
+  const age = Number(rawAge);
+  if (!rawAge || !Number.isInteger(age) || age < 0 || age > 30) {
+    clearAgeResult(input);
+    return;
+  }
+  input.removeAttribute('aria-invalid');
 
   const human = petType === 'dog' ? dogToHuman(age, dogSize) : catToHuman(age);
   const stage = STAGES.find(s => human < s.maxAge) || STAGES[STAGES.length - 1];
@@ -259,11 +279,11 @@ function calc() {
   const pct = Math.min(100, Math.round((age / life.years) * 100));
   document.getElementById('infoGrid').innerHTML = `
     <div class="info-item">
-      <div class="label">${petType === 'dog' ? '🐶 견종 평균 수명' : '🐱 평균 수명'}</div>
+      <div class="label">내부 기대수명 참고값</div>
       <div class="value">${life.years}년</div>
     </div>
     <div class="info-item">
-      <div class="label">수명 진행률</div>
+      <div class="label">참고값 대비 단순 비율</div>
       <div class="value" style="color:${pct > 80 ? '#ef4444' : pct > 50 ? '#f97316' : '#22c55e'}">${pct}%</div>
     </div>
     <div class="info-item">
@@ -303,6 +323,7 @@ function calc() {
   document.getElementById('r-percent').textContent = pct;
 
   const rBox = document.getElementById('reportBox');
+  rBox.style.display = '';
   rBox.style.animation = 'none';
   void rBox.offsetWidth;
   rBox.style.animation = 'fadeIn 0.5s ease-out';

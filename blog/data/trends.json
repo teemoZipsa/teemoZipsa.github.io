@@ -1,237 +1,78 @@
 {
-  "last_updated": "2026-07-04T12:57:02+09:00",
+  "last_updated": "2026-07-17T17:38:31+09:00",
   "refresh_minutes": 360,
-  "source": "google_suggest_cat_keywords",
+  "source": "google_suggest_with_editorial_fallback",
+  "methodology": "Suggestion order is not search volume or popularity. Editorial keywords are fallback only.",
   "items": [
     {
-      "keyword": "고양이 나이 계산",
-      "rank": 1,
-      "previousRank": 1,
-      "change": "flat",
-      "delta": 0,
-      "growth24h": "+2%",
-      "sparkline": [
-        19,
-        20,
-        24,
-        24,
-        20,
-        25,
-        21,
-        18,
-        20,
-        23,
-        19,
-        25,
-        22
-      ]
-    },
-    {
-      "keyword": "고양이 BCS 측정법",
-      "rank": 2,
-      "previousRank": 2,
-      "change": "flat",
-      "delta": 0,
-      "growth24h": "+3%",
-      "sparkline": [
-        37,
-        42,
-        36,
-        38,
-        38,
-        40,
-        41,
-        38,
-        41,
-        40,
-        42,
-        37,
-        38
-      ]
-    },
-    {
-      "keyword": "츄르 권장량 하루",
-      "rank": 3,
-      "previousRank": 3,
-      "change": "flat",
-      "delta": 0,
-      "growth24h": "+0%",
-      "sparkline": [
-        47,
-        40,
-        41,
-        44,
-        48,
-        42,
-        42,
-        46,
-        42,
-        40,
-        47,
-        44,
-        43
-      ]
-    },
-    {
-      "keyword": "고양이 양치질 거부",
-      "rank": 4,
-      "previousRank": 4,
-      "change": "flat",
-      "delta": 0,
-      "growth24h": "+2%",
-      "sparkline": [
-        42,
-        43,
-        42,
-        43,
-        41,
-        38,
-        42,
-        42,
-        42,
-        40,
-        43,
-        42,
-        37
-      ]
-    },
-    {
-      "keyword": "고양이 사료 급여량",
-      "rank": 5,
-      "previousRank": 5,
-      "change": "flat",
-      "delta": 0,
-      "growth24h": "+0%",
-      "sparkline": [
-        38,
-        30,
-        36,
-        30,
-        35,
-        36,
-        30,
-        35,
-        31,
-        31,
-        30,
-        32,
-        37
-      ]
-    },
-    {
-      "keyword": "고양이 신장 질환 증상",
-      "rank": 6,
-      "previousRank": 6,
-      "change": "flat",
-      "delta": 0,
-      "growth24h": "+0%",
-      "sparkline": [
-        47,
-        44,
-        40,
-        47,
-        41,
-        43,
-        46,
-        41,
-        44,
-        43,
-        40,
-        41,
-        43
-      ]
-    },
-    {
-      "keyword": "원시주머니 vs 비만",
-      "rank": 7,
-      "previousRank": 7,
-      "change": "flat",
-      "delta": 0,
-      "growth24h": "+0%",
-      "sparkline": [
-        23,
-        25,
-        22,
-        27,
-        27,
-        26,
-        27,
-        23,
-        26,
-        21,
-        23,
-        24,
-        20
-      ]
-    },
-    {
       "keyword": "고양이 나이",
-      "rank": 8,
-      "previousRank": 8,
-      "change": "flat",
-      "delta": 0,
-      "growth24h": "+3%",
-      "sparkline": [
-        34,
-        32,
-        36,
-        33,
-        33,
-        32,
-        35,
-        34,
-        34,
-        31,
-        32,
-        30,
-        33
-      ]
+      "origin": "google_suggest",
+      "seed": "고양이 나이",
+      "suggestion_position": 1,
+      "position": 1
     },
     {
-      "keyword": "고양이 나이 계산법",
-      "rank": 9,
-      "previousRank": 9,
-      "change": "flat",
-      "delta": 0,
-      "growth24h": "+3%",
-      "sparkline": [
-        39,
-        33,
-        34,
-        38,
-        37,
-        39,
-        39,
-        39,
-        36,
-        38,
-        34,
-        38,
-        35
-      ]
+      "keyword": "고양이 나이 계산",
+      "origin": "google_suggest",
+      "seed": "고양이 나이",
+      "suggestion_position": 2,
+      "position": 2
     },
     {
-      "keyword": "다묘 가정 사료",
-      "rank": 10,
-      "previousRank": 10,
-      "change": "flat",
-      "delta": 0,
-      "growth24h": "+2%",
-      "sparkline": [
-        31,
-        27,
-        30,
-        28,
-        34,
-        33,
-        35,
-        33,
-        35,
-        27,
-        34,
-        32,
-        29
-      ]
+      "keyword": "고양이 체중",
+      "origin": "google_suggest",
+      "seed": "고양이 체중",
+      "suggestion_position": 1,
+      "position": 3
+    },
+    {
+      "keyword": "고양이 체중계",
+      "origin": "google_suggest",
+      "seed": "고양이 체중",
+      "suggestion_position": 2,
+      "position": 4
+    },
+    {
+      "keyword": "고양이 사료",
+      "origin": "google_suggest",
+      "seed": "고양이 사료",
+      "suggestion_position": 1,
+      "position": 5
+    },
+    {
+      "keyword": "고양이 사료 추천",
+      "origin": "google_suggest",
+      "seed": "고양이 사료",
+      "suggestion_position": 2,
+      "position": 6
+    },
+    {
+      "keyword": "고양이 간식",
+      "origin": "google_suggest",
+      "seed": "고양이 간식",
+      "suggestion_position": 1,
+      "position": 7
+    },
+    {
+      "keyword": "고양이 간식 추천",
+      "origin": "google_suggest",
+      "seed": "고양이 간식",
+      "suggestion_position": 2,
+      "position": 8
+    },
+    {
+      "keyword": "고양이 건강검진 비용",
+      "origin": "google_suggest",
+      "seed": "고양이 건강",
+      "suggestion_position": 1,
+      "position": 9
+    },
+    {
+      "keyword": "고양이 건강검진",
+      "origin": "google_suggest",
+      "seed": "고양이 건강",
+      "suggestion_position": 2,
+      "position": 10
     }
   ]
 }

@@ -8,10 +8,10 @@
 <link rel="stylesheet" href="/special-chars/theme.css">
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
-<title>🚕 택시비 계산기 — 티모집사</title>
-<meta name="description" content="전국 시도별 고시 요율을 바탕으로 거리, 저속·정차 시간, 심야·시계외 할증과 별도 비용을 반영한 택시비 예상액을 계산합니다.">
-<meta property="og:title" content="🚕 택시비 계산기 — 티모집사">
-<meta property="og:description" content="거리·저속 시간·할증·통행료·호출료를 나눠 보는 전국 지역별 택시비 예상 계산기.">
+<title>🚕 서울 중형 택시비 예상 계산기 — 티모집사</title>
+<meta name="description" content="서울시 공식 중형택시 요율을 바탕으로 거리, 저속·정차 시간, 심야·시계외 할증과 별도 비용을 반영한 참고용 예상액을 계산합니다.">
+<meta property="og:title" content="🚕 서울 중형 택시비 예상 계산기 — 티모집사">
+<meta property="og:description" content="서울 중형택시의 거리·저속 시간·할증·통행료·호출료를 나눠 보는 참고용 예상 계산기.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.github.io/special-chars/taxi-calc/">
 <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
@@ -106,29 +106,22 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 <div class="app">
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
-    <h1>🚕 택시비 계산기</h1>
+    <h1>🚕 서울 중형 택시비 예상 계산기</h1>
   </div>
   <div class="body">
-    <!-- 지역 선택 -->
+    <!-- 공식 확인된 요율 프리셋 -->
     <div class="input-group">
-      <label>지역 선택</label>
+      <label>요율 프리셋</label>
       <div class="input-row">
         <select id="region" onchange="calc()"></select>
       </div>
     </div>
-    <!-- 차종 -->
-    <div>
-      <div class="section-title">차종</div>
-      <div class="tabs" id="typeTabs">
-        <button class="tab active" onclick="setType(0)">🚕 중형</button>
-        <button class="tab" onclick="setType(1)">🚐 대형/모범</button>
-      </div>
-    </div>
+    <div class="estimate-note"><strong>지원 범위: 서울 중형택시</strong><br>공식 요율과 병산 방식을 확인한 프리셋만 제공합니다. 지역별·차종별 요율을 검증 없이 추정하지 않습니다.</div>
     <!-- 거리 -->
     <div class="input-group">
       <label>예상 이동 거리</label>
       <div class="input-row">
-        <input type="number" id="distance" value="10" min="0.1" step="0.5" oninput="calc()">
+        <input type="number" id="distance" value="10" min="0.1" max="1000" step="0.5" oninput="calc()">
         <span class="unit">km</span>
       </div>
     </div>
@@ -136,7 +129,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <!-- 심야할증 -->
       <div class="toggle-row" onclick="toggleNight()" style="padding: 10px 12px; gap: 6px;">
         <div style="flex:1; min-width:0;">
-          <div class="toggle-label" style="font-size: 13px;">🌙 심야 할증</div>
+          <div class="toggle-label" style="font-size: 13px;">🌙 심야 최대 할증</div>
           <div class="toggle-sub" id="nightInfo" style="font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">적용 시 할증 반영</div>
         </div>
         <div class="toggle-switch" id="nightToggle" style="transform: scale(0.9); margin-right: -4px;"></div>
@@ -153,7 +146,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="section-title">운행 조건 · 별도 비용 (편도 기준)</div>
     <div class="condition-grid">
       <div class="input-group">
-        <label for="lowSpeedMinutes">저속·정차 예상 시간</label>
+        <label for="lowSpeedMinutes">총 저속·정차 예상 시간</label>
         <div class="input-row">
           <input type="number" id="lowSpeedMinutes" value="0" min="0" max="1440" step="1" oninput="calc()">
           <span class="unit">분</span>
@@ -162,7 +155,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <div class="input-group">
         <label for="outSurcharge">시계외 할증률</label>
         <div class="input-row">
-          <input type="number" id="outSurcharge" value="0" min="0" max="100" step="1" oninput="calc()">
+          <input type="number" id="outSurcharge" value="0" min="0" max="20" step="1" oninput="calc()">
           <span class="unit">%</span>
         </div>
       </div>
@@ -188,12 +181,13 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
         </div>
       </div>
     </div>
-    <div class="estimate-note">저속·정차 시간은 선택 지역·차종의 시간요금 단위로 계산합니다. 시계외 할증은 기본·거리·시간 요금 합계에 입력한 비율을 단순 적용하며, 통행료·호출료·기타 비용은 할증 대상에서 제외합니다. 왕복을 켜면 모든 편도 입력값을 2배로 계산합니다.</div>
+    <div class="estimate-note">서울 중형택시의 부분 동시병산 방식을 단순화해 총 이동거리와 기준속도(15.72km/h) 미만 저속·정차 시간을 함께 봅니다. 기본거리 1.6km에 해당하는 기본시간 약 6.1분을 넘는 저속 시간부터 시간요금으로 추정합니다. 심야 옵션은 23:00~02:00 최대 요율을 전체 운행에 적용하고, 시계외 할증은 서울 기준 최대 20% 범위에서 직접 입력합니다. 통행료·호출료·기타 비용은 할증 대상에서 제외합니다.</div>
+    <div class="estimate-note" id="inputError" role="status" hidden>거리·시간·할증·비용·인원수를 표시된 범위에 맞게 입력하세요.</div>
     <!-- 인원수 -->
     <div class="input-group">
       <label>인원수 (N빵)</label>
       <div class="input-row">
-        <input type="number" id="people" value="1" min="1" max="10" oninput="calc()">
+        <input type="number" id="people" value="1" min="1" max="10" step="1" oninput="calc()">
         <span class="unit">명</span>
       </div>
     </div>
@@ -215,10 +209,10 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <summary>💡 택시 이용 및 요금 절약 Q&A</summary>
     <div class="guide-content">
       <strong>Q. 시외 할증은 언제부터 붙나요?</strong>
-      <p>사업 구역을 벗어날 때 적용 여부와 요율은 지역·운행 조건에 따라 다릅니다. 실제 안내받은 비율이 있다면 <strong>시계외 할증률</strong>에 직접 입력하세요. 이 계산기는 입력한 심야·시계외 비율을 각각 미터 운임 추정액에 더하는 방식으로 단순 계산합니다.</p>
+      <p>서울 중형택시는 사업 구역 밖 운행에 20% 할증이 적용될 수 있습니다. 실제 적용 여부를 확인한 뒤 <strong>시계외 할증률</strong>에 0~20%를 입력하세요. 심야 최대 40%와 시계외 20%를 함께 적용하면 단순 합산 최대 60%로 추정합니다.</p>
       <br>
       <strong>Q. 차가 막히면 택시 요금이 왜 더 빨리 오르나요?</strong>
-      <p>기준 속도 이하로 서행하거나 정차한 구간에서는 지역별 <strong>시간 요금</strong>이 반영될 수 있습니다. 예상 저속·정차 시간을 분 단위로 넣으면 요금표의 시간 단위와 금액을 이용해 별도로 추정합니다.</p>
+      <p>서울 중형택시는 15.72km/h 미만 구간에서 거리와 시간을 부분 동시병산합니다. 이 도구는 기본거리와 제한속도로 환산한 기본시간 약 6.1분을 총 저속·정차 시간에서 먼저 제외하고, 남은 시간을 30초 단위로 거리요금에 더합니다. 실제 미터기는 저속 구간의 순서와 주행 펄스를 사용하므로 총 거리·시간만으로 완전히 재현할 수 없습니다.</p>
       <br>
       <strong>Q. 카카오 T 등 호출 수수료는 택시비와 별개인가요?</strong>
       <p>대개 미터기 운임과 별도로 표시됩니다. 앱이나 호출 화면에서 확인한 금액을 <strong>호출료</strong>에 입력하면 총 예상액에 합산할 수 있습니다.</p>
@@ -226,7 +220,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </details>
 
   <details class="guide-section">
-    <summary>📊 지역별 요금표 (2026년 기준)</summary>
+    <summary>📊 서울 중형택시 공식 참고 요율</summary>
     <div class="guide-content" id="rateInfo"></div>
   </details>
 
@@ -234,10 +228,10 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <summary>📖 택시비 요금 구조 기초 안내</summary>
     <div class="guide-content">
       <p><b>• 요금 산정 방식:</b> 기본요금(기본거리) + 추가거리요금 + 시간추가요금(서행/정차 시)</p>
-      <p><b>• 심야 폭증 주의:</b> 보통 밤 10시부터 새벽 4시까지 세분화 적용되며, 피크 시간대(예: 밤 11시 ~ 새벽 2시)엔 관할 구역에 따라 최대 40% 할증 구간이 있습니다.</p>
-      <p><b>• 시계외 할증:</b> 실제 적용 여부와 요율을 확인한 뒤 직접 입력할 수 있습니다. 지역별 중복 할증 방식은 다를 수 있습니다.</p>
+      <p><b>• 심야 할증 구간:</b> 서울 중형택시는 22:00~23:00 및 02:00~04:00에 20%, 23:00~02:00에 40%가 적용됩니다. 이 도구의 심야 옵션은 보수적인 최대 예상액을 위해 전체 운행에 40%를 적용합니다.</p>
+      <p><b>• 시계외 할증:</b> 서울 사업 구역 밖 운행은 20%가 적용될 수 있습니다. 실제 적용 여부를 확인한 뒤 0~20%를 직접 입력할 수 있습니다.</p>
       <p><b>• 별도 비용:</b> 통행료·호출료·기타 비용은 편도 기준으로 입력하며, 왕복 계산 시 2배로 반영됩니다.</p>
-      <p><b>• 공지:</b> 본 결과는 입력값과 수록 요율을 이용한 참고용 예상액입니다. 실제 미터기는 운행 경로, 저속 판정, 호출 상품, 지자체 세부 요율과 반올림 방식에 따라 달라질 수 있습니다.</p>
+      <p><b>• 공지:</b> 본 결과는 서울시 공개 요율과 사용자가 입력한 저속 시간을 단순화해 계산한 참고용 예상액입니다. 실제 미터기는 운행 경로, 저속 판정, 심야 구간별 주행 비중, 호출 상품과 반올림 방식에 따라 달라질 수 있습니다.</p>
     </div>
   </details>
 
@@ -250,120 +244,27 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
   </div>
 
-  <div class="footer"><span>전국 시·도 택시비 참고용 예상 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+  <div class="footer"><span>서울 중형택시 공식 요율 기반 · 참고용 예상 계산</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
 </div>
 
 <div class="toast" id="toast"></div>
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 
 <script>
-// === 전국 택시 요금 데이터 (2026.03 기준) ===
+// === 서울시 공식 중형택시 요율 (2023-02-01 04시 시행, 페이지 수정일 2026-04-03 확인) ===
 const REGIONS = {
   '서울': {
-    mid: { base: 4800, baseDist: 1600, distPer: 131, distFee: 100, timePer: 30, timeFee: 100 },
-    big: { base: 7000, baseDist: 3000, distPer: 151, distFee: 200, timePer: 36, timeFee: 200 },
+    mid: {
+      base: 4800, baseDist: 1600, distPer: 131, distFee: 100, timePer: 30, timeFee: 100,
+      peakBase: 6700, peakDistFee: 140, peakTimeFee: 140
+    },
     night: { start: 22, end: 4, rate: 0.2, peakRate: 0.4, peakStart: 23, peakEnd: 2 },
-    nightBig: { rate: 0.2 }
-  },
-  '인천': {
-    mid: { base: 4800, baseDist: 1600, distPer: 135, distFee: 100, timePer: 33, timeFee: 100 },
-    big: { base: 6500, baseDist: 3000, distPer: 151, distFee: 200, timePer: 36, timeFee: 200 },
-    night: { start: 22, end: 4, rate: 0.2, peakRate: 0.4, peakStart: 23, peakEnd: 2 },
-    nightBig: { rate: 0.2 }
-  },
-  '경기': {
-    mid: { base: 4800, baseDist: 1600, distPer: 131, distFee: 100, timePer: 30, timeFee: 100 },
-    big: { base: 6500, baseDist: 3000, distPer: 151, distFee: 200, timePer: 36, timeFee: 200 },
-    night: { start: 23, end: 4, rate: 0.2 },
-    nightBig: { rate: 0.2 }
-  },
-  '부산': {
-    mid: { base: 4800, baseDist: 2000, distPer: 132, distFee: 100, timePer: 31, timeFee: 100 },
-    big: { base: 6500, baseDist: 3000, distPer: 151, distFee: 200, timePer: 36, timeFee: 200 },
-    night: { start: 22, end: 4, rate: 0.2 },
-    nightBig: { rate: 0.2 }
-  },
-  '대구': {
-    mid: { base: 4500, baseDist: 1700, distPer: 130, distFee: 100, timePer: 31, timeFee: 100 },
-    big: { base: 6500, baseDist: 3000, distPer: 151, distFee: 200, timePer: 36, timeFee: 200 },
-    night: { start: 22, end: 4, rate: 0.2 },
-    nightBig: { rate: 0.2 }
-  },
-  '광주': {
-    mid: { base: 4800, baseDist: 1700, distPer: 132, distFee: 100, timePer: 31, timeFee: 100 },
-    big: { base: 6500, baseDist: 3000, distPer: 151, distFee: 200, timePer: 36, timeFee: 200 },
-    night: { start: 22, end: 4, rate: 0.2 },
-    nightBig: { rate: 0.2 }
-  },
-  '대전': {
-    mid: { base: 4300, baseDist: 1600, distPer: 133, distFee: 100, timePer: 34, timeFee: 100 },
-    big: { base: 6500, baseDist: 3000, distPer: 151, distFee: 200, timePer: 36, timeFee: 200 },
-    night: { start: 23, end: 4, rate: 0.2, peakRate: 0.3, peakStart: 0, peakEnd: 2 },
-    nightBig: { rate: 0.2 }
-  },
-  '울산': {
-    mid: { base: 4500, baseDist: 2000, distPer: 125, distFee: 100, timePer: 30, timeFee: 100 },
-    big: { base: 6500, baseDist: 3000, distPer: 151, distFee: 200, timePer: 36, timeFee: 200 },
-    night: { start: 22, end: 4, rate: 0.2 },
-    nightBig: { rate: 0.2 }
-  },
-  '세종': {
-    mid: { base: 4000, baseDist: 1600, distPer: 97, distFee: 100, timePer: 29, timeFee: 100 },
-    big: { base: 6500, baseDist: 3000, distPer: 151, distFee: 200, timePer: 36, timeFee: 200 },
-    night: { start: 22, end: 4, rate: 0.3 },
-    nightBig: { rate: 0.2 }
-  },
-  '강원': {
-    mid: { base: 4600, baseDist: 1600, distPer: 131, distFee: 100, timePer: 31, timeFee: 100 },
-    big: { base: 6500, baseDist: 3000, distPer: 151, distFee: 200, timePer: 36, timeFee: 200 },
-    night: { start: 22, end: 4, rate: 0.2 },
-    nightBig: { rate: 0.2 }
-  },
-  '충북': {
-    mid: { base: 4000, baseDist: 1800, distPer: 127, distFee: 100, timePer: 32, timeFee: 100 },
-    big: { base: 6500, baseDist: 3000, distPer: 151, distFee: 200, timePer: 36, timeFee: 200 },
-    night: { start: 22, end: 4, rate: 0.2 },
-    nightBig: { rate: 0.2 }
-  },
-  '충남': {
-    mid: { base: 4000, baseDist: 1400, distPer: 127, distFee: 100, timePer: 35, timeFee: 100 },
-    big: { base: 6500, baseDist: 3000, distPer: 151, distFee: 200, timePer: 36, timeFee: 200 },
-    night: { start: 22, end: 4, rate: 0.2 },
-    nightBig: { rate: 0.2 }
-  },
-  '전북': {
-    mid: { base: 4300, baseDist: 1600, distPer: 134, distFee: 100, timePer: 32, timeFee: 100 },
-    big: { base: 6500, baseDist: 3000, distPer: 151, distFee: 200, timePer: 36, timeFee: 200 },
-    night: { start: 22, end: 4, rate: 0.2 },
-    nightBig: { rate: 0.2 }
-  },
-  '전남': {
-    mid: { base: 4300, baseDist: 1600, distPer: 130, distFee: 100, timePer: 30, timeFee: 100 },
-    big: { base: 6500, baseDist: 3000, distPer: 151, distFee: 200, timePer: 36, timeFee: 200 },
-    night: { start: 22, end: 4, rate: 0.2 },
-    nightBig: { rate: 0.2 }
-  },
-  '경북': {
-    mid: { base: 4500, baseDist: 1700, distPer: 128, distFee: 100, timePer: 30, timeFee: 100 },
-    big: { base: 6500, baseDist: 3000, distPer: 151, distFee: 200, timePer: 36, timeFee: 200 },
-    night: { start: 22, end: 4, rate: 0.2 },
-    nightBig: { rate: 0.2 }
-  },
-  '경남': {
-    mid: { base: 4000, baseDist: 1600, distPer: 130, distFee: 100, timePer: 31, timeFee: 100 },
-    big: { base: 6500, baseDist: 3000, distPer: 151, distFee: 200, timePer: 36, timeFee: 200 },
-    night: { start: 22, end: 4, rate: 0.2 },
-    nightBig: { rate: 0.2 }
-  },
-  '제주': {
-    mid: { base: 4300, baseDist: 1800, distPer: 126, distFee: 100, timePer: 31, timeFee: 100 },
-    big: { base: 6500, baseDist: 3000, distPer: 151, distFee: 200, timePer: 36, timeFee: 200 },
-    night: { start: 22, end: 4, rate: 0.2 },
-    nightBig: { rate: 0.2 }
+    thresholdKmh: 15.72,
+    sourceUrl: 'https://news.seoul.go.kr/traffic/archives/1659?listPage=1',
+    sourceLabel: '서울특별시 서울 택시요금 (2023-02-01 04시 시행 · 페이지 수정 2026-04-03)'
   }
 };
 
-let taxiType = 0; // 0=중형, 1=대형
 let isNight = false;
 let isRound = false;
 
@@ -375,11 +276,6 @@ for (const r of Object.keys(REGIONS)) {
   regionSel.appendChild(o);
 }
 
-function setType(idx) {
-  taxiType = idx;
-  document.querySelectorAll('#typeTabs .tab').forEach((t,i) => t.classList.toggle('active', i===idx));
-  calc();
-}
 function toggleNight() {
   isNight = !isNight;
   document.getElementById('nightToggle').classList.toggle('on', isNight);
@@ -393,93 +289,161 @@ function toggleRound() {
 
 function fmt(n) { return Math.round(n).toLocaleString('ko-KR'); }
 
+function readBounded(id, min, max, options = {}) {
+  const element = document.getElementById(id);
+  const raw = element.value.trim();
+  if (options.optional && raw === '') {
+    element.removeAttribute('aria-invalid');
+    return 0;
+  }
+  const value = Number(raw);
+  const valid = Number.isFinite(value) && value >= min && value <= max && (!options.integer || Number.isInteger(value));
+  if (valid) element.removeAttribute('aria-invalid');
+  else element.setAttribute('aria-invalid', 'true');
+  return valid ? value : null;
+}
+
+function clearTaxiResult() {
+  document.getElementById('summary').innerHTML = '';
+  document.getElementById('detailBox').innerHTML = '';
+  document.getElementById('grandTotalBox').innerHTML = '';
+  const report = document.getElementById('analysisReport');
+  report.innerHTML = '';
+  report.style.display = 'none';
+  document.getElementById('inputError').hidden = false;
+}
+
 function calcFare() {
   const region = REGIONS[regionSel.value];
-  const dist = parseFloat(document.getElementById('distance').value) * 1000 || 0; // m
-  const data = taxiType === 0 ? region.mid : region.big;
-  const nightData = taxiType === 0 ? region.night : region.night;
-  const nightRate = taxiType === 0 ? (nightData.peakRate || nightData.rate) : (region.nightBig?.rate || 0.2);
-  const normalNightRate = nightData.rate || 0.2;
-
-  let fare = data.base;
-  let extraDist = dist - data.baseDist;
-
-  if (extraDist > 0) {
-    const ticks = Math.floor(extraDist / data.distPer);
-    fare += ticks * data.distFee;
+  const distKm = readBounded('distance', 0.1, 1000);
+  const lowSpeedMinutes = readBounded('lowSpeedMinutes', 0, 1440, { optional: true });
+  const outRatePercent = readBounded('outSurcharge', 0, 20, { optional: true });
+  const tollFeeOne = readBounded('tollFee', 0, 10000000, { optional: true });
+  const callFeeOne = readBounded('callFee', 0, 10000000, { optional: true });
+  const additionalFeeOne = readBounded('additionalFee', 0, 10000000, { optional: true });
+  const people = readBounded('people', 1, 10, { integer: true });
+  if (!region || [distKm, lowSpeedMinutes, outRatePercent, tollFeeOne, callFeeOne, additionalFeeOne, people].some(value => value === null)) {
+    return null;
   }
+  const dist = distKm * 1000;
+  const data = region.mid;
+  const nightData = region.night;
 
-  // 심야 할증 (단순화: 평균 할증률 적용)
-  let nightSurcharge = 0;
+  const extraDist = Math.max(0, dist - data.baseDist);
+  const distanceTicks = Math.floor(extraDist / data.distPer);
+  const distExtraOne = distanceTicks * data.distFee;
+  const baseTimeSeconds = data.baseDist / (region.thresholdKmh / 3.6);
+  const chargeableTimeSeconds = Math.max(0, lowSpeedMinutes * 60 - baseTimeSeconds);
+  const timeTicks = Math.floor(chargeableTimeSeconds / data.timePer);
+  const timeExtraOne = timeTicks * data.timeFee;
+  const dayMeterOne = data.base + distExtraOne + timeExtraOne;
+
   let appliedNightRate = 0;
   if (isNight) {
-    appliedNightRate = taxiType === 0 ? (nightData.peakRate || nightData.rate) : (region.nightBig?.rate || 0.2);
-    nightSurcharge = Math.round(fare * appliedNightRate);
+    appliedNightRate = nightData.peakRate;
   }
-
-  const totalOneway = fare + nightSurcharge;
-  const total = isRound ? totalOneway * 2 : totalOneway;
+  const nightMeterOne = isNight
+    ? data.peakBase + (distanceTicks * data.peakDistFee) + (timeTicks * data.peakTimeFee)
+    : dayMeterOne;
+  const nightSurchargeOne = nightMeterOne - dayMeterOne;
+  const combinedRate = appliedNightRate + (outRatePercent / 100);
+  const combinedMeterOne = isNight && outRatePercent === 0
+    ? nightMeterOne
+    : dayMeterOne * (1 + combinedRate);
+  const outSurchargeOne = Math.max(0, combinedMeterOne - nightMeterOne);
+  const meterEstimateOne = Math.round(combinedMeterOne / 10) * 10;
+  const separateFeesOne = tollFeeOne + callFeeOne + additionalFeeOne;
+  const oneway = meterEstimateOne + separateFeesOne;
+  const multiplier = isRound ? 2 : 1;
 
   return {
     baseFare: data.base,
     baseDist: data.baseDist,
-    distExtra: Math.max(0, fare - data.base),
-    nightSurcharge: isRound ? nightSurcharge * 2 : nightSurcharge,
+    distKm,
+    lowSpeedMinutes,
+    baseTimeMinutes: baseTimeSeconds / 60,
+    chargeableTimeMinutes: chargeableTimeSeconds / 60,
+    outRatePercent,
+    baseFareTotal: data.base * multiplier,
+    distExtra: distExtraOne * multiplier,
+    timeExtra: timeExtraOne * multiplier,
+    nightSurcharge: nightSurchargeOne * multiplier,
+    outSurcharge: outSurchargeOne * multiplier,
+    tollFee: tollFeeOne * multiplier,
+    callFee: callFeeOne * multiplier,
+    additionalFee: additionalFeeOne * multiplier,
     nightRate: appliedNightRate,
-    oneway: totalOneway,
-    total,
+    meterEstimateOne,
+    separateFeesOne,
+    oneway,
+    total: oneway * multiplier,
+    multiplier,
+    people,
     distPer: data.distPer,
-    distFee: data.distFee
+    distFee: data.distFee,
+    timePer: data.timePer,
+    timeFee: data.timeFee
   };
 }
 
 function calc() {
   const result = calcFare();
-  const people = Math.max(1, parseInt(document.getElementById('people').value) || 1);
+  if (!result) {
+    clearTaxiResult();
+    renderRateInfo();
+    return;
+  }
+  document.getElementById('inputError').hidden = true;
+  const people = result.people;
   const perPerson = Math.ceil(result.total / people);
-  const dist = parseFloat(document.getElementById('distance').value) || 0;
+  const dist = result.distKm;
   const regionName = regionSel.value;
 
   // 심야 정보
   const r = REGIONS[regionName];
   const n = r.night;
   document.getElementById('nightInfo').textContent =
-    `${n.start}:00~${String(n.end).padStart(2,'0')}:00 (${Math.round((n.peakRate||n.rate)*100)}%)`;
+    `${n.start}:00~${String(n.end).padStart(2,'0')}:00 (최대 ${Math.round(n.peakRate*100)}%)`;
 
-  // Summary (Top cards)
-  let html = `
+  const html = `
     <div class="summary-card">
-      <div class="s-label">기본요금</div>
-      <div class="s-value">${fmt(result.baseFare)}</div>
-      <div class="s-sub">${(result.baseDist/1000).toFixed(1)}km까지</div>
+      <div class="s-label">편도 미터 운임 추정</div>
+      <div class="s-value">${fmt(result.meterEstimateOne)}</div>
+      <div class="s-sub">거리·시간·선택 할증</div>
     </div>
     <div class="summary-card">
-      <div class="s-label">km당 비용</div>
-      <div class="s-value">${fmt(dist>0?Math.round(result.oneway/dist):0)}</div>
-      <div class="s-sub">원/km</div>
+      <div class="s-label">편도 별도 비용</div>
+      <div class="s-value">${fmt(result.separateFeesOne)}</div>
+      <div class="s-sub">통행료·호출료·기타</div>
     </div>`;
   document.getElementById('summary').innerHTML = html;
 
-  // Detail
-  const types = ['중형택시','대형/모범택시'];
+  const roundText = result.multiplier === 2 ? ' (편도 입력 × 2)' : '';
   let detail = `
     <div class="detail-row"><span class="detail-label">지역</span><span class="detail-value">${regionName}</span></div>
-    <div class="detail-row"><span class="detail-label">차종</span><span class="detail-value">${types[taxiType]}</span></div>
-    <div class="detail-row"><span class="detail-label">이동 거리</span><span class="detail-value">${dist} km</span></div>
-    <div class="detail-row"><span class="detail-label">기본요금</span><span class="detail-value">${fmt(result.baseFare)} 원 (${(result.baseDist/1000).toFixed(1)}km)</span></div>
+    <div class="detail-row"><span class="detail-label">차종</span><span class="detail-value">중형택시</span></div>
+    <div class="detail-row"><span class="detail-label">입력 이동 거리${roundText}</span><span class="detail-value">${dist} km${result.multiplier===2?' × 2':''}</span></div>
+    <div class="detail-row"><span class="detail-label">기본요금</span><span class="detail-value">${fmt(result.baseFareTotal)} 원</span></div>
     <div class="detail-row"><span class="detail-label">거리 추가요금</span><span class="detail-value">${fmt(result.distExtra)} 원</span></div>
-    <div class="detail-row"><span class="detail-label">추가요금 단위</span><span class="detail-value">${result.distPer}m당 ${result.distFee}원</span></div>`;
+    <div class="detail-row"><span class="detail-label">거리요금 단위</span><span class="detail-value">${result.distPer}m당 ${result.distFee}원</span></div>
+    <div class="detail-row"><span class="detail-label">저속·정차 시간요금 (총 ${result.lowSpeedMinutes}분 - 기본시간 약 ${result.baseTimeMinutes.toFixed(1)}분)</span><span class="detail-value">${fmt(result.timeExtra)} 원</span></div>
+    <div class="detail-row"><span class="detail-label">시간요금 단위</span><span class="detail-value">${result.timePer}초당 ${result.timeFee}원</span></div>`;
 
   if (isNight) {
     detail += `<div class="detail-row"><span class="detail-label">🌙 심야할증 (${Math.round(result.nightRate*100)}%)</span><span class="detail-value" style="color:#e67e22">+${fmt(result.nightSurcharge)} 원</span></div>`;
   }
+  if (result.outRatePercent > 0) {
+    detail += `<div class="detail-row"><span class="detail-label">🛣️ 시계외 할증 (${result.outRatePercent}%)</span><span class="detail-value">+${fmt(result.outSurcharge)} 원</span></div>`;
+  }
+  if (result.tollFee > 0) detail += `<div class="detail-row"><span class="detail-label">통행료</span><span class="detail-value">+${fmt(result.tollFee)} 원</span></div>`;
+  if (result.callFee > 0) detail += `<div class="detail-row"><span class="detail-label">호출료</span><span class="detail-value">+${fmt(result.callFee)} 원</span></div>`;
+  if (result.additionalFee > 0) detail += `<div class="detail-row"><span class="detail-label">기타 추가비용</span><span class="detail-value">+${fmt(result.additionalFee)} 원</span></div>`;
   if (isRound) {
     detail += `<div class="detail-row"><span class="detail-label">🔄 왕복</span><span class="detail-value">편도 ${fmt(result.oneway)}원 × 2</span></div>`;
   }
 
   document.getElementById('detailBox').innerHTML = detail;
 
-  // Grand Total Box (Bottom highlight)
   document.getElementById('grandTotalBox').innerHTML = `
     <div class="summary-card highlight" style="width: 100%; border-radius: 12px; padding: 18px 14px;">
       <div class="s-label" style="font-size: 13px;">예상 택시비${isRound?' (왕복)':''}</div>
@@ -487,29 +451,14 @@ function calc() {
       ${people>1?`<div class="s-sub" style="font-size:13px; margin-top:6px;">1인당 ${fmt(perPerson)}원 (${people}명)</div>`:''}
     </div>`;
 
-  // Dynamic Report Logic
   const report = document.getElementById('analysisReport');
   report.style.display = 'flex';
-  
-  let msg = `<h3>💡 택시 운임 심층 분석 리포트</h3>`;
-  
-  msg += `<p>선택하신 <strong>${regionName}</strong> 지역의 <strong>${types[taxiType]}</strong> 요금 체계를 기준으로 <strong>${dist}km</strong>의 ${isRound ? '왕복' : '편도'} 탑승 경로를 1차 분석한 결과, 기본 요금 ${fmt(result.baseFare)}원을 바탕으로 총 <strong>${fmt(result.total)}원</strong> 수준의 예상 운임표가 산출되었습니다.</p>`;
-  
-  if (isNight) {
-      msg += `<p>현재 지자체에서 고시한 <strong>심야 할증 타임 구간(실적요율 대비 ${Math.round(result.nightRate*100)}%)</strong>에 해당되어 할증 수수료만으로 무려 <strong>+${fmt(result.nightSurcharge)}원</strong>이 추가로 부과합산되었습니다. (단, 피크타임 및 할증 체계는 지자체 조례에 따라 변동될 수 있습니다)</p>`;
-  } else {
-      msg += `<p>현재는 야간 할증이 적용되지 않는 시간대로 산정되었습니다. 다만, 22시(지역에 따라 23시) 이후 자정을 넘기게 되어 정차하게 된다면 순식간에 요금 폭탄을 맞을 가능성이 있기 때문에 탑승 시간에 주의를 요합니다.</p>`;
-  }
-  
-  if (people > 1) {
-      msg += `<p>동반 탑승자 <strong>${people}명</strong>과 운임을 공동 분담(N빵 정산)할 경우 개인당 1/N 몫인 <strong>${fmt(perPerson)}원</strong> 금액씩 배분하여 이체 요청을 하시면 됩니다. 다만 정차 및 교통 체증에 따른 시간 요금이 추가로 합산될 현실적인 여지가 있으니, 위 금액보다 10% 이상 융통성 있게 여유액을 걷으시는 것이 바람직합니다.</p>`;
-  } else {
-      msg += `<p>나 홀로 단독 승차 시 미터기 요금 전액을 온전히 감당해야 합니다. 출발지나 목적지가 현재 사업 구역 경계를 넘어가거나, 신호 대기 및 막히는 구간으로 인해 '시간 요금'이 계속 누적된다면 실제 비용은 위 예상 금액을 가볍게 상회할 수 있으니 지갑을 조금 더 두둑하게 챙기시는 것을 권장해 드립니다.</p>`;
-  }
-  
+  let msg = `<h3>💡 택시비 예상 내역 안내</h3>`;
+  msg += `<p><strong>${regionName} 중형택시</strong> 공식 참고 요율과 입력한 편도 거리 <strong>${dist}km</strong>${result.lowSpeedMinutes>0?`, 저속·정차 <strong>${result.lowSpeedMinutes}분</strong>`:''}을 기준으로 계산했습니다. ${isRound?'왕복 입력값을 2배 적용한 ':''}총 예상액은 <strong>${fmt(result.total)}원</strong>입니다.</p>`;
+  msg += `<p>미터 운임 추정에는 기본·거리·시간 요금${isNight?`과 심야 ${Math.round(result.nightRate*100)}%`:''}${result.outRatePercent>0?`, 시계외 ${result.outRatePercent}%`:''}를 반영했고, 별도 비용 ${fmt(result.separateFeesOne * result.multiplier)}원을 합산했습니다.${people>1?` ${people}명 균등 분담 시 1인당 올림 금액은 <strong>${fmt(perPerson)}원</strong>입니다.`:''}</p>`;
+  msg += `<p>이 값은 실제 호출 견적이나 택시 미터기 확정 요금이 아닙니다. 총 거리와 저속 시간만으로 실제 주행 펄스의 순서를 재현할 수 없고, 운행 경로·심야 구간별 주행 비중·호출 상품에 따라 달라질 수 있습니다.</p>`;
   report.innerHTML = msg;
 
-  // 요율표
   renderRateInfo();
 }
 
@@ -517,37 +466,70 @@ function renderRateInfo() {
   const name = regionSel.value;
   const r = REGIONS[name];
   const m = r.mid;
-  const b = r.big;
   const n = r.night;
 
   document.getElementById('rateInfo').innerHTML = `
-    <p><b>${name} 택시 요금 (2026년 기준)</b></p>
+    <p><b>${name} 중형택시 공식 참고 요율</b></p>
     <table style="width:100%;border-collapse:collapse;font-size:11px;margin-top:8px">
-      <tr style="background:var(--bg-btn)"><th style="padding:6px;border:1px solid var(--border)">구분</th><th style="padding:6px;border:1px solid var(--border)">중형</th><th style="padding:6px;border:1px solid var(--border)">대형/모범</th></tr>
-      <tr><td style="padding:6px;border:1px solid var(--border)">기본요금</td><td style="padding:6px;border:1px solid var(--border);text-align:center">${fmt(m.base)}원 (${(m.baseDist/1000).toFixed(1)}km)</td><td style="padding:6px;border:1px solid var(--border);text-align:center">${fmt(b.base)}원 (${(b.baseDist/1000).toFixed(1)}km)</td></tr>
-      <tr><td style="padding:6px;border:1px solid var(--border)">거리요금</td><td style="padding:6px;border:1px solid var(--border);text-align:center">${m.distPer}m당 ${m.distFee}원</td><td style="padding:6px;border:1px solid var(--border);text-align:center">${b.distPer}m당 ${b.distFee}원</td></tr>
-      <tr><td style="padding:6px;border:1px solid var(--border)">시간요금</td><td style="padding:6px;border:1px solid var(--border);text-align:center">${m.timePer}초당 ${m.timeFee}원</td><td style="padding:6px;border:1px solid var(--border);text-align:center">${b.timePer}초당 ${b.timeFee}원</td></tr>
-      <tr><td style="padding:6px;border:1px solid var(--border)">심야할증</td><td style="padding:6px;border:1px solid var(--border);text-align:center">${n.start}~${String(n.end).padStart(2,'0')}시 (${Math.round((n.peakRate||n.rate)*100)}%)</td><td style="padding:6px;border:1px solid var(--border);text-align:center">${n.start}~${String(n.end).padStart(2,'0')}시 (${Math.round((r.nightBig?.rate||0.2)*100)}%)</td></tr>
+      <tr style="background:var(--bg-btn)"><th style="padding:6px;border:1px solid var(--border)">구분</th><th style="padding:6px;border:1px solid var(--border)">요율</th></tr>
+      <tr><td style="padding:6px;border:1px solid var(--border)">기본요금</td><td style="padding:6px;border:1px solid var(--border);text-align:center">${fmt(m.base)}원 (${(m.baseDist/1000).toFixed(1)}km)</td></tr>
+      <tr><td style="padding:6px;border:1px solid var(--border)">거리요금</td><td style="padding:6px;border:1px solid var(--border);text-align:center">${m.distPer}m당 ${m.distFee}원</td></tr>
+      <tr><td style="padding:6px;border:1px solid var(--border)">시간요금</td><td style="padding:6px;border:1px solid var(--border);text-align:center">${m.timePer}초당 ${m.timeFee}원 (${r.thresholdKmh}km/h 미만 부분 동시병산)</td></tr>
+      <tr><td style="padding:6px;border:1px solid var(--border)">심야할증</td><td style="padding:6px;border:1px solid var(--border);text-align:center">22~23시·02~04시 20%, 23~02시 40%</td></tr>
+      <tr><td style="padding:6px;border:1px solid var(--border)">시계외 할증</td><td style="padding:6px;border:1px solid var(--border);text-align:center">20% (심야와 중복 시 최대 60%)</td></tr>
     </table>
-    <p style="margin-top:8px;font-size:10px;color:var(--text-muted)">* 시·군별로 세부 요금이 다를 수 있습니다. 참고용입니다.</p>`;
+    <p style="margin-top:8px;font-size:10px;color:var(--text-muted)">* 기준: <a href="${r.sourceUrl}" target="_blank" rel="noopener noreferrer">${r.sourceLabel}</a>. 실제 미터기와 다를 수 있는 참고용 단순 추정입니다.</p>`;
 }
 
 function copyResult() {
   const result = calcFare();
-  const dist = document.getElementById('distance').value;
-  const people = Math.max(1, parseInt(document.getElementById('people').value)||1);
-  const types = ['중형','대형/모범'];
-  const lines = [
-    '🚕 택시비 계산 결과',
-    '━━━━━━━━━━━━━━━',
-    `지역: ${regionSel.value}`,
-    `차종: ${types[taxiType]}`,
-    `거리: ${dist}km${isRound?' (왕복)':''}`,
-    isNight?`심야할증: ${Math.round(result.nightRate*100)}%`:'',
-    `예상요금: ${fmt(result.total)}원`,
-    people>1?`1인당: ${fmt(Math.ceil(result.total/people))}원 (${people}명)`:''
-  ].filter(Boolean);
-  navigator.clipboard.writeText(lines.join('\n')).then(()=>showToast('📋 결과가 복사되었습니다'));
+  if (!result) { showToast('입력값을 확인해 주세요'); return; }
+  const people = result.people;
+  const rows = getResultRows(result, people);
+  const lines = ['🚕 택시비 참고용 예상 내역', '━━━━━━━━━━━━━━━']
+    .concat(rows.map(([label, value]) => `${label}: ${value}`))
+    .concat(['※ 실제 미터기 확정 요금이 아니며 운행 조건과 지역별 세부 기준에 따라 달라질 수 있습니다.']);
+  navigator.clipboard.writeText(lines.join('\n'))
+    .then(()=>showToast('📋 상세 결과가 복사되었습니다'))
+    .catch(()=>showToast('복사 권한을 확인해 주세요'));
+}
+
+function getResultRows(result, people) {
+  const rows = [
+    ['지역', regionSel.value],
+    ['차종', '중형'],
+    ['편도 거리', `${result.distKm} km`],
+    ['총 저속·정차 시간', `${result.lowSpeedMinutes}분 (기본시간 약 ${result.baseTimeMinutes.toFixed(1)}분 제외 후 추정)`],
+    ['기본요금', `${fmt(result.baseFareTotal)}원`],
+    ['거리 추가요금', `${fmt(result.distExtra)}원`],
+    ['시간 추가요금', `${fmt(result.timeExtra)}원`]
+  ];
+  if (isNight) rows.push(['심야 할증', `${Math.round(result.nightRate*100)}% / ${fmt(result.nightSurcharge)}원`]);
+  if (result.outRatePercent > 0) rows.push(['시계외 할증', `${result.outRatePercent}% / ${fmt(result.outSurcharge)}원`]);
+  rows.push(
+    ['통행료', `${fmt(result.tollFee)}원`],
+    ['호출료', `${fmt(result.callFee)}원`],
+    ['기타 추가비용', `${fmt(result.additionalFee)}원`],
+    ['계산 구분', isRound ? '왕복 (편도 입력 × 2)' : '편도'],
+    ['총 예상액', `${fmt(result.total)}원`]
+  );
+  if (people > 1) rows.push(['1인당 예상액', `${fmt(Math.ceil(result.total/people))}원 (${people}명, 원 단위 올림)`]);
+  return rows;
+}
+
+function exportResult() {
+  const result = calcFare();
+  if (!result) { showToast('입력값을 확인해 주세요'); return; }
+  const people = result.people;
+  const rows = [['항목','값'], ...getResultRows(result, people), ['안내','참고용 예상액이며 실제 요금과 다를 수 있습니다.']];
+  const csv = '\uFEFF' + rows.map(row => row.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const url = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'taxi-fare-estimate.csv';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 0);
+  showToast('⬇️ CSV 파일을 내보냈습니다');
 }
 
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),2000)}

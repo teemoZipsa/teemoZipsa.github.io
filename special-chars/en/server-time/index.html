@@ -6,10 +6,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
 <link rel="stylesheet" href="/special-chars/theme.css">
-<title>⏳ Server Time Checker — TeemoZipsa</title>
-<meta name="description" content="A tool to check the exact server time of any website down to the millisecond. Essential for ticketing and registration.">
-<meta property="og:title" content="⏳ Server Time Checker — TeemoZipsa">
-<meta property="og:description" content="Check the precise server time of any website.">
+<title>⏱️ Precision Local Clock & Response Test — TeemoZipsa</title>
+<meta name="description" content="Display your device's local time with milliseconds, apply a manual clock offset, use minute alarms, and measure a website's browser HTTP response time.">
+<meta property="og:title" content="⏱️ Precision Local Clock & Response Test — TeemoZipsa">
+<meta property="og:description" content="Use a millisecond local clock, manual offset, minute alarms, and browser-based website response testing.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/server-time/">
 <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
@@ -30,6 +30,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .url-input:focus{border-color:var(--accent)}
 .fetch-btn{background:var(--accent);color:var(--text-on-accent);border:none;border-radius:8px;padding:0 20px;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s;font-family:inherit}
 .fetch-btn:hover{background:var(--accent-hover)}
+.fetch-btn:disabled{cursor:wait;opacity:.65}
 .display-box{background:var(--bg-btn);border:1px solid var(--border);border-radius:12px;padding:32px 20px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden}
 .target-name{font-size:13px;color:var(--text-muted);margin-bottom:8px;font-weight:600}
 .time-display{font-size:52px;font-weight:800;letter-spacing:1px;font-variant-numeric:tabular-nums;color:var(--text-primary);display:flex;align-items:baseline;justify-content:center;gap:4px}
@@ -39,11 +40,23 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .status-badge.syncing{color:#f59e0b}
 .status-badge.success{color:#10b981;background:rgba(16,185,129,0.1)}
 .status-badge.error{color:#ef4444;background:rgba(239,68,68,0.1)}
-.options{display:flex;justify-content:center;gap:16px;margin-bottom:16px}
+.options{display:flex;justify-content:center;gap:16px;margin-bottom:16px;flex-wrap:wrap}
 .opt-label{font-size:13px;color:var(--text-secondary);display:flex;align-items:center;gap:6px;cursor:pointer}
+.offset-control{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:16px;padding:12px;background:var(--bg-bar);border:1px solid var(--border);border-radius:8px}
+.offset-control label{font-size:13px;color:var(--text-secondary);font-weight:600}
+.offset-input{width:110px;background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;padding:7px 9px;color:var(--text-primary);font:inherit;font-size:13px;text-align:right}
+.offset-input:focus{outline:none;border-color:var(--accent)}
+.reset-btn{background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text-secondary);font:inherit;font-size:12px;cursor:pointer}
+.reset-btn:hover{color:var(--text-primary);border-color:var(--accent)}
+.limit-note{font-size:12px;color:var(--text-muted);line-height:1.6;margin:-8px 0 18px}
 .quick-urls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
 .q-btn{background:var(--bg-bar);border:1px solid var(--border);border-radius:20px;padding:6px 12px;font-size:12px;color:var(--text-secondary);cursor:pointer;transition:all .2s;font-family:inherit}
 .q-btn:hover{background:var(--bg-btn);color:var(--text-primary)}
+.report-box{margin-top:24px;padding:20px;background:var(--bg-bar);border:1px solid var(--border);border-radius:12px;display:none;animation:fadeIn .4s ease-out}
+.report-box h3{font-size:15px;color:var(--text-primary);margin-bottom:12px}
+.report-box p{font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:8px}
+.report-box .highlight{color:var(--accent);font-weight:600}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
   .guide-section{padding:16px;background:var(--bg-body);max-width:100%}
   .guide-section h2{font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden;box-shadow:var(--shadow-sm)}
@@ -79,14 +92,14 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 <div class="app">
   <div class="header">
     <a href="https://teemozipsa.github.io/en/" class="back-btn">← All Tools</a>
-    <h1>⏳ Server Time Checker</h1>
+    <h1>⏱️ Precision Local Clock & Response Test</h1>
     <a href="/special-chars/server-time/" class="back-btn">🌐 한국어</a>
   </div>
   <div class="content">
-    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:8px">Enter the ticketing/registration URL (Default: Local device time)</p>
-    <form class="input-group" onsubmit="event.preventDefault(); syncTime();">
-      <input type="text" id="urlInput" class="url-input" placeholder="e.g. https://www.ticketmaster.com">
-      <button type="submit" class="fetch-btn">Check</button>
+    <p id="latencyHelp" style="font-size:13px;color:var(--text-secondary);margin-bottom:8px">Enter a target URL to run three HTTP response-time samples. The clock always remains local.</p>
+    <form class="input-group" onsubmit="event.preventDefault(); measureLatency();">
+      <input type="text" id="urlInput" class="url-input" placeholder="e.g. https://www.ticketmaster.com" aria-label="Website URL to test" aria-describedby="latencyHelp">
+      <button type="submit" class="fetch-btn" id="measureBtn">Test Response</button>
     </form>
     
     <div class="quick-urls">
@@ -98,8 +111,8 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 
     <div class="display-box" id="displayBox">
       <div id="rippleEff" class="ripple"></div>
-      <div class="status-badge" id="statusBadge">Local Clock</div>
-      <div class="target-name" id="targetName">Current Mode: Local Device Time</div>
+      <div class="status-badge" id="statusBadge">Device Clock</div>
+      <div class="target-name" id="targetName">Time source: Local device clock</div>
       <div class="time-display">
         <span id="hhmmss">00:00:00</span>
         <span class="time-ms" id="ms">.000</span>
@@ -109,32 +122,44 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     
     <div class="options">
       <label class="opt-label"><input type="checkbox" id="sndTick"> Click every sec</label>
-      <label class="opt-label"><input type="checkbox" id="sndAlarm" checked> Chime on 00s</label>
+      <label class="opt-label"><input type="checkbox" id="sndAlarm" checked> 58/59s & 00s chime</label>
       <label class="opt-label"><input type="checkbox" id="showMs" checked> Show ms</label>
     </div>
+
+    <div class="offset-control">
+      <label for="offsetInput">Manual clock offset</label>
+      <input class="offset-input" type="number" id="offsetInput" min="-60000" max="60000" step="1" value="0" inputmode="numeric" oninput="applyManualOffset()" aria-describedby="offsetHelp">
+      <span style="font-size:12px;color:var(--text-muted)">ms</span>
+      <button type="button" class="reset-btn" onclick="resetOffset()">Reset to 0</button>
+    </div>
+    <p class="limit-note" id="offsetHelp">A positive value moves the display ahead; a negative value moves it behind. The ±60-second offset also affects alarms.</p>
+    <div id="reportContainer" class="report-box" role="status" aria-live="polite"></div>
   </div>
 
   <section class="guide-section">
-    <h2>💡 Comprehensive Guide to Server Time Check</h2>
+    <h2>💡 Local Clock and Response Test Guide</h2>
     
     <details class="guide" open>
-      <summary>1. What is Server Time Checker?</summary>
+      <summary>1. What time does this clock show?</summary>
       <div class="guide-content">
-        <p>This tool fetches the exact internal time of the targeted website down to the millisecond. This is absolutely critical for successful concert ticketing, course registration, or limited-edition drops where everything is processed based on the target server's clock, not your local device time.</p>
+        <p>The display uses the system clock of the device running this browser and shows its milliseconds. Enable automatic date and time synchronization in your operating system for the best result. This page does not synchronize with a separate standard-time server.</p>
+        <p>If you know your device differs from a trusted reference, enter a manual offset in milliseconds. A detailed millisecond display does not by itself guarantee that the underlying device clock is accurate.</p>
       </div>
     </details>
 
     <details class="guide">
-      <summary>2. How does it work and what does "Synced" mean?</summary>
+      <summary>2. How is website response time measured?</summary>
       <div class="guide-content">
-        <p>When you enter a URL and click "Check", our tool pings the server to retrieve its HTTP response header (which contains its exact time protocol). We then calculate the network latency to give you a highly accurate calibration. On success, a <b>[Synced]</b> badge appears, meaning the clock you see is now perfectly aligned with the target website.</p>
+        <p>The browser sends three lightweight <code>HEAD</code> requests and reports the minimum, average, and maximum elapsed time until each response is received.</p>
+        <p>The result may include DNS lookup, connection setup, TLS negotiation, network conditions, and server processing. It is a browser measurement—not ICMP ping, a server-clock offset, or a prediction of when a click will be accepted.</p>
       </div>
     </details>
 
     <details class="guide">
-      <summary>3. What if it says "CORS Blocked"?</summary>
+      <summary>3. Why not display the target server's clock?</summary>
       <div class="guide-content">
-        <p>For strictly secured sites blocking direct requests (CORS), we automatically route the request through a lightweight backup proxy to fetch the time. This helps minimize the offset even on heavily firewalled pages.</p>
+        <p>Browsers often cannot read response headers from another origin because of CORS. An HTTP <code>Date</code> header is also generally limited to whole seconds and does not guarantee the time a service uses to accept transactions, so it cannot provide a millisecond-accurate target clock.</p>
+        <p>This tool does not use a CORS proxy and does not estimate server time. Response tests omit cookies, but they still send a normal network request to the target. Browser policy, mixed-content blocking, or the site's configuration may prevent a test even when the site is online.</p>
       </div>
     </details>
 
@@ -144,9 +169,11 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
         <p>To help you focus purely on the ticketing screen or "Refresh" button rather than staring at the clock:</p>
         <ul>
           <li><b>Ticks every second:</b> Keeps your rhythm (Optional)</li>
-          <li><b>Warning beep at 59s:</b> Indicates one second left</li>
-          <li><b>Big chime at 00s:</b> Indicates exact minute rollover (perfect for "00s" drops)</li>
+          <li><b>Warning beeps at 58s and 59s:</b> Indicates the minute is about to roll over</li>
+          <li><b>Big chime at 00s:</b> Indicates the minute rollover on the displayed local clock</li>
         </ul>
+        <p>Your browser may require one click or key press after opening the page before it allows sound. The manual offset also changes when these alarms occur.</p>
+        <p>Alarms work best while this page is visible and the browser is updating normally. A background tab, device sleep, or a busy main thread can skip the 58, 59, or 00-second frame, so do not rely on these sounds alone for a critical deadline.</p>
       </div>
     </details>
 
@@ -168,17 +195,18 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       </div>
     </div>
   </section>
-  <div class="footer"><span>Timing is everything. Good luck!</span><a href="https://teemozipsa.github.io/en/">😺 More tools</a></div>
+  <div class="footer"><span>Local device time · not server-time synchronization</span><a href="https://teemozipsa.github.io/en/">😺 More tools</a></div>
 </div>
 
 <script>
-let timeOffset = 0; // ms offset between local and server
-let targetMode = false;
+let manualOffset = 0;
 let lastSec = -1;
+let measurementSequence = 0;
+let activeMeasurementController = null;
 
 function setQuick(u) {
   document.getElementById('urlInput').value = u;
-  syncTime();
+  measureLatency();
 }
 
 // Audio helpers
@@ -187,6 +215,9 @@ function getCtx() {
   if(!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
   if(audioCtx.state === 'suspended') audioCtx.resume();
   return audioCtx;
+}
+function primeAudio() {
+  try { getCtx(); } catch(e) {}
 }
 function beep(freq, duration, vol=0.1, type='sine') {
   try {
@@ -231,55 +262,151 @@ function playAlarmAt(s) {
   }
 }
 
-async function syncTime() {
-  getCtx(); // init audio
-  let val = document.getElementById('urlInput').value.trim();
+function signedOffset(value) {
+  return `${value > 0 ? '+' : ''}${value}ms`;
+}
+
+function updateOffsetState() {
   const badge = document.getElementById('statusBadge');
   const tname = document.getElementById('targetName');
-  
-  if(!val) {
-    targetMode = false; timeOffset = 0;
-    badge.className = 'status-badge'; badge.textContent = 'Local Clock';
-    tname.textContent = 'Current Mode: Local Device Time';
+  badge.className = 'status-badge';
+  badge.textContent = manualOffset === 0 ? 'Device Clock' : `Manual ${signedOffset(manualOffset)}`;
+  tname.textContent = manualOffset === 0
+    ? 'Time source: Local device clock'
+    : `Time source: Device clock ${signedOffset(manualOffset)}`;
+}
+
+function applyManualOffset() {
+  const input = document.getElementById('offsetInput');
+  const value = Number(input.value);
+  manualOffset = Number.isFinite(value) ? Math.max(-60000, Math.min(60000, Math.round(value))) : 0;
+  if (String(manualOffset) !== input.value && input.value !== '' && input.value !== '-') input.value = manualOffset;
+  try { localStorage.setItem('localClock_offsetMs', String(manualOffset)); } catch(e) {}
+  lastSec = -1;
+  updateOffsetState();
+}
+
+function resetOffset() {
+  document.getElementById('offsetInput').value = '0';
+  applyManualOffset();
+}
+
+function parseTarget(raw) {
+  let value = raw.trim();
+  if (!value) throw new Error('Enter a website address to test.');
+  if (!/^https?:\/\//i.test(value)) value = 'https://' + value;
+  let url;
+  try { url = new URL(value); } catch(e) { throw new Error('Enter a valid website address.'); }
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') throw new Error('Only HTTP and HTTPS addresses can be tested.');
+  if (location.protocol === 'https:' && url.protocol === 'http:') throw new Error('An HTTPS page cannot test an HTTP address because browsers block mixed content. Use an HTTPS URL.');
+  return url;
+}
+
+async function measureOnce(url, runSignal) {
+  const controller = new AbortController();
+  const abortCurrent = () => controller.abort();
+  if (runSignal.aborted) controller.abort();
+  else runSignal.addEventListener('abort', abortCurrent, { once: true });
+  const timeoutId = setTimeout(abortCurrent, 8000);
+  const start = performance.now();
+  try {
+    await fetch(url.href, {
+      method: 'HEAD',
+      mode: 'no-cors',
+      cache: 'no-store',
+      credentials: 'omit',
+      redirect: 'follow',
+      referrerPolicy: 'no-referrer',
+      signal: controller.signal
+    });
+    return performance.now() - start;
+  } finally {
+    clearTimeout(timeoutId);
+    runSignal.removeEventListener('abort', abortCurrent);
+  }
+}
+
+async function measureLatency() {
+  const container = document.getElementById('reportContainer');
+  const button = document.getElementById('measureBtn');
+  const currentMeasurement = ++measurementSequence;
+  if (activeMeasurementController) activeMeasurementController.abort();
+  activeMeasurementController = null;
+  let url;
+  try {
+    url = parseTarget(document.getElementById('urlInput').value);
+  } catch(e) {
+    showMeasureError(e.message);
+    button.disabled = false;
+    button.textContent = 'Test Response';
     return;
   }
-  if(!/^https?:\/\//i.test(val)) val = 'https://' + val;
-
-  tname.textContent = 'Syncing: ' + val;
-  badge.className = 'status-badge syncing'; badge.textContent = 'Syncing...';
-  
-  const startLocal = performance.now();
+  const runController = new AbortController();
+  activeMeasurementController = runController;
+  document.getElementById('urlInput').value = url.href;
+  button.disabled = true;
+  button.textContent = 'Testing…';
+  container.style.display = 'block';
+  container.innerHTML = '<h3>📡 Testing HTTP response time</h3><p>Sending up to three HEAD requests to the same address.</p>';
+  const samples = [];
   try {
-    let res = await fetch(val, { method:'HEAD', cache:'no-store' }).catch(e => null);
-    
-    if(!res || !res.headers.get('Date')) {
-      const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(val);
-      res = await fetch(proxyUrl, { method:'HEAD', cache:'no-store' });
+    for (let i = 0; i < 3; i++) {
+      samples.push(await measureOnce(url, runController.signal));
+      if (currentMeasurement !== measurementSequence) return;
     }
-
-    const dateStr = res.headers.get('Date');
-    if(!dateStr) throw new Error("No Date header");
-    
-    const serverTime = new Date(dateStr).getTime();
-    const endLocal = performance.now();
-    const rtt = endLocal - startLocal;
-    
-    const estimatedLocalEquiv = Date.now() - (rtt/2);
-    timeOffset = serverTime - estimatedLocalEquiv;
-    targetMode = true;
-
-    tname.textContent = 'Synced Target: ' + new URL(val).hostname;
-    badge.className = 'status-badge success'; badge.textContent = 'Synced (offset ' + Math.round(timeOffset) + 'ms)';
+    updateReport(url, samples);
   } catch(e) {
-    timeOffset = 0; targetMode = false;
-    tname.textContent = 'Error: ' + new URL(val).hostname;
-    badge.className = 'status-badge error'; badge.textContent = 'CORS Blocked or Timeout';
+    if (currentMeasurement !== measurementSequence) return;
+    showMeasureError(e.name === 'AbortError'
+      ? 'The target did not respond within 8 seconds, so the test was stopped.'
+      : 'Browser security policy or a network error prevented this test. The target may still be online.');
+  } finally {
+    if (currentMeasurement === measurementSequence) {
+      if (activeMeasurementController === runController) activeMeasurementController = null;
+      button.disabled = false;
+      button.textContent = 'Test Response';
+      updateOffsetState();
+    }
   }
+}
+
+function showMeasureError(message) {
+  const container = document.getElementById('reportContainer');
+  container.style.display = 'block';
+  container.innerHTML = `<h3>⚠️ Unable to test</h3><p>${message}</p><p>No external proxy is used. The local clock and manual offset continue to work normally.</p>`;
+}
+
+function updateReport(url, samples) {
+  const container = document.getElementById('reportContainer');
+  const rounded = samples.map(value => Math.round(value));
+  const min = Math.min(...samples);
+  const max = Math.max(...samples);
+  const average = samples.reduce((sum, value) => sum + value, 0) / samples.length;
+  let rating = 'Good';
+  let ratingColor = 'var(--text-info)';
+  if (average < 100) {
+    rating = 'Very fast';
+    ratingColor = '#10b981';
+  } else if (average < 300) {
+    rating = 'Moderate';
+    ratingColor = '#f59e0b';
+  } else {
+    rating = 'Slow';
+    ratingColor = '#ef4444';
+  }
+  container.innerHTML = `
+    <h3>📊 HTTP response-time result</h3>
+    <p><b>Target:</b> <span class="highlight">${url.hostname}</span></p>
+    <p><b>Three samples:</b> ${rounded.join('ms · ')}ms</p>
+    <p><b>Minimum / average / maximum:</b> <span class="highlight">${Math.round(min)} / ${Math.round(average)} / ${Math.round(max)}ms</span></p>
+    <p><b>Reference category:</b> <span style="color:${ratingColor};font-weight:600">${rating}</span></p>
+    <p style="margin-bottom:0">This is elapsed browser time until a HEAD response arrives. The 100ms and 300ms cutoffs are this page's simple heuristic, not a universal quality standard. It is not server time, ping, or a prediction of transaction timing, and it varies with network conditions.</p>
+  `;
 }
 
 function updateClock() {
   const showMsCheck = document.getElementById('showMs').checked;
-  const now = new Date(Date.now() + timeOffset);
+  const now = new Date(Date.now() + manualOffset);
   
   const h = String(now.getHours()).padStart(2,'0');
   const m = String(now.getMinutes()).padStart(2,'0');
@@ -294,11 +421,18 @@ function updateClock() {
   
   playAlarmAt(now.getSeconds());
   
-  if (targetMode) document.title = `${h}:${m}:${s} — Server Time`;
-  else document.title = `⏳ Server Time Checker — TeemoZipsa`;
+  document.title = `${h}:${m}:${s} — Precision Local Clock`;
 
   requestAnimationFrame(updateClock);
 }
+(function restoreOffset() {
+  let saved = 0;
+  try { saved = Number(localStorage.getItem('localClock_offsetMs')) || 0; } catch(e) {}
+  document.getElementById('offsetInput').value = String(Math.max(-60000, Math.min(60000, Math.round(saved))));
+  applyManualOffset();
+})();
+document.addEventListener('pointerdown', primeAudio, { once: true });
+document.addEventListener('keydown', primeAudio, { once: true });
 requestAnimationFrame(updateClock);
 </script>
 <script src="/special-chars/theme-toggle.js"></script>

@@ -90,7 +90,10 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
         <div class="ip-type-badge" id="ipType">IPv4</div>
         <div class="ip-label">Your Public IP Address</div>
         <div class="ip-value" id="myIp">...</div>
-        <button class="copy-btn" id="copyBtn" onclick="copyIp()"><span>📋</span> Copy IP</button>
+        <div style="display:flex;justify-content:center;gap:8px">
+          <button class="copy-btn" id="copyBtn" onclick="copyIp()"><span>📋</span> Copy IP</button>
+          <button class="copy-btn" style="background:var(--bg-card);color:var(--text-secondary);border-color:var(--border)" onclick="refreshIp()" id="refreshBtn" title="Refresh"><span>🔄</span></button>
+        </div>
       </div>
     </div>
 
@@ -108,6 +111,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
         <span class="d-value" id="uaStr">...</span>
       </div>
     </div>
+    <div id="reportBox" class="report-box"></div>
   </div>
 
   <section class="guide-section">
@@ -164,15 +168,51 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       </div>
     </div>
   </section>
-  <div class="footer"><span>Secure & private tool</span><a href="https://teemozipsa.github.io/en/">😺 More tools</a></div>
+  <div class="footer"><span>Uses external public-IP lookup services</span><a href="https://teemozipsa.github.io/en/">😺 More tools</a></div>
 </div>
 
 <script>
+function isValidIp(value) {
+  if (typeof value !== 'string') return false;
+  const candidate = value.trim();
+  if (/^(?:\d{1,3}\.){3}\d{1,3}$/.test(candidate)) {
+    return candidate.split('.').every(part => Number(part) >= 0 && Number(part) <= 255);
+  }
+  if (!candidate.includes(':')) return false;
+  try {
+    return new URL(`http://[${candidate}]/`).hostname.startsWith('[');
+  } catch(e) {
+    return false;
+  }
+}
+
+let ipRequestSequence = 0;
+async function fetchWithTimeout(url) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
+  try {
+    return await fetch(url, { signal: controller.signal, cache: 'no-store' });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+function refreshIp() {
+  document.getElementById('loader').style.display = 'inline-block';
+  document.getElementById('ipContent').style.display = 'none';
+  const report = document.getElementById('reportBox');
+  report.textContent = '';
+  report.style.display = 'none';
+  fetchIpInfo();
+}
+
 async function fetchIpInfo() {
-  let ip = 'Unknown', loc = 'Unknown', http = 'HTTP', ua = navigator.userAgent;
+  const requestId = ++ipRequestSequence;
+  let ip = 'Unknown', loc = 'Unknown', http = 'Unknown', ua = navigator.userAgent;
   try {
     try {
-      const res = await fetch('https://cloudflare.com/cdn-cgi/trace');
+      const res = await fetchWithTimeout('https://cloudflare.com/cdn-cgi/trace');
+      if (!res.ok) throw new Error(`Cloudflare HTTP ${res.status}`);
       const text = await res.text();
       text.split('\n').filter(Boolean).forEach(line => {
         const [k, v] = line.split('=');
@@ -181,12 +221,26 @@ async function fetchIpInfo() {
         if (k === 'http') http = v;
         if (k === 'uag') ua = v;
       });
+      if (!isValidIp(ip)) throw new Error('Cloudflare response did not contain a valid IP address.');
     } catch(err) {
-      console.warn("Cloudflare proxy blocked, trying fallback", err);
-      const res = await fetch('https://api64.ipify.org?format=json');
-      const json = await res.json();
-      ip = json.ip;
+      console.warn("Cloudflare lookup unavailable, trying fallback", err);
+      try {
+        const res = await fetchWithTimeout('https://api.country.is');
+        if (!res.ok) throw new Error(`country.is HTTP ${res.status}`);
+        const json = await res.json();
+        ip = json.ip;
+        loc = json.country || 'Unknown';
+        if (!isValidIp(ip)) throw new Error('country.is response did not contain a valid IP address.');
+      } catch(e2) {
+        const res = await fetchWithTimeout('https://api64.ipify.org?format=json');
+        if (!res.ok) throw new Error(`ipify HTTP ${res.status}`);
+        const json = await res.json();
+        ip = json.ip;
+        if (!isValidIp(ip)) throw new Error('ipify response did not contain a valid IP address.');
+      }
     }
+
+    if (requestId !== ipRequestSequence) return;
 
     const isV6 = ip.includes(':');
 
@@ -197,39 +251,61 @@ async function fetchIpInfo() {
     document.getElementById('myIp').style.fontSize = ip.length > 20 ? '28px' : '42px';
     document.getElementById('ipType').textContent = isV6 ? 'IPv6 Protocol' : 'IPv4 Protocol';
     
-    const regionNames = new Intl.DisplayNames(['en-US'], {type: 'region'});
     let locEng = loc;
-    if (loc !== 'Unknown') {
-      try { locEng = regionNames.of(loc) + ` (${loc})`; } catch(e){}
+    if (loc !== 'Unknown' && typeof Intl.DisplayNames === 'function') {
+      try { locEng = new Intl.DisplayNames(['en-US'], {type: 'region'}).of(loc) + ` (${loc})`; } catch(e){}
     }
     
     document.getElementById('locStr').textContent = locEng;
     document.getElementById('httpStr').textContent = http;
     
     let uaSimple = 'Web Browser';
-    if(ua.includes('Chrome')) uaSimple = 'Google Chrome';
+    if(ua.includes('Edg/')) uaSimple = 'Microsoft Edge';
+    else if(ua.includes('Chrome')) uaSimple = 'Google Chrome';
     else if(ua.includes('Safari') && !ua.includes('Chrome')) uaSimple = 'Apple Safari';
     else if(ua.includes('Firefox')) uaSimple = 'Mozilla Firefox';
-    else if(ua.includes('Edge')) uaSimple = 'Microsoft Edge';
     
     const os = ua.includes('Windows') ? 'Windows' : ua.includes('Mac') ? 'macOS/iOS' : ua.includes('Android') ? 'Android' : 'Linux';
     document.getElementById('uaStr').textContent = `${uaSimple} (${os})`;
 
+    updateReport(ip, isV6 ? 'IPv6' : 'IPv4', locEng, http, uaSimple, os);
+
   } catch(e) {
+    if (requestId !== ipRequestSequence) return;
     document.getElementById('loader').style.display = 'none';
     document.getElementById('ipContent').style.display = 'block';
-    document.getElementById('myIp').textContent = 'Error (Disable Adblock)';
+    document.getElementById('myIp').textContent = 'Lookup failed (check network or blocking settings)';
     document.getElementById('myIp').style.fontSize = '24px';
+    document.getElementById('ipType').textContent = 'Lookup failed';
+    document.getElementById('locStr').textContent = '—';
+    document.getElementById('httpStr').textContent = '—';
+    document.getElementById('uaStr').textContent = '—';
+    const report = document.getElementById('reportBox');
+    report.textContent = '';
+    report.style.display = 'none';
   }
 }
 
-function copyIp() {
+function updateReport(ip, version, locationName, protocol, browser, os) {
+  const box = document.getElementById('reportBox');
+  const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  })[char]);
+  box.innerHTML = `<strong>Network lookup report</strong><br>Public IP: <strong>${escapeHtml(ip)}</strong> (${escapeHtml(version)}). Country: <strong>${escapeHtml(locationName)}</strong>. HTTP connection: <strong>${escapeHtml(protocol)}</strong>. Browser: <strong>${escapeHtml(browser)}</strong> on <strong>${escapeHtml(os)}</strong>.<br>This page contacts Cloudflare, country.is, or ipify directly from your browser; each provider's own logging policy applies.`;
+  box.style.display = 'block';
+}
+
+async function copyIp() {
   const ip = document.getElementById('myIp').textContent;
-  if(ip === 'Connection Error' || ip === '...') return;
-  navigator.clipboard.writeText(ip);
+  if(ip === '...' || ip.startsWith('Lookup failed')) return;
   const btn = document.getElementById('copyBtn');
-  btn.innerHTML = '<span>✅</span> Copied!';
-  btn.classList.add('copied');
+  try {
+    await navigator.clipboard.writeText(ip);
+    btn.innerHTML = '<span>✅</span> Copied!';
+    btn.classList.add('copied');
+  } catch(e) {
+    btn.innerHTML = '<span>⚠️</span> Copy failed';
+  }
   setTimeout(() => {
     btn.innerHTML = '<span>📋</span> Copy IP';
     btn.classList.remove('copied');

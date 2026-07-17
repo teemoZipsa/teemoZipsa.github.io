@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>티모집사 가이드 · 지금 사람들이 찾는 고양이 키워드와 생활 계산 도구</title>
-<meta name="description" content="실시간으로 갱신되는 고양이 관련 검색 키워드와 그에 맞는 가이드·계산 도구를 한 화면에서. 회원가입 없이 바로 쓰는 무료 도구의 사용법 허브.">
+<title>티모집사 가이드 · 최근 수집한 고양이 키워드와 생활 계산 도구</title>
+<meta name="description" content="주기적으로 수집한 고양이 관련 검색 제안 키워드와 그에 맞는 가이드·계산 도구를 한 화면에서 확인하는 무료 도구 사용법 허브입니다.">
 <link rel="canonical" href="https://teemozipsa.github.io/blog/">
 <link rel="icon" type="image/png" href="/favicon.png">
 <style>
@@ -78,33 +78,20 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .th-head h1{font-size:clamp(26px,3.2vw,40px);font-weight:900;letter-spacing:-.035em;line-height:1.1;color:#fff}
 .th-head h1 .sm{display:block;font-size:11px;letter-spacing:.18em;font-weight:900;color:#3ed6ba;text-transform:uppercase;margin-bottom:8px}
 .th-head .meta{display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(255,255,255,.7);font-weight:700;font-variant-numeric:tabular-nums}
-.th-head .live{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:rgba(62,214,186,.16);color:#3ed6ba;font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:900}
-.th-head .live .dot{width:7px;height:7px;border-radius:50%;background:#3ed6ba;position:relative}
-.th-head .live .dot::after{content:"";position:absolute;inset:-5px;border-radius:50%;background:#3ed6ba;opacity:.4;animation:pulseB 1.6s ease-out infinite}
-@keyframes pulseB{0%{transform:scale(.4);opacity:.6}100%{transform:scale(2.4);opacity:0}}
+.th-head .data-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:rgba(62,214,186,.16);color:#3ed6ba;font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:900}
+.th-head .data-badge .dot{width:7px;height:7px;border-radius:50%;background:#3ed6ba}
 
-.th-tabs{display:flex;gap:6px}
-.th-tabs button{padding:6px 12px;border-radius:999px;font-size:12px;font-weight:800;color:rgba(255,255,255,.6);background:rgba(255,255,255,.06)}
-.th-tabs button.on{background:#fff;color:#0b1220}
-.th-tabs button:hover{color:#fff}
-.th-tabs button.on:hover{color:#0b1220}
-
-/* ranking grid */
+/* topic grid */
 .rank-grid{display:grid;grid-template-columns:1.25fr .9fr;gap:22px;align-items:stretch}
 
-/* spotlight (top 1) */
+/* first topic spotlight */
 .spot{background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:24px;display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center;position:relative;overflow:hidden;min-height:280px}
 .spot::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:linear-gradient(180deg,#3ed6ba,#5aa1ff)}
 .spot-rank{font-family:'Inter',monospace;font-size:clamp(72px,9vw,128px);font-weight:900;line-height:.85;letter-spacing:-.08em;background:linear-gradient(180deg,#fff,rgba(255,255,255,.55));-webkit-background-clip:text;background-clip:text;color:transparent;align-self:flex-start;margin-top:4px}
 .spot-body{display:flex;flex-direction:column;gap:14px;min-width:0}
 .spot-meta{display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(255,255,255,.6);font-weight:800;text-transform:uppercase;letter-spacing:.06em}
-.spot-meta .badge-rise{background:rgba(225,29,72,.16);color:#fda4af;padding:3px 8px;border-radius:5px}
 .spot-meta .badge-new{background:rgba(62,214,186,.16);color:#3ed6ba;padding:3px 8px;border-radius:5px}
 .spot-kw{font-size:clamp(28px,3.4vw,44px);font-weight:900;letter-spacing:-.035em;line-height:1.05;color:#fff;word-break:keep-all}
-.spot-spark{margin-top:2px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.spot-spark svg{display:block;width:240px;max-width:100%;height:54px}
-.spot-stats{display:flex;align-items:center;gap:14px;font-size:12px;color:rgba(255,255,255,.7);font-weight:700}
-.spot-stats b{color:#3ed6ba;font-weight:900;font-variant-numeric:tabular-nums;font-size:14px}
 .spot-cta{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
 .spot-cta a{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:10px;font-size:12.5px;font-weight:800}
 .spot-cta a.primary{background:#fff;color:#0b1220}
@@ -112,23 +99,19 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .spot-cta a.ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.16)}
 .spot-cta a.ghost:hover{background:rgba(255,255,255,.16)}
 
-/* rank list (2-10) */
+/* topic list (2-10) */
 .rank-list{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:6px;display:flex;flex-direction:column;overflow:hidden}
-.rank-list .ri{display:grid;grid-template-columns:32px 1fr 80px auto;align-items:center;gap:12px;padding:11px 14px;border-radius:14px;transition:background .15s;color:rgba(255,255,255,.92)}
+.rank-list .ri{display:grid;grid-template-columns:32px 1fr auto;align-items:center;gap:12px;padding:11px 14px;border-radius:14px;transition:background .15s;color:rgba(255,255,255,.92)}
 .rank-list .ri:hover{background:rgba(255,255,255,.06)}
 .rank-list .ri .rk{font-family:'Inter',monospace;font-weight:900;font-size:18px;color:rgba(255,255,255,.55);text-align:center;font-variant-numeric:tabular-nums}
-.rank-list .ri.t .rk{color:#3ed6ba}
 .rank-list .ri .kw{font-size:14.5px;font-weight:800;letter-spacing:-.01em;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:8px}
-.rank-list .ri .kw .nb{font-size:9.5px;font-weight:900;padding:2px 5px;border-radius:4px;background:#3ed6ba;color:#0b1220;letter-spacing:.06em}
-.rank-list .ri .spk svg{display:block;width:80px;height:22px}
 .rank-list .ri .ch{font-size:11.5px;font-weight:800;font-variant-numeric:tabular-nums;text-align:right;min-width:42px}
-.ch-up{color:#fb7185}.ch-down{color:#7dd3fc}.ch-flat{color:#94a3b8}.ch-new{color:#3ed6ba}
+.ch-flat{color:#94a3b8}
 
 .th-foot{margin-top:18px;display:flex;justify-content:space-between;align-items:center;color:rgba(255,255,255,.6);font-size:11.5px;font-weight:700;flex-wrap:wrap;gap:8px}
 .th-foot a{color:#fff;font-weight:800;border-bottom:1px solid rgba(255,255,255,.5);padding-bottom:1px}
 .th-foot .legend{display:flex;gap:14px;align-items:center}
 .th-foot .legend span{display:inline-flex;align-items:center;gap:4px}
-.dotr{width:6px;height:6px;border-radius:50%}.dotr.r{background:#fb7185}.dotr.f{background:#7dd3fc}.dotr.n{background:#3ed6ba}
 
 /* ===== KW-DRIVEN CONTENT ===== */
 .section{padding:8px 0 32px}
@@ -142,12 +125,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .kw-stack{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .kw-card{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-sm);transition:transform .15s, box-shadow .15s, border-color .15s}
 .kw-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:var(--border-2)}
+.kw-card .article-link{display:flex;flex-direction:column;flex:1}
 .kw-card .kw-hd{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;background:var(--card-2)}
-.kw-card .kw-hd .rk{font-family:'Inter',monospace;font-weight:900;font-size:14px;color:var(--accent);width:24px}
+.kw-card .kw-hd .rk{font-family:'Inter',monospace;font-weight:900;font-size:12px;color:var(--accent);min-width:44px}
 .kw-card .kw-hd .kw{font-size:14px;font-weight:900;letter-spacing:-.01em;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.kw-card .kw-hd .ch{font-size:11px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--rise)}
-.kw-card .kw-hd .ch.up{color:var(--rise)}
-.kw-card .kw-hd .ch.new{color:var(--teal-strong)}
 .kw-card .thumb{aspect-ratio:16/9;position:relative;background:var(--card-2);overflow:hidden}
 .ph-fill{position:absolute;inset:0;background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--teal) 14%,transparent) 0 12px,color-mix(in srgb,var(--teal) 4%,transparent) 12px 24px);display:grid;place-items:center;color:var(--teal-strong);font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;font-weight:700;letter-spacing:.05em}
 .ph-fill.blue{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--accent) 12%,transparent) 0 12px,color-mix(in srgb,var(--accent) 4%,transparent) 12px 24px);color:var(--accent)}
@@ -231,7 +212,7 @@ footer{border-top:1px solid var(--border);margin-top:20px;padding:28px 0 80px;co
   .trend-hero{padding:16px 0 22px;margin-bottom:22px}
   .spot{grid-template-columns:1fr;padding:18px;min-height:auto}
   .spot-rank{font-size:64px}
-  .rank-list .ri{grid-template-columns:24px 1fr 60px auto;gap:8px;padding:10px}
+  .rank-list .ri{grid-template-columns:24px 1fr auto;gap:8px;padding:10px}
   .rank-list .ri .kw{font-size:13.5px}
   .stream{grid-template-columns:1fr}
   .scard.big, .scard.med, .scard.sm, .scard.tall{grid-column:span 1}
@@ -249,7 +230,7 @@ footer{border-top:1px solid var(--border);margin-top:20px;padding:28px 0 80px;co
   <div class="nav-inner">
     <a href="/" class="brand">
       <span class="brand-mark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16M4 12h10M4 19h16"/></svg></span>
-      <span>티모집사 <sub>트렌드</sub></span>
+      <span>티모집사 <sub>검색 주제</sub></span>
     </a>
     <div class="nav-links">
       <a href="/">도구 홈</a>
@@ -277,52 +258,25 @@ footer{border-top:1px solid var(--border);margin-top:20px;padding:28px 0 80px;co
 
     <div class="th-head">
       <div>
-        <h1><span class="sm">티모 트렌드 · Live Rank</span>지금 사람들이 찾는<br>고양이 키워드 TOP 10</h1>
+        <h1><span class="sm">티모 검색 주제 · Topic List</span>고양이 검색 주제<br>10선</h1>
       </div>
       <div class="meta">
-        <span class="live"><span class="dot"></span>LIVE</span>
-        <span id="heroMeta">05.20 · 12:33 갱신 · 매 10분</span>
-        <div class="th-tabs">
-          <button class="on">실시간</button>
-          <button>오늘</button>
-          <button>주간</button>
-        </div>
+        <span class="data-badge"><span class="dot"></span>DATA</span>
+        <span id="heroMeta">주제 데이터 변경 시각 로딩 중 · 갱신 설정 6시간</span>
       </div>
     </div>
 
     <div class="rank-grid" data-render="trend-spotlight-grid">
 
-      <!-- SPOTLIGHT TOP 1 — JS will replace if trends.json loads, this is the no-JS fallback -->
+      <!-- JS가 데이터를 불러오면 교체되는 정적 fallback. 번호는 검색량 순위가 아닙니다. -->
       <article class="spot">
         <div class="spot-rank">01</div>
         <div class="spot-body">
           <div class="spot-meta">
-            <span class="badge-rise">▲ 4 ranks</span>
-            <span>지난 1시간 +312% 검색량</span>
+            <span class="badge-new">검색 제안</span>
+            <span>검색량 순위가 아닌 주제 목록</span>
           </div>
-          <h2 class="spot-kw">고양이 나이 계산</h2>
-
-          <div class="spot-spark">
-            <!-- 24h sparkline -->
-            <svg viewBox="0 0 240 54" preserveAspectRatio="none" aria-hidden="true">
-              <defs>
-                <linearGradient id="spotGrad" x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="0%" stop-color="#3ed6ba" stop-opacity=".6"/>
-                  <stop offset="100%" stop-color="#3ed6ba" stop-opacity="0"/>
-                </linearGradient>
-              </defs>
-              <path d="M0 42 L20 40 L40 38 L60 35 L80 36 L100 30 L120 28 L140 22 L160 26 L180 16 L200 12 L220 8 L240 4" fill="none" stroke="#3ed6ba" stroke-width="2.5" stroke-linecap="round"/>
-              <path d="M0 42 L20 40 L40 38 L60 35 L80 36 L100 30 L120 28 L140 22 L160 26 L180 16 L200 12 L220 8 L240 4 L240 54 L0 54 Z" fill="url(#spotGrad)"/>
-              <circle cx="240" cy="4" r="3.5" fill="#3ed6ba"/>
-              <circle cx="240" cy="4" r="6" fill="#3ed6ba" opacity=".3"/>
-            </svg>
-            <div class="spot-stats">
-              <span>24h <b>+312%</b></span>
-              <span style="opacity:.5">|</span>
-              <span>유입원: 검색 84%</span>
-            </div>
-          </div>
-
+          <h2 class="spot-kw">고양이 나이</h2>
           <div class="spot-cta">
             <a href="/blog/cat-age-guide/" class="primary">
               관련 가이드 읽기
@@ -335,196 +289,120 @@ footer{border-top:1px solid var(--border);margin-top:20px;padding:28px 0 80px;co
         </div>
       </article>
 
-      <!-- RANKS 2-10 -->
-      <ol class="rank-list" aria-label="2위~10위 키워드">
-
-        <li class="ri t">
-          <span class="rk">2</span>
-          <a class="kw" href="/blog/cat-bmi-guide/"><span>고양이 BCS 측정법</span><span class="nb">NEW</span></a>
-          <span class="spk">
-            <svg viewBox="0 0 80 22" preserveAspectRatio="none"><path d="M0 20 L13 18 L26 12 L40 14 L54 8 L67 6 L80 2" fill="none" stroke="#3ed6ba" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </span>
-          <span class="ch ch-new">NEW</span>
-        </li>
-
-        <li class="ri t">
-          <span class="rk">3</span>
-          <a class="kw" href="/blog/cat-treat-calorie-guide/"><span>츄르 권장량 하루</span></a>
-          <span class="spk">
-            <svg viewBox="0 0 80 22" preserveAspectRatio="none"><path d="M0 16 L13 17 L26 14 L40 10 L54 12 L67 6 L80 3" fill="none" stroke="#fb7185" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </span>
-          <span class="ch ch-up">▲ 12</span>
-        </li>
-
-        <li class="ri">
-          <span class="rk">4</span>
-          <a class="kw" href="/blog/cat-bcs-home-checklist/"><span>고양이 양치질 거부</span></a>
-          <span class="spk">
-            <svg viewBox="0 0 80 22" preserveAspectRatio="none"><path d="M0 4 L13 7 L26 10 L40 9 L54 12 L67 14 L80 16" fill="none" stroke="#7dd3fc" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </span>
-          <span class="ch ch-down">▼ 2</span>
-        </li>
-
-        <li class="ri">
-          <span class="rk">5</span>
-          <a class="kw" href="/blog/cat-food-amount-guide/"><span>고양이 사료 급여량</span></a>
-          <span class="spk">
-            <svg viewBox="0 0 80 22" preserveAspectRatio="none"><path d="M0 14 L13 12 L26 13 L40 11 L54 10 L67 9 L80 8" fill="none" stroke="#fb7185" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </span>
-          <span class="ch ch-up">▲ 1</span>
-        </li>
-
-        <li class="ri">
-          <span class="rk">6</span>
-          <a class="kw" href="/blog/senior-cat-health-check/"><span>신장 질환 증상</span></a>
-          <span class="spk">
-            <svg viewBox="0 0 80 22" preserveAspectRatio="none"><path d="M0 11 L13 10 L26 12 L40 11 L54 10 L67 11 L80 11" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </span>
-          <span class="ch ch-flat">—</span>
-        </li>
-
-        <li class="ri">
-          <span class="rk">7</span>
-          <a class="kw" href="/blog/cat-bmi-guide/"><span>원시주머니 vs 비만</span><span class="nb">NEW</span></a>
-          <span class="spk">
-            <svg viewBox="0 0 80 22" preserveAspectRatio="none"><path d="M0 20 L13 19 L26 15 L40 13 L54 10 L67 7 L80 4" fill="none" stroke="#3ed6ba" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </span>
-          <span class="ch ch-new">NEW</span>
-        </li>
-
-        <li class="ri">
-          <span class="rk">8</span>
-          <a class="kw" href="/blog/multi-cat-feeding-guide/"><span>다묘 가정 사료</span></a>
-          <span class="spk">
-            <svg viewBox="0 0 80 22" preserveAspectRatio="none"><path d="M0 14 L13 12 L26 13 L40 11 L54 10 L67 9 L80 7" fill="none" stroke="#fb7185" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </span>
-          <span class="ch ch-up">▲ 3</span>
-        </li>
-
-        <li class="ri">
-          <span class="rk">9</span>
-          <a class="kw" href="/blog/cat-bcs-home-checklist/"><span>발톱 정리 주기</span></a>
-          <span class="spk">
-            <svg viewBox="0 0 80 22" preserveAspectRatio="none"><path d="M0 6 L13 8 L26 11 L40 12 L54 14 L67 15 L80 17" fill="none" stroke="#7dd3fc" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </span>
-          <span class="ch ch-down">▼ 5</span>
-        </li>
-
-        <li class="ri">
-          <span class="rk">10</span>
-          <a class="kw" href="/blog/senior-cat-health-check/"><span>노묘 건강검진</span></a>
-          <span class="spk">
-            <svg viewBox="0 0 80 22" preserveAspectRatio="none"><path d="M0 12 L13 11 L26 10 L40 11 L54 9 L67 8 L80 7" fill="none" stroke="#fb7185" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </span>
-          <span class="ch ch-up">▲ 2</span>
-        </li>
-
+      <ol class="rank-list" aria-label="검색 주제 2~10">
+        <li class="ri"><span class="rk">2</span><a class="kw" href="/blog/cat-age-guide/"><span>고양이 나이 계산</span></a><span class="ch ch-flat">검색 제안</span></li>
+        <li class="ri"><span class="rk">3</span><a class="kw" href="/blog/cat-bmi-guide/"><span>고양이 체중</span></a><span class="ch ch-flat">검색 제안</span></li>
+        <li class="ri"><span class="rk">4</span><span class="kw" aria-disabled="true"><span>고양이 체중계</span></span><span class="ch ch-flat">관련 콘텐츠 없음</span></li>
+        <li class="ri"><span class="rk">5</span><a class="kw" href="/blog/cat-food-amount-guide/"><span>고양이 사료</span></a><span class="ch ch-flat">검색 제안</span></li>
+        <li class="ri"><span class="rk">6</span><a class="kw" href="/blog/cat-food-amount-guide/"><span>고양이 사료 추천</span></a><span class="ch ch-flat">검색 제안</span></li>
+        <li class="ri"><span class="rk">7</span><a class="kw" href="/blog/cat-food-amount-guide/"><span>고양이 간식</span></a><span class="ch ch-flat">검색 제안</span></li>
+        <li class="ri"><span class="rk">8</span><a class="kw" href="/blog/cat-food-amount-guide/"><span>고양이 간식 추천</span></a><span class="ch ch-flat">검색 제안</span></li>
+        <li class="ri"><span class="rk">9</span><span class="kw" aria-disabled="true"><span>고양이 건강검진 비용</span></span><span class="ch ch-flat">관련 콘텐츠 없음</span></li>
+        <li class="ri"><span class="rk">10</span><a class="kw" href="/blog/senior-cat-health-check/"><span>고양이 건강검진</span></a><span class="ch ch-flat">검색 제안</span></li>
       </ol>
     </div>
 
     <div class="th-foot">
       <div class="legend">
-        <span><span class="dotr r"></span>상승</span>
-        <span><span class="dotr f"></span>하락</span>
-        <span><span class="dotr n"></span>NEW</span>
-        <span style="opacity:.5">스파크라인 = 최근 24시간 검색량</span>
+        <span>Google 검색 제안을 사용하고 부족하면 편집 추천으로 채웁니다.</span>
+        <span style="opacity:.65">번호는 검색량·인기도 순위가 아닙니다.</span>
       </div>
       <a href="#keyword-map">키워드별 가이드 보기 →</a>
     </div>
   </div>
 </section>
 
-<!-- ===== "이 키워드가 향한 곳" — top 3 trending → article + tool ===== -->
+<!-- ===== "이 키워드가 향한 곳" — first 3 topics → article + tool ===== -->
 <section class="wrap section" id="keyword-map">
   <div class="section-head">
     <div>
       <h2>이 키워드가 <em>향한 곳</em></h2>
-      <div class="desc">상승 중인 키워드별로 가장 가까운 가이드와 도구를 묶었습니다.</div>
+      <div class="desc">선택한 검색 주제별로 가장 가까운 가이드와 도구를 묶었습니다.</div>
     </div>
     <a class="more" href="/blog/">블로그 홈 →</a>
   </div>
   <div class="kw-stack" data-render="kw-mapping">
 
-    <a class="kw-card" href="/blog/cat-age-guide/">
-      <div class="kw-hd"><span class="rk">#1</span><span class="kw">고양이 나이 계산</span><span class="ch up">▲ 4</span></div>
-      <div class="thumb"><div class="ph-fill">CAT · AGE</div></div>
-      <div class="body">
-        <span class="tag">팩트체크</span>
-        <h3>"1년 = 7년"이라는 거짓말 — AAFP 6단계 환산표</h3>
-        <p>첫 해 +15세, 둘째 해 +9세, 이후 매년 +4세. 우리집 묘의 진짜 사람 나이를 다시 계산합니다.</p>
-      </div>
-      <div class="related-tool">
+    <article class="kw-card">
+      <a class="article-link" href="/blog/cat-age-guide/">
+        <div class="kw-hd"><span class="rk">주제 1</span><span class="kw">고양이 나이</span></div>
+        <div class="thumb"><div class="ph-fill">CAT · AGE</div></div>
+        <div class="body">
+          <span class="tag">팩트체크</span>
+          <h3>고양이 사람 나이 환산과 2021 생애 단계 구분</h3>
+          <p>교육용 사람 나이 환산과 공식 생애 단계 분류를 구분해 확인합니다.</p>
+        </div>
+      </a>
+      <a class="related-tool" href="/special-chars/pet-age-calc/">
         <div class="ic">🐾</div>
         <div><b>반려동물 나이 계산기</b></div>
         <span class="arr">바로 계산 →</span>
-      </div>
-    </a>
+      </a>
+    </article>
 
-    <a class="kw-card" href="/blog/cat-bmi-guide/">
-      <div class="kw-hd"><span class="rk">#2</span><span class="kw">고양이 BCS 측정법</span><span class="ch new">NEW</span></div>
-      <div class="thumb"><div class="ph-fill blue">CAT · BCS</div></div>
-      <div class="body">
-        <span class="tag" style="color:var(--accent);background:var(--accent-soft)">건강관리</span>
-        <h3>비만일까 원시주머니일까 — 9점 척도 시각 평가법</h3>
-        <p>위에서·옆에서·만져서. 3단 평가로 우리 고양이 체형을 정확히 점수화합니다.</p>
-      </div>
-      <div class="related-tool">
+    <article class="kw-card">
+      <a class="article-link" href="/blog/cat-bmi-guide/">
+        <div class="kw-hd"><span class="rk">주제 3</span><span class="kw">고양이 체중</span></div>
+        <div class="thumb"><div class="ph-fill blue">CAT · BCS</div></div>
+        <div class="body">
+          <span class="tag" style="color:var(--accent);background:var(--accent-soft)">건강관리</span>
+          <h3>비만일까 원시주머니일까? 고양이 BCS 체형 관리 가이드</h3>
+          <p>위에서·옆에서·만져서. 세 방향으로 살펴본 체형을 9점 BCS로 기록합니다.</p>
+        </div>
+      </a>
+      <a class="related-tool" href="/special-chars/pet-bmi-calc/">
         <div class="ic teal">⚖️</div>
         <div><b>반려동물 체중 관리 도구</b></div>
         <span class="arr">BCS 평가 →</span>
-      </div>
-    </a>
+      </a>
+    </article>
 
-    <a class="kw-card" href="/blog/cat-treat-calorie-guide/">
-      <div class="kw-hd"><span class="rk">#3</span><span class="kw">츄르 권장량 하루</span><span class="ch up">▲ 12</span></div>
-      <div class="thumb"><div class="ph-fill warn">CAT · TREAT</div></div>
-      <div class="body">
-        <span class="tag warn">영양 경고</span>
-        <h3>츄르 1일 권장량 초과 — 신장 질환과의 숨겨진 연관성</h3>
-        <p>나트륨·인 함량 기준으로 본 적정 급여량과 위험 신호 체크리스트.</p>
-      </div>
-      <div class="related-tool">
+    <article class="kw-card">
+      <a class="article-link" href="/blog/cat-food-amount-guide/">
+        <div class="kw-hd"><span class="rk">주제 5</span><span class="kw">고양이 사료</span></div>
+        <div class="thumb"><div class="ph-fill warn">CAT · FOOD</div></div>
+        <div class="body">
+          <span class="tag warn">사료 계산</span>
+          <h3>고양이 사료 급여량 — 체중만 넣으면 왜 틀릴까</h3>
+          <p>RER 공식과 활동 계수로 하루 사료량을 구하는 방법을 단계별로 확인합니다.</p>
+        </div>
+      </a>
+      <a class="related-tool" href="/special-chars/pet-food-calc/">
         <div class="ic warn">🍖</div>
         <div><b>사료 급여량 계산기</b></div>
         <span class="arr">하루치 계산 →</span>
-      </div>
-    </a>
+      </a>
+    </article>
 
   </div>
 </section>
 
-<!-- ===== AUTO-RECOMMENDED TOOLS (driven by trending) ===== -->
+<!-- ===== AUTO-RECOMMENDED TOOLS (driven by collected topics) ===== -->
 <section class="wrap section" id="smart-tools">
   <div class="smart-tools">
     <div class="h">
-      <span class="kicker"><span class="d"></span>지금 트렌드 기반 자동 추천</span>
+      <span class="kicker"><span class="d"></span>수집 주제 기반 자동 추천</span>
       <h3>이 키워드들이 향하는 도구</h3>
     </div>
-    <div class="desc">상위 10개 검색 키워드를 분석해 가장 자주 필요한 도구 4개를 추천합니다.</div>
+    <div class="desc">수집된 주제 최대 10개를 가이드와 연결해 서로 다른 도구를 최대 4개 추천합니다.</div>
     <div class="smart-grid" data-render="smart-tools">
       <a class="stool" href="/special-chars/pet-age-calc/">
         <div class="ic teal">🐾</div>
         <b>반려동물 나이 계산기</b>
-        <span>AAFP 기준 사람 나이 환산</span>
-        <span class="via">"고양이 나이 계산"에서 유입</span>
+        <span>교육용 사람 나이 환산</span>
+        <span class="via">"고양이 나이 계산" 주제 기반</span>
       </a>
       <a class="stool" href="/special-chars/pet-bmi-calc/">
         <div class="ic">⚖️</div>
         <b>반려동물 체중 관리</b>
         <span>BCS 9점 척도 평가</span>
-        <span class="via">"BCS 측정법" 키워드</span>
+        <span class="via">"고양이 체중" 주제 기반</span>
       </a>
       <a class="stool" href="/special-chars/pet-food-calc/">
         <div class="ic warn">🍖</div>
         <b>사료 급여량 계산기</b>
         <span>체중·활동량 기반 하루치</span>
-        <span class="via">"츄르 권장량" 키워드</span>
-      </a>
-      <a class="stool" href="/special-chars/calorie-calc/">
-        <div class="ic">🔥</div>
-        <b>칼로리 계산기</b>
-        <span>다이어트 목표 칼로리</span>
-        <span class="via">"신장 질환" 키워드</span>
+        <span class="via">"고양이 사료" 주제 기반</span>
       </a>
     </div>
   </div>
@@ -535,7 +413,7 @@ footer{border-top:1px solid var(--border);margin-top:20px;padding:28px 0 80px;co
   <div class="section-head">
     <div>
       <h2>매거진 스트림</h2>
-      <div class="desc">트렌드와 무관하게 챙겨야 할 가이드들.</div>
+      <div class="desc">검색 주제와 함께 살펴볼 만한 생활 가이드입니다.</div>
     </div>
     <a class="more" href="/blog/">전체 글 보기 →</a>
   </div>
@@ -545,9 +423,9 @@ footer{border-top:1px solid var(--border);margin-top:20px;padding:28px 0 80px;co
       <div class="thumb"><div class="ph-fill blue">FINANCE · LOAN</div></div>
       <div class="body">
         <span class="tag">금융 / 비용</span>
-        <h4>원리금균등 vs 원금균등 — 5천만원·5년 시뮬레이션</h4>
-        <p>총 이자·월 부담·중도상환 시점을 표로 정리. 결정 기준 5가지.</p>
-        <div class="meta"><span>티모 에디터 · 05.18</span><span class="read">읽기 →</span></div>
+        <h4>원리금균등·원금균등 차이 — 월 납입액만 보면 놓치는 것</h4>
+        <p>상환 방식별 월 납입액, 총이자, 초반 부담 차이를 계산 예시로 설명합니다.</p>
+        <div class="meta"><span>티모집사 편집팀 · 06.08</span><span class="read">4분</span></div>
       </div>
     </a>
 
@@ -555,9 +433,9 @@ footer{border-top:1px solid var(--border);margin-top:20px;padding:28px 0 80px;co
       <div class="thumb"><div class="ph-fill">CAT · AGE</div></div>
       <div class="body">
         <span class="tag teal">팩트체크</span>
-        <h4>"1년 = 7년"이라는 거짓말</h4>
-        <p>AAFP 가이드라인이 정의한 고양이 6단계 생애주기.</p>
-        <div class="meta"><span>티모 스튜디오 · 05.18</span><span class="read">읽기 →</span></div>
+        <h4>고양이 사람 나이 환산과 2021 생애 단계 구분</h4>
+        <p>교육용 환산값과 공식 생애 단계 분류를 구분해 확인합니다.</p>
+        <div class="meta"><span>티모집사 · 04.13</span><span class="read">6분</span></div>
       </div>
     </a>
 
@@ -565,17 +443,17 @@ footer{border-top:1px solid var(--border);margin-top:20px;padding:28px 0 80px;co
       <div class="thumb"><div class="ph-fill">D-DAY</div></div>
       <div class="body">
         <span class="tag">날짜</span>
-        <h4>"초일 산입"이 뭐길래 100일이 99일이 될까</h4>
-        <div class="meta"><span>05.18</span><span class="read">3분</span></div>
+        <h4>디데이 계산 — 오늘을 1일로 셀지 0일로 셀지 먼저 정하세요</h4>
+        <div class="meta"><span>06.10</span><span class="read">4분</span></div>
       </div>
     </a>
 
     <a href="/blog/discount-percent-guide/" class="scard sm">
-      <div class="thumb"><div class="ph-fill warn">SUB</div></div>
+      <div class="thumb"><div class="ph-fill warn">DISCOUNT</div></div>
       <div class="body">
-        <span class="tag warn">구독</span>
-        <h4>매달 새는 구독료, 5년 누적이면 차 한 대 값</h4>
-        <div class="meta"><span>05.16</span><span class="read">4분</span></div>
+        <span class="tag warn">할인율</span>
+        <h4>20% 할인과 20% 적립은 같은 혜택이 아닙니다</h4>
+        <div class="meta"><span>06.07</span><span class="read">4분</span></div>
       </div>
     </a>
 
@@ -583,29 +461,29 @@ footer{border-top:1px solid var(--border);margin-top:20px;padding:28px 0 80px;co
       <div class="thumb"><div class="ph-fill">IMG · WEBP</div></div>
       <div class="body">
         <span class="tag">이미지</span>
-        <h4>JPG·PNG·WebP·AVIF — 용도별 포맷 선택표</h4>
-        <p>블로그 썸네일부터 인쇄용까지, 5가지 케이스 비교.</p>
-        <div class="meta"><span>05.15</span><span class="read">4분</span></div>
+        <h4>이미지 용량 줄이기 — JPG, PNG, WebP를 언제 써야 할까</h4>
+        <p>업로드 전에 이미지 품질과 용량을 함께 맞추는 실전 기준입니다.</p>
+        <div class="meta"><span>06.11</span><span class="read">4분</span></div>
       </div>
     </a>
 
     <a href="/blog/senior-cat-health-check/" class="scard med">
-      <div class="thumb"><div class="ph-fill">CAT · WATER</div></div>
+      <div class="thumb"><div class="ph-fill">CAT · SENIOR</div></div>
       <div class="body">
-        <span class="tag teal">고양이 건강</span>
-        <h4>겨울철 음수량을 두 배로 — 5가지 환경 변화</h4>
-        <p>그릇 위치·재질·온도 조정만으로 평균 1.8배 증가.</p>
-        <div class="meta"><span>05.20</span><span class="read">4분</span></div>
+        <span class="tag teal">노묘 관리</span>
+        <h4>노묘 건강검진 항목 — 나이 계산 후 바로 확인할 것들</h4>
+        <p>생애 단계별로 어떤 검진과 생활 변화를 챙길지 정리했습니다.</p>
+        <div class="meta"><span>05.29</span><span class="read">4분</span></div>
       </div>
     </a>
 
     <a href="/blog/business-day-count-guide/" class="scard med">
-      <div class="thumb"><div class="ph-fill warn">FUEL</div></div>
+      <div class="thumb"><div class="ph-fill warn">BIZ · DAY</div></div>
       <div class="body">
-        <span class="tag warn">생활 계산</span>
-        <h4>주말 드라이브 유류비 N빵, 가장 깔끔한 공식</h4>
-        <p>거리·연비·유가만 있으면 인원수로 자동 분할.</p>
-        <div class="meta"><span>05.17</span><span class="read">3분</span></div>
+        <span class="tag warn">영업일</span>
+        <h4>오늘부터 5영업일 후와 두 날짜 사이는 다릅니다</h4>
+        <p>시작일 포함 여부가 결과를 바꾸므로 업무 마감 규칙을 먼저 확인합니다.</p>
+        <div class="meta"><span>06.04</span><span class="read">4분</span></div>
       </div>
     </a>
 
@@ -616,8 +494,8 @@ footer{border-top:1px solid var(--border);margin-top:20px;padding:28px 0 80px;co
 <section class="wrap">
   <div class="portal-cta">
     <div>
-      <h3>트렌드만 보고 끝내지 말고, 직접 계산해보기</h3>
-      <p>티모집사 툴즈의 36개 무료 도구로 검색만 하던 것을 바로 내 숫자로.</p>
+      <h3>검색 주제만 보고 끝내지 말고, 직접 계산해보기</h3>
+      <p>티모집사 툴즈의 44개 무료 도구로 검색만 하던 것을 바로 내 숫자로.</p>
     </div>
     <a href="/" class="portal-cta-btn">
       도구 포털로 돌아가기
@@ -627,7 +505,7 @@ footer{border-top:1px solid var(--border);margin-top:20px;padding:28px 0 80px;co
 </section>
 
 <footer>
-  © 2026 티모집사 트렌드 · 실시간 키워드 데이터는 매 10분 자동 갱신
+  © 2026 티모집사 가이드 · 검색 제안 기반 참고 데이터 · 마지막 주제 데이터 변경 시각은 상단 표시
 </footer>
 
 <script src="app.js" defer></script>
@@ -638,17 +516,6 @@ function toggleTheme(){
   document.documentElement.setAttribute('data-theme',next);
   try{localStorage.setItem('theme',next)}catch(e){}
 }
-(function(){
-  var d=new Date();
-  var pad=function(n){return n<10?'0'+n:''+n};
-  var s=pad(d.getMonth()+1)+'.'+pad(d.getDate())+' · '+pad(d.getHours())+':'+pad(d.getMinutes())+' 갱신 · 매 10분';
-  var el=document.getElementById('heroMeta');
-  if(el) el.textContent=s;
-})();
-(function(){
-  var btns=document.querySelectorAll('.th-tabs button');
-  btns.forEach(function(b){b.addEventListener('click',function(){btns.forEach(function(x){x.classList.remove('on')});b.classList.add('on');});});
-})();
 </script>
 </body>
 </html>

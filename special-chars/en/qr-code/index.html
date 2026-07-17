@@ -9,15 +9,16 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>📷 QR Code Generator — TeemoZipsa</title>
-<meta name="description" content="Generate QR codes instantly from text, URLs, or contacts and download them.">
+<meta name="description" content="Generate QR codes from text, URLs, or contacts, choose L/M/Q/H error correction, and download a PNG with a standard four-module quiet zone.">
 <meta property="og:title" content="📷 QR Code Generator — TeemoZipsa">
-<meta property="og:description" content="Generate QR codes instantly from text, URLs, or contacts and download them.">
+<meta property="og:description" content="Choose size and error correction, then download a QR code PNG with a standard quiet zone.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/qr-code/">
 <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
 <link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/qr-code/">
 <meta name="robots" content="noindex, follow">
-<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" onerror="window.__qrCdnError=true"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" integrity="sha384-lQXOAyZwHXE55JFyrOMB7nY2Wv+m5ZWNtJcHrd1rceRQXAYNLak8ukN5TjBTcIwz" crossorigin="anonymous" referrerpolicy="no-referrer" onerror="window.__qrCdnError=true"></script>
+<script>(function(){if(typeof qrcode==='function'&&qrcode.stringToBytesFuncs&&typeof qrcode.stringToBytesFuncs['UTF-8']==='function'){qrcode.stringToBytes=qrcode.stringToBytesFuncs['UTF-8'];window.__qrUtf8Ready=true}else{window.__qrCdnError=true}})()</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
   *{margin:0;padding:0;box-sizing:border-box}
@@ -41,6 +42,10 @@
   .size-row{display:flex;align-items:center;gap:10px}
   .size-row label{font-size:11px;color:var(--calc-expr-text);font-weight:600;white-space:nowrap}
   .size-row select{background:var(--bg-bar);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:6px 10px;font-size:12px;font-family:inherit;outline:none}
+  .setting-note{font-size:11px;color:var(--text-placeholder);line-height:1.5;margin-top:-8px}
+  .report-box{margin:2px 20px 14px;padding:16px;background:rgba(83,52,131,.05);border-left:4px solid var(--accent);border-radius:8px;font-size:13px;line-height:1.6;color:var(--text-primary);display:none}
+  .report-box.show{display:block;animation:fadeIn .4s}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
   .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text)}
   .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
   .footer a:hover{color:var(--text-guide)}
@@ -81,22 +86,33 @@
     <a href="/special-chars/qr-code/" class="back-btn">🌐 한국어</a>
   </div>
   <div class="body">
-    <textarea id="qrInput" placeholder="Enter URL, text, contact info, etc...&#10;e.g. https://teemozipsa.github.io/en/" oninput="generate()"></textarea>
+    <textarea id="qrInput" maxlength="5000" placeholder="Enter URL, text, contact info, etc...&#10;e.g. https://teemozipsa.github.io/en/" oninput="scheduleGenerate()" aria-label="Content to encode as a QR code"></textarea>
     <div class="size-row">
-      <label>QR Size:</label>
+      <label for="qrSize">Module Size:</label>
       <select id="qrSize" onchange="generate()">
-        <option value="4">Small (132px)</option>
-        <option value="6" selected>Medium (198px)</option>
-        <option value="8">Large (264px)</option>
-        <option value="12">Very Large (396px)</option>
+        <option value="4">Small (4px/module)</option>
+        <option value="6" selected>Medium (6px/module)</option>
+        <option value="8">Large (8px/module)</option>
+        <option value="12">Very Large (12px/module)</option>
       </select>
     </div>
+    <div class="size-row">
+      <label for="qrError">Error Correction:</label>
+      <select id="qrError" onchange="generate()" aria-describedby="errorLevelHelp">
+        <option value="L">L · about 7%</option>
+        <option value="M" selected>M · about 15%</option>
+        <option value="Q">Q · about 25%</option>
+        <option value="H">H · about 30%</option>
+      </select>
+    </div>
+    <p class="setting-note" id="errorLevelHelp">Higher levels tolerate more damage but can produce a denser QR pattern for the same content.</p>
     <div class="qr-box" id="qrBox"></div>
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="downloadQR()">📥 Download PNG</button>
-      <button class="btn btn-secondary" onclick="copyQR()">📋 Copy to Clipboard</button>
+      <button type="button" class="btn btn-primary" onclick="downloadQR()" disabled>📥 Download PNG</button>
+      <button type="button" class="btn btn-secondary" onclick="copyQR()" disabled>📋 Copy to Clipboard</button>
     </div>
   </div>
+  <div id="reportBox" class="report-box" role="status" aria-live="polite"></div>
   <section class="guide-section">
     <h2>💡 Comprehensive Guide to QR Code Generation</h2>
     
@@ -105,8 +121,9 @@
       <div class="guide-content">
         <ol>
           <li>Enter the URL, text, or contact information you want in the input box.</li>
-          <li>The QR code will be generated in real-time.</li>
-          <li>Download the generated QR code as an image.</li>
+          <li>Choose a module size and error-correction level. M is a good default for general use.</li>
+          <li>The QR code is generated in real time with a four-module white quiet zone.</li>
+          <li>Download or copy the generated PNG, then test it with a real phone before distribution.</li>
         </ol>
       </div>
     </details>
@@ -114,21 +131,28 @@
     <details class="guide">
       <summary>2. What is the minimum print size for a QR code?</summary>
       <div class="guide-content">
-        <p>Generally, the minimum print size is 2x2 cm (about 0.8 inches). If it's smaller, smartphone cameras may struggle to read it. For business cards, 1.5 cm is possible, but more data requires a larger size. We recommend at least 3x3 cm for safety.</p>
+        <p>There is no single minimum that works for every QR code. More data produces more modules, so each module becomes smaller at the same print size. Keep the four-module quiet zone and test the final print at its real viewing distance with representative phones. For a small handout, starting around 2–3 cm and testing before distribution is a practical baseline, not a guarantee.</p>
       </div>
     </details>
 
     <details class="guide">
       <summary>3. What if the QR code won't scan?</summary>
       <div class="guide-content">
-        <p>Common reasons for unreadable QR codes include: ① Print size is too small. ② Poor color contrast (e.g., dark QR on a dark background). ③ Blurry or distorted image. ④ Too much data making the QR code overly complex. This tool uses error correction level 'M', meaning it can be recovered even if up to 15% is damaged.</p>
+        <p>Common causes include a print that is too small, weak contrast, blur or distortion, a cropped white border, and too much data. You can choose L (about 7%), M (about 15%), Q (about 25%), or H (about 30%) error correction. Those percentages are general damage-recovery approximations; real scan performance also depends on the camera, print quality, and type of damage.</p>
       </div>
     </details>
 
     <details class="guide">
       <summary>4. Can I put long texts or special URLs in the QR code?</summary>
       <div class="guide-content">
-        <p>Yes. However, the more data you include, the more complex the QR code becomes, which can lower the scanning success rate. Depending on the version, a QR code can hold up to ~4,296 alphanumeric characters. We recommend using short URLs whenever possible for the best scanning experience.</p>
+        <p>Yes, within QR capacity. The more data you include, and the higher the selected error correction, the more complex the pattern can become. Capacity also varies by character encoding, so there is no single limit that applies to every input. Use short, stable URLs whenever possible for the best scanning experience.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>5. Why does the downloaded image include a white border?</summary>
+      <div class="guide-content">
+        <p>The PNG includes a four-module <b>quiet zone</b> on every side inside the image canvas. This clear border helps scanners distinguish the QR code from its surroundings. Keep it intact when cropping, printing, or placing the image over another background.</p>
       </div>
     </details>
 
@@ -158,32 +182,89 @@
 </div>
 <script>
 let currentDataUrl = '';
+const QUIET_ZONE_MODULES = 4;
+const QR_BYTE_CAPACITY = Object.freeze({ L: 2953, M: 2331, Q: 1663, H: 1273 });
+let generateTimer = 0;
 // 자동 저장: 페이지 로드 시 이전 입력 복원
-(function(){const saved=localStorage.getItem('qrCode_text');if(saved){document.getElementById('qrInput').value=saved;setTimeout(generate,0)}})();
+(function(){try{const saved=localStorage.getItem('qrCode_text');if(saved){document.getElementById('qrInput').value=saved;setTimeout(generate,0)}}catch(e){}})();
+
+function scheduleGenerate() {
+  clearTimeout(generateTimer);
+  if (!document.getElementById('qrInput').value.trim()) {
+    generate();
+    return;
+  }
+  invalidateOutput('Generating the QR code…');
+  generateTimer = setTimeout(generate, 180);
+}
+
+function setOutputReady(ready) {
+  document.querySelectorAll('.btn-row .btn').forEach(button => { button.disabled = !ready; });
+}
+
+function invalidateOutput(message = '') {
+  currentDataUrl = '';
+  setOutputReady(false);
+  const box = document.getElementById('qrBox');
+  if (message) {
+    box.innerHTML = `<p style="color:var(--text-info);font-size:12px">${message}</p>`;
+    box.style.display = 'block';
+  }
+  document.getElementById('reportBox').classList.remove('show');
+}
 
 function generate() {
+  clearTimeout(generateTimer);
+  generateTimer = 0;
+  currentDataUrl = '';
+  setOutputReady(false);
   const raw = document.getElementById('qrInput').value;
   // 자동 저장
   try{localStorage.setItem('qrCode_text',raw)}catch(e){}
-  const text = raw.trim();
+  const text = raw;
   const box = document.getElementById('qrBox');
-  if (!text) { box.style.display = 'none'; return; }
+  if (!text.trim()) {
+    box.style.display = 'none';
+    currentDataUrl = '';
+    document.getElementById('reportBox').classList.remove('show');
+    return;
+  }
+  if (!window.__qrUtf8Ready || typeof qrcode !== 'function') {
+    box.innerHTML = '<p style="color:#f87171;font-size:12px">The QR library is unavailable. Check your internet connection and refresh the page.</p>';
+    box.style.display = 'block';
+    currentDataUrl = '';
+    document.getElementById('reportBox').classList.remove('show');
+    return;
+  }
   const cellSize = parseInt(document.getElementById('qrSize').value);
+  const errorLevel = document.getElementById('qrError').value;
+  const byteLength = qrcode.stringToBytes(text).length;
+  if (byteLength > QR_BYTE_CAPACITY[errorLevel]) {
+    box.innerHTML = `<p style="color:#f87171;font-size:12px">This input exceeds level ${errorLevel}'s byte capacity (${QR_BYTE_CAPACITY[errorLevel].toLocaleString()} bytes). Shorten it or choose a lower error-correction level.</p>`;
+    box.style.display = 'block';
+    currentDataUrl = '';
+    document.getElementById('reportBox').classList.remove('show');
+    return;
+  }
   try {
-    const qr = qrcode(0, 'M');
+    const qr = qrcode(0, errorLevel);
     qr.addData(text);
     qr.make();
-    const size = qr.getModuleCount() * cellSize;
+    const moduleCount = qr.getModuleCount();
+    const totalModuleCount = moduleCount + (QUIET_ZONE_MODULES * 2);
+    const size = totalModuleCount * cellSize;
     const canvas = document.createElement('canvas');
     canvas.width = size; canvas.height = size;
+    canvas.setAttribute('role', 'img');
+    canvas.setAttribute('aria-label', `${moduleCount} by ${moduleCount} module QR code with a ${QUIET_ZONE_MODULES}-module quiet zone on every side`);
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = '#fff';
     ctx.fillRect(0, 0, size, size);
-    for (let r = 0; r < qr.getModuleCount(); r++) {
-      for (let c = 0; c < qr.getModuleCount(); c++) {
+    ctx.fillStyle = '#1a1a2e';
+    for (let r = 0; r < moduleCount; r++) {
+      for (let c = 0; c < moduleCount; c++) {
         if (qr.isDark(r, c)) {
-          ctx.fillStyle = '#1a1a2e';
-          ctx.fillRect(c * cellSize, r * cellSize, cellSize, cellSize);
+          ctx.fillRect((c + QUIET_ZONE_MODULES) * cellSize, (r + QUIET_ZONE_MODULES) * cellSize, cellSize, cellSize);
         }
       }
     }
@@ -191,10 +272,24 @@ function generate() {
     box.appendChild(canvas);
     box.style.display = 'block';
     currentDataUrl = canvas.toDataURL('image/png');
+    setOutputReady(true);
+    updateReport(text, size, moduleCount, totalModuleCount, errorLevel, byteLength);
   } catch(e) {
     box.innerHTML = '<p style="color:#f87171;font-size:12px">Text is too long or cannot be encoded.</p>';
     box.style.display = 'block';
+    currentDataUrl = '';
+    document.getElementById('reportBox').classList.remove('show');
   }
+}
+function updateReport(text, size, moduleCount, totalModuleCount, errorLevel, byteLength) {
+  const box = document.getElementById('reportBox');
+  const normalized = text.trim();
+  let type = 'plain text';
+  if (normalized.startsWith('http://') || normalized.startsWith('https://')) type = 'website URL';
+  else if (normalized.startsWith('tel:') || /\d{2,3}-\d{3,4}-\d{4}/.test(normalized)) type = 'phone/contact';
+  else if (normalized.startsWith('mailto:')) type = 'email address';
+  box.innerHTML = `📷 <b>QR generation report</b><br>The input is <b>${type}</b> with <b>${text.length} characters · ${byteLength.toLocaleString()} UTF-8 bytes</b>. Error correction is <b>level ${errorLevel}</b>, and the QR symbol is <b>${moduleCount}×${moduleCount} modules</b>. Adding a ${QUIET_ZONE_MODULES}-module quiet zone on every side makes the full canvas <b>${totalModuleCount}×${totalModuleCount} modules</b> or <b>${size}×${size}px</b>. Test the final image with a real phone before distribution.`;
+  box.classList.add('show');
 }
 function downloadQR() {
   if (!currentDataUrl) return;

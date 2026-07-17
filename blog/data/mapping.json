@@ -1,11 +1,15 @@
 {
-  "_comment": "랭킹 키워드를 글/도구로 연결하는 룰. 정확한 매칭이 우선, 없으면 substring/contains 매칭으로 fallback.",
+  "_comment": "검색 제안 및 편집 주제를 관련 글/도구로 연결하는 룰. 정확한 매칭이 우선, 없으면 substring/contains 매칭으로 fallback.",
   "keyword_to_content": {
     "고양이 나이 계산":      { "article": "cat-age-guide",                   "tool": "pet-age-calc"    },
     "고양이 BCS 측정법":     { "article": "cat-bmi-guide",                   "tool": "pet-bmi-calc"    },
     "원시주머니 vs 비만":    { "article": "cat-bmi-guide",                   "tool": "pet-bmi-calc"    },
     "츄르 권장량 하루":      { "article": "cat-food-amount-guide",           "tool": "pet-food-calc"   },
     "고양이 사료 급여량":    { "article": "cat-food-amount-guide",           "tool": "pet-food-calc"   },
+    "고양이 간식":          { "article": "cat-food-amount-guide",           "tool": "pet-food-calc"   },
+    "고양이 간식 추천":     { "article": "cat-food-amount-guide",           "tool": "pet-food-calc"   },
+    "고양이 체중계":        { "article": null,                               "tool": null              },
+    "고양이 건강검진 비용": { "article": null,                               "tool": null              },
     "다묘 가정 사료":        { "article": "cat-food-amount-guide",           "tool": "pet-food-calc"   },
     "강아지 사료량 계산":    { "article": "dog-food-amount-guide",           "tool": "pet-food-calc"   },
     "고양이 신장 질환 증상": { "article": "senior-cat-health-check",         "tool": null              },
@@ -24,6 +28,7 @@
     { "match": "강아지",   "article": "dog-food-amount-guide",           "tool": "pet-food-calc"   },
     { "match": "츄르",     "article": "cat-food-amount-guide",           "tool": "pet-food-calc"   },
     { "match": "사료",     "article": "cat-food-amount-guide",           "tool": "pet-food-calc"   },
+    { "match": "간식",     "article": "cat-food-amount-guide",           "tool": "pet-food-calc"   },
     { "match": "노묘",     "article": "senior-cat-health-check",         "tool": "pet-age-calc"    },
     { "match": "건강검진", "article": "senior-cat-health-check",         "tool": "pet-age-calc"    },
     { "match": "신장",     "article": "senior-cat-health-check",         "tool": null              },
@@ -31,7 +36,6 @@
     { "match": "BCS",      "article": "cat-bmi-guide",                   "tool": "pet-bmi-calc"    },
     { "match": "비만",     "article": "cat-bmi-guide",                   "tool": "pet-bmi-calc"    },
     { "match": "체중",     "article": "cat-bmi-guide",                   "tool": "pet-bmi-calc"    },
-    { "match": "고양이",   "article": "cat-age-guide",                   "tool": "pet-age-calc"    },
     { "match": "공휴일",   "article": "korean-substitute-holiday-guide", "tool": "biz-day-calc"    },
     { "match": "영업일",   "article": "business-day-count-guide",        "tool": "biz-day-calc"    },
     { "match": "부가세",   "article": "vat-inclusive-exclusive-guide",   "tool": "discount-calc"   },
@@ -44,7 +48,7 @@
   ],
   "_tool_meta_comment": "사이트 도구 메타 — id 만으로 카드를 렌더할 수 있게 정리.",
   "tools": {
-    "pet-age-calc":      { "url": "/special-chars/pet-age-calc/",      "name": "반려동물 나이 계산기",  "icon": "🐾",  "color": "teal", "desc": "AAFP 기준 사람 나이 환산" },
+    "pet-age-calc":      { "url": "/special-chars/pet-age-calc/",      "name": "반려동물 나이 계산기",  "icon": "🐾",  "color": "teal", "desc": "교육용 사람 나이 환산" },
     "pet-bmi-calc":      { "url": "/special-chars/pet-bmi-calc/",      "name": "반려동물 체중 관리",    "icon": "⚖️",  "color": "blue", "desc": "BCS 9점 척도 평가" },
     "pet-food-calc":     { "url": "/special-chars/pet-food-calc/",     "name": "사료 급여량 계산기",    "icon": "🍖",  "color": "warn", "desc": "체중·활동량 기반 하루치" },
     "calorie-calc":      { "url": "/special-chars/calorie-calc/",      "name": "칼로리 계산기",        "icon": "🔥",  "color": "blue", "desc": "다이어트 목표 칼로리" },
@@ -57,6 +61,6 @@
     "broker-fee-calc":   { "url": "/special-chars/broker-fee-calc/",   "name": "부동산 중개보수 계산기", "icon": "🏠", "color": "warn", "desc": "매매·전월세 중개보수" },
     "image-compress":    { "url": "/special-chars/image-compress/",    "name": "이미지 용량 줄이기",   "icon": "🗜️", "color": "blue", "desc": "브라우저에서 바로 압축" },
     "fuel-calc":         { "url": "/special-chars/fuel-calc/",         "name": "유류비 계산기",        "icon": "⛽",  "color": "warn", "desc": "거리·연비·유가 N빵" },
-    "image-format-converter": { "url": "/special-chars/image-format-converter/", "name": "이미지 포맷 변환기", "icon": "🖼️", "color": "blue", "desc": "JPG/PNG/WebP/AVIF" }
+    "image-format-converter": { "url": "/special-chars/image-format-converter/", "name": "이미지 포맷 변환기", "icon": "🖼️", "color": "blue", "desc": "JPG/PNG/WebP 출력" }
   }
 }

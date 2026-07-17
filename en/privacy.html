@@ -38,7 +38,7 @@
 <div class="hero">
     <a href="/en/" class="back-link">← Back to Tools</a>
     <h1>Privacy Policy</h1>
-    <p>Last updated: March 18, 2026</p>
+    <p>Last updated: July 17, 2026</p>
 </div>
 
 <div class="content">
@@ -50,6 +50,8 @@
     <p>However, the following information may be collected automatically:</p>
     <ul>
         <li><strong>Browser cookies and localStorage</strong>: Favorites, user preferences (dark mode, etc.), and banner dismissal states are stored in your browser. This data is stored only on your device and is never sent to a server.</li>
+        <li><strong>Anonymous visit count</strong>: The home page reads an aggregate counter from Firebase Realtime Database and increments it at most once every 24 hours per browser. No account name or email address is sent with this counter.</li>
+        <li><strong>Network-tool requests</strong>: Features that inherently require internet access, such as public-IP lookup and website response-latency checks, send a direct browser request to the selected provider or target address. That provider may process normal connection data such as your IP address and browser information.</li>
         <li><strong>Google AdSense data</strong>: This site uses Google AdSense to display ads. Google may use cookies for ad personalization.</li>
     </ul>
 
@@ -63,7 +65,7 @@
     <p>Some tools on this site use your browser's localStorage for convenience:</p>
     <ul>
         <li>Portal: Favorited tools list, banner dismissal state, view preferences</li>
-        <li>Individual tools: User settings and preferences</li>
+        <li>Selected text and marketing tools: Last input or draft content</li>
     </ul>
     <p>This data is stored only in your browser and is never sent to external servers. You can delete it at any time through your browser settings.</p>
 
@@ -72,7 +74,13 @@
     <ul>
         <li><strong>Google AdSense</strong>: Ad serving (<a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="color:#6366f1;">Google Privacy Policy</a>)</li>
         <li><strong>GitHub Pages</strong>: Web hosting (<a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener" style="color:#6366f1;">GitHub Privacy Statement</a>)</li>
-        <li><strong>Google Fonts CDN</strong>: Font delivery</li>
+        <li><strong>Firebase Realtime Database</strong>: Anonymous aggregate visit counter</li>
+        <li><strong>Cloudflare, country.is, and ipify</strong>: Public-IP and country-code lookup</li>
+        <li><strong>jsDelivr CDN</strong>: Fonts and browser-side PDF, QR, and background-removal libraries</li>
+        <li><strong>Google Fonts</strong>: Inter web font on English pages</li>
+        <li><strong>Google gstatic</strong>: Web-font files and Emoji Kitchen combination images</li>
+        <li><strong>Unsplash</strong>: Featured images for selected blog articles</li>
+        <li><strong>User-entered target websites</strong>: Response-latency measurement requests</li>
     </ul>
 
     <h2>6. Your Rights</h2>

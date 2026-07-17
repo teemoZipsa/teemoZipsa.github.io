@@ -9,9 +9,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>🐾 Pet Age Calculator — TeemoZipsa</title>
-<meta name="description" content="Convert your dog or cat's age to human years. Supports small, medium, and large breeds. 100% free online tool.">
+<meta name="description" content="Estimate a dog or cat's human-age equivalent with an educational non-linear model. Accepts whole ages from 0 to 30 and is not an official veterinary standard.">
 <meta property="og:title" content="🐾 Pet Age Calculator — TeemoZipsa">
-<meta property="og:description" content="Convert your dog or cat's age to human years.">
+<meta property="og:description" content="Educational dog and cat human-age estimate; not an official veterinary conversion.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.github.io/special-chars/en/pet-age-calc/">
 <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
@@ -144,7 +144,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <details class="guide" open>
       <summary>1. Is it true that 1 dog year equals 7 human years?</summary>
       <div class="guide-content">
-        <p>No, the "multiply by 7" rule is a common myth. In reality, dogs and cats mature much faster during their first two years of life than humans do. After that, their aging process slows down. We base our <strong>pet age calculator</strong> on the latest veterinary guidelines (AVMA) which use a non-linear calculation for accuracy.</p>
+        <p>No. The "multiply by 7" rule is an oversimplification. This calculator uses a project-defined non-linear educational model in which dogs and cats mature quickly during their first two years. It is not an official AVMA conversion or a veterinary assessment.</p>
       </div>
     </details>
 
@@ -163,7 +163,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     <details class="guide">
       <summary>3. Does size really affect a dog's lifespan?</summary>
       <div class="guide-content">
-        <p>Yes. Generally, larger dog breeds tend to have shorter lifespans and age faster than smaller breeds. That's why our <strong>dog age calculator</strong> requires you to specify if your dog is Small, Medium, or Large for accurate results.</p>
+        <p>Size can be associated with different aging patterns and lifespans in dogs. The Small, Medium, and Large choices only select broad rates in this educational model; they do not make the result a precise forecast for an individual dog.</p>
       </div>
     </details>
 
@@ -172,7 +172,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
       <div class="tools-grid">
         <a href="/special-chars/en/pet-bmi-calc/" class="tool-card">
           <span class="tool-icon">⚖️</span>
-          <span class="tool-name">Pet BMI Calc</span>
+          <span class="tool-name">Pet Body Condition Score</span>
         </a>
         <a href="/special-chars/en/pet-food-calc/" class="tool-card">
           <span class="tool-icon">🍖</span>
@@ -190,7 +190,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
     </div>
   </section>
 
-  <div class="footer"><span>Based on AVMA standards</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
+  <div class="footer"><span>Educational age estimate</span><a href="https://teemozipsa.github.io/en/">😺 More Tools</a></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -248,9 +248,26 @@ function setSize(s) {
   calc();
 }
 
+function clearAgeResult(input) {
+  input.setAttribute('aria-invalid', 'true');
+  document.getElementById('emoji').textContent = '🐾';
+  document.getElementById('humanAge').textContent = '-';
+  const stageEl = document.getElementById('stage');
+  stageEl.textContent = '-';
+  stageEl.removeAttribute('style');
+  document.getElementById('stageBar').innerHTML = '';
+  document.getElementById('infoGrid').innerHTML = '';
+}
+
 function calc() {
-  const age = parseFloat(document.getElementById('petAge').value);
-  if (isNaN(age) || age < 0) return;
+  const input = document.getElementById('petAge');
+  const rawAge = input.value.trim();
+  const age = Number(rawAge);
+  if (!rawAge || !Number.isInteger(age) || age < 0 || age > 30) {
+    clearAgeResult(input);
+    return;
+  }
+  input.removeAttribute('aria-invalid');
 
   const human = petType === 'dog' ? dogToHuman(age, dogSize) : catToHuman(age);
   const stage = STAGES.find(s => human < s.maxAge) || STAGES[STAGES.length - 1];
@@ -273,11 +290,11 @@ function calc() {
   const pct = Math.min(100, Math.round((age / life.years) * 100));
   document.getElementById('infoGrid').innerHTML = `
     <div class="info-item">
-      <div class="label">${petType === 'dog' ? '🐶 Breed Avg. Lifespan' : '🐱 Avg. Lifespan'}</div>
+      <div class="label">Illustrative lifespan reference</div>
       <div class="value">${life.years} yrs</div>
     </div>
     <div class="info-item">
-      <div class="label">Lifespan Progress</div>
+      <div class="label">Simple reference ratio</div>
       <div class="value" style="color:${pct > 80 ? '#ef4444' : pct > 50 ? '#f97316' : '#22c55e'}">${pct}%</div>
     </div>
     <div class="info-item">

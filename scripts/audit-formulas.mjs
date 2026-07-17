@@ -37,20 +37,39 @@ function sameDate(a, b) {
 
 function fixedHolidayRules(year) {
   const rules = [
+    ['ordinary', `${year}-01-01`, '신정'],
     ['national', `${year}-03-01`, '삼일절'],
-    ['fixed', `${year}-05-01`, '노동절'],
-    ['fixed', `${year}-05-05`, '어린이날'],
-    ['fixed', `${year}-06-06`, '현충일'],
-    ['national', `${year}-07-17`, '제헌절'],
+    ...(year >= 2026 ? [['labor', `${year}-05-01`, '노동절']] : []),
+    ['children', `${year}-05-05`, '어린이날'],
+    ['ordinary', `${year}-06-06`, '현충일'],
+    ...(year >= 2026 ? [['national', `${year}-07-17`, '제헌절']] : []),
     ['national', `${year}-08-15`, '광복절'],
     ['national', `${year}-10-03`, '개천절'],
     ['national', `${year}-10-09`, '한글날'],
-    ['fixed', `${year}-12-25`, '기독탄신일']
+    ['christmas', `${year}-12-25`, '기독탄신일']
   ];
   return rules.map(([kind, date, name]) => ({ kind, date, name }));
 }
 
 const lunarHolidays = {
+  2024: [
+    { kind: 'lunarNewYear', date: '2024-02-09', name: '설날 연휴' },
+    { kind: 'lunarNewYear', date: '2024-02-10', name: '설날' },
+    { kind: 'lunarNewYear', date: '2024-02-11', name: '설날 연휴' },
+    { kind: 'buddha', date: '2024-05-15', name: '부처님오신날' },
+    { kind: 'chuseok', date: '2024-09-16', name: '추석 연휴' },
+    { kind: 'chuseok', date: '2024-09-17', name: '추석' },
+    { kind: 'chuseok', date: '2024-09-18', name: '추석 연휴' }
+  ],
+  2025: [
+    { kind: 'lunarNewYear', date: '2025-01-28', name: '설날 연휴' },
+    { kind: 'lunarNewYear', date: '2025-01-29', name: '설날' },
+    { kind: 'lunarNewYear', date: '2025-01-30', name: '설날 연휴' },
+    { kind: 'buddha', date: '2025-05-05', name: '부처님오신날' },
+    { kind: 'chuseok', date: '2025-10-05', name: '추석 연휴' },
+    { kind: 'chuseok', date: '2025-10-06', name: '추석' },
+    { kind: 'chuseok', date: '2025-10-07', name: '추석 연휴' }
+  ],
   2026: [
     { kind: 'lunarNewYear', date: '2026-02-16', name: '설날 연휴' },
     { kind: 'lunarNewYear', date: '2026-02-17', name: '설날' },
@@ -59,6 +78,15 @@ const lunarHolidays = {
     { kind: 'chuseok', date: '2026-09-24', name: '추석 연휴' },
     { kind: 'chuseok', date: '2026-09-25', name: '추석' },
     { kind: 'chuseok', date: '2026-09-26', name: '추석 연휴' }
+  ],
+  2027: [
+    { kind: 'lunarNewYear', date: '2027-02-06', name: '설날 연휴' },
+    { kind: 'lunarNewYear', date: '2027-02-07', name: '설날' },
+    { kind: 'lunarNewYear', date: '2027-02-08', name: '설날 연휴' },
+    { kind: 'buddha', date: '2027-05-13', name: '부처님오신날' },
+    { kind: 'chuseok', date: '2027-09-14', name: '추석 연휴' },
+    { kind: 'chuseok', date: '2027-09-15', name: '추석' },
+    { kind: 'chuseok', date: '2027-09-16', name: '추석 연휴' }
   ]
 };
 
@@ -66,7 +94,7 @@ function substituteEligible(rule, allHolidayDates) {
   const date = dateFromIso(rule.date);
   const day = date.getDay();
   const overlapsOtherHoliday = allHolidayDates.get(rule.date) > 1;
-  if (['national', 'fixed', 'buddha'].includes(rule.kind)) {
+  if (['national', 'buddha', 'labor', 'children', 'christmas'].includes(rule.kind)) {
     return day === 0 || day === 6 || overlapsOtherHoliday;
   }
   if (['lunarNewYear', 'chuseok'].includes(rule.kind)) {
@@ -82,19 +110,28 @@ function buildHolidays(year) {
   base.forEach(h => counts.set(h.date, (counts.get(h.date) || 0) + 1));
   const holidays = base.map(h => ({ date: dateFromIso(h.date), name: h.name, substitute: false }));
   const holidayIsoSet = new Set(base.map(h => h.date));
+  const manualItems = manual.years[String(year)] || [];
+  manualItems.forEach(item => holidayIsoSet.add(item.date));
 
+  const rulesByOriginalDate = new Map();
   for (const rule of base) {
-    if (!substituteEligible(rule, counts)) continue;
-    let candidate = addDays(dateFromIso(rule.date), 1);
-    while (candidate.getDay() === 6 || holidayIsoSet.has(isoDate(candidate))) {
+    if (!rulesByOriginalDate.has(rule.date)) rulesByOriginalDate.set(rule.date, []);
+    rulesByOriginalDate.get(rule.date).push(rule);
+  }
+
+  for (const [originalDate, sameDateRules] of rulesByOriginalDate) {
+    if (!sameDateRules.some(rule => substituteEligible(rule, counts))) continue;
+    let candidate = addDays(dateFromIso(originalDate), 1);
+    while ([0, 6].includes(candidate.getDay()) || holidayIsoSet.has(isoDate(candidate))) {
       candidate = addDays(candidate, 1);
     }
     const candidateIso = isoDate(candidate);
     holidayIsoSet.add(candidateIso);
-    holidays.push({ date: candidate, name: `대체공휴일(${rule.name})`, substitute: true });
+    const names = sameDateRules.map(rule => rule.name).join('·');
+    holidays.push({ date: candidate, name: `대체공휴일(${names})`, substitute: true });
   }
 
-  for (const item of manual.years[String(year)] || []) {
+  for (const item of manualItems) {
     holidays.push({ date: dateFromIso(item.date), name: item.name, substitute: false });
   }
   return holidays;
@@ -277,24 +314,114 @@ function petFoodCalc({ petType, weightKg, stage, activity, neutered }) {
   return { rer: roundWon(rer), factor: Number(factor.toFixed(2)), der: roundWon(der), dailyGrams: roundWon((der / 3600) * 1000) };
 }
 
-function petBmiCalc({ petType, breed, weightKg }) {
-  const table = petType === 'dog' ? { '말티즈': { min: 2.5, max: 4.5 } } : {};
-  const selected = table[breed];
-  if (!selected) throw new Error(`Missing fixture breed ${breed}`);
-  const idealWeight = (selected.min + selected.max) / 2;
-  let status = '이상적';
-  if (weightKg < selected.min) status = '저체중';
-  if (weightKg > selected.max) status = '약간 과체중';
-  return { status, idealWeight: Number(idealWeight.toFixed(1)), diffKg: Number((weightKg - idealWeight).toFixed(1)) };
+function petBmiCalc({ bcs }) {
+  if (!Number.isInteger(bcs) || bcs < 1 || bcs > 9) throw new Error(`Invalid 9-point BCS ${bcs}`);
+  let status;
+  if (bcs <= 3) status = '이상 체형 미만';
+  else if (bcs <= 5) status = '이상적';
+  else if (bcs <= 7) status = '이상 체형 초과';
+  else status = '비만 구간';
+  return { status, bcs };
 }
 
 function petAgeCalc({ petType, size, ageYears }) {
-  if (ageYears <= 0) return { humanAge: 0 };
-  if (ageYears <= 1) return { humanAge: 15 };
-  if (ageYears <= 2) return { humanAge: 24 };
-  if (petType === 'cat') return { humanAge: roundWon(24 + (ageYears - 2) * 4) };
+  const valid = ['dog', 'cat'].includes(petType) && Number.isInteger(ageYears) && ageYears >= 0 && ageYears <= 30 &&
+    (petType === 'cat' || ['small', 'medium', 'large'].includes(size));
+  if (!valid) return { valid: false };
+  if (ageYears === 0) return { valid: true, humanAge: 0 };
+  if (ageYears <= 1) return { valid: true, humanAge: 15 };
+  if (ageYears <= 2) return { valid: true, humanAge: 24 };
+  if (petType === 'cat') return { valid: true, humanAge: roundWon(24 + (ageYears - 2) * 4) };
   const rates = { small: 4, medium: 5, large: 7 };
-  return { humanAge: roundWon(24 + (ageYears - 2) * rates[size]) };
+  return { valid: true, humanAge: roundWon(24 + (ageYears - 2) * rates[size]) };
+}
+
+function taxiCalc({ distanceKm, lowSpeedMinutes = 0, night = false, outRatePercent = 0 }) {
+  const valid = Number.isFinite(distanceKm) && distanceKm >= 0.1 && distanceKm <= 1000 &&
+    Number.isFinite(lowSpeedMinutes) && lowSpeedMinutes >= 0 && lowSpeedMinutes <= 1440 &&
+    Number.isFinite(outRatePercent) && outRatePercent >= 0 && outRatePercent <= 20;
+  if (!valid) return { valid: false };
+  const data = {
+    base: 4800, baseDist: 1600, distPer: 131, distFee: 100, timePer: 30, timeFee: 100,
+    peakBase: 6700, peakDistFee: 140, peakTimeFee: 140, thresholdKmh: 15.72
+  };
+  const distanceTicks = Math.floor(Math.max(0, distanceKm * 1000 - data.baseDist) / data.distPer);
+  const baseTimeSeconds = data.baseDist / (data.thresholdKmh / 3.6);
+  const timeTicks = Math.floor(Math.max(0, lowSpeedMinutes * 60 - baseTimeSeconds) / data.timePer);
+  const dayMeter = data.base + distanceTicks * data.distFee + timeTicks * data.timeFee;
+  const nightMeter = night
+    ? data.peakBase + distanceTicks * data.peakDistFee + timeTicks * data.peakTimeFee
+    : dayMeter;
+  const combinedRate = (night ? 0.4 : 0) + outRatePercent / 100;
+  const combinedMeter = night && outRatePercent === 0 ? nightMeter : dayMeter * (1 + combinedRate);
+  return { valid: true, meterEstimateOne: Math.round(combinedMeter / 10) * 10 };
+}
+
+function gpaCalc({ scale, courses = [] }) {
+  const gradeTables = {
+    4.5: { 'A+':4.5,'A0':4.0,'B+':3.5,'B0':3.0,'C+':2.5,'C0':2.0,'D+':1.5,'D0':1.0,'F':0,'P':-1 },
+    4.3: { 'A+':4.3,'A0':4.0,'B+':3.3,'B0':3.0,'C+':2.3,'C0':2.0,'D+':1.3,'D0':1.0,'F':0,'P':-1 },
+    4.0: { 'A+':4.0,'A0':4.0,'B+':3.3,'B0':3.0,'C+':2.3,'C0':2.0,'D+':1.3,'D0':1.0,'F':0,'P':-1 }
+  };
+  const table = gradeTables[scale];
+  if (!table || !Array.isArray(courses)) return { valid: false };
+
+  let gpaCredits = 0;
+  let earnedCredits = 0;
+  let totalPoints = 0;
+  let gradedCourseCount = 0;
+  let enteredCourseCount = 0;
+  let invalidCreditCount = 0;
+
+  for (const course of courses) {
+    if (!course || !Object.hasOwn(table, course.grade)) continue;
+    const credit = Number(course.credit);
+    const validCredit = Number.isFinite(credit) && credit >= 0.5 && credit <= 9 && Number.isInteger(credit * 2);
+    if (!validCredit) {
+      invalidCreditCount++;
+      continue;
+    }
+    enteredCourseCount++;
+    const gradePoint = table[course.grade];
+    if (gradePoint === -1) {
+      earnedCredits += credit;
+      continue;
+    }
+    gpaCredits += credit;
+    totalPoints += credit * gradePoint;
+    gradedCourseCount++;
+    if (gradePoint > 0) earnedCredits += credit;
+  }
+
+  const hasGpa = gradedCourseCount > 0 && gpaCredits > 0;
+  return {
+    valid: true,
+    gpa: hasGpa ? Number((totalPoints / gpaCredits).toFixed(2)) : null,
+    gpaCredits,
+    earnedCredits,
+    enteredCourseCount,
+    invalidCreditCount
+  };
+}
+
+function fuelCalc({ distanceKm, efficiencyKmpl, pricePerLiter, people = 1, roundTrip = false }) {
+  const valid = Number.isFinite(distanceKm) && distanceKm >= 0.1 && distanceKm <= 100000 &&
+    Number.isFinite(efficiencyKmpl) && efficiencyKmpl >= 0.1 && efficiencyKmpl <= 1000 &&
+    Number.isFinite(pricePerLiter) && pricePerLiter >= 1 && pricePerLiter <= 1000000 &&
+    Number.isInteger(people) && people >= 1 && people <= 20;
+  if (!valid) return { valid: false };
+
+  const actualDistanceKm = roundTrip ? distanceKm * 2 : distanceKm;
+  const fuelLiters = actualDistanceKm / efficiencyKmpl;
+  const totalCost = fuelLiters * pricePerLiter;
+  return {
+    valid: true,
+    actualDistanceKm,
+    fuelLiters: Number(fuelLiters.toFixed(1)),
+    totalCost: roundWon(totalCost),
+    perPerson: roundWon(totalCost / people),
+    roundTripCost: roundTrip ? null : roundWon(totalCost * 2)
+  };
 }
 
 const calculators = {
@@ -304,6 +431,9 @@ const calculators = {
   'pet-food-calc': petFoodCalc,
   'pet-bmi-calc': petBmiCalc,
   'pet-age-calc': petAgeCalc,
+  'taxi-calc': taxiCalc,
+  'gpa-calc': gpaCalc,
+  'fuel-calc': fuelCalc,
   'biz-day-calc': inputs => inputs.operation === 'add' ? businessAdd(inputs) : businessBetween(inputs)
 };
 

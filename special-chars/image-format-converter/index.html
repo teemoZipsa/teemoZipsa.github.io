@@ -9,9 +9,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>🖼️ 이미지 포맷 변환기 — 티모집사</title>
-<meta name="description" content="JPG, PNG, WebP, GIF 간 이미지 형식을 변환하세요. 서버 전송 없이 100% 브라우저 로컬 처리.">
+<meta name="description" content="JPG·PNG·WebP·GIF·BMP·SVG 이미지를 불러와 JPG·PNG·WebP로 변환하세요. GIF는 정지 프레임, SVG는 래스터 이미지로 출력되며 브라우저에서 로컬 처리됩니다.">
 <meta property="og:title" content="🖼️ 이미지 포맷 변환기 — 티모집사">
-<meta property="og:description" content="JPG, PNG, WebP, GIF 간 이미지 형식을 변환하세요. 100% 브라우저 로컬 처리.">
+<meta property="og:description" content="JPG·PNG·WebP·GIF·BMP·SVG 입력을 JPG·PNG·WebP로 변환하는 브라우저 로컬 도구.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.github.io/special-chars/image-format-converter/">
 <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
@@ -35,6 +35,10 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .drop-zone .text{font-size:13px;color:var(--calc-expr-text)}
 .drop-zone .sub{font-size:11px;color:var(--text-placeholder);margin-top:4px}
 .drop-zone input{display:none}
+.support-info{padding:10px 12px;background:var(--bg-bar);border:1px solid var(--border);border-radius:10px;font-size:11px;color:var(--text-info);line-height:1.65}
+.support-info strong{color:var(--text-primary)}
+.format-warning{padding:11px 13px;border:1px solid var(--text-error,#f87171);border-radius:10px;background:var(--bg-guide);color:var(--text-primary);font-size:12px;line-height:1.55}
+.format-warning[hidden]{display:none}
 
 .controls{display:none;gap:14px;flex-direction:column}
 .control-row{display:flex;align-items:center;gap:12px;background:var(--bg-bar);border-radius:10px;padding:12px 16px}
@@ -119,9 +123,12 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
       <div class="icon">📁</div>
       <div class="text">클릭하거나 이미지를 드래그하세요</div>
-      <div class="sub">JPG, PNG, WebP, GIF, BMP, SVG 지원</div>
-      <input type="file" id="fileInput" accept="image/*" onchange="handleFile(this.files[0])">
+      <div class="sub">입력: JPG · PNG · WebP · GIF · BMP · SVG (최대 25MB)</div>
+      <div class="sub">출력: JPG · PNG · WebP</div>
+      <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.svg,image/jpeg,image/png,image/webp,image/gif,image/bmp,image/svg+xml" onchange="handleFile(this.files[0])">
     </div>
+
+    <div class="support-info"><strong>입력과 출력 범위가 다릅니다.</strong> GIF·BMP·SVG는 불러오기 전용입니다. 결과는 JPG·PNG·WebP 중 하나로 저장되며, 긴 변 기준 12,000px 또는 총 4,000만 픽셀을 넘는 이미지는 기기 보호를 위해 처리하지 않습니다.</div>
 
     <div class="controls" id="controls">
       <div class="control-row">
@@ -138,6 +145,8 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
         <div class="val" id="qualityVal">90%</div>
       </div>
     </div>
+
+    <div class="format-warning" id="formatWarning" role="alert" hidden></div>
 
     <div class="preview" id="preview">
       <div class="preview-card">
@@ -173,22 +182,28 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <details class="guide" open>
       <summary>이미지 확장자별 변환은 어떤 차이가 있나요?</summary>
       <div class="guide-content">
-        <p>각 웹 이미지 확장자는 고유의 압축 기술(Algorithm)과 사용처 타겟을 가집니다.</p>
+        <p><strong>입력은 JPG·PNG·WebP·GIF·BMP·SVG</strong>, <strong>출력은 JPG·PNG·WebP</strong>를 지원합니다. GIF·BMP·SVG는 출력 포맷으로 선택할 수 없습니다.</p>
         <ul>
           <li><b>JPG (JPEG):</b> 풍경 사진, 극사실주의 스틸컷 등 색감이 다양한 객체에 적합합니다. 용량이 가벼운 손실 압축 방식을 사용합니다.</li>
-          <li><b>PNG:</b> 일러스트레이터 원화, 로고, 글씨가 많은 스크린샷 캡쳐본에 가장 탁월한 무손실 압축 포맷입니다. 투명 배경(누끼 영역)을 완벽히 보존합니다.</li>
-          <li><b>WebP:</b> 구글에서 적극 권장하는 차세대 차세대 웹 그래픽 포맷입니다. PNG의 투명도 보존 장점과 JPG의 용량 절감 장점을 둘 다 갖춰 평균 25~35% 작은 용량을 자랑합니다.</li>
+          <li><b>PNG:</b> 로고, 글씨가 많은 스크린샷과 투명 배경이 필요한 이미지에 적합한 무손실 출력 포맷입니다. 다만 원본을 캔버스로 다시 그리는 과정에서 일부 메타데이터는 유지되지 않을 수 있습니다.</li>
+          <li><b>WebP:</b> 사진과 투명 이미지를 모두 지원하는 웹용 포맷입니다. 파일에 따라 JPG·PNG보다 작아질 수 있지만 항상 용량이 줄어드는 것은 아닙니다.</li>
         </ul>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>GIF 애니메이션과 SVG 벡터 정보도 유지되나요?</summary>
+      <div class="guide-content">
+        <p>아닙니다. 이 도구는 브라우저 캔버스에 이미지를 그린 뒤 다시 인코딩합니다. <strong>애니메이션 GIF는 한 장의 정지 프레임으로 변환</strong>되고, <strong>SVG는 현재 표시 크기의 픽셀 이미지로 래스터화</strong>되어 벡터 확대 특성을 잃습니다. 해당 파일을 선택하면 변환 전에 경고가 표시됩니다.</p>
       </div>
     </details>
 
     <details class="guide">
       <summary>품질 설정 등은 어떻게 진행하나요?</summary>
       <div class="guide-content">
-        <p><b>[품질 슬라이더 조절 기법]</b></p>
         <ul>
-          <li><b>JPG / WebP:</b> 이 두 가지 포맷을 타겟으로 선택하시면 품질(Quality) 슬라이더 컨트롤러가 활성화됩니다. 수치가 높을수록 화질은 선명하나 용량이 기하급수적으로 늘며, 반대의 경우 픽셀 열화 현상(깍두기)이 눈에 띌 수 있습니다. 대개 SEO 최적화 목적으로는 <b>75~85% 셋업 구간</b>을 추천합니다.</li>
-          <li><b>PNG:</b> 태생적으로 무손실 압축을 기반으로 설계되었기에 품질 바가 자동 비활성화됩니다. 원본 수준의 퀄리티를 강제 유지합니다.</li>
+          <li><b>JPG / WebP:</b> 품질 수치가 높을수록 압축 손실은 줄어드는 경향이 있지만 파일 크기 변화는 이미지마다 다릅니다. 여러 값을 비교하고 결과 패널의 실제 용량과 화면 품질을 함께 확인하세요.</li>
+          <li><b>PNG:</b> 출력 인코딩이 무손실이라 품질 슬라이더를 사용하지 않습니다. 다만 원본을 캔버스로 다시 그리므로 원본의 메타데이터·색상 프로필 등이 그대로 유지된다는 뜻은 아닙니다.</li>
         </ul>
       </div>
     </details>
@@ -196,7 +211,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <details class="guide">
       <summary>업로드된 저의 개인 사진은 서버에 기록되나요?</summary>
       <div class="guide-content">
-        <p>전혀 기록되지 않습니다. 타 웹서비스에서는 원본을 업로드해 서버의 라이브러리(ImageMagick 등)를 거치는 핑퐁을 하지만, 본 서비스는 당신의 기기(스마트폰/PC 브라우저) 내에서 오프라인 모드처럼 동작합니다. <br>따라서 신분증, 결제 이력, 사생활이 담긴 기밀 이미지를 완전한 오프라인 환경에 맞먹는 수준으로 안전하게 컨버팅할 수 있습니다.</p>
+        <p>선택한 이미지의 읽기와 변환은 현재 브라우저 안에서 진행되며 변환을 위해 파일을 서버에 업로드하지 않습니다. 다만 공용 기기에서는 다운로드된 결과 파일과 브라우저 기록을 직접 관리해 주세요.</p>
       </div>
     </details>
 
@@ -223,6 +238,32 @@ let convertedBlob=null;
 let convertedUrl=null;
 let selectedFormat='image/png';
 let quality=0.9;
+let originalInputType=null;
+let loadSequence=0;
+let conversionSequence=0;
+let decodedImage=null;
+let reconvertTimer=null;
+
+const MAX_FILE_SIZE=25*1024*1024;
+const MAX_EDGE=12000;
+const MAX_PIXELS=40000000;
+const RECONVERT_DELAY_MS=200;
+const INPUT_MIME_INFO={
+  'image/jpeg':{mime:'image/jpeg',label:'JPG'},
+  'image/jpg':{mime:'image/jpeg',label:'JPG'},
+  'image/png':{mime:'image/png',label:'PNG'},
+  'image/x-png':{mime:'image/png',label:'PNG'},
+  'image/webp':{mime:'image/webp',label:'WebP'},
+  'image/gif':{mime:'image/gif',label:'GIF'},
+  'image/bmp':{mime:'image/bmp',label:'BMP'},
+  'image/x-ms-bmp':{mime:'image/bmp',label:'BMP'},
+  'image/svg+xml':{mime:'image/svg+xml',label:'SVG'}
+};
+const INPUT_EXTENSION_INFO={
+  jpg:INPUT_MIME_INFO['image/jpeg'],jpeg:INPUT_MIME_INFO['image/jpeg'],
+  png:INPUT_MIME_INFO['image/png'],webp:INPUT_MIME_INFO['image/webp'],
+  gif:INPUT_MIME_INFO['image/gif'],bmp:INPUT_MIME_INFO['image/bmp'],svg:INPUT_MIME_INFO['image/svg+xml']
+};
 
 const dropZone=document.getElementById('dropZone');
 dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('dragover');});
@@ -233,51 +274,126 @@ dropZone.addEventListener('drop',e=>{
 });
 
 function handleFile(file){
-  if(!file||!file.type.startsWith('image/')){showToast('이미지 파일을 선택하세요');return;}
+  if(!file)return;
+  const inputType=detectInputType(file);
+  if(!inputType){rejectFile('지원하지 않는 입력 형식입니다. JPG, PNG, WebP, GIF, BMP, SVG를 선택하세요.');return;}
+  if(file.size===0){rejectFile('비어 있는 파일은 변환할 수 없습니다.');return;}
+  if(file.size>MAX_FILE_SIZE){rejectFile('파일이 25MB를 초과해 처리할 수 없습니다.');return;}
+
+  clearLoadedState();
+  const currentLoad=++loadSequence;
   originalFile=file;
+  originalInputType=inputType;
 
   const reader=new FileReader();
   reader.onload=function(e){
+    if(currentLoad!==loadSequence)return;
     originalDataUrl=e.target.result;
-    document.getElementById('origImg').src=originalDataUrl;
-    document.getElementById('origFormat').textContent=file.type.split('/')[1].toUpperCase();
-    document.getElementById('origSize').textContent=formatSize(file.size);
 
     const img=new Image();
     img.onload=function(){
-      document.getElementById('origDim').textContent=`${img.width} × ${img.height}px`;
+      if(currentLoad!==loadSequence)return;
+      const width=img.naturalWidth||img.width;
+      const height=img.naturalHeight||img.height;
+      if(!isDimensionAllowed(width,height)){
+        rejectFile(`이미지 크기 ${width} × ${height}px는 처리 한도(긴 변 12,000px, 총 4,000만 픽셀)를 초과합니다.`);
+        return;
+      }
+      decodedImage=img;
+      document.getElementById('origImg').src=originalDataUrl;
+      document.getElementById('origFormat').textContent=inputType.label;
+      document.getElementById('origSize').textContent=formatSize(file.size);
+      document.getElementById('origDim').textContent=`${width} × ${height}px`;
       document.getElementById('controls').style.display='flex';
       document.getElementById('preview').style.display='flex';
-      document.getElementById('dlBtn').style.display='block';
       document.getElementById('resetBtn').style.display='block';
+      showInputWarning(inputType.mime);
 
-      // 원본과 다른 포맷 자동 선택
-      autoSelectFormat(file.type);
+      autoSelectFormat(inputType.mime);
       convertImage(img);
+    };
+    img.onerror=function(){
+      if(currentLoad===loadSequence)rejectFile('브라우저가 이 이미지 데이터를 해석하지 못했습니다. 파일 손상 또는 미지원 인코딩을 확인하세요.');
     };
     img.src=originalDataUrl;
   };
+  reader.onerror=function(){
+    if(currentLoad===loadSequence)rejectFile('파일을 읽지 못했습니다. 다시 선택해 주세요.');
+  };
   reader.readAsDataURL(file);
+}
+
+function detectInputType(file){
+  const mime=(file.type||'').toLowerCase();
+  if(INPUT_MIME_INFO[mime])return INPUT_MIME_INFO[mime];
+  const match=(file.name||'').toLowerCase().match(/\.([a-z0-9]+)$/);
+  return match ? (INPUT_EXTENSION_INFO[match[1]]||null) : null;
+}
+
+function isDimensionAllowed(width,height){
+  return Number.isFinite(width)&&Number.isFinite(height)&&width>0&&height>0&&
+    width<=MAX_EDGE&&height<=MAX_EDGE&&width*height<=MAX_PIXELS;
+}
+
+function showInputWarning(mime){
+  const warning=document.getElementById('formatWarning');
+  if(mime==='image/gif'){
+    warning.textContent='⚠️ 애니메이션 GIF는 움직임이 유지되지 않으며, 브라우저가 표시한 한 장의 정지 프레임으로 변환됩니다.';
+    warning.hidden=false;
+  }else if(mime==='image/svg+xml'){
+    warning.textContent='⚠️ SVG는 현재 해상도의 픽셀 이미지로 래스터화됩니다. 변환 결과는 벡터 확대 특성과 편집 가능한 벡터 정보를 유지하지 않습니다.';
+    warning.hidden=false;
+  }else{
+    warning.textContent='';
+    warning.hidden=true;
+  }
+}
+
+function rejectFile(message){
+  clearLoadedState();
+  document.getElementById('fileInput').value='';
+  showToast(message);
+}
+
+function clearLoadedState(){
+  if(reconvertTimer!==null){
+    clearTimeout(reconvertTimer);
+    reconvertTimer=null;
+  }
+  loadSequence++;
+  conversionSequence++;
+  originalFile=null;
+  originalDataUrl=null;
+  originalInputType=null;
+  decodedImage=null;
+  convertedBlob=null;
+  if(convertedUrl)URL.revokeObjectURL(convertedUrl);
+  convertedUrl=null;
+  ['controls','preview','dlBtn','resetBtn','savedInfo','reportContainer'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.style.display='none';
+  });
+  const warning=document.getElementById('formatWarning');
+  warning.textContent='';warning.hidden=true;
+  document.getElementById('origImg').removeAttribute('src');
+  document.getElementById('convImg').removeAttribute('src');
 }
 
 function autoSelectFormat(origType){
   const formats=document.querySelectorAll('.format-btn');
   const origMime=origType.toLowerCase();
 
-  // 원본과 다른 첫번째 포맷 선택
-  let selected=false;
+  const outputMimes=['image/jpeg','image/png','image/webp'];
+  const preferred=outputMimes.includes(origMime)
+    ? outputMimes.find(format=>format!==origMime)
+    : 'image/png';
   formats.forEach(btn=>{
     btn.classList.remove('active');
-    if(!selected && btn.dataset.format!==origMime){
+    if(btn.dataset.format===preferred){
       btn.classList.add('active');
       selectedFormat=btn.dataset.format;
-      selected=true;
     }
   });
-  if(!selected){
-    formats[1].classList.add('active');
-    selectedFormat=formats[1].dataset.format;
-  }
   updateQualityVisibility();
 }
 
@@ -286,7 +402,7 @@ function setFormat(btn){
   btn.classList.add('active');
   selectedFormat=btn.dataset.format;
   updateQualityVisibility();
-  reconvert();
+  scheduleReconvert();
 }
 
 function updateQualityVisibility(){
@@ -297,32 +413,70 @@ function updateQualityVisibility(){
 function onQualityChange(){
   quality=document.getElementById('qualitySlider').value/100;
   document.getElementById('qualityVal').textContent=Math.round(quality*100)+'%';
-  reconvert();
+  scheduleReconvert();
+}
+
+function invalidateConvertedOutput(){
+  conversionSequence++;
+  convertedBlob=null;
+  if(convertedUrl)URL.revokeObjectURL(convertedUrl);
+  convertedUrl=null;
+  document.getElementById('convImg').removeAttribute('src');
+  document.getElementById('dlBtn').style.display='none';
+  document.getElementById('savedInfo').style.display='none';
+  document.getElementById('reportContainer').style.display='none';
+}
+
+function scheduleReconvert(){
+  if(!originalDataUrl||!decodedImage)return;
+  invalidateConvertedOutput();
+  if(reconvertTimer!==null)clearTimeout(reconvertTimer);
+  reconvertTimer=setTimeout(()=>{
+    reconvertTimer=null;
+    reconvert();
+  },RECONVERT_DELAY_MS);
 }
 
 function reconvert(){
-  if(!originalDataUrl)return;
-  const img=new Image();
-  img.onload=()=>convertImage(img);
-  img.src=originalDataUrl;
+  if(!originalDataUrl||!decodedImage)return;
+  convertImage(decodedImage);
 }
 
 function convertImage(img){
-  const canvas=document.createElement('canvas');
-  canvas.width=img.width;
-  canvas.height=img.height;
-  const ctx=canvas.getContext('2d');
-
-  // JPG는 투명 배경을 흰색으로
-  if(selectedFormat==='image/jpeg'){
-    ctx.fillStyle='#ffffff';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
+  const width=img.naturalWidth||img.width;
+  const height=img.naturalHeight||img.height;
+  if(!isDimensionAllowed(width,height)){
+    showConversionError('이미지 크기가 처리 한도를 초과합니다.');
+    return;
+  }
+  invalidateConvertedOutput();
+  const currentConversion=conversionSequence;
+  let canvas;
+  let ctx;
+  try{
+    canvas=document.createElement('canvas');
+    canvas.width=width;
+    canvas.height=height;
+    ctx=canvas.getContext('2d');
+    if(!ctx||canvas.width!==width||canvas.height!==height)throw new Error('canvas unavailable');
+    if(selectedFormat==='image/jpeg'){
+      ctx.fillStyle='#ffffff';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+    }
+    ctx.drawImage(img,0,0);
+  }catch(error){
+    showConversionError('브라우저가 이 크기의 이미지를 캔버스에 그리지 못했습니다.');
+    return;
   }
 
-  ctx.drawImage(img,0,0);
-
-  canvas.toBlob(function(blob){
-    if(!blob){showToast('변환 실패');return;}
+  try{
+    canvas.toBlob(function(blob){
+    if(currentConversion!==conversionSequence)return;
+    if(!blob){showConversionError('이미지 인코딩에 실패했습니다. 다른 출력 포맷을 선택해 보세요.');return;}
+    if((blob.type||'').toLowerCase()!==selectedFormat){
+      showConversionError('이 브라우저가 선택한 출력 포맷 인코딩을 지원하지 않습니다.');
+      return;
+    }
     convertedBlob=blob;
     if(convertedUrl) URL.revokeObjectURL(convertedUrl);
     convertedUrl=URL.createObjectURL(blob);
@@ -331,7 +485,8 @@ function convertImage(img){
     const ext=selectedFormat.split('/')[1];
     document.getElementById('convFormat').textContent=(ext==='jpeg'?'JPG':ext.toUpperCase());
     document.getElementById('convSize').textContent=formatSize(blob.size);
-    document.getElementById('convDim').textContent=`${img.width} × ${img.height}px`;
+    document.getElementById('convDim').textContent=`${width} × ${height}px`;
+    document.getElementById('dlBtn').style.display='block';
 
     // 용량 비교
     const diff=blob.size-originalFile.size;
@@ -352,55 +507,59 @@ function convertImage(img){
     }
     savedEl.style.display='block';
 
-    updateReport(originalFile, blob, selectedFormat, img.width, img.height, pct, diff);
+    updateReport(originalFile, blob, selectedFormat, width, height, pct, diff);
   }, selectedFormat, selectedFormat==='image/png'?undefined:quality);
+  }catch(error){
+    showConversionError('이미지 변환 중 오류가 발생했습니다. 크기나 출력 포맷을 확인하세요.');
+  }
+}
+
+function showConversionError(message){
+  conversionSequence++;
+  convertedBlob=null;
+  if(convertedUrl)URL.revokeObjectURL(convertedUrl);
+  convertedUrl=null;
+  document.getElementById('convImg').removeAttribute('src');
+  document.getElementById('dlBtn').style.display='none';
+  document.getElementById('savedInfo').style.display='none';
+  document.getElementById('reportContainer').style.display='none';
+  showToast(message);
 }
 
 function updateReport(origFile, convBlob, format, w, h, pct, diff) {
   const container = document.getElementById('reportContainer');
-  if (!container) return;
-  
-  if (!origFile || !convBlob) {
-    container.style.display = 'none';
-    return;
-  }
-  
+  if (!container || !origFile || !convBlob) return;
   container.style.display = 'block';
-
-  let formatFeedback = '';
-  const isJpg = format === 'image/jpeg';
-  const isPng = format === 'image/png';
-  const isWebp = format === 'image/webp';
-  
-  if (isPng) {
-    formatFeedback = '선택하신 옵션에 따라 <span class="highlight">무손실(Lossless) 압축 포맷인 PNG로 변환 렌더링</span>되었습니다. 이미지의 투명도(Alpha Channel)가 완벽하게 보존되며, 텍스트나 로고, 라인 일러스트레이션 등 픽셀 경계선에서 가장 높은 샤프니스 품질을 보여줍니다.';
-  } else if (isWebp) {
-    formatFeedback = '<span class="highlight">차세대 고효율 웹 표준 포맷인 WebP로 인코딩</span> 완료되었습니다. 기존 디거시 레거시 포맷 대비 화질 저하를 시각적으로 최소화하면서도 극강의 압축률을 자랑하여 최신 브라우저 크롬/사파리 기반의 쾌속 모바일 로딩 환경에 최적화된 결과물입니다.';
-  } else {
-    formatFeedback = '<span class="highlight">호환성이 가장 뛰어난 표준 손실형 압축 형식인 JPG(JPEG)로 변환 트랜스코딩</span> 처리되었습니다. 투명한 배경 데이터 레이어는 브라우저 엔진에 의해 자동적으로 흰색 캔버스로 병합되어 구버전 웹브라우저 및 외부 어플 호환성을 극한으로 끌어올렸습니다.';
-  }
-  
-  let resFeedback = `현재 원본 스케일 해상도인 가로 ${w}px, 세로 ${h}px 사이즈 캔버스 비율을 물리적으로 축소하지 않고 유지하며, 포맷 인코더 엔진만 브릿지 스왑하여 블록 데이터 스트럭쳐 셋플러를 재구성하였습니다.`;
-  
-  let resultMsg = '';
+  const outputLabel=format==='image/jpeg'?'JPG':format.split('/')[1].toUpperCase();
+  let resultMsg;
   if (diff < 0) {
-    resultMsg = `디지털 분석 백그라운드 연산 결과 총 <span class="highlight">${Math.abs(pct)}% (크기 기준: ${formatSize(Math.abs(diff))})</span>의 용량이 성공적으로 트림 감축되었습니다. 새로운 모바일 업로드 환경에 훨씬 적합한 가벼운 최종 리소스를 획득하셨습니다.`;
+    resultMsg = `원본보다 <span class="highlight">${formatSize(Math.abs(diff))} (${Math.abs(pct)}%) 작습니다.</span>`;
   } else if (diff > 0) {
-    resultMsg = `<span style="color:var(--text-error, #f87171)">[오버플로우 용량 증가 알람]:</span> 지정 변환된 타겟 포맷의 헤비한 인코딩 밀도 스키마로 인해, 기존 콤팩트한 원본 객체 대비 <span class="highlight">${pct}% (크기 기준: ${formatSize(diff)})</span> 용량이 역으로 증가했습니다. 기존 파일 압축이 이미 최상으로 설계되어 있었거나, 무손실(PNG) 포맷으로 지정하여 메타 데이터가 확장 파생되었을 확률이 가장 높습니다.`;
+    resultMsg = `원본보다 <span class="highlight">${formatSize(diff)} (${pct}%) 큽니다.</span> 포맷 변환이 항상 용량 감소를 보장하지는 않습니다.`;
   } else {
-    resultMsg = `변환 결과 바이너리 용량의 변화량이 거의 0%에 수렴하며 완벽히 동일합니다. 오프라인 내부 프로세스를 통해 포맷 확장자의 메타 변경에만 성공했습니다.`;
+    resultMsg = '표시 단위 기준으로 원본과 용량이 같습니다.';
   }
+
+  let formatNote='PNG의 무손실 출력 인코딩을 사용했습니다.';
+  if(format==='image/jpeg')formatNote='JPG 손실 압축을 사용하며 투명 영역은 흰색으로 합쳐집니다.';
+  if(format==='image/webp')formatNote=`WebP 손실 압축을 품질 ${Math.round(quality*100)}%로 적용했습니다.`;
+
+  let sourceCaveat='캔버스 재인코딩 과정에서 EXIF 등 일부 메타데이터는 유지되지 않을 수 있습니다.';
+  if(originalInputType?.mime==='image/gif')sourceCaveat='<strong>GIF 애니메이션은 한 장의 정지 프레임으로 출력되었습니다.</strong>';
+  if(originalInputType?.mime==='image/svg+xml')sourceCaveat='<strong>SVG는 픽셀 이미지로 래스터화되어 벡터 정보를 유지하지 않습니다.</strong>';
 
   container.innerHTML = `
-    <h3>📊 실시간 포맷 트랜스퍼 최적화 분석 리포트</h3>
-    <p><b>처리 파일명 정보:</b> ${origFile.name} ➔ ${format.split('/')[1].toUpperCase()}</p>
-    <p><b>포맷 최적화 전략 로직:</b> ${formatFeedback}</p>
-    <p><b>픽셀 및 해상도 진단:</b> ${resFeedback}</p>
-    <p><b>최종 스코어(로딩 속도 이점):</b> ${resultMsg}</p>
-    <div style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);">
-      <p style="margin-bottom:0; color:var(--text-info);">💡 <b>테크니컬 웹 꿀팁 백서:</b> 티스토리 블로그나 네이버 카페 등 굴지의 메인 검색엔진(구글 등) 플랫폼에 최상단 1등으로 노출되기 위해서는 모바일 페이지 렌더링 속도(LCP) 지표가 무엇보다 핵심적으로 중요합니다. 최근 구글 최상위 SEO 가이드 정책에서는 WebP나 퀄리티가 고도로 최적화된 최신 이미지 포맷의 사용을 랭킹 로직상 매우 강력하게 권장하고 있으니 업로드 시 적극 활용하시기 바랍니다.</p>
-    </div>
+    <h3>📊 변환 결과 리포트</h3>
+    <p><b>파일:</b> ${escapeHtml(origFile.name)} (${originalInputType?.label||'이미지'}) → ${outputLabel}</p>
+    <p><b>크기:</b> ${w} × ${h}px 유지 · ${formatSize(origFile.size)} → ${formatSize(convBlob.size)}</p>
+    <p><b>용량 변화:</b> ${resultMsg}</p>
+    <p><b>출력 방식:</b> ${formatNote}</p>
+    <p><b>유의사항:</b> ${sourceCaveat}</p>
   `;
+}
+
+function escapeHtml(value){
+  return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 }
 
 function download(){
@@ -415,15 +574,8 @@ function download(){
 }
 
 function resetAll(){
-  originalFile=null;originalDataUrl=null;convertedBlob=null;
-  if(convertedUrl)URL.revokeObjectURL(convertedUrl);convertedUrl=null;
+  clearLoadedState();
   document.getElementById('fileInput').value='';
-  document.getElementById('controls').style.display='none';
-  document.getElementById('preview').style.display='none';
-  document.getElementById('dlBtn').style.display='none';
-  document.getElementById('resetBtn').style.display='none';
-  document.getElementById('savedInfo').style.display='none';
-  if(document.getElementById('reportContainer')){ document.getElementById('reportContainer').style.display = 'none'; }
 }
 
 function formatSize(bytes){
