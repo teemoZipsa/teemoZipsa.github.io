@@ -6,10 +6,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
 <link rel="stylesheet" href="/special-chars/theme.css">
-<title>⏳ 서버 시간 확인기 — 티모집사</title>
-<meta name="description" content="티켓팅, 수강신청 필수 도구! 인터파크, 예스24 등 각 웹사이트의 정확한 고유 서버 시간을 밀리초 단위로 띄워줍니다. 정각 알림음 지원.">
-<meta property="og:title" content="⏳ 서버 시간 확인기 — 티모집사">
-<meta property="og:description" content="티켓팅, 수강신청 필수 도구! 특정 사이트의 고유 서버 시간을 정확히 확인하세요.">
+<title>⏱️ 정밀 로컬 시계 · 응답속도 측정 — 티모집사</title>
+<meta name="description" content="내 기기의 로컬 시간을 밀리초 단위로 표시하고, 수동 시계 보정과 정각 알림을 제공합니다. 입력한 웹사이트의 브라우저 HTTP 응답 대기 시간도 측정할 수 있습니다.">
+<meta property="og:title" content="⏱️ 정밀 로컬 시계 · 응답속도 측정 — 티모집사">
+<meta property="og:description" content="밀리초 로컬 시계, 수동 보정, 정각 알림과 웹사이트 HTTP 응답속도 측정을 한곳에서 사용하세요.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.github.io/special-chars/server-time/">
 <meta property="og:image" content="https://teemozipsa.github.io/special-chars/favicon.png">
@@ -31,6 +31,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .url-input:focus{border-color:var(--accent)}
 .fetch-btn{background:var(--accent);color:var(--text-on-accent);border:none;border-radius:8px;padding:0 20px;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s;font-family:inherit}
 .fetch-btn:hover{background:var(--accent-hover)}
+.fetch-btn:disabled{cursor:wait;opacity:.65}
 .display-box{background:var(--bg-btn);border:1px solid var(--border);border-radius:12px;padding:32px 20px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden}
 .target-name{font-size:13px;color:var(--text-muted);margin-bottom:8px;font-weight:600}
 .time-display{font-size:52px;font-weight:800;letter-spacing:1px;font-variant-numeric:tabular-nums;color:var(--text-primary);display:flex;align-items:baseline;justify-content:center;gap:4px}
@@ -40,8 +41,15 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .status-badge.syncing{color:#f59e0b}
 .status-badge.success{color:#10b981;background:rgba(16,185,129,0.1)}
 .status-badge.error{color:#ef4444;background:rgba(239,68,68,0.1)}
-.options{display:flex;justify-content:center;gap:16px;margin-bottom:16px}
+.options{display:flex;justify-content:center;gap:16px;margin-bottom:16px;flex-wrap:wrap}
 .opt-label{font-size:13px;color:var(--text-secondary);display:flex;align-items:center;gap:6px;cursor:pointer}
+.offset-control{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:16px;padding:12px;background:var(--bg-bar);border:1px solid var(--border);border-radius:8px}
+.offset-control label{font-size:13px;color:var(--text-secondary);font-weight:600}
+.offset-input{width:110px;background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;padding:7px 9px;color:var(--text-primary);font:inherit;font-size:13px;text-align:right}
+.offset-input:focus{outline:none;border-color:var(--accent)}
+.reset-btn{background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text-secondary);font:inherit;font-size:12px;cursor:pointer}
+.reset-btn:hover{color:var(--text-primary);border-color:var(--accent)}
+.limit-note{font-size:12px;color:var(--text-muted);line-height:1.6;margin:-8px 0 18px}
 .quick-urls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
 .q-btn{background:var(--bg-bar);border:1px solid var(--border);border-radius:20px;padding:6px 12px;font-size:12px;color:var(--text-secondary);cursor:pointer;transition:all .2s;font-family:inherit}
 .q-btn:hover{background:var(--bg-btn);color:var(--text-primary)}
@@ -78,14 +86,14 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 <div class="app">
   <div class="header">
     <a href="https://teemozipsa.github.io/" class="back-btn">← 도구 모음</a>
-    <h1>⏳ 서버 시간 확인기</h1>
+    <h1>⏱️ 정밀 로컬 시계 · 응답속도 측정</h1>
     <a href="/special-chars/en/server-time/" class="back-btn">🌐 English</a>
   </div>
   <div class="content">
-    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:8px">티켓팅/예매 사이트 주소를 입력하세요 (기본값: 내 컴퓨터 시간)</p>
-    <form class="input-group" onsubmit="event.preventDefault(); syncTime();">
-      <input type="text" id="urlInput" class="url-input" placeholder="예: https://ticket.interpark.com">
-      <button type="submit" class="fetch-btn">시간 확인</button>
+    <p id="latencyHelp" style="font-size:13px;color:var(--text-secondary);margin-bottom:8px">대상 URL을 입력하면 로컬 시계는 그대로 두고 HTTP 응답 대기 시간을 3회 측정합니다.</p>
+    <form class="input-group" onsubmit="event.preventDefault(); measureLatency();">
+      <input type="text" id="urlInput" class="url-input" placeholder="예: https://ticket.interpark.com" aria-label="응답속도를 측정할 웹사이트 주소" aria-describedby="latencyHelp">
+      <button type="submit" class="fetch-btn" id="measureBtn">응답속도 측정</button>
     </form>
     
     <div class="quick-urls">
@@ -98,8 +106,8 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
     <div class="display-box" id="displayBox">
       <div id="rippleEff" class="ripple"></div>
-      <div class="status-badge" id="statusBadge">로컬 시스템 시계</div>
-      <div class="target-name" id="targetName">현재 기준: 내 기기(로컬) 시간</div>
+      <div class="status-badge" id="statusBadge">기기 시계</div>
+      <div class="target-name" id="targetName">현재 기준: 내 기기 로컬 시간</div>
       <div class="time-display">
         <span id="hhmmss">00:00:00</span>
         <span class="time-ms" id="ms">.000</span>
@@ -112,35 +120,43 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <label class="opt-label"><input type="checkbox" id="sndAlarm" checked> 59초/정각 알림</label>
       <label class="opt-label"><input type="checkbox" id="showMs" checked> 밀리초 표시</label>
     </div>
+
+    <div class="offset-control">
+      <label for="offsetInput">수동 시계 보정</label>
+      <input class="offset-input" type="number" id="offsetInput" min="-60000" max="60000" step="1" value="0" inputmode="numeric" oninput="applyManualOffset()" aria-describedby="offsetHelp">
+      <span style="font-size:12px;color:var(--text-muted)">ms</span>
+      <button type="button" class="reset-btn" onclick="resetOffset()">0으로 초기화</button>
+    </div>
+    <p class="limit-note" id="offsetHelp">양수는 시계를 빠르게, 음수는 느리게 표시합니다. 보정 범위는 ±60초이며 알림에도 적용됩니다.</p>
     
     <!-- 동적 결과 리포트 -->
-    <div id="reportContainer" class="report-box"></div>
+    <div id="reportContainer" class="report-box" role="status" aria-live="polite"></div>
   </div>
 
   <section class="guide-section">
-    <h2>💡 서버 시간 확인기 완벽 가이드</h2>
+    <h2>💡 정밀 로컬 시계와 응답속도 측정 가이드</h2>
     
     <details class="guide" open>
-      <summary>서버 시간이란 무엇이며 왜 중요한가요?</summary>
+      <summary>이 시계는 어떤 시간을 표시하나요?</summary>
       <div class="guide-content">
-        <p><b>서버 시간(Server Time)</b>은 특정 웹사이트(인터파크, 예스24, 멜론티켓 등)를 호스팅하는 서버의 자체적인 시스템 시계를 의미합니다. 내 기기의 시간(로컬 시간)이 아무리 정확하고 표준 시간 단위와 일치한다고 해도, 서버가 위치한 환경이나 상태에 따라 수십~수백 밀리초(ms) 이상의 오차가 발생할 수 있습니다.</p>
-        <p>티켓팅, 수강신청 등 0.1초의 차이가 결과를 가르는 치열한 경쟁 환경에서는 <b>내 기기의 시간이 아닌 해당 서비스의 실제 서버 시간</b>을 기준으로 액션을 취해야 로딩을 포함하여 누구보다 유리한 타이밍을 선점할 수 있습니다.</p>
+        <p>화면의 시각은 <b>브라우저가 실행 중인 기기의 시스템 시계</b>를 밀리초 단위로 표시한 값입니다. 운영체제의 자동 날짜·시간 동기화를 켜 두면 가장 유용하며, 이 페이지가 별도의 표준시 서버와 동기화하는 것은 아닙니다.</p>
+        <p>기기 시계와 알고 있는 기준시 사이에 차이가 있다면 수동 보정값을 밀리초 단위로 입력할 수 있습니다. 밀리초 숫자가 자세히 보인다고 해서 기기 시계 자체의 정확도가 보장되는 것은 아닙니다.</p>
       </div>
     </details>
 
     <details class="guide">
-      <summary>이 도구의 작동 원리는 어떻게 되나요?</summary>
+      <summary>웹사이트 응답속도는 어떻게 측정하나요?</summary>
       <div class="guide-content">
-        <p>사용자가 확인하고자 하는 URL을 입력하면, 브라우저가 해당 주소로 <code>HEAD</code> 요청을 보내 HTTP 응답 헤더 내에 포함된 <code>Date</code> 값을 추출합니다.</p>
-        <p>단순히 시간 값을 가져오는 것을 넘어, 이 과정에서 발생하는 <b>네트워크 왕복 지연 시간(Round Trip Time, RTT)을 계산하여 정밀하게 보정</b>합니다. 즉, 요청이 서버까지 도달하고 다시 돌아오는 데 걸린 시간을 반영해 <strong>실제 통신 지연에 따른 오차를 최소화한 서버 시간을 실시간으로 띄워줍니다.</strong></p>
+        <p>입력한 URL로 가벼운 <code>HEAD</code> 요청을 3회 보내고, 브라우저가 각 응답을 받기까지의 경과 시간을 측정해 최솟값·평균값·최댓값을 보여줍니다.</p>
+        <p>이 값에는 DNS 조회, 연결, TLS 협상, 네트워크 상태와 서버 처리 시간이 함께 포함될 수 있습니다. 전용 네트워크 <b>핑(ping)이나 서버 시계 차이</b>를 뜻하지 않으며, 현재 브라우저 환경의 참고값입니다.</p>
       </div>
     </details>
 
     <details class="guide">
-      <summary>보안 측면(개인정보 보호)에서 안전한가요?</summary>
+      <summary>왜 서버 시간을 직접 표시하지 않나요?</summary>
       <div class="guide-content">
-        <p>네, 100% 안전합니다. 본 서버 시간 확인기는 <b>가벼운 HTTP Header 조회(HEAD Method)만을 사용</b>하여 날짜 정보만을 반환받습니다.</p>
-        <p>사용자의 어떤 개인정보나 로그인 세션, 쿠키 정보도 수집하지 않으며, 백엔드 서버를 거치지 않고 오로지 <b>고객님의 브라우저(클라이언트) 내부에서만 연산이 이루어집니다.</b> 따라서 정보 유출이나 보안상의 위험이 전혀 없습니다.</p>
+        <p>다른 출처의 웹사이트는 브라우저의 CORS 정책 때문에 응답 헤더를 읽을 수 없는 경우가 많습니다. HTTP <code>Date</code> 헤더도 일반적으로 1초 단위이며 실제 서비스의 접수 기준 시각을 보장하지 않으므로, 밀리초 정밀 서버 시계로 사용할 수 없습니다.</p>
+        <p>이 도구는 외부 CORS 프록시를 사용하거나 서버 시각을 추정하지 않습니다. 응답속도 측정 요청에는 쿠키를 보내지 않지만, 대상 사이트에는 일반적인 네트워크 요청이 전달됩니다. 브라우저 정책, 혼합 콘텐츠 차단 또는 사이트 설정에 따라 측정이 실패할 수 있습니다.</p>
       </div>
     </details>
 
@@ -154,17 +170,16 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       </div>
     </div>
   </section>
-  <div class="footer"><span>0.01초의 승부, 성공을 기원합니다!</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
+  <div class="footer"><span>기기 로컬 시계 기준 · 서버 시각 동기화 아님</span><a href="https://teemozipsa.github.io/">😺 더 많은 도구</a></div>
 </div>
 
 <script>
-let timeOffset = 0; // ms offset between local and server
-let targetMode = false;
+let manualOffset = 0;
 let lastSec = -1;
 
 function setQuick(u) {
   document.getElementById('urlInput').value = u;
-  syncTime();
+  measureLatency();
 }
 
 // Audio helpers
@@ -217,108 +232,133 @@ function playAlarmAt(s) {
   }
 }
 
-async function syncTime() {
-  getCtx(); // init audio
-  let val = document.getElementById('urlInput').value.trim();
+function signedOffset(value) {
+  return `${value > 0 ? '+' : ''}${value}ms`;
+}
+
+function updateOffsetState() {
   const badge = document.getElementById('statusBadge');
   const tname = document.getElementById('targetName');
-  
-  if(!val) {
-    targetMode = false; timeOffset = 0;
-    badge.className = 'status-badge'; badge.textContent = '로컬 시스템 시계';
-    tname.textContent = '현재 기준: 내 기기(로컬) 시간';
-    document.getElementById('reportContainer').style.display = 'none';
-    return;
-  }
-  if(!/^https?:\/\//i.test(val)) val = 'https://' + val;
+  badge.className = 'status-badge';
+  badge.textContent = manualOffset === 0 ? '기기 시계' : `수동 보정 ${signedOffset(manualOffset)}`;
+  tname.textContent = manualOffset === 0
+    ? '현재 기준: 내 기기 로컬 시간'
+    : `현재 기준: 내 기기 시간 ${signedOffset(manualOffset)}`;
+}
 
-  tname.textContent = '동기화 중: ' + val;
-  badge.className = 'status-badge syncing'; badge.textContent = '동기화 중...';
-  
-  const startLocal = performance.now();
+function applyManualOffset() {
+  const input = document.getElementById('offsetInput');
+  const value = Number(input.value);
+  manualOffset = Number.isFinite(value) ? Math.max(-60000, Math.min(60000, Math.round(value))) : 0;
+  if (String(manualOffset) !== input.value && input.value !== '' && input.value !== '-') input.value = manualOffset;
+  try { localStorage.setItem('localClock_offsetMs', String(manualOffset)); } catch(e) {}
+  lastSec = -1;
+  updateOffsetState();
+}
+
+function resetOffset() {
+  document.getElementById('offsetInput').value = '0';
+  applyManualOffset();
+}
+
+function parseTarget(raw) {
+  let value = raw.trim();
+  if (!value) throw new Error('측정할 웹사이트 주소를 입력하세요.');
+  if (!/^https?:\/\//i.test(value)) value = 'https://' + value;
+  const url = new URL(value);
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') throw new Error('HTTP 또는 HTTPS 주소만 측정할 수 있습니다.');
+  if (location.protocol === 'https:' && url.protocol === 'http:') throw new Error('HTTPS 페이지에서는 브라우저 보안 정책상 HTTP 주소를 측정할 수 없습니다. HTTPS 주소를 사용하세요.');
+  return url;
+}
+
+async function measureOnce(url) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
+  const start = performance.now();
   try {
-    let res = await fetch(val, { method:'HEAD', cache:'no-store' }).catch(e => null);
-    
-    if(!res || !res.headers.get('Date')) {
-      const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(val);
-      res = await fetch(proxyUrl, { method:'HEAD', cache:'no-store' });
-    }
-
-    const dateStr = res.headers.get('Date');
-    if(!dateStr) throw new Error("No Date header");
-    
-    const serverTime = new Date(dateStr).getTime();
-    const endLocal = performance.now();
-    const rtt = endLocal - startLocal;
-    
-    const estimatedLocalEquiv = Date.now() - (rtt/2);
-    timeOffset = serverTime - estimatedLocalEquiv;
-    targetMode = true;
-
-    tname.textContent = '동기화된 대상: ' + new URL(val).hostname;
-    badge.className = 'status-badge success'; badge.textContent = '동기화 완료 (오차 ' + Math.round(timeOffset) + 'ms)';
-    updateReport(val, rtt, timeOffset, true);
-  } catch(e) {
-    timeOffset = 0; targetMode = false;
-    tname.textContent = '오류: ' + new URL(val).hostname;
-    badge.className = 'status-badge error'; badge.textContent = 'CORS 차단 또는 응답 없음';
-    updateReport(val, 0, 0, false);
+    await fetch(url.href, {
+      method: 'HEAD',
+      mode: 'no-cors',
+      cache: 'no-store',
+      credentials: 'omit',
+      redirect: 'follow',
+      referrerPolicy: 'no-referrer',
+      signal: controller.signal
+    });
+    return performance.now() - start;
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
-function updateReport(url, rtt, offset, success) {
+async function measureLatency() {
   const container = document.getElementById('reportContainer');
-  if (!container) return;
-  if (!success) {
-    container.style.display = 'none';
-    container.innerHTML = '';
+  const button = document.getElementById('measureBtn');
+  let url;
+  try {
+    url = parseTarget(document.getElementById('urlInput').value);
+  } catch(e) {
+    showMeasureError(e.message);
     return;
   }
-  
+  document.getElementById('urlInput').value = url.href;
+  button.disabled = true;
+  button.textContent = '측정 중…';
   container.style.display = 'block';
-  const domain = new URL(url).hostname;
+  container.innerHTML = '<h3>📡 HTTP 응답속도 측정 중</h3><p>동일한 주소에 HEAD 요청을 최대 3회 보내고 있습니다.</p>';
+  const samples = [];
+  try {
+    for (let i = 0; i < 3; i++) samples.push(await measureOnce(url));
+    updateReport(url, samples);
+  } catch(e) {
+    showMeasureError(e.name === 'AbortError'
+      ? '8초 안에 응답을 받지 못해 측정을 중단했습니다.'
+      : '브라우저 보안 정책 또는 네트워크 오류로 측정하지 못했습니다. 대상 사이트는 정상이어도 측정이 차단될 수 있습니다.');
+  } finally {
+    button.disabled = false;
+    button.textContent = '응답속도 측정';
+    updateOffsetState();
+  }
+}
+
+function showMeasureError(message) {
+  const container = document.getElementById('reportContainer');
+  container.style.display = 'block';
+  container.innerHTML = `<h3>⚠️ 측정할 수 없음</h3><p>${message}</p><p>외부 프록시로 우회하지 않으며, 로컬 시계와 수동 보정은 계속 정상 작동합니다.</p>`;
+}
+
+function updateReport(url, samples) {
+  const container = document.getElementById('reportContainer');
+  const rounded = samples.map(value => Math.round(value));
+  const min = Math.min(...samples);
+  const max = Math.max(...samples);
+  const average = samples.reduce((sum, value) => sum + value, 0) / samples.length;
   let latencyEval = '양호';
   let latencyColor = 'var(--text-info)';
-  let tips = '';
-  
-  if (rtt < 100) {
+  if (average < 100) {
     latencyEval = '매우 빠름';
     latencyColor = '#10b981';
-    tips = `응답 속도가 <span class="highlight">${Math.round(rtt)}ms</span>로 매우 빠릅니다. 통신 지연이 거의 없으므로, 정각에 딱 맞춰 새로고침이나 클릭을 시도해도 서버가 빠르게 반응할 확률이 높습니다.`;
-  } else if (rtt < 300) {
+  } else if (average < 300) {
     latencyEval = '보통';
     latencyColor = '#f59e0b';
-    tips = `응답 속도가 <span class="highlight">${Math.round(rtt)}ms</span>로 평범한 수준입니다. 접속자의 피지컬 및 환경에 따라 다르지만, 대략 0.1~0.2초 전에 미리 예매 버튼을 클릭하는 것이 성공 확률을 높이는 권장 전략입니다.`;
   } else {
-    latencyEval = '지연됨 (주의)';
+    latencyEval = '느림';
     latencyColor = '#ef4444';
-    tips = `응답 속도가 <span class="highlight">${Math.round(rtt)}ms</span>로 느린 편입니다. 서버에 이미 트래픽 부하가 발생했거나 해외에 위치할 가능성이 큽니다. 일반적인 기준보다 약 0.3초 이상 빨리 움직이는 것을 권장합니다.`;
-  }
-  
-  let offsetDesc = '';
-  if (Math.abs(offset) < 50) {
-    offsetDesc = `측정 오차 범위 이내로, <b>내 기기 시간과 사실상 동일</b>합니다 (오차 ${Math.round(offset)}ms).`;
-  } else if (offset > 0) {
-    offsetDesc = `내 기기보다 대상 서버 시간이 약 <span class="highlight">${Math.round(offset)}ms 만큼 더 빠릅니다.</span> 따라서 평소 감각보다 조금 더 여유있게 접근하세요.`;
-  } else {
-    offsetDesc = `내 기기보다 대상 서버 시간이 약 <span class="highlight">${Math.round(Math.abs(offset))}ms 만큼 더 느립니다.</span> 즉, 내 시계에서는 이미 정각이 지났더라도 서버는 아직 정각이 오지 않았을 수 있습니다.`;
   }
 
   container.innerHTML = `
-    <h3>📊 실시간 서버 응답 및 최적화 분석 리포트</h3>
-    <p><b>대상 서버:</b> <span class="highlight">${domain}</span></p>
-    <p><b>응답 상태:</b> <span style="color:${latencyColor}; font-weight:600;">${latencyEval}</span></p>
-    <p><b>시간 오차 분석:</b> ${offsetDesc}</p>
-    <div style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);">
-      <p style="margin-bottom:4px; color:var(--text-primary);">💡 <b>티켓팅 예매 성공 팁:</b></p>
-      <p style="margin-bottom:0;">${tips}</p>
-    </div>
+    <h3>📊 HTTP 응답속도 측정 결과</h3>
+    <p><b>대상:</b> <span class="highlight">${url.hostname}</span></p>
+    <p><b>3회 측정:</b> ${rounded.join('ms · ')}ms</p>
+    <p><b>최소 / 평균 / 최대:</b> <span class="highlight">${Math.round(min)} / ${Math.round(average)} / ${Math.round(max)}ms</span></p>
+    <p><b>현재 평가:</b> <span style="color:${latencyColor};font-weight:600">${latencyEval}</span></p>
+    <p style="margin-bottom:0">브라우저가 HEAD 응답을 받기까지의 경과 시간입니다. 서버 시각·핑·클릭 성공 시점을 의미하지 않으며 네트워크 상태에 따라 달라집니다.</p>
   `;
 }
 
 function updateClock() {
   const showMsCheck = document.getElementById('showMs').checked;
-  const now = new Date(Date.now() + timeOffset);
+  const now = new Date(Date.now() + manualOffset);
   
   const h = String(now.getHours()).padStart(2,'0');
   const m = String(now.getMinutes()).padStart(2,'0');
@@ -333,11 +373,16 @@ function updateClock() {
   
   playAlarmAt(now.getSeconds());
   
-  if (targetMode) document.title = `${h}:${m}:${s} — 서버 시간`;
-  else document.title = `⏳ 서버 시간 확인기 — 티모집사`;
+  document.title = `${h}:${m}:${s} — 정밀 로컬 시계`;
 
   requestAnimationFrame(updateClock);
 }
+(function restoreOffset() {
+  let saved = 0;
+  try { saved = Number(localStorage.getItem('localClock_offsetMs')) || 0; } catch(e) {}
+  document.getElementById('offsetInput').value = String(Math.max(-60000, Math.min(60000, Math.round(saved))));
+  applyManualOffset();
+})();
 requestAnimationFrame(updateClock);
 </script>
 <script src="/special-chars/theme-toggle.js"></script>
