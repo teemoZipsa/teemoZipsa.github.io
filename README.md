@@ -123,9 +123,9 @@ npm run verify
 
 이 명령은 구조·외부 실행 의존성·CSP 규칙, 계산식 오라클과 실제 페이지 회귀, SEO 색인, 핵심 사용자 조작, 80개 도구 페이지의 라이트·다크 초기·탭 상태 WCAG 2.1 A/AA 및 자동화 가능한 모범 사례, 전체 정적 페이지 Chromium 렌더링, Chromium·Firefox·WebKit 데스크톱과 Pixel 7·iPhone 15 에뮬레이션의 전체 도구·색인 페이지 렌더링, 모바일 터치 타깃과 Git diff 오류를 순서대로 검사합니다. 자동화 검사는 실제 스크린 리더·물리 모바일·OS 백그라운드 동작을 대체하지 않습니다. 빠른 조작 회귀검사는 `npm run audit:interactions`, 자동 접근성 검사는 `npm run audit:accessibility`, 5개 환경 호환성 검사는 `npm run audit:browsers`로 따로 실행할 수 있습니다.
 
-약 85MB로 고정된 전체 AI 모델·WASM 구성 중 현재 Chromium 실행 경로 약 56.9MB를 실제로 읽는 배경 제거 추론은 일반 검증의 실행 시간과 메모리 사용을 늘리므로 선택 검사로 분리했습니다. 배경 제거 번들·모델·CSP를 바꾼 뒤에는 `npm run audit:background-inference`를 실행해 64×64 PNG의 실제 추론 결과와 제3자 요청 부재를 확인합니다.
+약 85MB로 고정된 전체 AI 모델·WASM 구성 중 Chromium·Firefox가 각각 약 56.9MB를 실제로 읽는 배경 제거 추론은 일반 검증의 실행 시간과 메모리 사용을 늘리므로 선택 검사로 분리했습니다. 배경 제거 번들·모델·CSP를 바꾼 뒤에는 `npm run audit:background-inference`를 실행해 두 엔진 모두에서 64×64 PNG의 실제 추론 결과와 제3자 요청 부재를 확인합니다.
 
-모바일 프로필은 뷰포트·터치·브라우저 엔진 에뮬레이션입니다. 물리 기기의 OS 통합 동작과 Windows Playwright WebKit이 제공하지 않는 Safari/iOS Web Audio는 실제 Apple 기기에서 별도로 확인해야 합니다. Chromium과 Firefox에서는 메트로놈 AudioWorklet의 누적 프레임 간격·정지·재시작을 검증합니다.
+모바일 프로필은 뷰포트·터치·브라우저 엔진 에뮬레이션입니다. 물리 기기의 OS 통합 동작과 Windows Playwright WebKit이 제공하지 않는 Safari/iOS Web Audio는 실제 Apple 기기에서 별도로 확인해야 합니다. Windows Playwright WebKit에서는 브라우저 매트릭스의 전체 페이지 렌더링과 대표 상호작용은 통과하지만 배경 제거 실추론이 8분 동안 모델 로딩 단계를 벗어나지 않아 필수 추론 검사에 포함하지 않았으며, 이 경로도 실제 Apple 기기의 Safari에서 확인해야 합니다. Chromium과 Firefox에서는 메트로놈 AudioWorklet의 누적 프레임 간격·정지·재시작을 검증합니다.
 
 PDF·QR·배경 제거·글꼴 구성요소의 정확한 버전·크기·무결성·라이선스·출처는 [`special-chars/vendor/README.md`](special-chars/vendor/README.md)에 기록합니다. 배경 제거 도구의 첫 진입과 최초 처리에는 이 사이트에서 JS 번들·양자화 모델·실행 환경에 맞는 WASM 합계 약 56.9MB를 받으며, 브라우저 저장 공간 정리나 축출 시 다시 받아야 합니다. `@imgly/background-removal`의 AGPL-3.0 고지, 대응 소스맵과 제3자 라이선스는 배포물에서 제거하면 안 됩니다.
 

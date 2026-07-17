@@ -10,7 +10,7 @@
     "audit:accessibility": "node scripts/audit-accessibility.mjs",
     "audit:browsers": "node scripts/audit-browser-matrix.mjs",
     "audit:interactions": "node scripts/audit-interactions.mjs",
-    "audit:background-inference": "node scripts/audit-interactions.mjs --background-inference --filter=background-removal",
+    "audit:background-inference": "node scripts/audit-interactions.mjs --background-inference --filter=background-removal --browser=chromium && node scripts/audit-interactions.mjs --background-inference --filter=background-removal --browser=firefox",
     "audit:pages": "node scripts/audit-pages.mjs",
     "audit:seo": "node scripts/audit-seo-index.mjs",
     "trends:update": "python scripts/fetch_trends.py",

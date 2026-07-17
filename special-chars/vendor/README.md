@@ -115,10 +115,13 @@ node C:\path\to\repo\special-chars\vendor\imgly-background-removal\1.5.5\build.m
 After rebuilding, run `npm run audit:vendor:integrity` from the repository
 root to compare every pin and source-map input, then run
 `npm run audit:background-inference`. The latter performs a real 64×64 PNG
-inference under the deployed CSP and rejects third-party resource requests; it
-is intentionally opt-in because it exercises roughly 56.9MB of the active
-Chromium model/WASM path (the complete pinned compatibility unit is about
-85MB).
+inference under the deployed CSP in both Chromium and Firefox and rejects
+third-party resource requests; it is intentionally opt-in because each engine
+exercises roughly 56.9MB of its active model/WASM path (the complete pinned
+compatibility unit is about 85MB). Windows Playwright WebKit remained at the
+model-loading stage for eight minutes, so real Safari inference remains a
+separate Apple-hardware verification boundary rather than a passing automated
+claim.
 
 The service worker's vendor cache is immutable cache-first. This CSP rebuild
 keeps the upstream `1.5.5` URL, so `VENDOR_CACHE_NAME` was advanced to v2 to

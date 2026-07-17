@@ -2,7 +2,7 @@ import http from 'http';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { chromium } from 'playwright';
+import { chromium, firefox, webkit } from 'playwright';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
@@ -18,6 +18,15 @@ const scenarioFilters = [process.env.AUDIT_INTERACTION_FILTER, cliFilter]
   .map(value => value.trim().toLowerCase())
   .filter(Boolean);
 const runBackgroundInference = process.env.AUDIT_BACKGROUND_INFERENCE === '1' || process.argv.includes('--background-inference');
+const browserName = process.argv.find(argument => argument.startsWith('--browser='))?.slice('--browser='.length) || 'chromium';
+const browserTypes = { chromium, firefox, webkit };
+if (!browserTypes[browserName]) throw new Error(`Unsupported browser: ${browserName}`);
+const isBackgroundInferenceOnly = runBackgroundInference
+  && scenarioFilters.length > 0
+  && scenarioFilters.every(filter => filter === 'background-removal');
+if (browserName !== 'chromium' && !isBackgroundInferenceOnly) {
+  throw new Error(`The ${browserName} option is supported only with --background-inference --filter=background-removal`);
+}
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -80,7 +89,7 @@ async function main() {
   const server = await startServer();
   const address = server.address();
   const base = `http://127.0.0.1:${address.port}`;
-  const browser = await chromium.launch({ headless: true });
+  const browser = await browserTypes[browserName].launch({ headless: true });
 
   async function scenario(name, routePath, run, options = {}) {
     if (scenarioFilters.length && !scenarioFilters.some(filter => name.toLowerCase().includes(filter))) return;
@@ -106,7 +115,7 @@ async function main() {
       assert(pageErrors.length === 0, `page errors: ${pageErrors.join(' | ')}`);
       passed += 1;
     } catch (error) {
-      failures.push(`${name}: ${error.message || error}`);
+      failures.push(`${browserName} / ${name}: ${error.message || error}`);
     } finally {
       await context.close().catch(() => {});
     }
@@ -906,6 +915,10 @@ async function main() {
 
   if (runBackgroundInference) {
     await scenario('background-removal real small-image inference', '/special-chars/bg-remover/', async (page, _context, baseUrl) => {
+      const inferenceConsoleErrors = [];
+      page.on('console', message => {
+        if (message.type() === 'error') inferenceConsoleErrors.push(message.text());
+      });
       const encodedInput = await page.evaluate(() => {
         const canvas = document.createElement('canvas');
         canvas.width = 64;
@@ -924,10 +937,22 @@ async function main() {
         mimeType: 'image/png',
         buffer: Buffer.from(encodedInput, 'base64')
       });
-      await page.waitForFunction(() => (
-        document.querySelector('#resultArea')?.classList.contains('active')
-        || getComputedStyle(document.querySelector('#retryBtn')).display !== 'none'
-      ), null, { timeout: 150000 });
+      const inferenceTimeout = browserName === 'webkit' ? 480000 : browserName === 'firefox' ? 300000 : 150000;
+      try {
+        await page.waitForFunction(() => (
+          document.querySelector('#resultArea')?.classList.contains('active')
+          || getComputedStyle(document.querySelector('#retryBtn')).display !== 'none'
+        ), null, { timeout: inferenceTimeout });
+      } catch (error) {
+        const state = await page.evaluate(() => ({
+          progress: document.querySelector('#progressText')?.textContent || '',
+          detail: document.querySelector('#progressSub')?.textContent || '',
+          progressActive: document.querySelector('#progressWrap')?.classList.contains('active') || false,
+          dropzoneDisplay: getComputedStyle(document.querySelector('#dropzone')).display,
+          retryVisible: getComputedStyle(document.querySelector('#retryBtn')).display !== 'none'
+        }));
+        throw new Error(`${error.message}; state=${JSON.stringify(state)}; console=${inferenceConsoleErrors.slice(0, 4).join(' | ')}`);
+      }
       const result = await page.evaluate(async expectedOrigin => {
         const success = document.querySelector('#resultArea')?.classList.contains('active') || false;
         let output = { bytes: 0, type: '', width: 0, height: 0, pngSignature: false };
@@ -1184,7 +1209,7 @@ async function main() {
     failures.forEach(failure => console.error(`- ${failure}`));
     process.exit(1);
   }
-  console.log(`Interaction audit passed: ${passed} browser regression scenarios.`);
+  console.log(`Interaction audit passed: ${passed} ${browserName} browser regression scenarios.`);
 }
 
 main().catch(error => {
