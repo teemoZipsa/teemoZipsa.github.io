@@ -671,6 +671,87 @@ async function main() {
     assert(layout.scroll <= layout.client && layout.cardRight <= layout.client && layout.favRight <= layout.client, `mobile overflow: ${JSON.stringify(layout)}`);
   }, { viewport: { width: 320, height: 800 } });
 
+  await scenario('home category search and collapsed state', '/', async page => {
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('viewMode', 'category');
+      localStorage.setItem('toolsCollapsed', 'false');
+    });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.locator('#searchInput').fill('날짜');
+    const searched = await page.evaluate(() => ({
+      toolsDisplay: getComputedStyle(document.querySelector('#toolsGrid')).display,
+      categoryDisplay: getComputedStyle(document.querySelector('#categoryView')).display,
+      controlsDisplay: getComputedStyle(document.querySelector('.view-controls')).display,
+      visibleTools: [...document.querySelectorAll('#toolsGrid .tool-card')]
+        .filter(card => getComputedStyle(card).display !== 'none')
+        .map(card => card.querySelector('.tool-name')?.textContent.trim()),
+      dropdownItems: document.querySelectorAll('.search-dropdown-item').length
+    }));
+    assert(searched.toolsDisplay === 'grid' && searched.categoryDisplay === 'none', `category search did not switch to results: ${JSON.stringify(searched)}`);
+    assert(searched.controlsDisplay === 'none' && searched.dropdownItems === 2 && searched.visibleTools.length === 2, `category search leaked unrelated tools: ${JSON.stringify(searched)}`);
+
+    await page.locator('#searchInput').fill('');
+    const restored = await page.evaluate(() => ({
+      toolsDisplay: getComputedStyle(document.querySelector('#toolsGrid')).display,
+      categoryDisplay: getComputedStyle(document.querySelector('#categoryView')).display,
+      controlsDisplay: getComputedStyle(document.querySelector('.view-controls')).display,
+      categoryCards: document.querySelectorAll('#categoryView .tool-card').length
+    }));
+    assert(restored.toolsDisplay === 'none' && restored.categoryDisplay === 'block' && restored.controlsDisplay === 'flex', `category view was not restored after search: ${JSON.stringify(restored)}`);
+    assert(restored.categoryCards > 0, 'restored category view contains no tools');
+
+    await page.evaluate(() => localStorage.setItem('toolsCollapsed', 'true'));
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    const collapsed = await page.evaluate(() => ({
+      toolsDisplay: getComputedStyle(document.querySelector('#toolsGrid')).display,
+      categoryDisplay: getComputedStyle(document.querySelector('#categoryView')).display,
+      controlsDisplay: getComputedStyle(document.querySelector('.view-controls')).display,
+      button: document.querySelector('#toolsToggleBtn').textContent.trim()
+    }));
+    assert(collapsed.toolsDisplay === 'none' && collapsed.categoryDisplay === 'none' && collapsed.controlsDisplay === 'none', `saved category collapse was not honored: ${JSON.stringify(collapsed)}`);
+    assert(collapsed.button.includes('펼치기'), `collapsed control label is wrong: ${collapsed.button}`);
+  });
+
+  await scenario('home saved-link reconciliation and category favorites', '/', async page => {
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('favorites', JSON.stringify(['https://legacy.example/special-chars/removed-tool/']));
+      localStorage.setItem('recentTools', JSON.stringify(['https://legacy.example/special-chars/removed-recent/']));
+    });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    const stale = await page.evaluate(() => ({
+      favorites: JSON.parse(localStorage.getItem('favorites')),
+      recentTools: JSON.parse(localStorage.getItem('recentTools')),
+      favLabelVisible: document.querySelector('#favLabel').classList.contains('visible'),
+      recentLabelVisible: document.querySelector('#recentLabel').classList.contains('visible'),
+      favCards: document.querySelectorAll('#favGrid .tool-card').length,
+      recentCards: document.querySelectorAll('#recentGrid .tool-card').length
+    }));
+    assert(stale.favorites.length === 0 && stale.recentTools.length === 0, `stale saved links were not pruned: ${JSON.stringify(stale)}`);
+    assert(!stale.favLabelVisible && !stale.recentLabelVisible && stale.favCards === 0 && stale.recentCards === 0, `empty saved sections remained visible: ${JSON.stringify(stale)}`);
+
+    await page.evaluate(() => {
+      localStorage.setItem('viewMode', 'category');
+      localStorage.setItem('toolsCollapsed', 'false');
+      localStorage.setItem('favorites', JSON.stringify(['https://legacy.example/special-chars/date-calc/']));
+    });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    const canonicalFavorite = await page.evaluate(() => JSON.parse(localStorage.getItem('favorites')));
+    assert(canonicalFavorite.length === 1 && new URL(canonicalFavorite[0]).pathname === '/special-chars/date-calc/', `legacy favorite was not canonicalized: ${JSON.stringify(canonicalFavorite)}`);
+    assert(await page.locator('#favGrid a[href$="/date-calc/"]').count() === 1, 'canonical favorite card was not rendered');
+    assert(await page.locator('#categoryView a[href$="/date-calc/"]').count() === 0, 'favorite remained duplicated in category view');
+
+    await page.locator('#favGrid a[href$="/date-calc/"] .fav-btn').click();
+    const unfavorited = await page.evaluate(() => ({
+      favorites: JSON.parse(localStorage.getItem('favorites')),
+      favLabelVisible: document.querySelector('#favLabel').classList.contains('visible'),
+      categoryMatches: document.querySelectorAll('#categoryView a[href$="/date-calc/"]').length
+    }));
+    assert(unfavorited.favorites.length === 0 && !unfavorited.favLabelVisible, `favorite removal did not update saved UI: ${JSON.stringify(unfavorited)}`);
+    assert(unfavorited.categoryMatches === 1, `unfavorited tool did not return to category view: ${JSON.stringify(unfavorited)}`);
+  });
+
   await scenario('quick-reply safe custom actions', '/special-chars/quick-reply/', async page => {
     await page.evaluate(() => localStorage.setItem('qr_customs', JSON.stringify(['회의 "최종" <img src=x onerror=1>', '남길 문구'])));
     await page.reload({ waitUntil: 'domcontentloaded' });

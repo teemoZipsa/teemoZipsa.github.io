@@ -796,7 +796,25 @@ function dismissBanner() {
 }
 
 // === 즐겨찾기 ===
-let favorites = safeJsonArray('favorites');
+function reconcileStoredToolLinks(key, maxItems = Infinity) {
+    const stored = safeJsonArray(key);
+    const hrefByPath = new Map([...document.querySelectorAll('#toolsGrid .tool-card')].map(card => {
+        const url = new URL(card.href, window.location.href);
+        return [url.pathname, card.href];
+    }));
+    const reconciled = [];
+    stored.forEach(value => {
+        try {
+            const canonicalHref = hrefByPath.get(new URL(value, window.location.href).pathname);
+            if (canonicalHref && !reconciled.includes(canonicalHref)) reconciled.push(canonicalHref);
+        } catch (error) {}
+    });
+    const limited = reconciled.slice(0, maxItems);
+    if (JSON.stringify(limited) !== JSON.stringify(stored)) safeSet(key, JSON.stringify(limited));
+    return limited;
+}
+
+let favorites = reconcileStoredToolLinks('favorites');
 
 function toggleFav(href, e) {
     e.preventDefault();
@@ -807,6 +825,7 @@ function toggleFav(href, e) {
     safeSet('favorites', JSON.stringify(favorites));
     renderFavButtons();
     renderFavGrid();
+    refreshCategoryViewIfNeeded();
 }
 
 function renderFavButtons() {
@@ -832,7 +851,6 @@ function renderFavGrid() {
     const label = document.getElementById('favLabel');
     grid.innerHTML = '';
     if (favorites.length === 0) { label.classList.remove('visible'); return; }
-    label.classList.add('visible');
     const allCards = document.querySelectorAll('#toolsGrid .tool-card');
     favorites.forEach(href => {
         for (const card of allCards) {
@@ -853,6 +871,7 @@ function renderFavGrid() {
             }
         }
     });
+    label.classList.toggle('visible', grid.childElementCount > 0);
 }
 
 // === 드래그 앤 드롭 즐겨찾기 ===
@@ -870,6 +889,7 @@ function renderFavGrid() {
     safeSet('favorites', JSON.stringify(favorites));
     renderFavButtons();
     renderFavGrid();
+    refreshCategoryViewIfNeeded();
     makeDraggable();
   }
 
@@ -880,6 +900,7 @@ function renderFavGrid() {
     safeSet('favorites', JSON.stringify(favorites));
     renderFavButtons();
     renderFavGrid();
+    refreshCategoryViewIfNeeded();
     makeDraggable();
   }
 
@@ -1027,7 +1048,7 @@ function renderFavGrid() {
 })();
 
 // === 최근 사용 ===
-let recentTools = safeJsonArray('recentTools');
+let recentTools = reconcileStoredToolLinks('recentTools', 3);
 
 function trackRecent(href) {
     recentTools = recentTools.filter(h => h !== href);
@@ -1041,7 +1062,6 @@ function renderRecentGrid() {
     const label = document.getElementById('recentLabel');
     grid.innerHTML = '';
     if (recentTools.length === 0) { label.classList.remove('visible'); return; }
-    label.classList.add('visible');
     const allCards = document.querySelectorAll('#toolsGrid .tool-card');
     recentTools.forEach(href => {
         for (const card of allCards) {
@@ -1056,6 +1076,7 @@ function renderRecentGrid() {
             }
         }
     });
+    label.classList.toggle('visible', grid.childElementCount > 0);
 }
 
 // 카드 클릭 시 최근 사용 기록
@@ -1125,6 +1146,9 @@ function navigateFirstVisible() {
 
 function filterCards(q) {
     const cards = document.querySelectorAll('#toolsGrid .tool-card');
+    const grid = document.getElementById('toolsGrid');
+    const categoryView = document.getElementById('categoryView');
+    const viewControls = document.querySelector('.view-controls');
     let visibleCount = 0;
     cards.forEach(card => {
         const keywords = (card.getAttribute('data-keywords') || '').toLowerCase();
@@ -1145,7 +1169,15 @@ function filterCards(q) {
     document.getElementById('favGrid').style.display = q ? 'none' : '';
     document.getElementById('recentLabel').style.display = q ? 'none' : '';
     document.getElementById('recentGrid').style.display = q ? 'none' : '';
-    if (!q) { renderFavGrid(); renderRecentGrid(); }
+    if (q) {
+        grid.style.display = '';
+        categoryView.style.display = 'none';
+        viewControls.style.display = 'none';
+    } else {
+        renderFavGrid();
+        renderRecentGrid();
+        applyToolsCollapsed();
+    }
 }
 
 // 검색창 외부 클릭 시 드롭다운 닫기
@@ -1216,6 +1248,10 @@ function renderCategoryView() {
     });
 }
 
+function refreshCategoryViewIfNeeded() {
+    if (currentView === 'category') renderCategoryView();
+}
+
 function saveCatOrder(grid, catId) {
     const hrefs = [...grid.querySelectorAll('.tool-card')].map(c => c.getAttribute('data-href') || c.href);
     safeSet('catOrder_' + catId, JSON.stringify(hrefs));
@@ -1275,6 +1311,14 @@ function applyToolsCollapsed() {
     const toggleBtn = document.getElementById('toolsToggleBtn');
     const viewToggle = document.getElementById('viewToggle');
     const viewControls = document.querySelector('.view-controls');
+    const searching = document.getElementById('searchInput').value.trim() !== '';
+    if (searching) {
+        grid.style.display = '';
+        catView.style.display = 'none';
+        viewControls.style.display = 'none';
+        toggleBtn.innerHTML = toolsCollapsed ? '전체 도구 펼치기 ▼' : '전체 도구 접기 ▲';
+        return;
+    }
     if (toolsCollapsed) {
         grid.style.display = 'none';
         catView.style.display = 'none';
@@ -1293,8 +1337,8 @@ function applyToolsCollapsed() {
 renderFavButtons();
 renderFavGrid();
 renderRecentGrid();
-applyToolsCollapsed();
 if (currentView === 'category') switchView('category');
+applyToolsCollapsed();
 
 // === 맨 위로 버튼 ===
 </script>
