@@ -15,8 +15,8 @@ foreach ($tool in $tools) {
     
     # Fix og:url and canonical to en/ path
     $content = $content.Replace(
-        "teemozipsa.github.io/special-chars/$tool/",
-        "teemozipsa.github.io/special-chars/en/$tool/"
+        "teemozipsa.com/special-chars/$tool/",
+        "teemozipsa.com/special-chars/en/$tool/"
     )
     
     Set-Content $file $content -Encoding UTF8 -NoNewline

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://teemozipsa.github.io/special-chars/sitemap.xml
+Sitemap: https://teemozipsa.com/special-chars/sitemap.xml

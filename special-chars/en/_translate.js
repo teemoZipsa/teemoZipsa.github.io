@@ -9,7 +9,7 @@ const commonReplacements = [
   // Navigation
   ['← 도구 모음', '← All Tools'],
   ['😺 더 많은 도구', '😺 More Tools'],
-  ['href="https://teemozipsa.github.io/"', 'href="https://teemozipsa.github.io/en/"'],
+  ['href="https://teemozipsa.com/"', 'href="https://teemozipsa.com/en/"'],
   
   // Guide sections
   ['사용 방법', 'How to Use'],
@@ -122,10 +122,10 @@ for (const tool of tools) {
   
   // Add hreflang if missing
   if (!content.includes('hreflang="ko"')) {
-    const canonical = `<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/${tool}/">`;
+    const canonical = `<link rel="canonical" href="https://teemozipsa.com/special-chars/en/${tool}/">`;
     const replacement = canonical + 
-      `\n<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/${tool}/">` +
-      `\n<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/${tool}/">`;
+      `\n<link rel="alternate" hreflang="ko" href="https://teemozipsa.com/special-chars/${tool}/">` +
+      `\n<link rel="alternate" hreflang="en" href="https://teemozipsa.com/special-chars/en/${tool}/">`;
     content = content.replace(canonical, replacement);
   }
   
@@ -137,8 +137,8 @@ for (const tool of tools) {
   
   // Fix footer link
   content = content.replace(
-    /href="https:\/\/teemozipsa\.github\.io\/">😺 More Tools/g,
-    'href="https://teemozipsa.github.io/en/">😺 More Tools'
+    /href="https:\/\/teemozipsa\.com\/">😺 More Tools/g,
+    'href="https://teemozipsa.com/en/">😺 More Tools'
   );
   
   fs.writeFileSync(filePath, content, 'utf8');

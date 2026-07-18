@@ -225,7 +225,7 @@ if (sitemapFile) {
     let noindexTools = 0;
     toolPages.forEach(page => {
       const routePath = '/' + rel(path.dirname(page)) + '/';
-      const sitemapLoc = `<loc>https://teemozipsa.github.io${routePath}</loc>`;
+      const sitemapLoc = `<loc>https://teemozipsa.com${routePath}</loc>`;
       const content = fs.readFileSync(page, 'utf8');
       if (hasNoindex(content)) {
         noindexTools++;

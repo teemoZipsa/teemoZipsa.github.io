@@ -202,15 +202,15 @@ for (const tool of tools) {
   }
   
   // Fix URLs
-  content = content.split(`teemozipsa.github.io/special-chars/${tool}/`).join(`teemozipsa.github.io/special-chars/en/${tool}/`);
-  content = content.split('href="https://teemozipsa.github.io/">').join('href="https://teemozipsa.github.io/en/">');
+  content = content.split(`teemozipsa.com/special-chars/${tool}/`).join(`teemozipsa.com/special-chars/en/${tool}/`);
+  content = content.split('href="https://teemozipsa.com/">').join('href="https://teemozipsa.com/en/">');
   
   // Add hreflang
-  const can = `<link rel="canonical" href="https://teemozipsa.github.io/special-chars/en/${tool}/">`;
+  const can = `<link rel="canonical" href="https://teemozipsa.com/special-chars/en/${tool}/">`;
   if (!content.includes('hreflang="ko"')) {
     content = content.replace(can, can +
-      `\n<link rel="alternate" hreflang="ko" href="https://teemozipsa.github.io/special-chars/${tool}/">` +
-      `\n<link rel="alternate" hreflang="en" href="https://teemozipsa.github.io/special-chars/en/${tool}/">`);
+      `\n<link rel="alternate" hreflang="ko" href="https://teemozipsa.com/special-chars/${tool}/">` +
+      `\n<link rel="alternate" hreflang="en" href="https://teemozipsa.com/special-chars/en/${tool}/">`);
   }
   
   // Add Korean toggle

@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
-const origin = 'https://teemozipsa.github.io';
+const origin = 'https://teemozipsa.com';
 const liveMode = process.argv.includes('--live');
 
 const placeholderPatterns = [
@@ -42,7 +42,7 @@ function walk(dir, out = []) {
 
 function parseSitemap() {
   const xml = read(path.join(rootDir, 'sitemap.xml'));
-  return [...xml.matchAll(/<loc>(https:\/\/teemozipsa\.github\.io[^<]+)<\/loc>/g)].map(m => m[1]);
+  return [...xml.matchAll(/<loc>(https:\/\/teemozipsa\.com[^<]+)<\/loc>/g)].map(m => m[1]);
 }
 
 function fileForUrl(url) {
@@ -161,7 +161,7 @@ async function liveAudit(sitemapUrls) {
   const robots = await fetch(`${origin}/robots.txt`, { headers });
   if (!robots.ok) failures.push(`robots.txt HTTP ${robots.status}`);
   const robotsText = await robots.text();
-  if (!/Sitemap:\s*https:\/\/teemozipsa\.github\.io\/sitemap\.xml/i.test(robotsText)) {
+  if (!/Sitemap:\s*https:\/\/teemozipsa\.com\/sitemap\.xml/i.test(robotsText)) {
     failures.push('robots.txt missing canonical sitemap URL');
   }
 

@@ -69,7 +69,7 @@ function startServer() {
 
 function indexedPaths() {
   const xml = fs.readFileSync(path.join(rootDir, 'sitemap.xml'), 'utf8');
-  const urls = [...xml.matchAll(/<loc>(https:\/\/teemozipsa\.github\.io[^<]+)<\/loc>/g)]
+  const urls = [...xml.matchAll(/<loc>(https:\/\/teemozipsa\.com[^<]+)<\/loc>/g)]
     .map(match => new URL(match[1]));
   assert(urls.length > 0, 'sitemap.xml contains no indexed URLs');
   return urls.map(url => `${url.pathname}${url.search}`);
