@@ -64,6 +64,11 @@ function getTag(html, name) {
   return html.match(re)?.[2]?.trim() || '';
 }
 
+function getProperty(html, property) {
+  const re = new RegExp(`<meta\\s+[^>]*property=["']${property}["'][^>]*content=(["'])(.*?)\\1[^>]*>`, 'i');
+  return html.match(re)?.[2]?.trim() || '';
+}
+
 function getTitle(html) {
   return html.match(/<title>([\s\S]*?)<\/title>/i)?.[1]?.replace(/\s+/g, ' ').trim() || '';
 }
@@ -174,6 +179,10 @@ function localAudit() {
   }
 
   const homepage = read(path.join(rootDir, 'index.html'));
+  if (!getProperty(homepage, 'og:title')) failures.push('index.html missing Open Graph title');
+  if (!getProperty(homepage, 'og:description')) failures.push('index.html missing Open Graph description');
+  if (getProperty(homepage, 'og:url') !== `${origin}/`) failures.push('index.html Open Graph URL does not match the canonical homepage');
+  if (!getProperty(homepage, 'og:image')) failures.push('index.html missing Open Graph image');
   if (getTag(homepage, 'google-adsense-account') !== 'ca-pub-3501868770820650') {
     failures.push('index.html missing the expected AdSense ownership meta tag');
   }
