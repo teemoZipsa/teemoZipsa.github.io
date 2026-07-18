@@ -2,8 +2,8 @@
  * 티모집사 통합 테마 시스템
  * theme-toggle.js
  * 
- * - 메인 포털(teemoZipsa.github.io)에만 토글 버튼 표시
- * - 개별 도구 페이지는 저장된 설정 / 시스템 설정 자동 적용 (버튼 없음)
+ * - 메인 포털에서는 내비게이션 슬롯 또는 기존 고정 버튼 사용
+ * - 개별 도구 페이지에서는 모바일에서도 누르기 쉬운 고정 버튼 제공
  */
 (function() {
   'use strict';
@@ -35,11 +35,16 @@
   }
 
   function updateButton(theme) {
-    var btn = document.querySelector('.theme-toggle-portal:not(.blog-toggle-portal)');
+    var btn = document.querySelector('.theme-toggle-portal:not(.blog-toggle-portal), .theme-toggle-tool');
     if (!btn) return;
     btn.textContent = theme === DARK ? '☀️' : '🌙';
-    btn.setAttribute('aria-label', theme === DARK ? '라이트 모드로 전환' : '다크 모드로 전환');
-    btn.title = theme === DARK ? '라이트 모드' : '다크 모드';
+    var english = window.location.pathname.indexOf('/en/') !== -1;
+    btn.setAttribute('aria-label', theme === DARK
+      ? (english ? 'Switch to light mode' : '라이트 모드로 전환')
+      : (english ? 'Switch to dark mode' : '다크 모드로 전환'));
+    btn.title = theme === DARK
+      ? (english ? 'Light mode' : '라이트 모드')
+      : (english ? 'Dark mode' : '다크 모드');
   }
 
   function toggleTheme() {
@@ -60,25 +65,29 @@
   }
 
   function createToggleButton() {
-    if (!isPortalPage()) return;
-    if (document.querySelector('.theme-toggle-portal:not(.blog-toggle-portal)')) return;
+    var portalPage = isPortalPage();
+    var toolPage = window.location.pathname.indexOf('/special-chars/') !== -1;
+    if (!portalPage && !toolPage) return;
+    if (document.querySelector('.theme-toggle-portal:not(.blog-toggle-portal), .theme-toggle-tool')) return;
 
     var theme = document.documentElement.getAttribute('data-theme') || LIGHT;
     var slot = document.querySelector('[data-theme-toggle-slot]');
     var btn = document.createElement('button');
-    btn.className = 'theme-toggle-portal';
-    btn.textContent = theme === DARK ? '☀️' : '🌙';
-    btn.setAttribute('aria-label', theme === DARK ? '라이트 모드로 전환' : '다크 모드로 전환');
-    btn.title = theme === DARK ? '라이트 모드' : '다크 모드';
+    btn.type = 'button';
+    btn.className = toolPage && !portalPage ? 'theme-toggle-tool' : 'theme-toggle-portal';
     btn.onclick = toggleTheme;
     if (slot) {
       btn.classList.add('theme-toggle-inline');
       slot.appendChild(btn);
+      updateButton(theme);
       return;
     }
     document.body.appendChild(btn);
+    updateButton(theme);
+    if (toolPage && !portalPage) return;
 
     var blogBtn = document.createElement('button');
+    blogBtn.type = 'button';
     blogBtn.className = 'theme-toggle-portal blog-toggle-portal';
     blogBtn.textContent = '📰';
     blogBtn.setAttribute('aria-label', '티모 매거진 블로그');

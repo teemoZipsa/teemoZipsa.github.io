@@ -313,6 +313,33 @@ html[data-theme] a:not([class]) {
   right: 64px;
 }
 
+/* 개별 도구에서 헤더 폭을 차지하지 않는 공통 테마 전환 버튼 */
+.theme-toggle-tool {
+  position: fixed;
+  left: max(16px, env(safe-area-inset-left));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 1000;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 14px;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  box-shadow: var(--shadow-md);
+  font: 18px/1 system-ui, sans-serif;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+.theme-toggle-tool:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-accent);
+}
+
 /* 전환 애니메이션 */
 html[data-theme] body,
 html[data-theme] body * {

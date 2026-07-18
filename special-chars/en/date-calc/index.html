@@ -42,8 +42,11 @@
   .date-row input[type="date"],.date-row input[type="number"]{background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:6px 10px;font-size:13px;flex:1;font-family:inherit;outline:none}
   .date-row input[type="date"]:focus,.date-row input[type="number"]:focus{border-color:var(--accent)}
   .date-row input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.7)}
-  .checkbox-row{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-info);margin-bottom:8px}
+  .checkbox-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:11px;color:var(--text-info);margin-bottom:8px}
   .checkbox-row input[type="checkbox"]{accent-color:#533483}
+  .include-help-toggle{width:40px;height:40px;display:grid;place-items:center;margin-left:2px;border:1px solid var(--border);border-radius:10px;background:var(--bg-btn);color:var(--text-info);font:700 15px/1 inherit;cursor:pointer;touch-action:manipulation}
+  .include-help-toggle:hover{background:var(--bg-btn-hover);color:var(--accent-text)}
+  .include-help-text{flex:1 0 100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-guide);color:var(--text-secondary);font-size:11px;line-height:1.65}
   .date-result-card{background:var(--bg-input);border-radius:10px;padding:14px;text-align:center;margin-top:8px}
   .date-result-value{font-size:28px;font-weight:700;color:var(--text-primary)}
   .date-result-sub{font-size:12px;color:var(--text-info);margin-top:4px}
@@ -97,7 +100,8 @@
       <div class="checkbox-row">
         <input type="checkbox" id="ddayInclusive">
         <label for="ddayInclusive">Include both endpoint dates</label>
-        <span title="Check to include both the start and target dates.&#10;e.g., Jan 1 to Jan 3, in either direction → 3 days if checked, 2 days if unchecked.&#10;Recommended for anniversaries." style="cursor:help;color:var(--text-info);">ⓘ</span>
+        <button type="button" class="include-help-toggle" id="includeHelpToggle" aria-expanded="false" aria-controls="includeHelpText" onclick="toggleIncludeHelp()" aria-label="Show endpoint date option help">ⓘ</button>
+        <div class="include-help-text" id="includeHelpText" hidden>Counts both the start and target dates. For example, Jan 1 to Jan 3 in either direction is 3 days when checked and 2 days when unchecked. Use it for anniversaries; leave it off for standard deadlines.</div>
       </div>
       <div class="date-result-card" id="ddayResult">
         <div class="date-result-value" id="ddayValue">-</div>
@@ -173,6 +177,15 @@
 
 <script>
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),1500)}
+
+function toggleIncludeHelp(){
+  const button=document.getElementById('includeHelpToggle');
+  const help=document.getElementById('includeHelpText');
+  const expanded=button.getAttribute('aria-expanded')==='true';
+  button.setAttribute('aria-expanded',String(!expanded));
+  button.setAttribute('aria-label',expanded?'Show endpoint date option help':'Hide endpoint date option help');
+  help.hidden=expanded;
+}
 
 function parseDateInput(value){
   const parts=value.split('-').map(Number);

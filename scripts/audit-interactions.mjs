@@ -666,9 +666,17 @@ async function main() {
       const fav = card?.querySelector('.fav-btn');
       const cardRect = card?.getBoundingClientRect();
       const favRect = fav?.getBoundingClientRect();
-      return { client: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth, cardRight: cardRect?.right, favRight: favRect?.right };
+      return {
+        client: document.documentElement.clientWidth,
+        scroll: document.documentElement.scrollWidth,
+        cardRight: cardRect?.right,
+        favRight: favRect?.right,
+        favWidth: favRect?.width,
+        favHeight: favRect?.height
+      };
     });
     assert(layout.scroll <= layout.client && layout.cardRight <= layout.client && layout.favRight <= layout.client, `mobile overflow: ${JSON.stringify(layout)}`);
+    assert(layout.favWidth >= 44 && layout.favHeight >= 44, `favorite touch target is too small: ${JSON.stringify(layout)}`);
   }, { viewport: { width: 320, height: 800 } });
 
   await scenario('home category search and collapsed state', '/', async page => {
@@ -686,12 +694,14 @@ async function main() {
       visibleTools: [...document.querySelectorAll('#toolsGrid .tool-card')]
         .filter(card => getComputedStyle(card).display !== 'none')
         .map(card => card.querySelector('.tool-name')?.textContent.trim()),
-      dropdownItems: document.querySelectorAll('.search-dropdown-item').length
+      searchStatus: document.querySelector('#searchStatus').textContent.trim(),
+      clearVisible: getComputedStyle(document.querySelector('#searchClear')).display !== 'none'
     }));
     assert(searched.toolsDisplay === 'grid' && searched.categoryDisplay === 'none', `category search did not switch to results: ${JSON.stringify(searched)}`);
-    assert(searched.controlsDisplay === 'none' && searched.dropdownItems === 2 && searched.visibleTools.length === 2, `category search leaked unrelated tools: ${JSON.stringify(searched)}`);
+    assert(searched.controlsDisplay === 'none' && searched.visibleTools.length === 2, `category search leaked unrelated tools: ${JSON.stringify(searched)}`);
+    assert(searched.searchStatus === '검색 결과 2개' && searched.clearVisible, `search feedback is incomplete: ${JSON.stringify(searched)}`);
 
-    await page.locator('#searchInput').fill('');
+    await page.locator('#searchInput').press('Escape');
     const restored = await page.evaluate(() => ({
       toolsDisplay: getComputedStyle(document.querySelector('#toolsGrid')).display,
       categoryDisplay: getComputedStyle(document.querySelector('#categoryView')).display,
@@ -750,6 +760,106 @@ async function main() {
     }));
     assert(unfavorited.favorites.length === 0 && !unfavorited.favLabelVisible, `favorite removal did not update saved UI: ${JSON.stringify(unfavorited)}`);
     assert(unfavorited.categoryMatches === 1, `unfavorited tool did not return to category view: ${JSON.stringify(unfavorited)}`);
+  });
+
+  await scenario('home favorite feedback and undo', '/', async page => {
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    const firstFavoriteButton = page.locator('#toolsGrid .tool-card .fav-btn').first();
+    const href = await firstFavoriteButton.evaluate(button => button.closest('.tool-card').href);
+    await firstFavoriteButton.click();
+    const added = await page.evaluate(() => ({
+      toastVisible: document.querySelector('#homeToast').classList.contains('visible'),
+      toastText: document.querySelector('#homeToastMessage').textContent,
+      favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
+      favoriteCards: document.querySelectorAll('#favGrid .tool-card').length
+    }));
+    assert(added.toastVisible && added.toastText.includes('추가'), `favorite feedback was not shown: ${JSON.stringify(added)}`);
+    assert(added.favorites.includes(href) && added.favoriteCards === 1, `favorite was not added: ${JSON.stringify(added)}`);
+    await page.locator('#homeToastUndo').click();
+    const undone = await page.evaluate(targetHref => ({
+      toastVisible: document.querySelector('#homeToast').classList.contains('visible'),
+      favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
+      cardVisible: [...document.querySelectorAll('#toolsGrid .tool-card')].some(card => card.href === targetHref && getComputedStyle(card).display !== 'none')
+    }), href);
+    assert(!undone.toastVisible && undone.favorites.length === 0 && undone.cardVisible, `favorite undo failed: ${JSON.stringify(undone)}`);
+  });
+
+  await scenario('English home layout and locale storage', '/en/', async page => {
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('favorites', JSON.stringify(['https://legacy.example/special-chars/date-calc/']));
+      localStorage.setItem('recentTools', JSON.stringify(['https://legacy.example/special-chars/loan-calc/']));
+      localStorage.setItem('viewMode', 'category');
+      localStorage.setItem('toolsCollapsed', 'false');
+    });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    const isolated = await page.evaluate(() => ({
+      favoritesEn: JSON.parse(localStorage.getItem('favorites_en') || '[]'),
+      recentEn: JSON.parse(localStorage.getItem('recentTools_en') || '[]'),
+      sharedFavorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
+      favVisible: document.querySelector('#favLabel').classList.contains('visible'),
+      recentVisible: document.querySelector('#recentLabel').classList.contains('visible'),
+      inlineTheme: document.querySelectorAll('[data-theme-toggle-slot] .theme-toggle-inline').length,
+      fixedBlog: document.querySelectorAll('.blog-toggle-portal').length,
+      overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth
+    }));
+    assert(isolated.favoritesEn.length === 0 && isolated.recentEn.length === 0, `Korean saved state leaked into English: ${JSON.stringify(isolated)}`);
+    assert(isolated.sharedFavorites.length === 1 && !isolated.favVisible && !isolated.recentVisible, `English initialization damaged or exposed shared state: ${JSON.stringify(isolated)}`);
+    assert(isolated.inlineTheme === 1 && isolated.fixedBlog === 0 && !isolated.overflow, `English compact navigation is incomplete: ${JSON.stringify(isolated)}`);
+
+    await page.locator('#searchInput').fill('date');
+    const searched = await page.evaluate(() => ({
+      status: document.querySelector('#searchStatus').textContent.trim(),
+      visible: [...document.querySelectorAll('#toolsGrid .tool-card')].filter(card => getComputedStyle(card).display !== 'none').length,
+      categories: getComputedStyle(document.querySelector('#categoryView')).display,
+      controls: getComputedStyle(document.querySelector('.view-controls')).display,
+      dropdowns: document.querySelectorAll('.search-dropdown-item').length
+    }));
+    assert(searched.visible > 0 && searched.status.includes(`${searched.visible} tool`), `English search feedback mismatch: ${JSON.stringify(searched)}`);
+    assert(searched.categories === 'none' && searched.controls === 'none' && searched.dropdowns === 0, `English search duplicated or leaked views: ${JSON.stringify(searched)}`);
+    await page.locator('#searchClear').click();
+    assert(await page.locator('#searchInput').inputValue() === '', 'English search clear button did not clear the query');
+    assert(await page.locator('#categoryView').evaluate(element => getComputedStyle(element).display) === 'block', 'English category view was not restored');
+
+    await page.evaluate(() => {
+      localStorage.removeItem('favorites_en');
+      localStorage.setItem('favorites', JSON.stringify(['https://legacy.example/special-chars/en/date-calc/']));
+    });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    const migrated = await page.evaluate(() => ({
+      english: JSON.parse(localStorage.getItem('favorites_en') || '[]'),
+      shared: JSON.parse(localStorage.getItem('favorites') || '[]'),
+      rendered: document.querySelectorAll('#favGrid a[href$="/special-chars/en/date-calc/"]').length
+    }));
+    assert(migrated.english.length === 1 && migrated.shared.length === 1 && migrated.rendered === 1, `English legacy migration failed: ${JSON.stringify(migrated)}`);
+  }, { viewport: { width: 320, height: 800 } });
+
+  await scenario('tool theme control', '/special-chars/calculator/', async page => {
+    const button = page.locator('.theme-toggle-tool');
+    await button.waitFor({ state: 'visible' });
+    const before = await page.locator('html').getAttribute('data-theme');
+    const target = await button.boundingBox();
+    await button.click();
+    const after = await page.locator('html').getAttribute('data-theme');
+    assert(target.width >= 44 && target.height >= 44, `tool theme control is too small: ${JSON.stringify(target)}`);
+    assert(after !== before && await page.evaluate(() => localStorage.getItem('theme')) === after, 'tool theme control did not persist the selected theme');
+    assert((await button.getAttribute('aria-label')).includes('모드'), 'Korean tool theme control label is not localized');
+  }, { viewport: { width: 320, height: 800 } });
+
+  await scenario('date option touch help', '/special-chars/date-calc/', async page => {
+    const button = page.locator('#includeHelpToggle');
+    assert(await page.locator('#includeHelpText').isHidden(), 'date option help starts expanded');
+    await button.click();
+    assert(await button.getAttribute('aria-expanded') === 'true', 'date option help did not expose expanded state');
+    assert(await page.locator('#includeHelpText').isVisible(), 'date option help did not become visible');
+  });
+
+  await scenario('English date option touch help', '/special-chars/en/date-calc/', async page => {
+    const button = page.locator('#includeHelpToggle');
+    await button.click();
+    assert(await button.getAttribute('aria-expanded') === 'true' && await page.locator('#includeHelpText').isVisible(), 'English date option help did not expand');
+    assert((await page.locator('.theme-toggle-tool').getAttribute('aria-label')).includes('mode'), 'English tool theme control label is not localized');
   });
 
   await scenario('quick-reply safe custom actions', '/special-chars/quick-reply/', async page => {

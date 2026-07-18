@@ -46,11 +46,24 @@
         .search-wrap svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; fill: var(--text-muted); pointer-events: none; }
         .search-wrap input {
             width: 100%; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
-            padding: 14px 16px 14px 46px; font-size: 15px; color: var(--text-primary); outline: none;
+            padding: 14px 54px 14px 46px; font-size: 15px; color: var(--text-primary); outline: none;
             font-family: inherit; transition: border-color .2s, box-shadow .2s; box-shadow: var(--shadow-sm);
         }
         .search-wrap input::placeholder { color: var(--text-muted); }
         .search-wrap input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,.15); }
+        .search-clear {
+            position: absolute; right: 9px; top: 50%; transform: translateY(-50%);
+            width: 36px; height: 36px; border: 0; border-radius: 10px;
+            display: none; place-items: center; background: var(--bg-hover); color: var(--text-secondary);
+            cursor: pointer; font: 700 20px/1 inherit; z-index: 2;
+        }
+        .search-clear.visible { display: grid; }
+        .search-clear:hover { background: var(--accent-light); color: var(--accent); }
+        .search-status {
+            width: calc(100% - 40px); max-width: 1080px; margin: 0 auto 6px;
+            color: var(--text-muted); font-size: 12px; font-weight: 700; display: none;
+        }
+        .search-status.visible { display: block; }
 
         
         .section-label {
@@ -84,32 +97,34 @@
 
         
         .fav-btn {
-            position: absolute; top: 8px; right: 8px; background: none; border: none;
-            font-size: 16px; cursor: pointer; color: var(--text-muted); transition: color .2s;
-            padding: 4px; line-height: 1; z-index: 2;
+            position: absolute; top: 4px; right: 4px; width: 44px; height: 44px;
+            display: grid; place-items: center; background: transparent; border: none; border-radius: 12px;
+            font-size: 19px; cursor: pointer; color: var(--text-muted); transition: color .2s, background .2s;
+            padding: 0; line-height: 1; z-index: 2; touch-action: manipulation;
         }
-        .fav-btn:hover { color: #f59e0b; }
+        .fav-btn:hover { color: #f59e0b; background: var(--bg-hover); }
         .fav-btn.active { color: #f59e0b; }
 
-        .no-results { text-align: center; color: var(--text-muted); font-size: 14px; padding: 40px 20px; display: none; }
+        .home-toast {
+            position: fixed; right: 80px; bottom: 24px; z-index: 1200;
+            max-width: min(440px, calc(100vw - 32px)); min-height: 48px;
+            display: flex; align-items: center; gap: 14px;
+            padding: 11px 12px 11px 16px; border-radius: 14px;
+            background: #0f172a; color: #fff; box-shadow: 0 18px 42px rgba(15, 23, 42, .3);
+            opacity: 0; transform: translateY(14px); pointer-events: none;
+            transition: opacity .2s ease, transform .2s ease;
+            font-size: 13px; font-weight: 700;
+        }
+        html[data-theme="dark"] .home-toast { background: #f8fafc; color: #0f172a; }
+        .home-toast.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .home-toast button {
+            flex: 0 0 auto; min-height: 36px; padding: 0 10px; border: 0; border-radius: 9px;
+            background: rgba(99, 102, 241, .18); color: #a5b4fc;
+            font: 800 12px/1 inherit; cursor: pointer;
+        }
+        html[data-theme="dark"] .home-toast button { color: #4338ca; }
 
-        
-        .search-dropdown {
-            position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-card);
-            border: 1px solid var(--border); border-top: none; border-radius: 0 0 12px 12px;
-            box-shadow: var(--shadow-lg); z-index: 10; display: none;
-            max-height: 320px; overflow-y: auto;
-        }
-        .search-dropdown.open { display: block; }
-        .search-dropdown-item {
-            display: flex; align-items: center; gap: 10px; padding: 10px 16px;
-            text-decoration: none; color: inherit; cursor: pointer; transition: background .15s;
-        }
-        .search-dropdown-item:hover, .search-dropdown-item.active { background: var(--bg-hover); }
-        .search-dropdown-item .sdi-icon { font-size: 18px; width: 28px; text-align: center; flex-shrink: 0; }
-        .search-dropdown-item .sdi-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
-        .search-dropdown-item .sdi-desc { font-size: 11px; color: var(--text-muted); }
-        .search-wrap input.dropdown-open { border-radius: 12px 12px 0 0; }
+        .no-results { text-align: center; color: var(--text-muted); font-size: 14px; padding: 40px 20px; display: none; }
 
         
         .view-controls {
@@ -219,13 +234,101 @@
         .view-toggle button.active::before { display: none; }
         .view-toggle span { position: relative; z-index: 1; pointer-events: none; }
 
-        .tool-card { min-width: 0; width: 100%; max-width: 100%; padding-right: 44px; }
+        .tool-card { min-width: 0; width: 100%; max-width: 100%; padding-right: 56px; }
         .tool-card::after { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; }
         .tool-card > :not(.fav-btn) { position: relative; z-index: 1; }
         .tool-card > .fav-btn { position: absolute; z-index: 2; }
 
         
-        .update-banner,.hero,.search-wrap,.section-label,.view-controls,.tools-grid,.fav-drop-zone,.category-group,.faq-section,.tip-section,footer,.no-results{position:relative;z-index:1}
+        .update-banner,.hero,.today-widget,.search-wrap,.section-label,.view-controls,.tools-grid,.fav-drop-zone,.category-group,.faq-section,.tip-section,footer,.no-results{position:relative;z-index:1}
+
+        /* Compact portal layout shared with the Korean homepage */
+        .visually-hidden {
+            position: absolute !important; width: 1px !important; height: 1px !important;
+            padding: 0 !important; margin: -1px !important; overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important;
+        }
+        .blob-bg { display: none; }
+        body {
+            background:
+                linear-gradient(180deg, rgba(15, 23, 42, .04), transparent 420px),
+                var(--bg-body);
+        }
+        html[data-theme="dark"] body {
+            background: linear-gradient(180deg, #0f172a 0%, #111827 460px, var(--bg-body) 100%);
+        }
+        .site-nav {
+            max-width: 1120px; margin: 14px auto 0; padding: 0 20px;
+            display: flex; align-items: center; justify-content: space-between; gap: 18px;
+            position: relative; z-index: 2;
+        }
+        .brand-link {
+            display: inline-flex; align-items: center; gap: 10px;
+            color: var(--text-primary); text-decoration: none; font-weight: 900; letter-spacing: -0.02em;
+        }
+        .brand-mark {
+            width: 34px; height: 34px; border-radius: 10px;
+            display: grid; place-items: center;
+            background: linear-gradient(135deg, #2563eb, #0fba9f);
+            color: #fff; box-shadow: 0 10px 22px rgba(37, 99, 235, .28);
+        }
+        .site-nav-actions { display: flex; align-items: center; gap: 8px; min-width: 0; }
+        .site-nav-links { display: flex; align-items: center; gap: 4px; min-width: 0; }
+        .site-nav-links a {
+            color: var(--text-secondary); text-decoration: none;
+            padding: 9px 10px; border-radius: 10px; font-size: 13px; font-weight: 800;
+            white-space: nowrap;
+        }
+        .site-nav-links a:hover { background: var(--bg-hover); color: var(--text-primary); }
+        .nav-language-short { display: none; }
+        .nav-theme-slot { width: 40px; height: 40px; flex: 0 0 40px; }
+        .site-nav .theme-toggle-portal.theme-toggle-inline {
+            position: static; inset: auto; width: 40px; height: 40px; padding: 0;
+            display: grid; place-items: center; border-radius: 11px; box-shadow: var(--shadow-sm);
+            transition: background .2s, transform .2s, box-shadow .2s;
+        }
+        .home-utility {
+            max-width: 1120px; margin: 18px auto 0; padding: 0 20px;
+            position: relative; z-index: 1;
+        }
+        .today-widget {
+            max-width: none; margin: 0; padding: 16px 20px; border-radius: 18px;
+            background: color-mix(in srgb, var(--bg-card) 94%, transparent);
+            box-shadow: var(--shadow-md);
+        }
+        .search-wrap { width: calc(100% - 40px); max-width: 1080px; margin: 14px auto 8px; }
+        .search-wrap input { min-height: 54px; border-radius: 16px; font-size: 16px; box-shadow: var(--shadow-md); }
+        .tools-grid, .category-group, .view-controls, .section-label, .tip-section, .faq-section { max-width: 1120px; }
+        #recentGrid:empty, #favGrid:empty { display: none; }
+        .view-controls { margin-top: 4px; }
+        .tool-card {
+            border-radius: 18px; min-height: 86px;
+            background: color-mix(in srgb, var(--bg-card) 94%, transparent);
+        }
+        .tool-icon { background: linear-gradient(135deg, var(--accent-light), var(--bg-input)); }
+        footer { max-width: 1120px; }
+        @media (max-width: 640px) {
+            .site-nav { margin-top: 10px; padding: 0 16px; gap: 8px; }
+            .brand-link > span:last-child { display: none; }
+            .site-nav-actions { margin-left: auto; gap: 4px; }
+            .site-nav-links { gap: 0; }
+            .site-nav-links a { padding: 8px 7px; font-size: 12px; }
+            .nav-language-full { display: none; }
+            .nav-language-short { display: inline; }
+            .home-utility { margin-top: 12px; padding: 0 16px; }
+            .today-widget {
+                flex-direction: row; flex-wrap: nowrap; text-align: left;
+                padding: 14px 16px; gap: 10px;
+            }
+            .today-date { font-size: 13px; }
+            .today-sub { font-size: 11px; }
+            .today-clock { font-size: 20px; }
+            .today-remain { max-width: 150px; font-size: 10px; }
+            .search-wrap { width: calc(100% - 32px); margin-top: 12px; }
+            .search-wrap input { min-height: 50px; font-size: 15px; }
+            .search-status { width: calc(100% - 32px); }
+            .home-toast { left: 16px; right: 16px; bottom: 76px; max-width: none; }
+        }
     </style>
 </head>
 <body>
@@ -233,30 +336,44 @@
 <!-- Blob BG -->
 <div class="blob-bg" id="blobBg" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
 
-
-
-<div class="hero">
-    <h1>TeemoZipsa's Free Online Tools 😺</h1>
-    <p>Handy web tools for everyday life — no sign-up required.</p>
-</div>
-
-<!-- Today's Info Widget -->
-<div class="today-widget">
-    <div>
-        <div class="today-date" id="todayDate"></div>
-        <div class="today-sub" id="todaySub"></div>
+<header class="site-header">
+<nav class="site-nav" aria-label="Primary navigation">
+    <a href="/en/" class="brand-link">
+        <span class="brand-mark">T</span>
+        <span>TeemoZipsa Tools</span>
+    </a>
+    <div class="site-nav-actions">
+        <div class="site-nav-links">
+            <a href="#toolsGrid">Tools</a>
+            <a href="/blog/">Blog</a>
+            <a class="nav-language" href="/" aria-label="한국어"><span class="nav-language-full">한국어</span><span class="nav-language-short">KO</span></a>
+        </div>
+        <div class="nav-theme-slot" data-theme-toggle-slot></div>
     </div>
-    <div style="text-align:right">
-        <div class="today-clock" id="todayClock"></div>
-        <div class="today-remain" id="todayRemain"></div>
+</nav>
+</header>
+
+<main id="mainContent">
+<section class="home-utility" aria-labelledby="mainTitle">
+    <h1 id="mainTitle" class="visually-hidden">TeemoZipsa's Free Online Tools</h1>
+    <div class="today-widget">
+        <div>
+            <div class="today-date" id="todayDate"></div>
+            <div class="today-sub" id="todaySub"></div>
+        </div>
+        <div style="text-align:right">
+            <div class="today-clock" id="todayClock"></div>
+            <div class="today-remain" id="todayRemain"></div>
+        </div>
     </div>
-</div>
+</section>
 
 <div class="search-wrap">
     <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-    <input type="text" id="searchInput" placeholder="Search tools... (e.g. music, color, password)" oninput="onSearchInput()" onkeydown="onSearchKeydown(event)" onfocus="onSearchFocus()" autocomplete="off">
-    <div class="search-dropdown" id="searchDropdown"></div>
+    <input type="text" id="searchInput" placeholder="Search tools... (e.g. music, color, password)" oninput="onSearchInput()" onkeydown="onSearchKeydown(event)" autocomplete="off" aria-describedby="searchStatus">
+    <button type="button" class="search-clear" id="searchClear" onclick="clearToolSearch()" aria-label="Clear search">×</button>
 </div>
+<div class="search-status" id="searchStatus" role="status" aria-live="polite"></div>
 
 
 <div class="section-label" id="recentLabel">🕐 Recently Used</div>
@@ -518,6 +635,11 @@
     <button class="faq-toggle-btn" id="faqToggle" onclick="toggleFaqAll()">Show More ▼ <span style="font-weight:400;color:#94a3b8">(+15)</span></button>
 </div>
 
+</main>
+<div class="home-toast" id="homeToast" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true" inert>
+    <span id="homeToastMessage"></span>
+    <button type="button" id="homeToastUndo" disabled>Undo</button>
+</div>
 <footer>
     <div class="footer-links">
         <a href="https://www.instagram.com/seon_7yu/" target="_blank" rel="noopener">
@@ -710,17 +832,92 @@ document.getElementById('tipContent').textContent = TIPS[Math.floor(Math.random(
 
 
 
-let favorites = safeJsonArray('favorites');
+function reconcileEnglishStoredToolLinks(key, legacyKey, maxItems = Infinity) {
+    let stored;
+    if (safeGet(key) === null) {
+        stored = safeJsonArray(legacyKey).filter(value => {
+            try { return new URL(value, window.location.href).pathname.includes('/special-chars/en/'); }
+            catch (error) { return false; }
+        });
+    } else {
+        stored = safeJsonArray(key);
+    }
+    const hrefByPath = new Map([...document.querySelectorAll('#toolsGrid .tool-card')].map(card => {
+        const url = new URL(card.href, window.location.href);
+        return [url.pathname, card.href];
+    }));
+    const reconciled = [];
+    stored.forEach(value => {
+        try {
+            const canonicalHref = hrefByPath.get(new URL(value, window.location.href).pathname);
+            if (canonicalHref && !reconciled.includes(canonicalHref)) reconciled.push(canonicalHref);
+        } catch (error) {}
+    });
+    const limited = reconciled.slice(0, maxItems);
+    safeSet(key, JSON.stringify(limited));
+    return limited;
+}
 
-function toggleFav(href, e) {
-    e.preventDefault();
-    e.stopPropagation();
-    const idx = favorites.indexOf(href);
-    if (idx >= 0) favorites.splice(idx, 1);
-    else favorites.push(href);
-    safeSet('favorites', JSON.stringify(favorites));
+const FAVORITES_KEY = 'favorites_en';
+const RECENT_TOOLS_KEY = 'recentTools_en';
+const TOOL_ORDER_KEY = 'toolOrder_en';
+let favorites = reconcileEnglishStoredToolLinks(FAVORITES_KEY, 'favorites');
+let homeToastTimer = null;
+let homeToastUndoAction = null;
+
+function hideHomeToast() {
+    const toast = document.getElementById('homeToast');
+    toast.classList.remove('visible');
+    toast.setAttribute('aria-hidden', 'true');
+    toast.setAttribute('inert', '');
+    document.getElementById('homeToastUndo').disabled = true;
+    homeToastUndoAction = null;
+}
+
+function showHomeToast(message, undoAction) {
+    const toast = document.getElementById('homeToast');
+    toast.removeAttribute('aria-hidden');
+    toast.removeAttribute('inert');
+    document.getElementById('homeToastUndo').disabled = false;
+    document.getElementById('homeToastMessage').textContent = message;
+    homeToastUndoAction = undoAction;
+    clearTimeout(homeToastTimer);
+    toast.classList.add('visible');
+    homeToastTimer = setTimeout(hideHomeToast, 5000);
+}
+
+document.getElementById('homeToastUndo').addEventListener('click', function() {
+    const undoAction = homeToastUndoAction;
+    clearTimeout(homeToastTimer);
+    hideHomeToast();
+    if (undoAction) undoAction();
+});
+
+function setFavoriteState(href, shouldFavorite, announce = true) {
+    const wasFavorite = favorites.includes(href);
+    if (wasFavorite === shouldFavorite) return;
+    if (shouldFavorite) favorites.push(href);
+    else favorites = favorites.filter(value => value !== href);
+    safeSet(FAVORITES_KEY, JSON.stringify(favorites));
     renderFavButtons();
     renderFavGrid();
+    refreshCategoryViewIfNeeded();
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    if (query) filterCards(query);
+    if (announce) {
+        showHomeToast(
+            shouldFavorite ? 'Added to Favorites. It is now available near the top.' : 'Removed from Favorites.',
+            () => setFavoriteState(href, !shouldFavorite, false)
+        );
+    }
+}
+
+function toggleFav(href, e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    setFavoriteState(href, !favorites.includes(href));
 }
 
 function renderFavButtons() {
@@ -729,13 +926,13 @@ function renderFavButtons() {
         if (!btn) {
             btn = document.createElement('button');
             btn.className = 'fav-btn';
-            btn.setAttribute('aria-label', 'Favorites');
             btn.onclick = (e) => toggleFav(card.href, e);
             card.appendChild(btn);
         }
         const isFav = favorites.includes(card.href);
         btn.textContent = isFav ? '★' : '☆';
         btn.classList.toggle('active', isFav);
+        btn.setAttribute('aria-label', isFav ? 'Remove Favorite' : 'Add to Favorites');
         
         card.style.display = isFav ? 'none' : '';
     });
@@ -746,7 +943,6 @@ function renderFavGrid() {
     const label = document.getElementById('favLabel');
     grid.innerHTML = '';
     if (favorites.length === 0) { label.classList.remove('visible'); return; }
-    label.classList.add('visible');
     const allCards = document.querySelectorAll('#toolsGrid .tool-card');
     favorites.forEach(href => {
         for (const card of allCards) {
@@ -767,6 +963,7 @@ function renderFavGrid() {
             }
         }
     });
+    label.classList.toggle('visible', grid.childElementCount > 0);
 }
 
 (function() {
@@ -779,20 +976,13 @@ function renderFavGrid() {
 
   function addFav(href) {
     if (!href || favorites.includes(href)) return;
-    favorites.push(href);
-    safeSet('favorites', JSON.stringify(favorites));
-    renderFavButtons();
-    renderFavGrid();
+    setFavoriteState(href, true);
     makeDraggable();
   }
 
   function removeFav(href) {
-    var idx = favorites.indexOf(href);
-    if (idx < 0) return;
-    favorites.splice(idx, 1);
-    safeSet('favorites', JSON.stringify(favorites));
-    renderFavButtons();
-    renderFavGrid();
+    if (!favorites.includes(href)) return;
+    setFavoriteState(href, false);
     makeDraggable();
   }
 
@@ -931,7 +1121,7 @@ function renderFavGrid() {
     if (insertAfter) newToIdx++;
     favorites.splice(newToIdx, 0, fromHref);
 
-    safeSet('favorites', JSON.stringify(favorites));
+    safeSet(FAVORITES_KEY, JSON.stringify(favorites));
     renderFavButtons();
     renderFavGrid();
     makeDraggable();
@@ -939,13 +1129,13 @@ function renderFavGrid() {
   });
 })();
 
-let recentTools = safeJsonArray('recentTools');
+let recentTools = reconcileEnglishStoredToolLinks(RECENT_TOOLS_KEY, 'recentTools', 3);
 
 function trackRecent(href) {
     recentTools = recentTools.filter(h => h !== href);
     recentTools.unshift(href);
     if (recentTools.length > 3) recentTools = recentTools.slice(0, 3);
-    safeSet('recentTools', JSON.stringify(recentTools));
+    safeSet(RECENT_TOOLS_KEY, JSON.stringify(recentTools));
 }
 
 function renderRecentGrid() {
@@ -953,7 +1143,6 @@ function renderRecentGrid() {
     const label = document.getElementById('recentLabel');
     grid.innerHTML = '';
     if (recentTools.length === 0) { label.classList.remove('visible'); return; }
-    label.classList.add('visible');
     const allCards = document.querySelectorAll('#toolsGrid .tool-card');
     recentTools.forEach(href => {
         for (const card of allCards) {
@@ -968,6 +1157,7 @@ function renderRecentGrid() {
             }
         }
     });
+    label.classList.toggle('visible', grid.childElementCount > 0);
 }
 
 
@@ -978,55 +1168,25 @@ document.getElementById('toolsGrid').addEventListener('click', e => {
     }
 });
 
-let ddIdx = -1;
-function getToolList() {
-    return [...document.querySelectorAll('#toolsGrid .tool-card')].map(c => ({
-        href: c.href,
-        icon: c.querySelector('.tool-icon')?.textContent || '',
-        name: c.querySelector('.tool-name')?.textContent || '',
-        desc: c.querySelector('.tool-desc')?.textContent || '',
-        keywords: (c.getAttribute('data-keywords') || '').toLowerCase()
-    }));
-}
-
 function onSearchInput() {
     const q = document.getElementById('searchInput').value.trim().toLowerCase();
-    const dd = document.getElementById('searchDropdown');
-    const input = document.getElementById('searchInput');
-    ddIdx = -1;
-    if (!q) { dd.classList.remove('open'); input.classList.remove('dropdown-open'); filterCards(''); return; }
-    const tools = getToolList();
-    const matches = tools.filter(t => t.name.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q) || t.keywords.includes(q));
-    if (matches.length === 0) { dd.classList.remove('open'); input.classList.remove('dropdown-open'); filterCards(q); return; }
-    dd.innerHTML = matches.map((t, i) => `<a class="search-dropdown-item" href="${t.href}" data-idx="${i}" onmousedown="trackRecent('${t.href}')"><span class="sdi-icon">${t.icon}</span><span><span class="sdi-name">${t.name}</span><br><span class="sdi-desc">${t.desc}</span></span></a>`).join('');
-    dd.classList.add('open');
-    input.classList.add('dropdown-open');
+    document.getElementById('searchClear').classList.toggle('visible', q.length > 0);
     filterCards(q);
 }
 
-function onSearchFocus() {
-    const q = document.getElementById('searchInput').value.trim();
-    if (q) onSearchInput();
+function clearToolSearch() {
+    const input = document.getElementById('searchInput');
+    input.value = '';
+    onSearchInput();
+    input.focus();
 }
 
 function onSearchKeydown(e) {
-    const dd = document.getElementById('searchDropdown');
-    const items = dd.querySelectorAll('.search-dropdown-item');
-    if (!dd.classList.contains('open') || items.length === 0) {
-        if (e.key === 'Enter') { e.preventDefault(); navigateFirstVisible(); }
-        return;
-    }
-    if (e.key === 'ArrowDown') { e.preventDefault(); ddIdx = Math.min(ddIdx + 1, items.length - 1); highlightDD(items); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); ddIdx = Math.max(ddIdx - 1, -1); highlightDD(items); }
-    else if (e.key === 'Enter') {
+    if (e.key === 'Enter') { e.preventDefault(); navigateFirstVisible(); }
+    else if (e.key === 'Escape' && document.getElementById('searchInput').value) {
         e.preventDefault();
-        if (ddIdx >= 0 && items[ddIdx]) { trackRecent(items[ddIdx].href); window.location.href = items[ddIdx].href; }
-        else navigateFirstVisible();
-    } else if (e.key === 'Escape') { dd.classList.remove('open'); document.getElementById('searchInput').classList.remove('dropdown-open'); }
-}
-
-function highlightDD(items) {
-    items.forEach((el, i) => el.classList.toggle('active', i === ddIdx));
+        clearToolSearch();
+    }
 }
 
 function navigateFirstVisible() {
@@ -1036,6 +1196,9 @@ function navigateFirstVisible() {
 
 function filterCards(q) {
     const cards = document.querySelectorAll('#toolsGrid .tool-card');
+    const grid = document.getElementById('toolsGrid');
+    const categoryView = document.getElementById('categoryView');
+    const viewControls = document.querySelector('.view-controls');
     let visibleCount = 0;
     cards.forEach(card => {
         const keywords = (card.getAttribute('data-keywords') || '').toLowerCase();
@@ -1056,16 +1219,19 @@ function filterCards(q) {
     document.getElementById('favGrid').style.display = q ? 'none' : '';
     document.getElementById('recentLabel').style.display = q ? 'none' : '';
     document.getElementById('recentGrid').style.display = q ? 'none' : '';
-    if (!q) { renderFavGrid(); renderRecentGrid(); }
-}
-
-
-document.addEventListener('click', e => {
-    if (!e.target.closest('.search-wrap')) {
-        document.getElementById('searchDropdown').classList.remove('open');
-        document.getElementById('searchInput').classList.remove('dropdown-open');
+    const status = document.getElementById('searchStatus');
+    status.textContent = q ? `${visibleCount} tool${visibleCount === 1 ? '' : 's'} found` : '';
+    status.classList.toggle('visible', q.length > 0);
+    if (q) {
+        grid.style.display = '';
+        categoryView.style.display = 'none';
+        viewControls.style.display = 'none';
+    } else {
+        renderFavGrid();
+        renderRecentGrid();
+        applyToolsCollapsed();
     }
-});
+}
 
 const CATEGORIES = [
     { id: 'calc', label: '🧮 Calculators' },
@@ -1095,7 +1261,7 @@ function renderCategoryView() {
         let matching = cards.filter(c => c.getAttribute('data-category') === cat.id && !favorites.includes(c.href));
         if (matching.length === 0) return;
         
-        const savedOrder = safeJsonArray('catOrder_' + cat.id);
+        const savedOrder = reconcileEnglishStoredToolLinks('catOrder_en_' + cat.id, 'catOrder_' + cat.id);
         if (savedOrder.length) {
             const map = {}; matching.forEach(c => { map[c.href] = c; });
             const ordered = [];
@@ -1126,15 +1292,19 @@ function renderCategoryView() {
     });
 }
 
+function refreshCategoryViewIfNeeded() {
+    if (currentView === 'category') renderCategoryView();
+}
+
 function saveCatOrder(grid, catId) {
     const hrefs = [...grid.querySelectorAll('.tool-card')].map(c => c.getAttribute('data-href') || c.href);
-    safeSet('catOrder_' + catId, JSON.stringify(hrefs));
+    safeSet('catOrder_en_' + catId, JSON.stringify(hrefs));
 }
 
 (function initDragDrop() {
     const grid = document.getElementById('toolsGrid');
     let dragEl = null;
-    const saved = safeJsonArray('toolOrder');
+    const saved = reconcileEnglishStoredToolLinks(TOOL_ORDER_KEY, 'toolOrder');
     if (saved.length) {
         const cards = [...grid.querySelectorAll('.tool-card')];
         const map = {};
@@ -1166,7 +1336,7 @@ function saveCatOrder(grid, catId) {
         if (insertAfter) target.after(dragEl); else target.before(dragEl);
     });
     grid.querySelectorAll('.tool-card').forEach(c => c.setAttribute('draggable', 'true'));
-    function saveOrder() { safeSet('toolOrder', JSON.stringify([...grid.querySelectorAll('.tool-card')].map(c => c.href))); }
+    function saveOrder() { safeSet(TOOL_ORDER_KEY, JSON.stringify([...grid.querySelectorAll('.tool-card')].map(c => c.href))); }
 })();
 
 let toolsCollapsed = safeGet('toolsCollapsed') === 'true';
@@ -1183,6 +1353,14 @@ function applyToolsCollapsed() {
     const toggleBtn = document.getElementById('toolsToggleBtn');
     const viewToggle = document.getElementById('viewToggle');
     const viewControls = document.querySelector('.view-controls');
+    const searching = document.getElementById('searchInput').value.trim() !== '';
+    if (searching) {
+        grid.style.display = '';
+        catView.style.display = 'none';
+        viewControls.style.display = 'none';
+        toggleBtn.innerHTML = toolsCollapsed ? 'Expand All Tools ▼' : 'Collapse All Tools ▲';
+        return;
+    }
     if (toolsCollapsed) {
         grid.style.display = 'none';
         catView.style.display = 'none';
@@ -1200,8 +1378,8 @@ function applyToolsCollapsed() {
 renderFavButtons();
 renderFavGrid();
 renderRecentGrid();
-applyToolsCollapsed();
 if (currentView === 'category') switchView('category');
+applyToolsCollapsed();
 
 </script>
 <button class="scroll-top-btn" aria-label="Back to Top">↑</button>

@@ -65,11 +65,25 @@
         .search-wrap svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; fill: var(--text-muted); pointer-events: none; }
         .search-wrap input {
             width: 100%; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
-            padding: 14px 16px 14px 46px; font-size: 15px; color: var(--text-primary); outline: none;
+            padding: 14px 54px 14px 46px; font-size: 15px; color: var(--text-primary); outline: none;
             font-family: inherit; transition: border-color .2s, box-shadow .2s; box-shadow: var(--shadow-sm);
         }
         .search-wrap input::placeholder { color: var(--text-muted); }
         .search-wrap input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,.15); }
+        .search-clear {
+            position: absolute; right: 9px; top: 50%; transform: translateY(-50%);
+            width: 36px; height: 36px; border: 0; border-radius: 10px;
+            display: none; place-items: center; background: var(--bg-hover); color: var(--text-secondary);
+            cursor: pointer; font: 700 20px/1 inherit; z-index: 2;
+        }
+        .search-clear.visible { display: grid; }
+        .search-clear:hover { background: var(--accent-light); color: var(--accent); }
+        .search-status {
+            width: calc(100% - 40px); max-width: 1080px; margin: 0 auto 6px;
+            color: var(--text-muted); font-size: 12px; font-weight: 700;
+            display: none;
+        }
+        .search-status.visible { display: block; }
 
         /* === 즐겨찾기 / 최근 사용 섹션 === */
         .section-label {
@@ -103,32 +117,34 @@
 
         /* 즐겨찾기 버튼 */
         .fav-btn {
-            position: absolute; top: 8px; right: 8px; background: none; border: none;
-            font-size: 16px; cursor: pointer; color: var(--text-muted); transition: color .2s;
-            padding: 4px; line-height: 1; z-index: 2;
+            position: absolute; top: 4px; right: 4px; width: 44px; height: 44px;
+            display: grid; place-items: center; background: transparent; border: none; border-radius: 12px;
+            font-size: 19px; cursor: pointer; color: var(--text-muted); transition: color .2s, background .2s;
+            padding: 0; line-height: 1; z-index: 2; touch-action: manipulation;
         }
-        .fav-btn:hover { color: #f59e0b; }
+        .fav-btn:hover { color: #f59e0b; background: var(--bg-hover); }
         .fav-btn.active { color: #f59e0b; }
 
-        .no-results { text-align: center; color: var(--text-muted); font-size: 14px; padding: 40px 20px; display: none; }
+        .home-toast {
+            position: fixed; right: 80px; bottom: 24px; z-index: 1200;
+            max-width: min(440px, calc(100vw - 32px)); min-height: 48px;
+            display: flex; align-items: center; gap: 14px;
+            padding: 11px 12px 11px 16px; border-radius: 14px;
+            background: #0f172a; color: #fff; box-shadow: 0 18px 42px rgba(15, 23, 42, .3);
+            opacity: 0; transform: translateY(14px); pointer-events: none;
+            transition: opacity .2s ease, transform .2s ease;
+            font-size: 13px; font-weight: 700;
+        }
+        html[data-theme="dark"] .home-toast { background: #f8fafc; color: #0f172a; }
+        .home-toast.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .home-toast button {
+            flex: 0 0 auto; min-height: 36px; padding: 0 10px; border: 0; border-radius: 9px;
+            background: rgba(99, 102, 241, .18); color: #a5b4fc;
+            font: 800 12px/1 inherit; cursor: pointer;
+        }
+        html[data-theme="dark"] .home-toast button { color: #4338ca; }
 
-        /* === 검색 자동완성 드롭다운 === */
-        .search-dropdown {
-            position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-card);
-            border: 1px solid var(--border); border-top: none; border-radius: 0 0 12px 12px;
-            box-shadow: var(--shadow-lg); z-index: 10; display: none;
-            max-height: 320px; overflow-y: auto;
-        }
-        .search-dropdown.open { display: block; }
-        .search-dropdown-item {
-            display: flex; align-items: center; gap: 10px; padding: 10px 16px;
-            text-decoration: none; color: inherit; cursor: pointer; transition: background .15s;
-        }
-        .search-dropdown-item:hover, .search-dropdown-item.active { background: var(--bg-hover); }
-        .search-dropdown-item .sdi-icon { font-size: 18px; width: 28px; text-align: center; flex-shrink: 0; }
-        .search-dropdown-item .sdi-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
-        .search-dropdown-item .sdi-desc { font-size: 11px; color: var(--text-muted); }
-        .search-wrap input.dropdown-open { border-radius: 12px 12px 0 0; }
+        .no-results { text-align: center; color: var(--text-muted); font-size: 14px; padding: 40px 20px; display: none; }
 
         /* === 뷰 전환 토글 === */
         .view-controls {
@@ -222,7 +238,7 @@
         .view-toggle button.active::before { display: none; }
         .view-toggle span { position: relative; z-index: 1; pointer-events: none; }
 
-        .tool-card { min-width: 0; width: 100%; max-width: 100%; padding-right: 44px; }
+        .tool-card { min-width: 0; width: 100%; max-width: 100%; padding-right: 56px; }
         .tool-card::after { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; }
         .tool-card > :not(.fav-btn) { position: relative; z-index: 1; }
         .tool-card > .fav-btn { position: absolute; z-index: 2; }
@@ -291,7 +307,6 @@
             min-height: 54px; border-radius: 16px; font-size: 16px;
             box-shadow: var(--shadow-md);
         }
-        .search-wrap input.dropdown-open { border-radius: 16px 16px 0 0; }
         .tools-grid, .category-group, .view-controls, .section-label, .tip-section {
             max-width: 1120px;
         }
@@ -329,6 +344,8 @@
             .today-remain { max-width: 130px; font-size: 10px; }
             .search-wrap { width: calc(100% - 32px); margin-top: 12px; }
             .search-wrap input { min-height: 50px; font-size: 15px; }
+            .search-status { width: calc(100% - 32px); }
+            .home-toast { left: 16px; right: 16px; bottom: 76px; max-width: none; }
         }
     </style>
 </head>
@@ -377,9 +394,10 @@
 
 <div class="search-wrap">
     <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-    <input type="text" id="searchInput" placeholder="도구 검색... (예: 글자, 날짜, 특수문자)" oninput="onSearchInput()" onkeydown="onSearchKeydown(event)" onfocus="onSearchFocus()" autocomplete="off">
-    <div class="search-dropdown" id="searchDropdown"></div>
+    <input type="text" id="searchInput" placeholder="도구 검색... (예: 글자, 날짜, 특수문자)" oninput="onSearchInput()" onkeydown="onSearchKeydown(event)" autocomplete="off" aria-describedby="searchStatus">
+    <button type="button" class="search-clear" id="searchClear" onclick="clearToolSearch()" aria-label="검색어 지우기">×</button>
 </div>
+<div class="search-status" id="searchStatus" role="status" aria-live="polite"></div>
 
 <!-- 최근 사용 섹션 -->
 <div class="section-label" id="recentLabel">🕐 최근 사용</div>
@@ -596,6 +614,10 @@
 </div>
 
 </main>
+<div class="home-toast" id="homeToast" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true" inert>
+    <span id="homeToastMessage"></span>
+    <button type="button" id="homeToastUndo" disabled>실행 취소</button>
+</div>
 <footer>
     <div class="footer-links">
         <a href="https://www.instagram.com/seon_7yu/" target="_blank" rel="noopener">
@@ -815,17 +837,62 @@ function reconcileStoredToolLinks(key, maxItems = Infinity) {
 }
 
 let favorites = reconcileStoredToolLinks('favorites');
+let homeToastTimer = null;
+let homeToastUndoAction = null;
 
-function toggleFav(href, e) {
-    e.preventDefault();
-    e.stopPropagation();
-    const idx = favorites.indexOf(href);
-    if (idx >= 0) favorites.splice(idx, 1);
-    else favorites.push(href);
+function hideHomeToast() {
+    const toast = document.getElementById('homeToast');
+    toast.classList.remove('visible');
+    toast.setAttribute('aria-hidden', 'true');
+    toast.setAttribute('inert', '');
+    document.getElementById('homeToastUndo').disabled = true;
+    homeToastUndoAction = null;
+}
+
+function showHomeToast(message, undoAction) {
+    const toast = document.getElementById('homeToast');
+    toast.removeAttribute('aria-hidden');
+    toast.removeAttribute('inert');
+    document.getElementById('homeToastUndo').disabled = false;
+    document.getElementById('homeToastMessage').textContent = message;
+    homeToastUndoAction = undoAction;
+    clearTimeout(homeToastTimer);
+    toast.classList.add('visible');
+    homeToastTimer = setTimeout(hideHomeToast, 5000);
+}
+
+document.getElementById('homeToastUndo').addEventListener('click', function() {
+    const undoAction = homeToastUndoAction;
+    clearTimeout(homeToastTimer);
+    hideHomeToast();
+    if (undoAction) undoAction();
+});
+
+function setFavoriteState(href, shouldFavorite, announce = true) {
+    const wasFavorite = favorites.includes(href);
+    if (wasFavorite === shouldFavorite) return;
+    if (shouldFavorite) favorites.push(href);
+    else favorites = favorites.filter(value => value !== href);
     safeSet('favorites', JSON.stringify(favorites));
     renderFavButtons();
     renderFavGrid();
     refreshCategoryViewIfNeeded();
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    if (query) filterCards(query);
+    if (announce) {
+        showHomeToast(
+            shouldFavorite ? '즐겨찾기에 추가했습니다. 상단 목록에서 바로 찾을 수 있어요.' : '즐겨찾기에서 제거했습니다.',
+            () => setFavoriteState(href, !shouldFavorite, false)
+        );
+    }
+}
+
+function toggleFav(href, e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    setFavoriteState(href, !favorites.includes(href));
 }
 
 function renderFavButtons() {
@@ -834,13 +901,13 @@ function renderFavButtons() {
         if (!btn) {
             btn = document.createElement('button');
             btn.className = 'fav-btn';
-            btn.setAttribute('aria-label', '즐겨찾기');
             btn.onclick = (e) => toggleFav(card.href, e);
             card.appendChild(btn);
         }
         const isFav = favorites.includes(card.href);
         btn.textContent = isFav ? '★' : '☆';
         btn.classList.toggle('active', isFav);
+        btn.setAttribute('aria-label', isFav ? '즐겨찾기 해제' : '즐겨찾기에 추가');
         // 즐겨찾기된 도구는 전체 도구에서 숨기기
         card.style.display = isFav ? 'none' : '';
     });
@@ -885,22 +952,13 @@ function renderFavGrid() {
 
   function addFav(href) {
     if (!href || favorites.includes(href)) return;
-    favorites.push(href);
-    safeSet('favorites', JSON.stringify(favorites));
-    renderFavButtons();
-    renderFavGrid();
-    refreshCategoryViewIfNeeded();
+    setFavoriteState(href, true);
     makeDraggable();
   }
 
   function removeFav(href) {
-    var idx = favorites.indexOf(href);
-    if (idx < 0) return;
-    favorites.splice(idx, 1);
-    safeSet('favorites', JSON.stringify(favorites));
-    renderFavButtons();
-    renderFavGrid();
-    refreshCategoryViewIfNeeded();
+    if (!favorites.includes(href)) return;
+    setFavoriteState(href, false);
     makeDraggable();
   }
 
@@ -1087,56 +1145,26 @@ document.getElementById('toolsGrid').addEventListener('click', e => {
     }
 });
 
-// === 검색 자동완성 ===
-let ddIdx = -1;
-function getToolList() {
-    return [...document.querySelectorAll('#toolsGrid .tool-card')].map(c => ({
-        href: c.href,
-        icon: c.querySelector('.tool-icon')?.textContent || '',
-        name: c.querySelector('.tool-name')?.textContent || '',
-        desc: c.querySelector('.tool-desc')?.textContent || '',
-        keywords: (c.getAttribute('data-keywords') || '').toLowerCase()
-    }));
-}
-
+// === 도구 검색 ===
 function onSearchInput() {
     const q = document.getElementById('searchInput').value.trim().toLowerCase();
-    const dd = document.getElementById('searchDropdown');
-    const input = document.getElementById('searchInput');
-    ddIdx = -1;
-    if (!q) { dd.classList.remove('open'); input.classList.remove('dropdown-open'); filterCards(''); return; }
-    const tools = getToolList();
-    const matches = tools.filter(t => t.name.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q) || t.keywords.includes(q));
-    if (matches.length === 0) { dd.classList.remove('open'); input.classList.remove('dropdown-open'); filterCards(q); return; }
-    dd.innerHTML = matches.map((t, i) => `<a class="search-dropdown-item" href="${t.href}" data-idx="${i}" onmousedown="trackRecent('${t.href}')"><span class="sdi-icon">${t.icon}</span><span><span class="sdi-name">${t.name}</span><br><span class="sdi-desc">${t.desc}</span></span></a>`).join('');
-    dd.classList.add('open');
-    input.classList.add('dropdown-open');
+    document.getElementById('searchClear').classList.toggle('visible', q.length > 0);
     filterCards(q);
 }
 
-function onSearchFocus() {
-    const q = document.getElementById('searchInput').value.trim();
-    if (q) onSearchInput();
+function clearToolSearch() {
+    const input = document.getElementById('searchInput');
+    input.value = '';
+    onSearchInput();
+    input.focus();
 }
 
 function onSearchKeydown(e) {
-    const dd = document.getElementById('searchDropdown');
-    const items = dd.querySelectorAll('.search-dropdown-item');
-    if (!dd.classList.contains('open') || items.length === 0) {
-        if (e.key === 'Enter') { e.preventDefault(); navigateFirstVisible(); }
-        return;
-    }
-    if (e.key === 'ArrowDown') { e.preventDefault(); ddIdx = Math.min(ddIdx + 1, items.length - 1); highlightDD(items); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); ddIdx = Math.max(ddIdx - 1, -1); highlightDD(items); }
-    else if (e.key === 'Enter') {
+    if (e.key === 'Enter') { e.preventDefault(); navigateFirstVisible(); }
+    else if (e.key === 'Escape' && document.getElementById('searchInput').value) {
         e.preventDefault();
-        if (ddIdx >= 0 && items[ddIdx]) { trackRecent(items[ddIdx].href); window.location.href = items[ddIdx].href; }
-        else navigateFirstVisible();
-    } else if (e.key === 'Escape') { dd.classList.remove('open'); document.getElementById('searchInput').classList.remove('dropdown-open'); }
-}
-
-function highlightDD(items) {
-    items.forEach((el, i) => el.classList.toggle('active', i === ddIdx));
+        clearToolSearch();
+    }
 }
 
 function navigateFirstVisible() {
@@ -1169,6 +1197,9 @@ function filterCards(q) {
     document.getElementById('favGrid').style.display = q ? 'none' : '';
     document.getElementById('recentLabel').style.display = q ? 'none' : '';
     document.getElementById('recentGrid').style.display = q ? 'none' : '';
+    const status = document.getElementById('searchStatus');
+    status.textContent = q ? `검색 결과 ${visibleCount}개` : '';
+    status.classList.toggle('visible', q.length > 0);
     if (q) {
         grid.style.display = '';
         categoryView.style.display = 'none';
@@ -1179,14 +1210,6 @@ function filterCards(q) {
         applyToolsCollapsed();
     }
 }
-
-// 검색창 외부 클릭 시 드롭다운 닫기
-document.addEventListener('click', e => {
-    if (!e.target.closest('.search-wrap')) {
-        document.getElementById('searchDropdown').classList.remove('open');
-        document.getElementById('searchInput').classList.remove('dropdown-open');
-    }
-});
 
 // === 카테고리 뷰 전환 ===
 const CATEGORIES = [
