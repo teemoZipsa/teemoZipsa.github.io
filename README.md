@@ -110,6 +110,10 @@
 
 공식 주소는 `https://teemozipsa.com`이며 저장소 루트의 `CNAME`과 Cloudflare DNS로 연결합니다. 루트 도메인과 `www` 레코드는 GitHub Pages 인증서 발급과 원본 확인이 가능하도록 DNS 전용으로 유지합니다.
 
+루트와 `special-chars` 사이트맵에는 `noindex` 페이지를 제외한 공개 색인 페이지만 등록합니다. Google Search Console과 네이버 서치어드바이저의 속성 등록·소유권 확인·사이트맵 제출은 외부 관리자 계정에서 수동으로 관리합니다.
+
+AdSense 사이트 소유권은 루트 페이지의 `google-adsense-account` 메타태그와 `ads.txt`로 확인합니다. 도구 링크 중심의 포털·404·`noindex`·순수 유틸리티 화면에는 광고 로더를 두지 않으며, 승인 후에도 광고는 충분한 자체 본문이 있는 콘텐츠 페이지에서만 정책에 맞춰 적용합니다.
+
 최초 한 번 의존성과 로컬 브라우저 엔진을 준비합니다.
 
 ```powershell

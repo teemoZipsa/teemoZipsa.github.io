@@ -40,8 +40,8 @@ function walk(dir, out = []) {
   return out;
 }
 
-function parseSitemap() {
-  const xml = read(path.join(rootDir, 'sitemap.xml'));
+function parseSitemap(file = path.join(rootDir, 'sitemap.xml')) {
+  const xml = read(file);
   return [...xml.matchAll(/<loc>(https:\/\/teemozipsa\.com[^<]+)<\/loc>/g)].map(m => m[1]);
 }
 
@@ -70,6 +70,11 @@ function getTitle(html) {
 
 function getCanonical(html) {
   return html.match(/<link\s+[^>]*rel=["']canonical["'][^>]*href=["']([^"']+)["'][^>]*>/i)?.[1]?.trim() || '';
+}
+
+function getRefreshTarget(html) {
+  const content = html.match(/<meta\s+[^>]*http-equiv=["']refresh["'][^>]*content=["'][^"']*url=\s*([^"';]+)["'][^>]*>/i)?.[1]?.trim();
+  return content ? new URL(content, origin).href : '';
 }
 
 function hasNoindex(html) {
@@ -110,6 +115,9 @@ function localAudit() {
   const warnings = [];
   const sitemapUrls = parseSitemap();
   const sitemapSet = new Set(sitemapUrls);
+  const toolSitemapUrls = parseSitemap(path.join(rootDir, 'special-chars', 'sitemap.xml'));
+  const toolSitemapSet = new Set(toolSitemapUrls);
+  const expectedToolUrls = sitemapUrls.filter(url => new URL(url).pathname.startsWith('/special-chars/'));
   const publicHtmlFiles = walk(rootDir).filter(file => {
     const r = rel(file);
     if (r.startsWith('scripts/')) return false;
@@ -127,8 +135,12 @@ function localAudit() {
     const expectedUrl = urlForFile(file);
     const html = read(file);
     const noindex = hasNoindex(html);
+    const hasAdSenseLoader = /pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js/i.test(html);
     if (noindex && sitemapSet.has(expectedUrl)) failures.push(`${r}: noindex page is present in sitemap (${expectedUrl})`);
     if (!noindex && !sitemapSet.has(expectedUrl)) failures.push(`${r}: indexable public HTML is missing from sitemap (${expectedUrl})`);
+    if (hasAdSenseLoader && (r === 'index.html' || noindex || r.startsWith('special-chars/'))) {
+      failures.push(`${r}: AdSense loader is present on a portal, noindex page, or utility page`);
+    }
 
     for (const pattern of placeholderPatterns) {
       if (pattern.test(html)) failures.push(`${r}: contains placeholder/editorial-risk marker (${pattern})`);
@@ -136,13 +148,15 @@ function localAudit() {
     const title = getTitle(html);
     const desc = getTag(html, 'description');
     const canonical = getCanonical(html);
+    const refreshTarget = getRefreshTarget(html);
+    const expectedCanonical = noindex && refreshTarget ? refreshTarget : expectedUrl;
     const textLen = stripHtml(html).length;
     if (!title) failures.push(`${r}: missing <title>`);
     else if (title.length < 10 || title.length > 80) warnings.push(`${r}: title length ${title.length}`);
     if (!desc) failures.push(`${r}: missing meta description`);
     else if (desc.length < 40 || desc.length > 180) warnings.push(`${r}: meta description length ${desc.length}`);
     if (!canonical) failures.push(`${r}: missing canonical`);
-    else if (canonical !== expectedUrl) failures.push(`${r}: canonical mismatch (${canonical} !== ${expectedUrl})`);
+    else if (canonical !== expectedCanonical) failures.push(`${r}: canonical mismatch (${canonical} !== ${expectedCanonical})`);
 
     const minText = r.startsWith('blog/') && r.endsWith('/index.html') && r !== 'blog/index.html' ? 1400 : 250;
     if (!noindex && textLen < minText) warnings.push(`${r}: thin visible text candidate (${textLen} chars)`);
@@ -150,6 +164,22 @@ function localAudit() {
     for (const href of internalLinks(html)) {
       if (!localTargetExists(href, file)) failures.push(`${r}: broken internal asset/link ${href}`);
     }
+  }
+
+  for (const url of expectedToolUrls) {
+    if (!toolSitemapSet.has(url)) failures.push(`special-chars/sitemap.xml missing indexed tool URL: ${url}`);
+  }
+  for (const url of toolSitemapUrls) {
+    if (!sitemapSet.has(url)) failures.push(`special-chars/sitemap.xml contains URL outside the canonical sitemap: ${url}`);
+  }
+
+  const homepage = read(path.join(rootDir, 'index.html'));
+  if (getTag(homepage, 'google-adsense-account') !== 'ca-pub-3501868770820650') {
+    failures.push('index.html missing the expected AdSense ownership meta tag');
+  }
+  const adsText = read(path.join(rootDir, 'ads.txt')).trim();
+  if (adsText !== 'google.com, pub-3501868770820650, DIRECT, f08c47fec0942fa0') {
+    failures.push('ads.txt publisher declaration does not match the configured AdSense account');
   }
 
   return { failures, warnings, sitemapUrls };
