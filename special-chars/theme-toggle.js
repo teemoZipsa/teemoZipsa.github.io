@@ -35,7 +35,7 @@
   }
 
   function updateButton(theme) {
-    var btn = document.querySelector('.theme-toggle-portal');
+    var btn = document.querySelector('.theme-toggle-portal:not(.blog-toggle-portal)');
     if (!btn) return;
     btn.textContent = theme === DARK ? '☀️' : '🌙';
     btn.setAttribute('aria-label', theme === DARK ? '라이트 모드로 전환' : '다크 모드로 전환');
@@ -61,15 +61,21 @@
 
   function createToggleButton() {
     if (!isPortalPage()) return;
-    if (document.querySelector('.theme-toggle-portal')) return;
+    if (document.querySelector('.theme-toggle-portal:not(.blog-toggle-portal)')) return;
 
     var theme = document.documentElement.getAttribute('data-theme') || LIGHT;
+    var slot = document.querySelector('[data-theme-toggle-slot]');
     var btn = document.createElement('button');
     btn.className = 'theme-toggle-portal';
     btn.textContent = theme === DARK ? '☀️' : '🌙';
     btn.setAttribute('aria-label', theme === DARK ? '라이트 모드로 전환' : '다크 모드로 전환');
     btn.title = theme === DARK ? '라이트 모드' : '다크 모드';
     btn.onclick = toggleTheme;
+    if (slot) {
+      btn.classList.add('theme-toggle-inline');
+      slot.appendChild(btn);
+      return;
+    }
     document.body.appendChild(btn);
 
     var blogBtn = document.createElement('button');
