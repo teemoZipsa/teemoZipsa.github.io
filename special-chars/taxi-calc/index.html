@@ -9,16 +9,15 @@
 <link rel="stylesheet" href="/special-chars/theme.css">
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
-<title>🚕 서울 중형 택시비 예상 계산기 — 티모집사</title>
-<meta name="description" content="서울시 공식 중형택시 요율을 바탕으로 거리, 저속·정차 시간, 심야·시계외 할증과 별도 비용을 반영한 참고용 예상액을 계산합니다.">
-<meta property="og:title" content="🚕 서울 중형 택시비 예상 계산기 — 티모집사">
-<meta property="og:description" content="서울 중형택시의 거리·저속 시간·할증·통행료·호출료를 나눠 보는 참고용 예상 계산기.">
+<title>🚕 서울 출장 택시비 예상 — 티모집사</title>
+<meta name="description" content="출장 교통비 사전 결재와 정산 참고를 위해 거리, 저속 시간, 심야·시계외 할증과 별도 비용을 반영한 서울 중형택시 예상액을 계산합니다.">
+<meta property="og:title" content="🚕 서울 출장 택시비 예상 — 티모집사">
+<meta property="og:description" content="출장 사전 결재를 위해 거리·저속 시간·할증을 반영한 서울 택시비를 예상합니다.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/taxi-calc/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
 <link rel="canonical" href="https://teemozipsa.com/special-chars/taxi-calc/">
 
-<meta name="robots" content="noindex, follow">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
@@ -107,7 +106,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 <main>
   <div class="header">
     <a href="https://teemozipsa.com/" class="back-btn">← 도구 모음</a>
-    <h1>🚕 서울 중형 택시비 예상 계산기</h1>
+    <h1>🚕 서울 출장 택시비 예상</h1>
   </div>
   <div class="body">
     <!-- 공식 확인된 요율 프리셋 -->
@@ -245,6 +244,12 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
   </div>
 
+  <section class="work-context" aria-labelledby="taxiWorkTitle">
+    <h2 id="taxiWorkTitle">출장 교통비의 사전 예상액 만들기</h2>
+    <p><strong>업무 예시:</strong> 외근·야간 출장 전 결재 문서에 참고할 서울 중형택시 예상액을 거리와 정체 시간을 나눠 계산합니다. 심야와 시계외 할증, 통행료 같은 별도 비용을 구분해 입력하면 어떤 조건이 금액을 바꿨는지 설명하기 쉽습니다.</p>
+    <p><strong>적용 범위:</strong> 실제 미터기는 주행 중 거리와 저속 시간을 순차적으로 반영하며 호출료, 경로, 교통 상황과 사업자별 서비스에 따라 달라집니다. 이 결과는 영수증을 대신하지 않으며 비용 정산에는 실제 탑승 영수증과 회사 규정을 우선하세요.</p>
+    <p><strong>데이터 처리:</strong> 입력값과 예상액은 서버에 저장하지 않고 브라우저에서 계산합니다. 요율 기준일이 바뀔 수 있으므로 페이지의 적용 기준과 서울시 공식 안내를 확인하고 오래된 결재 양식의 고정 금액을 그대로 재사용하지 마세요.</p>
+  </section>
   </main>
 <footer class="footer"><span>서울 중형택시 공식 요율 기반 · 참고용 예상 계산</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
 </div>

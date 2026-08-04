@@ -20,3 +20,32 @@
     color: var(--text-secondary);
     text-decoration: underline;
 }
+
+.work-context {
+    margin: 14px 16px 18px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    line-height: 1.65;
+}
+
+.work-context h2 {
+    margin: 0 0 8px;
+    color: var(--text-primary);
+    font-size: 15px;
+}
+
+.work-context p {
+    margin: 0 0 10px;
+    font-size: 12px;
+}
+
+.work-context p:last-child {
+    margin-bottom: 0;
+}
+
+.work-context strong {
+    color: var(--text-primary);
+}

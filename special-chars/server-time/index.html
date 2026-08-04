@@ -7,16 +7,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
 <link rel="stylesheet" href="/special-chars/theme.css">
-<title>⏱️ 정밀 로컬 시계 · 응답속도 측정 — 티모집사</title>
-<meta name="description" content="내 기기의 로컬 시간을 밀리초 단위로 표시하고, 수동 시계 보정과 정각 알림을 제공합니다. 입력한 웹사이트의 브라우저 HTTP 응답 대기 시간도 측정할 수 있습니다.">
-<meta property="og:title" content="⏱️ 정밀 로컬 시계 · 응답속도 측정 — 티모집사">
-<meta property="og:description" content="밀리초 로컬 시계, 수동 보정, 정각 알림과 웹사이트 HTTP 응답속도 측정을 한곳에서 사용하세요.">
+<title>⏱️ 업무용 정밀 시계·웹 응답 확인 — 티모집사</title>
+<meta name="description" content="배포·접수·온라인 업무의 기준 시각을 밀리초 단위로 확인하고, 웹사이트의 브라우저 응답 대기 시간을 비교합니다.">
+<meta property="og:title" content="⏱️ 업무용 정밀 시계·웹 응답 확인 — 티모집사">
+<meta property="og:description" content="접수·배포 기준 시각과 웹사이트 응답 대기 시간을 한곳에서 확인합니다.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/server-time/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
 <link rel="canonical" href="https://teemozipsa.com/special-chars/server-time/">
 
-<meta name="robots" content="noindex, follow">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
@@ -87,7 +86,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 <main>
   <div class="header">
     <a href="https://teemozipsa.com/" class="back-btn">← 도구 모음</a>
-    <h1>⏱️ 정밀 로컬 시계 · 응답속도 측정</h1>
+    <h1>⏱️ 업무용 정밀 시계 · 웹 응답 확인</h1>
     <a href="/special-chars/en/server-time/" class="back-btn">🌐 English</a>
   </div>
   <div class="content">
@@ -179,6 +178,12 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
         <a href="/special-chars/percent-calc/" class="tag">퍼센트 계산기</a>
       </div>
     </div>
+  </section>
+  <section class="work-context" aria-labelledby="serverTimeWorkTitle">
+    <h2 id="serverTimeWorkTitle">접수·배포 시각을 같은 기준으로 확인하기</h2>
+    <p><strong>업무 예시:</strong> 온라인 접수 마감, 캠페인 공개, 예약 오픈이나 배포 직전에 밀리초 단위의 기기 시각을 확인하고 정각 알림을 사용할 수 있습니다. URL 응답 측정은 여러 번 실행해 특정 사이트가 평소보다 느린지 비교하는 보조 지표로 활용합니다.</p>
+    <p><strong>해석 기준:</strong> 표시 시각은 사용자 기기의 로컬 시계를 기준으로 하며 국가 표준시나 대상 서버의 내부 시각을 읽는 기능이 아닙니다. 응답 시간도 브라우저의 네트워크 요청 대기 시간이므로 서버 처리 시간, 인터넷 회선과 보안 정책이 함께 반영됩니다.</p>
+    <p><strong>데이터 처리:</strong> 시계 보정값은 현재 브라우저에서만 사용합니다. 응답 측정을 실행하면 입력한 주소로 실제 네트워크 요청이 전송되므로 사내 전용 주소나 민감한 쿼리 문자열은 입력하지 마세요.</p>
   </section>
   </main>
 <footer class="footer"><span>기기 로컬 시계 기준 · 서버 시각 동기화 아님</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>

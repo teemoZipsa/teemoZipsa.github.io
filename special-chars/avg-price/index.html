@@ -9,16 +9,15 @@
 <link rel="stylesheet" href="/special-chars/theme.css">
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
-<title>📉 물타기/불타기 계산기 — 티모집사</title>
-<meta name="description" content="코인·주식 물타기 불타기 평단가 계산기. 추가 매수 시 평균 단가를 실시간으로 계산합니다.">
-<meta property="og:title" content="📉 물타기/불타기 계산기 — 티모집사">
-<meta property="og:description" content="코인·주식 물타기 불타기 평단가 계산기. 추가 매수 시 평균 단가를 실시간으로 계산합니다.">
+<title>📦 가중 평균 단가 계산기 — 티모집사</title>
+<meta name="description" content="현재 수량·평균 단가와 추가 구매 수량·단가를 입력해 재고, 자재와 상품의 새로운 가중 평균 단가를 계산합니다.">
+<meta property="og:title" content="📦 가중 평균 단가 계산기 — 티모집사">
+<meta property="og:description" content="기존 보유분과 추가 구매분을 합친 새로운 수량 가중 평균 단가를 계산합니다.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/avg-price/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
 <link rel="canonical" href="https://teemozipsa.com/special-chars/avg-price/">
 
-<meta name="robots" content="noindex, follow">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{
@@ -170,18 +169,18 @@
 <main>
   <div class="header">
     <a href="https://teemozipsa.com/" class="back-btn">← 도구 모음</a>
-    <h1>📉 물타기/불타기 계산기</h1>
+    <h1>📦 가중 평균 단가 계산기</h1>
   </div>
 
   <div class="body">
     <!-- 1단: 기존 보유 -->
     <div class="section">
       <div class="section-title">
-        <span class="badge badge-hold">1</span> 내 현재 보유
+        <span class="badge badge-hold">1</span> 현재 재고·보유분
       </div>
       <div class="field-row">
         <div class="field">
-          <label>현재 평단가</label>
+          <label>현재 평균 단가</label>
           <input type="text" id="curPrice" placeholder="예: 50000" oninput="calc()" inputmode="decimal">
         </div>
         <div class="field">
@@ -189,17 +188,17 @@
           <input type="text" id="curQty" placeholder="예: 10" oninput="calc()" inputmode="decimal">
         </div>
       </div>
-      <div class="hint" id="curTotal">보유 금액: -</div>
+      <div class="hint" id="curTotal">현재 합계 금액: -</div>
     </div>
 
-    <!-- 2단: 추가 매수 -->
+    <!-- 2단: 추가 구매 -->
     <div class="section">
       <div class="section-title">
-        <span class="badge badge-add">2</span> 추가 매수 계획
+        <span class="badge badge-add">2</span> 추가 입고·구매
       </div>
       <div class="field-row">
         <div class="field">
-          <label>매수 단가</label>
+          <label>추가 구매 단가</label>
           <input type="text" id="addPrice" placeholder="예: 40000" oninput="calc()" inputmode="decimal">
         </div>
         <div class="field">
@@ -223,17 +222,17 @@
         📊 최종 결과
       </div>
       <div class="result-main">
-        <div class="result-label">최종 평단가</div>
+        <div class="result-label">최종 평균 단가</div>
         <div class="result-value" id="finalPrice">-</div>
         <div class="result-change" id="priceChange"></div>
       </div>
       <div class="result-stats">
         <div class="r-stat">
-          <div class="r-label">총 투자 금액</div>
+          <div class="r-label">총 합계 금액</div>
           <div class="r-value" id="finalInvest">-</div>
         </div>
         <div class="r-stat">
-          <div class="r-label">총 보유 수량</div>
+          <div class="r-label">총 수량</div>
           <div class="r-value" id="finalQty">-</div>
         </div>
       </div>
@@ -246,35 +245,41 @@
     <summary>📖 사용 방법</summary>
     <div class="guide-content">
       <ol>
-        <li>현재 보유 수량과 평균 단가를 입력하세요.</li>
-        <li>추가 매수할 수량과 매수 단가를 입력하면 새 평균 단가가 계산됩니다.</li>
-        <li>여러 번 추가 매수하는 경우, 메모해두고 한 번에 합산하여 입력할 수도 있습니다. 금액 모드를 선택하여 원화 기준으로 바로 환산할 수 있습니다.</li>
+        <li>현재 재고 또는 보유분의 수량과 평균 단가를 입력하세요.</li>
+        <li>추가 구매할 수량과 단가를 입력하면 새 가중 평균 단가가 계산됩니다.</li>
+        <li>추가 구매 총액만 알고 있다면 금액 모드를 선택해 수량을 역산할 수 있습니다.</li>
         <li>가격·수량·추가 금액은 모두 0보다 큰 유한한 값만 사용할 수 있습니다.</li>
       </ol>
     </div>
   </details>
   <details class="guide-section" open>
-    <summary>💡 주식/코인 물타기 전략 가이드</summary>
+    <summary>💡 가중 평균 단가 업무 가이드</summary>
     <div class="guide-content">
-      <strong>Q. 물타기와 불타기의 정확한 차이는 무엇인가요?</strong>
-      <p><strong>물타기(Averaging Down)</strong>는 보유 종목의 가격이 하락했을 때, 더 낮은 가격에 추가로 매수하여 '평균 매입 단가'를 낮추는 방어적 전략입니다. 반대로 <strong>불타기(Averaging Up)</strong>는 가격이 오르는 추세에서 긍정적인 전망을 바탕으로 추가 매수하여 전체 투자 규모와 수익금을 키우는 공격적 전략입니다.</p>
+      <strong>Q. 단가 두 개를 단순 평균하면 왜 틀리나요?</strong>
+      <p>각 구매의 수량이 다르면 단가에 같은 비중을 줄 수 없습니다. 가중 평균 단가는 각 단가에 해당 수량을 곱해 합산한 뒤 전체 수량으로 나눕니다. 예를 들어 1개를 1만 원, 9개를 2만 원에 샀다면 평균은 1만5천 원이 아니라 1만9천 원입니다.</p>
       <br>
-      <strong>Q. 평단가를 낮추는 것이 무조건 유리한가요?</strong>
-      <p>물타기를 통해 평단가를 낮추면, 향후 주가가 조금만 반등해도 원금을 회복하거나 수익으로 전환될 수 있다는 장점이 있습니다. 그러나 <strong>기업의 펀더멘털이나 시장 상황이 악화되어 계속 하락하는 경우(소위 '지하실'로 가는 경우)</strong>, 물타기는 오히려 손실 금액을 폭발적으로 키우는 최악의 선택이 될 수 있습니다. 확실한 지지선이나 반등 근거가 있을 때만 신중하게 실행해야 합니다.</p>
+      <strong>Q. 어떤 업무에 사용할 수 있나요?</strong>
+      <p>서로 다른 단가로 입고된 재고의 참고 평균, 여러 공급처에서 구매한 자재의 평균 매입가, 행사 물품의 수량별 평균 비용을 빠르게 확인할 때 사용할 수 있습니다. 회계상 재고평가 방식은 이동평균법·총평균법 등 조직 기준이 따로 있으므로 이 결과가 장부 금액을 자동 확정하지는 않습니다.</p>
       <br>
-      <strong>Q. 추가 매수 시 비율은 어떻게 설정하는 것이 좋나요?</strong>
-      <p>단순히 현재가에 맞춰 매수하기보다, 본인의 전체 투자 자산 대비 <strong>비중 조절(포트폴리오 리스크 관리)</strong>이 최우선입니다. 일반적으로는 하락폭이 -10%, -20% 등 유의미할 때 분할 매수하는 '피라미딩(Pyramiding) 기법'이나 '정액 분할 매수법(적립식)' 등을 활용하여 한 번에 너무 많은 자금이 한 종목에 묶이지 않도록 조절하는 것을 권장합니다.</p>
+      <strong>Q. 세금과 부대비용은 포함되나요?</strong>
+      <p>입력한 단가와 수량만 반영합니다. 부가세, 배송비, 관세, 할인과 반품이 있다면 회사의 원가 산정 기준에 맞춰 단가에 먼저 포함하거나 별도 항목으로 관리해야 합니다. 최종 발주·회계 자료는 세금계산서와 재고 시스템 기록을 우선하세요.</p>
     </div>
   </details>
 
   <div class="related-tools">
-    <h2>🔗 연관 금융/생활 계산기</h2>
+    <h2>🔗 연관 업무 계산기</h2>
     <div class="tool-list">
       <a href="/special-chars/percent-calc/"><span>🔢 퍼센트 계산기</span><span>바로가기 →</span></a>
-      <a href="/special-chars/compound-interest/"><span>📈 복리 이자 계산기</span><span>바로가기 →</span></a>
-      <a href="/special-chars/broker-fee-calc/"><span>🏠 부동산 중개보수 계산기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/discount-calc/"><span>🏷️ 할인·부가세 계산기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/unit-conv/"><span>📐 업무 단위 변환기</span><span>바로가기 →</span></a>
     </div>
   </div>
+  <section class="work-context" aria-labelledby="averageCostWorkTitle">
+    <h2 id="averageCostWorkTitle">재고·자재의 평균 매입 단가 확인하기</h2>
+    <p><strong>업무 예시:</strong> 기존 보유분과 신규 입고분의 수량·단가를 합쳐 보고서에 쓸 참고 평균 단가를 만듭니다. 계산식은 ‘각 수량×단가의 합계 ÷ 전체 수량’이며 입력한 통화 단위는 결과에도 그대로 유지됩니다.</p>
+    <p><strong>적용 한계:</strong> 회계 시스템의 이동평균, 선입선출, 환율 적용과 원가 배부 규칙을 대신하지 않습니다. 부가세·배송비·반품이 있는 경우 조직의 원가 정책에 맞춰 별도로 반영하고 최종 장부와 대조하세요.</p>
+    <p><strong>데이터 처리:</strong> 수량과 단가는 서버로 전송하거나 저장하지 않고 브라우저에서 계산합니다. 거래처명이나 계약번호 같은 식별 정보는 입력할 필요가 없습니다.</p>
+  </section>
     </main>
 <footer class="footer"><span>숫자 입력 즉시 실시간 계산</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
 </div>
@@ -345,12 +350,12 @@ function calc() {
   const addPrice = parseNum('addPrice');
   const rawInput = parseNum('addQtyOrAmt');
 
-  // 보유 금액 표시
+  // 현재 합계 금액 표시
   if (isPositiveFinite(curPrice) && isPositiveFinite(curQty)) {
     const curTotal = curPrice * curQty;
-    document.getElementById('curTotal').textContent = '보유 금액: ' + fmtWon(curTotal);
+    document.getElementById('curTotal').textContent = '현재 합계 금액: ' + fmtWon(curTotal);
   } else {
-    document.getElementById('curTotal').textContent = '보유 금액: -';
+    document.getElementById('curTotal').textContent = '현재 합계 금액: -';
   }
 
   // 추가 수량 계산
@@ -400,28 +405,28 @@ function calc() {
     let reportDesc = '';
 
     if (diff < 0) {
-      changeEl.textContent = `▼ ${fmtNum(Math.abs(diff), 4)} (${pct}%) — 물타기 적용됨`;
+      changeEl.textContent = `▼ ${fmtNum(Math.abs(diff), 4)} (${pct}%) — 평균 단가 하락`;
       changeEl.className = 'result-change change-down';
-      actionType = '물타기';
-      reportDesc = `기존 평단가 <strong>${fmtNum(curPrice, 8)}</strong>에서 추가 매수를 통해 <strong>${fmtNum(Math.abs(diff), 4)}</strong>만큼 단가를 낮추는 데 성공했습니다. 이제 <strong>${fmtNum(finalAvg, 8)}</strong>까지만 가격이 반등해도 본전(원금) 회복이 가능해집니다. 하락장 방어에 집중한 보수적 매수 보강 전략이 반영된 상태입니다.`;
+      actionType = '평균 단가 하락';
+      reportDesc = `기존 평균 단가 <strong>${fmtNum(curPrice, 8)}</strong>보다 낮은 단가의 구매분이 추가되어 최종 평균 단가가 <strong>${fmtNum(finalAvg, 8)}</strong>로 낮아졌습니다.`;
     } else if (diff > 0) {
-      changeEl.textContent = `▲ ${fmtNum(diff, 4)} (+${pct}%) — 불타기 적용됨`;
+      changeEl.textContent = `▲ ${fmtNum(diff, 4)} (+${pct}%) — 평균 단가 상승`;
       changeEl.className = 'result-change change-up';
-      actionType = '불타기';
-      reportDesc = `기존 평단가 <strong>${fmtNum(curPrice, 8)}</strong>에서 추가 매수로 인해 단가가 <strong>${fmtNum(diff, 4)}</strong>만큼 상승했습니다. 이는 상승장 추세를 타고 투자 비중을 늘리기 위한 공격적 움직임입니다. 최종 평단가 <strong>${fmtNum(finalAvg, 8)}</strong>을 새로운 기준으로 삼아, 보유 자산의 추세 상승을 주도면밀하게 모니터링하시기 바랍니다.`;
+      actionType = '평균 단가 상승';
+      reportDesc = `기존 평균 단가 <strong>${fmtNum(curPrice, 8)}</strong>보다 높은 단가의 구매분이 추가되어 최종 평균 단가가 <strong>${fmtNum(finalAvg, 8)}</strong>로 높아졌습니다.`;
     } else {
       changeEl.textContent = '변동 없음';
       changeEl.className = 'result-change change-same';
-      actionType = '추가 매수';
-      reportDesc = `기존 평단가와 동일한 가격으로 추가 매수하여, 평균 단가의 변화 없이 보유 <strong>수량(${fmtNum(totalQty, 8)}개)</strong>과 <strong>투자 금액(${fmtWon(totalInvest)})</strong>만 증가했습니다. 매입 단가보다는 종목 비중 자체를 확대하기 위한 전략입니다.`;
+      actionType = '평균 단가 유지';
+      reportDesc = `기존 평균 단가와 같은 단가로 구매분이 추가되어 평균 단가는 유지되고 전체 수량은 <strong>${fmtNum(totalQty, 8)}</strong>로 증가했습니다.`;
     }
 
     report.style.display = 'flex';
     report.innerHTML = `
-      <h2>💡 ${actionType} 시뮬레이션 분석 리포트</h2>
-      <p>입력하신 매매 데이터를 기반으로, 총 <strong>${fmtWon(totalInvest)}</strong>의 누적 투자금이 투입되어 <strong>${fmtNum(totalQty, 8)}개</strong>의 물량을 확보하게 됩니다.</p>
+      <h2>💡 ${actionType} 계산 결과</h2>
+      <p>입력한 구매 데이터를 합치면 총 금액은 <strong>${fmtWon(totalInvest)}</strong>, 전체 수량은 <strong>${fmtNum(totalQty, 8)}</strong>입니다.</p>
       <p>${reportDesc}</p>
-      <p>⚠️ <strong>투자 인사이트:</strong> 이 종목의 비중이 포트폴리오에 치명적 리스크를 주지 않는 선인지 잔고를 다시 한번 확인하세요.</p>
+      <p>⚠️ <strong>확인:</strong> 세금·배송비·할인·반품은 입력값에 포함한 경우에만 결과에 반영됩니다.</p>
     `;
 
   } else {

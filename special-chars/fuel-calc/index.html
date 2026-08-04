@@ -9,16 +9,15 @@
 <link rel="stylesheet" href="/special-chars/theme.css">
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
-<title>⛽ 유류비 계산기 — 티모집사</title>
-<meta name="description" content="주행 거리, 연비, 유가를 입력하면 유류비를 실시간으로 계산합니다. 인원수 N빵, 왕복 계산까지 한 번에.">
-<meta property="og:title" content="⛽ 유류비 계산기 — 티모집사">
-<meta property="og:description" content="거리·연비·유가로 유류비 자동 계산. N빵·왕복 지원.">
+<title>⛽ 출장 유류비 계산기 — 티모집사</title>
+<meta name="description" content="출장 거리·차량 연비·적용 유가를 입력해 예상 유류비와 왕복 비용, 인원별 분담 참고액을 계산합니다.">
+<meta property="og:title" content="⛽ 출장 유류비 계산기 — 티모집사">
+<meta property="og:description" content="출장 거리·연비·적용 유가로 왕복 유류비 참고액을 계산합니다.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/fuel-calc/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
 <link rel="canonical" href="https://teemozipsa.com/special-chars/fuel-calc/">
 
-<meta name="robots" content="noindex, follow">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
@@ -131,7 +130,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 <main>
   <div class="header">
     <a href="https://teemozipsa.com/" class="back-btn">← 도구 모음</a>
-    <h1>⛽ 유류비 계산기</h1>
+    <h1>⛽ 출장 유류비 계산기</h1>
   </div>
   <div class="body">
     <!-- 유종 선택 -->
@@ -240,6 +239,12 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
   </div>
 
+  <section class="work-context" aria-labelledby="fuelWorkTitle">
+    <h2 id="fuelWorkTitle">출장 사전 결재와 교통비 분담액 계산하기</h2>
+    <p><strong>업무 예시:</strong> 출발지와 방문지를 왕복할 때 예상 주행 거리, 업무 차량의 실연비와 회사가 인정하는 적용 유가를 입력해 유류비 참고액을 만듭니다. 여러 명이 개인적으로 분담해야 할 때만 인원 나누기 값을 사용하세요.</p>
+    <p><strong>계산 기준:</strong> 결과는 거리÷연비×유가의 단순 추정값이며 통행료, 주차비, 우회 거리, 공회전과 차량별 연비 차이는 포함하지 않습니다. 비용 정산에는 회사 규정, 실제 영수증과 계기판 기록을 우선하세요.</p>
+    <p><strong>데이터 처리:</strong> 거리·연비·유가 입력은 서버로 전송하지 않고 브라우저에서 계산합니다. 기본 유가는 실시간 가격이 아니므로 결재 기준일의 회사 고시값이나 실제 주유 단가로 직접 수정해야 합니다.</p>
+  </section>
   </main>
 <footer class="footer"><span>입력값 기준 즉시 계산 · 유가 직접 수정 가능</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
 </div>

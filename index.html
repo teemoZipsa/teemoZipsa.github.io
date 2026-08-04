@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>티모집사의 유용한 웹 도구 모음😺</title>
+    <title>티모집사 툴즈 — 설치·로그인 없는 직장인 업무 도구</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="/special-chars/theme.css">
     <link rel="manifest" href="/special-chars/manifest.json">
     <link rel="apple-touch-icon" href="favicon.png">
     <meta name="theme-color" content="#6366f1">
-    <meta name="description" content="특수 문자, 글자 수 계산기, 날짜 계산기, 단위 변환기, 빠른 답장 등 일상과 업무에 필요한 무료 웹 도구 모음입니다.">
-    <meta property="og:title" content="티모집사의 유용한 웹 도구 모음😺">
-    <meta property="og:description" content="특수 문자, 글자 수 계산기, 날짜 계산기, 단위 변환기, 빠른 답장 등 일상과 업무에 필요한 무료 웹 도구 모음입니다.">
+    <meta name="description" content="직장인이 문서 작성, 파일 처리, 일정 계산, 마케팅 업무를 설치와 로그인 없이 바로 끝내는 브라우저 업무 도구 모음입니다.">
+    <meta property="og:title" content="티모집사 툴즈 — 직장인용 브라우저 업무 도구">
+    <meta property="og:description" content="문서·파일·일정·계산·마케팅 업무를 설치와 로그인 없이 브라우저에서 바로 처리하세요.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://teemozipsa.com/">
     <meta property="og:image" content="https://teemozipsa.com/favicon.png">
@@ -23,7 +23,7 @@
     <meta name="google-site-verification" content="Q3amxZVhsseow7dtGnkw67e9LnGy8gGF7HYBASnEz6o" />
     <!-- Google AdSense 사이트 소유권 확인용 메타태그. 광고 로더는 승인 후 콘텐츠 페이지에만 배치합니다. -->
     <meta name="google-adsense-account" content="ca-pub-3501868770820650">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"티모집사","url":"https://teemozipsa.com/","description":"일상과 업무에 필요한 무료 웹 도구 모음","inLanguage":"ko-KR","publisher":{"@type":"Organization","name":"티모집사","url":"https://teemozipsa.com/","sameAs":["https://www.instagram.com/seon_7yu/"]},"potentialAction":{"@type":"SearchAction","target":"https://teemozipsa.com/?q={search_term_string}","query-input":"required name=search_term_string"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"티모집사 툴즈","alternateName":"teemoZipsa Tools","url":"https://teemozipsa.com/","description":"설치와 로그인 없이 바로 쓰는 직장인용 브라우저 업무 도구","inLanguage":"ko-KR","audience":{"@type":"Audience","audienceType":"직장인과 실무자"},"publisher":{"@type":"Organization","name":"티모집사","url":"https://teemozipsa.com/","sameAs":["https://www.instagram.com/seon_7yu/"]},"potentialAction":{"@type":"SearchAction","target":"https://teemozipsa.com/?q={search_term_string}","query-input":"required name=search_term_string"}}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"티모집사","url":"https://teemozipsa.com/","contactPoint":{"@type":"ContactPoint","contactType":"customer support","url":"https://teemozipsa.com/contact.html","availableLanguage":["ko"]}}</script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -302,6 +302,61 @@
             max-width: 1120px; margin: 18px auto 0; padding: 0 20px;
             position: relative; z-index: 1;
         }
+        .work-hero {
+            max-width: 1120px; margin: 42px auto 0; padding: 0 20px;
+            position: relative; z-index: 1;
+        }
+        .work-hero-inner {
+            padding: 34px; border: 1px solid var(--border); border-radius: 26px;
+            background:
+                radial-gradient(circle at 88% 10%, rgba(15, 186, 159, .18), transparent 34%),
+                radial-gradient(circle at 8% 100%, rgba(37, 99, 235, .14), transparent 38%),
+                color-mix(in srgb, var(--bg-card) 96%, transparent);
+            box-shadow: var(--shadow-md);
+        }
+        .work-kicker {
+            display: inline-flex; align-items: center; gap: 7px; margin-bottom: 13px;
+            padding: 6px 10px; border-radius: 999px; background: var(--accent-light);
+            color: var(--accent); font-size: 12px; font-weight: 900;
+        }
+        .work-kicker::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #0fba9f; }
+        .work-hero h1 {
+            max-width: 760px; color: var(--text-primary); font-size: clamp(30px, 5vw, 50px);
+            line-height: 1.12; letter-spacing: -.045em; font-weight: 900;
+        }
+        .work-hero p {
+            max-width: 720px; margin-top: 15px; color: var(--text-secondary);
+            font-size: 16px; line-height: 1.75;
+        }
+        .work-promises { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+        .work-promise {
+            display: inline-flex; align-items: center; gap: 6px; padding: 8px 11px;
+            border: 1px solid var(--border); border-radius: 10px; background: var(--bg-card);
+            color: var(--text-secondary); font-size: 12px; font-weight: 800;
+        }
+        .workflow-section, .service-principles {
+            max-width: 1120px; margin: 22px auto 8px; padding: 0 20px;
+            position: relative; z-index: 1;
+        }
+        .content-heading { margin-bottom: 12px; }
+        .content-heading h2 { color: var(--text-primary); font-size: 20px; font-weight: 900; letter-spacing: -.02em; }
+        .content-heading p { margin-top: 5px; color: var(--text-muted); font-size: 13px; line-height: 1.6; }
+        .workflow-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .workflow-card {
+            display: flex; flex-direction: column; min-height: 176px; padding: 18px;
+            border: 1px solid var(--border); border-radius: 18px; background: var(--bg-card);
+            color: inherit; text-decoration: none; box-shadow: var(--shadow-sm); transition: .2s ease;
+        }
+        .workflow-card:hover { transform: translateY(-2px); border-color: var(--border-hover); box-shadow: var(--shadow-md); }
+        .workflow-icon { font-size: 25px; }
+        .workflow-card h3 { margin-top: 14px; color: var(--text-primary); font-size: 15px; font-weight: 900; }
+        .workflow-card p { margin-top: 7px; color: var(--text-muted); font-size: 12px; line-height: 1.6; }
+        .workflow-link { margin-top: auto; padding-top: 12px; color: var(--accent); font-size: 12px; font-weight: 900; }
+        .principle-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .principle-card { padding: 17px; border: 1px solid var(--border); border-radius: 16px; background: var(--bg-card); }
+        .principle-card strong { display: block; color: var(--text-primary); font-size: 14px; }
+        .principle-card span { display: block; margin-top: 6px; color: var(--text-muted); font-size: 12px; line-height: 1.6; }
+        .standards-link { color: var(--accent); font-weight: 900; text-decoration: none; }
         .today-widget {
             max-width: none; margin: 0; padding: 16px 20px; border-radius: 18px;
             background: color-mix(in srgb, var(--bg-card) 94%, transparent);
@@ -339,6 +394,12 @@
             .nav-language-full { display: none; }
             .nav-language-short { display: inline; }
             .home-utility { margin-top: 12px; padding: 0 16px; }
+            .work-hero { margin-top: 24px; padding: 0 16px; }
+            .work-hero-inner { padding: 24px 20px; border-radius: 20px; }
+            .work-hero p { font-size: 14px; }
+            .workflow-section, .service-principles { padding: 0 16px; }
+            .workflow-grid, .principle-grid { grid-template-columns: 1fr; }
+            .workflow-card { min-height: 0; }
             .today-widget {
                 flex-direction: row; flex-wrap: nowrap; text-align: left;
                 padding: 14px 16px; gap: 10px;
@@ -373,8 +434,8 @@
     </a>
     <div class="site-nav-actions">
         <div class="site-nav-links">
-            <a class="nav-tools-link" href="#toolsGrid">도구</a>
-            <a href="/blog/">블로그</a>
+            <a class="nav-tools-link" href="#toolsGrid">업무 도구</a>
+            <a href="/blog/">업무 가이드</a>
             <a class="nav-language" href="/en/" aria-label="English"><span class="nav-language-full">English</span><span class="nav-language-short">EN</span></a>
         </div>
         <div class="nav-theme-slot" data-theme-toggle-slot></div>
@@ -383,8 +444,60 @@
 </header>
 
 <main id="mainContent">
+<section class="work-hero" aria-labelledby="mainTitle">
+    <div class="work-hero-inner">
+        <span class="work-kicker">직장인을 위한 브라우저 업무 도구</span>
+        <h1 id="mainTitle">설치와 로그인 없이,<br>지금 하던 업무를 바로 끝내세요</h1>
+        <p>문서 작성, 파일 변환, 일정 계산, 마케팅 링크처럼 자주 생기는 작은 업무를 한곳에서 처리합니다. 필요한 기능만 빠르게 열고, 가능한 작업은 사용자의 브라우저 안에서 끝냅니다.</p>
+        <div class="work-promises" aria-label="서비스 핵심 원칙">
+            <span class="work-promise">✓ 회원가입 없음</span>
+            <span class="work-promise">✓ 설치 없음</span>
+            <span class="work-promise">✓ 로컬 우선 처리</span>
+            <span class="work-promise">✓ 모바일·PC 지원</span>
+        </div>
+    </div>
+</section>
+
+<section class="workflow-section" aria-labelledby="workflowTitle">
+    <div class="content-heading">
+        <h2 id="workflowTitle">업무 상황으로 바로 찾기</h2>
+        <p>도구 이름을 몰라도 지금 해결하려는 일에서 시작할 수 있습니다.</p>
+    </div>
+    <div class="workflow-grid">
+        <a class="workflow-card" href="/special-chars/char-counter/">
+            <span class="workflow-icon">✍️</span><h3>문서·메시지 다듬기</h3>
+            <p>글자 수와 바이트를 확인하고, 자주 쓰는 답장과 발표 원고를 빠르게 준비합니다.</p>
+            <span class="workflow-link">글자 수 계산부터 시작 →</span>
+        </a>
+        <a class="workflow-card" href="/special-chars/pdf-tool/">
+            <span class="workflow-icon">📁</span><h3>파일·이미지 정리하기</h3>
+            <p>PDF를 합치거나 나누고, 첨부 제한에 맞춰 이미지 용량과 형식을 조정합니다.</p>
+            <span class="workflow-link">PDF 도구 열기 →</span>
+        </a>
+        <a class="workflow-card" href="/special-chars/biz-day-calc/">
+            <span class="workflow-icon">📅</span><h3>일정·마감 계산하기</h3>
+            <p>공휴일을 제외한 영업일, 날짜 차이, 해외 동료와의 회의 시간을 확인합니다.</p>
+            <span class="workflow-link">영업일 계산하기 →</span>
+        </a>
+        <a class="workflow-card" href="/special-chars/utm-builder/">
+            <span class="workflow-icon">📣</span><h3>마케팅·웹 작업하기</h3>
+            <p>UTM 링크, QR 코드, 색상 코드와 Base64처럼 실무에서 자주 쓰는 값을 만듭니다.</p>
+            <span class="workflow-link">UTM 링크 만들기 →</span>
+        </a>
+        <a class="workflow-card" href="/special-chars/sub-calc/">
+            <span class="workflow-icon">🧮</span><h3>예산·비용 검토하기</h3>
+            <p>퍼센트, 평균 단가, SaaS 구독과 출장비를 같은 조건으로 계산하고 비교합니다.</p>
+            <span class="workflow-link">업무 구독 예산부터 시작 →</span>
+        </a>
+        <a class="workflow-card" href="/special-chars/prompt-gen/">
+            <span class="workflow-icon">🤖</span><h3>AI·콘텐츠 준비하기</h3>
+            <p>업무 프롬프트, 이모지 조합과 영상·오디오 제작값을 빠르게 준비합니다.</p>
+            <span class="workflow-link">AI 프롬프트 작성하기 →</span>
+        </a>
+    </div>
+</section>
+
 <section class="home-utility" aria-labelledby="mainTitle">
-    <h1 id="mainTitle" class="visually-hidden">티모집사의 유용한 무료 웹 도구 모음</h1>
     <div class="today-widget">
         <div>
             <div class="today-date" id="todayDate"></div>
@@ -399,7 +512,7 @@
 
 <div class="search-wrap">
     <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-    <input type="text" id="searchInput" placeholder="도구 검색... (예: 글자, 날짜, 특수문자)" oninput="onSearchInput()" onkeydown="onSearchKeydown(event)" autocomplete="off" aria-describedby="searchStatus">
+    <input type="text" id="searchInput" placeholder="업무 도구 검색... (예: PDF, 글자 수, 영업일, UTM)" oninput="onSearchInput()" onkeydown="onSearchKeydown(event)" autocomplete="off" aria-describedby="searchStatus">
     <button type="button" class="search-clear" id="searchClear" onclick="clearToolSearch()" aria-label="검색어 지우기">×</button>
 </div>
 <div class="search-status" id="searchStatus" role="status" aria-live="polite"></div>
@@ -416,7 +529,7 @@
 
 <!-- 전체 도구 -->
 <div class="view-controls">
-    <div class="section-label visible" style="margin:0;padding:0">📦 전체 도구</div>
+    <div class="section-label visible" style="margin:0;padding:0">📦 검증된 업무 도구</div>
     <div class="view-toggle" id="viewToggle">
         <button id="viewCard" class="active" onclick="switchView('card')"><span>카드</span></button>
         <button id="viewCat" onclick="switchView('category')"><span>카테고리</span></button>
@@ -424,185 +537,153 @@
 </div>
 
 <div class="tools-grid" id="toolsGrid">
-    <a href="https://119.teemozipsa.com/" class="tool-card" data-keywords="119 소방 구급 현장 출동 응급실 병상 소화전 소방용수 대피소 재난 안전" data-category="utility">
+    <a href="https://119.teemozipsa.com/" class="tool-card" data-keywords="119 소방 구급 현장 출동 응급실 병상 소화전 소방용수 대피소 재난 안전" data-category="web">
         <div class="tool-icon">🚒</div>
         <div class="tool-info"><div class="tool-name">119 현장 지원 도구</div><div class="tool-desc">소방·구급 현장을 위한 실시간 정보 대시보드</div></div>
     </a>
-    <a href="/special-chars/server-time/" class="tool-card" data-keywords="정각 시계 응답시간 지연 티켓팅 수강신청 예매 알람" data-category="utility">
-        <div class="tool-icon">⏳</div>
-        <div class="tool-info"><div class="tool-name">정각 시계 & 응답시간</div><div class="tool-desc">로컬 정밀 시계 · 사이트 응답 지연 확인</div></div>
-    </a>
-    <a href="/special-chars/lotto-gen/" class="tool-card" data-keywords="로또 번호 추첨 추천 자동 당첨 제외수 고정수" data-category="utility">
-        <div class="tool-icon">🎰</div>
-        <div class="tool-info"><div class="tool-name">로또 번호 자동 추첨기</div><div class="tool-desc">스마트한 고정/제외수 옵션 추첨</div></div>
-    </a>
-    <a href="/special-chars/my-ip/" class="tool-card" data-keywords="내 아이피 IP 확인 주소 위치 정보" data-category="utility">
-        <div class="tool-icon">🌐</div>
-        <div class="tool-info"><div class="tool-name">내 IP 확인기</div><div class="tool-desc">접속 공인 IP 주소 및 정보 1초 확인</div></div>
-    </a>
-    <a href="/special-chars/" class="tool-card" data-keywords="특수 문자 이모지 특수기호 유니코드 기호 복사" data-category="utility">
+    <a href="/special-chars/" class="tool-card" data-keywords="특수 문자 이모지 특수기호 유니코드 기호 복사" data-category="writing">
         <div class="tool-icon">⌨️</div>
         <div class="tool-info"><div class="tool-name">특수문자 & 이모지</div><div class="tool-desc">클릭 한 번으로 특수 문자·이모지 복사</div></div>
     </a>
-    <a href="/special-chars/char-counter/" class="tool-card" data-keywords="글자 수 계산기 바이트 텍스트 카운터 단어 문자수" data-category="convert">
+    <a href="/special-chars/char-counter/" class="tool-card" data-keywords="글자 수 계산기 바이트 텍스트 카운터 단어 문자수 이력서 자소서 문서" data-category="writing">
         <div class="tool-icon">📏</div>
         <div class="tool-info"><div class="tool-name">글자 수 계산기</div><div class="tool-desc">글자·바이트·단어 수 실시간 계산</div></div>
     </a>
-    <a href="/special-chars/date-calc/" class="tool-card" data-keywords="날짜 계산기 디데이 D-Day 기념일 만일 일수" data-category="date">
+    <a href="/special-chars/date-calc/" class="tool-card" data-keywords="날짜 계산기 디데이 D-Day 기념일 마감일 일수" data-category="schedule">
         <div class="tool-icon">📅</div>
         <div class="tool-info"><div class="tool-name">날짜/D-Day 계산기</div><div class="tool-desc">D-Day 계산, 날짜 더하기·빼기</div></div>
     </a>
-    <a href="/special-chars/zodiac-calc/" class="tool-card" data-keywords="별자리 운세 성격 궁합 탄생 star zodiac 양자리 황소 쌍둥이 게 사자 처녀 천칭 전갈 사수 염소 물병 물고기" data-category="date">
-        <div class="tool-icon">⭐</div>
-        <div class="tool-info"><div class="tool-name">별자리 계산기</div><div class="tool-desc">생일로 별자리·성격·궁합 확인</div></div>
-    </a>
-    <a href="/special-chars/zodiac-animal/" class="tool-card" data-keywords="띠 십이지신 간지 갑자 동물 해 animal zodiac 쥐 소 호랑이 토끼 용 뱀 말 양 원숭이 닭 개 돼지" data-category="date">
-        <div class="tool-icon">🐉</div>
-        <div class="tool-info"><div class="tool-name">띠(십이지신) 계산기</div><div class="tool-desc">생년월일로 띠·오행·궁합 확인</div></div>
-    </a>
-    <a href="/special-chars/timezone-conv/" class="tool-card" data-keywords="시차 타임존 시간 변환 세계시간 timezone 뉴욕 런던 서울 도쿄 LA" data-category="date">
+    <a href="/special-chars/timezone-conv/" class="tool-card" data-keywords="시차 타임존 시간 변환 세계시간 해외 회의 timezone 뉴욕 런던 서울 도쿄 LA" data-category="schedule">
         <div class="tool-icon">🌍</div>
         <div class="tool-info"><div class="tool-name">타임존 변환기</div><div class="tool-desc">세계 주요 도시 시간 변환·시차 확인</div></div>
     </a>
-    <a href="/special-chars/biz-day-calc/" class="tool-card" data-keywords="영업일 근무일 워킹데이 업무일 공휴일 business day 주말 제외" data-category="date">
+    <a href="/special-chars/biz-day-calc/" class="tool-card" data-keywords="영업일 근무일 워킹데이 업무일 납기 마감 공휴일 business day 주말 제외" data-category="schedule">
         <div class="tool-icon">🏢</div>
         <div class="tool-info"><div class="tool-name">영업일 계산기</div><div class="tool-desc">2024~2027 공휴일·주말 제외 날짜 계산</div></div>
     </a>
-    <a href="/special-chars/color-conv/" class="tool-card" data-keywords="색상 컬러 HEX RGB HSL 색 코드 color picker 팔레트" data-category="convert">
-        <div class="tool-icon">🎨</div>
-        <div class="tool-info"><div class="tool-name">색상 코드 변환기</div><div class="tool-desc">HEX·RGB·HSL 실시간 변환</div></div>
-    </a>
-    <a href="/special-chars/unit-conv/" class="tool-card" data-keywords="단위 변환기 평 제곱미터 온도 근 그램 신발 사이즈 직구" data-category="convert">
-        <div class="tool-icon">📐</div>
-        <div class="tool-info"><div class="tool-name">생활 단위 변환기</div><div class="tool-desc">부동산·요리·직구·디지털·여행 단위 변환</div></div>
-    </a>
-    <a href="/special-chars/quick-reply/" class="tool-card" data-keywords="빠른 답장 메신저 이메일 템플릿 복사 문구 업무" data-category="utility">
+    <a href="/special-chars/quick-reply/" class="tool-card" data-keywords="빠른 답장 메신저 이메일 템플릿 복사 문구 업무" data-category="writing">
         <div class="tool-icon">💬</div>
         <div class="tool-info"><div class="tool-name">빠른 답장 도구</div><div class="tool-desc">자주 쓰는 답장 문구 저장 & 빠른 복사</div></div>
     </a>
-    <a href="/special-chars/calculator/" class="tool-card" data-keywords="계산기 사칙연산 더하기 빼기 곱하기 나누기 calculator" data-category="calc">
-        <div class="tool-icon">🧮</div>
-        <div class="tool-info"><div class="tool-name">일반 계산기</div><div class="tool-desc">사칙연산·퍼센트·키보드 입력 지원</div></div>
-    </a>
-    <a href="/special-chars/compound-interest/" class="tool-card" data-keywords="복리 계산기 이자 주식 코인 투자 수익률 원금 compound interest" data-category="calc">
-        <div class="tool-icon">💰</div>
-        <div class="tool-info"><div class="tool-name">복리 계산기</div><div class="tool-desc">복리의 마법을 차트로 한눈에 확인</div></div>
-    </a>
-    <a href="/special-chars/speech-timer/" class="tool-card" data-keywords="발표시간 계산기 스크립트 프레젠테이션 발표 시간 말하기 속도 speech" data-category="convert">
+    <a href="/special-chars/speech-timer/" class="tool-card" data-keywords="발표시간 계산기 스크립트 프레젠테이션 회의 발표 시간 말하기 속도 speech" data-category="writing">
         <div class="tool-icon">🎤</div>
         <div class="tool-info"><div class="tool-name">발표시간 계산기</div><div class="tool-desc">스크립트 붙여넣기 → 예상 발표 시간 자동 계산</div></div>
     </a>
-    <a href="/special-chars/avg-price/" class="tool-card" data-keywords="물타기 불타기 평단가 계산기 코인 주식 추가매수 평균단가 averaging" data-category="calc">
-        <div class="tool-icon">📉</div>
-        <div class="tool-info"><div class="tool-name">물타기/불타기 계산기</div><div class="tool-desc">추가 매수 시 평단가 실시간 계산</div></div>
-    </a>
-    <a href="/special-chars/qr-code/" class="tool-card" data-keywords="QR 코드 생성기 큐알 바코드 URL 링크 qr code" data-category="utility">
+    <a href="/special-chars/qr-code/" class="tool-card" data-keywords="QR 코드 생성기 큐알 바코드 URL 명함 안내문 링크 qr code" data-category="web">
         <div class="tool-icon">📷</div>
         <div class="tool-info"><div class="tool-name">QR 코드 생성기</div><div class="tool-desc">오류 복원 수준·스캔 여백을 갖춘 QR 생성</div></div>
     </a>
-    <a href="/special-chars/image-compress/" class="tool-card" data-keywords="이미지 용량 줄이기 사진 압축 리사이즈 jpg png 최적화" data-category="utility">
+    <a href="/special-chars/image-compress/" class="tool-card" data-keywords="이미지 용량 줄이기 사진 압축 리사이즈 이메일 첨부 업로드 jpg png 최적화" data-category="files">
         <div class="tool-icon">🗜️</div>
         <div class="tool-info"><div class="tool-name">이미지 용량 줄이기</div><div class="tool-desc">브라우저에서 바로 사진 용량 압축</div></div>
     </a>
-    <a href="/special-chars/wage-calc/" class="tool-card" data-keywords="시급 월급 연봉 환산기 급여 계산기 최저시급 알바 wage salary" data-category="calc">
+    <a href="/special-chars/wage-calc/" class="tool-card" data-keywords="시급 월급 연봉 환산기 급여 계산기 최저시급 알바 wage salary" data-category="numbers">
         <div class="tool-icon">💵</div>
         <div class="tool-info"><div class="tool-name">시급 환산기</div><div class="tool-desc">시급·월급·연봉 자유롭게 환산</div></div>
     </a>
-    <a href="/special-chars/prompt-gen/" class="tool-card" data-keywords="AI 프롬프트 자판기 생성기 ChatGPT Claude 질문 템플릿 prompt" data-category="utility">
-        <div class="tool-icon">🤖</div>
-        <div class="tool-info"><div class="tool-name">AI 프롬프트 자판기</div><div class="tool-desc">빈칸만 채우면 AI용 프롬프트 완성</div></div>
-    </a>
-    <a href="/special-chars/sub-calc/" class="tool-card" data-keywords="구독료 계산기 넷플릭스 유튜브 구독 지출 subscription 가랑비" data-category="calc">
-        <div class="tool-icon">💸</div>
-        <div class="tool-info"><div class="tool-name">구독료 팩폭 계산기</div><div class="tool-desc">매달 나가는 구독료, 모이면 얼마?</div></div>
-    </a>
-    <a href="/special-chars/calorie-calc/" class="tool-card" data-keywords="칼로리 계산기 다이어트 기초대사량 탄단지 BMR 식단" data-category="calc">
-        <div class="tool-icon">🔥</div>
-        <div class="tool-info"><div class="tool-name">칼로리 계산기</div><div class="tool-desc">다이어트 목표 칼로리 및 탄단지 비율 계산</div></div>
-    </a>
-    <a href="/special-chars/utm-builder/" class="tool-card" data-keywords="UTM 파라미터 구글 애널리틱스 마케팅 캠페인 추적 링크 utm_source utm_medium" data-category="utility">
+    <a href="/special-chars/utm-builder/" class="tool-card" data-keywords="UTM 파라미터 구글 애널리틱스 마케팅 캠페인 추적 링크 utm_source utm_medium" data-category="web">
         <div class="tool-icon">🔗</div>
         <div class="tool-info"><div class="tool-name">UTM 생성기</div><div class="tool-desc">마케팅 캠페인 URL에 UTM 추적 파라미터 추가</div></div>
     </a>
-    <a href="/special-chars/pdf-tool/" class="tool-card" data-keywords="PDF 합치기 나누기 회전 순서 워터마크 문서 페이지 merge split" data-category="utility">
+    <a href="/special-chars/pdf-tool/" class="tool-card" data-keywords="PDF 합치기 나누기 회전 순서 워터마크 업무 문서 페이지 merge split" data-category="files">
         <div class="tool-icon">📄</div>
         <div class="tool-info"><div class="tool-name">PDF 도구</div><div class="tool-desc">PDF 합치기·나누기·회전·워터마크</div></div>
     </a>
-    <a href="/special-chars/emoji-mixer/" class="tool-card" data-keywords="이모지 합치기 믹서 이모티콘 짤 조합 emoji kitchen mixer 스티커" data-category="utility">
-        <div class="tool-icon">🎨</div>
-        <div class="tool-info"><div class="tool-name">이모지 합치기</div><div class="tool-desc">이모지 두 개를 합쳐 새로운 이모지 만들기</div></div>
-    </a>
-    <a href="/special-chars/discount-calc/" class="tool-card" data-keywords="할인 세금 부가세 VAT 가격 계산기 쇼핑 견적 discount tax 퍼센트" data-category="calc">
+    <a href="/special-chars/discount-calc/" class="tool-card" data-keywords="할인 세금 부가세 VAT 가격 계산기 쇼핑 견적 공급가액 discount tax 퍼센트" data-category="numbers">
         <div class="tool-icon">🏷️</div>
         <div class="tool-info"><div class="tool-name">할인/세금 계산기</div><div class="tool-desc">할인율·부가세 적용 최종 가격 계산</div></div>
     </a>
-    <a href="/special-chars/percent-calc/" class="tool-card" data-keywords="퍼센트 계산기 비율 변화율 증가율 할인율 percent calculator 백분율 비례" data-category="calc">
+    <a href="/special-chars/percent-calc/" class="tool-card" data-keywords="퍼센트 계산기 비율 변화율 증가율 증감률 보고서 percent calculator 백분율 비례" data-category="numbers">
         <div class="tool-icon">🔢</div>
         <div class="tool-info"><div class="tool-name">퍼센트 계산기</div><div class="tool-desc">A의 B%·변화율·비율·역산 한 번에</div></div>
     </a>
-    <a href="/special-chars/gpa-calc/" class="tool-card" data-keywords="학점 계산기 GPA 평점 대학교 성적 4.5 4.3 4.0 만점 grade point average" data-category="calc">
-        <div class="tool-icon">🎓</div>
-        <div class="tool-info"><div class="tool-name">학점 계산기</div><div class="tool-desc">GPA 반영 학점·취득 학점을 구분해 계산</div></div>
-    </a>
-    <a href="/special-chars/loan-calc/" class="tool-card" data-keywords="대출 이자 계산기 원리금균등 원금균등 만기일시 상환 월 납입금 모기지 주택담보 loan mortgage" data-category="calc">
-        <div class="tool-icon">🏦</div>
-        <div class="tool-info"><div class="tool-name">대출이자 계산기</div><div class="tool-desc">상환 방식별 월 납입금·총 이자 비교</div></div>
-    </a>
-    <a href="/special-chars/bmi-calc/" class="tool-card" data-keywords="BMI 계산기 체질량지수 비만도 체중 키 몸무게 비만 과체중 body mass index" data-category="calc">
-        <div class="tool-icon">📊</div>
-        <div class="tool-info"><div class="tool-name">BMI 계산기</div><div class="tool-desc">체질량지수 측정 · 비만도 판정</div></div>
-    </a>
-    <a href="/special-chars/timer/" class="tool-card" data-keywords="타이머 스톱워치 카운트다운 랩 알람 timer stopwatch 뽀모도로 시간 측정" data-category="utility">
+    <a href="/special-chars/timer/" class="tool-card" data-keywords="타이머 스톱워치 카운트다운 회의 집중 뽀모도로 랩 알람 timer stopwatch 시간 측정" data-category="schedule">
         <div class="tool-icon">⏱️</div>
         <div class="tool-info"><div class="tool-name">타이머/스톱워치</div><div class="tool-desc">카운트다운 타이머 + 랩 기록 스톱워치</div></div>
     </a>
-    <a href="/special-chars/password-gen/" class="tool-card" data-keywords="비밀번호 생성기 패스워드 암호 보안 password generator 랜덤" data-category="utility">
+    <a href="/special-chars/password-gen/" class="tool-card" data-keywords="비밀번호 생성기 패스워드 암호 보안 password generator 랜덤" data-category="web">
         <div class="tool-icon">🔐</div>
         <div class="tool-info"><div class="tool-name">비밀번호 생성기</div><div class="tool-desc">안전한 랜덤 비밀번호 즉시 생성</div></div>
     </a>
-    <a href="/special-chars/korean-english-converter/" class="tool-card" data-keywords="한영 타자 변환 키보드 영타 한타 변환기 korean english converter" data-category="convert">
-        <div class="tool-icon">⌨️</div>
-        <div class="tool-info"><div class="tool-name">한영 타자 변환기</div><div class="tool-desc">영타로 친 한글, 한타로 친 영어 변환</div></div>
-    </a>
-    <a href="/special-chars/base64-tool/" class="tool-card" data-keywords="Base64 인코더 디코더 인코딩 디코딩 텍스트 이미지 변환 base64 encoder decoder" data-category="utility">
+    <a href="/special-chars/base64-tool/" class="tool-card" data-keywords="Base64 인코더 디코더 인코딩 디코딩 개발 텍스트 이미지 변환 base64 encoder decoder" data-category="web">
         <div class="tool-icon">🔣</div>
         <div class="tool-info"><div class="tool-name">Base64 인코더/디코더</div><div class="tool-desc">텍스트·이미지를 Base64로 변환</div></div>
     </a>
-    <a href="/special-chars/image-format-converter/" class="tool-card" data-keywords="이미지 포맷 변환 JPG PNG WebP GIF 파일 형식 image format converter" data-category="convert">
+    <a href="/special-chars/image-format-converter/" class="tool-card" data-keywords="이미지 포맷 변환 JPG PNG WebP GIF 업무 파일 형식 image format converter" data-category="files">
         <div class="tool-icon">🖼️</div>
         <div class="tool-info"><div class="tool-name">이미지 포맷 변환기</div><div class="tool-desc">이미지를 정적 JPG·PNG·WebP로 변환</div></div>
     </a>
-    <a href="/special-chars/pet-age-calc/" class="tool-card" data-keywords="반려동물 나이 계산기 강아지 고양이 사람 나이 환산 pet age calculator 댕댕이" data-category="pet">
-        <div class="tool-icon">🐾</div>
-        <div class="tool-info"><div class="tool-name">반려동물 나이 계산기</div><div class="tool-desc">강아지·고양이 → 사람 나이 환산</div></div>
-    </a>
-    <a href="/special-chars/pet-food-calc/" class="tool-card" data-keywords="사료 급여량 계산기 강아지 고양이 칼로리 사료량 반려동물 먹이 pet food calculator" data-category="pet">
-        <div class="tool-icon">🍖</div>
-        <div class="tool-info"><div class="tool-name">사료 급여량 계산기</div><div class="tool-desc">체중·활동량 기반 하루 사료량 계산</div></div>
-    </a>
-    <a href="/special-chars/pet-bmi-calc/" class="tool-card" data-keywords="반려동물 체중 관리 BMI BCS 강아지 고양이 비만 체형 점수 pet weight" data-category="pet">
-        <div class="tool-icon">⚖️</div>
-        <div class="tool-info"><div class="tool-name">반려동물 체중 관리</div><div class="tool-desc">BCS 체형 평가 · 품종별 체중 참고 범위</div></div>
-    </a>
-    <a href="/special-chars/fuel-calc/" class="tool-card" data-keywords="유류비 계산기 기름값 주유비 연비 휘발유 경유 LPG 주유 N빵 교통비 fuel cost" data-category="calc">
-        <div class="tool-icon">⛽</div>
-        <div class="tool-info"><div class="tool-name">유류비 계산기</div><div class="tool-desc">참고 유가를 직접 수정해 유류비 N빵 계산</div></div>
-    </a>
-    <a href="/special-chars/bg-remover/" class="tool-card" data-keywords="누끼 배경 제거 이미지 배경제거 background removal AI 투명 png 따기" data-category="utility">
+    <a href="/special-chars/bg-remover/" class="tool-card" data-keywords="누끼 배경 제거 상품 이미지 배경제거 background removal AI 투명 png 따기" data-category="files">
         <div class="tool-icon">✂️</div>
         <div class="tool-info"><div class="tool-name">이미지 배경(누끼) 제거</div><div class="tool-desc">AI 배경 제거 · 서버 전송 없이 로컬 처리</div></div>
     </a>
-    <a href="/special-chars/broker-fee-calc/" class="tool-card" data-keywords="부동산 중개수수료 중개보수 복비 매매 전세 월세 주택 상가 오피스텔 요율 계산기" data-category="calc">
+    <a href="/special-chars/server-time/" class="tool-card" data-keywords="정밀 시계 접수 마감 배포 정각 알림 웹 응답 시간 지연 업무" data-category="schedule">
+        <div class="tool-icon">⏱️</div>
+        <div class="tool-info"><div class="tool-name">업무용 정밀 시계</div><div class="tool-desc">접수·배포 기준 시각과 웹 응답 대기 확인</div></div>
+    </a>
+    <a href="/special-chars/my-ip/" class="tool-card" data-keywords="공인 IP 아이피 IT 지원 방화벽 허용 VPN 접속 환경 복사" data-category="web">
+        <div class="tool-icon">🌐</div>
+        <div class="tool-info"><div class="tool-name">공인 IP·접속 환경</div><div class="tool-desc">IT 문의와 방화벽 요청에 필요한 정보 확인</div></div>
+    </a>
+    <a href="/special-chars/color-conv/" class="tool-card" data-keywords="색상 컬러 HEX RGB HSL 변환 디자인 시안 웹 문서 보색 유사색" data-category="web">
+        <div class="tool-icon">🎨</div>
+        <div class="tool-info"><div class="tool-name">실무 색상 코드 변환</div><div class="tool-desc">HEX·RGB·HSL 변환과 배색 후보 확인</div></div>
+    </a>
+    <a href="/special-chars/unit-conv/" class="tool-card" data-keywords="업무 단위 변환 견적 상품 인치 센티미터 파운드 킬로그램 면적 용량 거리" data-category="numbers">
+        <div class="tool-icon">📐</div>
+        <div class="tool-info"><div class="tool-name">업무 단위 변환기</div><div class="tool-desc">견적·상품 자료의 면적·무게·용량 통일</div></div>
+    </a>
+    <a href="/special-chars/calculator/" class="tool-card" data-keywords="업무 계산기 사칙연산 퍼센트 견적 보고서 키보드 빠른 계산" data-category="numbers">
+        <div class="tool-icon">🧮</div>
+        <div class="tool-info"><div class="tool-name">업무용 빠른 계산기</div><div class="tool-desc">견적과 보고서 수치를 키보드로 빠르게 확인</div></div>
+    </a>
+    <a href="/special-chars/compound-interest/" class="tool-card" data-keywords="성장률 복리 시나리오 매출 사용자 비용 생산량 반복 변화율 예측 비교" data-category="numbers">
+        <div class="tool-icon">📈</div>
+        <div class="tool-info"><div class="tool-name">성장률·복리 시나리오</div><div class="tool-desc">업무 지표의 반복 증가·감소값을 차트로 비교</div></div>
+    </a>
+    <a href="/special-chars/avg-price/" class="tool-card" data-keywords="가중 평균 단가 재고 자재 상품 입고 구매 수량 원가 평균 매입가" data-category="numbers">
+        <div class="tool-icon">📦</div>
+        <div class="tool-info"><div class="tool-name">가중 평균 단가 계산기</div><div class="tool-desc">기존·추가 구매분의 수량 가중 평균 계산</div></div>
+    </a>
+    <a href="/special-chars/prompt-gen/" class="tool-card" data-keywords="업무 AI 프롬프트 보고서 이메일 요약 아이디어 목적 배경 출력 형식" data-category="writing">
+        <div class="tool-icon">🤖</div>
+        <div class="tool-info"><div class="tool-name">업무용 AI 프롬프트</div><div class="tool-desc">목적·자료·출력 형식을 채워 요청문 완성</div></div>
+    </a>
+    <a href="/special-chars/sub-calc/" class="tool-card" data-keywords="업무 구독 SaaS 비용 예산 좌석 갱신 협업 AI 디자인 클라우드 월 합계" data-category="numbers">
+        <div class="tool-icon">💳</div>
+        <div class="tool-info"><div class="tool-name">구독·SaaS 비용 계산기</div><div class="tool-desc">팀 구독의 월 합계와 장기 갱신 예산 비교</div></div>
+    </a>
+    <a href="/special-chars/emoji-mixer/" class="tool-card" data-keywords="이모지 조합 이미지 사내 공지 캠페인 소셜 콘텐츠 마케팅 다운로드" data-category="writing">
+        <div class="tool-icon">🎨</div>
+        <div class="tool-info"><div class="tool-name">콘텐츠용 이모지 조합</div><div class="tool-desc">공지·캠페인용 이모지 조합 이미지 찾기</div></div>
+    </a>
+    <a href="/special-chars/gpa-calc/" class="tool-card" data-keywords="GPA 학점 평균 채용 지원 서류 교육 이수 성적 가중 평균 4.5 4.3" data-category="numbers">
+        <div class="tool-icon">🎓</div>
+        <div class="tool-info"><div class="tool-name">채용·교육 GPA 계산</div><div class="tool-desc">과목별 학점·등급의 가중 평균 사전 확인</div></div>
+    </a>
+    <a href="/special-chars/loan-calc/" class="tool-card" data-keywords="재무 검토 대출 상환 비교 원리금균등 원금균등 만기일시 월 납입 총 이자" data-category="numbers">
+        <div class="tool-icon">🏦</div>
+        <div class="tool-info"><div class="tool-name">대출 상환 방식 비교</div><div class="tool-desc">같은 조건의 월 납입금·총이자 구조 비교</div></div>
+    </a>
+    <a href="/special-chars/korean-english-converter/" class="tool-card" data-keywords="한영 타자 복구 키보드 오타 영타 한타 메신저 문서 두벌식 변환" data-category="writing">
+        <div class="tool-icon">⌨️</div>
+        <div class="tool-info"><div class="tool-name">업무용 한영 타자 복구</div><div class="tool-desc">잘못 선택한 키보드 언어 입력을 즉시 복원</div></div>
+    </a>
+    <a href="/special-chars/fuel-calc/" class="tool-card" data-keywords="출장 유류비 교통비 거리 연비 유가 왕복 정산 분담 비용" data-category="numbers">
+        <div class="tool-icon">⛽</div>
+        <div class="tool-info"><div class="tool-name">출장 유류비 계산기</div><div class="tool-desc">거리·연비·적용 유가로 출장 비용 예상</div></div>
+    </a>
+    <a href="/special-chars/broker-fee-calc/" class="tool-card" data-keywords="부동산 실무 중개보수 상한 수수료 매매 전세 월세 주택 오피스텔 계약" data-category="numbers">
         <div class="tool-icon">🏠</div>
-        <div class="tool-info"><div class="tool-name">부동산 중개수수료 계산기</div><div class="tool-desc">매매·전세·월세 중개보수 자동 계산</div></div>
+        <div class="tool-info"><div class="tool-name">중개보수 상한 계산</div><div class="tool-desc">서울 기준 계약 유형별 요율과 상한 확인</div></div>
     </a>
-    <a href="/special-chars/taxi-calc/" class="tool-card" data-keywords="서울 택시비 계산기 택시 요금 예상 심야할증 중형 저속시간 시계외" data-category="calc">
+    <a href="/special-chars/taxi-calc/" class="tool-card" data-keywords="서울 출장 택시비 교통비 사전 결재 정산 심야 시계외 할증 예상" data-category="numbers">
         <div class="tool-icon">🚕</div>
-        <div class="tool-info"><div class="tool-name">서울 중형 택시비 계산기</div><div class="tool-desc">서울 공식 요율로 거리·저속 시간·할증·추가 비용 예상</div></div>
+        <div class="tool-info"><div class="tool-name">서울 출장 택시비 예상</div><div class="tool-desc">거리·저속 시간·할증을 반영한 참고 금액</div></div>
     </a>
-    <a href="/special-chars/music-calc/" class="tool-card" data-keywords="음악 계산기 BPM 탭 측정 딜레이 타이밍 곡 길이 마디 음정 Hz 주파수 키변환 트랜스포즈 DAW 프로듀서" data-category="calc">
+    <a href="/special-chars/music-calc/" class="tool-card" data-keywords="영상 오디오 콘텐츠 제작 BPM 딜레이 곡 길이 마디 음정 주파수 키 변환" data-category="files">
         <div class="tool-icon">🎵</div>
-        <div class="tool-info"><div class="tool-name">음악 계산기</div><div class="tool-desc">BPM 측정·딜레이·음정·Hz·키 변환</div></div>
+        <div class="tool-info"><div class="tool-name">영상·오디오 제작 계산</div><div class="tool-desc">BPM·딜레이·곡 길이·음정 제작값 확인</div></div>
     </a>
 </div>
 
@@ -613,6 +694,19 @@
 </div>
 
 <div class="no-results" id="noResults">🔍 검색 결과가 없습니다</div>
+
+<section class="service-principles" aria-labelledby="principlesTitle">
+    <div class="content-heading">
+        <h2 id="principlesTitle">도구가 늘어날수록 기준도 함께 쌓입니다</h2>
+        <p>새 기능을 무작정 공개하지 않고 실제 업무 목적, 처리 범위, 예외 상황과 검증 방법을 함께 관리합니다.</p>
+    </div>
+    <div class="principle-grid">
+        <div class="principle-card"><strong>업무 문제부터 정의</strong><span>누가 언제 무엇을 끝내기 위해 쓰는지 설명할 수 있는 도구를 만듭니다.</span></div>
+        <div class="principle-card"><strong>브라우저 로컬 우선</strong><span>파일과 입력값은 가능한 한 기기 안에서 처리하고, 네트워크 사용은 페이지에 밝힙니다.</span></div>
+        <div class="principle-card"><strong>검증 후 검색 공개</strong><span>계산식·경계값·접근성·브라우저 동작과 안내 콘텐츠를 확인한 도구만 검색 대상에 포함합니다.</span></div>
+    </div>
+    <p style="margin-top:12px;font-size:12px;color:var(--text-muted)">자세한 절차는 <a class="standards-link" href="/tool-standards.html">도구 제작·검증 기준</a>에서 공개합니다.</p>
+</section>
 
 <!-- 팁 섹션 -->
 <div class="tip-section">
@@ -641,6 +735,8 @@
         <a href="/about.html">사이트 소개</a>
         <span style="color:#475569;">·</span>
         <a href="/editorial-policy.html">편집정책</a>
+        <span style="color:#475569;">·</span>
+        <a href="/tool-standards.html">도구 제작·검증 기준</a>
         <span style="color:#475569;">·</span>
         <a href="/contact.html">문의</a>
         <span style="color:#475569;">·</span>
@@ -756,63 +852,18 @@ setInterval(updateToday, 1000);
 
 // === 팁 로테이션 ===
 const TIPS = [
-    // 단위 변환
-    '1평은 약 3.3㎡입니다. 방 크기를 ㎡로 환산할 때 유용해요!',
-    '1마일은 약 1.6km입니다. 미국 도로 표지판 읽을 때 기억하세요.',
-    '100℃는 212℉입니다. 미국 레시피를 따라 할 때 참고하세요.',
-    '1파운드(lb)는 약 453g입니다. 해외 직구 시 무게 계산에 활용하세요.',
-    '1oz(온스)는 약 29.6ml입니다. 해외 음료 용량 환산에 유용해요.',
-    '1인치는 2.54cm입니다. TV·모니터 크기 비교할 때 유용해요.',
-    '1갤런은 약 3.79리터입니다. 미국 주유소에서 참고하세요.',
-    '1에이커는 약 4,047㎡, 약 1,224평입니다.',
-    '1해리(nautical mile)는 약 1.852km입니다. 항공·해상 거리 단위예요.',
-    '1피트(ft)는 약 30.5cm입니다. 키를 피트로 환산할 때 참고하세요.',
-    '1야드는 약 91.4cm입니다. 골프에서 자주 쓰이는 단위예요.',
-    // 무게·부피
-    '고기 1근은 600g, 채소 1근은 400g으로 서로 다릅니다.',
-    '1큰술(T)은 15ml, 1컵은 200ml입니다. 요리할 때 기억하세요!',
-    '밀가루 1컵은 약 110g, 설탕 1컵은 약 200g으로 재료마다 다릅니다.',
-    '버터 1스틱은 약 113g(미국 기준)입니다.',
-    '1톤은 1,000kg, 미국의 1숏톤(short ton)은 약 907kg입니다.',
-    // 신발·의류
-    '한국 신발 270mm = 미국 남성 US 8 = 유럽 EU 42입니다.',
-    '미국 여성 신발 US 7 = 한국 240mm = 유럽 EU 38입니다.',
-    // 금융·경제
-    '복리의 72법칙: 수익률로 72를 나누면 원금이 2배가 되는 햇수를 알 수 있어요.',
-    '2026년 최저시급은 10,320원입니다.',
-    '2026년 최저시급 기준 월급(209시간)은 약 215만 원입니다.',
-    '연봉 3,000만 원의 실수령액은 월 약 220만 원 내외입니다 (4대보험·세금 공제 후).',
-    '주식 물타기: 평단가 = (총 매수금액) ÷ (총 수량)으로 계산합니다.',
-    '적금 이자에도 15.4%의 이자소득세가 붙습니다.',
-    '1달러 ≈ 약 1,450원 (2026년 초 기준, 환율은 수시 변동).',
-    // IT·디지털
-    '한글 1글자는 UTF-8로 3바이트, EUC-KR로 2바이트입니다.',
+    '한글 한 글자는 UTF-8에서 보통 3바이트입니다. 시스템 제한은 글자 수와 바이트 수를 구분해 확인하세요.',
     'QR 코드에 담을 수 있는 데이터량은 내용의 문자 종류와 오류 복원 수준에 따라 달라집니다.',
-    '72DPI에서 1인치(72px)는 정확히 25.4mm입니다.',
-    'Full HD(1920×1080)와 4K(3840×2160)는 해상도가 정확히 4배 차이입니다.',
-    '1GB = 1,024MB이지만, 저장장치 제조사는 1,000MB로 계산해서 실제 용량이 적어 보여요.',
-    'RGB #000000은 검정, #FFFFFF는 흰색입니다. 16진수 색상 코드의 기본이에요.',
-    'Wi-Fi 주파수 2.4GHz는 범위가 넓고, 5GHz는 속도가 빠릅니다.',
-    'PDF 용량이 크다면 이미지 해상도를 150DPI로 낮추면 크게 줄어듭니다.',
-    // 생활 상식
-    'D-Day 계산 시 "초일 산입"을 체크하면 시작일도 1일로 포함됩니다.',
-    '카페인 하루 권장 섭취량은 성인 기준 400mg 이하입니다 (커피 약 3~4잔).',
-    '성인 하루 권장 수분 섭취량은 약 2리터(8잔)입니다.',
-    '비행기 기내 반입 액체류는 개당 100ml, 총 1리터까지 가능합니다.',
-    '국제전화 국가번호: 한국 +82, 미국 +1, 일본 +81, 중국 +86입니다.',
-    '택배 부피무게 계산: 가로×세로×높이(cm) ÷ 6,000 = kg입니다.',
-    // 한국 특화
-    '전용면적 25평(약 84㎡)은 아파트 국민평형이라 불립니다.',
-    '1psi는 약 0.069bar입니다. 타이어 공기압 확인 시 참고하세요.',
-    '한국 표준시(KST)는 UTC+9로, 일본과 같은 시간대입니다.',
-    '대한민국의 실제 휴일 수는 해마다 요일·대체공휴일·임시공휴일 지정에 따라 달라집니다.',
-    '아파트 전용면적은 벽 안쪽, 공급면적은 복도·계단 등을 포함한 넓이입니다.',
-    // 도구 관련 알쓸신잡
-    '강아지와 고양이의 정상 체온은 38~39도로 사람보다 약간 더 높아요.',
-    '브라우저에서는 임의 사이트의 정확한 서버 시각을 직접 읽기 어렵습니다. 로컬 시계와 응답 지연을 구분해 확인하세요.',
-    '나눔로또 1등 당첨 확률은 8,145,060분의 1입니다.',
-    '비밀번호를 영문 대소문자+숫자+특수문자 조합으로 12자 이상 만들면 해킹에 수백 년이 걸립니다.',
-    'WebP의 용량 절감 폭과 화질은 원본 이미지, 품질 설정, 투명도 여부에 따라 달라집니다.'
+    'PDF 용량은 포함된 이미지의 해상도와 압축 방식에 크게 좌우됩니다.',
+    'D-Day와 영업일 계산은 시작일 포함 여부를 먼저 정해야 같은 조건으로 재현할 수 있습니다.',
+    '한국 표준시(KST)는 UTC+9입니다. 해외 회의 일정에는 도시 이름과 시간대를 함께 적는 편이 안전합니다.',
+    '20% 증가한 값을 다시 20% 줄이면 원래 값으로 돌아오지 않습니다. 기준값이 달라지기 때문입니다.',
+    '부가세 포함 금액을 나눌 때는 원 단위 반올림 또는 절사 규칙에 따라 결과가 달라질 수 있습니다.',
+    'UTM 파라미터 값은 팀 안에서 소문자·구분자 규칙을 통일해야 캠페인 보고서가 덜 쪼개집니다.',
+    'WebP의 용량 절감 폭과 화질은 원본 이미지, 품질 설정과 투명도 여부에 따라 달라집니다.',
+    '투명 배경이 필요하면 PNG 또는 WebP를 사용하고, 일반 사진은 JPG나 WebP가 대체로 효율적입니다.',
+    'Base64는 바이너리 원본보다 데이터 크기가 대략 33% 늘어나므로 큰 파일 전달에는 적합하지 않습니다.',
+    '브라우저 로컬 처리는 파일을 서버에 보내지 않을 수 있지만, 다운로드 파일과 클립보드 기록은 사용자가 직접 관리해야 합니다.'
 ];
 document.getElementById('tipContent').textContent = TIPS[Math.floor(Math.random() * TIPS.length)];
 
@@ -1222,11 +1273,11 @@ function filterCards(q) {
 
 // === 카테고리 뷰 전환 ===
 const CATEGORIES = [
-    { id: 'calc', label: '🧮 계산기' },
-    { id: 'convert', label: '📐 변환 / 측정' },
-    { id: 'date', label: '📅 날짜 / 시간' },
-    { id: 'utility', label: '🛠️ 유틸리티' },
-    { id: 'pet', label: '🐾 반려동물' }
+    { id: 'writing', label: '✍️ 문서 · 커뮤니케이션' },
+    { id: 'files', label: '📁 파일 · 이미지' },
+    { id: 'schedule', label: '📅 일정 · 시간' },
+    { id: 'numbers', label: '🧮 계산 · 비용' },
+    { id: 'web', label: '📣 마케팅 · 웹 실무' }
 ];
 
 let currentView = safeGet('viewMode') === 'category' ? 'category' : 'card';

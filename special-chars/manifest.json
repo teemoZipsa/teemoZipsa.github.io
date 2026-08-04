@@ -1,7 +1,7 @@
 {
-  "name": "티모집사 도구 모음",
-  "short_name": "티모집사",
-  "description": "일상과 업무에 필요한 무료 웹 도구 모음",
+  "name": "티모집사 직장인 업무 도구",
+  "short_name": "티모집사 툴즈",
+  "description": "설치와 로그인 없이 바로 쓰는 직장인용 브라우저 업무 도구",
   "start_url": "/special-chars/",
   "scope": "/special-chars/",
   "display": "standalone",

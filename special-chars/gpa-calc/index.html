@@ -9,16 +9,15 @@
 <link rel="stylesheet" href="/special-chars/theme.css">
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
-<title>🎓 학점 계산기 — 티모집사</title>
-<meta name="description" content="대학교 학점(GPA) 계산기. 4.5, 4.3, 4.0 만점제 지원. 과목별 학점과 성적을 입력하면 평균 평점을 자동 계산합니다.">
-<meta property="og:title" content="🎓 학점 계산기 — 티모집사">
-<meta property="og:description" content="대학교 학점(GPA) 계산기. 4.5, 4.3, 4.0 만점제 지원.">
+<title>🎓 채용·교육 GPA 평균 계산기 — 티모집사</title>
+<meta name="description" content="채용 서류와 교육 이수 결과를 사전 확인할 때 과목별 학점·성적을 입력해 4.5·4.3·4.0 만점의 가중 GPA를 계산합니다.">
+<meta property="og:title" content="🎓 채용·교육 GPA 평균 계산기 — 티모집사">
+<meta property="og:description" content="채용 서류와 교육 결과의 과목별 학점·등급 가중 평균을 확인합니다.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/gpa-calc/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
 <link rel="canonical" href="https://teemozipsa.com/special-chars/gpa-calc/">
 
-<meta name="robots" content="noindex, follow">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
@@ -115,7 +114,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 <main>
   <div class="header">
     <a href="https://teemozipsa.com/" class="back-btn">← 도구 모음</a>
-    <h1>🎓 학점 계산기</h1>
+    <h1>🎓 채용·교육 GPA 평균 계산기</h1>
   </div>
 
   <div class="body">
@@ -196,6 +195,12 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       </div>
     </div>
   </details>
+  <section class="work-context" aria-labelledby="gpaWorkTitle">
+    <h2 id="gpaWorkTitle">채용 서류와 사내 교육 성적을 사전 확인하기</h2>
+    <p><strong>업무 예시:</strong> 지원자가 성적표의 과목·학점·등급을 입력해 가중 GPA를 자체 확인하거나, 교육 담당자가 여러 과정의 이수 학점과 등급 평균을 검산할 때 사용합니다. P 과목과 F 과목의 반영 방식은 화면 안내를 따릅니다.</p>
+    <p><strong>적용 한계:</strong> 학교·채용기관별 백분위와 100점 환산표, 재수강·학점포기 규칙은 자동 반영하지 않습니다. 공식 제출값은 발급된 성적증명서와 지원 기관의 환산 기준을 우선하세요.</p>
+    <p><strong>데이터 처리:</strong> 과목명과 성적은 서버로 전송하거나 저장하지 않고 현재 브라우저에서 계산합니다. 주민번호, 학번과 지원자 이름은 입력할 필요가 없습니다.</p>
+  </section>
     </main>
 <footer class="footer"><span>4.5 / 4.3 / 4.0 만점제 지원</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
 </div>

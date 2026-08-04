@@ -361,6 +361,22 @@ async function main() {
     assert(result.price === '-' && result.message.includes('0보다 큰'), `invalid average-price input leaked a result: ${JSON.stringify(result)}`);
   });
 
+  await scenario('weighted average work calculation', '/special-chars/avg-price/', async page => {
+    const result = await page.evaluate(() => {
+      document.querySelector('#curPrice').value = '100';
+      document.querySelector('#curQty').value = '10';
+      document.querySelector('#addPrice').value = '200';
+      document.querySelector('#addQtyOrAmt').value = '10';
+      calc();
+      return {
+        average: document.querySelector('#finalPrice').textContent,
+        total: document.querySelector('#finalInvest').textContent,
+        quantity: document.querySelector('#finalQty').textContent
+      };
+    });
+    assert(result.average === '150' && result.total.includes('3,000') && result.quantity === '20', `weighted average result is wrong: ${JSON.stringify(result)}`);
+  });
+
   await scenario('officetel fee requirements', '/special-chars/broker-fee-calc/', async page => {
     const values = await page.evaluate(() => {
       setProp(1);
@@ -391,11 +407,14 @@ async function main() {
       const zero = document.querySelector('#sumRate').textContent;
       document.querySelector('#rate').value = '-10'; calculate();
       const negative = document.querySelector('.trade-item:last-child .trade-detail').textContent;
+      document.querySelector('#principal').value = '1000'; document.querySelector('#rate').value = '10'; document.querySelector('#times').value = '2'; calculate();
+      const growth = document.querySelector('#sumTotal').textContent;
       document.querySelector('#times').value = '100000'; calculate();
-      return { zero, negative, hidden: getComputedStyle(document.querySelector('#summary')).display, validation: document.querySelector('#times').validationMessage };
+      return { zero, negative, growth, hidden: getComputedStyle(document.querySelector('#summary')).display, validation: document.querySelector('#times').validationMessage };
     });
     assert(result.zero === '0.0%', `zero rate failed: ${result.zero}`);
     assert(!result.negative.includes('+-'), `negative return formatting failed: ${result.negative}`);
+    assert(result.growth === '1,210', `10% repeated growth result is wrong: ${result.growth}`);
     assert(result.hidden === 'none' && result.validation, 'period cap was not enforced');
   });
 
@@ -940,6 +959,21 @@ async function main() {
     });
     assert(result.value.includes('"Family"') && result.value.includes('<img') && result.injected === 0, `subscription value was corrupted: ${JSON.stringify(result)}`);
     assert(result.invalid === 'true' && !/Infinity|∞|NaN/.test(result.total), `subscription overflow leaked: ${JSON.stringify(result)}`);
+  });
+
+  await scenario('SaaS budget escalation scenario', '/special-chars/sub-calc/', async page => {
+    const result = await page.evaluate(() => {
+      const prices = document.querySelectorAll('.sub-price');
+      prices[0].value = '1000';
+      prices[1].value = '0';
+      prices[0].dispatchEvent(new Event('input', { bubbles: true }));
+      return {
+        monthly: document.querySelector('#monthlyTotal').textContent,
+        flatFiveYears: document.querySelector('#y5').textContent,
+        escalatedFiveYears: document.querySelector('#inv5').textContent
+      };
+    });
+    assert(result.monthly.includes('1,000') && result.flatFiveYears === '60,000원' && result.escalatedFiveYears === '66,308원', `SaaS budget scenario is wrong: ${JSON.stringify(result)}`);
   });
 
   await scenario('English subscription overflow bounds', '/special-chars/en/sub-calc/', async page => {

@@ -167,7 +167,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <details class="guide-item">
       <summary>내 비밀번호는 서버에 저장되나요?</summary>
       <div class="guide-content">
-        <strong>아니요. 절대 저장되지 않습니다.</strong> 저희 도구는 100% 사용자의 브라우저 로컬 환경(클라이언트 사이드)에서 <code>crypto.getRandomValues()</code> 함수를 사용하여 비밀번호를 생성합니다. 외부 네트워크로 전송되는 데이터가 없으므로 완전히 안전하게 사용하실 수 있습니다. 브라우저를 닫으면 최근 생성 기록도 모두 삭제됩니다.
+        이 도구는 현재 브라우저에서 <code>crypto.getRandomValues()</code>를 사용해 비밀번호를 생성하며 앱 서버로 결과를 전송하거나 저장하지 않습니다. 최근 생성 기록은 페이지 메모리에만 유지되어 새로고침하거나 탭을 닫으면 사라집니다. 다만 기기 보안, 브라우저 확장 프로그램, 클립보드 기록까지 이 페이지가 통제할 수는 없으므로 신뢰할 수 있는 기기에서 사용하고 결과는 비밀번호 관리자에 보관하세요.
       </div>
     </details>
     <details class="guide-item">
@@ -198,6 +198,12 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <summary>특수문자를 꼭 넣어야 하나요?</summary>
       <div class="guide-content">
         사이트 정책에 따라 특수문자를 요구하는 곳도 있지만, 보안 강도에서 가장 중요한 요소는 길이와 예측 불가능성입니다. 8자리 특수문자 조합보다 16자리 이상의 충분히 긴 무작위 조합이 더 안전한 경우가 많습니다. 다만 여러 사이트가 서로 다른 규칙을 갖고 있으므로 이 도구에서 길이와 문자 종류를 바꿔가며 조건에 맞는 비밀번호를 만들 수 있습니다.
+      </div>
+    </details>
+    <details class="guide-item">
+      <summary>이 도구가 보장하지 않는 범위는 무엇인가요?</summary>
+      <div class="guide-content">
+        생성기의 무작위성은 최신 브라우저의 보안 난수 구현을 기준으로 합니다. 이미 감염된 기기, 악성 확장 프로그램, 유출된 클립보드와 사용자가 같은 비밀번호를 다시 쓰는 위험까지 막아주지는 않습니다. 중요한 계정은 서로 다른 긴 비밀번호와 2단계 인증을 함께 사용하세요.
       </div>
     </details>
 

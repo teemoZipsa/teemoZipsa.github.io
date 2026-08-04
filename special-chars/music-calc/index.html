@@ -9,16 +9,15 @@
 <link rel="stylesheet" href="/special-chars/theme.css">
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
-<title>🎵 음악 계산기 — 티모집사</title>
-<meta name="description" content="BPM 탭 측정, 메트로놈, 딜레이 타이밍, 곡 길이·마디 계산, 음정↔Hz 변환, 키 변환(Transpose)까지. 음악 프로듀서와 연주자를 위한 올인원 음악 계산기.">
-<meta property="og:title" content="🎵 음악 계산기 — 티모집사">
-<meta property="og:description" content="BPM 측정, 딜레이 타이밍, 음정·Hz 변환 등 음악 제작에 필요한 모든 계산을 한 곳에서.">
+<title>🎵 영상·오디오 제작 계산기 — 티모집사</title>
+<meta name="description" content="콘텐츠 제작자가 BPM, 딜레이 타이밍, 곡 길이·마디, 음정·주파수와 키 변환 값을 한 화면에서 계산합니다.">
+<meta property="og:title" content="🎵 영상·오디오 제작 계산기 — 티모집사">
+<meta property="og:description" content="콘텐츠 제작에 필요한 BPM, 딜레이, 길이, 음정·주파수와 키 변환값을 계산합니다.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/music-calc/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
 <link rel="canonical" href="https://teemozipsa.com/special-chars/music-calc/">
 
-<meta name="robots" content="noindex, follow">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
@@ -171,7 +170,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 <main>
   <div class="header">
     <a href="https://teemozipsa.com/" class="back-btn">← 도구 모음</a>
-    <h1>🎵 음악 계산기</h1>
+    <h1>🎵 영상·오디오 제작 계산기</h1>
     <a href="/special-chars/en/music-calc/" class="back-btn">🌐 EN</a>
   </div>
 
@@ -401,6 +400,12 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
   </details>
 
+  <section class="work-context" aria-labelledby="musicWorkTitle">
+    <h2 id="musicWorkTitle">영상·오디오 콘텐츠 제작값 한곳에서 계산하기</h2>
+    <p><strong>업무 예시:</strong> 홍보 영상의 배경음 길이를 마디 수로 맞추거나 BPM에 맞는 딜레이 시간을 구하고, 음성·효과음의 음정과 주파수 또는 전조 값을 확인합니다. 계산 결과를 편집 프로그램의 프로젝트 메모에 함께 남기면 수정 이력을 재현하기 쉽습니다.</p>
+    <p><strong>해석 기준:</strong> BPM과 박자표로 계산한 곡 길이는 템포 변화, 루바토와 무음 구간을 반영하지 않습니다. 음정 주파수는 A4=440Hz의 평균율을 기준으로 하므로 실제 연주·튜닝 기준이 다른 프로젝트는 별도 보정이 필요합니다.</p>
+    <p><strong>데이터 처리:</strong> 탭 입력과 숫자 계산은 현재 브라우저에서 처리하며 서버에 저장하지 않습니다. 메트로놈 소리는 브라우저 오디오 정책과 기기 지연의 영향을 받으므로 방송 송출이나 정밀 동기화의 기준 신호로 사용하지 마세요.</p>
+  </section>
   </main>
 <footer class="footer"><span>🎵 음악 계산기 · 올인원</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
 </div>

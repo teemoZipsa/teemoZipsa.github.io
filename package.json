@@ -13,9 +13,9 @@
     "audit:background-inference": "node scripts/audit-interactions.mjs --background-inference --filter=background-removal --browser=chromium && node scripts/audit-interactions.mjs --background-inference --filter=background-removal --browser=firefox",
     "audit:pages": "node scripts/audit-pages.mjs",
     "audit:seo": "node scripts/audit-seo-index.mjs",
-    "trends:update": "python scripts/fetch_trends.py",
-    "verify": "npm run check:rules && npm run audit:vendor:integrity && npm run audit:formulas && npm run audit:formula-pages && npm run audit:functional && npm run audit:seo && npm run audit:interactions && npm run audit:accessibility && npm run audit:pages && npm run audit:browsers && npm run check:diff",
-    "release:check": "npm run trends:update && npm run audit:vendor && npm run verify"
+    "audit:tool-quality": "node scripts/audit-tool-quality.mjs",
+    "verify": "npm run check:rules && npm run audit:tool-quality && npm run audit:vendor:integrity && npm run audit:formulas && npm run audit:formula-pages && npm run audit:functional && npm run audit:seo && npm run audit:interactions && npm run audit:accessibility && npm run audit:pages && npm run audit:browsers && npm run check:diff",
+    "release:check": "npm run audit:vendor && npm run verify"
   },
   "devDependencies": {
     "axe-core": "^4.12.1",

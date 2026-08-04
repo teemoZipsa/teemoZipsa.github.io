@@ -18,7 +18,6 @@
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
 <link rel="canonical" href="https://teemozipsa.com/special-chars/base64-tool/">
 
-<meta name="robots" content="noindex, follow">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
@@ -170,6 +169,12 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <div class="guide-content">
         HTML 문서 내에 작은 크기의 로고 이미지나 아이콘을 삽입할 때 주로 사용됩니다.<br/>
         문서 내에 <code>&lt;img src="data:image/png;base64,...(데이터)..." /&gt;</code> 형태로 포함시키면 별도의 이미지 파일을 다운로드하기 위한 추가적인 네트워크 HTTP 요청이 발생하지 않아 페이지 로딩 속도를 일부 개선하는 데 도움을 줍니다. 단, 이미지 용량이 너무 크면 문서의 텍스트 크기가 과도하게 커질 수 있으므로 수 킬로바이트 이하의 소형 이미지에 권장됩니다.
+      </div>
+    </details>
+    <details class="guide-item">
+      <summary>지원 범위와 주의할 한계는 무엇인가요?</summary>
+      <div class="guide-content">
+        텍스트 입력은 최대 100만 자, Base64 디코딩 입력은 최대 800만 자, 이미지 파일은 최대 10MB까지 처리합니다. Base64 결과는 원본보다 대체로 약 33% 커지므로 큰 파일 전송이나 저장 용도로는 적합하지 않습니다. 이 제한은 브라우저 탭의 메모리 사용과 응답 중단을 줄이기 위한 기준입니다.
       </div>
     </details>
 

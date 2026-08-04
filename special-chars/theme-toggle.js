@@ -90,8 +90,8 @@
     blogBtn.type = 'button';
     blogBtn.className = 'theme-toggle-portal blog-toggle-portal';
     blogBtn.textContent = '📰';
-    blogBtn.setAttribute('aria-label', '티모 매거진 블로그');
-    blogBtn.title = '티모 매거진 (블로그)';
+    blogBtn.setAttribute('aria-label', '티모집사 업무 가이드');
+    blogBtn.title = '업무 가이드';
     blogBtn.onclick = function() { window.location.href = '/blog/'; };
     document.body.appendChild(blogBtn);
 
