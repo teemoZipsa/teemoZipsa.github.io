@@ -401,6 +401,85 @@ async function main() {
     assert(edited.display === '02:00' && edited.remaining === 120000, `paused edit was stale: ${JSON.stringify(edited)}`);
   });
 
+  await scenario('daily quest self-review reward loop', '/special-chars/daily-quest/', async page => {
+    await page.evaluate(() => { localStorage.clear(); location.reload(); });
+    await page.waitForFunction(() => window.__teemoDailyQuest?.getState);
+    await page.evaluate(() => {
+      selectMission('starter5', { silent: true });
+      doStartStop();
+      timerEndTime = Date.now() - 1;
+      reconcileRunningClock();
+    });
+    assert(await page.locator('#missionReviewDialog').evaluate(dialog => dialog.open), 'mission completion did not open the self-review dialog');
+    assert((await page.locator('#reviewChecklist input').count()) === 2, 'mission review criteria were not linked to the selected mission');
+    await page.locator('#reviewChecklist input').evaluateAll(inputs => inputs.forEach(input => { input.checked = true; input.dispatchEvent(new Event('change', { bubbles: true })); }));
+    await page.locator('#claimRewardBtn').click();
+    const rewarded = await page.evaluate(() => ({
+      state: window.__teemoDailyQuest.getState(),
+      rewardVisible: !document.querySelector('#rewardStep').hidden,
+      result: document.querySelector('#rewardResult').textContent
+    }));
+    assert(rewarded.state.coins === 6 && rewarded.state.xp === 7 && rewarded.state.totalCompleted === 1, `mission reward was not applied once: ${JSON.stringify(rewarded)}`);
+    assert(!rewarded.state.pendingReview && rewarded.rewardVisible && rewarded.result.includes('+6냥'), 'reward confirmation did not replace the self-review step');
+    await page.locator('#viewGameBtn').click();
+    assert(!await page.locator('#journeyGamePanel').getAttribute('hidden'), 'reward handoff did not open the game tab');
+    assert(await page.locator('#totalMissionCount').textContent() === '1', 'game tab did not reflect the completed timer mission');
+  });
+
+  await scenario('daily quest local pause recovery', '/special-chars/daily-quest/', async page => {
+    await page.evaluate(() => { localStorage.clear(); location.reload(); });
+    await page.waitForFunction(() => window.__teemoDailyQuest?.getState);
+    await page.evaluate(() => {
+      selectMission('starter5', { silent: true });
+      doStartStop();
+      doStartStop();
+    });
+    const saved = await page.evaluate(() => window.__teemoDailyQuest.getState().activeSession);
+    assert(saved?.status === 'paused' && saved.remaining > 0, `paused mission was not persisted: ${JSON.stringify(saved)}`);
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => window.__teemoDailyQuest?.getState().activeSession?.status === 'paused');
+    const restored = await page.evaluate(() => ({
+      display: document.querySelector('#display').textContent,
+      phase: document.querySelector('#timerPhase').textContent,
+      targetLocked: document.querySelector('#missionTarget').readOnly
+    }));
+    assert(['05:00', '04:59'].includes(restored.display) && restored.phase === '잠시 멈춤' && restored.targetLocked, `paused mission recovery failed: ${JSON.stringify(restored)}`);
+  });
+
+  await scenario('daily quest game shop mobile linkage', '/special-chars/daily-quest/', async page => {
+    await page.evaluate(() => {
+      localStorage.setItem('teemo_daily_quest_v1', JSON.stringify({
+        version: 1,
+        coins: 100,
+        xp: 0,
+        totalCompleted: 0,
+        streak: 0,
+        history: [],
+        selectedMissionId: 'focus25',
+        targets: {},
+        owned: ['lucky_bell'],
+        equipped: { scene: '', outfit: '', charm: 'lucky_bell' },
+        shields: 0,
+        pendingReview: null,
+        activeSession: null
+      }));
+      location.reload();
+    });
+    await page.waitForFunction(() => window.__teemoDailyQuest?.getState().coins === 100);
+    assert(await page.locator('#missionCoinReward').textContent() === '23', 'equipped shop charm did not increase the linked mission reward');
+    await page.locator('[data-journey="shop"]').click();
+    await page.locator('[data-shop-item="cozy_cushion"]').click();
+    const purchased = await page.evaluate(() => window.__teemoDailyQuest.getState());
+    assert(purchased.coins === 70 && purchased.owned.includes('cozy_cushion') && purchased.equipped.scene === 'cozy_cushion', `shop purchase was not linked to inventory and equipment: ${JSON.stringify(purchased)}`);
+    await page.locator('[data-journey="game"]').click();
+    const layout = await page.evaluate(() => ({
+      client: document.documentElement.clientWidth,
+      scroll: document.documentElement.scrollWidth,
+      scene: document.querySelector('#avatarScene').textContent
+    }));
+    assert(layout.scroll <= layout.client && layout.scene === '🛋️', `mobile game/shop layout or equipment preview failed: ${JSON.stringify(layout)}`);
+  }, { viewport: { width: 320, height: 800 } });
+
   await scenario('compound bounds and zero rate', '/special-chars/compound-interest/', async page => {
     const result = await page.evaluate(() => {
       document.querySelector('#rate').value = '0'; document.querySelector('#times').value = '2'; calculate();

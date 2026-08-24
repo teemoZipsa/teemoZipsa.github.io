@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="stylesheet" href="/special-chars/site-links.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>🐾 일상 퀘스트 — 티모집사</title>
+<meta name="description" content="짧은 퀘스트를 고르고 타이머로 끝내는 일상 퀘스트. 냥과 경험치를 모아 아지트를 꾸미고 상점 아이템을 사용해 보세요. 기록은 브라우저에 저장됩니다.">
+<meta property="og:title" content="🐾 일상 퀘스트 — 티모집사">
+<meta property="og:description" content="작은 퀘스트를 끝내고 냥과 경험치를 모아 아지트를 꾸며보세요.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.com/special-chars/daily-quest/">
+<meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.com/special-chars/daily-quest/">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:clamp(8px,2.5vw,24px);display:flex;justify-content:center;align-items:flex-start}
+.app{background:var(--bg-app);border-radius:20px;box-shadow:var(--shadow-lg);width:min(760px,100%);min-width:0;overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:600;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+
+.journey-head{padding:18px 20px 0;background:var(--bg-app)}
+.journey-stats{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.journey-copy{min-width:0}
+.journey-kicker{display:block;color:var(--accent-text);font-size:12px;font-weight:800;letter-spacing:.04em;margin-bottom:3px}
+.journey-copy strong{display:block;font-size:20px;line-height:1.25}
+.journey-score{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.score-pill{display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border:1px solid var(--border);border-radius:999px;background:var(--bg-bar);color:var(--text-label);font-size:12px;font-weight:700;white-space:nowrap}
+.journey-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:5px;background:var(--bg-bar);border:1px solid var(--border);border-radius:12px}
+.journey-tab{min-width:0;border:0;border-radius:9px;padding:10px 8px;background:transparent;color:var(--text-muted);font:700 13px/1.2 inherit;cursor:pointer}
+.journey-tab.active{background:var(--bg-app);color:var(--accent-text);box-shadow:var(--shadow-sm)}
+.journey-tab:disabled{cursor:default;opacity:.58}
+
+.mission-brief{margin:16px 20px 0;padding:18px;border:1px solid var(--border-hover);border-radius:16px;background:linear-gradient(145deg,var(--accent-bg),var(--bg-app));display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center}
+.mission-brief-main{min-width:0}
+.mission-label{display:inline-flex;align-items:center;gap:5px;color:var(--accent-text);font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px}
+.mission-brief h2{font-size:21px;line-height:1.3;margin-bottom:7px;overflow-wrap:anywhere}
+.mission-brief p{font-size:13px;line-height:1.55;color:var(--text-secondary);overflow-wrap:anywhere}
+.mission-goals{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.mission-goal{padding:5px 8px;border-radius:7px;background:var(--bg-app);border:1px solid var(--border);color:var(--text-label);font-size:11px;font-weight:650}
+.mission-reward{min-width:112px;text-align:center;padding:14px 12px;background:var(--bg-app);border:1px solid var(--border);border-radius:13px}
+.mission-reward strong{display:block;color:var(--text-highlight);font-size:20px;margin-bottom:4px}
+.mission-reward>span{display:block;color:var(--text-muted);font-size:10px;line-height:1.35}
+.mission-reward strong span,.mission-reward>span span{display:inline;color:inherit;font:inherit}
+
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px}
+.journey-panel[hidden]{display:none}
+.mission-picker{padding:18px 20px 0}
+.panel-title-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px}
+.panel-title-row.compact{align-items:center;margin-bottom:14px}
+.panel-title-row h2,.panel-title-row h3{font-size:17px;line-height:1.35}
+.section-kicker{display:block;color:var(--accent-text);font-size:11px;font-weight:800;letter-spacing:.045em;margin-bottom:3px}
+.local-save-note{padding:5px 8px;border-radius:999px;background:var(--bg-bar);color:var(--text-muted);font-size:10px;font-weight:650;white-space:nowrap}
+.mission-choice-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.mission-choice{min-width:0;min-height:64px;border:1px solid var(--border);border-radius:12px;background:var(--bg-app);color:var(--text-primary);padding:10px;display:flex;align-items:center;gap:8px;text-align:left;font-family:inherit;cursor:pointer;transition:border-color .2s,background .2s,transform .2s,box-shadow .2s}
+.mission-choice:hover{border-color:var(--border-hover);transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+.mission-choice.selected{border-color:var(--accent);background:var(--accent-bg);box-shadow:0 0 0 1px var(--accent)}
+.mission-choice:disabled{cursor:not-allowed;opacity:.58;transform:none}
+.mission-choice-icon{width:32px;height:32px;border-radius:9px;background:var(--bg-bar);display:grid;place-items:center;flex:0 0 auto;font-size:18px}
+.mission-choice span:last-child{min-width:0}
+.mission-choice strong,.mission-choice small{display:block;overflow-wrap:anywhere}
+.mission-choice strong{font-size:12px;line-height:1.3}
+.mission-choice small{color:var(--text-muted);font-size:10px;margin-top:3px}
+.mission-target{display:block;margin-top:13px}
+.mission-target>span{display:block;color:var(--text-label);font-size:11px;font-weight:750;margin-bottom:5px}
+.mission-target input{display:block;width:100%;min-width:0;padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:var(--bg-app);color:var(--text-primary);font:600 13px/1.3 inherit}
+.mission-target input::placeholder{color:var(--text-placeholder)}
+.mission-target input:focus{border-color:var(--accent)}
+
+.timer-status{display:flex;align-items:center;gap:9px;min-width:0;padding:10px 12px;background:var(--bg-bar);border:1px solid var(--border);border-radius:11px}
+.timer-status-dot{width:9px;height:9px;border-radius:50%;background:var(--text-muted);flex:0 0 auto;box-shadow:0 0 0 4px color-mix(in srgb,var(--text-muted) 15%,transparent)}
+.timer-status.running .timer-status-dot{background:#16a34a;box-shadow:0 0 0 4px rgba(22,163,74,.16);animation:statusPulse 1.6s ease-in-out infinite}
+.timer-status.pending .timer-status-dot{background:#d97706;box-shadow:0 0 0 4px rgba(217,119,6,.16)}
+.timer-status-copy{display:flex;flex-direction:column;min-width:0;flex:1}
+.timer-status-copy strong{font-size:12px}
+.timer-status-copy span{font-size:10px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini-action,.secondary-action,.primary-action,.text-action,.shop-action{min-height:36px;border-radius:9px;border:1px solid transparent;padding:8px 12px;font:700 12px/1.2 inherit;cursor:pointer;transition:background .2s,border-color .2s,transform .15s}
+.mini-action{background:var(--accent);color:var(--text-on-accent);white-space:nowrap}
+.mini-action:hover,.primary-action:hover{background:var(--accent-hover)}
+.secondary-action{background:var(--bg-app);border-color:var(--border);color:var(--text-label)}
+.secondary-action:hover{border-color:var(--accent);color:var(--accent-text)}
+.primary-action{background:var(--accent);color:var(--text-on-accent)}
+.primary-action:disabled{cursor:not-allowed;opacity:.5}
+.text-action{background:transparent;color:var(--text-muted)}
+.text-action.danger{color:var(--status-red-text)}
+.timer-connection-note{display:flex;align-items:center;justify-content:center;gap:7px;margin:0 auto 4px;padding:9px 12px;max-width:440px;border-radius:10px;background:var(--accent-bg);color:var(--text-secondary);font-size:11px;line-height:1.4;text-align:center}
+.timer-connection-note strong{color:var(--accent-text)}
+@keyframes statusPulse{50%{transform:scale(.82);opacity:.7}}
+
+.panel-content{padding:24px 20px}
+.panel-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:20px}
+.panel-heading>div:first-child{min-width:0}
+.panel-heading h2{font-size:23px;line-height:1.25;margin-bottom:6px}
+.panel-heading p{color:var(--text-secondary);font-size:13px;line-height:1.55;max-width:540px}
+.game-layout{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:14px;align-items:stretch}
+.companion-card,.trail-card,.history-card,.linked-mission-card,.game-stat{border:1px solid var(--border);background:var(--bg-app);border-radius:15px}
+.companion-card{padding:18px;display:flex;flex-direction:column}
+.avatar-stage{position:relative;min-height:176px;border-radius:14px;overflow:hidden;display:grid;place-items:center;background:linear-gradient(155deg,var(--accent-bg),var(--bg-bar));isolation:isolate}
+.avatar-stage::before{content:'';position:absolute;left:13%;right:13%;bottom:24px;height:30px;border-radius:50%;background:rgba(15,23,42,.12);filter:blur(3px);z-index:-1}
+.avatar-cat{font-size:82px;line-height:1;filter:drop-shadow(0 8px 8px rgba(0,0,0,.16));transform:translateY(5px)}
+.avatar-scene,.avatar-outfit,.avatar-charm{position:absolute;z-index:2;pointer-events:none}
+.avatar-scene{font-size:84px;bottom:-15px;z-index:-1}
+.avatar-outfit{font-size:30px;top:36px;left:50%;transform:translateX(-50%)}
+.avatar-charm{font-size:25px;right:25%;top:82px}
+.companion-copy{text-align:center;padding:15px 4px 12px}
+.level-badge{display:inline-block;padding:5px 8px;border-radius:999px;background:var(--accent-bg);color:var(--accent-text);font-size:10px;font-weight:800;margin-bottom:7px}
+.companion-copy h3{font-size:17px;margin-bottom:5px}
+.companion-copy p{color:var(--text-muted);font-size:11px;line-height:1.5}
+.xp-track{height:9px;border-radius:999px;background:var(--progress-bg);overflow:hidden;margin-top:auto}
+.xp-track span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),#22c55e);transition:width .4s ease}
+.xp-copy{display:flex;justify-content:space-between;gap:8px;color:var(--text-muted);font-size:9px;margin-top:6px}
+.game-side{display:flex;flex-direction:column;gap:12px}
+.game-stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.game-stat{padding:13px;min-width:0}
+.game-stat span{display:block;color:var(--text-muted);font-size:10px;margin-bottom:4px}
+.game-stat strong{display:block;color:var(--text-primary);font-size:19px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.game-stat strong span{display:inline;color:inherit;font-size:inherit;margin:0}
+.linked-mission-card{padding:16px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex:1;background:linear-gradient(140deg,var(--accent-bg),var(--bg-app))}
+.linked-mission-card>div{min-width:0}
+.linked-mission-card h3{font-size:15px;margin-bottom:5px}
+.linked-mission-card p{font-size:12px;line-height:1.45;overflow-wrap:anywhere}
+.mission-state{display:block;color:var(--text-muted);font-size:10px;margin-top:7px}
+.trail-card,.history-card{margin-top:14px;padding:16px}
+.trail-summary{font-size:11px;font-weight:700;color:var(--accent-text)}
+.weekly-trail{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.trail-day{min-width:0;text-align:center;padding:8px 3px;border-radius:10px;background:var(--bg-bar);color:var(--text-muted)}
+.trail-day.today{box-shadow:inset 0 0 0 1px var(--accent)}
+.trail-day strong,.trail-day small{display:block}
+.trail-day strong{font-size:10px}.trail-day small{font-size:9px;margin-top:5px}
+.trail-dot{width:26px;height:26px;margin:7px auto 0;border-radius:50%;display:grid;place-items:center;background:var(--bg-btn);font-size:10px;font-weight:800}
+.trail-day.complete .trail-dot{background:var(--accent);color:var(--text-on-accent)}
+.mission-history{display:grid;gap:8px}
+.history-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:var(--bg-bar);min-width:0}
+.history-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:9px;background:var(--bg-app);flex:0 0 auto}
+.history-copy{min-width:0;flex:1}
+.history-copy strong,.history-copy span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.history-copy strong{font-size:11px}.history-copy span{font-size:9px;color:var(--text-muted);margin-top:3px}
+.history-reward{font-size:10px;font-weight:800;color:var(--text-highlight);white-space:nowrap}
+.empty-state{padding:18px;text-align:center;color:var(--text-muted);font-size:11px;background:var(--bg-bar);border-radius:10px}
+
+.shop-heading{align-items:center}
+.shop-balance{flex:0 0 auto;padding:10px 13px;border-radius:11px;background:var(--accent-bg);color:var(--accent-text);font-size:13px}
+.shop-loop-note{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;padding:11px;margin-bottom:16px;border:1px dashed var(--border-hover);border-radius:11px;background:var(--bg-bar);color:var(--text-secondary);font-size:11px}
+.shop-loop-note b{color:var(--accent-text)}
+.shop-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.shop-item{display:grid;grid-template-columns:auto minmax(0,1fr);gap:11px;padding:14px;border:1px solid var(--border);border-radius:14px;background:var(--bg-app);min-width:0}
+.shop-item.equipped{border-color:var(--accent);background:var(--accent-bg)}
+.shop-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:13px;background:var(--bg-bar);font-size:27px;flex:0 0 auto}
+.shop-info{min-width:0}
+.shop-name-row{display:flex;align-items:center;justify-content:space-between;gap:7px}
+.shop-name-row h3{font-size:13px;overflow-wrap:anywhere}
+.item-tag{padding:3px 5px;border-radius:999px;background:var(--bg-bar);color:var(--text-muted);font-size:8px;font-weight:800;white-space:nowrap}
+.shop-info p{font-size:10px;color:var(--text-muted);line-height:1.45;margin:5px 0 9px}
+.shop-item-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.shop-price{font-size:11px;font-weight:800;color:var(--text-highlight);white-space:nowrap}
+.shop-action{min-height:32px;padding:7px 9px;background:var(--accent);color:var(--text-on-accent);font-size:10px}
+.shop-action:hover{background:var(--accent-hover)}
+.shop-action:disabled{background:var(--bg-btn);color:var(--text-muted);cursor:not-allowed;opacity:.85}
+.shop-footnote{text-align:center;color:var(--text-muted);font-size:10px;line-height:1.45;margin-top:15px}
+
+.mission-dialog{width:min(460px,calc(100vw - 24px));max-width:none;max-height:calc(100dvh - 24px);padding:0;border:1px solid var(--border);border-radius:20px;background:var(--bg-app);color:var(--text-primary);box-shadow:0 24px 80px rgba(0,0,0,.35);overflow:auto}
+.mission-dialog::backdrop{background:rgba(10,13,28,.7);backdrop-filter:blur(5px)}
+.mission-dialog[open]{animation:dialogIn .2s ease-out}
+.review-step,.reward-step{position:relative;padding:26px}
+.dialog-close{position:absolute;top:13px;right:13px;width:34px;height:34px;border:0;border-radius:50%;background:var(--bg-bar);color:var(--text-muted);font-size:22px;line-height:1;cursor:pointer}
+.dialog-icon,.reward-burst{display:block;font-size:42px;margin-bottom:10px}
+.mission-dialog h2{font-size:21px;line-height:1.3;margin:4px 36px 9px 0}
+.review-target{padding:11px 12px;border-radius:10px;background:var(--accent-bg);color:var(--accent-text);font-size:13px;font-weight:800;line-height:1.4;overflow-wrap:anywhere}
+.honesty-note{font-size:11px;line-height:1.55;color:var(--text-secondary);margin:11px 0}
+.review-checklist{min-width:0;border:0;margin:0;padding:0;display:grid;gap:8px}
+.review-checklist legend{font-size:11px;font-weight:800;margin-bottom:7px}
+.review-check{display:flex;align-items:flex-start;gap:9px;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--bg-bar);font-size:11px;line-height:1.45;cursor:pointer}
+.review-check input{width:19px;height:19px;flex:0 0 auto;accent-color:var(--accent)}
+.dialog-reward{margin:13px 0 0;padding:10px;border-radius:10px;background:var(--bg-success);border:1px solid var(--border-success);color:var(--text-success);font-size:11px;font-weight:800;text-align:center}
+.dialog-actions{display:grid;gap:8px;margin-top:14px}
+.dialog-actions.horizontal{grid-template-columns:repeat(2,minmax(0,1fr))}
+.reward-step{text-align:center;padding:34px 26px}
+.reward-step h2{margin:5px 0 9px}
+.reward-result{display:inline-block;margin:10px 0;padding:11px 15px;border-radius:999px;background:var(--accent-bg);color:var(--accent-text);font-size:14px;font-weight:850}
+.reward-step p{color:var(--text-secondary);font-size:12px;line-height:1.5}
+@keyframes dialogIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+.mode-tabs{display:flex;background:var(--bg-bar);border-bottom:1px solid var(--border)}
+.mode-tab{flex:1;padding:12px;text-align:center;font-size:14px;font-weight:600;color:var(--text-muted);background:none;border:none;cursor:pointer;font-family:inherit;transition:all .2s;border-bottom:2px solid transparent}
+.mode-tab.active{color:var(--accent-text);border-bottom-color:var(--accent)}
+.mode-tab:hover:not(.active){color:var(--text-primary)}
+.mode-tab.active:hover{color:var(--accent-text)}
+.journey-panel>.mode-tabs{margin-top:16px;border-top:1px solid var(--border)}
+.journey-panel>.guide-section,.journey-panel>.related-tools{margin-left:20px;margin-right:20px}
+body.stopwatch-mode .mission-picker,body.stopwatch-mode .mission-brief,body.stopwatch-mode .timer-connection-note{display:none}
+body.stopwatch-mode .journey-panel>.mode-tabs{margin-top:0}
+
+.content{padding:18px 20px 24px}
+
+/* 디스플레이 */
+.display{text-align:center;padding:32px 0 24px;user-select:none}
+.display .time{font-size:64px;font-weight:700;letter-spacing:2px;font-variant-numeric:tabular-nums;color:var(--text-primary)}
+.display .ms{font-size:32px;color:var(--text-section);font-weight:400}
+@media(max-width:560px){
+  .header{gap:8px;flex-wrap:wrap}.header h1{order:-1;width:100%;text-align:center}
+  .journey-head{padding:16px 14px 0}.journey-stats{align-items:flex-start}.journey-copy strong{font-size:18px}
+  .journey-score{gap:5px}.score-pill{padding:6px 8px;font-size:11px}
+  .mission-picker{padding:16px 14px 0}.mission-choice-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .panel-title-row{align-items:flex-start}.local-save-note{white-space:normal;text-align:right}
+  .mission-brief{margin:14px 14px 0;padding:15px;grid-template-columns:minmax(0,1fr)}
+  .mission-reward{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;min-width:0}
+  .mission-reward strong{margin:0;font-size:18px}.mission-reward span{text-align:right;max-width:160px}
+  .content{padding:16px 14px 22px}.display{padding:24px 0 18px}.display .time{font-size:clamp(42px,14vw,56px)}.display .ms{font-size:24px}
+  .timer-status-copy span{white-space:normal}.timer-connection-note{align-items:flex-start;text-align:left}
+  .panel-content{padding:20px 14px}.panel-heading{align-items:flex-start;flex-direction:column}.panel-heading h2{font-size:21px}
+  .game-layout{grid-template-columns:minmax(0,1fr)}.avatar-stage{min-height:156px}.avatar-cat{font-size:74px}
+  .linked-mission-card{align-items:flex-start;flex-direction:column}.linked-mission-card .mini-action{width:100%}
+  .shop-heading{flex-direction:column;align-items:flex-start}.shop-balance{align-self:flex-end}.shop-grid{grid-template-columns:minmax(0,1fr)}
+  .journey-panel>.guide-section,.journey-panel>.related-tools{margin-left:14px;margin-right:14px}
+}
+@media(max-width:340px){
+  .score-pill:first-child{display:none}.journey-tabs{gap:3px}.journey-tab{padding-inline:4px;font-size:12px}
+  .timer-inputs{gap:5px}.timer-inputs input{width:58px}.ctrl-btn{width:64px;height:64px}
+  .mission-choice{padding:8px;gap:6px}.mission-choice-icon{width:28px;height:28px;font-size:16px}
+  .game-stat-grid{grid-template-columns:minmax(0,1fr)}.weekly-trail{gap:3px}.trail-day{padding-inline:1px}.trail-dot{width:23px;height:23px}
+  .dialog-actions.horizontal{grid-template-columns:minmax(0,1fr)}.review-step,.reward-step{padding-left:18px;padding-right:18px}
+}
+
+/* 타이머 입력 */
+.timer-inputs{display:flex;justify-content:center;gap:8px;margin-bottom:20px}
+.timer-inputs .tfield{text-align:center}
+.timer-inputs input{width:64px;padding:10px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:20px;font-family:inherit;text-align:center;font-weight:600}
+.timer-inputs input:focus{outline:none;border-color:var(--accent)}
+.timer-inputs .tfield span{display:block;font-size:11px;color:var(--text-muted);margin-top:4px}
+
+.quick-btns{display:flex;justify-content:center;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.quick-btn{padding:6px 14px;background:var(--bg-btn);border:1px solid var(--border);border-radius:16px;color:var(--text-label);font-size:12px;cursor:pointer;font-family:inherit;transition:all .2s}
+.quick-btn:hover{background:var(--bg-btn-hover);color:var(--text-primary)}
+
+/* 컨트롤 버튼 */
+.controls{display:flex;justify-content:center;gap:12px;margin-bottom:20px}
+.ctrl-btn{width:72px;height:72px;border-radius:50%;border:none;font-size:22px;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.ctrl-btn:active{transform:scale(.92)}
+.btn-start{background:#22c55e;color:var(--text-primary)}
+.btn-start:hover{background:#16a34a}
+.btn-start.running{background:#ef4444}
+.btn-start.running:hover{background:#dc2626}
+.btn-pause{background:#f59e0b;color:var(--text-primary)}
+.btn-pause:hover{background:#d97706}
+.btn-reset{background:var(--bg-btn-hover);color:var(--text-label)}
+.btn-reset:hover{background:#4a4a7a;color:var(--text-primary)}
+.btn-lap{background:#3b82f6;color:var(--text-primary)}
+.btn-lap:hover{background:#2563eb}
+
+/* 랩 기록 */
+.laps{max-height:200px;overflow-y:auto;margin-top:8px}
+.laps::-webkit-scrollbar{width:4px}
+.laps::-webkit-scrollbar-thumb{background:var(--bg-btn-hover);border-radius:2px}
+.lap-item{display:flex;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--border);font-size:13px}
+.lap-item:first-child{color:var(--accent-text);font-weight:600}
+.lap-num{color:var(--text-muted)}
+.lap-time{font-variant-numeric:tabular-nums}
+.lap-diff{color:var(--text-muted);font-size:12px}
+
+.toast{position:fixed;bottom:30px;left:50%;max-width:calc(100vw - 24px);transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;line-height:1.4;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:normal}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
+.scroll-top-btn.visible{opacity:1;visibility:visible}
+.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
+
+  /* 가이드 & 관련 도구 (표준) */
+  .guide-section{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+  .guide-section h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
+  .guide:last-child{margin-bottom:0}
+  .guide summary{padding:12px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--bg-guide);transition:background .2s}
+  .guide summary::-webkit-details-marker{display:none}
+  .guide summary::after{content:'▼';font-size:10px;color:var(--text-muted);transition:transform .3s}
+  .guide[open] summary::after{transform:rotate(180deg)}
+  .guide summary:hover{background:var(--bg-guide-hover)}
+  .guide-content{padding:14px;font-size:13px;color:var(--text-info);line-height:1.6;border-top:1px solid var(--border);background:var(--bg-app)}
+  .related-tools{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
+  .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+  .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
+  .tool-card:hover{border-color:var(--accent);color:var(--accent-text);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
+.footer a:hover{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+<div class="app">
+<main>
+  <div class="header">
+    <a href="https://teemozipsa.com/" class="back-btn">← 도구 모음</a>
+    <h1>🐾 일상 퀘스트</h1>
+    <a href="/special-chars/timer/" class="back-btn">⏱️ 기본 타이머</a>
+  </div>
+
+  <section class="journey-head" aria-label="퀘스트 여정">
+    <div class="journey-stats">
+      <div class="journey-copy">
+        <span class="journey-kicker">하나씩 끝내는 타이머 게임</span>
+        <strong>오늘의 퀘스트를 골라보세요.</strong>
+      </div>
+      <div class="journey-score" aria-label="게임 현황">
+        <span class="score-pill">⭐ 레벨 <span id="headerLevel">1</span></span>
+        <span class="score-pill">🪙 <span id="headerCoins">0</span>냥</span>
+      </div>
+    </div>
+    <div class="journey-tabs" role="tablist" aria-label="일상 퀘스트 메뉴">
+      <button class="journey-tab active" id="journeyMissionTab" data-journey="mission" type="button" role="tab" aria-selected="true" aria-controls="journeyMissionPanel">⏳ 퀘스트</button>
+      <button class="journey-tab" id="journeyGameTab" data-journey="game" type="button" role="tab" aria-selected="false" aria-controls="journeyGamePanel">🐾 게임</button>
+      <button class="journey-tab" id="journeyShopTab" data-journey="shop" type="button" role="tab" aria-selected="false" aria-controls="journeyShopPanel">🛍️ 상점</button>
+    </div>
+  </section>
+
+  <section class="journey-panel active" id="journeyMissionPanel" role="tabpanel" aria-labelledby="journeyMissionTab">
+    <section class="mission-picker" aria-labelledby="missionPickerTitle">
+      <div class="panel-title-row">
+        <div>
+          <span class="section-kicker">오늘의 선택</span>
+          <h2 id="missionPickerTitle">지금 필요한 퀘스트는?</h2>
+        </div>
+        <span class="local-save-note">🔒 브라우저에 저장</span>
+      </div>
+      <div class="mission-choice-grid" aria-label="퀘스트 종류">
+        <button class="mission-choice" type="button" data-mission="starter5" aria-pressed="false">
+          <span class="mission-choice-icon" aria-hidden="true">🌱</span>
+          <span><strong>가볍게 시동</strong><small>5분 · 6냥</small></span>
+        </button>
+        <button class="mission-choice selected" type="button" data-mission="focus25" aria-pressed="true">
+          <span class="mission-choice-icon" aria-hidden="true">🧠</span>
+          <span><strong>깊은 집중</strong><small>25분 · 20냥</small></span>
+        </button>
+        <button class="mission-choice" type="button" data-mission="tidy10" aria-pressed="false">
+          <span class="mission-choice-icon" aria-hidden="true">🧹</span>
+          <span><strong>눈앞 정리</strong><small>10분 · 10냥</small></span>
+        </button>
+        <button class="mission-choice" type="button" data-mission="move15" aria-pressed="false">
+          <span class="mission-choice-icon" aria-hidden="true">💪</span>
+          <span><strong>몸 깨우기</strong><small>15분 · 13냥</small></span>
+        </button>
+      </div>
+    </section>
+
+    <section class="mission-brief" aria-labelledby="missionTitle">
+      <div class="mission-brief-main">
+        <span class="mission-label">🎯 지금 할 일</span>
+        <h2 id="missionTitle">25분 동안 핵심 작업 한 덩어리 끝내기</h2>
+        <p id="missionDescription">가장 중요한 결과 하나를 정하고, 알림이 울릴 때까지 그 일에만 집중해 보세요.</p>
+        <label class="mission-target" for="missionTarget">
+          <span>이번에 끝낼 것</span>
+          <input id="missionTarget" type="text" maxlength="80" value="가장 중요한 작업 한 가지" autocomplete="off">
+        </label>
+        <div class="mission-goals" id="missionGoals" aria-label="완료 조건">
+          <span class="mission-goal">① 끝낼 결과를 한 줄로 정하기</span>
+          <span class="mission-goal">② 타이머가 끝날 때까지 한 일에 집중</span>
+        </div>
+      </div>
+      <div class="mission-reward" aria-label="예상 보상">
+        <strong>+<span id="missionCoinReward">20</span>냥</strong>
+        <span>경험치 +<span id="missionXpReward">25</span><br><span id="rewardBonusText">기본 보상</span></span>
+      </div>
+    </section>
+
+    <div class="mode-tabs" role="tablist" aria-label="타이머 방식">
+      <button class="mode-tab active" role="tab" aria-selected="true" onclick="switchMode('timer')">⏳ 퀘스트 타이머</button>
+      <button class="mode-tab" role="tab" aria-selected="false" onclick="switchMode('stopwatch')">⏱️ 자유 스톱워치</button>
+    </div>
+
+    <div class="content">
+      <div class="timer-status" id="timerStatus">
+        <span class="timer-status-dot" id="timerStatusDot" aria-hidden="true"></span>
+        <div class="timer-status-copy">
+          <strong id="timerPhase">준비됨</strong>
+          <span id="timerContext">퀘스트를 고르고 재생 버튼을 눌러주세요.</span>
+        </div>
+        <button class="mini-action" id="reviewPendingBtn" type="button" hidden>완료 확인</button>
+      </div>
+
+      <div class="display" aria-label="남은 시간">
+        <span class="time" id="display">00:00:00</span><span class="ms" id="displayMs"></span>
+      </div>
+
+      <!-- 타이머 전용 -->
+      <div id="timerSection">
+        <div class="timer-inputs">
+          <div class="tfield">
+            <input aria-label="시간" type="number" id="tHour" value="0" min="0" max="99" oninput="clampInput(this,99)">
+            <span>시간</span>
+          </div>
+          <div class="tfield">
+            <input aria-label="분" type="number" id="tMin" value="25" min="0" max="59" oninput="clampInput(this,59)">
+            <span>분</span>
+          </div>
+          <div class="tfield">
+            <input aria-label="초" type="number" id="tSec" value="0" min="0" max="59" oninput="clampInput(this,59)">
+            <span>초</span>
+          </div>
+        </div>
+        <div class="quick-btns" aria-label="빠른 시간 설정">
+          <button class="quick-btn" onclick="setQuick(1)">1분</button>
+          <button class="quick-btn" onclick="setQuick(3)">3분</button>
+          <button class="quick-btn" onclick="setQuick(5)">5분</button>
+          <button class="quick-btn" onclick="setQuick(10)">10분</button>
+          <button class="quick-btn" onclick="setQuick(15)">15분</button>
+          <button class="quick-btn" onclick="setQuick(25)">25분</button>
+          <button class="quick-btn" onclick="setQuick(30)">30분</button>
+          <button class="quick-btn" onclick="setQuick(60)">1시간</button>
+        </div>
+      </div>
+
+      <!-- 컨트롤 -->
+      <div class="controls">
+        <button class="ctrl-btn btn-reset" id="btnReset" onclick="doReset()" title="리셋" aria-label="타이머 초기화">↺</button>
+        <button class="ctrl-btn btn-start" id="btnStart" onclick="doStartStop()" aria-label="타이머 시작">▶</button>
+        <button class="ctrl-btn btn-lap" id="btnLap" onclick="doLap()" title="랩" aria-label="랩 기록" style="display:none">🏁</button>
+      </div>
+
+      <div class="timer-connection-note" id="timerRewardSummary">
+        <span aria-hidden="true">🔗</span>
+        <span>완료 확인 후 <strong>20냥과 경험치 25</strong>가 게임에 바로 반영돼요.</span>
+      </div>
+
+      <div class="laps" id="lapsContainer"></div>
+    </div>
+
+  <section class="guide-section">
+    <h2>💡 일상 퀘스트 가이드</h2>
+    <details class="guide" open>
+      <summary>퀘스트·게임·상점 연결 방식</summary>
+      <div class="guide-content">
+        퀘스트를 고르면 완료 조건과 예상 보상이 타이머에 표시됩니다. 시간이 끝난 뒤 조건을 확인하면 냥과 경험치가 게임 탭에 반영됩니다. 모은 냥은 상점에서 아지트를 꾸미거나 다음 퀘스트의 보너스 아이템을 준비하는 데 사용할 수 있습니다.
+      </div>
+    </details>
+    <details class="guide">
+      <summary>타이머 사용법</summary>
+      <div class="guide-content">
+        시, 분, 초를 직접 입력하거나 숫자 버튼(예: 5분, 1시간)을 눌러 시간을 빠르게 설정하세요. 재생 버튼(▶)을 누르면 카운트다운이 시작되며, 시간이 다 되면 자동으로 알림음이 울립니다.
+      </div>
+    </details>
+    <details class="guide">
+      <summary>퀘스트 완료 확인</summary>
+      <div class="guide-content">
+        타이머가 끝나면 선택한 퀘스트의 완료 조건이 다시 나타납니다. 실제로 끝낸 항목을 체크하면 보상이 기록됩니다. 퀘스트와 게임 기록은 현재 브라우저에 저장됩니다.
+      </div>
+    </details>
+    <details class="guide">
+      <summary>스톱워치 사용법</summary>
+      <div class="guide-content">
+        스톱워치 탭을 선택한 뒤 재생 버튼(▶)을 누르면 시간이 측정됩니다. 실행 중 랩 버튼(🏁)을 눌러 구간 기록을 남길 수 있습니다. 측정이 끝나면 정지 버튼(■)을 눌러주세요.
+      </div>
+    </details>
+    <details class="guide">
+      <summary>단축키</summary>
+      <div class="guide-content">
+        <ul style="padding-left: 20px; list-style-type: disc;">
+          <li><b>스페이스바</b>: 시작 / 정지</li>
+          <li><b>R</b>: 초기화(리셋)</li>
+          <li><b>L</b>: 랩 기록 (스톱워치 모드)</li>
+        </ul>
+      </div>
+    </details>
+    <details class="guide">
+      <summary>언제 어떤 모드를 쓰면 좋나요?</summary>
+      <div class="guide-content">
+        타이머는 정해진 시간이 끝났는지 확인해야 하는 작업에 맞습니다. 요리, 휴식 시간, 운동 세트, 25분 집중 작업처럼 종료 알림이 필요한 경우에 사용하세요. 스톱워치는 시간이 얼마나 걸렸는지 측정하는 용도입니다. 발표 리허설, 달리기 기록, 작업 소요 시간 측정, 반복 업무의 평균 시간을 확인할 때 적합합니다.
+      </div>
+    </details>
+    <details class="guide">
+      <summary>집중 작업에 쓰는 기준</summary>
+      <div class="guide-content">
+        짧은 집중에는 10~15분, 일반적인 포모도로에는 25분, 긴 문서 작업이나 코딩에는 45~60분을 먼저 시도해 보세요. 너무 긴 시간을 한 번에 잡으면 중간에 흐름이 끊기기 쉽습니다. 반복 업무는 스톱워치 랩 기록으로 구간을 나눈 뒤, 실제로 오래 걸리는 단계를 찾아 개선하는 방식이 좋습니다.
+      </div>
+    </details>
+    <details class="guide">
+      <summary>알림이 들리지 않을 때 확인할 점</summary>
+      <div class="guide-content">
+        브라우저 타이머는 실제 종료 시각을 기준으로 남은 시간을 보정하지만, 페이지가 완전히 정지된 동안에는 소리를 낼 수 없습니다. 탭으로 돌아오면 종료 상태를 즉시 반영하고 알림음을 시도합니다. 모바일에서 화면을 끄거나 배터리 절약 모드가 켜져 있으면 브라우저가 실행을 제한할 수 있으므로, 중요한 시험·조리·약 복용 알림은 휴대폰 기본 알람도 같이 설정하세요.
+      </div>
+    </details>
+    <details class="guide">
+      <summary>기록을 남기는 작업에 쓰는 방법</summary>
+      <div class="guide-content">
+        스톱워치 랩은 전체 시간 안에서 구간별 소요 시간을 분리할 때 유용합니다. 발표 연습이라면 도입, 본론, 마무리 구간마다 랩을 누르고, 운동이라면 세트마다 랩을 남기세요. 기록을 비교하면 매번 늦어지는 구간이나 시간을 줄일 수 있는 단계를 쉽게 찾을 수 있습니다.
+      </div>
+    </details>
+    <details class="guide">
+      <summary>공부, 운동, 요리에서 쓰는 예시</summary>
+      <div class="guide-content">
+        공부할 때는 25분 집중과 5분 휴식을 반복하거나, 암기 과목처럼 짧게 끊는 작업은 10분 단위로 나눠 진행할 수 있습니다. 운동에서는 세트 사이 휴식 시간을 60~90초로 맞추거나 인터벌 운동의 운동 시간과 휴식 시간을 번갈아 확인하는 데 쓸 수 있습니다. 요리에서는 삶기, 굽기, 뜸 들이기처럼 단계별 시간이 다를 때 각각 타이머를 다시 설정해 과조리를 줄이는 방식으로 활용하면 좋습니다.
+      </div>
+    </details>
+  </section>
+
+  <section class="related-tools">
+    <h2>🔗 관련 도구</h2>
+    <div class="tools-grid">
+      <a href="/special-chars/timer/" class="tool-card">⏱️ 기본 타이머</a>
+      <a href="/special-chars/speech-timer/" class="tool-card">🗣️ 스피치 타이머</a>
+      <a href="/special-chars/server-time/" class="tool-card">⌚ 정밀 로컬 시계·응답시간</a>
+      <a href="/special-chars/timezone-conv/" class="tool-card">🌍 세계 시간 변환</a>
+    </div>
+  </section>
+  </section>
+
+  <section class="journey-panel" id="journeyGamePanel" role="tabpanel" aria-labelledby="journeyGameTab" hidden>
+    <div class="panel-content">
+      <div class="panel-heading">
+        <div>
+          <span class="section-kicker">나의 퀘스트 기록</span>
+          <h2>퀘스트로 키우는 작은 아지트</h2>
+          <p>완료한 퀘스트는 경험치와 아지트를 꾸밀 재화가 됩니다.</p>
+        </div>
+        <button class="secondary-action" type="button" data-go-journey="mission">퀘스트 하러 가기</button>
+      </div>
+
+      <div class="game-layout">
+        <section class="companion-card" aria-labelledby="companionTitle">
+          <div class="avatar-stage" id="avatarStage" role="img" aria-label="내 퀘스트 고양이와 현재 사용 중인 아지트 아이템">
+            <span class="avatar-scene" id="avatarScene" aria-hidden="true"></span>
+            <span class="avatar-outfit" id="avatarOutfit" aria-hidden="true"></span>
+            <span class="avatar-cat" aria-hidden="true">🐈</span>
+            <span class="avatar-charm" id="avatarCharm" aria-hidden="true"></span>
+          </div>
+          <div class="companion-copy">
+            <span class="level-badge" id="gameLevelBadge">레벨 1 · 새싹 집사</span>
+            <h3 id="companionTitle">티모의 퀘스트 아지트</h3>
+            <p id="companionMessage">첫 퀘스트를 끝내면 아지트가 열려요.</p>
+          </div>
+          <div class="xp-track" id="xpTrack" role="progressbar" aria-label="다음 레벨 진행도" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="xpProgressBar" style="width:0%"></span>
+          </div>
+          <div class="xp-copy"><span id="xpProgressText">0 / 100 XP</span><span id="nextLevelText">다음 레벨까지 100</span></div>
+        </section>
+
+        <div class="game-side">
+          <section class="game-stat-grid" aria-label="게임 기록">
+            <div class="game-stat"><span>완료 퀘스트</span><strong id="totalMissionCount">0</strong></div>
+            <div class="game-stat"><span>연속 기록</span><strong><span id="streakCount">0</span>일</strong></div>
+            <div class="game-stat"><span>보유 재화</span><strong><span id="gameCoinCount">0</span>냥</strong></div>
+            <div class="game-stat"><span>보호권</span><strong><span id="shieldCount">0</span>개</strong></div>
+          </section>
+
+          <section class="linked-mission-card" aria-labelledby="linkedMissionTitle">
+            <div>
+              <span class="section-kicker">타이머와 연결됨</span>
+              <h3 id="linkedMissionTitle">진행할 퀘스트</h3>
+              <p id="gameCurrentMission">25분 동안 핵심 작업 한 덩어리 끝내기</p>
+              <span class="mission-state" id="gameCurrentMissionState">준비됨 · 완료 시 20냥</span>
+            </div>
+            <button class="mini-action" id="gameMissionAction" type="button">타이머 열기</button>
+          </section>
+        </div>
+      </div>
+
+      <section class="trail-card" aria-labelledby="weeklyTrailTitle">
+        <div class="panel-title-row compact">
+          <div><span class="section-kicker">최근 7일</span><h3 id="weeklyTrailTitle">집중 발자국</h3></div>
+          <span class="trail-summary" id="weeklySummary">이번 주 0회</span>
+        </div>
+        <div class="weekly-trail" id="weeklyTrail" aria-label="최근 7일 퀘스트 완료 기록"></div>
+      </section>
+
+      <section class="history-card" aria-labelledby="historyTitle">
+        <div class="panel-title-row compact">
+          <div><span class="section-kicker">최근 기록</span><h3 id="historyTitle">완료한 퀘스트</h3></div>
+        </div>
+        <div class="mission-history" id="missionHistory">
+          <p class="empty-state">아직 완료 기록이 없어요. 첫 퀘스트를 시작해 보세요.</p>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <section class="journey-panel" id="journeyShopPanel" role="tabpanel" aria-labelledby="journeyShopTab" hidden>
+    <div class="panel-content">
+      <div class="panel-heading shop-heading">
+        <div>
+          <span class="section-kicker">퀘스트 보상의 쓰임새</span>
+          <h2>퀘스트 상점</h2>
+          <p>퀘스트에서 모은 냥으로 아지트를 꾸미거나 다음 퀘스트의 보너스를 준비하세요.</p>
+        </div>
+        <div class="shop-balance" aria-label="상점 보유 재화">🪙 <strong id="shopCoinCount">0</strong>냥</div>
+      </div>
+      <div class="shop-loop-note">
+        <span aria-hidden="true">⏳</span><span>퀘스트 완료</span><b>→</b><span aria-hidden="true">🪙</span><span>냥 획득</span><b>→</b><span aria-hidden="true">🎁</span><span>아이템 효과</span>
+      </div>
+      <div class="shop-grid" id="shopGrid" aria-live="polite"></div>
+      <p class="shop-footnote">아이템과 기록은 현재 브라우저에 저장됩니다.</p>
+    </div>
+  </section>
+    </main>
+<footer class="footer"><span>퀘스트 기록은 이 브라우저에 저장</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
+<nav class="site-policy-links" aria-label="사이트 정책"><a href="/about.html">사이트 소개</a><a href="/editorial-policy.html">편집정책</a><a href="/contact.html">문의</a><a href="/privacy.html">개인정보처리방침</a></nav>
+</div>
+
+<dialog class="mission-dialog" id="missionReviewDialog" aria-labelledby="reviewTitle">
+  <div class="review-step" id="reviewStep">
+    <button class="dialog-close" id="reviewCloseBtn" type="button" aria-label="완료 확인 창 닫기">×</button>
+    <span class="dialog-icon" aria-hidden="true">⏰</span>
+    <span class="section-kicker">타이머가 끝났어요</span>
+    <h2 id="reviewTitle">퀘스트를 마쳤나요?</h2>
+    <p class="review-target" id="reviewTarget">가장 중요한 작업 한 가지</p>
+    <p class="honesty-note">실제로 끝낸 항목만 체크해 주세요.</p>
+    <fieldset class="review-checklist" id="reviewChecklist">
+      <legend>완료 조건</legend>
+    </fieldset>
+    <div class="dialog-reward" id="dialogReward">완료 보상 · 20냥 + 경험치 25</div>
+    <div class="dialog-actions">
+      <button class="primary-action" id="claimRewardBtn" type="button" disabled>체크하고 보상 받기</button>
+      <button class="secondary-action" id="extendMissionBtn" type="button">아직 덜 했어요 · 5분 더</button>
+      <button class="text-action danger" id="abandonMissionBtn" type="button">보상 없이 끝내기</button>
+    </div>
+  </div>
+  <div class="reward-step" id="rewardStep" hidden>
+    <span class="reward-burst" aria-hidden="true">✨</span>
+    <span class="section-kicker">퀘스트 완료</span>
+    <h2>아지트가 한 단계 자랐어요.</h2>
+    <div class="reward-result" id="rewardResult">+20냥 · 경험치 +25</div>
+    <p id="rewardLevelMessage">첫 번째 발자국을 남겼어요.</p>
+    <div class="dialog-actions horizontal">
+      <button class="primary-action" id="viewGameBtn" type="button">게임에서 보기</button>
+      <button class="secondary-action" id="nextMissionBtn" type="button">다음 퀘스트 고르기</button>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
+
+<script>
+let mode = 'timer'; // 'timer' | 'stopwatch'
+let running = false;
+let intervalId = null;
+
+// Timer state
+let timerRemaining = 0; // ms
+let timerEndTime = 0;
+let timerFinished = false;
+
+function emitTimerEvent(name, detail) {
+  window.dispatchEvent(new CustomEvent(name, { detail: detail || {} }));
+}
+
+// Stopwatch state
+let swElapsed = 0; // ms
+let swStart = 0;
+let laps = [];
+
+// Prime audio from the user's Start gesture so completion has the best chance
+// of sounding. Browsers may still suspend a fully backgrounded page.
+let alarmAudioContext = null;
+function getAlarmAudioContext() {
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) return null;
+  if (!alarmAudioContext || alarmAudioContext.state === 'closed') alarmAudioContext = new AudioContextClass();
+  return alarmAudioContext;
+}
+
+function primeAlarmAudio() {
+  try {
+    const ctx = getAlarmAudioContext();
+    if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {});
+  } catch (e) { /* silent fallback */ }
+}
+
+function suspendAlarmAudio() {
+  try { if (alarmAudioContext && alarmAudioContext.state === 'running') alarmAudioContext.suspend().catch(() => {}); } catch (e) {}
+}
+
+function playAlarm() {
+  try {
+    const ctx = getAlarmAudioContext();
+    if (!ctx) return;
+    const sound = () => {
+    [0, 200, 400].forEach(delay => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 880;
+      osc.type = 'sine';
+      gain.gain.value = 0.3;
+      osc.start(ctx.currentTime + delay / 1000);
+      osc.stop(ctx.currentTime + delay / 1000 + 0.15);
+    });
+    setTimeout(() => { if (ctx.state === 'running') ctx.suspend().catch(() => {}); }, 1000);
+    };
+    if (ctx.state === 'suspended') ctx.resume().then(sound).catch(() => {}); else sound();
+  } catch (e) { /* silent fallback */ }
+}
+
+function switchMode(m) {
+  if (running) doStartStop(); // stop first
+  doReset();
+  mode = m;
+  document.querySelectorAll('.mode-tab').forEach((tab, i) => {
+    const isActive = (i === 0 && m === 'timer') || (i === 1 && m === 'stopwatch');
+    tab.classList.toggle('active', isActive);
+    tab.setAttribute('aria-selected', isActive);
+  });
+  document.getElementById('timerSection').style.display = m === 'timer' ? 'block' : 'none';
+  document.getElementById('btnLap').style.display = m === 'stopwatch' ? 'flex' : 'none';
+  document.getElementById('displayMs').textContent = m === 'stopwatch' ? '.00' : '';
+  updateDisplay();
+  emitTimerEvent('teemo:mode-changed', { mode: m });
+}
+
+function clampInput(el, max) {
+  let v = parseInt(el.value) || 0;
+  if (v < 0) v = 0;
+  if (v > max) v = max;
+  el.value = v;
+  syncTimerFromInputs();
+  emitTimerEvent('teemo:duration-changed', { source: 'input', milliseconds: getTimerMs() });
+}
+
+function syncTimerFromInputs() {
+  if (mode !== 'timer' || running) return;
+  timerRemaining = getTimerMs();
+  timerFinished = false;
+  updateDisplay();
+}
+
+function setQuick(min) {
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  document.getElementById('tHour').value = h;
+  document.getElementById('tMin').value = m;
+  document.getElementById('tSec').value = 0;
+  syncTimerFromInputs();
+  emitTimerEvent('teemo:duration-changed', { source: 'quick', milliseconds: min * 60000 });
+}
+
+function getTimerMs() {
+  const h = parseInt(document.getElementById('tHour').value) || 0;
+  const m = parseInt(document.getElementById('tMin').value) || 0;
+  const s = parseInt(document.getElementById('tSec').value) || 0;
+  return (h * 3600 + m * 60 + s) * 1000;
+}
+
+function formatTime(ms, showMs) {
+  const totalSec = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  const pad = n => String(n).padStart(2, '0');
+  const main = h > 0 ? `${pad(h)}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
+  if (showMs) {
+    const centis = Math.floor((ms % 1000) / 10);
+    return { main, ms: '.' + String(centis).padStart(2, '0') };
+  }
+  return { main, ms: '' };
+}
+
+function updateDisplay() {
+  let ms = mode === 'timer' ? timerRemaining : swElapsed;
+  if (mode === 'timer' && !running && timerRemaining === 0 && !timerFinished) {
+    ms = getTimerMs();
+  }
+  const f = formatTime(ms, mode === 'stopwatch');
+  document.getElementById('display').textContent = f.main;
+  document.getElementById('displayMs').textContent = f.ms;
+
+  // Update document title
+  if (running) {
+    document.title = f.main + (f.ms || '') + ' — 타이머';
+  } else {
+    document.title = '🐾 일상 퀘스트 — 티모집사';
+  }
+}
+
+function finishTimer() {
+  if (mode !== 'timer') return;
+  timerRemaining = 0;
+  timerEndTime = 0;
+  timerFinished = true;
+  running = false;
+  clearInterval(intervalId);
+  intervalId = null;
+  document.getElementById('btnStart').textContent = '▶';
+  document.getElementById('btnStart').classList.remove('running');
+  document.getElementById('btnStart').setAttribute('aria-label', '타이머 시작');
+  updateDisplay();
+  playAlarm();
+  showToast('⏰ 타이머 완료!');
+  emitTimerEvent('teemo:timer-finished', { completedAt: Date.now() });
+}
+
+function reconcileRunningClock() {
+  if (!running) return;
+  if (mode === 'timer') {
+    timerRemaining = Math.max(0, timerEndTime - Date.now());
+    if (timerRemaining === 0) { finishTimer(); return; }
+    updateDisplay();
+    return;
+  }
+  const current = swElapsed + (Date.now() - swStart);
+  const f = formatTime(current, true);
+  document.getElementById('display').textContent = f.main;
+  document.getElementById('displayMs').textContent = f.ms;
+  document.title = f.main + f.ms + ' — 스톱워치';
+}
+
+function doStartStop() {
+  if (running) {
+    // Stop
+    if (mode === 'timer') {
+      timerRemaining = Math.max(0, timerEndTime - Date.now());
+      if (timerRemaining === 0) { finishTimer(); return; }
+      timerEndTime = 0;
+    }
+    running = false;
+    clearInterval(intervalId);
+    intervalId = null;
+    if (mode === 'stopwatch') {
+      swElapsed += Date.now() - swStart;
+    }
+    document.getElementById('btnStart').textContent = '▶';
+    document.getElementById('btnStart').classList.remove('running');
+    document.getElementById('btnStart').setAttribute('aria-label', mode === 'timer' ? '타이머 시작' : '스톱워치 시작');
+    if (mode === 'timer') suspendAlarmAudio();
+    updateDisplay();
+    emitTimerEvent('teemo:timer-state', { mode, running: false, reason: 'pause', remaining: mode === 'timer' ? timerRemaining : swElapsed });
+    return;
+  }
+
+  // Start
+  if (mode === 'timer') {
+    if (typeof window.teemoBeforeTimerStart === 'function' && window.teemoBeforeTimerStart() === false) return;
+    primeAlarmAudio();
+    if (timerRemaining === 0) {
+      timerRemaining = getTimerMs();
+    }
+    if (timerRemaining <= 0) return;
+    timerFinished = false;
+    timerEndTime = Date.now() + timerRemaining;
+    running = true;
+    intervalId = setInterval(reconcileRunningClock, 100);
+  } else {
+    // Stopwatch
+    swStart = Date.now();
+    running = true;
+    intervalId = setInterval(reconcileRunningClock, 30);
+  }
+
+  document.getElementById('btnStart').textContent = '■';
+  document.getElementById('btnStart').classList.add('running');
+  document.getElementById('btnStart').setAttribute('aria-label', mode === 'timer' ? '타이머 일시정지' : '스톱워치 일시정지');
+  emitTimerEvent('teemo:timer-state', { mode, running: true, reason: 'start', remaining: mode === 'timer' ? timerRemaining : swElapsed, endAt: mode === 'timer' ? timerEndTime : 0 });
+}
+
+function doReset() {
+  running = false;
+  clearInterval(intervalId);
+  intervalId = null;
+  timerRemaining = 0;
+  timerEndTime = 0;
+  timerFinished = false;
+  swElapsed = 0;
+  laps = [];
+  document.getElementById('lapsContainer').innerHTML = '';
+  document.getElementById('btnStart').textContent = '▶';
+  document.getElementById('btnStart').classList.remove('running');
+  suspendAlarmAudio();
+  document.title = '🐾 일상 퀘스트 — 티모집사';
+  updateDisplay();
+  emitTimerEvent('teemo:timer-reset', { mode });
+}
+
+function doLap() {
+  if (mode !== 'stopwatch' || !running) return;
+  const current = swElapsed + (Date.now() - swStart);
+  const prevLap = laps.length > 0 ? laps[laps.length - 1] : 0;
+  laps.push(current);
+  renderLaps();
+}
+
+function renderLaps() {
+  const container = document.getElementById('lapsContainer');
+  container.innerHTML = '';
+  for (let i = laps.length - 1; i >= 0; i--) {
+    const diff = i === 0 ? laps[0] : laps[i] - laps[i - 1];
+    const el = document.createElement('div');
+    el.className = 'lap-item';
+    el.innerHTML = `<span class="lap-num">랩 ${i + 1}</span><span class="lap-time">${formatTime(laps[i], true).main}${formatTime(laps[i], true).ms}</span><span class="lap-diff">+${formatTime(diff, true).main}${formatTime(diff, true).ms}</span>`;
+    container.appendChild(el);
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.code === 'Space') { e.preventDefault(); doStartStop(); }
+  if (e.code === 'KeyR') doReset();
+  if (e.code === 'KeyL' && mode === 'stopwatch') doLap();
+});
+
+document.addEventListener('visibilitychange', reconcileRunningClock);
+window.addEventListener('pageshow', reconcileRunningClock);
+
+updateDisplay();
+
+(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
+</script>
+<script src="/special-chars/daily-quest/quest-game.js"></script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

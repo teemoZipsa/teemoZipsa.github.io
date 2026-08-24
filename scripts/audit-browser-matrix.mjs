@@ -276,6 +276,13 @@ async function runInteractions(context, base, config) {
       await page.waitForTimeout(120);
       await activate(page.locator('#btnStart'));
       assert((await page.locator('#display').innerText()).startsWith('00:59'), 'timer did not start and stop through the visible control');
+    }],
+    ['daily quest tab linkage', '/special-chars/daily-quest/', async page => {
+      await activate(page.locator('#journeyGameTab'));
+      assert(await page.locator('#journeyGamePanel').isVisible(), 'game tab did not reveal the quest progress panel');
+      await activate(page.locator('#journeyShopTab'));
+      assert(await page.locator('#journeyShopPanel').isVisible(), 'shop tab did not reveal quest rewards');
+      assert(await page.locator('.shop-item').count() === 6, 'daily quest shop inventory was incomplete');
     }]
   ];
 
