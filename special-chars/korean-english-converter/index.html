@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-tool-layout="compact">
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
 <link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="stylesheet" href="/special-chars/site-links.css">
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>⌨️ 업무용 한영 타자 복구 — 티모집사</title>
@@ -80,14 +81,11 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .footer a:hover{color:var(--text-guide)}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
-.scroll-top-btn.visible{opacity:1;visibility:visible}
-.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
-@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
 .paste-btn{position:absolute;top:8px;right:8px;background:var(--accent);color:var(--text-on-accent);border:none;padding:5px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;opacity:.85;display:flex;align-items:center;gap:4px}
 .paste-btn:hover{opacity:1;background:var(--accent-hover)}
 
 </style>
+<link rel="stylesheet" href="/special-chars/tool-shell.css">
 </head>
 <body>
 <div class="app">
@@ -168,10 +166,11 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </section>
   </main>
 <footer class="footer"><span>실시간 변환</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
+<nav class="site-policy-links" aria-label="사이트 정책"><a href="/about.html">사이트 소개</a><a href="/editorial-policy.html">편집정책</a><a href="/contact.html">문의</a><a href="/privacy.html">개인정보처리방침</a></nav>
 </div>
 
 <div class="toast" id="toast"></div>
-<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<button class="scroll-top-btn" id="scrollTopBtn" aria-label="맨 위로">↑</button>
 
 <script>
 // 한영 키보드 매핑
@@ -465,12 +464,6 @@ function showToast(msg){
   t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2000);
 }
-
-// 스크롤 탑 버튼
-window.addEventListener('scroll',()=>{
-  document.getElementById('scrollTopBtn').classList.toggle('visible',window.scrollY>300);
-});
-
 renderExamples();
 </script>
 <script src="/special-chars/theme-toggle.js"></script>

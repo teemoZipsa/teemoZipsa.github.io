@@ -14,7 +14,8 @@
     "audit:pages": "node scripts/audit-pages.mjs",
     "audit:seo": "node scripts/audit-seo-index.mjs",
     "audit:tool-quality": "node scripts/audit-tool-quality.mjs",
-    "verify": "npm run check:rules && npm run audit:tool-quality && npm run audit:vendor:integrity && npm run audit:formulas && npm run audit:formula-pages && npm run audit:functional && npm run audit:seo && npm run audit:interactions && npm run audit:accessibility && npm run audit:pages && npm run audit:browsers && npm run check:diff",
+    "audit:ui": "node scripts/audit-ui-consistency.mjs",
+    "verify": "npm run check:rules && npm run audit:tool-quality && npm run audit:ui && npm run audit:vendor:integrity && npm run audit:formulas && npm run audit:formula-pages && npm run audit:functional && npm run audit:seo && npm run audit:interactions && npm run audit:accessibility && npm run audit:pages && npm run audit:browsers && npm run check:diff",
     "release:check": "npm run audit:vendor && npm run verify"
   },
   "devDependencies": {

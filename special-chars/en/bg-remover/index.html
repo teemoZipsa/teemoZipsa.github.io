@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-tool-layout="standard">
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
@@ -108,14 +108,11 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.4);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
-.scroll-top-btn.visible{opacity:1;visibility:visible}
-.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
 @media(max-width:640px){
-  .scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}
-  .btn-group{flex-direction:column}
+.btn-group{flex-direction:column}
 }
 </style>
+<link rel="stylesheet" href="/special-chars/tool-shell.css">
 </head>
 <body>
 <div class="app">
@@ -230,8 +227,19 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 <footer class="footer"><span>AI Background Removal · In-browser inference · Max 10MB</span><a href="https://teemozipsa.com/en/">😺 More Tools</a></footer>
 </div>
 
+<dialog class="tool-confirm-dialog" id="networkDialog" aria-labelledby="networkDialogTitle" aria-describedby="networkDialogDescription">
+  <div class="tool-confirm-dialog__body">
+    <h2 id="networkDialogTitle">📱 Cellular data check</h2>
+    <p id="networkDialogDescription">The first run downloads about 55MB of model and runtime files. Check your data allowance and use Wi-Fi when possible.</p>
+    <div class="tool-confirm-dialog__actions">
+      <button type="button" data-network-cancel autofocus>Cancel</button>
+      <button type="button" class="tool-confirm-dialog__confirm" data-network-confirm>Continue</button>
+    </div>
+  </div>
+</dialog>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<button class="scroll-top-btn" aria-label="Top">↑</button>
+<button class="scroll-top-btn" aria-label="Back to top">↑</button>
 
 <script type="module">
 let originalURL = null;
@@ -253,6 +261,32 @@ const BACKGROUND_REMOVAL_CONFIG = Object.freeze({
   proxyToWorker: true
 });
 let backgroundRemovalPromise = null;
+
+function confirmMobileDownload() {
+  const dialog = document.getElementById('networkDialog');
+  if (!dialog || typeof dialog.showModal !== 'function') {
+    showToast('⚠️ Please try again on Wi-Fi.');
+    return Promise.resolve(false);
+  }
+  return new Promise(resolve => {
+    const confirmButton = dialog.querySelector('[data-network-confirm]');
+    const cancelButton = dialog.querySelector('[data-network-cancel]');
+    const handleCancel = event => {
+      event.preventDefault();
+      dialog.close('cancel');
+    };
+    const handleClose = () => {
+      dialog.removeEventListener('cancel', handleCancel);
+      resolve(dialog.returnValue === 'confirm');
+    };
+    confirmButton.onclick = () => dialog.close('confirm');
+    cancelButton.onclick = () => dialog.close('cancel');
+    dialog.addEventListener('cancel', handleCancel);
+    dialog.addEventListener('close', handleClose, { once: true });
+    dialog.returnValue = '';
+    dialog.showModal();
+  });
+}
 
 function ensureBackgroundRemoval() {
   if (!backgroundRemovalPromise) {
@@ -373,8 +407,7 @@ async function handleFile(file) {
 
   // 모바일 데이터 경고
   if (checkMobileData()) {
-    const ok = confirm('📱 You are on a cellular connection.\n\nOn first use, this site serves about 55MB of AI model and runtime files.\nWi-Fi is highly recommended.\n\nDo you want to continue?');
-    if (!ok) return;
+    if (!await confirmMobileDownload()) return;
   }
 
   lastFile = file;
@@ -521,7 +554,7 @@ function showToast(msg) {
 }
 
 // Scroll top
-(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
+
 </script>
 <script src="/special-chars/theme-toggle.js"></script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>

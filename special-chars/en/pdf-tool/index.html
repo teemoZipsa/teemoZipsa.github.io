@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-tool-layout="wide">
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
@@ -122,12 +122,6 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .btn-clear:hover{background:var(--bg-btn-hover)}
 
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:20px;font-size:13px;opacity:0;transition:all .3s;z-index:999;white-space:nowrap}
-
-.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
-.scroll-top-btn.visible{opacity:1;visibility:visible}
-.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
-@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
-
 .loading{display:none;text-align:center;padding:20px;color:var(--text-info);font-size:13px}
 .loading.show{display:block}
 .spinner{display:inline-block;width:20px;height:20px;border:3px solid #2a2a5a;border-top-color:#533483;border-radius:50%;animation:spin .8s linear infinite;margin-right:8px;vertical-align:middle}
@@ -161,6 +155,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .report-value.highlight{color:var(--accent-text)}
 
 </style>
+<link rel="stylesheet" href="/special-chars/tool-shell.css">
 </head>
 <body>
 <div id="cdnError" role="alert" aria-live="assertive" style="display:none;background:#ff4444;color:var(--text-on-accent);text-align:center;padding:12px;font-size:14px;">The local PDF engine failed to initialize. Refresh the page and try again.</div>
@@ -439,7 +434,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 <footer class="footer"><span>Browser processing without selected-file uploads</span><a href="https://teemozipsa.com/en/">😺 More Tools</a></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<button class="scroll-top-btn" id="scrollTopBtn" aria-label="Top">↑</button>
+<button class="scroll-top-btn" id="scrollTopBtn" aria-label="Back to top">↑</button>
 
 <script src="/special-chars/vendor/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script>
@@ -1370,14 +1365,6 @@ function resetAll() {
   document.getElementById('reportContainer').replaceChildren();
   showToast('Reset complete.');
 }
-
-/* ===== Scroll to top ===== */
-const scrollBtn = document.getElementById('scrollTopBtn');
-window.addEventListener('scroll', () => {
-  scrollBtn.classList.toggle('visible', window.scrollY > 300);
-});
-scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-
 /* ===== Tab drag to scroll ===== */
 const modeTabsEl = document.querySelector('.mode-tabs');
 let isDown = false, startX, sLeft;

@@ -313,7 +313,7 @@ html[data-theme] a:not([class]) {
   right: 64px;
 }
 
-/* 개별 도구에서 헤더 폭을 차지하지 않는 공통 테마 전환 버튼 */
+/* 개별 도구 테마 버튼의 기본값. tool-shell 적용 페이지에서는 헤더 안에 배치한다. */
 .theme-toggle-tool {
   position: fixed;
   left: max(16px, env(safe-area-inset-left));

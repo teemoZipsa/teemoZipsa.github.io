@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-tool-layout="standard">
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
@@ -51,6 +51,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .num-btn.excluded{background:#ef4444;color:#fff;border-color:#ef4444;text-decoration:line-through;opacity:0.8}
 
 .opt-controls{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-muted)}
+.option-error{margin:8px 0 12px;padding:8px 10px;border:1px solid var(--status-red-text);border-radius:8px;background:rgba(220,38,38,.08);color:var(--status-red-text);font-size:12px;line-height:1.5}
 .reset-opt{background:none;border:none;color:var(--text-info);cursor:pointer;text-decoration:underline;font-family:inherit;min-width:44px;min-height:36px;padding:6px 10px;border-radius:6px}
 .reset-opt:hover{color:var(--text-secondary)}
 
@@ -91,6 +92,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 @keyframes pop{ 0%{transform:scale(0.5);opacity:0} 70%{transform:scale(1.2)} 100%{transform:scale(1);opacity:1} }
 .anim-pop{animation:pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards}
 </style>
+<link rel="stylesheet" href="/special-chars/tool-shell.css">
 </head>
 <body>
 <div class="app">
@@ -121,7 +123,8 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
         <span>⚙️ 추출 옵션 (선택)</span>
       </div>
       <div id="numberOptionHelp" style="font-size:11px;color:var(--text-info);margin-bottom:8px">번호를 클릭하여 <b>고정수(파란색)</b> 또는 <b>제외수(빨간색)</b>를 설정하세요.</div>
-      <div class="num-grid" id="numGrid" role="group" aria-label="로또 번호 추출 옵션" aria-describedby="numberOptionHelp"></div>
+      <div class="num-grid" id="numGrid" role="group" aria-label="로또 번호 추출 옵션" aria-describedby="numberOptionHelp optionError"></div>
+      <div class="option-error" id="optionError" role="alert" hidden></div>
       <div class="opt-controls">
         <span id="optCountInfo" role="status" aria-live="polite">고정수 0개 · 제외수 0개</span>
         <button class="reset-opt" onclick="resetOptions()">초기화</button>
@@ -175,6 +178,12 @@ let exNums = new Set();
 const maxFixed = 5;
 let historyRecs = [];
 
+function showOptionError(message) {
+  const error = document.getElementById('optionError');
+  error.textContent = message || '';
+  error.hidden = !message;
+}
+
 function initGrid() {
   const g = document.getElementById('numGrid');
   g.innerHTML = '';
@@ -202,7 +211,7 @@ function toggleNum(n, btn) {
   } else {
     // Normal -> Fixed
     if (fixedNums.size >= maxFixed) {
-      alert(`고정수는 최대 ${maxFixed}개 까지만 설정할 수 있습니다.`);
+      showOptionError(`고정수는 최대 ${maxFixed}개까지 설정할 수 있습니다.`);
       return;
     }
     fixedNums.add(n);
@@ -211,6 +220,7 @@ function toggleNum(n, btn) {
   const state = fixedNums.has(n) ? '고정수' : exNums.has(n) ? '제외수' : '일반';
   btn.setAttribute('aria-pressed', String(fixedNums.has(n)));
   btn.setAttribute('aria-label', `${n}번, ${state}`);
+  showOptionError('');
   updateOptInfo();
 }
 
@@ -226,6 +236,7 @@ function resetOptions() {
     b.setAttribute('aria-pressed', 'false');
     b.setAttribute('aria-label', `${index + 1}번, 일반`);
   });
+  showOptionError('');
   updateOptInfo();
 }
 
@@ -246,9 +257,11 @@ function generate() {
   }
   
   if (fixedNums.size + pool.length < 6) {
-    alert("가능한 번호 풀이 너무 적습니다! 제외수를 줄여주세요.");
+    showOptionError('가능한 번호가 부족합니다. 제외수를 줄여 주세요.');
     return;
   }
+
+  showOptionError('');
 
   // Shuffle pool with an unbiased cryptographic index source.
   for (let i = pool.length - 1; i > 0; i--) {

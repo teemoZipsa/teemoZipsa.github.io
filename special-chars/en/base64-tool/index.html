@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-tool-layout="standard">
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
@@ -87,11 +87,8 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .limit-note{margin-top:6px;font-size:11px;line-height:1.5;color:var(--text-muted)}
 .input-error{display:none;margin-top:8px;padding:10px 12px;border:1px solid #ef4444;border-radius:8px;background:rgba(239,68,68,.08);color:#f87171;font-size:12px;line-height:1.5}
 .input-error.show{display:block}
-.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
-.scroll-top-btn.visible{opacity:1;visibility:visible}
-.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
-@media(max-width:640px){.scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}}
 </style>
+<link rel="stylesheet" href="/special-chars/tool-shell.css">
 </head>
 <body>
 <div class="app">
@@ -208,7 +205,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<button class="scroll-top-btn" id="scrollTopBtn" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<button class="scroll-top-btn" id="scrollTopBtn" aria-label="Back to top">↑</button>
 
 <script>
 let currentMode='text';
@@ -382,9 +379,7 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),2000);
 }
 
-window.addEventListener('scroll',()=>{
-  document.getElementById('scrollTopBtn').classList.toggle('visible',window.scrollY>300);
-});
+
 </script>
 <script src="/special-chars/theme-toggle.js"></script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>

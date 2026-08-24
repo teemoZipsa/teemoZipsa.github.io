@@ -3,7 +3,7 @@
  * theme-toggle.js
  * 
  * - 메인 포털에서는 내비게이션 슬롯 또는 기존 고정 버튼 사용
- * - 개별 도구 페이지에서는 모바일에서도 누르기 쉬운 고정 버튼 제공
+ * - 개별 도구 페이지에서는 공통 헤더 안에 테마 버튼을 배치
  */
 (function() {
   'use strict';
@@ -55,6 +55,35 @@
     try { localStorage.setItem(STORAGE_KEY, next); } catch(e) {}
   }
 
+  function setupScrollTop() {
+    var btn = document.querySelector('.scroll-top-btn');
+    if (!btn) {
+      btn = document.createElement('button');
+      btn.className = 'scroll-top-btn';
+      btn.textContent = '↑';
+      document.body.appendChild(btn);
+    }
+    if (btn.getAttribute('data-scroll-top-ready') === 'true') return;
+
+    var english = window.location.pathname.indexOf('/en/') !== -1;
+    btn.type = 'button';
+    btn.setAttribute('aria-label', english ? 'Back to top' : '맨 위로');
+    btn.title = english ? 'Back to top' : '맨 위로';
+    btn.setAttribute('data-scroll-top-ready', 'true');
+
+    function updateVisibility() {
+      btn.classList.toggle('visible', window.scrollY > 200);
+    }
+
+    window.addEventListener('scroll', updateVisibility, { passive: true });
+    btn.addEventListener('click', function(event) {
+      event.preventDefault();
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+    });
+    updateVisibility();
+  }
+
   // 메인 포털인지 판별 (경로가 / 또는 /index.html 또는 /about.html 또는 /privacy.html)
   function isPortalPage() {
     var path = window.location.pathname;
@@ -68,6 +97,7 @@
     var portalPage = isPortalPage();
     var toolPage = window.location.pathname.indexOf('/special-chars/') !== -1;
     if (!portalPage && !toolPage) return;
+    if (toolPage && !portalPage) setupScrollTop();
     if (document.querySelector('.theme-toggle-portal:not(.blog-toggle-portal), .theme-toggle-tool')) return;
 
     var theme = document.documentElement.getAttribute('data-theme') || LIGHT;
@@ -76,6 +106,48 @@
     btn.type = 'button';
     btn.className = toolPage && !portalPage ? 'theme-toggle-tool' : 'theme-toggle-portal';
     btn.onclick = toggleTheme;
+
+    if (toolPage && !portalPage && !slot) {
+      var header = document.querySelector('.header, .calc-header');
+      var title = header && header.querySelector(':scope > h1');
+      if (header && title) {
+        header.classList.add('tool-shell-header');
+
+        var directChildren = Array.prototype.slice.call(header.children);
+        var titleIndex = directChildren.indexOf(title);
+        var leadingAction = titleIndex > 0 ? directChildren[0] : null;
+        if (leadingAction && leadingAction.matches('a, button')) {
+          leadingAction.classList.add('tool-shell-back');
+          leadingAction.setAttribute('data-tool-short', '←');
+        }
+
+        var actions = document.createElement('div');
+        actions.className = 'tool-header-actions';
+        directChildren.slice(titleIndex + 1).forEach(function(child) {
+          if (child.classList.contains('search-box')) {
+            actions.classList.add('tool-header-actions--search');
+          }
+          if (child.matches('a')) {
+            var label = (child.textContent || '').trim();
+            var targetIsEnglish = child.getAttribute('href') && child.getAttribute('href').indexOf('/en/') !== -1;
+            var languageLink = /English|한국어/i.test(label);
+            child.classList.add('tool-header-action');
+            if (languageLink) child.classList.add('tool-language-link');
+            child.setAttribute('data-tool-short', languageLink
+              ? (targetIsEnglish ? 'EN' : '한')
+              : (label.split(/\s+/)[0] || '↗'));
+          }
+          actions.appendChild(child);
+        });
+        title.insertAdjacentElement('afterend', actions);
+
+        btn.classList.add('theme-toggle-inline');
+        actions.appendChild(btn);
+        updateButton(theme);
+        return;
+      }
+    }
+
     if (slot) {
       btn.classList.add('theme-toggle-inline');
       slot.appendChild(btn);

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-tool-layout="standard">
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
 <link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="stylesheet" href="/special-chars/site-links.css">
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>🎵 영상·오디오 제작 계산기 — 티모집사</title>
@@ -111,10 +112,6 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 
 /* === 맨위로 === */
-.scroll-top-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--text-on-accent);border:none;font-size:20px;font-weight:700;cursor:pointer;z-index:900;box-shadow:0 2px 12px rgba(83,52,131,.5);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s}
-.scroll-top-btn.visible{opacity:1;visibility:visible}
-.scroll-top-btn:hover{transform:scale(1.1);background:var(--accent-hover)}
-
 /* === 2열 카드 === */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .info-card{background:var(--accent-bg);border:1.5px solid var(--accent);border-radius:10px;padding:14px 10px;text-align:center}
@@ -155,8 +152,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .vol-slider::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);border:none;cursor:pointer}
 
 @media(max-width:640px){
-  .scroll-top-btn{bottom:70px;right:16px;width:40px;height:40px;font-size:18px}
-  .two-col{grid-template-columns:1fr}
+.two-col{grid-template-columns:1fr}
   .note-grid{grid-template-columns:repeat(6,1fr)}
   .tap-bpm{font-size:44px}
   .main-tab{font-size:11px;padding:7px 10px}
@@ -164,6 +160,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   .beat-dot{width:24px;height:24px}
 }
 </style>
+<link rel="stylesheet" href="/special-chars/tool-shell.css">
 </head>
 <body>
 <div class="app">
@@ -408,6 +405,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </section>
   </main>
 <footer class="footer"><span>🎵 음악 계산기 · 올인원</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
+<nav class="site-policy-links" aria-label="사이트 정책"><a href="/about.html">사이트 소개</a><a href="/editorial-policy.html">편집정책</a><a href="/contact.html">문의</a><a href="/privacy.html">개인정보처리방침</a></nav>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -1056,7 +1054,7 @@ buildTransposeSelect();
 calcTranspose();
 
 // 스크롤 버튼
-(function(){var b=document.querySelector('.scroll-top-btn');if(!b)return;window.addEventListener('scroll',function(){b.classList.toggle('visible',window.scrollY>200)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
+
 
 // Tab drag to scroll
 const _tabs = document.getElementById('mainTabs');

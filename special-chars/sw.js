@@ -4,7 +4,7 @@
  * 오프라인 재사용성과 대용량 AI 자산의 수명을 독립적으로 관리한다.
  */
 const OWNED_CACHE_PREFIX = 'teemozipsa-';
-const SHELL_CACHE_NAME = 'teemozipsa-shell-v1.9';
+const SHELL_CACHE_NAME = 'teemozipsa-shell-v2.0';
 const PAGE_CACHE_NAME = 'teemozipsa-pages-v1';
 const RUNTIME_CACHE_NAME = 'teemozipsa-runtime-v1';
 // Vendor responses are immutable cache-first. Bump this generation whenever
@@ -27,6 +27,7 @@ const PRECACHE_URLS = [
   '/special-chars/',
   '/special-chars/theme.css',
   '/special-chars/site-links.css',
+  '/special-chars/tool-shell.css',
   '/special-chars/theme-toggle.js',
   '/special-chars/metronome-worklet.js',
   '/special-chars/favicon.png',

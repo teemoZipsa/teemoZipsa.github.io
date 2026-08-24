@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-tool-layout="standard">
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
@@ -50,6 +50,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 .num-btn.excluded{background:#ef4444;color:#fff;border-color:#ef4444;text-decoration:line-through;opacity:0.8}
 
 .opt-controls{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-muted)}
+.option-error{margin:8px 0 12px;padding:8px 10px;border:1px solid var(--status-red-text);border-radius:8px;background:rgba(220,38,38,.08);color:var(--status-red-text);font-size:12px;line-height:1.5}
 .reset-opt{background:none;border:none;color:var(--text-info);cursor:pointer;text-decoration:underline;font-family:inherit;min-width:44px;min-height:36px;padding:6px 10px;border-radius:6px}
 .reset-opt:hover{color:var(--text-secondary)}
 
@@ -96,6 +97,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
 @keyframes pop{ 0%{transform:scale(0.5);opacity:0} 70%{transform:scale(1.2)} 100%{transform:scale(1);opacity:1} }
 .anim-pop{animation:pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards}
 </style>
+<link rel="stylesheet" href="/special-chars/tool-shell.css">
 </head>
 <body>
 <div class="app">
@@ -126,7 +128,8 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-body);colo
         <span>⚙️ Options (Optional)</span>
       </div>
       <div id="numberOptionHelp" style="font-size:11px;color:var(--text-info);margin-bottom:8px">Click to set <b>Include (Blue)</b> or <b>Exclude (Red)</b>.</div>
-      <div class="num-grid" id="numGrid" role="group" aria-label="Lotto number options" aria-describedby="numberOptionHelp"></div>
+      <div class="num-grid" id="numGrid" role="group" aria-label="Lotto number options" aria-describedby="numberOptionHelp optionError"></div>
+      <div class="option-error" id="optionError" role="alert" hidden></div>
       <div class="opt-controls">
         <span id="optCountInfo" role="status" aria-live="polite">Fixed: 0 · Excluded: 0</span>
         <button class="reset-opt" onclick="resetOptions()">Reset</button>
@@ -207,6 +210,12 @@ let exNums = new Set();
 const maxFixed = 5;
 let historyRecs = [];
 
+function showOptionError(message) {
+  const error = document.getElementById('optionError');
+  error.textContent = message || '';
+  error.hidden = !message;
+}
+
 function initGrid() {
   const g = document.getElementById('numGrid');
   g.innerHTML = '';
@@ -234,7 +243,7 @@ function toggleNum(n, btn) {
   } else {
     // Normal -> Fixed
     if (fixedNums.size >= maxFixed) {
-      alert(`You can only include up to ${maxFixed} numbers.`);
+      showOptionError(`You can include up to ${maxFixed} fixed numbers.`);
       return;
     }
     fixedNums.add(n);
@@ -243,6 +252,7 @@ function toggleNum(n, btn) {
   const state = fixedNums.has(n) ? 'included' : exNums.has(n) ? 'excluded' : 'normal';
   btn.setAttribute('aria-pressed', String(fixedNums.has(n)));
   btn.setAttribute('aria-label', `Number ${n}, ${state}`);
+  showOptionError('');
   updateOptInfo();
 }
 
@@ -258,6 +268,7 @@ function resetOptions() {
     b.setAttribute('aria-pressed', 'false');
     b.setAttribute('aria-label', `Number ${index + 1}, normal`);
   });
+  showOptionError('');
   updateOptInfo();
 }
 
@@ -278,9 +289,11 @@ function generate() {
   }
   
   if (fixedNums.size + pool.length < 6) {
-    alert("Too few numbers in the pool! Remove some excluded numbers.");
+    showOptionError('Too few numbers remain. Remove some exclusions.');
     return;
   }
+
+  showOptionError('');
 
   // Shuffle pool with an unbiased cryptographic index source.
   for (let i = pool.length - 1; i > 0; i--) {

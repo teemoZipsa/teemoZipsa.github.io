@@ -1,0 +1,278 @@
+/*
+ * Shared shell for individual tools.
+ *
+ * This file intentionally owns only the page frame, header controls and
+ * small-screen safety rules. Tool-specific content keeps its local styles.
+ */
+
+html[data-tool-layout] {
+  --tool-shell-max: 40rem;
+  --tool-shell-gutter: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+html[data-tool-layout="mini"] { --tool-shell-max: 22.5rem; }
+html[data-tool-layout="compact"] { --tool-shell-max: 32.5rem; }
+html[data-tool-layout="standard"] { --tool-shell-max: 40rem; }
+html[data-tool-layout="wide"] { --tool-shell-max: 47.5rem; }
+
+html[data-tool-layout] body {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: var(--tool-shell-gutter);
+}
+
+html[data-tool-layout] :where(.app, .calc-app) {
+  width: min(100%, var(--tool-shell-max));
+  max-width: var(--tool-shell-max);
+  flex: 0 0 auto;
+  border-radius: 1rem;
+}
+
+html[data-tool-layout] :where(.header, .calc-header).tool-shell-header {
+  display: grid;
+  grid-template-columns: minmax(2.75rem, auto) minmax(0, 1fr) minmax(2.75rem, auto);
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 3.5rem;
+  padding: 0.5rem 0.75rem;
+}
+
+html[data-tool-layout] .tool-shell-header > h1 {
+  position: static;
+  left: auto;
+  width: auto;
+  min-width: 0;
+  margin: 0;
+  transform: none;
+  order: initial;
+  text-align: center;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  pointer-events: auto;
+}
+
+html[data-tool-layout] .tool-shell-header > .tool-shell-back {
+  justify-self: start;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  justify-content: center;
+  padding: 0.4rem 0.65rem;
+  white-space: nowrap;
+}
+
+html[data-tool-layout] .tool-header-actions {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.375rem;
+  min-width: 2.75rem;
+}
+
+html[data-tool-layout] .tool-header-actions > :where(a, button) {
+  min-height: 2.75rem;
+}
+
+html[data-tool-layout] .tool-header-actions > a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.65rem;
+  white-space: nowrap;
+}
+
+html[data-tool-layout] .theme-toggle-tool.theme-toggle-inline {
+  position: static;
+  inset: auto;
+  flex: 0 0 2.75rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.65rem;
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  box-shadow: none;
+}
+
+html[data-tool-layout] .theme-toggle-tool.theme-toggle-inline:hover {
+  background: rgba(255, 255, 255, 0.24);
+  transform: none;
+  box-shadow: none;
+}
+
+html[data-tool-layout] .tool-header-actions--search {
+  width: min(17rem, 38vw);
+}
+
+html[data-tool-layout] .tool-header-actions--search .search-box {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+html[data-tool-layout] .tool-header-actions--search .search-box input {
+  width: 100%;
+  min-width: 0;
+}
+
+html[data-tool-layout] .tool-confirm-dialog {
+  width: min(28rem, calc(100vw - 1.5rem));
+  max-height: calc(100dvh - 1.5rem);
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: var(--bg-app);
+  color: var(--text-primary);
+  box-shadow: 0 1.5rem 5rem rgba(0, 0, 0, 0.35);
+}
+
+html[data-tool-layout] .tool-confirm-dialog::backdrop {
+  background: rgba(15, 23, 42, 0.58);
+  backdrop-filter: blur(0.2rem);
+}
+
+html[data-tool-layout] .tool-confirm-dialog__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem;
+}
+
+html[data-tool-layout] .tool-confirm-dialog h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
+
+html[data-tool-layout] .tool-confirm-dialog p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
+html[data-tool-layout] .tool-confirm-dialog__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+html[data-tool-layout] .tool-confirm-dialog__actions button {
+  min-height: 2.75rem;
+  border: 0;
+  border-radius: 0.625rem;
+  background: var(--bg-btn);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+html[data-tool-layout] .tool-confirm-dialog__actions .tool-confirm-dialog__confirm {
+  background: var(--accent);
+  color: var(--text-on-accent);
+}
+
+html[data-tool-layout] .scroll-top-btn {
+  position: fixed;
+  right: max(1.5rem, env(safe-area-inset-right));
+  bottom: max(1.5rem, env(safe-area-inset-bottom));
+  z-index: 900;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  box-shadow: var(--shadow-accent);
+  font: 700 1.25rem/1 system-ui, sans-serif;
+  cursor: pointer;
+  touch-action: manipulation;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s, transform 0.2s, background 0.2s;
+}
+
+html[data-tool-layout] .scroll-top-btn.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+html[data-tool-layout] .scroll-top-btn:hover {
+  background: var(--accent-hover);
+  transform: scale(1.06);
+}
+
+@media (max-width: 900px) {
+  html[data-tool-layout] .scroll-top-btn {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  html[data-tool-layout] {
+    --tool-shell-gutter: 0.75rem;
+  }
+
+  html[data-tool-layout] :where(.app, .calc-app) {
+    border-radius: 0.875rem;
+  }
+
+  html[data-tool-layout] :where(.header, .calc-header).tool-shell-header {
+    padding-inline: 0.625rem;
+  }
+
+  html[data-tool-layout] :where(
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]),
+    select,
+    textarea
+  ) {
+    min-height: 2.75rem;
+  }
+
+  html[data-tool-layout] .site-policy-links a {
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  html[data-tool-layout] .tool-header-actions--search {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: stretch;
+    width: 100%;
+  }
+
+  html[data-tool-layout] .tool-header-actions--search .search-box {
+    width: auto;
+  }
+}
+
+@media (max-width: 420px) {
+  html[data-tool-layout] .tool-shell-header > .tool-shell-back,
+  html[data-tool-layout] .tool-header-actions > a {
+    width: 2.75rem;
+    padding-inline: 0;
+    overflow: hidden;
+    color: transparent;
+    font-size: 0;
+    gap: 0;
+  }
+
+  html[data-tool-layout] .tool-shell-header > .tool-shell-back::after,
+  html[data-tool-layout] .tool-header-actions > a::after {
+    content: attr(data-tool-short);
+    color: #fff;
+    font-size: 1rem;
+    line-height: 1;
+  }
+}
