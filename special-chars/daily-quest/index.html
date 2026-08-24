@@ -620,7 +620,7 @@ body.stopwatch-mode .journey-panel>.mode-tabs{margin-top:0}
   <div class="reward-step" id="rewardStep" hidden>
     <span class="reward-burst" aria-hidden="true">✨</span>
     <span class="section-kicker">퀘스트 완료</span>
-    <h2>아지트가 한 단계 자랐어요.</h2>
+    <h2 id="rewardTitle" tabindex="-1">아지트가 한 단계 자랐어요.</h2>
     <div class="reward-result" id="rewardResult">+20냥 · 경험치 +25</div>
     <p id="rewardLevelMessage">첫 번째 발자국을 남겼어요.</p>
     <div class="dialog-actions horizontal">
@@ -903,7 +903,9 @@ function showToast(msg) {
 
 // Keyboard shortcuts
 document.addEventListener('keydown', e => {
-  if (e.target.tagName === 'INPUT') return;
+  if (e.defaultPrevented || e.repeat || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+  const target = e.target instanceof Element ? e.target : null;
+  if (document.querySelector('dialog[open]') || target?.closest('input, textarea, select, button, a, [contenteditable], [role="button"], [role="tab"]')) return;
   if (e.code === 'Space') { e.preventDefault(); doStartStop(); }
   if (e.code === 'KeyR') doReset();
   if (e.code === 'KeyL' && mode === 'stopwatch') doLap();

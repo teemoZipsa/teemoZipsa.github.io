@@ -581,6 +581,7 @@
   function renderReviewDialog() {
     const pending = state.pendingReview;
     if (!pending) return;
+    $('#missionReviewDialog').setAttribute('aria-labelledby', 'reviewTitle');
     $('#reviewStep').hidden = false;
     $('#rewardStep').hidden = true;
     $('#reviewTarget').textContent = pending.target;
@@ -666,6 +667,7 @@
     const newLevel = currentLevel();
     $('#reviewStep').hidden = true;
     $('#rewardStep').hidden = false;
+    $('#missionReviewDialog').setAttribute('aria-labelledby', 'rewardTitle');
     $('#rewardResult').textContent = `+${numberFormat.format(pending.coins)}냥 · 경험치 +${numberFormat.format(pending.xp)}`;
     let message = newLevel > previousLevel
       ? `레벨 ${newLevel}, ${levelTitle(newLevel)}로 성장했어요!`
@@ -677,6 +679,7 @@
     renderHeader();
     renderGame();
     renderShop();
+    $('#rewardTitle').focus();
   }
 
   let suppressReset = false;

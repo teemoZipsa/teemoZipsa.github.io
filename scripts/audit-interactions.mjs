@@ -401,6 +401,26 @@ async function main() {
     assert(edited.display === '02:00' && edited.remaining === 120000, `paused edit was stale: ${JSON.stringify(edited)}`);
   });
 
+  for (const [label, routePath] of [
+    ['Korean timer', '/special-chars/timer/'],
+    ['English timer', '/special-chars/en/timer/'],
+    ['daily quest timer', '/special-chars/daily-quest/']
+  ]) {
+    await scenario(`${label} keyboard shortcut isolation`, routePath, async page => {
+      await page.locator('.theme-toggle-tool').focus();
+      await page.keyboard.press('Space');
+      assert(!await page.evaluate(() => running), `${label} started while Space activated a focused button`);
+
+      await page.evaluate(() => {
+        document.body.tabIndex = -1;
+        document.body.focus();
+      });
+      await page.keyboard.press('Space');
+      assert(await page.evaluate(() => running), `${label} global Space shortcut stopped working outside controls`);
+      await page.evaluate(() => doReset());
+    });
+  }
+
   await scenario('daily quest self-review reward loop', '/special-chars/daily-quest/', async page => {
     await page.evaluate(() => { localStorage.clear(); location.reload(); });
     await page.waitForFunction(() => window.__teemoDailyQuest?.getState);
@@ -417,10 +437,13 @@ async function main() {
     const rewarded = await page.evaluate(() => ({
       state: window.__teemoDailyQuest.getState(),
       rewardVisible: !document.querySelector('#rewardStep').hidden,
-      result: document.querySelector('#rewardResult').textContent
+      result: document.querySelector('#rewardResult').textContent,
+      labelledBy: document.querySelector('#missionReviewDialog').getAttribute('aria-labelledby'),
+      focused: document.activeElement?.id
     }));
     assert(rewarded.state.coins === 6 && rewarded.state.xp === 7 && rewarded.state.totalCompleted === 1, `mission reward was not applied once: ${JSON.stringify(rewarded)}`);
     assert(!rewarded.state.pendingReview && rewarded.rewardVisible && rewarded.result.includes('+6냥'), 'reward confirmation did not replace the self-review step');
+    assert(rewarded.labelledBy === 'rewardTitle' && rewarded.focused === 'rewardTitle', `reward dialog lost its name or focus: ${JSON.stringify(rewarded)}`);
     await page.locator('#viewGameBtn').click();
     assert(!await page.locator('#journeyGamePanel').getAttribute('hidden'), 'reward handoff did not open the game tab');
     assert(await page.locator('#totalMissionCount').textContent() === '1', 'game tab did not reflect the completed timer mission');

@@ -36,6 +36,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .input-row input:focus,.input-row select:focus{border-color:var(--accent)}
 .input-row .unit{font-size:13px;color:var(--text-info);font-weight:600;white-space:nowrap;min-width:28px}
 .condition-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.taxi-toggle-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .condition-grid .input-row input{min-width:0}
 .input-help{font-size:10px;color:var(--text-muted);line-height:1.5}
 .estimate-note{padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-bar);font-size:11px;color:var(--text-info);line-height:1.55}
@@ -96,6 +97,9 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .footer a:hover{color:var(--text-secondary)}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.4);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+@media(max-width:420px){
+  .condition-grid,.taxi-toggle-grid{grid-template-columns:minmax(0,1fr)}
+}
 </style>
 <link rel="stylesheet" href="/special-chars/tool-shell.css">
 </head>
@@ -123,7 +127,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
         <span class="unit">km</span>
       </div>
     </div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+    <div class="taxi-toggle-grid">
       <!-- 심야할증 -->
       <div class="toggle-row" onclick="toggleNight()" style="padding: 10px 12px; gap: 6px;">
         <div style="flex:1; min-width:0;">
@@ -253,7 +257,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 <nav class="site-policy-links" aria-label="사이트 정책"><a href="/about.html">사이트 소개</a><a href="/editorial-policy.html">편집정책</a><a href="/contact.html">문의</a><a href="/privacy.html">개인정보처리방침</a></nav>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 
 <script>

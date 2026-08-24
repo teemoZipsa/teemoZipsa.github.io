@@ -475,7 +475,9 @@ function showToast(msg) {
 
 // Keyboard shortcuts
 document.addEventListener('keydown', e => {
-  if (e.target.tagName === 'INPUT') return;
+  if (e.defaultPrevented || e.repeat || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+  const target = e.target instanceof Element ? e.target : null;
+  if (document.querySelector('dialog[open]') || target?.closest('input, textarea, select, button, a, [contenteditable], [role="button"], [role="tab"]')) return;
   if (e.code === 'Space') { e.preventDefault(); doStartStop(); }
   if (e.code === 'KeyR') doReset();
   if (e.code === 'KeyL' && mode === 'stopwatch') doLap();

@@ -80,6 +80,14 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   border: 2px solid var(--accent); left: 50%; top: 50%; transform: translate(-50%, -50%);
 }
 @keyframes rip{ 0%{width:0;height:0;opacity:.5} 100%{width:400px;height:400px;opacity:0} }
+@media(max-width:420px){
+  .content{padding:16px 12px}
+  .input-group{flex-direction:column}
+  .fetch-btn{min-height:44px}
+  .display-box{padding:24px 12px}
+  .time-display{font-size:clamp(2rem,11vw,2.75rem);letter-spacing:0}
+  .time-ms{font-size:clamp(1rem,5vw,1.25rem)}
+}
 </style>
 <link rel="stylesheet" href="/special-chars/tool-shell.css">
 </head>

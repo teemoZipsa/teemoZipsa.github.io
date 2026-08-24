@@ -94,6 +94,14 @@ function auditStaticPage(file) {
     failures.push(`${rel}: 맨 위 버튼 CSS는 tool-shell.css에서만 관리해야 합니다.`);
   }
 
+  const toasts = findAll(document, node => node.tagName === 'div' && classList(node).has('toast'));
+  for (const toast of toasts) {
+    const toastAttributes = attributes(toast);
+    if (toastAttributes.get('role') !== 'status' || toastAttributes.get('aria-live') !== 'polite') {
+      failures.push(`${rel}: 토스트 피드백에는 role="status"와 aria-live="polite"가 필요합니다.`);
+    }
+  }
+
   if (isDirectKoreanPage(file, document) && !hasNoindex(html)) {
     if (countExact(html, '/special-chars/site-links.css') !== 1) {
       failures.push(`${rel}: 공개 한국어 도구에 site-links.css가 정확히 하나 필요합니다.`);
@@ -191,6 +199,11 @@ async function probePage(context, base, file, width) {
 
   try {
     await page.setViewportSize({ width, height: 844 });
+    if (rel === 'special-chars/quick-reply/index.html') {
+      await page.addInitScript(() => {
+        localStorage.setItem('qr_customs', JSON.stringify(['모바일 카드 조작부 겹침 검사 문구']));
+      });
+    }
     const response = await page.goto(`${base}${route}?ui-audit=1`, {
       waitUntil: 'domcontentloaded',
       timeout: 15000
@@ -230,6 +243,55 @@ async function probePage(context, base, file, width) {
       )].filter(visible);
       const headerLinks = header ? [...header.querySelectorAll('a')].filter(visible) : [];
       const policyLinks = [...document.querySelectorAll('.site-policy-links a')].filter(visible);
+      const actionControls = [...document.querySelectorAll('button, [role="button"], [role="tab"]')]
+        .filter(visible)
+        .filter(element => !header?.contains(element) && element !== scrollTop);
+      const responsiveContainers = [...document.querySelectorAll(
+        '.code-row, .speed-row, .condition-grid, .taxi-toggle-grid, .sub-item, .date-row, .size-row, .input-row, .input-group, .emoji-grid, .num-grid, .bcs-selector'
+      )].filter(visible);
+      const bottomBar = document.querySelector('.bottom-bar');
+      let bottomBarProblem = null;
+      if (bottomBar && visible(bottomBar)) {
+        const info = bottomBar.querySelector(':scope > .info');
+        const barActions = [...bottomBar.querySelectorAll('.action-btn')].filter(visible);
+        const actionTop = barActions.length
+          ? Math.min(...barActions.map(element => element.getBoundingClientRect().top))
+          : null;
+        const narrowActions = barActions.filter(element => element.getBoundingClientRect().width < 79.5);
+        if ((info && actionTop !== null && actionTop < info.getBoundingClientRect().bottom - 1) || narrowActions.length) {
+          bottomBarProblem = narrowActions.length
+            ? `폭이 좁은 버튼: ${narrowActions.map(dimensions).join(', ')}`
+            : '상태 문구와 액션 버튼이 같은 좁은 행에 배치됩니다.';
+        }
+      }
+
+      const quickReplyDelete = document.querySelector('.msg-delete');
+      const quickReplyCard = quickReplyDelete?.closest('.msg-card');
+      const quickReplyFavorite = quickReplyCard?.querySelector('.msg-favorite');
+      const quickReplyCopy = quickReplyCard?.querySelector('.msg-copy');
+      const quickReplyOverlap = Boolean(quickReplyDelete && quickReplyFavorite && quickReplyCopy && (
+        intersects(quickReplyDelete.getBoundingClientRect(), quickReplyFavorite.getBoundingClientRect()) ||
+        intersects(quickReplyDelete.getBoundingClientRect(), quickReplyCopy.getBoundingClientRect()) ||
+        intersects(quickReplyFavorite.getBoundingClientRect(), quickReplyCopy.getBoundingClientRect())
+      ));
+      const toast = document.querySelector('.toast');
+      let toastState = null;
+      if (toast) {
+        toast.style.transition = 'none';
+        toast.textContent = location.pathname.includes('/en/')
+          ? 'Saved. This deliberately long feedback message must wrap inside the screen without covering the page width.'
+          : '저장했습니다. 긴 피드백 문구도 화면 너비 안에서 자연스럽게 줄바꿈되어야 합니다.';
+        toast.classList.add('show');
+        const toastRect = toast.getBoundingClientRect();
+        const toastStyle = getComputedStyle(toast);
+        toastState = {
+          role: toast.getAttribute('role'),
+          live: toast.getAttribute('aria-live'),
+          visible: Number.parseFloat(toastStyle.opacity) > 0.9,
+          whiteSpace: toastStyle.whiteSpace,
+          outsideViewport: toastRect.left < -1 || toastRect.right > viewportWidth + 1 || toastRect.bottom > innerHeight + 1
+        };
+      }
 
       return {
         overflow: Math.max(0, scrollWidth - viewportWidth),
@@ -261,7 +323,21 @@ async function probePage(context, base, file, width) {
         smallPolicyLinks: policyLinks
           .filter(element => element.getBoundingClientRect().height < 43.5)
           .slice(0, 6)
-          .map(dimensions)
+          .map(dimensions),
+        smallActions: actionControls
+          .filter(element => {
+            const rect = element.getBoundingClientRect();
+            return rect.width < 43.5 || rect.height < 43.5;
+          })
+          .slice(0, 8)
+          .map(dimensions),
+        clippedContainers: responsiveContainers
+          .filter(element => element.scrollWidth - element.clientWidth > 2)
+          .slice(0, 8)
+          .map(element => `${element.className || element.tagName} (+${element.scrollWidth - element.clientWidth}px)`),
+        bottomBarProblem,
+        quickReplyOverlap,
+        toastState
       };
     });
 
@@ -277,6 +353,19 @@ async function probePage(context, base, file, width) {
     if (state.smallFields.length) failures.push(`${prefix}: 높이 44px 미만 입력 필드 — ${state.smallFields.join(', ')}`);
     if (state.smallHeaderLinks.length) failures.push(`${prefix}: 44px 미만 헤더 링크 — ${state.smallHeaderLinks.join(', ')}`);
     if (state.smallPolicyLinks.length) failures.push(`${prefix}: 44px 미만 정책 링크 — ${state.smallPolicyLinks.join(', ')}`);
+    if (state.smallActions.length) failures.push(`${prefix}: 44px 미만 조작 버튼 — ${state.smallActions.join(', ')}`);
+    if (state.clippedContainers.length) failures.push(`${prefix}: 내부에서 잘리는 반응형 컨테이너 — ${state.clippedContainers.join(', ')}`);
+    if (state.bottomBarProblem) failures.push(`${prefix}: 하단 액션 바가 모바일 행 규격을 벗어납니다 (${state.bottomBarProblem}).`);
+    if (state.quickReplyOverlap) failures.push(`${prefix}: 빠른 답장 커스텀 카드의 복사·삭제·즐겨찾기 조작부가 겹칩니다.`);
+    if (state.toastState && (
+      state.toastState.role !== 'status' ||
+      state.toastState.live !== 'polite' ||
+      !state.toastState.visible ||
+      state.toastState.whiteSpace !== 'normal' ||
+      state.toastState.outsideViewport
+    )) {
+      failures.push(`${prefix}: 토스트 피드백이 공통 의미·줄바꿈·화면 경계 규격을 충족하지 않습니다.`);
+    }
     if (runtimeProblems.length) failures.push(`${prefix}: ${runtimeProblems.slice(0, 4).join(' | ')}`);
 
   } catch (error) {
@@ -410,4 +499,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`UI consistency audit passed: ${files.length} tools × ${mobileWidths.length} mobile widths plus desktop scroll controls, shared headers, touch fields, policy links, and overflow checks.`);
+console.log(`UI consistency audit passed: ${files.length} tools × ${mobileWidths.length} mobile widths plus desktop scroll controls, shared headers, touch actions, wrapped feedback, policy links, and overflow checks.`);

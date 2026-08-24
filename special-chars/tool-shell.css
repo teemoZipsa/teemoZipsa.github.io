@@ -1,8 +1,8 @@
 /*
  * Shared shell for individual tools.
  *
- * This file intentionally owns only the page frame, header controls and
- * small-screen safety rules. Tool-specific content keeps its local styles.
+ * This file owns the shared page frame, header controls, transient feedback
+ * and small-screen safety rules. Tool-specific content keeps its local styles.
  */
 
 html[data-tool-layout] {
@@ -179,6 +179,39 @@ html[data-tool-layout] .tool-confirm-dialog__actions .tool-confirm-dialog__confi
   color: var(--text-on-accent);
 }
 
+html[data-tool-layout] .toast {
+  left: 50%;
+  bottom: max(0.75rem, env(safe-area-inset-bottom));
+  width: max-content;
+  max-width: min(30rem, calc(100vw - 1.5rem));
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.75rem;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  box-shadow: var(--shadow-lg);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.45;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  pointer-events: none;
+  z-index: 1100;
+  opacity: 0;
+  transform: translate(-50%, calc(100% + 2rem));
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+html[data-tool-layout] .toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+html[data-tool-layout] :where(.guide-content, .work-context, .report-box) {
+  overflow-wrap: anywhere;
+}
+
 html[data-tool-layout] .scroll-top-btn {
   position: fixed;
   right: max(1.5rem, env(safe-area-inset-right));
@@ -236,6 +269,69 @@ html[data-tool-layout] .scroll-top-btn:hover {
     select,
     textarea
   ) {
+    min-width: 0;
+    max-width: 100%;
+    min-height: 2.75rem;
+  }
+
+  html[data-tool-layout] input[type="range"] {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  html[data-tool-layout] button:not(.scroll-top-btn) {
+    min-height: 2.75rem;
+    touch-action: manipulation;
+  }
+
+  html[data-tool-layout] :is(
+    .char-btn-small,
+    .del-btn,
+    .sub-del,
+    .pw-btn,
+    .include-help-toggle,
+    .quick-btn,
+    .mode-tab,
+    .toggle-opt,
+    .btn-copy-small
+  ) {
+    min-width: 2.75rem;
+  }
+
+  html[data-tool-layout] .char-grid,
+  html[data-tool-layout] .emoji-grid,
+  html[data-tool-layout] .num-grid {
+    grid-template-columns: repeat(auto-fill, minmax(2.75rem, 1fr));
+  }
+
+  html[data-tool-layout] .bcs-selector {
+    grid-template-columns: repeat(auto-fit, minmax(2.75rem, 1fr));
+  }
+
+  html[data-tool-layout] .emoji-btn {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  html[data-tool-layout] .bottom-bar {
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  html[data-tool-layout] .bottom-bar > .info {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  html[data-tool-layout] .bottom-bar > :where(.bottom-actions, .info + div) {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  html[data-tool-layout] .bottom-bar > .action-btn,
+  html[data-tool-layout] .bottom-bar > :where(.bottom-actions, .info + div) > .action-btn {
+    flex: 1 1 0;
+    min-width: 0;
     min-height: 2.75rem;
   }
 
