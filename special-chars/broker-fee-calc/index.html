@@ -63,17 +63,19 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
 /* 상세 내역 */
 .detail-box{background:var(--bg-guide);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
-.detail-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+.detail-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:6px 0;border-bottom:1px solid var(--border);font-size:14px}
 .detail-row:last-child{border-bottom:none}
 .detail-label{color:var(--text-info)}
 .detail-value{font-weight:700;color:var(--text-primary);font-variant-numeric:tabular-nums}
 
 /* 요율표 */
-.rate-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:8px}
+.rate-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px;table-layout:fixed}
 .rate-table th{background:var(--bg-btn);padding:6px 8px;text-align:center;font-weight:600;color:var(--text-secondary);border:1px solid var(--border)}
 .rate-table td{padding:6px 8px;text-align:center;border:1px solid var(--border);color:var(--text-info)}
 .rate-table tr.current-row{background:var(--accent-bg);font-weight:700}
 .rate-table tr.current-row td{color:var(--accent-text)}
+.input-note,.rate-note,.rate-revision{font-size:12px;color:var(--text-muted)}
+.rate-note{margin-top:8px}
 
 .copy-btn{width:100%;padding:11px;background:var(--bg-header);color:var(--text-on-accent);border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .2s}
 .copy-btn:hover{opacity:.85}
@@ -98,7 +100,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:0 12px 12px}
 .related-tools h2 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
-.related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
+.related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:14px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
 .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
 
 @keyframes fadeIn {
@@ -156,7 +158,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
           <option value="yes">충족함</option>
         </select>
       </div>
-      <div style="font-size:11px;color:var(--text-muted)">전용입식 부엌, 전용수세식 화장실 및 목욕시설을 모두 갖추고 전용면적이 85㎡ 이하인 경우에만 0.5%/0.4% 특례를 적용합니다.</div>
+      <div class="input-note">전용입식 부엌, 전용수세식 화장실 및 목욕시설을 모두 갖추고 전용면적이 85㎡ 이하인 경우에만 0.5%/0.4% 특례를 적용합니다.</div>
     </div>
 
     <!-- 거래 금액 -->
@@ -166,7 +168,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
         <input aria-label="거래 금액" type="number" id="price" value="300000000" min="0" step="10000000" oninput="calc()">
         <span class="unit">원</span>
       </div>
-      <div style="font-size:11px;color:var(--text-muted)" id="priceHint"></div>
+      <div class="input-note" id="priceHint"></div>
     </div>
 
     <!-- 월세 입력 (월세 선택 시만) -->
@@ -188,7 +190,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
           <option value="noadd">별도 금액 미포함 (견적 확인)</option>
         </select>
       </div>
-      <div style="font-size:11px;color:var(--text-muted)">서울시 요율표는 부가가치세 별도로 안내합니다. 실제 제시 금액의 포함 여부와 증빙은 중개사무소에 확인하세요.</div>
+      <div class="input-note">서울시 요율표는 부가가치세 별도로 안내합니다. 실제 제시 금액의 포함 여부와 증빙은 중개사무소에 확인하세요.</div>
     </div>
 
     <!-- 결과 -->
@@ -542,7 +544,7 @@ function renderRateTable(currentAmount) {
         <tr ${tradeType === 0 ? 'class="current-row"' : ''}><td>매매·교환</td><td>0.5% 이내</td><td>0.9% 이내</td></tr>
         <tr ${tradeType !== 0 ? 'class="current-row"' : ''}><td>임대차 등</td><td>0.4% 이내</td><td>0.9% 이내</td></tr>
       </table>
-      <p style="margin-top:8px;font-size:11px">* 현재 입력: 전용 ${Number.isFinite(area) ? area + '㎡' : '미입력'}, 주거요건 ${meetsResidentialRequirements ? '충족' : '미충족 또는 미확인'}<br>* 주거요건: 전용입식 부엌, 전용수세식 화장실 및 목욕시설 구비</p>`;
+      <p class="rate-note">* 현재 입력: 전용 ${Number.isFinite(area) ? area + '㎡' : '미입력'}, 주거요건 ${meetsResidentialRequirements ? '충족' : '미충족 또는 미확인'}<br>* 주거요건: 전용입식 부엌, 전용수세식 화장실 및 목욕시설 구비</p>`;
     return;
   }
   
@@ -562,12 +564,12 @@ function renderRateTable(currentAmount) {
   }
   
   container.innerHTML = `
-    <p><b>${title} 요율표</b> <span style="font-size:10px;color:var(--text-muted)">(2021.10.19 개정)</span></p>
+    <p><b>${title} 요율표</b> <span class="rate-revision">(2021.10.19 개정)</span></p>
     <table class="rate-table">
       <tr><th>거래금액</th><th>상한요율</th><th>한도액</th></tr>
       ${rows}
     </table>
-    <p style="margin-top:8px;font-size:11px">* 현재 적용 구간이 <span style="color:var(--accent-text);font-weight:700">하이라이트</span> 됩니다</p>`;
+    <p class="rate-note">* 현재 적용 구간이 <span style="color:var(--accent-text);font-weight:700">하이라이트</span> 됩니다</p>`;
 }
 
 function copyResult() {

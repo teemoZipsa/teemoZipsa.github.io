@@ -184,6 +184,80 @@ function startServer() {
   });
 }
 
+function collectTypographyState() {
+  const visible = element => {
+    const style = getComputedStyle(element);
+    const rect = element.getBoundingClientRect();
+    return style.display !== 'none' && style.visibility !== 'hidden' && Number(style.opacity) > 0 && rect.width > 0 && rect.height > 0;
+  };
+  const meaningful = element => /[\p{L}\p{N}]/u.test((element.textContent || '').replace(/\s+/g, ' ').trim());
+  const fontSize = (element, pseudo) => Number.parseFloat(getComputedStyle(element, pseudo).fontSize) || 0;
+  const hasOwnMeaningfulText = element => [...element.childNodes].some(node => (
+    node.nodeType === Node.TEXT_NODE && /[\p{L}\p{N}]/u.test((node.textContent || '').trim())
+  ));
+  const hasReadablePseudoReplacement = element => ['::before', '::after'].some(pseudo => {
+    const style = getComputedStyle(element, pseudo);
+    return style.display !== 'none' && !['none', 'normal', '""'].includes(style.content) && fontSize(element, pseudo) >= 11.75;
+  });
+  const isTypographyException = element => (
+    element.matches('sup, sub, .sr-only, .visually-hidden') ||
+    (element.matches('.tool-shell-back, .tool-header-actions > a') && fontSize(element) < 11.75 && hasReadablePseudoReplacement(element))
+  );
+  const label = element => (element.getAttribute('aria-label') || element.textContent || element.tagName)
+    .trim().replace(/\s+/g, ' ').slice(0, 36);
+  const describe = (element, size = fontSize(element)) => `${label(element)} (${size.toFixed(1)}px)`;
+  const fields = [...document.querySelectorAll(
+    'input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="color"]), select, textarea'
+  )].filter(visible);
+  const controlSelector = [
+    '.action-btn', '.bcs-btn', '.breed-item', '.btn', '.btn-copy-small', '.emoji-tab',
+    '.fuel-tab', '.gender-btn', '.journey-tab', '.main-tab', '.min-wage button', '.mode-tab',
+    '.num-btn', '.preset', '.preset-btn', '.q-btn', '.quick-add', '.quick-btn', '.related-chip',
+    '.scale-btn', '.size-tab', '.speed-preset', '.tab', '.tool-card', '.toggle-opt', '.type-tab',
+    '.unit-tab'
+  ].join(',');
+  const controls = [...document.querySelectorAll(controlSelector)].filter(visible).filter(meaningful);
+  const textControls = [...document.querySelectorAll('button, [role="button"], [role="tab"], input[type="button"], input[type="submit"], input[type="reset"]')]
+    .filter(visible).filter(meaningful);
+  const semanticText = [...document.querySelectorAll('label, legend, summary')].filter(visible).filter(meaningful);
+  const microText = [...document.querySelectorAll('.footer, .site-policy-links, small')].filter(visible).filter(meaningful);
+  const readingSurfaces = [...document.querySelectorAll('.guide-content, .report-box, .work-context')]
+    .filter(visible).filter(meaningful);
+  const leafText = [...document.querySelectorAll('body *')]
+    .filter(visible)
+    .filter(hasOwnMeaningfulText)
+    .filter(element => !isTypographyException(element));
+  const ranges = [...document.querySelectorAll('input[type="range"]')].filter(element => {
+    const style = getComputedStyle(element);
+    const rect = element.getBoundingClientRect();
+    return style.display !== 'none' && style.visibility !== 'hidden' && rect.height > 0;
+  });
+  const title = document.querySelector('.tool-shell-header > h1');
+
+  return {
+    titleFont: title && visible(title) ? fontSize(title) : 0,
+    smallFields: fields.filter(element => fontSize(element) < 15.75).slice(0, 8).map(element => describe(element)),
+    smallPlaceholders: fields
+      .filter(element => element.matches('input, textarea') && element.hasAttribute('placeholder'))
+      .filter(element => fontSize(element, '::placeholder') < 15.75)
+      .slice(0, 8)
+      .map(element => describe(element, fontSize(element, '::placeholder'))),
+    smallControls: controls.filter(element => fontSize(element) < 13.75).slice(0, 10).map(element => describe(element)),
+    smallTextControls: textControls.filter(element => fontSize(element) < 13.75).slice(0, 10).map(element => describe(element)),
+    smallSemanticText: semanticText.filter(element => fontSize(element) < 13.75).slice(0, 10).map(element => describe(element)),
+    smallMicroText: microText.filter(element => fontSize(element) < 11.75).slice(0, 10).map(element => describe(element)),
+    smallReadingSurfaces: readingSurfaces.filter(element => fontSize(element) < 13.75).slice(0, 8).map(element => describe(element)),
+    smallLeafText: leafText.filter(element => fontSize(element) < 11.75).slice(0, 12).map(element => describe(element)),
+    collapsedRanges: ranges
+      .filter(element => element.getBoundingClientRect().width < 43.5)
+      .slice(0, 6)
+      .map(element => {
+        const rect = element.getBoundingClientRect();
+        return `${label(element)} (${rect.width.toFixed(1)}px wide)`;
+      })
+  };
+}
+
 async function probePage(context, base, file, width) {
   const rel = relative(file);
   const route = routeForFile(file);
@@ -247,7 +321,7 @@ async function probePage(context, base, file, width) {
         .filter(visible)
         .filter(element => !header?.contains(element) && element !== scrollTop);
       const responsiveContainers = [...document.querySelectorAll(
-        '.code-row, .speed-row, .condition-grid, .taxi-toggle-grid, .sub-item, .date-row, .size-row, .input-row, .input-group, .emoji-grid, .num-grid, .bcs-selector'
+        '.code-row, .course-table, .speed-row, .condition-grid, .taxi-toggle-grid, .sub-item, .date-row, .size-row, .input-row, .input-group, .emoji-grid, .num-grid, .bcs-selector'
       )].filter(visible);
       const bottomBar = document.querySelector('.bottom-bar');
       let bottomBarProblem = null;
@@ -341,6 +415,7 @@ async function probePage(context, base, file, width) {
       };
     });
 
+    const typography = await page.evaluate(collectTypographyState);
     const prefix = `${rel} @ ${width}px`;
     if (state.overflow > 1) failures.push(`${prefix}: ${state.overflow}px 가로 오버플로가 있습니다.`);
     if (state.shellOutsideViewport) failures.push(`${prefix}: 앱 셸이 뷰포트 밖으로 벗어납니다.`);
@@ -366,8 +441,47 @@ async function probePage(context, base, file, width) {
     )) {
       failures.push(`${prefix}: 토스트 피드백이 공통 의미·줄바꿈·화면 경계 규격을 충족하지 않습니다.`);
     }
+    if (typography.titleFont < 17.75) failures.push(`${prefix}: 도구 제목이 18px보다 작습니다 (${typography.titleFont.toFixed(1)}px).`);
+    if (typography.smallFields.length) failures.push(`${prefix}: 16px 미만 입력 글자 — ${typography.smallFields.join(', ')}`);
+    if (typography.smallPlaceholders.length) failures.push(`${prefix}: 16px 미만 입력 안내문 — ${typography.smallPlaceholders.join(', ')}`);
+    if (typography.smallControls.length) failures.push(`${prefix}: 14px 미만 주요 조작 문구 — ${typography.smallControls.join(', ')}`);
+    if (typography.smallTextControls.length) failures.push(`${prefix}: 14px 미만 텍스트 버튼 — ${typography.smallTextControls.join(', ')}`);
+    if (typography.smallSemanticText.length) failures.push(`${prefix}: 14px 미만 라벨·범례·가이드 제목 — ${typography.smallSemanticText.join(', ')}`);
+    if (typography.smallMicroText.length) failures.push(`${prefix}: 12px 미만 보조 문구 — ${typography.smallMicroText.join(', ')}`);
+    if (typography.smallReadingSurfaces.length) failures.push(`${prefix}: 14px 미만 본문 영역 — ${typography.smallReadingSurfaces.join(', ')}`);
+    if (typography.smallLeafText.length) failures.push(`${prefix}: 12px 미만 가시 텍스트 — ${typography.smallLeafText.join(', ')}`);
+    if (typography.collapsedRanges.length) failures.push(`${prefix}: 폭이 지나치게 좁은 범위 입력 — ${typography.collapsedRanges.join(', ')}`);
     if (runtimeProblems.length) failures.push(`${prefix}: ${runtimeProblems.slice(0, 4).join(' | ')}`);
 
+  } catch (error) {
+    failures.push(`${rel} @ ${width}px: ${error.message || error}`);
+  } finally {
+    await page.close();
+  }
+}
+
+async function probeTypographyPage(context, base, file, width) {
+  const rel = relative(file);
+  const page = await context.newPage();
+  try {
+    await page.setViewportSize({ width, height: 900 });
+    const response = await page.goto(`${base}${routeForFile(file)}?typography-audit=1`, {
+      waitUntil: 'domcontentloaded',
+      timeout: 15000
+    });
+    if (!response?.ok()) throw new Error(`HTTP ${response?.status() || 'no response'}`);
+    await page.waitForSelector('.theme-toggle-tool.theme-toggle-inline');
+    const typography = await page.evaluate(collectTypographyState);
+    const prefix = `${rel} @ ${width}px`;
+    if (typography.titleFont < 17.75) failures.push(`${prefix}: 도구 제목이 18px보다 작습니다 (${typography.titleFont.toFixed(1)}px).`);
+    if (typography.smallFields.length) failures.push(`${prefix}: 16px 미만 입력 글자 — ${typography.smallFields.join(', ')}`);
+    if (typography.smallPlaceholders.length) failures.push(`${prefix}: 16px 미만 입력 안내문 — ${typography.smallPlaceholders.join(', ')}`);
+    if (typography.smallControls.length) failures.push(`${prefix}: 14px 미만 주요 조작 문구 — ${typography.smallControls.join(', ')}`);
+    if (typography.smallTextControls.length) failures.push(`${prefix}: 14px 미만 텍스트 버튼 — ${typography.smallTextControls.join(', ')}`);
+    if (typography.smallSemanticText.length) failures.push(`${prefix}: 14px 미만 라벨·범례·가이드 제목 — ${typography.smallSemanticText.join(', ')}`);
+    if (typography.smallMicroText.length) failures.push(`${prefix}: 12px 미만 보조 문구 — ${typography.smallMicroText.join(', ')}`);
+    if (typography.smallReadingSurfaces.length) failures.push(`${prefix}: 14px 미만 본문 영역 — ${typography.smallReadingSurfaces.join(', ')}`);
+    if (typography.smallLeafText.length) failures.push(`${prefix}: 12px 미만 가시 텍스트 — ${typography.smallLeafText.join(', ')}`);
   } catch (error) {
     failures.push(`${rel} @ ${width}px: ${error.message || error}`);
   } finally {
@@ -474,6 +588,23 @@ async function runMobileAudit(files) {
       await probeDesktopScroll(desktopContext, base, file);
     }
     await desktopContext.close();
+
+    for (const width of [768, 1280]) {
+      const typographyContext = await browser.newContext({
+        viewport: { width, height: 900 },
+        colorScheme: 'light',
+        reducedMotion: 'reduce',
+        serviceWorkers: 'block'
+      });
+      await typographyContext.route('**/*', route => {
+        if (route.request().url().startsWith(`${base}/`)) return route.continue();
+        return route.abort('blockedbyclient');
+      });
+      for (let index = 0; index < files.length; index += 6) {
+        await Promise.all(files.slice(index, index + 6).map(file => probeTypographyPage(typographyContext, base, file, width)));
+      }
+      await typographyContext.close();
+    }
   } finally {
     await browser.close();
     await new Promise(resolve => server.close(resolve));
@@ -499,4 +630,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`UI consistency audit passed: ${files.length} tools × ${mobileWidths.length} mobile widths plus desktop scroll controls, shared headers, touch actions, wrapped feedback, policy links, and overflow checks.`);
+console.log(`UI consistency audit passed: ${files.length} tools × 4 responsive widths plus desktop scroll controls, readable typography, shared headers, touch actions, wrapped feedback, policy links, and overflow checks.`);

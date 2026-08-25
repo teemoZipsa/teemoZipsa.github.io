@@ -75,14 +75,14 @@
 
   /* 차트 */
   .chart-wrap{display:none;padding:0 16px 12px}
-  .chart-title{font-size:11px;color:var(--calc-expr-text);margin-bottom:8px;font-weight:600}
+  .chart-title{font-size:14px;color:var(--calc-expr-text);margin-bottom:8px;font-weight:600}
   .chart{
     background:var(--bg-bar);border-radius:10px;padding:12px;
     height:180px;display:flex;align-items:flex-end;gap:2px;
     position:relative;overflow:visible;
   }
   .bar-wrap{
-    flex:1;display:flex;flex-direction:column;align-items:center;
+    flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;
     height:100%;justify-content:flex-end;position:relative;
   }
   .bar{
@@ -92,11 +92,11 @@
     min-height:2px;position:relative;cursor:pointer;
   }
   .bar:hover{background:linear-gradient(180deg,var(--accent),var(--accent-hover))}
-  .bar-label{font-size:8px;color:var(--calc-expr-text);margin-top:3px;white-space:nowrap}
+  .bar-label{font-size:12px;color:var(--calc-expr-text);margin-top:3px;white-space:nowrap}
   .bar-tooltip{
     display:none;position:absolute;bottom:calc(100% + 6px);
     left:50%;transform:translateX(-50%);
-    background:var(--bg-input);color:var(--text-primary);font-size:10px;
+    background:var(--bg-input);color:var(--text-primary);font-size:12px;
     padding:4px 8px;border-radius:6px;white-space:nowrap;
     box-shadow:0 4px 12px rgba(0,0,0,.4);z-index:10;font-weight:600;
   }
@@ -104,7 +104,7 @@
 
   /* 시도별 리스트 */
   .trades-wrap{display:none;padding:0 16px 16px}
-  .trades-title{font-size:11px;color:var(--calc-expr-text);margin-bottom:8px;font-weight:600}
+  .trades-title{font-size:14px;color:var(--calc-expr-text);margin-bottom:8px;font-weight:600}
   .trades-list{
     display:flex;flex-direction:column;gap:4px;
     max-height:400px;overflow-y:auto;
@@ -117,7 +117,7 @@
   }
   .trade-item:hover{background:var(--bg-item-hover)}
   .trade-num{
-    font-size:11px;color:var(--calc-expr-text);font-weight:700;
+    font-size:12px;color:var(--calc-expr-text);font-weight:700;
     min-width:36px;text-align:center;
   }
   .trade-info{flex:1;min-width:0}
@@ -125,7 +125,7 @@
     font-size:15px;font-weight:700;color:var(--text-amount);
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
-  .trade-detail{font-size:11px;color:var(--calc-expr-text);margin-top:2px}
+  .trade-detail{font-size:12px;color:var(--calc-expr-text);margin-top:2px}
   .trade-gain{
     font-size:13px;font-weight:700;color:var(--text-success);
     white-space:nowrap;
@@ -138,6 +138,10 @@
   }
   .trade-item.final .trade-amount{color:var(--text-primary);font-size:17px}
   .trade-item.final .trade-gain{color:var(--text-highlight);font-size:14px}
+
+  .chart:has(>.bar-wrap:nth-child(12)) .bar-label{visibility:hidden}
+  .chart:has(>.bar-wrap:nth-child(12))>.bar-wrap:nth-child(5n+1):not(:nth-last-child(-n+3)) .bar-label,
+  .chart:has(>.bar-wrap:nth-child(12))>.bar-wrap:last-child .bar-label{visibility:visible}
 
   .footer{
     background:var(--bg-bar);padding:10px 16px;

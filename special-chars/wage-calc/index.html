@@ -48,10 +48,11 @@
   /* 세후 결과 */
   .after-tax{display:none}
   .after-tax .result-grid{margin-top:8px}
-  .at-label{font-size:11px;color:var(--text-success);font-weight:700;margin-bottom:4px}
+  .at-label{font-size:14px;color:var(--text-success);font-weight:700;margin-bottom:4px}
   .r-card.after .r-value{color:var(--text-success)}
 
-  .min-wage{background:var(--bg-success, #1a2a1a);border:1px solid var(--border-success, #2a4a2a);border-radius:10px;padding:10px 14px;font-size:11px;color:var(--text-success);display:flex;justify-content:space-between;align-items:center}
+  .min-wage{background:var(--bg-success, #1a2a1a);border:1px solid var(--border-success, #2a4a2a);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--text-success);display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .min-wage>span{min-width:0}
   .min-wage button{background:var(--status-green-bg);border:none;color:var(--text-on-accent);min-height:32px;padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;transition:filter .15s}
   .min-wage button:hover{filter:brightness(.9)}
 
@@ -78,7 +79,7 @@
   .related-tools li a{font-size:13px;color:var(--accent-text);text-decoration:none;display:flex;align-items:center;gap:6px;transition:opacity .2s}
   .related-tools li a:hover{opacity:0.8;text-decoration:underline}
 
-  .hint{font-size:10px;color:var(--text-muted);text-align:center;margin-top:10px}
+  .hint{font-size:12px;color:var(--text-muted);text-align:center;margin-top:10px}
   .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text)}
   .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
   .footer a:hover{color:var(--text-guide)}
@@ -88,6 +89,14 @@
   .guide-section[open] summary{background:var(--bg-btn);border-bottom:1px solid var(--border)}
   .guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
   .guide-content ol{padding-left:20px}.guide-content li{margin-bottom:4px}
+  @media(max-width:420px){
+    .field-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+    .field-row>.field:only-child{grid-column:1/-1}
+    .body>.section:first-child>.field-row:first-of-type>.field:last-child:nth-child(3){grid-column:1/-1}
+    .result-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .result-grid>.r-card:last-child{grid-column:1/-1}
+    .section{padding-inline:14px}
+  }
 </style>
 <link rel="stylesheet" href="/special-chars/tool-shell.css">
 </head>
@@ -266,7 +275,7 @@
       <p>원래 3.3% 사업소득세를 공제하는 구조는 실질적으로 '독립 사업자(프리랜서)'에게 적용되는 방식이기 때문에 근로기준법의 보호를 받지 않아 주휴수당 지급 대상이 아닙니다. 그러나 사용자의 지휘·감독을 받는 등 실질적으로 <b>근로자성</b>이 인정된다면, 3.3% 공제와 무관하게 모든 수당(퇴직금 포함) 적용 대상이 될 수 있습니다.</p>
       <br>
       <strong>📊 최근 5개년 및 연도별 최저시급 총람</strong>
-      <table style="width:100%;border-collapse:collapse;margin:8px 0;font-size:11px">
+      <table style="width:100%;border-collapse:collapse;margin:8px 0;font-size:12px">
         <tr style="background:var(--bg-input);color:var(--text-guide)"><th style="padding:6px;border:1px solid var(--border)">연도</th><th style="padding:6px;border:1px solid var(--border)">최저시급</th><th style="padding:6px;border:1px solid var(--border)">인상률</th><th style="padding:6px;border:1px solid var(--border)">월급(209h)</th></tr>
         <tr><td style="padding:5px;border:1px solid var(--border);text-align:center">2022</td><td style="padding:5px;border:1px solid var(--border);text-align:center">9,160원</td><td style="padding:5px;border:1px solid var(--border);text-align:center">5.1%</td><td style="padding:5px;border:1px solid var(--border);text-align:center">1,914,440원</td></tr>
         <tr><td style="padding:5px;border:1px solid var(--border);text-align:center">2023</td><td style="padding:5px;border:1px solid var(--border);text-align:center">9,620원</td><td style="padding:5px;border:1px solid var(--border);text-align:center">5.0%</td><td style="padding:5px;border:1px solid var(--border);text-align:center">2,010,580원</td></tr>
@@ -274,7 +283,7 @@
         <tr><td style="padding:5px;border:1px solid var(--border);text-align:center">2025</td><td style="padding:5px;border:1px solid var(--border);text-align:center">10,030원</td><td style="padding:5px;border:1px solid var(--border);text-align:center">1.7%</td><td style="padding:5px;border:1px solid var(--border);text-align:center">2,096,270원</td></tr>
         <tr style="background:var(--bg-guide)"><td style="padding:5px;border:1px solid var(--border);text-align:center;color:var(--text-amount);font-weight:700">2026</td><td style="padding:5px;border:1px solid var(--border);text-align:center;color:var(--text-amount);font-weight:700">10,320원</td><td style="padding:5px;border:1px solid var(--border);text-align:center;color:#4ade80">2.9%</td><td style="padding:5px;border:1px solid var(--border);text-align:center;color:var(--text-amount);font-weight:700">2,156,880원</td></tr>
       </table>
-      <p style="font-size:11px;color:var(--calc-expr-text)">* 월환산액은 주 40시간 개근에 따른 유급주휴수당 포함하여 월 209시간으로 산정한 기준 금액입니다.</p>
+      <p style="font-size:12px;color:var(--calc-expr-text)">* 월환산액은 주 40시간 개근에 따른 유급주휴수당 포함하여 월 209시간으로 산정한 기준 금액입니다.</p>
     </div>
   </details>
 

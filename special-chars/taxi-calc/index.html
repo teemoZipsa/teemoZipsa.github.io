@@ -38,15 +38,15 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .condition-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .taxi-toggle-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .condition-grid .input-row input{min-width:0}
-.input-help{font-size:10px;color:var(--text-muted);line-height:1.5}
-.estimate-note{padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-bar);font-size:11px;color:var(--text-info);line-height:1.55}
+.input-help{font-size:12px;color:var(--text-muted);line-height:1.5}
+.estimate-note{padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-bar);font-size:13px;color:var(--text-info);line-height:1.55}
 .tabs{display:inline-flex;gap:4px;background:var(--bg-bar);border-radius:10px;padding:4px}
 .tab{padding:8px 18px;border:none;border-radius:8px;background:transparent;color:var(--text-info);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;text-align:center}
 .tab.active{background:var(--accent);color:var(--text-on-accent);box-shadow:0 2px 8px rgba(83,52,131,.3)}
 .tab:hover:not(.active){background:var(--bg-btn)}
 .toggle-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--bg-guide);border:1px solid var(--border);border-radius:10px;cursor:pointer;user-select:none}
 .toggle-row .toggle-label{font-size:14px;font-weight:600;color:var(--text-secondary)}
-.toggle-row .toggle-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+.toggle-row .toggle-sub{font-size:12px;color:var(--text-muted);margin-top:2px;white-space:normal;overflow:visible;text-overflow:clip}
 .toggle-switch{width:44px;height:24px;background:var(--bg-btn);border-radius:12px;position:relative;transition:background .3s;flex-shrink:0}
 .toggle-switch::after{content:'';position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:2px;left:2px;transition:transform .3s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
 .toggle-switch.on{background:var(--accent)}
@@ -61,7 +61,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .s-value{font-size:22px;font-weight:800;color:var(--accent-text)}
 .s-sub{font-size:11px;color:var(--text-info);margin-top:2px}
 .detail-box{background:var(--bg-guide);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
-.detail-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+.detail-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:6px 0;border-bottom:1px solid var(--border);font-size:14px}
 .detail-row:last-child{border-bottom:none}
 .detail-label{color:var(--text-info)}
 .detail-value{font-weight:700;color:var(--text-primary);font-variant-numeric:tabular-nums}
@@ -79,7 +79,9 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:0 12px 12px}
 .related-tools h2 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
-.related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
+.related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:14px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
+.rate-info-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px;table-layout:fixed}
+.rate-info-source{margin-top:8px;font-size:12px;color:var(--text-muted)}
 .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
 
 @keyframes fadeIn {
@@ -131,16 +133,16 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <!-- 심야할증 -->
       <div class="toggle-row" onclick="toggleNight()" style="padding: 10px 12px; gap: 6px;">
         <div style="flex:1; min-width:0;">
-          <div class="toggle-label" style="font-size: 13px;">🌙 심야 최대 할증</div>
-          <div class="toggle-sub" id="nightInfo" style="font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">적용 시 할증 반영</div>
+          <div class="toggle-label">🌙 심야 최대 할증</div>
+          <div class="toggle-sub" id="nightInfo">적용 시 할증 반영</div>
         </div>
         <div class="toggle-switch" id="nightToggle" style="transform: scale(0.9); margin-right: -4px;"></div>
       </div>
       <!-- 왕복 -->
       <div class="toggle-row" onclick="toggleRound()" style="padding: 10px 12px; gap: 6px;">
         <div style="flex:1; min-width:0;">
-          <div class="toggle-label" style="font-size: 13px;">🔄 왕복 계산</div>
-          <div class="toggle-sub" style="font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">편도 요금 × 2</div>
+          <div class="toggle-label">🔄 왕복 계산</div>
+          <div class="toggle-sub">편도 요금 × 2</div>
         </div>
         <div class="toggle-switch" id="roundToggle" style="transform: scale(0.9); margin-right: -4px;"></div>
       </div>
@@ -480,7 +482,7 @@ function renderRateInfo() {
 
   document.getElementById('rateInfo').innerHTML = `
     <p><b>${name} 중형택시 공식 참고 요율</b></p>
-    <table style="width:100%;border-collapse:collapse;font-size:11px;margin-top:8px">
+    <table class="rate-info-table">
       <tr style="background:var(--bg-btn)"><th style="padding:6px;border:1px solid var(--border)">구분</th><th style="padding:6px;border:1px solid var(--border)">요율</th></tr>
       <tr><td style="padding:6px;border:1px solid var(--border)">기본요금</td><td style="padding:6px;border:1px solid var(--border);text-align:center">${fmt(m.base)}원 (${(m.baseDist/1000).toFixed(1)}km)</td></tr>
       <tr><td style="padding:6px;border:1px solid var(--border)">거리요금</td><td style="padding:6px;border:1px solid var(--border);text-align:center">${m.distPer}m당 ${m.distFee}원</td></tr>
@@ -488,7 +490,7 @@ function renderRateInfo() {
       <tr><td style="padding:6px;border:1px solid var(--border)">심야할증</td><td style="padding:6px;border:1px solid var(--border);text-align:center">22~23시·02~04시 20%, 23~02시 40%</td></tr>
       <tr><td style="padding:6px;border:1px solid var(--border)">시계외 할증</td><td style="padding:6px;border:1px solid var(--border);text-align:center">20% (심야와 중복 시 최대 60%)</td></tr>
     </table>
-    <p style="margin-top:8px;font-size:10px;color:var(--text-muted)">* 기준: <a href="${r.sourceUrl}" target="_blank" rel="noopener noreferrer">${r.sourceLabel}</a>. 실제 미터기와 다를 수 있는 참고용 단순 추정입니다.</p>`;
+    <p class="rate-info-source">* 기준: <a href="${r.sourceUrl}" target="_blank" rel="noopener noreferrer">${r.sourceLabel}</a>. 실제 미터기와 다를 수 있는 참고용 단순 추정입니다.</p>`;
 }
 
 function copyResult() {

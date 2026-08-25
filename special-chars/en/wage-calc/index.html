@@ -48,10 +48,11 @@
   /* 세후 결과 */
   .after-tax{display:none}
   .after-tax .result-grid{margin-top:8px}
-  .at-label{font-size:11px;color:var(--text-success);font-weight:700;margin-bottom:4px}
+  .at-label{font-size:14px;color:var(--text-success);font-weight:700;margin-bottom:4px}
   .r-card.after .r-value{color:var(--text-success)}
 
-  .min-wage{background:var(--bg-success, #1a2a1a);border:1px solid var(--border-success, #2a4a2a);border-radius:10px;padding:10px 14px;font-size:11px;color:var(--text-success);display:flex;justify-content:space-between;align-items:center}
+  .min-wage{background:var(--bg-success, #1a2a1a);border:1px solid var(--border-success, #2a4a2a);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--text-success);display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .min-wage>span{min-width:0}
   .min-wage button{background:var(--status-green-bg);border:none;color:var(--text-on-accent);min-height:32px;padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;transition:filter .15s}
   .min-wage button:hover{filter:brightness(.9)}
 
@@ -63,7 +64,7 @@
   .goal-result strong{color:var(--text-highlight)}
   .goal-result .emoji{font-size:20px}
 
-  .hint{font-size:10px;color:var(--text-muted);text-align:center}
+  .hint{font-size:12px;color:var(--text-muted);text-align:center}
   .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text)}
   .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
   .footer a:hover{color:var(--text-guide)}
@@ -83,6 +84,13 @@
   .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
   .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
   .tool-card:hover{border-color:var(--accent);color:var(--accent-text);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+  @media(max-width:420px){
+    .field-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+    .field-row>.field:only-child{grid-column:1/-1}
+    .result-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .result-grid>.r-card:last-child{grid-column:1/-1}
+    .section{padding-inline:14px}
+  }
 </style>
 <link rel="stylesheet" href="/special-chars/tool-shell.css">
 </head>

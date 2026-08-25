@@ -41,19 +41,19 @@
   .gender-btn.active{background:var(--status-orange-bg);color:var(--text-on-accent);font-weight:bold}
 
   .result-box{background:var(--bg-input);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;margin-top:4px}
-  .result-title{font-size:11px;color:var(--text-info);margin-bottom:4px}
+  .result-title{font-size:12px;color:var(--text-info);margin-bottom:4px}
   .result-value{font-size:24px;font-weight:800;color:var(--text-primary);margin-bottom:2px}
   .result-value span{font-size:14px;font-weight:normal;color:var(--text-muted)}
-  .result-desc{font-size:11px;color:var(--calc-expr-text)}
+  .result-desc{font-size:12px;color:var(--calc-expr-text)}
 
   .macros-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
   .macro-card{background:var(--bg-input);border:1px solid var(--border);border-radius:10px;padding:12px 8px;text-align:center}
-  .m-label{font-size:11px;font-weight:600;margin-bottom:4px}
+  .m-label{font-size:14px;font-weight:600;margin-bottom:4px}
   .m-carbs{color:var(--status-blue-text)}
   .m-protein{color:var(--status-pink-text)}
   .m-fat{color:var(--text-highlight)}
   .m-val{font-size:16px;font-weight:800;color:var(--text-primary)}
-  .m-g{font-size:10px;color:var(--text-muted);font-weight:normal}
+  .m-g{font-size:12px;color:var(--text-muted);font-weight:normal}
 
   .progress-container{margin-top:12px;background:var(--bg-input);border-radius:8px;height:8px;position:relative;overflow:hidden}
   .progress-bar{height:100%;background:linear-gradient(90deg,#38bdf8,#f472b6,#facc15);width:100%}
@@ -80,6 +80,14 @@
   .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
   .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
   .tool-card:hover{border-color:var(--accent);color:var(--accent-text);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+  @media(max-width:420px){
+    .field-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+    .field-row>.field:only-child{grid-column:1/-1}
+    .field-row:has(.gender-toggle)>.field{grid-column:1/-1}
+    .macros-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .macro-card:last-child{grid-column:1/-1}
+    .section{padding-inline:14px}
+  }
 </style>
 <!-- 구글 애드센스 코드 -->
 <link rel="stylesheet" href="/special-chars/tool-shell.css">
@@ -189,7 +197,7 @@
     <details class="guide">
       <summary>2. How does the Activity Level Multiplier work?</summary>
       <div class="guide-content">
-        <table style="width:100%;border-collapse:collapse;margin:8px 0;font-size:11px">
+        <table style="width:100%;border-collapse:collapse;margin:8px 0;font-size:12px">
           <tr style="background:var(--bg-input);color:var(--text-guide)"><th style="padding:6px;border:1px solid var(--border)">Level</th><th style="padding:6px;border:1px solid var(--border)">Multiplier</th><th style="padding:6px;border:1px solid var(--border)">Description</th></tr>
           <tr><td style="padding:5px;border:1px solid var(--border)">Sedentary</td><td style="padding:5px;border:1px solid var(--border);text-align:center">1.2</td><td style="padding:5px;border:1px solid var(--border)">Office job, little to no exercise</td></tr>
           <tr><td style="padding:5px;border:1px solid var(--border)">Lightly active</td><td style="padding:5px;border:1px solid var(--border);text-align:center">1.375</td><td style="padding:5px;border:1px solid var(--border)">Light exercise 1-3 days/wk</td></tr>
@@ -197,7 +205,7 @@
           <tr><td style="padding:5px;border:1px solid var(--border)">Very active</td><td style="padding:5px;border:1px solid var(--border);text-align:center">1.725</td><td style="padding:5px;border:1px solid var(--border)">Hard exercise 6-7 days/wk</td></tr>
           <tr><td style="padding:5px;border:1px solid var(--border)">Extra active</td><td style="padding:5px;border:1px solid var(--border);text-align:center">1.9</td><td style="padding:5px;border:1px solid var(--border)">Physical job + daily exercise</td></tr>
         </table>
-        <p style="font-size:11px;color:var(--calc-expr-text);margin-top:8px;">* TDEE (Total Daily Energy Expenditure) = BMR × Activity Multiplier</p>
+        <p style="font-size:12px;color:var(--calc-expr-text);margin-top:8px;">* TDEE (Total Daily Energy Expenditure) = BMR × Activity Multiplier</p>
       </div>
     </details>
 

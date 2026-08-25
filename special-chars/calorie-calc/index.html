@@ -42,19 +42,19 @@
   .gender-btn.active{background:var(--status-orange-bg);color:var(--text-on-accent);font-weight:bold}
 
   .result-box{background:var(--bg-input);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;margin-top:4px}
-  .result-title{font-size:11px;color:var(--text-info);margin-bottom:4px}
+  .result-title{font-size:12px;color:var(--text-info);margin-bottom:4px}
   .result-value{font-size:24px;font-weight:800;color:var(--text-primary);margin-bottom:2px}
   .result-value span{font-size:14px;font-weight:normal;color:var(--text-muted)}
-  .result-desc{font-size:11px;color:var(--calc-expr-text)}
+  .result-desc{font-size:12px;color:var(--calc-expr-text)}
 
   .macros-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
   .macro-card{background:var(--bg-input);border:1px solid var(--border);border-radius:10px;padding:12px 8px;text-align:center}
-  .m-label{font-size:11px;font-weight:600;margin-bottom:4px}
+  .m-label{font-size:14px;font-weight:600;margin-bottom:4px}
   .m-carbs{color:var(--status-blue-text)}
   .m-protein{color:var(--status-pink-text)}
   .m-fat{color:var(--text-highlight)}
   .m-val{font-size:16px;font-weight:800;color:var(--text-primary)}
-  .m-g{font-size:10px;color:var(--text-muted);font-weight:normal}
+  .m-g{font-size:12px;color:var(--text-muted);font-weight:normal}
 
   .progress-container{margin-top:12px;background:var(--bg-input);border-radius:8px;height:8px;position:relative;overflow:hidden}
   .progress-bar{height:100%;background:linear-gradient(90deg,#38bdf8,#f472b6,#facc15);width:100%}
@@ -82,6 +82,14 @@
   .guide-section[open] summary{background:var(--bg-btn);border-bottom:1px solid var(--border)}
   .guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
   .guide-content ol{padding-left:20px}.guide-content li{margin-bottom:4px}
+  @media(max-width:420px){
+    .field-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+    .field-row>.field:only-child{grid-column:1/-1}
+    .field-row:has(.gender-toggle)>.field{grid-column:1/-1}
+    .macros-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .macro-card:last-child{grid-column:1/-1}
+    .section{padding-inline:14px}
+  }
 </style>
 <!-- 구글 애드센스 코드 -->
 <link rel="stylesheet" href="/special-chars/tool-shell.css">
@@ -211,7 +219,7 @@
       <p>기초대사량(Basal Metabolic Rate)은 생명을 유지하기 위해 최소한으로 필요한 에너지입니다. 숨쉬기, 심장 박동, 체온 유지 등 기본적인 생체 활동에 소모되는 칼로리로, 하루 종일 누워만 있어도 소비되는 에너지량입니다. 이 계산기는 가장 정확하다고 알려진 Mifflin-St Jeor 공식을 사용합니다.</p>
       <br>
       <strong>📊 활동계수 참고표</strong>
-      <table style="width:100%;border-collapse:collapse;margin:8px 0;font-size:11px">
+      <table style="width:100%;border-collapse:collapse;margin:8px 0;font-size:12px">
         <tr style="background:var(--bg-input);color:var(--text-guide)"><th style="padding:6px;border:1px solid var(--border)">활동 수준</th><th style="padding:6px;border:1px solid var(--border)">계수</th><th style="padding:6px;border:1px solid var(--border)">설명</th></tr>
         <tr><td style="padding:5px;border:1px solid var(--border)">거의 운동 안 함</td><td style="padding:5px;border:1px solid var(--border);text-align:center">1.2</td><td style="padding:5px;border:1px solid var(--border)">사무직, 재택근무</td></tr>
         <tr><td style="padding:5px;border:1px solid var(--border)">가벼운 활동</td><td style="padding:5px;border:1px solid var(--border);text-align:center">1.375</td><td style="padding:5px;border:1px solid var(--border)">주 1~3일 가벼운 운동</td></tr>
@@ -219,7 +227,7 @@
         <tr><td style="padding:5px;border:1px solid var(--border)">매우 활동적</td><td style="padding:5px;border:1px solid var(--border);text-align:center">1.725</td><td style="padding:5px;border:1px solid var(--border)">주 6~7일 고강도 운동</td></tr>
         <tr><td style="padding:5px;border:1px solid var(--border)">극도로 활동적</td><td style="padding:5px;border:1px solid var(--border);text-align:center">1.9</td><td style="padding:5px;border:1px solid var(--border)">육체노동 + 매일 2회 운동</td></tr>
       </table>
-      <p style="font-size:11px;color:var(--calc-expr-text)">* TDEE(총 에너지 소비량) = BMR × 활동계수</p>
+      <p style="font-size:12px;color:var(--calc-expr-text)">* TDEE(총 에너지 소비량) = BMR × 활동계수</p>
       <br>
       <strong>Q. 다이어트 시 하루 칼로리를 얼마나 줄여야 하나요?</strong>
       <p>일반적으로 TDEE(유지 칼로리)에서 하루 500kcal을 줄이면 일주일에 약 0.5kg 감량이 가능합니다. 1,000kcal 이상 급격한 칼로리 제한은 근손실과 요요 현상을 유발할 수 있으므로 권장하지 않습니다. 남성은 최소 1,500kcal, 여성은 최소 1,200kcal 이하로 내려가지 않는 것이 안전합니다.</p>

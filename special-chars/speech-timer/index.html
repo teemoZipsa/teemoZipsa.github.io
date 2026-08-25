@@ -54,7 +54,7 @@
     display:flex;align-items:center;gap:12px;
     background:var(--bg-bar);border-radius:10px;padding:12px 16px;
   }
-  .speed-label{font-size:12px;color:var(--text-info);white-space:nowrap;font-weight:600}
+  .speed-label{font-size:14px;color:var(--text-info);white-space:nowrap;font-weight:600}
   .speed-slider{
     flex:1;-webkit-appearance:none;appearance:none;
     height:6px;background:var(--bg-btn);border-radius:3px;outline:none;
@@ -76,7 +76,7 @@
   }
   .speed-preset{
     background:var(--bg-input);border:1px solid var(--border);color:var(--text-info);
-    padding:4px 10px;border-radius:6px;font-size:11px;
+    padding:4px 10px;border-radius:6px;font-size:14px;
     cursor:pointer;font-family:inherit;transition:all .15s;
   }
   .speed-preset:hover{border-color:var(--accent);color:var(--text-amount)}
@@ -136,6 +136,13 @@
   }
   .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
   .footer a:hover{color:var(--text-guide)}
+  @media(max-width:420px){
+    .speed-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px}
+    .speed-label{grid-column:1}.speed-value{grid-column:2;min-width:0}
+    .speed-slider{grid-column:1/-1;grid-row:2;width:100%}
+    .speed-presets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+    .speed-preset{min-width:0;padding-inline:6px;white-space:normal}
+  }
 </style>
 <link rel="stylesheet" href="/special-chars/tool-shell.css">
 </head>

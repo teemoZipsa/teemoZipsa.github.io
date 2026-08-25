@@ -6,7 +6,7 @@
     padding: 12px 16px 16px;
     background: var(--bg-bar);
     border-top: 1px solid var(--border);
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .site-policy-links a {
@@ -39,7 +39,7 @@
 
 .work-context p {
     margin: 0 0 10px;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .work-context p:last-child {

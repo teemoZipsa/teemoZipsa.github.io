@@ -30,7 +30,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .body{padding:16px;display:flex;flex-direction:column;gap:14px}
 
 .scale-row{display:flex;gap:6px;align-items:center}
-.scale-label{font-size:12px;color:var(--text-info);font-weight:600;white-space:nowrap}
+.scale-label{font-size:14px;color:var(--text-info);font-weight:600;white-space:nowrap}
 .scale-btn{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg-btn);color:var(--text-secondary);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
 .scale-btn.active{background:var(--accent);color:var(--text-on-accent);border-color:var(--accent)}
 .scale-btn:hover:not(.active){background:var(--bg-btn-hover)}
@@ -44,11 +44,11 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .result-empty{font-size:15px;color:var(--text-placeholder);padding:12px 0}
 
 .course-table{width:100%;border-collapse:separate;border-spacing:0 4px}
-.course-table th{font-size:11px;color:var(--text-info);font-weight:600;text-align:center;padding:6px 4px;text-transform:uppercase}
+.course-table th{font-size:12px;color:var(--text-info);font-weight:600;text-align:center;padding:6px 4px;text-transform:uppercase}
 .course-table td{padding:4px}
 .course-table input{width:100%;padding:8px 6px;background:var(--bg-guide);border:1.5px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;font-family:inherit;text-align:center;outline:none;transition:border-color .2s}
 .course-table input:focus{border-color:var(--accent)}
-.course-table input::placeholder{color:var(--text-placeholder);font-size:11px}
+.course-table input::placeholder{color:var(--text-placeholder);font-size:12px}
 .course-table select{width:100%;padding:8px 4px;background:var(--bg-guide);border:1.5px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;font-family:inherit;text-align:center;outline:none;cursor:pointer;transition:border-color .2s;-webkit-appearance:none}
 .course-table select:focus{border-color:var(--accent)}
 .del-btn{background:none;border:none;color:var(--text-placeholder);font-size:16px;cursor:pointer;padding:4px 8px;border-radius:4px;transition:all .2s}
@@ -103,6 +103,16 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 @media(max-width:640px){
 .name-col{min-width:60px}
   .course-table input,.course-table select{font-size:12px;padding:6px 4px}
+}
+@media(max-width:420px){
+  .scale-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .scale-label{grid-column:1/-1}
+  .scale-btn{min-width:0;padding:8px 4px}
+  .course-table{table-layout:fixed}
+  .credit-col{width:56px}.grade-col{width:76px}.del-col{width:52px}.name-col{width:auto;min-width:0}
+  .course-table input,.course-table select{padding-inline:3px}
+  .guide-content table{table-layout:fixed;font-size:12px!important}
+  .guide-content table :is(th,td){padding:6px 3px}
 }
 </style>
 <link rel="stylesheet" href="/special-chars/tool-shell.css">

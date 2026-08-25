@@ -8,6 +8,11 @@
 html[data-tool-layout] {
   --tool-shell-max: 40rem;
   --tool-shell-gutter: clamp(0.75rem, 2vw, 1.5rem);
+  --tool-type-title: 1.125rem;
+  --tool-type-body: 0.875rem;
+  --tool-type-control: 0.875rem;
+  --tool-type-support: 0.8125rem;
+  --tool-type-meta: 0.75rem;
 }
 
 html[data-tool-layout="mini"] { --tool-shell-max: 22.5rem; }
@@ -50,9 +55,231 @@ html[data-tool-layout] .tool-shell-header > h1 {
   transform: none;
   order: initial;
   text-align: center;
+  font-size: var(--tool-type-title);
   line-height: 1.35;
   overflow-wrap: anywhere;
   pointer-events: auto;
+}
+
+/* Readable type floors shared by legacy and current tools. */
+html[data-tool-layout] :where(label, legend, summary) {
+  font-size: var(--tool-type-body) !important;
+  line-height: 1.45;
+}
+
+html[data-tool-layout] :where(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="color"]),
+  select,
+  textarea
+) {
+  font-size: 1rem !important;
+}
+
+html[data-tool-layout] :where(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="color"]),
+  textarea
+)::placeholder {
+  font-size: 1em !important;
+}
+
+html[data-tool-layout] .field {
+  min-width: 0;
+}
+
+html[data-tool-layout] .timer-inputs input {
+  font-size: 1.25rem !important;
+}
+
+html[data-tool-layout] #petAge {
+  font-size: 1.5rem !important;
+}
+
+html[data-tool-layout] :where(
+  .action-btn,
+  .bcs-btn,
+  .breed-item,
+  .btn,
+  .btn-copy-small,
+  .emoji-tab,
+  .fuel-tab,
+  .gender-btn,
+  .journey-tab,
+  .main-tab,
+  .min-wage button,
+  .mode-tab,
+  .num-btn,
+  .preset,
+  .preset-btn,
+  .q-btn,
+  .quick-add,
+  .quick-btn,
+  .related-chip,
+  .scale-btn,
+  .size-tab,
+  .speed-preset,
+  .tab,
+  .tool-card,
+  .toggle-opt,
+  .type-tab,
+  .unit-tab
+) {
+  font-size: var(--tool-type-control) !important;
+  line-height: 1.35;
+}
+
+html[data-tool-layout] :where(
+  .act-btn,
+  .add-btn,
+  .copy-btn,
+  .btn-now,
+  .btn-swap,
+  .btn-today,
+  .example-chip,
+  .history-item,
+  .mission-choice,
+  .paste-btn,
+  .recent-label,
+  .reset-btn,
+  .reset-opt,
+  .schedule-toggle,
+  .storage-clear,
+  .sub-header,
+  .support-info,
+  .tab-group-label,
+  .tap-reset,
+  .toggle-label,
+  .tool-card .title,
+  .tz-label
+) {
+  font-size: var(--tool-type-control) !important;
+  line-height: 1.45;
+}
+
+html[data-tool-layout] .mission-choice strong {
+  font-size: var(--tool-type-control) !important;
+}
+
+html[data-tool-layout] :where(.tag, .tool-tag, .related-tag) {
+  font-size: var(--tool-type-support) !important;
+  line-height: 1.4;
+}
+
+html[data-tool-layout] .tool-name {
+  font-size: var(--tool-type-body) !important;
+  line-height: 1.4;
+}
+
+html[data-tool-layout] :where(
+  .section-title,
+  .date-section-title,
+  .guide-title,
+  .report-title,
+  .scale-label,
+  .related-tools > h2,
+  .related-tools > h3
+) {
+  font-size: var(--tool-type-body) !important;
+  line-height: 1.45;
+}
+
+html[data-tool-layout] :where(
+  .guide-content,
+  .report-box,
+  .work-context
+) {
+  font-size: var(--tool-type-body) !important;
+  line-height: 1.65;
+}
+
+html[data-tool-layout] .guide-content table {
+  font-size: var(--tool-type-meta) !important;
+  line-height: 1.5;
+}
+
+html[data-tool-layout] :where(
+  .guide-content,
+  .report-box,
+  .work-context
+) :where(p, li, dd, dt) {
+  font-size: var(--tool-type-body) !important;
+  line-height: 1.65;
+}
+
+html[data-tool-layout] :where(
+  small,
+  .bottom-bar .info,
+  .chip-hex,
+  .chip-label,
+  .char-count,
+  .converted-info,
+  .drop-zone .sub,
+  .dropzone-sub,
+  .field-label .optional,
+  .field-label .required,
+  .gauge-labels span,
+  .history-item .idx,
+  .invest-note,
+  .ip-type-badge,
+  .limit-note,
+  .meal-card .meal-unit,
+  .price-date,
+  .price-source,
+  .price-warning,
+  .privacy,
+  .progress-text,
+  .result-sub,
+  .section-title .badge,
+  .setting-note,
+  .size-tab span,
+  .stage-bar .seg,
+  .status-badge,
+  .storage-note,
+  #curTotal,
+  #numberOptionHelp
+) {
+  font-size: var(--tool-type-meta) !important;
+  line-height: 1.5;
+}
+
+html[data-tool-layout] :where(
+  .info-item .label,
+  .meal-card .meal-label
+) {
+  font-size: var(--tool-type-body) !important;
+  line-height: 1.45;
+}
+
+html[data-tool-layout] .info-item .value[style*="font-size:11px"] {
+  font-size: var(--tool-type-support) !important;
+  line-height: 1.45;
+}
+
+html[data-tool-layout] .result-sub {
+  font-size: var(--tool-type-body) !important;
+}
+
+html[data-tool-layout] :where(.r-sub, .s-sub, .stat-sub) {
+  font-size: var(--tool-type-support) !important;
+  line-height: 1.5;
+}
+
+html[data-tool-layout] :where(
+  .r-label,
+  .s-label,
+  .stat-label
+) {
+  font-size: 0.8125rem !important;
+  line-height: 1.45;
+}
+
+html[data-tool-layout] .result-label {
+  font-size: var(--tool-type-body) !important;
+  line-height: 1.45;
+}
+
+html[data-tool-layout] :where(.footer, .site-policy-links) {
+  font-size: var(--tool-type-meta) !important;
+  line-height: 1.5;
 }
 
 html[data-tool-layout] .tool-shell-header > .tool-shell-back {
@@ -62,6 +289,7 @@ html[data-tool-layout] .tool-shell-header > .tool-shell-back {
   justify-content: center;
   padding: 0.4rem 0.65rem;
   white-space: nowrap;
+  font-size: var(--tool-type-control);
 }
 
 html[data-tool-layout] .tool-header-actions {
@@ -83,6 +311,7 @@ html[data-tool-layout] .tool-header-actions > a {
   justify-content: center;
   padding: 0.4rem 0.65rem;
   white-space: nowrap;
+  font-size: var(--tool-type-control);
 }
 
 html[data-tool-layout] .theme-toggle-tool.theme-toggle-inline {
@@ -190,7 +419,7 @@ html[data-tool-layout] .toast {
   background: var(--accent);
   color: var(--text-on-accent);
   box-shadow: var(--shadow-lg);
-  font-size: 0.8125rem;
+  font-size: var(--tool-type-body);
   font-weight: 600;
   line-height: 1.45;
   text-align: center;
