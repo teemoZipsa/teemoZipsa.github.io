@@ -136,7 +136,7 @@ for (const page of toolPages) {
   }
 }
 
-for (const requiredPhrase of ['직장인을 위한 브라우저 업무 도구', '업무 상황으로 바로 찾기', '도구가 늘어날수록 기준도 함께 쌓입니다']) {
+for (const requiredPhrase of ['직장인을 위한 브라우저 업무 도구', '검증된 업무 도구', '도구가 늘어날수록 기준도 함께 쌓입니다']) {
   if (!homepage.includes(requiredPhrase)) failures.push(`index.html: 포지셔닝 문구 누락 — ${requiredPhrase}`);
 }
 

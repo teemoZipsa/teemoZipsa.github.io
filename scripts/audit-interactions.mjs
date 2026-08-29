@@ -1088,6 +1088,65 @@ async function main() {
     assert(result.invalid === 'true' && !/Infinity|∞|NaN/.test(result.total), `English subscription overflow leaked: ${JSON.stringify(result)}`);
   });
 
+  await scenario('document diff accuracy, ignored changes, and DOM safety', '/special-chars/text-diff/', async page => {
+    await page.locator('#oldText').fill('alpha\nbeta\ngamma\n<img src=x onerror="window.__diffXss=1">');
+    await page.locator('#newText').fill('alpha\nbeta changed\ngamma\ndelta\n<img src=x onerror="window.__diffXss=1">');
+    await page.waitForFunction(() => document.querySelector('#resultStatus').textContent.includes('변경 구간'));
+    const lineState = await page.evaluate(() => ({
+      same: document.querySelector('#sameCount').textContent,
+      added: document.querySelector('#addCount').textContent,
+      removed: document.querySelector('#removeCount').textContent,
+      images: document.querySelectorAll('#diffOutput img').length,
+      text: document.querySelector('#diffOutput').textContent
+    }));
+    assert(lineState.same === '3' && lineState.added === '2' && lineState.removed === '1', `line diff summary is wrong: ${JSON.stringify(lineState)}`);
+    assert(lineState.images === 0 && lineState.text.includes('<img src=x'), `diff content was not rendered safely: ${JSON.stringify(lineState)}`);
+
+    await page.locator('#oldText').fill('Hello   TEAM');
+    await page.locator('#newText').fill('hello TEAM');
+    await page.locator('[data-mode="word"]').click();
+    await page.locator('#ignoreSpace').check();
+    await page.locator('#ignoreCase').check();
+    await page.waitForFunction(() => document.querySelector('#resultStatus').textContent === '차이가 없습니다');
+    const ignoredState = await page.evaluate(() => ({
+      added: document.querySelector('#addCount').textContent,
+      removed: document.querySelector('#removeCount').textContent,
+      mode: document.querySelector('[data-mode="word"]').getAttribute('aria-pressed')
+    }));
+    assert(ignoredState.added === '0' && ignoredState.removed === '0' && ignoredState.mode === 'true', `ignored word changes remained: ${JSON.stringify(ignoredState)}`);
+  });
+
+  await scenario('table cleaner parsing, cleanup, conversion, and DOM safety', '/special-chars/table-cleaner/', async page => {
+    await page.locator('#sourceInput').fill('Name\tDept\tBlank\n Alice <img src=x onerror="window.__tableXss=1"> \tOps\t\n\t\t\nAlice <img src=x onerror="window.__tableXss=1">\tOps\t\nBob\tDev\t');
+    await page.waitForFunction(() => document.querySelector('#rowCount').textContent === '3');
+    const cleaned = await page.evaluate(() => ({
+      rows: document.querySelector('#rowCount').textContent,
+      cols: document.querySelector('#colCount').textContent,
+      removed: document.querySelector('#removedCount').textContent,
+      output: document.querySelector('#outputArea').value,
+      images: document.querySelectorAll('#tableWrap img').length,
+      preview: document.querySelector('#tableWrap').textContent
+    }));
+    assert(cleaned.rows === '3' && cleaned.cols === '2' && cleaned.removed === '3', `table cleanup summary is wrong: ${JSON.stringify(cleaned)}`);
+    assert(cleaned.output.includes('Name,Dept') && cleaned.output.includes('Bob,Dev'), `CSV output is wrong: ${cleaned.output}`);
+    assert(cleaned.images === 0 && cleaned.preview.includes('<img src=x'), `table preview was not rendered safely: ${JSON.stringify(cleaned)}`);
+
+    await page.locator('#formatSelect').selectOption('json');
+    const json = await page.locator('#outputArea').inputValue();
+    const parsed = JSON.parse(json);
+    assert(parsed.length === 2 && parsed[1].Name === 'Bob' && parsed[1].Dept === 'Dev', `JSON object conversion is wrong: ${json}`);
+
+    await page.locator('#delimiterSelect').selectOption('comma');
+    await page.locator('#formatSelect').selectOption('csv');
+    await page.locator('#sourceInput').fill('Name,Note\nAlice,"x,y"');
+    await page.waitForFunction(() => document.querySelector('#colCount').textContent === '2');
+    assert((await page.locator('#outputArea').inputValue()).includes('"x,y"'), 'quoted CSV cell lost its comma');
+
+    await page.locator('#sourceInput').fill('Name,Note\nAlice,"not closed');
+    await page.waitForFunction(() => document.querySelector('#sourceInput').getAttribute('aria-invalid') === 'true');
+    assert((await page.locator('#parseStatus').innerText()).includes('따옴표'), 'malformed CSV did not show an inline error');
+  });
+
   await scenario('Base64 limits and keyboard upload', '/special-chars/base64-tool/', async page => {
     await page.evaluate(() => {
       setMode('image');

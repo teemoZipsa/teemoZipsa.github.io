@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ko" data-tool-layout="wide">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="stylesheet" href="/special-chars/site-links.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>🧹 표 데이터 정리·변환 — 티모집사</title>
+<meta name="description" content="엑셀 표나 CSV 데이터를 붙여넣어 공백·빈 행·중복을 정리하고 CSV, TSV, JSON, 마크다운으로 브라우저에서 변환합니다.">
+<meta property="og:title" content="🧹 표 데이터 정리·변환 — 티모집사">
+<meta property="og:description" content="붙여넣은 표의 빈 행과 중복을 정리하고 필요한 데이터 형식으로 변환합니다.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.com/special-chars/table-cleaner/">
+<meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.com/special-chars/table-cleaner/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"표 데이터 정리·변환","url":"https://teemozipsa.com/special-chars/table-cleaner/","applicationCategory":"BusinessApplication","operatingSystem":"Any","description":"표의 공백, 빈 행과 중복을 정리하고 CSV, TSV, JSON, 마크다운으로 변환하는 브라우저 도구"}</script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+.app{width:760px;max-width:100%;background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:16px;font-weight:700;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:#fff;font-size:13px;cursor:pointer;padding:7px 11px;border-radius:8px;text-decoration:none;font-family:inherit}
+.content{padding:20px}
+.lead{font-size:14px;line-height:1.6;color:var(--text-secondary);margin-bottom:16px}
+.source-card,.settings-card,.preview-card,.output-card{border:1px solid var(--border);border-radius:12px;background:var(--bg-card);overflow:hidden}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid var(--border);background:var(--bg-bar)}
+.card-title{font-size:14px;font-weight:700;color:var(--text-primary)}
+.card-meta{font-size:12px;color:var(--text-muted);text-align:right}
+.file-btn{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--bg-card);color:var(--text-secondary);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.file-btn:hover{background:var(--bg-hover);border-color:var(--border-hover)}
+.file-btn input{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.source-input{display:block;width:100%;min-height:180px;padding:14px;border:0;resize:vertical;background:var(--bg-card);color:var(--text-primary);font:400 16px/1.6 'Inter','Pretendard',monospace;outline:none;tab-size:4}
+.source-input:focus{box-shadow:inset 0 0 0 2px var(--focus-ring)}
+.source-input::placeholder{color:var(--text-placeholder);font-family:'Pretendard',sans-serif}
+.source-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:34px;padding:7px 12px;border-top:1px solid var(--border);color:var(--text-muted);font-size:12px}
+.settings-card{margin-top:14px;padding:14px;overflow:visible}
+.select-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.field label{display:block;margin-bottom:6px;color:var(--text-secondary);font-size:14px;font-weight:700}
+.field select{width:100%;min-height:44px;padding:8px 34px 8px 11px;border:1px solid var(--border);border-radius:9px;background:var(--bg-card);color:var(--text-primary);font:600 16px 'Pretendard',sans-serif}
+.option-title{margin:14px 0 8px;color:var(--text-primary);font-size:14px;font-weight:700}
+.option-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.check-option{display:flex;align-items:center;gap:8px;min-height:46px;padding:9px 10px;border:1px solid var(--border);border-radius:9px;background:var(--bg-card);color:var(--text-secondary);font-size:14px;font-weight:600;cursor:pointer}
+.check-option:has(input:checked){border-color:var(--border-hover);background:var(--accent-bg);color:var(--text-primary)}
+.check-option input{width:18px;height:18px;flex:0 0 auto;accent-color:var(--accent)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn{min-height:44px;padding:10px 15px;border:1px solid var(--border);border-radius:10px;background:var(--bg-card);color:var(--text-secondary);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:hover:not(:disabled){background:var(--bg-hover);border-color:var(--border-hover)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--text-on-accent)}
+.btn-primary:hover:not(:disabled){background:var(--accent-hover);border-color:var(--accent-hover)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-grow{flex:1}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}
+.stat{padding:12px;border:1px solid var(--border);border-radius:10px;background:var(--bg-card);text-align:center}
+.stat strong{display:block;color:var(--text-primary);font-size:20px;line-height:1.2;font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:4px;color:var(--text-muted);font-size:12px;font-weight:600}
+.stat.changed strong{color:var(--status-green-text)}
+.preview-card{margin-bottom:14px}
+.table-wrap{max-height:390px;overflow:auto}
+.data-table{width:max-content;min-width:100%;border-collapse:separate;border-spacing:0;font-size:14px}
+.data-table th,.data-table td{max-width:320px;padding:9px 11px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;vertical-align:top}
+.data-table th{position:sticky;top:0;z-index:1;background:var(--bg-bar);color:var(--text-primary);font-weight:700}
+.data-table tbody th{position:sticky;left:0;z-index:1;min-width:46px;text-align:right;color:var(--text-muted);font-size:12px;font-variant-numeric:tabular-nums}
+.data-table tr:last-child td,.data-table tr:last-child th{border-bottom:0}
+.data-table th:last-child,.data-table td:last-child{border-right:0}
+.empty-state{padding:40px 18px;text-align:center;color:var(--text-muted);font-size:14px;line-height:1.7}
+.preview-note{padding:8px 12px;border-top:1px solid var(--border);background:var(--bg-bar);color:var(--text-muted);font-size:12px}
+.output-area{display:block;width:100%;min-height:190px;padding:14px;border:0;resize:vertical;background:var(--bg-card);color:var(--text-primary);font:400 14px/1.6 'Inter','Pretendard',monospace;outline:none;tab-size:4}
+.output-area:focus{box-shadow:inset 0 0 0 2px var(--focus-ring)}
+.output-actions{display:flex;gap:8px;padding:11px 12px;border-top:1px solid var(--border);background:var(--bg-bar)}
+.output-actions .btn{flex:1}
+.guide-section{margin:14px 16px;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg-bar)}
+.guide-section summary{padding:14px 16px;cursor:pointer;font-size:14px;font-weight:700;color:var(--text-guide);list-style:none;background:var(--bg-guide)}
+.guide-section summary::before{content:'▶';display:inline-block;margin-right:8px;font-size:11px;color:var(--accent-text);transition:transform .2s}
+.guide-section[open] summary::before{transform:rotate(90deg)}
+.guide-section[open] summary{border-bottom:1px solid var(--border)}
+.guide-content{padding:18px;font-size:14px;line-height:1.75;color:var(--text-info)}
+.guide-content h3{margin:0 0 6px;color:var(--text-primary);font-size:15px}
+.guide-content p{margin:0 0 16px}
+.guide-content p:last-child{margin-bottom:0}
+.guide-content code{padding:2px 5px;border-radius:5px;background:var(--bg-card);color:var(--text-code);font-family:'Inter',monospace}
+.related-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px dashed var(--border)}
+.related-tag{padding:6px 10px;border:1px solid var(--border);border-radius:999px;background:var(--bg-card);color:var(--accent-text);font-size:12px;font-weight:700;text-decoration:none}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:12px;color:var(--text-muted)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:700}
+.toast{position:fixed;bottom:30px;left:50%;transform:translate(-50%,80px);opacity:0;pointer-events:none;z-index:999}
+.toast.show{transform:translate(-50%,0);opacity:1}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:640px){
+  body{padding:10px}
+  .content{padding:14px}
+  .card-head{align-items:flex-start}
+  .source-input{min-height:160px}
+  .select-grid{grid-template-columns:1fr}
+  .option-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .actions .btn{flex:1;min-width:130px}
+  .data-table th,.data-table td{max-width:240px;padding:8px}
+}
+@media(max-width:390px){
+  .option-grid{grid-template-columns:1fr}
+  .source-foot{align-items:flex-start;flex-direction:column}
+  .output-actions{flex-direction:column}
+}
+</style>
+<link rel="stylesheet" href="/special-chars/tool-shell.css">
+</head>
+<body>
+<div class="app">
+<main>
+  <div class="header">
+    <a href="https://teemozipsa.com/" class="back-btn">← 도구 모음</a>
+    <h1>🧹 표 데이터 정리·변환</h1>
+  </div>
+
+  <div class="content">
+    <p class="lead">엑셀이나 스프레드시트의 표를 그대로 붙여넣어 불필요한 공백·빈 행·중복을 정리하고 원하는 형식으로 바꿉니다. 모든 처리는 현재 브라우저에서 끝납니다.</p>
+
+    <section class="source-card" aria-labelledby="sourceTitle">
+      <div class="card-head">
+        <span class="card-title" id="sourceTitle">원본 표 붙여넣기</span>
+        <label class="file-btn">📂 CSV·TSV 열기<input type="file" id="fileInput" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values,text/plain"></label>
+      </div>
+      <textarea class="source-input" id="sourceInput" aria-label="원본 표 데이터" placeholder="엑셀에서 셀 범위를 복사한 뒤 여기에 붙여넣으세요&#10;&#10;예:&#10;이름    부서    상태&#10;김민지  운영팀  완료" spellcheck="false"></textarea>
+      <div class="source-foot"><span id="fileName">직접 입력</span><span id="parseStatus" role="status" aria-live="polite">표를 입력해 주세요</span></div>
+    </section>
+
+    <section class="settings-card" aria-labelledby="settingsTitle">
+      <h2 class="sr-only" id="settingsTitle">표 정리 설정</h2>
+      <div class="select-grid">
+        <div class="field">
+          <label for="delimiterSelect">입력 구분자</label>
+          <select id="delimiterSelect">
+            <option value="auto">자동 감지</option>
+            <option value="tab">탭 (엑셀 복사)</option>
+            <option value="comma">쉼표 (,)</option>
+            <option value="semicolon">세미콜론 (;)</option>
+            <option value="pipe">세로선 (|)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="formatSelect">출력 형식</label>
+          <select id="formatSelect">
+            <option value="csv">CSV</option>
+            <option value="tsv">TSV (엑셀 붙여넣기)</option>
+            <option value="json">JSON</option>
+            <option value="markdown">마크다운 표</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="encodingSelect">CSV 문자 인코딩</label>
+          <select id="encodingSelect">
+            <option value="bom">UTF-8 BOM (엑셀 권장)</option>
+            <option value="plain">UTF-8</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="option-title">정리할 항목</div>
+      <div class="option-grid">
+        <label class="check-option"><input type="checkbox" id="trimCells" checked> 셀 앞뒤 공백</label>
+        <label class="check-option"><input type="checkbox" id="collapseSpace"> 연속 공백 합치기</label>
+        <label class="check-option"><input type="checkbox" id="removeEmptyRows" checked> 빈 행 삭제</label>
+        <label class="check-option"><input type="checkbox" id="removeEmptyCols" checked> 빈 열 삭제</label>
+        <label class="check-option"><input type="checkbox" id="removeDuplicates" checked> 중복 행 삭제</label>
+        <label class="check-option"><input type="checkbox" id="hasHeader" checked> 첫 행을 제목으로</label>
+        <label class="check-option"><input type="checkbox" id="transposeTable"> 행·열 바꾸기</label>
+      </div>
+
+      <div class="actions">
+        <button class="btn" type="button" id="exampleBtn">예시 불러오기</button>
+        <button class="btn btn-primary btn-grow" type="button" id="copyBtn" disabled>📋 결과 복사</button>
+        <button class="btn" type="button" id="clearBtn">초기화</button>
+      </div>
+    </section>
+
+    <div class="stats" aria-label="정리 결과 요약">
+      <div class="stat"><strong id="rowCount">0</strong><span>결과 행</span></div>
+      <div class="stat"><strong id="colCount">0</strong><span>결과 열</span></div>
+      <div class="stat changed"><strong id="removedCount">0</strong><span>삭제한 행·열</span></div>
+      <div class="stat changed"><strong id="changedCount">0</strong><span>정리한 셀</span></div>
+    </div>
+
+    <section class="preview-card" aria-labelledby="previewTitle">
+      <div class="card-head">
+        <span class="card-title" id="previewTitle">정리 결과 미리보기</span>
+        <span class="card-meta" id="previewMeta">0 × 0</span>
+      </div>
+      <div class="table-wrap" id="tableWrap">
+        <div class="empty-state">표를 입력하면 정리된 셀을 여기에서 확인할 수 있습니다.</div>
+      </div>
+      <div class="preview-note" id="previewNote">최대 80행·20열까지 미리 표시합니다. 다운로드 결과에는 전체 데이터가 포함됩니다.</div>
+    </section>
+
+    <section class="output-card" aria-labelledby="outputTitle">
+      <div class="card-head">
+        <span class="card-title" id="outputTitle">변환된 데이터</span>
+        <span class="card-meta" id="outputMeta">CSV</span>
+      </div>
+      <textarea class="output-area" id="outputArea" aria-label="변환된 데이터" readonly placeholder="변환 결과가 여기에 표시됩니다" spellcheck="false"></textarea>
+      <div class="output-actions">
+        <button class="btn" type="button" id="outputCopyBtn" disabled>📋 복사</button>
+        <button class="btn btn-primary" type="button" id="downloadBtn" disabled>⬇ 파일 저장</button>
+      </div>
+    </section>
+  </div>
+
+  <details class="guide-section">
+    <summary>사용 방법과 데이터 처리 기준</summary>
+    <div class="guide-content">
+      <h3>엑셀 표는 어떻게 가져오나요?</h3>
+      <p>엑셀, 구글 스프레드시트 또는 다른 표 프로그램에서 필요한 셀 범위를 복사한 뒤 원본 입력 칸에 붙여넣으세요. 보통 열 사이는 탭으로 전달되므로 ‘자동 감지’가 바로 표 구조를 찾습니다. CSV·TSV·TXT 파일은 ‘CSV·TSV 열기’로 불러올 수 있지만 XLSX 파일 자체는 읽지 않습니다. 여러 시트가 있다면 시트별로 필요한 범위를 복사해 사용하세요.</p>
+      <h3>각 정리 옵션은 원본을 어떻게 바꾸나요?</h3>
+      <p>‘셀 앞뒤 공백’은 값의 시작과 끝에 붙은 공백만 제거합니다. ‘연속 공백 합치기’는 셀 안의 줄바꿈과 여러 칸 공백을 한 칸으로 바꾸므로 주소나 코드처럼 공백이 중요한 자료에서는 끄는 것이 안전합니다. 빈 행·열은 모든 셀이 비어 있을 때만 삭제하며, 중복 행은 정리 후 모든 셀 값이 같은 두 번째 행부터 제거합니다.</p>
+      <h3>CSV, TSV, JSON, 마크다운은 언제 쓰나요?</h3>
+      <p>CSV는 일반적인 데이터 전달과 업로드에, TSV는 변환 결과를 다시 엑셀에 붙여넣을 때 편합니다. JSON은 첫 행을 <code>제목</code>으로 사용해 객체 배열을 만들며, 같은 제목이 반복되면 뒤에 번호를 붙입니다. 마크다운은 문서와 이슈에 붙일 수 있는 표 문법으로 변환합니다. CSV 파일을 국내 엑셀에서 바로 열 예정이라면 ‘UTF-8 BOM’을 유지하는 편이 한글 깨짐을 줄이는 데 도움이 됩니다.</p>
+      <h3>검수할 때 주의할 점이 있나요?</h3>
+      <p>자동 구분자 감지가 숫자의 쉼표나 본문의 세로선을 열 구분자로 오인할 수 있으므로 미리보기의 행·열 수를 먼저 확인하세요. 따옴표로 묶은 CSV 셀의 쉼표와 줄바꿈은 유지되지만, 닫히지 않은 따옴표가 있으면 변환을 중단합니다. 외부에서 받은 CSV에 <code>=</code>, <code>+</code>, <code>-</code>, <code>@</code>로 시작하는 값이 있다면 스프레드시트에서 수식으로 실행될 가능성이 있으므로 열기 전에 출처와 값을 확인해야 합니다.</p>
+      <h3>자료가 서버에 올라가나요?</h3>
+      <p>붙여넣은 표, 불러온 파일, 정리 결과는 모두 현재 브라우저 탭에서만 처리하며 서버나 브라우저 저장소에 보관하지 않습니다. 파일 저장과 복사를 누르면 결과가 기기 다운로드 폴더 또는 운영체제 클립보드로 이동합니다. 민감한 고객·인사 자료를 처리한 뒤에는 입력값과 클립보드 기록을 지워 주세요.</p>
+      <div class="related-links">
+        <a class="related-tag" href="/special-chars/text-diff/">문서 변경사항 비교</a>
+        <a class="related-tag" href="/special-chars/char-counter/">글자 수 계산기</a>
+        <a class="related-tag" href="/special-chars/base64-tool/">Base64 변환</a>
+      </div>
+    </div>
+  </details>
+
+  <section class="work-context" aria-labelledby="tableWorkTitle">
+    <h2 id="tableWorkTitle">전달받은 표를 다시 쓰기 전에 빠르게 정리하기</h2>
+    <p><strong>업무 예시:</strong> 여러 사람이 합친 참석자 명단의 빈 행과 중복을 지우거나, 엑셀에서 복사한 상품 목록을 개발 문서용 JSON·마크다운으로 바꿉니다.</p>
+    <p><strong>지원 범위:</strong> 구분자로 나뉜 2차원 텍스트 데이터를 처리합니다. 수식 계산, 셀 색상, 병합, 필터, 숨김 행, 날짜·통화 표시 형식처럼 스프레드시트 서식은 가져오지 않으며 보이는 셀 값만 사용합니다.</p>
+    <p><strong>데이터 처리:</strong> 표는 현재 탭의 메모리에서만 파싱하고 정리하며 서버로 전송하거나 자동 저장하지 않습니다. 저장한 파일은 변환 결과이므로 원본 파일과 행·열 수를 대조한 뒤 업무 시스템에 업로드하세요.</p>
+  </section>
+</main>
+
+<footer class="footer"><span>브라우저 로컬 표 처리</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
+<nav class="site-policy-links" aria-label="사이트 정책"><a href="/about.html">사이트 소개</a><a href="/editorial-policy.html">편집정책</a><a href="/contact.html">문의</a><a href="/privacy.html">개인정보처리방침</a></nav>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<button class="scroll-top-btn" id="scrollTopBtn" aria-label="맨 위로">↑</button>
+
+<script>
+(function(){
+  'use strict';
+
+  const source=document.getElementById('sourceInput');
+  const output=document.getElementById('outputArea');
+  const tableWrap=document.getElementById('tableWrap');
+  const parseStatus=document.getElementById('parseStatus');
+  const MAX_FILE_BYTES=2*1024*1024;
+  const MAX_CELLS=100000;
+  const PREVIEW_ROWS=80;
+  const PREVIEW_COLS=20;
+  const delimiterMap={tab:'\t',comma:',',semicolon:';',pipe:'|'};
+  const delimiterNames={'\t':'탭',',':'쉼표',';':'세미콜론','|':'세로선'};
+  const formatNames={csv:'CSV',tsv:'TSV',json:'JSON',markdown:'마크다운'};
+  let cleanedRows=[];
+  let resultText='';
+  let processTimer=0;
+
+  const optionIds=['trimCells','collapseSpace','removeEmptyRows','removeEmptyCols','removeDuplicates','hasHeader','transposeTable'];
+
+  function showToast(message){
+    const toast=document.getElementById('toast');
+    toast.textContent=message;
+    toast.classList.add('show');
+    clearTimeout(showToast.timer);
+    showToast.timer=setTimeout(function(){toast.classList.remove('show')},2200);
+  }
+
+  function scoreDelimiter(text,delimiter){
+    const counts=[];
+    let count=0;
+    let quoted=false;
+    for(let index=0;index<text.length&&counts.length<12;index++){
+      const char=text[index];
+      if(char==='"'){
+        if(quoted&&text[index+1]==='"'){index+=1;continue}
+        quoted=!quoted;
+      }else if(!quoted&&char===delimiter){
+        count+=1;
+      }else if(!quoted&&(char==='\n'||char==='\r')){
+        counts.push(count);
+        count=0;
+        if(char==='\r'&&text[index+1]==='\n') index+=1;
+      }
+    }
+    if(counts.length<12) counts.push(count);
+    const positive=counts.filter(function(value){return value>0});
+    if(!positive.length) return 0;
+    const frequency=new Map();
+    positive.forEach(function(value){frequency.set(value,(frequency.get(value)||0)+1)});
+    const consistency=Math.max.apply(null,Array.from(frequency.values()));
+    return consistency*100+positive.reduce(function(sum,value){return sum+value},0);
+  }
+
+  function detectDelimiter(text){
+    const candidates=['\t',',',';','|'];
+    let best='\t';
+    let bestScore=0;
+    candidates.forEach(function(delimiter){
+      const score=scoreDelimiter(text,delimiter);
+      if(score>bestScore){best=delimiter;bestScore=score}
+    });
+    return {delimiter:best,detected:bestScore>0};
+  }
+
+  function parseDelimited(text,delimiter){
+    const rows=[];
+    let row=[];
+    let cell='';
+    let quoted=false;
+    for(let index=0;index<text.length;index++){
+      const char=text[index];
+      if(char==='"'){
+        if(quoted&&text[index+1]==='"'){
+          cell+='"';
+          index+=1;
+        }else if(quoted){
+          quoted=false;
+        }else if(cell.length===0){
+          quoted=true;
+        }else{
+          cell+=char;
+        }
+      }else if(!quoted&&char===delimiter){
+        row.push(cell);
+        cell='';
+      }else if(!quoted&&(char==='\n'||char==='\r')){
+        row.push(cell);
+        rows.push(row);
+        row=[];
+        cell='';
+        if(char==='\r'&&text[index+1]==='\n') index+=1;
+      }else{
+        cell+=char;
+      }
+    }
+    if(cell.length||row.length||!/[\r\n]$/.test(text)){
+      row.push(cell);
+      rows.push(row);
+    }
+    return {rows:rows,unclosed:quoted};
+  }
+
+  function normalizeRows(rows,summary){
+    const trim=document.getElementById('trimCells').checked;
+    const collapse=document.getElementById('collapseSpace').checked;
+    let result=rows.map(function(row){
+      return row.map(function(cell){
+        let value=cell;
+        if(trim) value=value.trim();
+        if(collapse) value=value.replace(/\s+/g,' ');
+        if(value!==cell) summary.changedCells+=1;
+        return value;
+      });
+    });
+    const header=document.getElementById('hasHeader').checked;
+    if(document.getElementById('removeEmptyRows').checked){
+      result=result.filter(function(row,index){
+        if(header&&index===0) return true;
+        const keep=row.some(function(cell){return cell!==''});
+        if(!keep) summary.emptyRows+=1;
+        return keep;
+      });
+    }
+    let width=result.reduce(function(max,row){return Math.max(max,row.length)},0);
+    result=result.map(function(row){return row.concat(Array(Math.max(0,width-row.length)).fill(''))});
+    if(document.getElementById('removeEmptyCols').checked&&width){
+      const keepColumns=[];
+      const rowsForEmptyCheck=header&&result.length>1?result.slice(1):result;
+      for(let column=0;column<width;column++){
+        if(rowsForEmptyCheck.some(function(row){return row[column]!==''})) keepColumns.push(column);
+        else summary.emptyCols+=1;
+      }
+      result=result.map(function(row){return keepColumns.map(function(column){return row[column]})});
+      width=keepColumns.length;
+    }
+    if(document.getElementById('removeDuplicates').checked&&result.length){
+      const start=header?1:0;
+      const seen=new Set();
+      result=result.filter(function(row,index){
+        if(index<start) return true;
+        const key=JSON.stringify(row);
+        if(seen.has(key)){summary.duplicates+=1;return false}
+        seen.add(key);
+        return true;
+      });
+    }
+    if(document.getElementById('transposeTable').checked&&result.length){
+      width=result.reduce(function(max,row){return Math.max(max,row.length)},0);
+      result=Array.from({length:width},function(_,column){
+        return result.map(function(row){return row[column]||''});
+      });
+    }
+    return result;
+  }
+
+  function quoteCell(value,delimiter){
+    const text=String(value);
+    return text.includes(delimiter)||/["\r\n]/.test(text)?'"'+text.replace(/"/g,'""')+'"':text;
+  }
+
+  function serializeDelimited(rows,delimiter){
+    return rows.map(function(row){return row.map(function(cell){return quoteCell(cell,delimiter)}).join(delimiter)}).join('\r\n');
+  }
+
+  function uniqueHeaders(row,width){
+    const used=new Map();
+    return Array.from({length:width},function(_,index){
+      const base=(row&&row[index]||'').trim()||'열 '+(index+1);
+      const count=(used.get(base)||0)+1;
+      used.set(base,count);
+      return count===1?base:base+'_'+count;
+    });
+  }
+
+  function serializeJson(rows,header){
+    if(!rows.length) return '[]';
+    if(!header) return JSON.stringify(rows,null,2);
+    const width=rows.reduce(function(max,row){return Math.max(max,row.length)},0);
+    const keys=uniqueHeaders(rows[0],width);
+    const objects=rows.slice(1).map(function(row){
+      return Object.fromEntries(keys.map(function(key,index){return [key,row[index]||'']}));
+    });
+    return JSON.stringify(objects,null,2);
+  }
+
+  function markdownCell(value){
+    return String(value).replace(/\\/g,'\\\\').replace(/\|/g,'\\|').replace(/[\r\n]+/g,'<br>');
+  }
+
+  function serializeMarkdown(rows,header){
+    if(!rows.length) return '';
+    const width=rows.reduce(function(max,row){return Math.max(max,row.length)},0);
+    const heading=header?rows[0]:Array.from({length:width},function(_,index){return '열 '+(index+1)});
+    const body=header?rows.slice(1):rows;
+    const line=function(row){return '| '+Array.from({length:width},function(_,index){return markdownCell(row[index]||'')}).join(' | ')+' |'};
+    return [line(heading),'| '+Array(width).fill('---').join(' | ')+' |'].concat(body.map(line)).join('\n');
+  }
+
+  function makeOutput(rows){
+    const format=document.getElementById('formatSelect').value;
+    const header=document.getElementById('hasHeader').checked;
+    if(format==='csv') return serializeDelimited(rows,',');
+    if(format==='tsv') return serializeDelimited(rows,'\t');
+    if(format==='json') return serializeJson(rows,header);
+    return serializeMarkdown(rows,header);
+  }
+
+  function resetView(message){
+    cleanedRows=[];
+    resultText='';
+    output.value='';
+    tableWrap.replaceChildren();
+    const empty=document.createElement('div');
+    empty.className='empty-state';
+    empty.textContent=message||'표를 입력하면 정리된 셀을 여기에서 확인할 수 있습니다.';
+    tableWrap.appendChild(empty);
+    ['rowCount','colCount','removedCount','changedCount'].forEach(function(id){document.getElementById(id).textContent='0'});
+    document.getElementById('previewMeta').textContent='0 × 0';
+    document.getElementById('copyBtn').disabled=true;
+    document.getElementById('outputCopyBtn').disabled=true;
+    document.getElementById('downloadBtn').disabled=true;
+  }
+
+  function renderPreview(rows){
+    tableWrap.replaceChildren();
+    if(!rows.length){resetView('정리 후 남은 데이터가 없습니다. 옵션을 확인해 주세요.');return}
+    const width=rows.reduce(function(max,row){return Math.max(max,row.length)},0);
+    const header=document.getElementById('hasHeader').checked;
+    const table=document.createElement('table');
+    table.className='data-table';
+    const caption=document.createElement('caption');
+    caption.className='sr-only';
+    caption.textContent='정리된 표 데이터 미리보기';
+    table.appendChild(caption);
+    let bodyRows=rows;
+    if(header){
+      const thead=document.createElement('thead');
+      const tr=document.createElement('tr');
+      const corner=document.createElement('th');
+      corner.scope='col';
+      corner.textContent='#';
+      tr.appendChild(corner);
+      rows[0].slice(0,PREVIEW_COLS).forEach(function(value){
+        const th=document.createElement('th');
+        th.scope='col';
+        th.textContent=value||'(빈 제목)';
+        tr.appendChild(th);
+      });
+      thead.appendChild(tr);
+      table.appendChild(thead);
+      bodyRows=rows.slice(1);
+    }
+    const tbody=document.createElement('tbody');
+    bodyRows.slice(0,PREVIEW_ROWS).forEach(function(row,rowIndex){
+      const tr=document.createElement('tr');
+      const number=document.createElement('th');
+      number.scope='row';
+      number.textContent=String(rowIndex+1);
+      tr.appendChild(number);
+      row.slice(0,PREVIEW_COLS).forEach(function(value){
+        const cell=document.createElement('td');
+        cell.textContent=value;
+        tr.appendChild(cell);
+      });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    tableWrap.appendChild(table);
+    const truncated=bodyRows.length>PREVIEW_ROWS||width>PREVIEW_COLS;
+    document.getElementById('previewNote').textContent=truncated
+      ? '표가 커서 일부만 미리 표시했습니다. 복사와 파일 저장에는 전체 데이터가 포함됩니다.'
+      : '전체 데이터를 미리 표시하고 있습니다.';
+  }
+
+  function updateStats(rows,summary){
+    const width=rows.reduce(function(max,row){return Math.max(max,row.length)},0);
+    document.getElementById('rowCount').textContent=rows.length.toLocaleString('ko-KR');
+    document.getElementById('colCount').textContent=width.toLocaleString('ko-KR');
+    document.getElementById('removedCount').textContent=(summary.emptyRows+summary.emptyCols+summary.duplicates).toLocaleString('ko-KR');
+    document.getElementById('changedCount').textContent=summary.changedCells.toLocaleString('ko-KR');
+    document.getElementById('previewMeta').textContent=rows.length.toLocaleString('ko-KR')+' × '+width.toLocaleString('ko-KR');
+  }
+
+  function processTable(){
+    const text=source.value.replace(/^\uFEFF/,'');
+    const format=document.getElementById('formatSelect').value;
+    document.getElementById('encodingSelect').disabled=format!=='csv';
+    document.getElementById('outputMeta').textContent=formatNames[format];
+    if(!text){
+      parseStatus.textContent='표를 입력해 주세요';
+      source.removeAttribute('aria-invalid');
+      resetView();
+      return;
+    }
+    const selected=document.getElementById('delimiterSelect').value;
+    const detected=detectDelimiter(text);
+    const delimiter=selected==='auto'?detected.delimiter:delimiterMap[selected];
+    const parsed=parseDelimited(text,delimiter);
+    if(parsed.unclosed){
+      parseStatus.textContent='닫히지 않은 큰따옴표가 있습니다';
+      source.setAttribute('aria-invalid','true');
+      resetView('CSV 따옴표가 닫히지 않아 표를 만들 수 없습니다. 원본 값을 확인해 주세요.');
+      return;
+    }
+    source.removeAttribute('aria-invalid');
+    const sourceCells=parsed.rows.reduce(function(sum,row){return sum+row.length},0);
+    if(sourceCells>MAX_CELLS){
+      parseStatus.textContent='10만 셀을 초과했습니다';
+      resetView('브라우저 과부하를 막기 위해 10만 셀 이하의 표만 처리합니다. 표를 나누어 입력해 주세요.');
+      return;
+    }
+    const summary={emptyRows:0,emptyCols:0,duplicates:0,changedCells:0};
+    cleanedRows=normalizeRows(parsed.rows,summary);
+    resultText=makeOutput(cleanedRows);
+    output.value=resultText;
+    renderPreview(cleanedRows);
+    updateStats(cleanedRows,summary);
+    const width=cleanedRows.reduce(function(max,row){return Math.max(max,row.length)},0);
+    const detectedText=selected==='auto'?(detected.detected?'자동 감지: '+delimiterNames[delimiter]:'구분자 없음 · 한 열로 처리'):'선택한 구분자: '+delimiterNames[delimiter];
+    parseStatus.textContent=detectedText+' · '+cleanedRows.length.toLocaleString('ko-KR')+'행 '+width.toLocaleString('ko-KR')+'열';
+    const usable=cleanedRows.length>0&&width>0;
+    document.getElementById('copyBtn').disabled=!usable;
+    document.getElementById('outputCopyBtn').disabled=!usable;
+    document.getElementById('downloadBtn').disabled=!usable;
+  }
+
+  function queueProcess(){
+    clearTimeout(processTimer);
+    processTimer=setTimeout(processTable,70);
+  }
+
+  function copyText(text){
+    if(navigator.clipboard&&window.isSecureContext) return navigator.clipboard.writeText(text);
+    const helper=document.createElement('textarea');
+    helper.value=text;
+    helper.setAttribute('readonly','');
+    helper.style.position='fixed';
+    helper.style.opacity='0';
+    document.body.appendChild(helper);
+    helper.select();
+    document.execCommand('copy');
+    helper.remove();
+    return Promise.resolve();
+  }
+
+  function copyResult(){
+    if(!resultText){showToast('복사할 결과가 없습니다');return}
+    copyText(resultText).then(function(){showToast('변환 결과를 복사했습니다')});
+  }
+
+  function downloadResult(){
+    if(!resultText) return;
+    const format=document.getElementById('formatSelect').value;
+    const types={csv:'text/csv;charset=utf-8',tsv:'text/tab-separated-values;charset=utf-8',json:'application/json;charset=utf-8',markdown:'text/markdown;charset=utf-8'};
+    const extensions={csv:'csv',tsv:'tsv',json:'json',markdown:'md'};
+    const bom=format==='csv'&&document.getElementById('encodingSelect').value==='bom'?'\uFEFF':'';
+    const blob=new Blob([bom,resultText],{type:types[format]});
+    const url=URL.createObjectURL(blob);
+    const anchor=document.createElement('a');
+    anchor.href=url;
+    anchor.download='cleaned_table.'+extensions[format];
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    setTimeout(function(){URL.revokeObjectURL(url)},1000);
+    showToast('정리된 표 파일을 저장했습니다');
+  }
+
+  async function loadFile(file){
+    if(!file) return;
+    if(file.size>MAX_FILE_BYTES){showToast('2MB 이하 CSV·TSV·TXT 파일만 열 수 있습니다');return}
+    try{
+      source.value=(await file.text()).replace(/^\uFEFF/,'');
+      document.getElementById('fileName').textContent=file.name+' · '+Math.max(1,Math.round(file.size/1024)).toLocaleString('ko-KR')+'KB';
+      if(/\.csv$/i.test(file.name)) document.getElementById('delimiterSelect').value='comma';
+      else if(/\.tsv$/i.test(file.name)) document.getElementById('delimiterSelect').value='tab';
+      processTable();
+    }catch(error){
+      showToast('파일을 읽지 못했습니다');
+    }
+  }
+
+  source.addEventListener('input',function(){document.getElementById('fileName').textContent='직접 입력';queueProcess()});
+  document.getElementById('fileInput').addEventListener('change',function(){loadFile(this.files&&this.files[0]);this.value=''});
+  document.getElementById('delimiterSelect').addEventListener('change',processTable);
+  document.getElementById('formatSelect').addEventListener('change',processTable);
+  document.getElementById('encodingSelect').addEventListener('change',processTable);
+  optionIds.forEach(function(id){document.getElementById(id).addEventListener('change',processTable)});
+  document.getElementById('copyBtn').addEventListener('click',copyResult);
+  document.getElementById('outputCopyBtn').addEventListener('click',copyResult);
+  document.getElementById('downloadBtn').addEventListener('click',downloadResult);
+  document.getElementById('exampleBtn').addEventListener('click',function(){
+    source.value='이름\t부서\t진행 상태\t비고\n 김민지 \t운영팀\t완료\t  1차 검토  \n이준호\t디자인팀\t진행 중\t시안 수정\n\t\t\t\n김민지\t운영팀\t완료\t1차 검토\n박서연\t개발팀\t대기\t  API  확인';
+    document.getElementById('fileName').textContent='예시 표 · 탭으로 구분';
+    document.getElementById('delimiterSelect').value='auto';
+    processTable();
+  });
+  document.getElementById('clearBtn').addEventListener('click',function(){
+    source.value='';
+    document.getElementById('fileName').textContent='직접 입력';
+    document.getElementById('delimiterSelect').value='auto';
+    document.getElementById('formatSelect').value='csv';
+    document.getElementById('encodingSelect').value='bom';
+    document.getElementById('trimCells').checked=true;
+    document.getElementById('collapseSpace').checked=false;
+    document.getElementById('removeEmptyRows').checked=true;
+    document.getElementById('removeEmptyCols').checked=true;
+    document.getElementById('removeDuplicates').checked=true;
+    document.getElementById('hasHeader').checked=true;
+    document.getElementById('transposeTable').checked=false;
+    processTable();
+    source.focus();
+  });
+
+  processTable();
+})();
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>

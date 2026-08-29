@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ko" data-tool-layout="wide">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<link rel="stylesheet" href="/special-chars/site-links.css">
+<link rel="manifest" href="/special-chars/manifest.json">
+<link rel="apple-touch-icon" href="/special-chars/favicon.png">
+<title>🔎 문서 변경사항 비교기 — 티모집사</title>
+<meta name="description" content="수정 전후 문서와 텍스트를 줄 또는 단어 단위로 비교하고 추가·삭제된 내용을 서버 전송 없이 브라우저에서 확인합니다.">
+<meta property="og:title" content="🔎 문서 변경사항 비교기 — 티모집사">
+<meta property="og:description" content="두 버전의 문서를 붙여넣어 추가·삭제된 내용을 줄 또는 단어 단위로 비교합니다.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://teemozipsa.com/special-chars/text-diff/">
+<meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
+<link rel="canonical" href="https://teemozipsa.com/special-chars/text-diff/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"문서 변경사항 비교기","url":"https://teemozipsa.com/special-chars/text-diff/","applicationCategory":"BusinessApplication","operatingSystem":"Any","description":"수정 전후 텍스트의 추가와 삭제 내용을 브라우저에서 비교하는 업무 도구"}</script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+.app{width:760px;max-width:100%;background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);overflow:hidden}
+.header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:16px;font-weight:700;color:#fff}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:#fff;font-size:13px;cursor:pointer;padding:7px 11px;border-radius:8px;text-decoration:none;font-family:inherit}
+.content{padding:20px}
+.lead{font-size:14px;line-height:1.6;color:var(--text-secondary);margin-bottom:16px}
+.input-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.text-panel{border:1px solid var(--border);border-radius:12px;background:var(--bg-card);overflow:hidden;min-width:0}
+.panel-head{padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid var(--border);background:var(--bg-bar)}
+.panel-title{font-size:14px;font-weight:700;color:var(--text-primary)}
+.file-btn{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--bg-card);color:var(--text-secondary);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.file-btn:hover{border-color:var(--border-hover);background:var(--bg-hover)}
+.file-btn input{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.text-input{display:block;width:100%;min-height:220px;padding:14px;border:0;resize:vertical;background:var(--bg-card);color:var(--text-primary);font:400 16px/1.65 'Pretendard',sans-serif;outline:none}
+.text-input:focus{box-shadow:inset 0 0 0 2px var(--focus-ring)}
+.text-input::placeholder{color:var(--text-placeholder)}
+.file-name{min-height:30px;padding:6px 12px;border-top:1px solid var(--border);color:var(--text-muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.control-card{margin-top:14px;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--bg-bar)}
+.control-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.mode-tabs{display:flex;gap:6px;padding:4px;border-radius:10px;background:var(--bg-card);border:1px solid var(--border)}
+.mode-tab{min-height:40px;padding:8px 14px;border:0;border-radius:7px;background:transparent;color:var(--text-secondary);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.mode-tab.active{background:var(--accent);color:var(--text-on-accent);box-shadow:var(--shadow-sm)}
+.options{display:flex;gap:8px 14px;flex-wrap:wrap}
+.check-option{display:inline-flex;align-items:center;gap:7px;min-height:40px;color:var(--text-secondary);font-size:14px;font-weight:600;cursor:pointer}
+.check-option input{width:18px;height:18px;accent-color:var(--accent)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn{min-height:44px;padding:10px 15px;border:1px solid var(--border);border-radius:10px;background:var(--bg-card);color:var(--text-secondary);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:hover{background:var(--bg-hover);border-color:var(--border-hover)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--text-on-accent)}
+.btn-primary:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+.btn-grow{flex:1}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}
+.stat{padding:12px;border:1px solid var(--border);border-radius:10px;background:var(--bg-card);text-align:center}
+.stat strong{display:block;font-size:20px;line-height:1.2;color:var(--text-primary);font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:4px;font-size:12px;color:var(--text-muted);font-weight:600}
+.stat.added strong{color:var(--status-green-text)}
+.stat.removed strong{color:var(--status-red-text)}
+.result-card{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg-card)}
+.result-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid var(--border);background:var(--bg-bar)}
+.result-title{font-size:14px;font-weight:700;color:var(--text-primary)}
+.result-status{font-size:13px;color:var(--text-secondary);text-align:right}
+.diff-output{max-height:520px;overflow:auto;background:var(--bg-card);font-family:'Inter','Pretendard',monospace;font-size:14px;line-height:1.55}
+.diff-empty{padding:46px 18px;text-align:center;color:var(--text-muted);font-family:'Pretendard',sans-serif;font-size:14px;line-height:1.7}
+.diff-row{display:grid;grid-template-columns:44px 44px 28px minmax(0,1fr);min-height:29px;border-bottom:1px solid color-mix(in srgb,var(--border) 55%,transparent)}
+.diff-row:last-child{border-bottom:0}
+.line-no{padding:4px 7px;text-align:right;background:var(--bg-bar);color:var(--text-muted);font-size:12px;user-select:none;font-variant-numeric:tabular-nums}
+.line-mark{padding:3px 4px;text-align:center;font-weight:800;user-select:none}
+.line-text{padding:3px 10px;white-space:pre-wrap;overflow-wrap:anywhere;min-width:0}
+.diff-add{background:color-mix(in srgb,var(--bg-success) 72%,var(--bg-card))}
+.diff-add .line-mark{color:var(--status-green-text)}
+.diff-remove{background:color-mix(in srgb,#fee2e2 62%,var(--bg-card))}
+html[data-theme="dark"] .diff-remove{background:color-mix(in srgb,#7f1d1d 32%,var(--bg-card))}
+.diff-remove .line-mark{color:var(--status-red-text)}
+.word-diff{padding:16px;white-space:pre-wrap;overflow-wrap:anywhere;min-height:110px}
+.word-add{background:var(--bg-success);color:var(--status-green-text);border-radius:4px;text-decoration:none}
+.word-remove{background:color-mix(in srgb,#fee2e2 80%,var(--bg-card));color:var(--status-red-text);border-radius:4px;text-decoration:line-through}
+html[data-theme="dark"] .word-remove{background:color-mix(in srgb,#7f1d1d 48%,var(--bg-card))}
+.limit-note{padding:14px;color:var(--status-orange-text);font-family:'Pretendard',sans-serif;font-size:14px;line-height:1.6}
+.guide-section{margin:14px 16px;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg-bar)}
+.guide-section summary{padding:14px 16px;cursor:pointer;font-size:14px;font-weight:700;color:var(--text-guide);list-style:none;background:var(--bg-guide)}
+.guide-section summary::before{content:'▶';display:inline-block;margin-right:8px;font-size:11px;color:var(--accent-text);transition:transform .2s}
+.guide-section[open] summary::before{transform:rotate(90deg)}
+.guide-section[open] summary{border-bottom:1px solid var(--border)}
+.guide-content{padding:18px;font-size:14px;line-height:1.75;color:var(--text-info)}
+.guide-content h3{margin:0 0 6px;color:var(--text-primary);font-size:15px}
+.guide-content p{margin:0 0 16px}
+.guide-content p:last-child{margin-bottom:0}
+.related-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px dashed var(--border)}
+.related-tag{padding:6px 10px;border:1px solid var(--border);border-radius:999px;background:var(--bg-card);color:var(--accent-text);font-size:12px;font-weight:700;text-decoration:none}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:12px;color:var(--text-muted)}
+.footer a{color:var(--text-info);text-decoration:none;font-weight:700}
+.toast{position:fixed;bottom:30px;left:50%;transform:translate(-50%,80px);opacity:0;pointer-events:none;z-index:999}
+.toast.show{transform:translate(-50%,0);opacity:1}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:640px){
+  body{padding:10px}
+  .content{padding:14px}
+  .input-grid{grid-template-columns:1fr}
+  .text-input{min-height:170px}
+  .control-top{align-items:stretch}
+  .mode-tabs{width:100%}
+  .mode-tab{flex:1}
+  .options{width:100%}
+  .check-option{flex:1;min-width:130px}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .btn{flex:1;min-width:130px}
+  .diff-row{grid-template-columns:34px 34px 24px minmax(0,1fr)}
+  .line-no{padding-inline:4px}
+  .line-text{padding-inline:7px}
+  .result-head{align-items:flex-start;flex-direction:column}
+  .result-status{text-align:left}
+}
+</style>
+<link rel="stylesheet" href="/special-chars/tool-shell.css">
+</head>
+<body>
+<div class="app">
+<main>
+  <div class="header">
+    <a href="https://teemozipsa.com/" class="back-btn">← 도구 모음</a>
+    <h1>🔎 문서 변경사항 비교</h1>
+  </div>
+
+  <div class="content">
+    <p class="lead">수정 전과 수정 후 내용을 붙여넣으면 달라진 부분만 표시합니다. 입력한 문서는 서버로 보내거나 저장하지 않습니다.</p>
+
+    <div class="input-grid">
+      <section class="text-panel" aria-labelledby="oldTitle">
+        <div class="panel-head">
+          <span class="panel-title" id="oldTitle">수정 전</span>
+          <label class="file-btn">📂 파일 열기<input type="file" id="oldFile" accept=".txt,.md,.csv,.json,.html,.css,.js,.xml,text/plain"></label>
+        </div>
+        <textarea class="text-input" id="oldText" aria-label="수정 전 내용" placeholder="이전 버전의 문서나 문장을 붙여넣으세요" spellcheck="false"></textarea>
+        <div class="file-name" id="oldFileName">직접 입력</div>
+      </section>
+
+      <section class="text-panel" aria-labelledby="newTitle">
+        <div class="panel-head">
+          <span class="panel-title" id="newTitle">수정 후</span>
+          <label class="file-btn">📂 파일 열기<input type="file" id="newFile" accept=".txt,.md,.csv,.json,.html,.css,.js,.xml,text/plain"></label>
+        </div>
+        <textarea class="text-input" id="newText" aria-label="수정 후 내용" placeholder="새 버전의 문서나 문장을 붙여넣으세요" spellcheck="false"></textarea>
+        <div class="file-name" id="newFileName">직접 입력</div>
+      </section>
+    </div>
+
+    <section class="control-card" aria-label="비교 설정">
+      <div class="control-top">
+        <div class="mode-tabs" role="group" aria-label="비교 단위">
+          <button class="mode-tab active" type="button" data-mode="line" aria-pressed="true">줄 단위</button>
+          <button class="mode-tab" type="button" data-mode="word" aria-pressed="false">단어 단위</button>
+        </div>
+        <div class="options">
+          <label class="check-option"><input type="checkbox" id="ignoreSpace"> 공백 차이 무시</label>
+          <label class="check-option"><input type="checkbox" id="ignoreCase"> 영문 대소문자 무시</label>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" type="button" id="exampleBtn">예시 불러오기</button>
+        <button class="btn" type="button" id="swapBtn">⇄ 앞뒤 바꾸기</button>
+        <button class="btn btn-primary btn-grow" type="button" id="copyBtn">📋 비교 결과 복사</button>
+        <button class="btn" type="button" id="clearBtn">초기화</button>
+      </div>
+    </section>
+
+    <div class="stats" aria-label="비교 요약">
+      <div class="stat"><strong id="sameCount">0</strong><span id="sameLabel">같은 줄</span></div>
+      <div class="stat added"><strong id="addCount">0</strong><span id="addLabel">추가된 줄</span></div>
+      <div class="stat removed"><strong id="removeCount">0</strong><span id="removeLabel">삭제된 줄</span></div>
+      <div class="stat"><strong id="blockCount">0</strong><span>변경 구간</span></div>
+    </div>
+
+    <section class="result-card" aria-labelledby="resultTitle">
+      <div class="result-head">
+        <span class="result-title" id="resultTitle">비교 결과</span>
+        <span class="result-status" id="resultStatus" role="status" aria-live="polite">두 내용을 입력해 주세요</span>
+      </div>
+      <div class="diff-output" id="diffOutput" tabindex="0">
+        <div class="diff-empty">왼쪽에는 이전 내용을, 오른쪽에는 수정된 내용을 입력하세요.<br>입력과 동시에 변경사항을 비교합니다.</div>
+      </div>
+    </section>
+  </div>
+
+  <details class="guide-section">
+    <summary>사용 방법과 비교 기준</summary>
+    <div class="guide-content">
+      <h3>어떤 문서를 비교할 수 있나요?</h3>
+      <p>메일 초안, 공지문, 회의록, 계약 검토 메모, 보고서 문장처럼 글자로 복사할 수 있는 내용을 비교할 수 있습니다. TXT·Markdown·CSV·JSON 등 텍스트 파일은 각 입력 칸의 ‘파일 열기’로 불러올 수 있습니다. 워드와 한글 문서 파일은 서식과 내부 구조가 포함되어 있으므로 문서 프로그램에서 본문을 복사해 붙여넣으세요.</p>
+      <h3>줄 단위와 단어 단위는 어떻게 다른가요?</h3>
+      <p>줄 단위는 문단이나 목록의 추가·삭제 위치를 빠르게 확인할 때 적합합니다. 단어 단위는 한 문장 안에서 바뀐 표현을 세밀하게 찾을 때 사용합니다. 초록색은 수정 후 새로 들어간 내용, 빨간색과 취소선은 이전 버전에서 빠진 내용입니다. ‘공백 차이 무시’를 켜면 들여쓰기와 연속 공백만 달라진 경우를 같은 내용으로 취급합니다.</p>
+      <h3>비교 결과를 그대로 검수 자료로 써도 되나요?</h3>
+      <p>이 도구는 글자 차이를 찾으며 문장의 의미, 맞춤법, 수치의 타당성이나 법률적 효력을 판단하지 않습니다. 표 서식, 댓글, 변경 추적, 이미지와 각주 같은 문서 프로그램의 요소도 비교 대상이 아닙니다. 중요한 계약서나 최종 배포본은 원본 프로그램의 변경 추적 기능과 함께 확인하세요. 차이가 매우 큰 장문은 브라우저 과부하를 막기 위해 간략한 전체 교체 형태로 표시될 수 있습니다.</p>
+      <h3>입력한 내용은 어디에 저장되나요?</h3>
+      <p>비교 연산은 현재 브라우저 안에서만 실행되며 입력 문서와 결과를 서버에 업로드하거나 로컬 저장소에 보관하지 않습니다. 다만 운영체제 클립보드, 브라우저 자동완성, 화면 캡처에는 내용이 남을 수 있으므로 민감한 자료를 다룬 뒤에는 입력 칸을 초기화하고 클립보드 기록도 확인하세요.</p>
+      <div class="related-links">
+        <a class="related-tag" href="/special-chars/char-counter/">글자 수 계산기</a>
+        <a class="related-tag" href="/special-chars/korean-english-converter/">한영 타자 복구</a>
+        <a class="related-tag" href="/special-chars/table-cleaner/">표 데이터 정리·변환</a>
+      </div>
+    </div>
+  </details>
+
+  <section class="work-context" aria-labelledby="diffWorkTitle">
+    <h2 id="diffWorkTitle">수정본을 전달하기 전 달라진 부분 확인하기</h2>
+    <p><strong>업무 예시:</strong> 팀원이 보낸 공지문 수정본, 고객에게 전달할 이메일의 최종안, 회의록 보완본을 이전 버전과 대조해 누락되거나 새로 들어간 문장을 확인합니다.</p>
+    <p><strong>지원 범위:</strong> 일반 텍스트의 순서와 내용을 비교합니다. PDF·DOCX·HWP의 시각적 서식, 표 병합, 이미지, 주석과 작성자 정보는 읽지 않으므로 해당 파일은 본문을 복사한 뒤 사용해야 합니다.</p>
+    <p><strong>데이터 처리:</strong> 불러온 파일과 붙여넣은 문장은 현재 탭의 메모리에서만 처리되며 서버에 전송하거나 저장하지 않습니다. 탭을 닫거나 초기화하면 입력 내용이 사라집니다.</p>
+  </section>
+</main>
+
+<footer class="footer"><span>브라우저 로컬 비교</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
+<nav class="site-policy-links" aria-label="사이트 정책"><a href="/about.html">사이트 소개</a><a href="/editorial-policy.html">편집정책</a><a href="/contact.html">문의</a><a href="/privacy.html">개인정보처리방침</a></nav>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<button class="scroll-top-btn" id="scrollTopBtn" aria-label="맨 위로">↑</button>
+
+<script>
+(function(){
+  'use strict';
+
+  const oldText=document.getElementById('oldText');
+  const newText=document.getElementById('newText');
+  const output=document.getElementById('diffOutput');
+  const status=document.getElementById('resultStatus');
+  const ignoreSpace=document.getElementById('ignoreSpace');
+  const ignoreCase=document.getElementById('ignoreCase');
+  const MAX_FILE_BYTES=2*1024*1024;
+  const MAX_TOKENS={line:12000,word:20000};
+  const MAX_EDIT_DEPTH=800;
+  let mode='line';
+  let latestOperations=[];
+  let compareTimer=0;
+
+  function showToast(message){
+    const toast=document.getElementById('toast');
+    toast.textContent=message;
+    toast.classList.add('show');
+    clearTimeout(showToast.timer);
+    showToast.timer=setTimeout(function(){toast.classList.remove('show')},2200);
+  }
+
+  function tokenize(text,type){
+    if(type==='line') return text.split('\n');
+    return text.match(/\s+|[\p{L}\p{N}_]+|[^\s\p{L}\p{N}_]/gu)||[];
+  }
+
+  function tokenKey(token){
+    let value=token.replace(/\r/g,'');
+    if(ignoreSpace.checked) value=value.replace(/\s+/g,' ').trim();
+    if(ignoreCase.checked) value=value.toLocaleLowerCase('ko-KR');
+    return value;
+  }
+
+  function backtrack(trace,a,b){
+    let x=a.length;
+    let y=b.length;
+    const result=[];
+    for(let d=trace.length-1;d>=0;d--){
+      const v=trace[d];
+      const k=x-y;
+      let previousK;
+      const left=v.has(k-1)?v.get(k-1):-Infinity;
+      const down=v.has(k+1)?v.get(k+1):-Infinity;
+      if(k===-d||(k!==d&&left<down)) previousK=k+1;
+      else previousK=k-1;
+      const previousX=v.has(previousK)?v.get(previousK):0;
+      const previousY=previousX-previousK;
+      while(x>previousX&&y>previousY){
+        result.push({type:'equal',oldValue:a[x-1],newValue:b[y-1]});
+        x-=1;
+        y-=1;
+      }
+      if(d===0) break;
+      if(x===previousX){
+        result.push({type:'add',value:b[y-1]});
+        y-=1;
+      }else{
+        result.push({type:'remove',value:a[x-1]});
+        x-=1;
+      }
+    }
+    return result.reverse();
+  }
+
+  function buildDiff(a,b){
+    const max=a.length+b.length;
+    let frontier=new Map([[1,0]]);
+    const trace=[];
+    for(let depth=0;depth<=max;depth++){
+      if(depth>MAX_EDIT_DEPTH){
+        return a.map(function(value){return {type:'remove',value:value}})
+          .concat(b.map(function(value){return {type:'add',value:value}}));
+      }
+      trace.push(new Map(frontier));
+      for(let diagonal=-depth;diagonal<=depth;diagonal+=2){
+        const left=frontier.has(diagonal-1)?frontier.get(diagonal-1):-Infinity;
+        const down=frontier.has(diagonal+1)?frontier.get(diagonal+1):-Infinity;
+        let x;
+        if(diagonal===-depth||(diagonal!==depth&&left<down)) x=down===-Infinity?0:down;
+        else x=(left===-Infinity?0:left)+1;
+        let y=x-diagonal;
+        while(x<a.length&&y<b.length&&tokenKey(a[x])===tokenKey(b[y])){
+          x+=1;
+          y+=1;
+        }
+        frontier.set(diagonal,x);
+        if(x>=a.length&&y>=b.length) return backtrack(trace,a,b);
+      }
+    }
+    return [];
+  }
+
+  function meaningful(operation){
+    const value=operation.type==='equal'?operation.newValue:operation.value;
+    return mode==='line'||!/^\s*$/.test(value);
+  }
+
+  function summarize(operations){
+    let same=0;
+    let added=0;
+    let removed=0;
+    let blocks=0;
+    let insideChange=false;
+    operations.forEach(function(operation){
+      if(operation.type==='equal'){
+        if(meaningful(operation)) same+=1;
+        insideChange=false;
+      }else{
+        if(!insideChange){blocks+=1;insideChange=true}
+        if(meaningful(operation)){
+          if(operation.type==='add') added+=1;
+          else removed+=1;
+        }
+      }
+    });
+    return {same:same,added:added,removed:removed,blocks:blocks};
+  }
+
+  function appendLine(operation,numbers){
+    const row=document.createElement('div');
+    row.className='diff-row diff-'+operation.type;
+    let oldNumber='';
+    let newNumber='';
+    let marker=' ';
+    let value=operation.type==='equal'?operation.newValue:operation.value;
+    if(operation.type==='equal'){
+      oldNumber=String(numbers.old++);
+      newNumber=String(numbers.new++);
+    }else if(operation.type==='remove'){
+      oldNumber=String(numbers.old++);
+      marker='−';
+    }else{
+      newNumber=String(numbers.new++);
+      marker='+';
+    }
+    [oldNumber,newNumber].forEach(function(number){
+      const cell=document.createElement('span');
+      cell.className='line-no';
+      cell.textContent=number;
+      row.appendChild(cell);
+    });
+    const mark=document.createElement('span');
+    mark.className='line-mark';
+    mark.textContent=marker;
+    row.appendChild(mark);
+    const text=document.createElement('span');
+    text.className='line-text';
+    text.textContent=value||'\u00a0';
+    row.appendChild(text);
+    output.appendChild(row);
+  }
+
+  function renderOperations(operations){
+    output.replaceChildren();
+    if(mode==='line'){
+      const numbers={old:1,new:1};
+      operations.forEach(function(operation){appendLine(operation,numbers)});
+      return;
+    }
+    const wrap=document.createElement('div');
+    wrap.className='word-diff';
+    operations.forEach(function(operation){
+      const span=document.createElement('span');
+      if(operation.type!=='equal') span.className='word-'+operation.type;
+      span.textContent=operation.type==='equal'?operation.newValue:operation.value;
+      wrap.appendChild(span);
+    });
+    output.appendChild(wrap);
+  }
+
+  function setStats(summary){
+    document.getElementById('sameCount').textContent=summary.same.toLocaleString('ko-KR');
+    document.getElementById('addCount').textContent=summary.added.toLocaleString('ko-KR');
+    document.getElementById('removeCount').textContent=summary.removed.toLocaleString('ko-KR');
+    document.getElementById('blockCount').textContent=summary.blocks.toLocaleString('ko-KR');
+    const unit=mode==='line'?'줄':'단어';
+    document.getElementById('sameLabel').textContent='같은 '+unit;
+    document.getElementById('addLabel').textContent='추가된 '+unit;
+    document.getElementById('removeLabel').textContent='삭제된 '+unit;
+  }
+
+  function showEmpty(message){
+    latestOperations=[];
+    output.replaceChildren();
+    const empty=document.createElement('div');
+    empty.className='diff-empty';
+    empty.textContent=message;
+    output.appendChild(empty);
+    setStats({same:0,added:0,removed:0,blocks:0});
+  }
+
+  function compare(){
+    const before=oldText.value;
+    const after=newText.value;
+    if(!before&&!after){
+      status.textContent='두 내용을 입력해 주세요';
+      showEmpty('왼쪽에는 이전 내용을, 오른쪽에는 수정된 내용을 입력하세요.');
+      return;
+    }
+    const beforeTokens=tokenize(before,mode);
+    const afterTokens=tokenize(after,mode);
+    if(beforeTokens.length+afterTokens.length>MAX_TOKENS[mode]){
+      latestOperations=[];
+      output.replaceChildren();
+      const note=document.createElement('div');
+      note.className='limit-note';
+      note.textContent=mode==='word'
+        ? '단어 조각이 너무 많습니다. 줄 단위 비교로 바꾸거나 문서를 나누어 비교해 주세요.'
+        : '문서의 줄 수가 너무 많습니다. 필요한 구간을 나누어 비교해 주세요.';
+      output.appendChild(note);
+      status.textContent='안전한 처리 범위를 초과했습니다';
+      setStats({same:0,added:0,removed:0,blocks:0});
+      return;
+    }
+    latestOperations=buildDiff(beforeTokens,afterTokens);
+    const summary=summarize(latestOperations);
+    setStats(summary);
+    renderOperations(latestOperations);
+    status.textContent=summary.added||summary.removed
+      ? summary.blocks.toLocaleString('ko-KR')+'개 변경 구간을 찾았습니다'
+      : '차이가 없습니다';
+  }
+
+  function queueCompare(){
+    clearTimeout(compareTimer);
+    compareTimer=setTimeout(compare,70);
+  }
+
+  function setMode(nextMode){
+    mode=nextMode;
+    document.querySelectorAll('.mode-tab').forEach(function(button){
+      const active=button.dataset.mode===mode;
+      button.classList.toggle('active',active);
+      button.setAttribute('aria-pressed',String(active));
+    });
+    compare();
+  }
+
+  function copyValue(){
+    if(!latestOperations.length){showToast('복사할 비교 결과가 없습니다');return}
+    let text;
+    if(mode==='line'){
+      text=latestOperations.map(function(operation){
+        const prefix=operation.type==='add'?'+ ':operation.type==='remove'?'- ':'  ';
+        const value=operation.type==='equal'?operation.newValue:operation.value;
+        return prefix+value;
+      }).join('\n');
+    }else{
+      text=latestOperations.map(function(operation){
+        if(operation.type==='equal') return operation.newValue;
+        return operation.type==='add'?'[+'+operation.value+'+]':'[-'+operation.value+'-]';
+      }).join('');
+    }
+    copyText(text).then(function(){showToast('비교 결과를 복사했습니다')});
+  }
+
+  function copyText(text){
+    if(navigator.clipboard&&window.isSecureContext) return navigator.clipboard.writeText(text);
+    const helper=document.createElement('textarea');
+    helper.value=text;
+    helper.setAttribute('readonly','');
+    helper.style.position='fixed';
+    helper.style.opacity='0';
+    document.body.appendChild(helper);
+    helper.select();
+    document.execCommand('copy');
+    helper.remove();
+    return Promise.resolve();
+  }
+
+  async function loadFile(input,target,nameTarget){
+    const file=input.files&&input.files[0];
+    if(!file) return;
+    if(file.size>MAX_FILE_BYTES){showToast('2MB 이하 텍스트 파일만 열 수 있습니다');input.value='';return}
+    try{
+      target.value=(await file.text()).replace(/^\uFEFF/,'');
+      nameTarget.textContent=file.name+' · '+Math.max(1,Math.round(file.size/1024)).toLocaleString('ko-KR')+'KB';
+      compare();
+    }catch(error){
+      showToast('파일을 읽지 못했습니다');
+    }
+    input.value='';
+  }
+
+  oldText.addEventListener('input',function(){document.getElementById('oldFileName').textContent='직접 입력';queueCompare()});
+  newText.addEventListener('input',function(){document.getElementById('newFileName').textContent='직접 입력';queueCompare()});
+  ignoreSpace.addEventListener('change',compare);
+  ignoreCase.addEventListener('change',compare);
+  document.querySelectorAll('.mode-tab').forEach(function(button){button.addEventListener('click',function(){setMode(button.dataset.mode)})});
+  document.getElementById('oldFile').addEventListener('change',function(){loadFile(this,oldText,document.getElementById('oldFileName'))});
+  document.getElementById('newFile').addEventListener('change',function(){loadFile(this,newText,document.getElementById('newFileName'))});
+  document.getElementById('swapBtn').addEventListener('click',function(){
+    const text=oldText.value;
+    const oldName=document.getElementById('oldFileName').textContent;
+    oldText.value=newText.value;
+    newText.value=text;
+    document.getElementById('oldFileName').textContent=document.getElementById('newFileName').textContent;
+    document.getElementById('newFileName').textContent=oldName;
+    compare();
+  });
+  document.getElementById('exampleBtn').addEventListener('click',function(){
+    oldText.value='문서 번호: TM-2026-09\n프로젝트 점검 일정\n- 초안 제출: 9월 3일\n- 검토 담당: 운영팀\n첨부 파일을 확인해 주세요.';
+    newText.value='문서 번호: TM-2026-09\n프로젝트 최종 점검 일정\n- 초안 제출: 9월 4일 오후 3시\n- 검토 담당: 운영팀·디자인팀\n첨부된 체크리스트도 함께 확인해 주세요.';
+    document.getElementById('oldFileName').textContent='예시 문서 · 이전 버전';
+    document.getElementById('newFileName').textContent='예시 문서 · 수정 버전';
+    compare();
+  });
+  document.getElementById('copyBtn').addEventListener('click',copyValue);
+  document.getElementById('clearBtn').addEventListener('click',function(){
+    oldText.value='';
+    newText.value='';
+    document.getElementById('oldFileName').textContent='직접 입력';
+    document.getElementById('newFileName').textContent='직접 입력';
+    ignoreSpace.checked=false;
+    ignoreCase.checked=false;
+    setMode('line');
+    oldText.focus();
+  });
+
+  compare();
+})();
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
+</body>
+</html>
