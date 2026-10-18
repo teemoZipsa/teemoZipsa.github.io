@@ -8,10 +8,11 @@
 <link rel="icon" type="image/png" href="/special-chars/favicon.png">
 <link rel="stylesheet" href="/special-chars/theme.css">
 <link rel="stylesheet" href="/special-chars/site-links.css">
+<link rel="manifest" href="/special-chars/manifest.json">
 <title>⏱️ 업무용 정밀 시계·웹 응답 확인 — 티모집사</title>
-<meta name="description" content="배포·접수·온라인 업무의 기준 시각을 밀리초 단위로 확인하고, 웹사이트의 브라우저 응답 대기 시간을 비교합니다.">
+<meta name="description" content="내 기기 시계가 인터넷 서버 시각보다 얼마나 빠르거나 느린지 측정해 보정하고, 목표 시각(오픈·마감)까지 카운트다운과 예고음을 제공합니다. 웹사이트 응답 대기 시간도 확인합니다.">
 <meta property="og:title" content="⏱️ 업무용 정밀 시계·웹 응답 확인 — 티모집사">
-<meta property="og:description" content="접수·배포 기준 시각과 웹사이트 응답 대기 시간을 한곳에서 확인합니다.">
+<meta property="og:description" content="기기 시계 오차 측정·보정, 목표 시각 카운트다운, 웹사이트 응답 대기 시간 확인.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/server-time/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
@@ -26,67 +27,83 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
 .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
 .content{padding:24px 20px}
-.input-group{display:flex;gap:8px;margin-bottom:20px}
-.url-input{flex:1;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:15px;color:var(--text-primary);outline:none;transition:border-color .2s;font-family:inherit}
-.url-input:focus{border-color:var(--accent)}
-.fetch-btn{background:var(--accent);color:var(--text-on-accent);border:none;border-radius:8px;padding:0 20px;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s;font-family:inherit}
-.fetch-btn:hover{background:var(--accent-hover)}
-.fetch-btn:disabled{cursor:wait;opacity:.65}
-.display-box{background:var(--bg-btn);border:1px solid var(--border);border-radius:12px;padding:32px 20px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden}
+.section-title{font-size:14px;font-weight:700;color:var(--text-primary);margin:0 0 10px;display:flex;align-items:center;gap:6px}
+.display-box{background:var(--bg-btn);border:1px solid var(--border);border-radius:12px;padding:44px 20px 24px;text-align:center;margin-bottom:12px;position:relative;overflow:hidden}
 .target-name{font-size:13px;color:var(--text-muted);margin-bottom:8px;font-weight:600}
 .time-display{font-size:52px;font-weight:800;letter-spacing:1px;font-variant-numeric:tabular-nums;color:var(--text-primary);display:flex;align-items:baseline;justify-content:center;gap:4px}
 .time-ms{font-size:24px;color:var(--text-info);font-weight:600}
 .date-display{font-size:14px;color:var(--text-secondary);margin-top:8px}
-.status-badge{position:absolute;top:12px;right:14px;font-size:11px;font-weight:600;padding:4px 8px;border-radius:12px;background:var(--bg-bar);color:var(--text-muted)}
-.status-badge.syncing{color:#f59e0b}
-.status-badge.success{color:#10b981;background:rgba(16,185,129,0.1)}
-.status-badge.error{color:#ef4444;background:rgba(239,68,68,0.1)}
-.options{display:flex;justify-content:center;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.status-badge{position:absolute;top:12px;right:14px;font-size:12px;font-weight:600;padding:4px 8px;border-radius:12px;background:var(--bg-bar);color:var(--text-muted)}
+.status-badge.syncing{color:var(--status-orange-text)}
+.status-badge.success{color:var(--text-success);background:var(--bg-success)}
+.status-badge.error{color:var(--status-red-text)}
+.sync-panel{padding:14px;margin-bottom:16px;border:1px solid var(--border);border-radius:10px;background:var(--bg-bar)}
+.sync-summary{font-size:15px;font-weight:700;color:var(--text-primary);line-height:1.5}
+.sync-detail{font-size:12px;color:var(--text-muted);line-height:1.6;margin-top:4px}
+.sync-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-top:10px}
+.small-btn{background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text-secondary);font-weight:600;font-size:14px;line-height:1;font-family:inherit;cursor:pointer;min-height:44px}
+.small-btn:hover{color:var(--text-primary);border-color:var(--accent)}
+.small-btn:disabled{opacity:.6;cursor:wait}
 .opt-label{font-size:13px;color:var(--text-secondary);display:flex;align-items:center;gap:6px;cursor:pointer}
-.offset-control{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:16px;padding:12px;background:var(--bg-bar);border:1px solid var(--border);border-radius:8px}
+.opt-label input{width:17px;height:17px;accent-color:var(--accent)}
+.offset-control{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
 .offset-control label{font-size:13px;color:var(--text-secondary);font-weight:600}
 .offset-input{width:110px;background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;padding:7px 9px;color:var(--text-primary);font:inherit;font-size:13px;text-align:right}
 .offset-input:focus{outline:none;border-color:var(--accent)}
-.reset-btn{background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text-secondary);font:inherit;font-size:12px;cursor:pointer}
-.reset-btn:hover{color:var(--text-primary);border-color:var(--accent)}
-.limit-note{font-size:12px;color:var(--text-muted);line-height:1.6;margin:-8px 0 18px}
-.quick-urls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.limit-note{font-size:12px;color:var(--text-muted);line-height:1.6;margin-top:6px}
+.countdown-panel{padding:14px;margin-bottom:22px;border:1px solid var(--border);border-radius:10px;background:var(--bg-bar)}
+.countdown-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.countdown-row label{font-size:13px;color:var(--text-secondary);font-weight:600}
+.time-input{background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text-primary);font-weight:600;font-size:15px;line-height:1.2;font-family:inherit;font-variant-numeric:tabular-nums}
+.time-input:focus{outline:none;border-color:var(--accent)}
+html[data-theme="dark"] .time-input{color-scheme:dark}
+html[data-theme="light"] .time-input{color-scheme:light}
+.lead-select{background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text-primary);font:inherit;font-size:13px}
+.countdown-value{margin-top:12px;font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--accent-text);text-align:center}
+.countdown-value.final{color:var(--status-red-text)}
+.countdown-caption{font-size:13px;color:var(--text-info);text-align:center;margin-top:2px}
+.input-group{display:flex;gap:8px;margin-bottom:10px}
+.url-input{flex:1;min-width:0;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:15px;color:var(--text-primary);outline:none;transition:border-color .2s;font-family:inherit}
+.url-input:focus{border-color:var(--accent)}
+.fetch-btn{background:var(--accent);color:var(--text-on-accent);border:none;border-radius:8px;padding:0 20px;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s;font-family:inherit}
+.fetch-btn:hover{background:var(--accent-hover)}
+.fetch-btn:disabled{cursor:wait;opacity:.65}
+.quick-urls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
 .q-btn{background:var(--bg-bar);border:1px solid var(--border);border-radius:20px;padding:6px 12px;font-size:12px;color:var(--text-secondary);cursor:pointer;transition:all .2s;font-family:inherit}
 .q-btn:hover{background:var(--bg-btn);color:var(--text-primary)}
-.report-box { margin-top: 24px; padding: 20px; background: var(--bg-bar); border: 1px solid var(--border); border-radius: 12px; display: none; animation: fadeIn 0.5s ease-out; }
-.report-box h3 { font-size: 15px; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-.report-box p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 8px; }
-.report-box .highlight { color:var(--accent-text); font-weight: 600; }
-.guide-section { margin-top: 32px; padding: 24px 20px; background: var(--bg-bar); border-top: 1px solid var(--border); }
-.guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-.guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-.guide summary { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
-.guide summary::-webkit-details-marker { display: none; }
-.guide summary::after { content: '▼'; font-size: 10px; color: var(--text-muted); transition: transform 0.2s; }
-.guide[open] summary::after { transform: rotate(180deg); }
-.guide-content { padding: 0 16px 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
-.guide-content p { margin-bottom: 12px; }
-.related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
-.related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; }
-.tags { display: flex; flex-wrap: wrap; gap: 8px; }
-.tag { font-size: 12px; background: var(--bg-btn); color: var(--text-secondary); padding: 6px 12px; border-radius: 16px; text-decoration: none; border: 1px solid var(--border); transition: all 0.2s; }
-.tag:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.report-box{margin-top:12px;padding:16px;background:var(--bg-bar);border:1px solid var(--border);border-radius:12px;display:none}
+.report-box h3{font-size:15px;color:var(--text-primary);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.report-box p{font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:6px}
+.report-box .highlight{color:var(--accent-text);font-weight:600}
+.guide-section{margin-top:32px;padding:24px 20px;background:var(--bg-bar);border-top:1px solid var(--border)}
+.guide-section h2{font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.guide{margin-bottom:12px;background:var(--bg-app);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.guide summary{padding:14px 16px;font-size:14px;font-weight:600;color:var(--text-primary);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary::after{content:'▼';font-size:10px;color:var(--text-muted);transition:transform .2s}
+.guide[open] summary::after{transform:rotate(180deg)}
+.guide-content{padding:0 16px 16px;font-size:14px;color:var(--text-secondary);line-height:1.65}
+.guide-content p{margin-bottom:12px}
+.related-tools{margin-top:24px;padding-top:20px;border-top:1px dashed var(--border)}
+.related-tools h3{font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:12px}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-size:13px;background:var(--bg-btn);color:var(--text-secondary);padding:6px 12px;border-radius:16px;text-decoration:none;border:1px solid var(--border);transition:all .2s}
+.tag:hover{background:var(--accent);color:var(--text-on-accent);border-color:var(--accent)}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:12px;color:var(--text-info)}
 .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
 .footer a:hover{color:var(--text-secondary)}
-.ripple {
-  position: absolute; border-radius: 50%; opacity: 0; pointer-events: none;
-  border: 2px solid var(--accent); left: 50%; top: 50%; transform: translate(-50%, -50%);
-}
-@keyframes rip{ 0%{width:0;height:0;opacity:.5} 100%{width:400px;height:400px;opacity:0} }
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:13px;opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.ripple{position:absolute;border-radius:50%;opacity:0;pointer-events:none;border:2px solid var(--accent);left:50%;top:50%;transform:translate(-50%,-50%)}
+@keyframes rip{0%{width:0;height:0;opacity:.5}100%{width:400px;height:400px;opacity:0}}
 @media(max-width:420px){
   .content{padding:16px 12px}
   .input-group{flex-direction:column}
   .fetch-btn{min-height:44px}
-  .display-box{padding:24px 12px}
+  .display-box{padding:44px 12px 20px}
   .time-display{font-size:clamp(2rem,11vw,2.75rem);letter-spacing:0}
   .time-ms{font-size:clamp(1rem,5vw,1.25rem)}
+  .countdown-value{font-size:22px}
 }
 </style>
 <link rel="stylesheet" href="/special-chars/tool-shell.css">
@@ -99,141 +116,405 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <h1>⏱️ 업무용 정밀 시계 · 웹 응답 확인</h1>
   </div>
   <div class="content">
-    <p id="latencyHelp" style="font-size:13px;color:var(--text-secondary);margin-bottom:8px">대상 URL을 입력하면 로컬 시계는 그대로 두고 HTTP 응답 대기 시간을 3회 측정합니다.</p>
-    <form class="input-group" onsubmit="event.preventDefault(); measureLatency();">
-      <input type="text" id="urlInput" class="url-input" placeholder="예: https://ticket.interpark.com" aria-label="응답속도를 측정할 웹사이트 주소" aria-describedby="latencyHelp">
-      <button type="submit" class="fetch-btn" id="measureBtn">응답속도 측정</button>
-    </form>
-    
-    <div class="quick-urls">
-      <button class="q-btn" onclick="setQuick('https://ticket.interpark.com')">인터파크</button>
-      <button class="q-btn" onclick="setQuick('https://ticket.yes24.com')">YES24</button>
-      <button class="q-btn" onclick="setQuick('https://www.melon.com')">멜론티켓</button>
-      <button class="q-btn" onclick="setQuick('https://www.letskorail.com')">코레일</button>
-      <button class="q-btn" onclick="setQuick('https://sugang.snu.ac.kr')">수강신청</button>
-    </div>
-
     <div class="display-box" id="displayBox">
       <div id="rippleEff" class="ripple"></div>
       <div class="status-badge" id="statusBadge">기기 시계</div>
-      <div class="target-name" id="targetName">현재 기준: 내 기기 로컬 시간</div>
-      <div class="time-display">
+      <div class="target-name" id="targetName">현재 기준: 내 기기 시계</div>
+      <div class="time-display" aria-live="off">
         <span id="hhmmss">00:00:00</span>
         <span class="time-ms" id="ms">.000</span>
       </div>
-      <div class="date-display" id="dateStr">- 가동 중 -</div>
-    </div>
-    
-    <div class="options">
-      <label class="opt-label"><input type="checkbox" id="sndTick"> 매초 틱 소리</label>
-      <label class="opt-label"><input type="checkbox" id="sndAlarm" checked> 58·59초/정각 알림</label>
-      <label class="opt-label"><input type="checkbox" id="showMs" checked> 밀리초 표시</label>
+      <div class="date-display" id="dateStr">-</div>
     </div>
 
-    <div class="offset-control">
-      <label for="offsetInput">수동 시계 보정</label>
-      <input class="offset-input" type="number" id="offsetInput" min="-60000" max="60000" step="1" value="0" inputmode="numeric" oninput="applyManualOffset()" aria-describedby="offsetHelp">
-      <span style="font-size:12px;color:var(--text-muted)">ms</span>
-      <button type="button" class="reset-btn" onclick="resetOffset()">0으로 초기화</button>
+    <section class="sync-panel" aria-labelledby="syncTitle">
+      <h2 class="section-title" id="syncTitle">🛰️ 기기 시계 오차</h2>
+      <p class="sync-summary" id="syncSummary" role="status" aria-live="polite">서버 시각과 비교하는 중입니다…</p>
+      <p class="sync-detail" id="syncDetail">이 사이트 서버의 HTTP Date 헤더(1초 단위)가 바뀌는 순간을 여러 번 측정해 오차를 추정합니다.</p>
+      <div class="sync-actions">
+        <button type="button" class="small-btn" id="syncBtn" onclick="syncClock()">다시 측정</button>
+        <label class="opt-label"><input type="checkbox" id="applySync" checked onchange="updateOffsetState()"> 측정한 오차로 시계 보정</label>
+        <label class="opt-label"><input type="checkbox" id="showMs" checked> 밀리초 표시</label>
+      </div>
+      <div class="offset-control">
+        <label for="offsetInput">추가 수동 보정</label>
+        <input class="offset-input" type="number" id="offsetInput" min="-60000" max="60000" step="1" value="0" inputmode="numeric" oninput="applyManualOffset()" aria-describedby="offsetHelp">
+        <span style="font-size:12px;color:var(--text-muted)">ms</span>
+        <button type="button" class="small-btn" onclick="resetOffset()">0으로</button>
+      </div>
+      <p class="limit-note" id="offsetHelp">양수는 시계를 빠르게, 음수는 느리게 표시합니다(±60초). 대상 서비스의 기준 시각과 차이를 따로 알고 있을 때만 쓰세요.</p>
+    </section>
+
+    <section class="countdown-panel" aria-labelledby="countdownTitle">
+      <h2 class="section-title" id="countdownTitle">🎯 목표 시각 카운트다운</h2>
+      <div class="countdown-row">
+        <label for="targetTime">오픈·마감 시각</label>
+        <input class="time-input" type="time" id="targetTime" step="1" aria-describedby="countdownCaption">
+      </div>
+      <div class="countdown-row" style="margin-top:10px">
+        <label class="opt-label"><input type="checkbox" id="beepToggle"> 목표</label>
+        <select class="lead-select" id="beepLead" aria-label="예고음 시작 시점">
+          <option value="3">3초 전부터</option>
+          <option value="5" selected>5초 전부터</option>
+          <option value="10">10초 전부터</option>
+        </select>
+        <span style="font-size:13px;color:var(--text-secondary)">매초 예고음 + 정각 알림음</span>
+      </div>
+      <div class="countdown-value" id="countdownValue">--:--:--</div>
+      <p class="countdown-caption" id="countdownCaption">목표 시각을 정하면 보정된 시계 기준으로 남은 시간을 셉니다.</p>
+    </section>
+
+    <h2 class="section-title">📡 웹 응답 확인</h2>
+    <p id="latencyHelp" style="font-size:13px;color:var(--text-secondary);margin-bottom:8px">주소를 입력하고 '응답속도 측정'을 누르면 첫 연결 요청 1회를 뺀 뒤 5회의 응답 대기 시간을 잽니다.</p>
+    <form class="input-group" onsubmit="event.preventDefault(); measureLatency();">
+      <input type="text" id="urlInput" class="url-input" placeholder="예: https://ticket.yes24.com" aria-label="응답속도를 측정할 웹사이트 주소" aria-describedby="latencyHelp">
+      <button type="submit" class="fetch-btn" id="measureBtn">응답속도 측정</button>
+    </form>
+    <div class="quick-urls" aria-label="자주 쓰는 주소 채우기">
+      <button type="button" class="q-btn" onclick="setQuick('https://nol.interpark.com/ticket')">NOL 인터파크 티켓</button>
+      <button type="button" class="q-btn" onclick="setQuick('https://ticket.yes24.com')">YES24 티켓</button>
+      <button type="button" class="q-btn" onclick="setQuick('https://ticket.melon.com')">멜론티켓</button>
+      <button type="button" class="q-btn" onclick="setQuick('https://www.korail.com')">코레일</button>
     </div>
-    <p class="limit-note" id="offsetHelp">양수는 시계를 빠르게, 음수는 느리게 표시합니다. 보정 범위는 ±60초이며 알림에도 적용됩니다.</p>
-    
-    <!-- 동적 결과 리포트 -->
     <div id="reportContainer" class="report-box" role="status" aria-live="polite"></div>
   </div>
 
   <section class="guide-section">
-    <h2>💡 정밀 로컬 시계와 응답속도 측정 가이드</h2>
-    
+    <h2>💡 정밀 시계와 응답속도 측정 가이드</h2>
+
     <details class="guide" open>
-      <summary>이 시계는 어떤 시간을 표시하나요?</summary>
+      <summary>이 시계는 어떤 시각을 표시하나요?</summary>
       <div class="guide-content">
-        <p>화면의 시각은 <b>브라우저가 실행 중인 기기의 시스템 시계</b>를 밀리초 단위로 표시한 값입니다. 운영체제의 자동 날짜·시간 동기화를 켜 두면 가장 유용하며, 이 페이지가 별도의 표준시 서버와 동기화하는 것은 아닙니다.</p>
-        <p>기기 시계와 알고 있는 기준시 사이에 차이가 있다면 수동 보정값을 밀리초 단위로 입력할 수 있습니다. 밀리초 숫자가 자세히 보인다고 해서 기기 시계 자체의 정확도가 보장되는 것은 아닙니다.</p>
+        <p>기본은 <b>브라우저가 실행 중인 기기의 시스템 시계</b>입니다. 페이지를 열면 이 사이트(teemozipsa.com) 서버가 응답에 붙이는 표준 시각(HTTP Date 헤더)과 기기 시계를 비교해 오차를 추정하고, '측정한 오차로 시계 보정'이 켜져 있으면 그만큼 더하거나 빼서 보여 줍니다. 예를 들어 "내 기기 시계가 약 0.8초 빠릅니다 (±0.1초)"라면 화면 시계는 기기보다 0.8초 늦게 표시됩니다.</p>
+        <p>대상 서비스의 기준 시각과의 차이를 따로 알고 있다면 '추가 수동 보정'에 밀리초 단위로 더할 수 있습니다. 보정값과 목표 시각은 이 브라우저에만 저장됩니다.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>오차는 어떻게 측정하고, 얼마나 정확한가요?</summary>
+      <div class="guide-content">
+        <p>HTTP Date 헤더는 초 단위까지만 기록됩니다. 그래서 이 도구는 이 사이트에 작은 HEAD 요청을 여러 번 보내되, 서버 시각의 초가 바뀌는 순간 근처에 요청이 도착하도록 보내는 시점을 조금씩 옮깁니다. 각 응답은 "서버 시각이 이 범위 안에 있었다"는 조건을 주고, 조건을 겹쳐 가면 오차 범위가 좁아집니다. 보통 6~10회, 수 초 안에 끝나며 남는 불확실성(±)은 대략 네트워크 왕복 시간의 절반입니다.</p>
+        <p>측정 기준은 <b>이 사이트를 제공하는 서버(CDN)</b>의 시계입니다. 이런 서버는 보통 인터넷 표준시에 맞춰져 있어 기기 시계 점검에는 충분하지만, 예매·수강신청 사이트의 서버 시각을 읽은 값은 아닙니다. 다른 사이트의 응답 헤더는 브라우저 보안 정책(CORS) 때문에 읽을 수 없고, 이 도구는 외부 프록시를 쓰지 않습니다. 또한 대기열 시스템이나 서버 처리 순서 때문에 정확한 시각에 누른다고 접수가 보장되지는 않습니다.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>목표 시각 카운트다운과 예고음은 언제 울리나요?</summary>
+      <div class="guide-content">
+        <p>오픈·마감 시각을 넣으면 보정된 시계 기준으로 남은 시간을 0.1초 단위로 보여 줍니다. 이미 지난 시각이면 다음 날 같은 시각으로 계산합니다. '목표 N초 전부터'를 켜면 선택한 시각의 N초 전부터 매초 짧은 예고음이, 정각에는 긴 알림음이 울립니다. 예전처럼 매분 정각마다 울리지 않고, 정한 목표 시각에만 울립니다.</p>
+        <p>알림음은 체크박스를 켤 때 브라우저 오디오 시계에 미리 예약되므로 다른 탭을 보고 있어도 제시간에 울립니다. 다만 브라우저 자동 재생 정책 때문에 체크박스를 직접 눌러야 소리가 켜지고, 기기가 절전 상태에 들어가면 울리지 않을 수 있습니다. 중요한 일정은 휴대폰 알람도 함께 쓰세요.</p>
       </div>
     </details>
 
     <details class="guide">
       <summary>웹사이트 응답속도는 어떻게 측정하나요?</summary>
       <div class="guide-content">
-        <p>입력한 URL로 가벼운 <code>HEAD</code> 요청을 3회 보내고, 브라우저가 각 응답을 받기까지의 경과 시간을 측정해 최솟값·평균값·최댓값을 보여줍니다.</p>
-        <p>이 값에는 DNS 조회, 연결, TLS 협상, 네트워크 상태와 서버 처리 시간이 함께 포함될 수 있습니다. 전용 네트워크 <b>핑(ping)이나 서버 시계 차이</b>를 뜻하지 않으며, 현재 브라우저 환경의 참고값입니다.</p>
-      </div>
-    </details>
-
-    <details class="guide">
-      <summary>왜 서버 시간을 직접 표시하지 않나요?</summary>
-      <div class="guide-content">
-        <p>다른 출처의 웹사이트는 브라우저의 CORS 정책 때문에 응답 헤더를 읽을 수 없는 경우가 많습니다. HTTP <code>Date</code> 헤더도 일반적으로 1초 단위이며 실제 서비스의 접수 기준 시각을 보장하지 않으므로, 밀리초 정밀 서버 시계로 사용할 수 없습니다.</p>
-        <p>이 도구는 외부 CORS 프록시를 사용하거나 서버 시각을 추정하지 않습니다. 응답속도 측정 요청에는 쿠키를 보내지 않지만, 대상 사이트에는 일반적인 네트워크 요청이 전달됩니다. 브라우저 정책, 혼합 콘텐츠 차단 또는 사이트 설정에 따라 측정이 실패할 수 있습니다.</p>
-      </div>
-    </details>
-
-    <details class="guide">
-      <summary>틱 소리와 정각 알림은 언제 울리나요?</summary>
-      <div class="guide-content">
-        <p>‘매초 틱 소리’는 표시 시계의 초가 바뀔 때 짧게 울립니다. 정각 알림을 켜면 58초와 59초에 서로 다른 예고음이 나고, 00초에 정각 알림과 화면 효과가 실행됩니다.</p>
-        <p>브라우저의 자동 재생 정책 때문에 페이지를 연 뒤 한 번은 클릭하거나 키를 눌러야 소리가 활성화될 수 있습니다. 수동 시계 보정값은 이 알림 시점에도 적용됩니다.</p>
-        <p>알림은 페이지가 화면에 표시되고 브라우저가 정상적으로 갱신할 때 가장 잘 동작합니다. 백그라운드 탭, 기기 절전, 메인 스레드 지연에서는 58·59·00초 프레임을 건너뛰어 소리를 놓칠 수 있으므로 중요한 접수 시각을 이 알림에만 의존하지 마세요.</p>
+        <p>입력한 주소로 가벼운 <code>HEAD</code> 요청을 보냅니다. 첫 요청은 DNS 조회와 보안 연결(TLS) 준비 시간이 섞여 크게 나오므로 결과에서 빼고, 이어지는 5회의 중앙값과 최솟값을 보여 줍니다. 빠른 버튼은 주소만 채우며, '응답속도 측정'을 눌러야 요청이 전송됩니다.</p>
+        <p>이 값은 네트워크 왕복 시간과 서버 처리 시간이 합쳐진 대략적인 대기 시간이며, 전용 핑(ping)이나 서버 시계 차이를 뜻하지 않습니다. 쿠키는 보내지 않지만 대상 사이트에는 실제 요청이 전달되므로 사내 전용 주소나 민감한 쿼리 문자열은 입력하지 마세요. 브라우저 보안 정책이나 사이트 설정에 따라 측정이 실패할 수 있습니다.</p>
       </div>
     </details>
 
     <div class="related-tools">
       <h3>🛠️ 함께 쓰면 좋은 도구</h3>
       <div class="tags">
-        <a href="/special-chars/gpa-calc/" class="tag">학점 계산기</a>
-        <a href="/special-chars/speech-timer/" class="tag">발표 타이머</a>
-        <a href="/special-chars/calculator/" class="tag">일반 계산기</a>
-        <a href="/special-chars/percent-calc/" class="tag">퍼센트 계산기</a>
+        <a href="/special-chars/timer/" class="tag">⏱️ 타이머/스톱워치</a>
+        <a href="/special-chars/timezone-conv/" class="tag">🌍 타임존 변환기</a>
+        <a href="/special-chars/biz-day-calc/" class="tag">🏢 영업일 계산기</a>
       </div>
     </div>
   </section>
   <section class="work-context" aria-labelledby="serverTimeWorkTitle">
     <h2 id="serverTimeWorkTitle">접수·배포 시각을 같은 기준으로 확인하기</h2>
-    <p><strong>업무 예시:</strong> 온라인 접수 마감, 캠페인 공개, 예약 오픈이나 배포 직전에 밀리초 단위의 기기 시각을 확인하고 정각 알림을 사용할 수 있습니다. URL 응답 측정은 여러 번 실행해 특정 사이트가 평소보다 느린지 비교하는 보조 지표로 활용합니다.</p>
-    <p><strong>해석 기준:</strong> 표시 시각은 사용자 기기의 로컬 시계를 기준으로 하며 국가 표준시나 대상 서버의 내부 시각을 읽는 기능이 아닙니다. 응답 시간도 브라우저의 네트워크 요청 대기 시간이므로 서버 처리 시간, 인터넷 회선과 보안 정책이 함께 반영됩니다.</p>
-    <p><strong>데이터 처리:</strong> 시계 보정값은 현재 브라우저에서만 사용합니다. 응답 측정을 실행하면 입력한 주소로 실제 네트워크 요청이 전송되므로 사내 전용 주소나 민감한 쿼리 문자열은 입력하지 마세요.</p>
+    <p><strong>업무 예시:</strong> 온라인 접수 마감, 캠페인 공개, 예약 오픈이나 배포 직전에 기기 시계가 표준시와 얼마나 어긋나는지 먼저 확인하고, 목표 시각 카운트다운으로 남은 시간을 봅니다. 여러 사람이 같은 시각에 작업해야 할 때 각자 이 페이지에서 오차를 확인하면 기준을 맞추기 쉽습니다.</p>
+    <p><strong>해석 기준:</strong> 보정값은 이 사이트 서버와 비교한 추정치이며 표시된 ± 범위 안의 오차가 남습니다. 대상 서비스의 내부 시각이나 대기열 처리 순서를 알려 주지는 않습니다. 응답 시간은 브라우저의 네트워크 대기 시간이므로 회선과 서버 상태에 따라 달라집니다.</p>
+    <p><strong>데이터 처리:</strong> 시계 측정 요청은 이 사이트에만 보내며 개인정보를 담지 않습니다. 응답 측정을 실행하면 입력한 주소로 실제 네트워크 요청이 전송됩니다. 보정값·목표 시각 설정은 이 브라우저의 로컬 저장소에만 남습니다.</p>
   </section>
   </main>
-<footer class="footer"><span>기기 로컬 시계 기준 · 서버 시각 동기화 아님</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
+<footer class="footer"><span>서버 Date 헤더로 기기 시계 오차 추정</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
 <nav class="site-policy-links" aria-label="사이트 정책"><a href="/about.html">사이트 소개</a><a href="/editorial-policy.html">편집정책</a><a href="/contact.html">문의</a><a href="/privacy.html">개인정보처리방침</a></nav>
 </div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
+const OFFSET_KEY = 'localClock_offsetMs';
+const TARGET_KEY = 'serverTime_target_v1';
+const SYNC_PATH = '/special-chars/server-time/';
+const MAX_SYNC_PROBES = 10;
+
 let manualOffset = 0;
-let lastSec = -1;
+let syncOffset = 0;        // 서버 시각 - 기기 시각 (ms)
+let syncUncertainty = null;
+let syncState = 'idle';    // idle | syncing | ok | error
+let syncMeasuredAt = 0;
+let syncSequence = 0;
 let measurementSequence = 0;
 let activeMeasurementController = null;
+let targetMs = 0;          // 보정된 시계 기준 목표 시각(epoch ms)
+let lastTargetState = '';
 
-function setQuick(u) {
-  document.getElementById('urlInput').value = u;
-  measureLatency();
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2200);
 }
 
-// Audio helpers
-let audioCtx;
-function getCtx() {
-  if(!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-  if(audioCtx.state === 'suspended') audioCtx.resume();
+function totalOffset() {
+  const auto = document.getElementById('applySync').checked && syncState === 'ok' ? syncOffset : 0;
+  return auto + manualOffset;
+}
+
+function correctedNow() {
+  return Date.now() + totalOffset();
+}
+
+// ---------- 서버 기준 오차 측정 ----------
+const sleep = ms => new Promise(resolve => setTimeout(resolve, Math.max(0, ms)));
+
+async function probeServer(clockBase) {
+  const url = `${SYNC_PATH}?clock=${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
+  const start = performance.now();
+  const response = await fetch(url, { method: 'HEAD', cache: 'no-store', credentials: 'omit', redirect: 'follow' });
+  const end = performance.now();
+  const header = response.headers.get('date');
+  const server = header ? Date.parse(header) : NaN;
+  if (!Number.isFinite(server)) throw new Error('Date 헤더 없음');
+  return { t0: clockBase + start, t1: clockBase + end, server, rtt: end - start };
+}
+
+async function syncClock() {
+  const run = ++syncSequence;
+  const button = document.getElementById('syncBtn');
+  button.disabled = true;
+  syncState = syncState === 'ok' ? 'ok' : 'syncing';
+  setBadge('syncing', '서버와 비교 중');
+  document.getElementById('syncSummary').textContent = '서버 시각과 비교하는 중입니다…';
+  const clockBase = Date.now() - performance.now();
+  let lo = -Infinity;
+  let hi = Infinity;
+  let minRtt = Infinity;
+  let used = 0;
+  try {
+    for (let i = 0; i < MAX_SYNC_PROBES; i++) {
+      if (i >= 1 && Number.isFinite(lo) && Number.isFinite(hi)) {
+        // 현재 추정치 기준으로 요청이 서버에 닿는 순간이 초 경계가 되도록 보낼 시점을 고릅니다.
+        const mid = (lo + hi) / 2;
+        const half = Math.min(minRtt, 1500) / 2;
+        const now = clockBase + performance.now();
+        const boundary = Math.ceil((now + 30 + half + mid) / 1000) * 1000;
+        await sleep(boundary - mid - half - (clockBase + performance.now()));
+      }
+      if (run !== syncSequence) return;
+      const sample = await probeServer(clockBase);
+      used += 1;
+      minRtt = Math.min(minRtt, sample.rtt);
+      const nextLo = Math.max(lo, sample.server - sample.t1);
+      const nextHi = Math.min(hi, sample.server + 1000 - sample.t0);
+      if (nextLo > nextHi) {
+        // 서버 쪽 캐시나 시계 변경으로 조건이 모순되면 이 표본부터 다시 좁힙니다.
+        lo = sample.server - sample.t1;
+        hi = sample.server + 1000 - sample.t0;
+      } else {
+        lo = nextLo;
+        hi = nextHi;
+      }
+      if (i >= 3 && hi - lo <= Math.max(30, minRtt * 1.1)) break;
+    }
+    if (!Number.isFinite(lo) || !Number.isFinite(hi) || minRtt > 5000) throw new Error('측정 불가');
+    syncOffset = Math.round((lo + hi) / 2);
+    syncUncertainty = Math.max(1, Math.round((hi - lo) / 2));
+    syncMeasuredAt = Date.now();
+    syncState = 'ok';
+    renderSyncResult(used, minRtt);
+  } catch (error) {
+    if (run !== syncSequence) return;
+    syncState = 'error';
+    document.getElementById('syncSummary').textContent = '서버 시각과 비교하지 못해 기기 시계를 그대로 표시합니다.';
+    document.getElementById('syncDetail').textContent = '네트워크 연결을 확인한 뒤 다시 측정하세요. 오프라인이거나 서버가 Date 헤더를 주지 않으면 측정할 수 없습니다.';
+  } finally {
+    if (run === syncSequence) button.disabled = false;
+    updateOffsetState();
+    scheduleBeeps();
+  }
+}
+
+function secondsText(ms) {
+  const abs = Math.abs(ms) / 1000;
+  const digits = abs < 1 ? 2 : abs < 10 ? 1 : 0;
+  return String(Number(abs.toFixed(digits)));
+}
+
+function renderSyncResult(samples, minRtt) {
+  const summary = document.getElementById('syncSummary');
+  const detail = document.getElementById('syncDetail');
+  const deviceMinusServer = -syncOffset;
+  const within = Math.abs(deviceMinusServer) <= Math.max(syncUncertainty, 50);
+  if (within) {
+    summary.textContent = `내 기기 시계가 서버와 거의 같습니다 (차이 ±${secondsText(Math.max(syncUncertainty, 50))}초 이내)`;
+  } else {
+    summary.textContent = `내 기기 시계가 약 ${secondsText(deviceMinusServer)}초 ${deviceMinusServer > 0 ? '빠릅니다' : '느립니다'} (±${secondsText(syncUncertainty)}초)`;
+  }
+  const at = new Intl.DateTimeFormat('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }).format(new Date(syncMeasuredAt));
+  detail.textContent = `기준: ${location.host || '이 사이트'} 서버 Date 헤더 · 요청 ${samples}회 · 최소 왕복 ${Math.round(minRtt)}ms · ${at} 측정. 대상 서비스(예매·접수 사이트)의 서버 시각과는 다를 수 있습니다.`;
+}
+
+function setBadge(kind, text) {
+  const badge = document.getElementById('statusBadge');
+  badge.className = `status-badge${kind ? ' ' + kind : ''}`;
+  badge.textContent = text;
+}
+
+function signedOffset(value) {
+  return `${value > 0 ? '+' : ''}${value}ms`;
+}
+
+function updateOffsetState() {
+  const applied = document.getElementById('applySync').checked && syncState === 'ok';
+  const parts = [];
+  if (applied) parts.push('서버 기준 보정');
+  if (manualOffset) parts.push(`수동 ${signedOffset(manualOffset)}`);
+  document.getElementById('targetName').textContent = parts.length
+    ? `현재 기준: 내 기기 시계 + ${parts.join(' + ')}`
+    : '현재 기준: 내 기기 시계';
+  if (syncState === 'syncing') setBadge('syncing', '서버와 비교 중');
+  else if (applied) setBadge('success', `보정 ${signedOffset(syncOffset)}`);
+  else if (syncState === 'error') setBadge('error', '비교 실패 · 기기 시계');
+  else setBadge('', manualOffset ? `수동 보정 ${signedOffset(manualOffset)}` : '기기 시계');
+  scheduleBeeps();
+}
+
+function applyManualOffset() {
+  const input = document.getElementById('offsetInput');
+  const value = Number(input.value);
+  manualOffset = Number.isFinite(value) ? Math.max(-60000, Math.min(60000, Math.round(value))) : 0;
+  if (String(manualOffset) !== input.value && input.value !== '' && input.value !== '-') input.value = manualOffset;
+  try { localStorage.setItem(OFFSET_KEY, String(manualOffset)); } catch (e) { /* 저장이 막혀도 현재 화면에는 적용합니다. */ }
+  updateOffsetState();
+}
+
+function resetOffset() {
+  document.getElementById('offsetInput').value = '0';
+  applyManualOffset();
+}
+
+// ---------- 목표 시각 카운트다운 ----------
+let audioCtx = null;
+let beepNodes = [];
+
+function getAudioContext() {
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) return null;
+  if (!audioCtx || audioCtx.state === 'closed') {
+    try { audioCtx = new AudioContextClass(); } catch (e) { audioCtx = null; }
+  }
   return audioCtx;
 }
-function primeAudio() {
-  try { getCtx(); } catch(e) {}
+
+function cancelBeeps() {
+  beepNodes.forEach(node => { try { node.stop(0); } catch (e) {} try { node.disconnect(); } catch (e) {} });
+  beepNodes = [];
 }
-function beep(freq, duration, vol=0.1, type='sine') {
+
+function scheduleTone(ctx, at, frequency, duration, volume) {
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.value = frequency;
+  gain.gain.setValueAtTime(0, at);
+  gain.gain.linearRampToValueAtTime(volume, at + 0.01);
+  gain.gain.setValueAtTime(volume, at + duration - 0.02);
+  gain.gain.linearRampToValueAtTime(0, at + duration);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(at);
+  osc.stop(at + duration + 0.01);
+  beepNodes.push(osc);
+}
+
+// 목표 시각의 예고음을 오디오 시계에 예약합니다. 백그라운드 탭에서도 예약된 시각에 울립니다.
+function scheduleBeeps() {
+  cancelBeeps();
+  if (!document.getElementById('beepToggle').checked || !targetMs) return;
+  const ctx = getAudioContext();
+  if (!ctx || ctx.state !== 'running') return;
+  const lead = Number(document.getElementById('beepLead').value) || 5;
+  const latency = (ctx.baseLatency || 0) + (ctx.outputLatency || 0);
+  const deviceTarget = targetMs - totalOffset();
+  const toCtx = deviceMs => ctx.currentTime + (deviceMs - Date.now()) / 1000 - latency;
+  for (let k = lead; k >= 1; k--) {
+    const at = toCtx(deviceTarget - k * 1000);
+    if (at > ctx.currentTime + 0.01) scheduleTone(ctx, at, 1000, 0.09, 0.18);
+  }
+  const final = toCtx(deviceTarget);
+  if (final > ctx.currentTime + 0.01) scheduleTone(ctx, final, 1500, 0.6, 0.3);
+}
+
+function enableBeeps() {
+  const toggle = document.getElementById('beepToggle');
+  saveTargetPrefs();
+  if (!toggle.checked) { cancelBeeps(); return; }
+  const ctx = getAudioContext();
+  if (!ctx) { toggle.checked = false; showToast('이 브라우저는 알림음을 지원하지 않습니다'); return; }
+  ctx.resume().then(() => {
+    scheduleBeeps();
+    showToast(`목표 ${document.getElementById('beepLead').value}초 전부터 예고음을 울립니다`);
+  }).catch(() => showToast('알림음을 켜지 못했습니다. 화면을 한 번 누른 뒤 다시 켜 주세요'));
+}
+
+function parseTargetInput() {
+  const match = /^(\d{2}):(\d{2})(?::(\d{2}))?/.exec(document.getElementById('targetTime').value || '');
+  if (!match) return 0;
+  const now = new Date(correctedNow());
+  const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), Number(match[1]), Number(match[2]), Number(match[3] || 0), 0);
+  if (target.getTime() <= now.getTime() - 1000) target.setDate(target.getDate() + 1);
+  return target.getTime();
+}
+
+function setTargetFromInput() {
+  targetMs = parseTargetInput();
+  lastTargetState = '';
+  saveTargetPrefs();
+  scheduleBeeps();
+  renderCountdown();
+}
+
+function defaultTargetValue() {
+  const now = new Date(correctedNow());
+  now.setHours(now.getHours() + 1, 0, 0, 0);
+  return `${String(now.getHours()).padStart(2, '0')}:00:00`;
+}
+
+function saveTargetPrefs() {
   try {
-    const ctx = getCtx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = type;
-    osc.frequency.value = freq;
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    gain.gain.setValueAtTime(vol, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + duration);
-  } catch(e){}
+    localStorage.setItem(TARGET_KEY, JSON.stringify({
+      time: document.getElementById('targetTime').value,
+      beep: document.getElementById('beepToggle').checked,
+      lead: document.getElementById('beepLead').value
+    }));
+  } catch (e) { /* 저장이 막혀도 동작합니다. */ }
+}
+
+function restoreTargetPrefs() {
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(TARGET_KEY) || 'null'); } catch (e) { saved = null; }
+  const time = saved && /^\d{2}:\d{2}(:\d{2})?$/.test(saved.time || '') ? saved.time : defaultTargetValue();
+  document.getElementById('targetTime').value = time.length === 5 ? `${time}:00` : time;
+  if (saved && ['3', '5', '10'].includes(String(saved.lead))) document.getElementById('beepLead').value = String(saved.lead);
+  // 소리는 사용자가 직접 켜야 하므로 새로고침 뒤에는 항상 꺼진 상태로 시작합니다.
+  document.getElementById('beepToggle').checked = false;
+  targetMs = parseTargetInput();
+}
+
+function pad(n, width = 2) { return String(n).padStart(width, '0'); }
+
+function formatDuration(ms) {
+  const tenths = Math.floor(ms / 100);
+  const totalSec = Math.floor(tenths / 10);
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  return `${pad(h)}:${pad(m)}:${pad(s)}.${tenths % 10}`;
 }
 
 function alarmEffect() {
@@ -243,53 +524,60 @@ function alarmEffect() {
   rp.style.animation = 'rip 1s ease-out forwards';
 }
 
-function playAlarmAt(s) {
-  const tickOn = document.getElementById('sndTick').checked;
-  const alarmOn = document.getElementById('sndAlarm').checked;
-  
-  if (s !== lastSec) {
-    if (alarmOn && s === 0) {
-      beep(880, 0.4, 0.3, 'square');
-      setTimeout(()=>beep(880, 0.6, 0.3, 'square'), 200);
-      alarmEffect();
-    } else if (alarmOn && s === 59) {
-      beep(1200, 0.2, 0.2, 'triangle');
-    } else if (alarmOn && s === 58) {
-      beep(1000, 0.1, 0.1, 'triangle');
-    } else if (tickOn) {
-      beep(600, 0.05, 0.05);
-    }
-    lastSec = s;
+function renderCountdown(nowMs) {
+  const valueEl = document.getElementById('countdownValue');
+  const captionEl = document.getElementById('countdownCaption');
+  if (!targetMs) {
+    valueEl.textContent = '--:--:--';
+    valueEl.classList.remove('final');
+    captionEl.textContent = '목표 시각을 정하면 보정된 시계 기준으로 남은 시간을 셉니다.';
+    return;
+  }
+  const now = nowMs || correctedNow();
+  const diff = targetMs - now;
+  const target = new Date(targetMs);
+  const today = new Date(now);
+  const dayLabel = target.toDateString() === today.toDateString() ? '오늘' : '내일';
+  const clock = `${pad(target.getHours())}:${pad(target.getMinutes())}:${pad(target.getSeconds())}`;
+  if (diff > 0) {
+    valueEl.textContent = formatDuration(diff);
+    valueEl.classList.toggle('final', diff <= 10000);
+    captionEl.textContent = `${dayLabel} ${clock}까지 남은 시간`;
+    lastTargetState = 'pending';
+  } else {
+    valueEl.textContent = `+${formatDuration(-diff)}`;
+    valueEl.classList.add('final');
+    captionEl.textContent = `${dayLabel} ${clock}이 지났습니다`;
+    if (lastTargetState === 'pending') alarmEffect();
+    lastTargetState = 'passed';
   }
 }
 
-function signedOffset(value) {
-  return `${value > 0 ? '+' : ''}${value}ms`;
+// ---------- 시계 표시 ----------
+function renderClock() {
+  const nowMs = correctedNow();
+  const now = new Date(nowMs);
+  const showMsCheck = document.getElementById('showMs').checked;
+  const hms = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  document.getElementById('hhmmss').textContent = hms;
+  document.getElementById('ms').textContent = showMsCheck ? `.${pad(now.getMilliseconds(), 3)}` : '';
+  document.getElementById('dateStr').textContent = now.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+  renderCountdown(nowMs);
+  document.title = targetMs && targetMs > nowMs && targetMs - nowMs < 3600000
+    ? `${formatDuration(targetMs - nowMs).slice(0, 8)} 남음 — 정밀 시계`
+    : `${hms} — 정밀 시계`;
 }
 
-function updateOffsetState() {
-  const badge = document.getElementById('statusBadge');
-  const tname = document.getElementById('targetName');
-  badge.className = 'status-badge';
-  badge.textContent = manualOffset === 0 ? '기기 시계' : `수동 보정 ${signedOffset(manualOffset)}`;
-  tname.textContent = manualOffset === 0
-    ? '현재 기준: 내 기기 로컬 시간'
-    : `현재 기준: 내 기기 시간 ${signedOffset(manualOffset)}`;
+function frameLoop() {
+  renderClock();
+  requestAnimationFrame(frameLoop);
 }
 
-function applyManualOffset() {
-  const input = document.getElementById('offsetInput');
-  const value = Number(input.value);
-  manualOffset = Number.isFinite(value) ? Math.max(-60000, Math.min(60000, Math.round(value))) : 0;
-  if (String(manualOffset) !== input.value && input.value !== '' && input.value !== '-') input.value = manualOffset;
-  try { localStorage.setItem('localClock_offsetMs', String(manualOffset)); } catch(e) {}
-  lastSec = -1;
-  updateOffsetState();
-}
-
-function resetOffset() {
-  document.getElementById('offsetInput').value = '0';
-  applyManualOffset();
+// ---------- 웹 응답 확인 ----------
+function setQuick(u) {
+  document.getElementById('urlInput').value = u;
+  document.getElementById('measureBtn').focus();
+  showToast('주소를 채웠습니다. 측정 버튼을 누르면 요청을 보냅니다');
 }
 
 function parseTarget(raw) {
@@ -297,7 +585,7 @@ function parseTarget(raw) {
   if (!value) throw new Error('측정할 웹사이트 주소를 입력하세요.');
   if (!/^https?:\/\//i.test(value)) value = 'https://' + value;
   let url;
-  try { url = new URL(value); } catch(e) { throw new Error('올바른 웹사이트 주소를 입력하세요.'); }
+  try { url = new URL(value); } catch (e) { throw new Error('올바른 웹사이트 주소를 입력하세요.'); }
   if (url.protocol !== 'http:' && url.protocol !== 'https:') throw new Error('HTTP 또는 HTTPS 주소만 측정할 수 있습니다.');
   if (location.protocol === 'https:' && url.protocol === 'http:') throw new Error('HTTPS 페이지에서는 브라우저 보안 정책상 HTTP 주소를 측정할 수 없습니다. HTTPS 주소를 사용하세요.');
   return url;
@@ -327,6 +615,12 @@ async function measureOnce(url, runSignal) {
   }
 }
 
+function median(values) {
+  const sorted = values.slice().sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+}
+
 async function measureLatency() {
   const container = document.getElementById('reportContainer');
   const button = document.getElementById('measureBtn');
@@ -336,7 +630,7 @@ async function measureLatency() {
   let url;
   try {
     url = parseTarget(document.getElementById('urlInput').value);
-  } catch(e) {
+  } catch (e) {
     showMeasureError(e.message);
     button.disabled = false;
     button.textContent = '응답속도 측정';
@@ -348,15 +642,18 @@ async function measureLatency() {
   button.disabled = true;
   button.textContent = '측정 중…';
   container.style.display = 'block';
-  container.innerHTML = '<h3>📡 HTTP 응답속도 측정 중</h3><p>동일한 주소에 HEAD 요청을 최대 3회 보내고 있습니다.</p>';
+  container.replaceChildren(textElement('h3', '📡 응답 대기 시간 측정 중'), textElement('p', '첫 연결 요청 1회 뒤 HEAD 요청 5회를 보내고 있습니다.'));
   const samples = [];
   try {
-    for (let i = 0; i < 3; i++) {
-      samples.push(await measureOnce(url, runController.signal));
+    await measureOnce(url, runController.signal); // 첫 요청: DNS·TLS 준비 시간이 섞여 결과에서 뺍니다.
+    for (let i = 0; i < 5; i++) {
       if (currentMeasurement !== measurementSequence) return;
+      await sleep(150);
+      samples.push(await measureOnce(url, runController.signal));
     }
+    if (currentMeasurement !== measurementSequence) return;
     updateReport(url, samples);
-  } catch(e) {
+  } catch (e) {
     if (currentMeasurement !== measurementSequence) return;
     showMeasureError(e.name === 'AbortError'
       ? '8초 안에 응답을 받지 못해 측정을 중단했습니다.'
@@ -366,77 +663,69 @@ async function measureLatency() {
       if (activeMeasurementController === runController) activeMeasurementController = null;
       button.disabled = false;
       button.textContent = '응답속도 측정';
-      updateOffsetState();
     }
   }
+}
+
+function textElement(tag, text) {
+  const element = document.createElement(tag);
+  element.textContent = text;
+  return element;
 }
 
 function showMeasureError(message) {
   const container = document.getElementById('reportContainer');
   container.style.display = 'block';
-  container.innerHTML = `<h3>⚠️ 측정할 수 없음</h3><p>${message}</p><p>외부 프록시로 우회하지 않으며, 로컬 시계와 수동 보정은 계속 정상 작동합니다.</p>`;
+  container.replaceChildren(
+    textElement('h3', '⚠️ 측정할 수 없음'),
+    textElement('p', message),
+    textElement('p', '외부 프록시로 우회하지 않으며, 시계 보정과 카운트다운은 계속 정상 작동합니다.')
+  );
 }
 
 function updateReport(url, samples) {
   const container = document.getElementById('reportContainer');
   const rounded = samples.map(value => Math.round(value));
-  const min = Math.min(...samples);
-  const max = Math.max(...samples);
-  const average = samples.reduce((sum, value) => sum + value, 0) / samples.length;
-  let latencyEval = '양호';
-  let latencyColor = 'var(--text-info)';
-  if (average < 100) {
-    latencyEval = '매우 빠름';
-    latencyColor = '#10b981';
-  } else if (average < 300) {
-    latencyEval = '보통';
-    latencyColor = '#f59e0b';
-  } else {
-    latencyEval = '느림';
-    latencyColor = '#ef4444';
-  }
-
-  container.innerHTML = `
-    <h3>📊 HTTP 응답속도 측정 결과</h3>
-    <p><b>대상:</b> <span class="highlight">${url.hostname}</span></p>
-    <p><b>3회 측정:</b> ${rounded.join('ms · ')}ms</p>
-    <p><b>최소 / 평균 / 최대:</b> <span class="highlight">${Math.round(min)} / ${Math.round(average)} / ${Math.round(max)}ms</span></p>
-    <p><b>참고 분류:</b> <span style="color:${latencyColor};font-weight:600">${latencyEval}</span></p>
-    <p style="margin-bottom:0">브라우저가 HEAD 응답을 받기까지의 경과 시간입니다. 100ms·300ms 경계는 이 도구의 단순 휴리스틱이며 보편적인 품질 기준이 아닙니다. 서버 시각·핑·클릭 성공 시점을 의미하지 않고 네트워크 상태에 따라 달라집니다.</p>
-  `;
+  const mid = Math.round(median(samples));
+  const min = Math.round(Math.min(...samples));
+  const line = (label, value, highlight) => {
+    const p = document.createElement('p');
+    const b = document.createElement('b');
+    b.textContent = `${label}: `;
+    const span = document.createElement('span');
+    if (highlight) span.className = 'highlight';
+    span.textContent = value;
+    p.append(b, span);
+    return p;
+  };
+  container.replaceChildren(
+    textElement('h3', '📊 응답 대기 시간'),
+    line('대상', url.hostname, true),
+    line('중앙값 / 최솟값', `${mid}ms / ${min}ms`, true),
+    line('5회 측정', `${rounded.join('ms · ')}ms`),
+    textElement('p', '첫 연결 요청은 제외했습니다. 네트워크 왕복과 서버 처리 시간이 합쳐진 대략적인 값이며, 서버 시각이나 접수 성공 시점을 뜻하지 않습니다.')
+  );
 }
 
-function updateClock() {
-  const showMsCheck = document.getElementById('showMs').checked;
-  const now = new Date(Date.now() + manualOffset);
-  
-  const h = String(now.getHours()).padStart(2,'0');
-  const m = String(now.getMinutes()).padStart(2,'0');
-  const s = String(now.getSeconds()).padStart(2,'0');
-  const ms = String(now.getMilliseconds()).padStart(3,'0');
-  
-  document.getElementById('hhmmss').textContent = `${h}:${m}:${s}`;
-  document.getElementById('ms').textContent = showMsCheck ? `.${ms}` : '';
-  
-  const dateOpts = { year:'numeric', month:'long', day:'numeric', weekday:'long' };
-  document.getElementById('dateStr').textContent = now.toLocaleDateString('ko-KR', dateOpts);
-  
-  playAlarmAt(now.getSeconds());
-  
-  document.title = `${h}:${m}:${s} — 정밀 로컬 시계`;
-
-  requestAnimationFrame(updateClock);
-}
+// ---------- 초기화 ----------
 (function restoreOffset() {
   let saved = 0;
-  try { saved = Number(localStorage.getItem('localClock_offsetMs')) || 0; } catch(e) {}
+  try { saved = Number(localStorage.getItem(OFFSET_KEY)) || 0; } catch (e) {}
   document.getElementById('offsetInput').value = String(Math.max(-60000, Math.min(60000, Math.round(saved))));
   applyManualOffset();
 })();
-document.addEventListener('pointerdown', primeAudio, { once: true });
-document.addEventListener('keydown', primeAudio, { once: true });
-requestAnimationFrame(updateClock);
+restoreTargetPrefs();
+document.getElementById('targetTime').addEventListener('change', setTargetFromInput);
+document.getElementById('targetTime').addEventListener('input', setTargetFromInput);
+document.getElementById('beepToggle').addEventListener('change', enableBeeps);
+document.getElementById('beepLead').addEventListener('change', () => { saveTargetPrefs(); scheduleBeeps(); });
+// 오디오 시계와 기기 시계의 차이를 주기적으로 다시 맞추고, 탭으로 돌아오면 즉시 갱신합니다.
+setInterval(() => { scheduleBeeps(); if (document.hidden) renderClock(); }, 30000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { renderClock(); scheduleBeeps(); } });
+requestAnimationFrame(frameLoop);
+syncClock();
 </script>
+<button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 <script src="/special-chars/theme-toggle.js"></script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
 </body>

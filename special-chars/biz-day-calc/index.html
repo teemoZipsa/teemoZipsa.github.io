@@ -11,9 +11,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
     <title>영업일 계산기 / Business Day Calculator</title>
-    <meta name="description" content="주말과 한국 공휴일을 제외해 영업일 날짜·기간을 계산합니다. 음력·변동·대체공휴일 데이터 지원 범위는 2024~2027년이며 범위 밖 결과에는 경고를 표시합니다.">
+    <meta name="description" content="주말과 한국 공휴일(설·추석·대체공휴일·선거일 포함)을 제외해 N영업일 후 날짜와 두 날짜 사이 영업일 수를 계산합니다. 공휴일 수록 범위는 2024~2030년이며 범위 밖 결과는 불완전으로 표시합니다.">
     <meta property="og:title" content="영업일 계산기 / Business Day Calculator — 티모집사">
-    <meta property="og:description" content="2024~2027년 한국 변동 공휴일 지원 범위를 명확히 표시하는 영업일 계산기.">
+    <meta property="og:description" content="2024~2030년 한국 공휴일·대체공휴일을 반영하는 영업일 계산기. 엑셀 NETWORKDAYS 방식 지원.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://teemozipsa.com/special-chars/biz-day-calc/">
     <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
@@ -37,81 +37,84 @@
         .field-group{margin-bottom:14px}
         .field-label{font-size:13px;font-weight:500;color:var(--text-secondary);margin-bottom:6px;display:flex;align-items:center;gap:6px}
         .field-row{display:flex;gap:10px;align-items:center}
-        .field-input{width:100%;padding:10px 12px;background:var(--bg-guide);border:1.5px solid #333366;border-radius:8px;color:var(--text-primary);font-size:14px;font-family:inherit;transition:border-color .2s}
-        .field-input:focus{outline:none;border-color:#7c5cbf}
-        input[type="date"]{color-scheme:dark}
+        .field-input{width:100%;padding:10px 12px;background:var(--bg-guide);border:1.5px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:inherit;transition:border-color .2s}
+        .field-input:focus{outline:none;border-color:var(--accent)}
+        .field-input[aria-invalid="true"]{border-color:var(--status-red-text)}
+        html[data-theme="dark"] input[type="date"]{color-scheme:dark}
+        html[data-theme="light"] input[type="date"]{color-scheme:light}
         input[type="number"]{-moz-appearance:textfield}
         input[type="number"]::-webkit-outer-spin-button,input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none}
+        .field-error{margin-top:6px;font-size:12px;color:var(--status-red-text);line-height:1.5}
+        .field-error:empty{display:none}
+        .field-note{margin-top:6px;font-size:12px;color:var(--text-info);line-height:1.55}
 
         .quick-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
-        .quick-btn{padding:5px 12px;background:var(--bg-btn);border:1px solid var(--border);border-radius:16px;color:var(--text-guide);font-size:11px;cursor:pointer;transition:all .2s;font-family:inherit}
-        .quick-btn:hover{background:var(--bg-btn-hover);border-color:#5a5a9a}
+        .quick-btn{padding:5px 12px;background:var(--bg-btn);border:1px solid var(--border);border-radius:16px;color:var(--text-guide);font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit}
+        .quick-btn:hover{background:var(--bg-btn-hover);border-color:var(--border-hover)}
 
-        .option-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
-        .toggle-wrap{display:flex;align-items:center;gap:6px;cursor:pointer}
-        .toggle-wrap input{display:none}
-        .toggle{width:36px;height:20px;background:var(--bg-btn);border-radius:10px;position:relative;transition:background .2s;flex-shrink:0}
-        .toggle::after{content:'';position:absolute;width:16px;height:16px;background:#8888bb;border-radius:50%;top:2px;left:2px;transition:all .2s}
-        .toggle-wrap input:checked+.toggle{background:var(--accent)}
-        .toggle-wrap input:checked+.toggle::after{left:18px;background:#fff}
-        .toggle-label{font-size:12px;color:var(--text-guide)}
-        .coverage-banner{margin-bottom:16px;padding:12px 14px;background:var(--bg-guide);border:1px solid var(--accent);border-radius:10px;font-size:12px;color:var(--text-secondary);line-height:1.65}
+        .option-row{display:flex;align-items:center;gap:10px 14px;margin-bottom:14px;flex-wrap:wrap}
+        .toggle-wrap{position:relative;display:flex;align-items:center;gap:6px;cursor:pointer;min-height:32px}
+        .toggle-wrap input{position:absolute;opacity:0;width:1px;height:1px;margin:0;pointer-events:none}
+        .toggle{width:36px;height:20px;background:var(--bg-btn);border:1px solid var(--border);border-radius:10px;position:relative;transition:background .2s;flex-shrink:0}
+        .toggle::after{content:'';position:absolute;width:14px;height:14px;background:var(--text-muted);border-radius:50%;top:2px;left:2px;transition:all .2s}
+        .toggle-wrap input:checked+.toggle{background:var(--accent);border-color:var(--accent)}
+        .toggle-wrap input:checked+.toggle::after{left:18px;background:var(--text-on-accent)}
+        .toggle-wrap input:focus-visible+.toggle{outline:3px solid var(--focus-ring);outline-offset:2px}
+        .toggle-label{font-size:13px;color:var(--text-guide)}
+        .coverage-banner{margin-bottom:16px;padding:12px 14px;background:var(--bg-guide);border:1px solid var(--accent);border-radius:10px;font-size:13px;color:var(--text-secondary);line-height:1.65}
         .coverage-banner strong{color:var(--accent-text)}
-        .coverage-status{margin-bottom:12px;padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.55}
+        .coverage-status{margin-bottom:12px;padding:10px 12px;border-radius:8px;font-size:13px;line-height:1.55}
         .coverage-status.complete{background:var(--accent-bg);border:1px solid var(--accent);color:var(--text-secondary)}
-        .coverage-status.warning{background:var(--bg-body);border:1px solid var(--text-error,#f87171);color:var(--text-primary)}
+        .coverage-status.warning{background:var(--bg-body);border:2px solid var(--status-red-text);color:var(--text-primary)}
+        .coverage-status.warning strong{display:block;font-size:15px;color:var(--status-red-text);margin-bottom:4px}
         .coverage-status.neutral{background:var(--bg-body);border:1px solid var(--border);color:var(--text-info)}
 
-        .divider{height:1px;background:var(--bg-btn);margin:16px 0}
+        .divider{height:1px;background:var(--border);margin:16px 0}
 
         .result-section{background:var(--bg-guide);border-radius:10px;padding:16px;margin-bottom:12px;display:none}
         .result-section.show{display:block}
         .result-main{text-align:center;margin-bottom:12px}
         .result-date{font-size:28px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
+        .result-section.incomplete .result-date{color:var(--text-secondary);text-decoration:underline dashed var(--status-red-text);text-underline-offset:6px}
+        .incomplete-tag{display:none;margin:0 auto 6px;width:max-content;max-width:100%;padding:3px 10px;border-radius:999px;background:var(--status-red-bg);color:#fff;font-size:12px;font-weight:700}
+        .result-section.incomplete .incomplete-tag{display:block}
         .result-day{font-size:14px;color:var(--text-info)}
+        .result-rule{margin-top:6px;font-size:13px;color:var(--text-secondary);line-height:1.55}
         .result-detail{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
         .detail-box{background:var(--bg-body);border-radius:8px;padding:10px;text-align:center}
-        .detail-box .label{font-size:11px;color:var(--text-info);margin-bottom:4px}
+        .detail-box .label{font-size:12px;color:var(--text-info);margin-bottom:4px}
         .detail-box .value{font-size:16px;font-weight:600;color:var(--text-primary)}
-        .result-holidays{margin-top:12px;font-size:12px;color:var(--text-info);line-height:1.8}
-        .result-holidays .holiday-chip{display:inline-block;padding:2px 8px;background:var(--bg-btn);border-radius:10px;margin:2px;font-size:11px;color:var(--text-secondary)}
+        .result-holidays{margin-top:12px;font-size:13px;color:var(--text-info);line-height:1.8}
+        .result-holidays .holiday-chip{display:inline-block;padding:2px 8px;background:var(--bg-btn);border-radius:10px;margin:2px;font-size:12px;color:var(--text-secondary)}
 
         .guide-section{background:var(--bg-bar);border-radius:10px;margin:0 16px 16px;font-size:14px;overflow:hidden}
         .guide-section summary{cursor:pointer;padding:14px 16px;font-weight:600;color:var(--text-secondary);list-style:none;display:flex;align-items:center;gap:6px}
         .guide-section summary::-webkit-details-marker{display:none}
         .guide-section summary::after{content:'▼';font-size:10px;margin-left:auto;transition:transform .2s;color:var(--text-muted)}
         .guide-section[open] summary::after{transform:rotate(180deg)}
-        .guide-content{padding:0 16px 16px;color:var(--text-info);line-height:1.8;font-size:13px}
+        .guide-content{padding:0 16px 16px;color:var(--text-info);line-height:1.8;font-size:14px}
         .guide-content strong{color:var(--text-secondary)}
         .guide-content ul{margin:8px 0;padding-left:20px}
         .guide-content li{margin-bottom:4px}
+        .guide-content p+p{margin-top:8px}
 
-        .bottom-bar{background:var(--bg-body);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #222250}
-        .bottom-bar .info{font-size:11px;color:var(--text-muted)}
-        .action-btn{padding:8px 16px;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .2s}
+        .bottom-bar{background:var(--bg-body);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--border)}
+        .bottom-bar .info{font-size:12px;color:var(--text-muted);min-width:0}
+        .bottom-actions{display:flex;gap:8px;flex-wrap:wrap}
+        .action-btn{padding:8px 14px;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .2s}
         .btn-clear{background:var(--bg-btn);color:var(--text-secondary)}
         .btn-clear:hover{background:var(--bg-btn-hover)}
         .btn-copy{background:var(--accent);color:var(--text-on-accent)}
         .btn-copy:hover{background:var(--accent-hover)}
 
-        .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-on-accent);padding:10px 24px;border-radius:20px;font-size:13px;opacity:0;transition:all .3s;z-index:999;white-space:nowrap}
+        .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:20px;font-size:13px;opacity:0;transition:all .3s;z-index:999;white-space:nowrap}
         .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-
-        .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:16px;}
-        .report-box h2 {font-size:14px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
-        .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
-        .report-box strong {color:var(--text-primary);font-weight:600}
 
         .related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:20px 16px}
         .related-tools h2 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
         .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
         .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
         .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
-
-        @keyframes fadeIn {
-            from { opacity:0; transform:translateY(10px) }
-            to { opacity:1; transform:translateY(0) }
-        }
 
         @media(max-width:640px){
             body{padding:10px}
@@ -125,7 +128,7 @@
             .detail-box{padding:8px 4px}
             .detail-box .value{font-size:14px}
         }
-.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:12px;color:var(--text-info)}
 .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
 .footer a:hover{color:var(--text-secondary)}
 </style>
@@ -146,7 +149,7 @@
             <button type="button" class="mode-tab" onclick="setMode('between')" id="modeBetween" aria-controls="betweenMode" aria-pressed="false">📊 두 날짜 사이</button>
         </div>
 
-        <div class="coverage-banner" role="note"><strong>수록 공휴일 데이터 지원 범위: 2024.01.01~2027.12.31</strong><br>이 범위에서는 현재 수록된 고정·음력 변동·대체·추가 공휴일을 반영합니다. 향후 지정되는 임시공휴일은 갱신 전까지 빠질 수 있으며, 범위 밖에서는 음력·변동 공휴일도 불완전할 수 있습니다.</div>
+        <div class="coverage-banner" role="note"><strong>공휴일 데이터 수록 범위: <span id="coverageRangeText">2024.01.01~2030.12.31</span></strong><br>이 범위에서는 양력 고정 공휴일, 설날·추석·부처님오신날, 대체공휴일, 임기만료 선거일과 이미 지정된 임시공휴일을 반영합니다. 앞으로 새로 지정되는 임시공휴일은 자료를 갱신하기 전까지 빠질 수 있습니다.</div>
 
         <!-- 모드1: 시작일 + 영업일 수 -->
         <div id="addMode">
@@ -154,20 +157,22 @@
                 <label class="field-label" for="startDate">📅 시작일</label>
                 <div class="field-row">
                     <input type="date" id="startDate" class="field-input" onchange="calculate()">
-                    <button class="quick-btn" onclick="setToday('startDate')" style="white-space:nowrap">오늘</button>
+                    <button type="button" class="quick-btn" onclick="setToday('startDate')" style="white-space:nowrap">오늘</button>
                 </div>
             </div>
             <div class="field-group">
                 <label class="field-label" for="bizDays">🔢 영업일 수</label>
-                <input type="number" id="bizDays" class="field-input" min="-100000" max="100000" step="1" placeholder="예: 10 (음수 입력 시 과거로 계산)" oninput="calculate()">
+                <input type="number" id="bizDays" class="field-input" min="-100000" max="100000" step="1" inputmode="numeric" placeholder="예: 10 (음수 입력 시 과거로 계산)" oninput="calculate()" aria-describedby="bizDaysError bizDaysNote">
+                <div class="field-error" id="bizDaysError" aria-live="polite"></div>
                 <div class="quick-btns">
-                    <button class="quick-btn" onclick="setBizDays(5)">5일</button>
-                    <button class="quick-btn" onclick="setBizDays(10)">10일</button>
-                    <button class="quick-btn" onclick="setBizDays(15)">15일</button>
-                    <button class="quick-btn" onclick="setBizDays(20)">20일</button>
-                    <button class="quick-btn" onclick="setBizDays(30)">30일</button>
-                    <button class="quick-btn" onclick="setBizDays(-5)">-5일</button>
+                    <button type="button" class="quick-btn" onclick="setBizDays(5)">5일</button>
+                    <button type="button" class="quick-btn" onclick="setBizDays(10)">10일</button>
+                    <button type="button" class="quick-btn" onclick="setBizDays(15)">15일</button>
+                    <button type="button" class="quick-btn" onclick="setBizDays(20)">20일</button>
+                    <button type="button" class="quick-btn" onclick="setBizDays(30)">30일</button>
+                    <button type="button" class="quick-btn" onclick="setBizDays(-5)">-5일</button>
                 </div>
+                <div class="field-note" id="bizDaysNote">시작일은 세지 않고, 다음 날부터 처음 만나는 영업일을 1영업일로 셉니다.</div>
             </div>
         </div>
 
@@ -177,15 +182,22 @@
                 <label class="field-label" for="fromDate">📅 시작일</label>
                 <div class="field-row">
                     <input type="date" id="fromDate" class="field-input" onchange="calculate()">
-                    <button class="quick-btn" onclick="setToday('fromDate')" style="white-space:nowrap">오늘</button>
+                    <button type="button" class="quick-btn" onclick="setToday('fromDate')" style="white-space:nowrap">오늘</button>
                 </div>
             </div>
             <div class="field-group">
                 <label class="field-label" for="toDate">📅 종료일</label>
                 <div class="field-row">
                     <input type="date" id="toDate" class="field-input" onchange="calculate()">
-                    <button class="quick-btn" onclick="setToday('toDate')" style="white-space:nowrap">오늘</button>
+                    <button type="button" class="quick-btn" onclick="setToday('toDate')" style="white-space:nowrap">오늘</button>
                 </div>
+            </div>
+            <div class="option-row">
+                <label class="toggle-wrap">
+                    <input type="checkbox" id="includeStartDay" checked onchange="calculate()">
+                    <span class="toggle" aria-hidden="true"></span>
+                    <span class="toggle-label">시작일도 셈 (엑셀 NETWORKDAYS 방식)</span>
+                </label>
             </div>
         </div>
 
@@ -193,208 +205,151 @@
         <div class="option-row">
             <label class="toggle-wrap">
                 <input type="checkbox" id="excludeHolidays" checked onchange="calculate()">
-                <span class="toggle"></span>
+                <span class="toggle" aria-hidden="true"></span>
                 <span class="toggle-label">🇰🇷 공휴일 제외</span>
             </label>
             <label class="toggle-wrap">
                 <input type="checkbox" id="includeSaturday" onchange="calculate()">
-                <span class="toggle"></span>
-                <span class="toggle-label">토요일 포함</span>
+                <span class="toggle" aria-hidden="true"></span>
+                <span class="toggle-label">토요일도 영업일로 셈</span>
             </label>
         </div>
 
         <div class="divider"></div>
 
         <!-- 결과 -->
-        <div class="result-section" id="resultSection">
-            <div class="coverage-status" id="resultCoverage" role="status" aria-live="polite"></div>
+        <div class="result-section" id="resultSection" aria-live="polite">
+            <div class="coverage-status" id="resultCoverage" role="status"></div>
             <div class="result-main">
+                <span class="incomplete-tag">⚠️ 불완전한 결과</span>
                 <div class="result-date" id="resultDate"></div>
                 <div class="result-day" id="resultDay"></div>
+                <div class="result-rule" id="resultRule"></div>
             </div>
             <div class="result-detail" id="resultDetail"></div>
             <div class="result-holidays" id="resultHolidays"></div>
-            <div class="report-box" id="analysisReport" style="display:none;" role="status" aria-live="polite"></div>
         </div>
     </div>
 
     <div class="bottom-bar">
         <div class="info" id="bottomInfo">시작일과 영업일 수를 입력하세요</div>
-        <div style="display:flex;gap:8px">
+        <div class="bottom-actions">
             <button class="action-btn btn-clear" type="button" onclick="clearAll()">초기화</button>
+            <button class="action-btn btn-clear" type="button" onclick="copyShareLink()">링크 복사</button>
             <button class="action-btn btn-copy" type="button" onclick="copyResult()">결과 복사</button>
         </div>
     </div>
 
     <details class="guide-section" open>
-        <summary>📖 영업일(근무일) 계산기 활용 가이드 및 상식</summary>
+        <summary>📖 영업일(근무일) 계산기 활용 가이드</summary>
         <div class="guide-content">
             <strong>Q. 영업일(Business Day)이란 정확히 무엇인가요?</strong>
             <p>보통 주말과 해당 기관이 쉬는 공휴일을 제외한 업무일을 뜻합니다. 다만 계약·법령·은행·배송 서비스마다 토요일과 특정 휴일을 세는 기준이 다를 수 있으므로, 중요한 기한은 적용 문서나 기관 기준을 함께 확인해야 합니다.</p>
             <br>
-            <strong>Q. 공휴일 제외 옵션은 어떻게 동작하나요?</strong>
-            <p><strong>2024~2027년 안에서는</strong> 수록된 양력 고정 공휴일, 설날·추석·부처님오신날 같은 음력 변동 공휴일, 대체공휴일과 별도 추가 데이터를 함께 확인해 제외합니다. 계산 구간이 이 범위를 벗어나면 음력·변동 공휴일 데이터가 완전하지 않으므로 결과 상단에 경고가 표시됩니다.</p>
-            <p style="color:var(--text-muted);font-size:11px;">규정 기준: 대통령령 제36290호의 노동절 관련 규정은 2026년 5월 1일, 제헌절(국경일) 관련 규정은 2026년 5월 11일 시행되어 두 날짜는 2026년부터 관공서 공휴일 규칙에 포함됩니다. 2026년 전 노동절의 민간 사업장 휴무 여부는 이 도구의 관공서 공휴일 기준과 다를 수 있습니다.</p>
+            <strong>Q. 'N영업일 후'와 '두 날짜 사이'는 날짜를 어떻게 세나요?</strong>
+            <p><strong>시작일 + 영업일</strong>은 시작일을 세지 않고 다음 날부터 처음 만나는 영업일을 1영업일로 셉니다. 예를 들어 2026년 9월 28일(월)부터 1영업일 후는 9월 29일(화)입니다. 음수를 입력하면 같은 방식으로 과거 방향으로 셉니다.</p>
+            <p><strong>두 날짜 사이</strong>는 기본적으로 시작일과 종료일을 모두 포함해 셉니다. 엑셀의 NETWORKDAYS 함수와 같은 방식입니다. 2026년 9월 1일~30일은 평일 22일 중 추석 연휴 평일 이틀(24·25일)을 빼서 20영업일입니다. '시작일도 셈'을 끄면 시작일은 빼고 종료일만 포함하므로 같은 기간이 19영업일이 됩니다. 종료일을 시작일보다 앞에 입력하면 순서를 바꿔 계산합니다.</p>
+            <br>
+            <strong>Q. 공휴일 제외 옵션은 어떤 기준으로 동작하나요?</strong>
+            <p>「관공서의 공휴일에 관한 규정」을 기준으로 합니다. 1월 1일·삼일절·노동절·어린이날·현충일·제헌절·광복절·개천절·한글날·기독탄신일은 양력 규칙으로 계산하고, 설날·추석 연휴와 부처님오신날은 한국천문연구원 음양력 자료로 확인한 2024~2030년 양력 날짜를 사용합니다. 대통령·국회의원·지방선거처럼 임기가 끝나 치르는 선거의 선거일은 「공직선거법」 제34조의 산식(예: 국회의원선거는 임기만료일 전 50일 이후 첫 번째 수요일)으로 확인해 넣었습니다.</p>
+            <p>대체공휴일은 규정 제3조를 따릅니다. 설날·추석 연휴는 일요일과 겹칠 때, 국경일·어린이날·부처님오신날·노동절·기독탄신일은 토요일이나 일요일과 겹칠 때, 그리고 평일에 다른 공휴일과 겹칠 때 그다음 첫 번째 비공휴일을 쉽니다. 1월 1일과 현충일에는 대체공휴일이 없습니다. 예를 들어 2028년 10월 3일은 추석과 개천절이 겹쳐 10월 5일(목)이 대체공휴일이 됩니다.</p>
+            <p>계산 구간이 2024년 1월 1일~2030년 12월 31일을 벗어나면 결과 위에 <strong>"공휴일 자료가 없는 기간이 포함되어 결과가 불완전합니다"</strong>라는 경고가 크게 표시됩니다. 이때는 주말과 양력 고정 공휴일만 확실하게 반영되므로 결과를 최종 기한으로 쓰지 마세요.</p>
+            <p style="color:var(--text-muted);font-size:13px;">규정 기준: 대통령령 제36290호의 노동절 관련 규정은 2026년 5월 1일, 제헌절(국경일) 관련 규정은 2026년 5월 11일 시행되어 두 날짜는 2026년부터 관공서 공휴일 규칙에 포함됩니다. 2026년 전 노동절의 민간 사업장 휴무 여부는 이 도구의 관공서 공휴일 기준과 다를 수 있습니다.</p>
             <br>
             <strong>Q. 토요일 포함 옵션은 언제 쓰나요?</strong>
-            <p>공무원이나 일반 사무직은 주 5일제가 기본이라 토요일을 쉬지만, 제조업체나 일부 물류·운송 업종, 혹은 주말 근무가 포함된 스케줄러를 쓰는 부서는 토요일을 정상 근로일로 치는 경우가 잦습니다. 이 옵션을 켜면 일요일만 주휴일로 치고 토요일을 영업일 카운트에 포함시킵니다.</p>
+            <p>공무원이나 일반 사무직은 주 5일제가 기본이라 토요일을 쉬지만, 제조업체나 일부 물류·운송 업종, 주말 근무가 포함된 부서는 토요일을 정상 근로일로 치는 경우가 많습니다. 이 옵션을 켜면 일요일만 주휴일로 보고 토요일을 영업일로 셉니다.</p>
             <br>
-            <p style="color:var(--text-muted);font-size:11px;">※ 행정 처리 기한은 적용 법령과 기관 기준을 따르며, 영업일이 아닌 단순 일수로 산정되는 경우도 있습니다. 임시공휴일·선거일 등 사후 지정일은 추가 데이터 갱신 전 누락될 수 있으므로 중요한 일정은 관계 기관 달력과 다시 확인하세요.</p>
+            <strong>Q. 결과를 공유하거나 기록하려면?</strong>
+            <p>'결과 복사'는 입력한 날짜·영업일 수·계산 기준과 제외한 공휴일 목록을 함께 복사합니다. '링크 복사'는 현재 입력값이 담긴 주소를 복사하므로 동료가 같은 조건으로 결과를 다시 열 수 있습니다. 계산은 브라우저에서만 이루어지며 입력한 날짜를 서버로 보내지 않습니다.</p>
+            <br>
+            <p style="color:var(--text-muted);font-size:13px;">※ 법령상 기간은 영업일이 아닌 달력 일수로 정해지는 경우가 많고, 「민법」 제161조에 따라 기간의 마지막 날이 토요일이나 공휴일이면 그다음 날 만료됩니다. 행정·계약 기한은 적용 법령과 기관 기준을 먼저 확인하세요. 새로 지정되는 임시공휴일은 자료 갱신 전 누락될 수 있으므로 중요한 일정은 관계 기관 달력과 다시 확인하세요.</p>
         </div>
     </details>
 
     <div class="related-tools">
-      <h2>🔗 연관 생활 도구</h2>
+      <h2>🔗 연관 업무 도구</h2>
       <div class="tool-list">
-        <a href="/special-chars/date-calc/"><span>📅 디데이/단순 날짜 지정 계산기</span><span>바로가기 →</span></a>
+        <a href="/special-chars/date-calc/"><span>📅 날짜/D-Day 계산기 (달력 일수)</span><span>바로가기 →</span></a>
         <a href="/special-chars/wage-calc/"><span>💰 알바/급여(주휴수당) 계산기</span><span>바로가기 →</span></a>
-        <a href="/special-chars/char-counter/"><span>📝 자소서 글자수/맞춤법 검사기</span><span>바로가기 →</span></a>
+        <a href="/special-chars/timezone-conv/"><span>🌍 타임존 변환기 (해외 일정)</span><span>바로가기 →</span></a>
       </div>
     </div>
 
     </main>
-<footer class="footer"><span>한국 변동 공휴일 데이터: 2024~2027년</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
+<footer class="footer"><span>한국 공휴일 데이터: 2024~2030년</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
 <nav class="site-policy-links" aria-label="사이트 정책"><a href="/about.html">사이트 소개</a><a href="/editorial-policy.html">편집정책</a><a href="/contact.html">문의</a><a href="/privacy.html">개인정보처리방침</a></nav>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-// === 한국 공휴일 데이터 (양력 고정 + 음력 변동 + 수동 지정일) ===
-// 기준: 대통령령 제36290호. 노동절 관련 규정은 2026.5.1., 제헌절(국경일) 관련 규정은 2026.5.11. 시행.
-// 포함 규칙: N영업일 후는 시작일 미산입, 두 날짜 사이는 시작일 미산입/종료일 포함.
-const HOLIDAYS = {
-    // kind는 대체공휴일 제3조의 비대칭 조건을 그대로 반영하기 위한 분류입니다.
-    fixed: [
-        [1,1,'신정','ordinary',1900],
-        [3,1,'삼일절','national',1900],
-        [5,1,'노동절','labor',2026],
-        [5,5,'어린이날','children',1900],
-        [6,6,'현충일','ordinary',1900],
-        [7,17,'제헌절','national',2026],
-        [8,15,'광복절','national',1900],
-        [10,3,'개천절','national',1900],
-        [10,9,'한글날','national',2013],
-        [12,25,'기독탄신일','christmas',1900]
-    ],
-    // 연도별 음력 변동 공휴일 (양력 변환). 대체공휴일은 getHolidaysForYear에서 계산합니다.
-    lunar: {
-        2024: [
-            [2,9,'설날 연휴','lunarNewYear'],[2,10,'설날','lunarNewYear'],[2,11,'설날 연휴','lunarNewYear'],
-            [5,15,'부처님오신날','buddha'],
-            [9,16,'추석 연휴','chuseok'],[9,17,'추석','chuseok'],[9,18,'추석 연휴','chuseok']
-        ],
-        2025: [
-            [1,28,'설날 연휴','lunarNewYear'],[1,29,'설날','lunarNewYear'],[1,30,'설날 연휴','lunarNewYear'],
-            [5,5,'부처님오신날','buddha'],
-            [10,5,'추석 연휴','chuseok'],[10,6,'추석','chuseok'],[10,7,'추석 연휴','chuseok']
-        ],
-        2026: [
-            [2,16,'설날 연휴','lunarNewYear'],[2,17,'설날','lunarNewYear'],[2,18,'설날 연휴','lunarNewYear'],
-            [5,24,'부처님오신날','buddha'],
-            [9,24,'추석 연휴','chuseok'],[9,25,'추석','chuseok'],[9,26,'추석 연휴','chuseok']
-        ],
-        2027: [
-            [2,6,'설날 연휴','lunarNewYear'],[2,7,'설날','lunarNewYear'],[2,8,'설날 연휴','lunarNewYear'],
-            [5,13,'부처님오신날','buddha'],
-            [9,14,'추석 연휴','chuseok'],[9,15,'추석','chuseok'],[9,16,'추석 연휴','chuseok']
-        ]
-    }
-};
-
-const HOLIDAY_EXTRA_YEARS = {
-    2024: [
-        { date: '2024-04-10', name: '제22대 국회의원선거일', type: 'term-end-election' },
-        { date: '2024-10-01', name: '국군의 날 임시공휴일', type: 'temporary-holiday' }
-    ],
-    2025: [
-        { date: '2025-01-27', name: '설 연휴 임시공휴일', type: 'temporary-holiday' },
-        { date: '2025-06-03', name: '제21대 대통령선거일', type: 'temporary-election-holiday' }
-    ],
-    2026: [
-        { date: '2026-06-03', name: '전국동시지방선거일', type: 'term-end-election' }
-    ]
-};
+// === 한국 공휴일 규칙 ===
+// 양력 고정 공휴일과 대체공휴일 규칙은 이 페이지에서 계산하고, 음력 공휴일·선거일·임시공휴일은
+// /special-chars/data/kr-holidays-extra.json 한곳에서 관리합니다.
+// 기준: 관공서의 공휴일에 관한 규정(대통령령 제36290호). 노동절 2026.5.1., 제헌절(국경일) 2026.5.11. 시행.
+// kind는 대체공휴일 제3조의 비대칭 조건을 반영하기 위한 분류입니다.
+const FIXED_HOLIDAYS = [
+    [1,1,'신정','ordinary',1900],
+    [3,1,'삼일절','national',1900],
+    [5,1,'노동절','labor',2026],
+    [5,5,'어린이날','children',1900],
+    [6,6,'현충일','ordinary',1900],
+    [7,17,'제헌절','national',2026],
+    [8,15,'광복절','national',1900],
+    [10,3,'개천절','national',1900],
+    [10,9,'한글날','national',2013],
+    [12,25,'기독탄신일','christmas',1900]
+];
+// 데이터를 갱신하면 서비스 워커 캐시를 우회하도록 버전을 함께 올립니다.
+const HOLIDAY_DATA_URL = '/special-chars/data/kr-holidays-extra.json?v=20260928';
+const holidayData = { status: 'loading', coverageStart: '', coverageEnd: '', checkedAt: '', lunar: {}, extras: {} };
 const HOLIDAY_YEAR_CACHE = new Map();
-
-fetch('/special-chars/data/kr-holidays-extra.json')
-    .then(r => r.ok ? r.json() : null)
-    .then(data => {
-        if (!data || !data.years) return;
-        Object.keys(data.years).forEach(year => { HOLIDAY_EXTRA_YEARS[year] = data.years[year]; });
-        HOLIDAY_YEAR_CACHE.clear();
-        calculate();
-    })
-    .catch(() => {});
+const MAX_CALCULATION_DAYS = 100000;
+const DAYS_KO = ['일', '월', '화', '수', '목', '금', '토'];
 
 let mode = 'add';
-let lastCoverageCopyText = '';
+let lastCopyText = '';
 
-const HOLIDAY_COVERAGE_START = new Date(2024, 0, 1);
-const HOLIDAY_COVERAGE_END = new Date(2027, 11, 31);
-const MAX_CALCULATION_DAYS = 100000;
-
-function getHolidayCoverage(startDate, endDate, excludeHolidays) {
-    if (!excludeHolidays) {
-        return { applies: false, complete: true };
-    }
-    const first = startDate <= endDate ? startDate : endDate;
-    const last = startDate <= endDate ? endDate : startDate;
-    return {
-        applies: true,
-        complete: first >= HOLIDAY_COVERAGE_START && last <= HOLIDAY_COVERAGE_END
-    };
+function loadHolidayData() {
+    fetch(HOLIDAY_DATA_URL)
+        .then(response => { if (!response.ok) throw new Error(String(response.status)); return response.json(); })
+        .then(data => {
+            const coverage = data && data.meta && data.meta.coverage;
+            if (!data || !data.lunar || !coverage || !isIsoDate(coverage.start) || !isIsoDate(coverage.end)) throw new Error('holiday data format');
+            holidayData.lunar = data.lunar;
+            holidayData.extras = data.years || {};
+            holidayData.coverageStart = coverage.start;
+            holidayData.coverageEnd = coverage.end;
+            holidayData.checkedAt = data.meta.checkedAt || '';
+            holidayData.status = 'ready';
+        })
+        .catch(() => { holidayData.status = 'failed'; })
+        .finally(() => {
+            HOLIDAY_YEAR_CACHE.clear();
+            renderCoverageBanner();
+            calculate();
+        });
 }
 
-function getHolidaysForYear(year) {
-    if (HOLIDAY_YEAR_CACHE.has(year)) return HOLIDAY_YEAR_CACHE.get(year);
-    const baseRules = [];
-    HOLIDAYS.fixed.forEach(([m, d, name, kind, fromYear]) => {
-        if (year >= fromYear) baseRules.push({ date: new Date(year, m - 1, d), name, kind });
-    });
-    if (HOLIDAYS.lunar[year]) {
-        HOLIDAYS.lunar[year].forEach(([m, d, name, kind]) => {
-            baseRules.push({ date: new Date(year, m - 1, d), name, kind });
-        });
-    }
+function renderCoverageBanner() {
+    if (holidayData.status !== 'ready') return;
+    document.getElementById('coverageRangeText').textContent =
+        `${holidayData.coverageStart.replace(/-/g, '.')}~${holidayData.coverageEnd.replace(/-/g, '.')}` +
+        (holidayData.checkedAt ? ` (자료 확인 ${holidayData.checkedAt})` : '');
+}
 
-    const dayCounts = new Map();
-    const sourceGroups = new Map();
-    baseRules.forEach(h => {
-        const key = toISODate(h.date);
-        dayCounts.set(key, (dayCounts.get(key) || 0) + 1);
-        if (!sourceGroups.has(key)) sourceGroups.set(key, []);
-        sourceGroups.get(key).push(h);
-    });
+function isIsoDate(value) {
+    if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+    return Boolean(parseIsoDate(value));
+}
 
-    const sourceGroupList = Array.from(sourceGroups.values()).sort((a, b) => a[0].date - b[0].date);
-    const holidays = sourceGroupList.map(rules => ({
-        date: rules[0].date,
-        name: Array.from(new Set(rules.map(rule => rule.name))).join('·')
-    }));
-    const extraHolidays = HOLIDAY_EXTRA_YEARS[year] || HOLIDAY_EXTRA_YEARS[String(year)] || [];
-    const occupied = new Set(sourceGroups.keys());
-    extraHolidays.forEach(item => occupied.add(item.date));
-
-    // 같은 원 공휴일 날짜에 여러 규칙이 겹쳐도 대체공휴일은 날짜 그룹당 한 번만 생성합니다.
-    sourceGroupList.forEach(rules => {
-        if (!rules.some(rule => isSubstituteEligible(rule, dayCounts))) return;
-        let candidate = new Date(rules[0].date);
-        candidate.setDate(candidate.getDate() + 1);
-        while (candidate.getDay() === 0 || candidate.getDay() === 6 || occupied.has(toISODate(candidate))) {
-            candidate.setDate(candidate.getDate() + 1);
-        }
-        occupied.add(toISODate(candidate));
-        const sourceNames = Array.from(new Set(rules.map(rule => rule.name))).join('·');
-        holidays.push({ date: candidate, name: `대체공휴일(${sourceNames})` });
-    });
-
-    extraHolidays.forEach(item => {
-        holidays.push({ date: new Date(item.date + 'T00:00:00'), name: item.name });
-    });
-
-    HOLIDAY_YEAR_CACHE.set(year, holidays);
-    return holidays;
+// 로컬 정오로 만들면 서머타임이 자정에 바뀌는 지역에서도 날짜가 밀리지 않습니다.
+function parseIsoDate(value) {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value || '');
+    if (!match) return null;
+    const [year, month, day] = match.slice(1).map(Number);
+    const date = new Date(year, month - 1, day, 12);
+    return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day ? date : null;
 }
 
 function toISODate(date) {
@@ -404,58 +359,119 @@ function toISODate(date) {
     return `${y}-${m}-${d}`;
 }
 
-function isSubstituteEligible(rule, dayCounts) {
-    const day = rule.date.getDay();
-    const overlapsOtherHoliday = (dayCounts.get(toISODate(rule.date)) || 0) > 1;
+function addDays(date, days) {
+    const next = new Date(date);
+    next.setDate(next.getDate() + days);
+    return next;
+}
+
+function formatDateKo(date) {
+    return `${toISODate(date)}(${DAYS_KO[date.getDay()]})`;
+}
+
+function uniqueNames(rules) {
+    return Array.from(new Set(rules.map(rule => rule.name))).join('·');
+}
+
+function isSubstituteEligible(rule, overlapsOtherHoliday) {
+    const day = parseIsoDate(rule.iso).getDay();
+    const weekend = day === 0 || day === 6;
     if (['national', 'buddha', 'labor', 'children', 'christmas'].includes(rule.kind)) {
-        return day === 0 || day === 6 || overlapsOtherHoliday;
+        return weekend || overlapsOtherHoliday;
     }
     if (['lunarNewYear', 'chuseok'].includes(rule.kind)) {
-        return day === 0 || overlapsOtherHoliday;
+        return day === 0 || (overlapsOtherHoliday && !weekend);
     }
     return false;
 }
 
-function isHoliday(date, excludeHolidays) {
+// 연도별 공휴일 맵(YYYY-MM-DD → 이름)을 만듭니다.
+function getHolidayMap(year) {
+    if (HOLIDAY_YEAR_CACHE.has(year)) return HOLIDAY_YEAR_CACHE.get(year);
+    const baseRules = [];
+    FIXED_HOLIDAYS.forEach(([m, d, name, kind, fromYear]) => {
+        if (year >= fromYear) baseRules.push({ iso: `${year}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`, name, kind });
+    });
+    (holidayData.lunar[year] || holidayData.lunar[String(year)] || []).forEach(item => {
+        if (isIsoDate(item.date)) baseRules.push({ iso: item.date, name: String(item.name || '공휴일'), kind: item.kind });
+    });
+
+    const groups = new Map();
+    baseRules.forEach(rule => {
+        if (!groups.has(rule.iso)) groups.set(rule.iso, []);
+        groups.get(rule.iso).push(rule);
+    });
+
+    const holidays = new Map();
+    groups.forEach((rules, iso) => holidays.set(iso, uniqueNames(rules)));
+    const extras = holidayData.extras[year] || holidayData.extras[String(year)] || [];
+    extras.forEach(item => {
+        if (!isIsoDate(item.date)) return;
+        const name = String(item.name || '공휴일');
+        holidays.set(item.date, holidays.has(item.date) ? `${holidays.get(item.date)}·${name}` : name);
+    });
+
+    // 같은 날짜에 여러 공휴일이 겹쳐도 대체공휴일은 날짜 하나당 한 번만 생깁니다.
+    const occupied = new Set(holidays.keys());
+    Array.from(groups.keys()).sort().forEach(iso => {
+        const rules = groups.get(iso);
+        const overlaps = rules.length > 1;
+        if (!rules.some(rule => isSubstituteEligible(rule, overlaps))) return;
+        let candidate = addDays(parseIsoDate(iso), 1);
+        while (candidate.getDay() === 0 || candidate.getDay() === 6 || occupied.has(toISODate(candidate))) {
+            candidate = addDays(candidate, 1);
+        }
+        const key = toISODate(candidate);
+        occupied.add(key);
+        holidays.set(key, `대체공휴일(${uniqueNames(rules)})`);
+    });
+
+    HOLIDAY_YEAR_CACHE.set(year, holidays);
+    return holidays;
+}
+
+function holidayNameFor(date, excludeHolidays) {
     if (!excludeHolidays) return null;
-    const year = date.getFullYear();
-    const holidays = getHolidaysForYear(year);
-    const ds = date.toDateString();
-    const found = holidays.find(h => h.date.toDateString() === ds);
-    return found || null;
+    return getHolidayMap(date.getFullYear()).get(toISODate(date)) || null;
 }
 
 function isWeekend(date, includeSat) {
     const day = date.getDay();
-    if (day === 0) return true; // 일요일
-    if (day === 6 && !includeSat) return true; // 토요일
+    if (day === 0) return true;
+    if (day === 6 && !includeSat) return true;
     return false;
 }
 
 function isBusinessDay(date, excludeHolidays, includeSat) {
-    if (isWeekend(date, includeSat)) return false;
-    if (excludeHolidays && isHoliday(date, true)) return false;
-    return true;
+    return !isWeekend(date, includeSat) && !holidayNameFor(date, excludeHolidays);
+}
+
+function getHolidayCoverage(firstDate, lastDate, excludeHolidays) {
+    if (!excludeHolidays) return { applies: false, complete: true, reason: '' };
+    if (holidayData.status !== 'ready') return { applies: true, complete: false, reason: holidayData.status };
+    const first = toISODate(firstDate <= lastDate ? firstDate : lastDate);
+    const last = toISODate(firstDate <= lastDate ? lastDate : firstDate);
+    const complete = first >= holidayData.coverageStart && last <= holidayData.coverageEnd;
+    return { applies: true, complete, reason: complete ? '' : 'range' };
 }
 
 function setMode(m) {
-    mode = m;
-    document.getElementById('modeAdd').classList.toggle('active', m === 'add');
-    document.getElementById('modeBetween').classList.toggle('active', m === 'between');
-    document.getElementById('modeAdd').setAttribute('aria-pressed', String(m === 'add'));
-    document.getElementById('modeBetween').setAttribute('aria-pressed', String(m === 'between'));
-    document.getElementById('addMode').style.display = m === 'add' ? '' : 'none';
-    document.getElementById('betweenMode').style.display = m === 'between' ? '' : 'none';
-    document.getElementById('resultSection').classList.remove('show');
-    document.getElementById('bottomInfo').textContent = m === 'add' ? '시작일과 영업일 수를 입력하세요' : '두 날짜를 선택하세요';
+    mode = m === 'between' ? 'between' : 'add';
+    document.getElementById('modeAdd').classList.toggle('active', mode === 'add');
+    document.getElementById('modeBetween').classList.toggle('active', mode === 'between');
+    document.getElementById('modeAdd').setAttribute('aria-pressed', String(mode === 'add'));
+    document.getElementById('modeBetween').setAttribute('aria-pressed', String(mode === 'between'));
+    document.getElementById('addMode').style.display = mode === 'add' ? '' : 'none';
+    document.getElementById('betweenMode').style.display = mode === 'between' ? '' : 'none';
+    calculate();
+}
+
+function todayIso() {
+    return toISODate(new Date());
 }
 
 function setToday(id) {
-    const today = new Date();
-    const y = today.getFullYear();
-    const m = String(today.getMonth() + 1).padStart(2, '0');
-    const d = String(today.getDate()).padStart(2, '0');
-    document.getElementById(id).value = `${y}-${m}-${d}`;
+    document.getElementById(id).value = todayIso();
     calculate();
 }
 
@@ -467,33 +483,38 @@ function setBizDays(n) {
 function calculate() {
     const excludeH = document.getElementById('excludeHolidays').checked;
     const includeSat = document.getElementById('includeSaturday').checked;
+    if (mode === 'add') calcAdd(excludeH, includeSat);
+    else calcBetween(excludeH, includeSat);
+    syncUrlState();
+}
 
-    if (mode === 'add') {
-        calcAdd(excludeH, includeSat);
-    } else {
-        calcBetween(excludeH, includeSat);
-    }
+function setBizDaysError(message) {
+    const input = document.getElementById('bizDays');
+    input.setAttribute('aria-invalid', String(Boolean(message)));
+    document.getElementById('bizDaysError').textContent = message || '';
 }
 
 function calcAdd(excludeH, includeSat) {
     const startVal = document.getElementById('startDate').value;
-    const daysVal = document.getElementById('bizDays').value;
-    if (!startVal || !daysVal) {
+    const daysVal = document.getElementById('bizDays').value.trim();
+    const days = Number(daysVal);
+    if (daysVal !== '' && (!Number.isInteger(days) || days === 0)) {
+        setBizDaysError('영업일 수는 0이 아닌 정수로 입력하세요.');
+        clearPendingResult('영업일 수는 0이 아닌 정수로 입력하세요');
+        return;
+    }
+    if (daysVal !== '' && Math.abs(days) > MAX_CALCULATION_DAYS) {
+        setBizDaysError('영업일 수는 -100,000일에서 100,000일 사이로 입력하세요.');
+        clearPendingResult('영업일 수는 -100,000일에서 100,000일 사이로 입력하세요');
+        return;
+    }
+    setBizDaysError('');
+    const start = parseIsoDate(startVal);
+    if (!start || daysVal === '') {
         clearPendingResult('시작일과 0이 아닌 정수 영업일 수를 입력하세요');
         return;
     }
 
-    const days = Number(daysVal);
-    if (!Number.isInteger(days) || days === 0) {
-        clearPendingResult('영업일 수는 0이 아닌 정수로 입력하세요');
-        return;
-    }
-    if (Math.abs(days) > MAX_CALCULATION_DAYS) {
-        showInputLimit('영업일 수는 -100,000일에서 100,000일 사이로 입력하세요.');
-        return;
-    }
-
-    const start = new Date(startVal + 'T00:00:00');
     const direction = days > 0 ? 1 : -1;
     let remaining = Math.abs(days);
     let current = new Date(start);
@@ -502,37 +523,39 @@ function calcAdd(excludeH, includeSat) {
     const skippedHolidays = [];
 
     while (remaining > 0) {
-        current.setDate(current.getDate() + direction);
+        current = addDays(current, direction);
         totalDays++;
         if (isWeekend(current, includeSat)) {
             weekendDays++;
             continue;
         }
-        const holiday = isHoliday(current, excludeH);
+        const holiday = holidayNameFor(current, excludeH);
         if (holiday) {
-            skippedHolidays.push(holiday);
+            skippedHolidays.push({ date: current, name: holiday });
             continue;
         }
         remaining--;
     }
 
-    const coverage = getHolidayCoverage(start, current, excludeH);
-    showResult(current, start, Math.abs(days), totalDays, weekendDays, skippedHolidays, 'add', coverage);
+    showResult({
+        type: 'add', start, target: current, days, totalDays, weekendDays, holidays: skippedHolidays,
+        coverage: getHolidayCoverage(start, current, excludeH), excludeH, includeSat
+    });
 }
 
 function calcBetween(excludeH, includeSat) {
     const fromVal = document.getElementById('fromDate').value;
     const toVal = document.getElementById('toDate').value;
-    if (!fromVal || !toVal) {
+    const includeStart = document.getElementById('includeStartDay').checked;
+    let from = parseIsoDate(fromVal);
+    let to = parseIsoDate(toVal);
+    if (!from || !to) {
         clearPendingResult('시작일과 종료일을 모두 선택하세요');
         return;
     }
 
-    let from = new Date(fromVal + 'T00:00:00');
-    let to = new Date(toVal + 'T00:00:00');
-
-    const swap = from > to;
-    if (swap) { let tmp = from; from = to; to = tmp; }
+    const swapped = from > to;
+    if (swapped) { const tmp = from; from = to; to = tmp; }
 
     const spanDays = Math.round((to - from) / 86400000);
     if (!Number.isFinite(spanDays) || spanDays > MAX_CALCULATION_DAYS) {
@@ -542,126 +565,139 @@ function calcBetween(excludeH, includeSat) {
 
     let bizDays = 0, totalDays = 0, weekendDays = 0;
     const skippedHolidays = [];
-    let current = new Date(from);
+    let current = includeStart ? new Date(from) : addDays(from, 1);
 
-    while (current < to) {
-        current.setDate(current.getDate() + 1);
+    while (toISODate(current) <= toISODate(to)) {
         totalDays++;
         if (isWeekend(current, includeSat)) {
             weekendDays++;
-            continue;
+        } else {
+            const holiday = holidayNameFor(current, excludeH);
+            if (holiday) skippedHolidays.push({ date: new Date(current), name: holiday });
+            else bizDays++;
         }
-        const holiday = isHoliday(current, excludeH);
-        if (holiday) {
-            skippedHolidays.push(holiday);
-            continue;
-        }
-        bizDays++;
+        current = addDays(current, 1);
     }
 
-    const coverage = getHolidayCoverage(from, to, excludeH);
-    showResult(null, null, bizDays, totalDays, weekendDays, skippedHolidays, 'between', coverage);
+    showResult({
+        type: 'between', from, to, swapped, includeStart, count: bizDays, totalDays, weekendDays, holidays: skippedHolidays,
+        coverage: getHolidayCoverage(from, to, excludeH), excludeH, includeSat
+    });
 }
 
-const DAYS_KO = ['일', '월', '화', '수', '목', '금', '토'];
+function coverageMessage(coverage) {
+    const range = holidayData.status === 'ready'
+        ? `${holidayData.coverageStart}~${holidayData.coverageEnd}`
+        : '2024-01-01~2030-12-31';
+    if (!coverage.applies) {
+        return { className: 'neutral', html: 'ℹ️ 공휴일 제외 옵션이 꺼져 있어 주말 규칙만 적용했습니다.', copy: '공휴일 제외: 사용 안 함' };
+    }
+    if (coverage.complete) {
+        return {
+            className: 'complete',
+            html: `✅ 계산 구간이 공휴일 수록 범위(${range}) 안에 있어 대체공휴일·선거일까지 반영했습니다. 앞으로 새로 지정되는 임시공휴일은 포함되지 않을 수 있습니다.`,
+            copy: `공휴일 자료: ${range} 수록 범위 내${holidayData.checkedAt ? ` (확인 ${holidayData.checkedAt})` : ''}`
+        };
+    }
+    if (coverage.reason === 'loading') {
+        return {
+            className: 'neutral',
+            html: '⏳ 공휴일 자료를 불러오는 중입니다. 잠시 후 결과가 자동으로 다시 계산됩니다.',
+            copy: '⚠️ 공휴일 자료를 불러오기 전에 계산되어 결과가 불완전할 수 있습니다',
+            copyWarning: true
+        };
+    }
+    let detail;
+    if (coverage.reason === 'failed') detail = '공휴일 자료를 불러오지 못해 설날·추석·부처님오신날·선거일이 빠졌습니다. 네트워크 연결을 확인하고 새로고침하세요.';
+    else detail = `수록 범위(${range}) 밖의 설날·추석·부처님오신날·선거일과 그에 따른 대체공휴일은 반영되지 않았습니다. 주말과 양력 고정 공휴일만 확실하므로 이 날짜를 최종 기한으로 쓰지 마세요.`;
+    return {
+        className: 'warning',
+        html: `<strong>⚠️ 공휴일 자료가 없는 기간이 포함되어 결과가 불완전합니다</strong>${escapeHtml(detail)}`,
+        copy: '⚠️ 공휴일 자료가 없는 기간이 포함되어 결과가 불완전합니다',
+        copyWarning: true
+    };
+}
 
-function showResult(targetDate, startDate, bizDays, totalDays, weekendDays, holidays, type, coverage) {
+function showResult(result) {
     const section = document.getElementById('resultSection');
-    section.classList.add('show');
-
     const dateEl = document.getElementById('resultDate');
     const dayEl = document.getElementById('resultDay');
+    const ruleEl = document.getElementById('resultRule');
     const detailEl = document.getElementById('resultDetail');
     const holidayEl = document.getElementById('resultHolidays');
     const coverageEl = document.getElementById('resultCoverage');
     const info = document.getElementById('bottomInfo');
+    const coverage = coverageMessage(result.coverage);
+    const incomplete = coverage.className === 'warning';
 
-    if (!coverage.applies) {
-        coverageEl.className = 'coverage-status neutral';
-        coverageEl.textContent = 'ℹ️ 공휴일 제외 옵션이 꺼져 있어 데이터 지원 범위와 관계없이 주말 규칙만 적용했습니다.';
-        lastCoverageCopyText = '공휴일 제외: 사용 안 함';
-    } else if (coverage.complete) {
-        coverageEl.className = 'coverage-status complete';
-        coverageEl.textContent = '✅ 계산 구간이 수록 공휴일 데이터 지원 범위(2024~2027년) 안에 있습니다.';
-        lastCoverageCopyText = '공휴일 데이터: 2024~2027년 수록 범위 내';
+    section.classList.add('show');
+    section.classList.toggle('incomplete', incomplete);
+    coverageEl.className = `coverage-status ${coverage.className}`;
+    coverageEl.innerHTML = coverage.html;
+
+    const weekendRule = result.includeSat ? '일요일만 제외' : '토·일 제외';
+    const holidayRule = result.excludeH ? '한국 공휴일 제외' : '공휴일 미제외';
+    let headline;
+    let ruleText;
+    if (result.type === 'add') {
+        const t = result.target;
+        const directionText = result.days > 0 ? '후' : '전';
+        dateEl.textContent = `${t.getFullYear()}년 ${t.getMonth() + 1}월 ${t.getDate()}일 (${DAYS_KO[t.getDay()]})`;
+        dayEl.textContent = `${formatDateKo(result.start)}부터 ${Math.abs(result.days)}영업일 ${directionText}`;
+        ruleText = `시작일 미포함 · ${weekendRule} · ${holidayRule}`;
+        headline = `영업일 계산: ${formatDateKo(result.start)}부터 ${Math.abs(result.days)}영업일 ${directionText} = ${formatDateKo(t)}`;
+        info.textContent = `결과: ${formatDateKo(t)}${incomplete ? ' (불완전)' : ''}`;
     } else {
-        coverageEl.className = 'coverage-status warning';
-        coverageEl.textContent = '⚠️ 계산 구간이 2024~2027년을 벗어납니다. 주말과 확인 가능한 고정·추가 공휴일은 반영하지만, 음력·변동 공휴일이 누락될 수 있어 공휴일 제외 결과는 불완전합니다.';
-        lastCoverageCopyText = '주의: 2024~2027년 밖의 음력·변동 공휴일은 불완전';
+        const startLabel = result.includeStart ? '시작일 포함' : '시작일 제외·종료일 포함';
+        dateEl.textContent = `${result.count}영업일`;
+        dayEl.textContent = `${formatDateKo(result.from)} ~ ${formatDateKo(result.to)}${result.swapped ? ' (순서를 바꿔 계산)' : ''}`;
+        ruleText = `${startLabel} · ${weekendRule} · ${holidayRule}`;
+        headline = `${formatDateKo(result.from)} ~ ${formatDateKo(result.to)}: ${result.count}영업일 (${startLabel})`;
+        info.textContent = `영업일: ${result.count}일 / 전체: ${result.totalDays}일${incomplete ? ' (불완전)' : ''}`;
     }
+    ruleEl.textContent = `${ruleText} · 달력상 ${result.totalDays}일 중 주말 ${result.weekendDays}일, 공휴일 ${result.holidays.length}일 제외`;
 
-    if (type === 'add') {
-        const y = targetDate.getFullYear();
-        const m = targetDate.getMonth() + 1;
-        const d = targetDate.getDate();
-        const dow = DAYS_KO[targetDate.getDay()];
-        dateEl.textContent = `${y}년 ${m}월 ${d}일 (${dow})`;
-        dayEl.textContent = `시작일로부터 ${bizDays}영업일 ${parseInt(document.getElementById('bizDays').value) > 0 ? '후' : '전'}`;
-        info.textContent = `결과: ${y}.${m}.${d} (${dow})`;
-    } else {
-        dateEl.textContent = `${bizDays}영업일`;
-        dayEl.textContent = '두 날짜 사이의 영업일 수';
-        info.textContent = `영업일: ${bizDays}일 / 전체: ${totalDays}일`;
-    }
-
-    const uniqueHolidays = [];
-    const seen = new Set();
-    holidays.forEach(h => {
-        const key = h.date.toDateString();
-        if (!seen.has(key)) {
-            seen.add(key);
-            uniqueHolidays.push(h);
-        }
-    });
-
-    const holidayLabel = !coverage.applies ? '공휴일 제외 안 함' : (coverage.complete ? '제외 공휴일' : '확인된 공휴일');
+    const holidayLabel = !result.coverage.applies ? '공휴일 제외 안 함' : (incomplete ? '확인된 공휴일' : '제외 공휴일');
     detailEl.innerHTML = `
-        <div class="detail-box"><div class="label">총 일수</div><div class="value">${totalDays}일</div></div>
-        <div class="detail-box"><div class="label">제외 주말</div><div class="value">${weekendDays}일</div></div>
-        <div class="detail-box"><div class="label">${holidayLabel}</div><div class="value">${uniqueHolidays.length}일</div></div>
+        <div class="detail-box"><div class="label">총 일수</div><div class="value">${result.totalDays}일</div></div>
+        <div class="detail-box"><div class="label">제외 주말</div><div class="value">${result.weekendDays}일</div></div>
+        <div class="detail-box"><div class="label">${holidayLabel}</div><div class="value">${result.holidays.length}일</div></div>
     `;
 
-    const reportBox = document.getElementById('analysisReport');
-    reportBox.style.display = 'flex';
-    let msg = `<h2>💡 영업일 계산 내역</h2>`;
-    if (type === 'add') {
-        const inputDays = parseInt(document.getElementById('bizDays').value);
-        msg += `<p>시작일을 세지 않고 <strong>${Math.abs(inputDays)}영업일 ${inputDays>0?'후':'전'}</strong>을 계산했습니다. 제외일을 건너뛴 달력상 이동 기간은 <strong>${totalDays}일</strong>입니다.</p>`;
-    } else {
-        msg += `<p>시작일은 세지 않고 종료일은 포함하는 규칙으로 총 <strong>${totalDays}일</strong> 중 <strong>${bizDays}영업일</strong>을 계산했습니다.</p>`;
-    }
-    if (coverage.applies) {
-        msg += `<p>선택한 토요일 규칙에 따라 주말 <strong>${weekendDays}일</strong>을 제외했고, 공휴일 제외 옵션으로 확인된 공휴일 <strong>${uniqueHolidays.length}일</strong>을 제외했습니다.</p>`;
-    } else {
-        msg += `<p>선택한 토요일 규칙에 따라 주말 <strong>${weekendDays}일</strong>만 제외했으며 공휴일은 계산에 사용하지 않았습니다.</p>`;
-    }
-    if (coverage.applies && !coverage.complete) {
-        msg += `<p><strong>지원 범위 경고:</strong> 계산 구간이 2024~2027년 밖을 포함하므로 음력·변동 공휴일 누락 가능성이 있습니다. 이 결과를 공휴일이 모두 제외된 값으로 사용하지 마세요.</p>`;
-    } else if (coverage.applies) {
-        msg += `<p>계산 구간은 현재 수록된 음력·변동 공휴일 데이터 지원 범위(2024~2027년) 안에 있습니다. 향후 지정되는 임시공휴일은 데이터 갱신 전까지 누락될 수 있습니다.</p>`;
-    } else {
-        msg += `<p>공휴일 제외 옵션이 꺼져 있으므로 공휴일 데이터 지원 범위는 이 결과에 영향을 주지 않습니다.</p>`;
-    }
-    reportBox.innerHTML = msg;
-
-    if (uniqueHolidays.length > 0) {
-        holidayEl.innerHTML = '📌 기간 내 확인·제외한 공휴일: ' + uniqueHolidays.map(h => {
-            const m = h.date.getMonth() + 1;
-            const d = h.date.getDate();
-            return `<span class="holiday-chip">${m}/${d} ${escapeHtml(h.name)}</span>`;
-        }).join('');
+    const holidays = result.holidays.slice().sort((a, b) => a.date - b.date);
+    let holidayCopy = '';
+    if (holidays.length > 0) {
+        const crossesYear = holidays[0].date.getFullYear() !== holidays[holidays.length - 1].date.getFullYear();
+        const label = date => crossesYear
+            ? `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}(${DAYS_KO[date.getDay()]})`
+            : `${date.getMonth() + 1}/${date.getDate()}(${DAYS_KO[date.getDay()]})`;
+        const shown = holidays.slice(0, 60);
+        holidayEl.innerHTML = '📌 평일에 겹쳐 제외한 공휴일: ' + shown
+            .map(h => `<span class="holiday-chip">${label(h.date)} ${escapeHtml(h.name)}</span>`).join('') +
+            (holidays.length > shown.length ? ` <span class="holiday-chip">외 ${holidays.length - shown.length}일</span>` : '');
         holidayEl.style.display = '';
+        holidayCopy = '제외한 공휴일: ' + shown.map(h => `${label(h.date)} ${h.name}`).join(', ') +
+            (holidays.length > shown.length ? ` 외 ${holidays.length - shown.length}일` : '');
     } else {
         holidayEl.style.display = 'none';
+        holidayEl.textContent = '';
     }
+
+    lastCopyText = [
+        coverage.copyWarning ? coverage.copy : '',
+        headline,
+        `기준: ${ruleText}`,
+        `달력상 ${result.totalDays}일 · 주말 ${result.weekendDays}일 · 공휴일 ${result.holidays.length}일 제외`,
+        holidayCopy,
+        coverage.copyWarning ? '' : coverage.copy
+    ].filter(Boolean).join('\n');
 }
 
 function clearPendingResult(message) {
-    document.getElementById('resultSection').classList.remove('show');
-    const reportBox = document.getElementById('analysisReport');
-    if (reportBox) reportBox.style.display = 'none';
+    const section = document.getElementById('resultSection');
+    section.classList.remove('show', 'incomplete');
     document.getElementById('bottomInfo').textContent = message;
-    lastCoverageCopyText = '';
+    lastCopyText = '';
 }
 
 function showInputLimit(message) {
@@ -678,30 +714,102 @@ function clearAll() {
         const el = document.getElementById(id);
         if (el) el.value = '';
     });
-    document.getElementById('resultSection').classList.remove('show');
-    const reportBox = document.getElementById('analysisReport');
-    if(reportBox) reportBox.style.display = 'none';
-    lastCoverageCopyText = '';
+    document.getElementById('includeStartDay').checked = true;
+    document.getElementById('excludeHolidays').checked = true;
+    document.getElementById('includeSaturday').checked = false;
+    setBizDaysError('');
+    calculate();
     document.getElementById('bottomInfo').textContent = mode === 'add' ? '시작일과 영업일 수를 입력하세요' : '두 날짜를 선택하세요';
     showToast('초기화되었습니다');
 }
 
+// 현재 입력값을 주소에 담아 공유할 수 있게 합니다. 날짜와 옵션 외의 정보는 담지 않습니다.
+function currentStateParams() {
+    const params = new URLSearchParams();
+    params.set('mode', mode);
+    if (mode === 'add') {
+        const start = document.getElementById('startDate').value;
+        const days = document.getElementById('bizDays').value.trim();
+        if (isIsoDate(start)) params.set('start', start);
+        if (/^-?\d{1,6}$/.test(days)) params.set('days', days);
+    } else {
+        const from = document.getElementById('fromDate').value;
+        const to = document.getElementById('toDate').value;
+        if (isIsoDate(from)) params.set('from', from);
+        if (isIsoDate(to)) params.set('to', to);
+        if (!document.getElementById('includeStartDay').checked) params.set('startday', '0');
+    }
+    if (!document.getElementById('excludeHolidays').checked) params.set('holidays', '0');
+    if (document.getElementById('includeSaturday').checked) params.set('saturday', '1');
+    return params;
+}
+
+function syncUrlState() {
+    try {
+        const url = new URL(location.href);
+        url.search = currentStateParams().toString();
+        history.replaceState(null, '', url);
+    } catch (e) { /* 주소 갱신이 막혀도 계산은 계속합니다. */ }
+}
+
+function applyUrlState() {
+    const params = new URLSearchParams(location.search);
+    const today = todayIso();
+    const pick = (key, fallback) => isIsoDate(params.get(key)) ? params.get(key) : fallback;
+    document.getElementById('startDate').value = pick('start', today);
+    const days = params.get('days');
+    document.getElementById('bizDays').value = /^-?\d{1,6}$/.test(days || '') ? days : '10';
+    const monthLater = toISODate(addDays(parseIsoDate(today), 30));
+    document.getElementById('fromDate').value = pick('from', today);
+    document.getElementById('toDate').value = pick('to', monthLater);
+    document.getElementById('includeStartDay').checked = params.get('startday') !== '0';
+    document.getElementById('excludeHolidays').checked = params.get('holidays') !== '0';
+    document.getElementById('includeSaturday').checked = params.get('saturday') === '1';
+    setMode(params.get('mode') === 'between' ? 'between' : 'add');
+}
+
+function copyText(text) {
+    const fallback = () => new Promise((resolve, reject) => {
+        const helper = document.createElement('textarea');
+        helper.value = text;
+        helper.setAttribute('readonly', '');
+        helper.style.position = 'fixed';
+        helper.style.opacity = '0';
+        document.body.appendChild(helper);
+        helper.select();
+        let ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        helper.remove();
+        if (ok) resolve(); else reject(new Error('copy failed'));
+    });
+    if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text).catch(fallback);
+    return fallback();
+}
+
 function copyResult() {
-    const dateText = document.getElementById('resultDate').textContent;
-    const dayText = document.getElementById('resultDay').textContent;
-    if (!document.getElementById('resultSection').classList.contains('show') || !dateText) { showToast('먼저 계산을 실행하세요'); return; }
-    const text = `${dateText} (${dayText})\n${lastCoverageCopyText}`;
-    navigator.clipboard.writeText(text)
-        .then(() => showToast('결과와 공휴일 범위 안내가 복사되었습니다!'))
-        .catch(() => showToast('복사 권한을 확인해 주세요'));
+    if (!document.getElementById('resultSection').classList.contains('show') || !lastCopyText) { showToast('먼저 날짜를 입력해 결과를 계산하세요'); return; }
+    copyText(lastCopyText)
+        .then(() => showToast('입력값과 결과를 함께 복사했습니다'))
+        .catch(() => showToast('복사하지 못했습니다. 결과를 직접 선택해 복사해 주세요'));
+}
+
+function copyShareLink() {
+    syncUrlState();
+    copyText(location.href)
+        .then(() => showToast('현재 조건이 담긴 링크를 복사했습니다'))
+        .catch(() => showToast('링크를 복사하지 못했습니다. 주소창에서 직접 복사해 주세요'));
 }
 
 function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2000);
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 2200);
 }
+
+applyUrlState();
+loadHolidayData();
 </script>
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 <script src="/special-chars/theme-toggle.js"></script>

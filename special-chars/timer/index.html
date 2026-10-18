@@ -11,9 +11,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>⏱️ 타이머/스톱워치 — 티모집사</title>
-<meta name="description" content="카운트다운 타이머와 스톱워치를 한 곳에서. 랩 기록, 알림음 지원. 공부, 운동, 요리에 활용하세요.">
+<meta name="description" content="카운트다운 타이머와 스톱워치를 한 곳에서. 종료 시각 표시, 끌 때까지 반복되는 알림음과 브라우저 알림, 새로고침 후 이어하기, 랩 기록 복사를 지원합니다.">
 <meta property="og:title" content="⏱️ 타이머/스톱워치 — 티모집사">
-<meta property="og:description" content="카운트다운 타이머와 스톱워치를 한 곳에서. 랩 기록, 알림음 지원.">
+<meta property="og:description" content="카운트다운 타이머와 스톱워치. 반복 알림음, 브라우저 알림, 랩 기록 복사 지원.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/timer/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
@@ -37,38 +37,50 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .content{padding:24px 20px}
 
 /* 디스플레이 */
-.display{text-align:center;padding:32px 0 24px;user-select:none}
+.display{text-align:center;padding:28px 0 8px;user-select:none}
 .display .time{font-size:64px;font-weight:700;letter-spacing:2px;font-variant-numeric:tabular-nums;color:var(--text-primary)}
 .display .ms{font-size:32px;color:var(--text-section);font-weight:400}
+.end-info{text-align:center;min-height:22px;font-size:14px;color:var(--text-info);margin-bottom:16px}
 @media(max-width:400px){.display .time{font-size:48px}.display .ms{font-size:24px}}
 
-/* 타이머 입력 */
-.timer-inputs{display:flex;justify-content:center;gap:8px;margin-bottom:20px}
-.timer-inputs .tfield{text-align:center}
-.timer-inputs input{width:64px;padding:10px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:20px;font-family:inherit;text-align:center;font-weight:600}
-.timer-inputs input:focus{outline:none;border-color:var(--accent)}
-.timer-inputs .tfield span{display:block;font-size:13px;line-height:1.3;color:var(--text-muted);margin-top:4px}
+.alarm-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 16px;padding:12px 14px;border:2px solid var(--accent);border-radius:12px;background:var(--accent-bg);color:var(--text-primary);font-size:14px;font-weight:700}
+.alarm-banner[hidden]{display:none}
+.alarm-banner button{flex:0 0 auto;min-height:40px;padding:8px 14px;border:none;border-radius:8px;background:var(--accent);color:var(--text-on-accent);font-weight:700;font-size:14px;line-height:1;font-family:inherit;cursor:pointer}
 
-.quick-btns{display:flex;justify-content:center;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+/* 타이머 입력 */
+.timer-inputs{display:flex;justify-content:center;gap:8px;margin-bottom:8px}
+.timer-inputs .tfield{text-align:center}
+.timer-inputs input{width:72px;padding:10px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:20px;font-family:inherit;text-align:center;font-weight:600}
+.timer-inputs input:focus{outline:none;border-color:var(--accent)}
+.timer-inputs input:disabled{opacity:.6}
+.timer-inputs .tfield span{display:block;font-size:13px;line-height:1.3;color:var(--text-muted);margin-top:4px}
+.input-hint{text-align:center;font-size:12px;color:var(--text-muted);margin-bottom:16px}
+
+.quick-btns{display:flex;justify-content:center;gap:6px;margin-bottom:16px;flex-wrap:wrap}
 .quick-btn{padding:6px 14px;background:var(--bg-btn);border:1px solid var(--border);border-radius:16px;color:var(--text-label);font-size:14px;cursor:pointer;font-family:inherit;transition:all .2s}
 .quick-btn:hover{background:var(--bg-btn-hover);color:var(--text-primary)}
+.quick-btn:disabled{opacity:.55;cursor:not-allowed}
+.notify-row{display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:18px;font-size:13px;color:var(--text-secondary)}
+.notify-row input{width:18px;height:18px;accent-color:var(--accent)}
 
 /* 컨트롤 버튼 */
 .controls{display:flex;justify-content:center;gap:12px;margin-bottom:20px}
 .ctrl-btn{width:72px;height:72px;border-radius:50%;border:none;font-size:22px;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center}
 .ctrl-btn:active{transform:scale(.92)}
-.btn-start{background:#22c55e;color:var(--text-primary)}
+.btn-start{background:#22c55e;color:#052e16}
 .btn-start:hover{background:#16a34a}
-.btn-start.running{background:#ef4444}
+.btn-start.running{background:#ef4444;color:#fff}
 .btn-start.running:hover{background:#dc2626}
-.btn-pause{background:#f59e0b;color:var(--text-primary)}
-.btn-pause:hover{background:#d97706}
 .btn-reset{background:var(--bg-btn-hover);color:var(--text-label)}
-.btn-reset:hover{background:#4a4a7a;color:var(--text-primary)}
-.btn-lap{background:#3b82f6;color:var(--text-primary)}
+.btn-reset:hover{background:var(--border-hover);color:var(--text-primary)}
+.btn-lap{background:#3b82f6;color:#fff}
 .btn-lap:hover{background:#2563eb}
 
 /* 랩 기록 */
+.lap-tools{display:flex;justify-content:flex-end;margin-bottom:4px}
+.lap-tools[hidden]{display:none}
+.lap-copy{padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-btn);color:var(--text-secondary);font-weight:600;font-size:14px;line-height:1;font-family:inherit;cursor:pointer}
+.lap-copy:hover{border-color:var(--accent);color:var(--accent-text)}
 .laps{max-height:200px;overflow-y:auto;margin-top:8px}
 .laps::-webkit-scrollbar{width:4px}
 .laps::-webkit-scrollbar-thumb{background:var(--bg-btn-hover);border-radius:2px}
@@ -90,7 +102,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   .guide summary::after{content:'▼';font-size:10px;color:var(--text-muted);transition:transform .3s}
   .guide[open] summary::after{transform:rotate(180deg)}
   .guide summary:hover{background:var(--bg-guide-hover)}
-  .guide-content{padding:14px;font-size:13px;color:var(--text-info);line-height:1.6;border-top:1px solid var(--border);background:var(--bg-app)}
+  .guide-content{padding:14px;font-size:14px;color:var(--text-info);line-height:1.65;border-top:1px solid var(--border);background:var(--bg-app)}
   .related-tools{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
   .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
@@ -112,50 +124,59 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </div>
 
   <div class="mode-tabs" role="tablist">
-    <button class="mode-tab active" role="tab" aria-selected="true" onclick="switchMode('timer')">⏳ 타이머</button>
-    <button class="mode-tab" role="tab" aria-selected="false" onclick="switchMode('stopwatch')">⏱️ 스톱워치</button>
+    <button class="mode-tab active" role="tab" aria-selected="true" onclick="requestSwitchMode('timer')">⏳ 타이머</button>
+    <button class="mode-tab" role="tab" aria-selected="false" onclick="requestSwitchMode('stopwatch')">⏱️ 스톱워치</button>
   </div>
 
   <div class="content">
-    <div class="display">
+    <div class="display" aria-live="off">
       <span class="time" id="display">00:00:00</span><span class="ms" id="displayMs"></span>
+    </div>
+    <div class="end-info" id="endInfo" aria-live="polite"></div>
+
+    <div class="alarm-banner" id="alarmBanner" role="alert" hidden>
+      <span id="alarmMessage">⏰ 타이머가 끝났습니다</span>
+      <button type="button" onclick="acknowledgeAlarm()">알람 끄기</button>
     </div>
 
     <!-- 타이머 전용 -->
     <div id="timerSection">
       <div class="timer-inputs">
         <div class="tfield">
-          <input aria-label="시간" type="number" id="tHour" value="0" min="0" max="99" oninput="clampInput(this,99)">
+          <input aria-label="시간" type="number" id="tHour" value="0" min="0" max="99" inputmode="numeric" oninput="clampInput(this,99)" onchange="normalizeTimerInputs()">
           <span>시간</span>
         </div>
         <div class="tfield">
-          <input aria-label="분" type="number" id="tMin" value="5" min="0" max="59" oninput="clampInput(this,59)">
+          <input aria-label="분" type="number" id="tMin" value="5" min="0" max="5999" inputmode="numeric" oninput="clampInput(this,5999)" onchange="normalizeTimerInputs()">
           <span>분</span>
         </div>
         <div class="tfield">
-          <input aria-label="초" type="number" id="tSec" value="0" min="0" max="59" oninput="clampInput(this,59)">
+          <input aria-label="초" type="number" id="tSec" value="0" min="0" max="5999" inputmode="numeric" oninput="clampInput(this,5999)" onchange="normalizeTimerInputs()">
           <span>초</span>
         </div>
       </div>
+      <p class="input-hint">90초처럼 입력해도 1분 30초로 자동 정리됩니다 (최대 99:59:59)</p>
       <div class="quick-btns">
-        <button class="quick-btn" onclick="setQuick(1)">1분</button>
-        <button class="quick-btn" onclick="setQuick(3)">3분</button>
-        <button class="quick-btn" onclick="setQuick(5)">5분</button>
-        <button class="quick-btn" onclick="setQuick(10)">10분</button>
-        <button class="quick-btn" onclick="setQuick(15)">15분</button>
-        <button class="quick-btn" onclick="setQuick(25)">25분</button>
-        <button class="quick-btn" onclick="setQuick(30)">30분</button>
-        <button class="quick-btn" onclick="setQuick(60)">1시간</button>
+        <button type="button" class="quick-btn" onclick="setQuick(1)">1분</button>
+        <button type="button" class="quick-btn" onclick="setQuick(3)">3분</button>
+        <button type="button" class="quick-btn" onclick="setQuick(5)">5분</button>
+        <button type="button" class="quick-btn" onclick="setQuick(10)">10분</button>
+        <button type="button" class="quick-btn" onclick="setQuick(15)">15분</button>
+        <button type="button" class="quick-btn" onclick="setQuick(25)">25분</button>
+        <button type="button" class="quick-btn" onclick="setQuick(30)">30분</button>
+        <button type="button" class="quick-btn" onclick="setQuick(60)">1시간</button>
       </div>
+      <label class="notify-row" id="notifyRow"><input type="checkbox" id="notifyToggle"> 다른 탭에 있을 때 브라우저 알림도 받기</label>
     </div>
 
     <!-- 컨트롤 -->
     <div class="controls">
-      <button class="ctrl-btn btn-reset" id="btnReset" onclick="doReset()" title="리셋">↺</button>
-      <button class="ctrl-btn btn-start" id="btnStart" onclick="doStartStop()">▶</button>
-      <button class="ctrl-btn btn-lap" id="btnLap" onclick="doLap()" title="랩" style="display:none">🏁</button>
+      <button class="ctrl-btn btn-reset" id="btnReset" onclick="doReset()" title="리셋" aria-label="초기화">↺</button>
+      <button class="ctrl-btn btn-start" id="btnStart" onclick="doStartStop()" aria-label="시작">▶</button>
+      <button class="ctrl-btn btn-lap" id="btnLap" onclick="doLap()" title="랩" aria-label="랩 기록" style="display:none">🏁</button>
     </div>
 
+    <div class="lap-tools" id="lapTools" hidden><button type="button" class="lap-copy" onclick="copyLaps()">📋 랩 기록 복사</button></div>
     <div class="laps" id="lapsContainer"></div>
   </div>
 
@@ -164,23 +185,35 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <details class="guide" open>
       <summary>타이머 사용법</summary>
       <div class="guide-content">
-        시, 분, 초를 직접 입력하거나 숫자 버튼(예: 5분, 1시간)을 눌러 시간을 빠르게 설정하세요. 재생 버튼(▶)을 누르면 카운트다운이 시작되며, 시간이 다 되면 자동으로 알림음이 울립니다.
+        시, 분, 초를 직접 입력하거나 빠른 버튼(예: 5분, 1시간)을 눌러 시간을 정하세요. 초나 분 칸에 90처럼 60 이상을 넣으면 칸을 벗어날 때 1분 30초처럼 자동으로 정리됩니다. 재생 버튼(▶)을 누르면 카운트다운이 시작되고 화면 아래에 'OO:OO에 종료'처럼 끝나는 시각이 표시됩니다. 남은 시간은 올림으로 표시하므로 5분 타이머는 5:00에서 시작해 알림 직전까지 00:01을 보여 줍니다.
+      </div>
+    </details>
+    <details class="guide">
+      <summary>알림음과 브라우저 알림은 어떻게 울리나요?</summary>
+      <div class="guide-content">
+        시작 버튼을 누르는 순간 종료 시각의 알림음을 브라우저 오디오 시계에 미리 예약합니다. 그래서 다른 탭을 보고 있어 화면 갱신이 느려져도 알림음은 제시간에 울립니다. 알림음은 '알람 끄기'를 누르거나 스페이스바를 누를 때까지 최대 1분 동안 반복되고, 탭 제목은 '⏰ 완료'로 바뀝니다. '브라우저 알림도 받기'를 켜면 처음 한 번 알림 권한을 묻고, 다른 탭이나 창에 있을 때 완료 알림을 띄웁니다.
       </div>
     </details>
     <details class="guide">
       <summary>스톱워치 사용법</summary>
       <div class="guide-content">
-        스톱워치 탭을 선택한 뒤 재생 버튼(▶)을 누르면 시간이 측정됩니다. 실행 중 랩 버튼(🏁)을 눌러 구간 기록을 남길 수 있습니다. 측정이 끝나면 정지 버튼(■)을 눌러주세요.
+        스톱워치 탭을 선택한 뒤 재생 버튼(▶)을 누르면 시간이 측정됩니다. 실행 중 랩 버튼(🏁)을 눌러 구간 기록을 남길 수 있고, '랩 기록 복사'로 전체 기록을 텍스트로 복사해 메모나 메신저에 붙여 넣을 수 있습니다. 측정이 끝나면 정지 버튼(■)을 눌러주세요.
       </div>
     </details>
     <details class="guide">
       <summary>단축키</summary>
       <div class="guide-content">
         <ul style="padding-left: 20px; list-style-type: disc;">
-          <li><b>스페이스바</b>: 시작 / 정지</li>
-          <li><b>R</b>: 초기화(리셋)</li>
+          <li><b>스페이스바</b>: 시작 / 정지 (알림음이 울리는 중이면 알람 끄기)</li>
+          <li><b>R</b>: 초기화 — 진행 중인 기록이 있으면 한 번 더 확인합니다</li>
           <li><b>L</b>: 랩 기록 (스톱워치 모드)</li>
         </ul>
+      </div>
+    </details>
+    <details class="guide">
+      <summary>새로고침하거나 탭을 바꾸면 어떻게 되나요?</summary>
+      <div class="guide-content">
+        진행 중인 타이머와 스톱워치 상태는 이 브라우저에 저장되어, 실수로 새로고침해도 같은 종료 시각으로 이어집니다. 새로고침 동안 타이머가 끝났다면 끝난 시각을 알려 줍니다. 다만 새로고침 직후에는 브라우저 정책 때문에 화면을 한 번 누르기 전까지 알림음을 낼 수 없습니다. 타이머가 돌아가는 중에 스톱워치 탭으로 바꾸면 기록이 사라지므로 먼저 확인 창을 띄웁니다.
       </div>
     </details>
     <details class="guide">
@@ -198,19 +231,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <details class="guide">
       <summary>알림이 들리지 않을 때 확인할 점</summary>
       <div class="guide-content">
-        브라우저 타이머는 실제 종료 시각을 기준으로 남은 시간을 보정하지만, 페이지가 완전히 정지된 동안에는 소리를 낼 수 없습니다. 탭으로 돌아오면 종료 상태를 즉시 반영하고 알림음을 시도합니다. 모바일에서 화면을 끄거나 배터리 절약 모드가 켜져 있으면 브라우저가 실행을 제한할 수 있으므로, 중요한 시험·조리·약 복용 알림은 휴대폰 기본 알람도 같이 설정하세요.
-      </div>
-    </details>
-    <details class="guide">
-      <summary>기록을 남기는 작업에 쓰는 방법</summary>
-      <div class="guide-content">
-        스톱워치 랩은 전체 시간 안에서 구간별 소요 시간을 분리할 때 유용합니다. 발표 연습이라면 도입, 본론, 마무리 구간마다 랩을 누르고, 운동이라면 세트마다 랩을 남기세요. 기록을 비교하면 매번 늦어지는 구간이나 시간을 줄일 수 있는 단계를 쉽게 찾을 수 있습니다.
-      </div>
-    </details>
-    <details class="guide">
-      <summary>공부, 운동, 요리에서 쓰는 예시</summary>
-      <div class="guide-content">
-        공부할 때는 25분 집중과 5분 휴식을 반복하거나, 암기 과목처럼 짧게 끊는 작업은 10분 단위로 나눠 진행할 수 있습니다. 운동에서는 세트 사이 휴식 시간을 60~90초로 맞추거나 인터벌 운동의 운동 시간과 휴식 시간을 번갈아 확인하는 데 쓸 수 있습니다. 요리에서는 삶기, 굽기, 뜸 들이기처럼 단계별 시간이 다를 때 각각 타이머를 다시 설정해 과조리를 줄이는 방식으로 활용하면 좋습니다.
+        기기 음량과 브라우저 탭 음소거 여부를 먼저 확인하세요. 컴퓨터가 절전 모드에 들어가거나 휴대폰 화면이 꺼지면 브라우저 전체가 멈춰 알림음이 늦거나 울리지 않을 수 있습니다. 이때도 다시 돌아오면 실제 종료 시각을 기준으로 즉시 완료 상태를 반영합니다. 중요한 시험·조리·약 복용 알림은 휴대폰 기본 알람도 같이 설정하세요. 타이머 설정과 상태는 이 브라우저에만 저장되며 서버로 보내지 않습니다.
       </div>
     </details>
   </section>
@@ -219,19 +240,36 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <h2>🔗 관련 도구</h2>
     <div class="tools-grid">
       <a href="/special-chars/speech-timer/" class="tool-card">🗣️ 스피치 타이머</a>
-      <a href="/special-chars/server-time/" class="tool-card">⌚ 정밀 로컬 시계·응답시간</a>
-      <a href="/special-chars/timezone-conv/" class="tool-card">🌍 세계 시간 변환</a>
+      <a href="/special-chars/daily-quest/" class="tool-card">🐾 일상 퀘스트</a>
+      <a href="/special-chars/server-time/" class="tool-card">⌚ 업무용 정밀 시계</a>
     </div>
   </section>
     </main>
-<footer class="footer"><span>실제 경과시간 기준 보정</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
+<footer class="footer"><span>실제 종료 시각 기준 보정 · 설정은 이 브라우저에만 저장</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
 <nav class="site-policy-links" aria-label="사이트 정책"><a href="/about.html">사이트 소개</a><a href="/editorial-policy.html">편집정책</a><a href="/contact.html">문의</a><a href="/privacy.html">개인정보처리방침</a></nav>
 </div>
+
+<dialog class="tool-confirm-dialog" id="confirmDialog" aria-labelledby="confirmDialogTitle" aria-describedby="confirmDialogDescription">
+  <div class="tool-confirm-dialog__body">
+    <h2 id="confirmDialogTitle">진행 중인 기록을 지울까요?</h2>
+    <p id="confirmDialogDescription"></p>
+    <div class="tool-confirm-dialog__actions">
+      <button type="button" data-confirm-cancel autofocus>계속하기</button>
+      <button type="button" class="tool-confirm-dialog__confirm" data-confirm-ok>지우기</button>
+    </div>
+  </div>
+</dialog>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 
+<script src="/special-chars/timer/timer-alarm.js"></script>
 <script>
+const DEFAULT_TITLE = '⏱️ 타이머/스톱워치 — 티모집사';
+const STATE_KEY = 'teemo_timer_state_v1';
+const NOTIFY_KEY = 'teemo_timer_notify';
+const MAX_TIMER_SECONDS = 99 * 3600 + 59 * 60 + 59;
+
 let mode = 'timer'; // 'timer' | 'stopwatch'
 let running = false;
 let intervalId = null;
@@ -240,59 +278,74 @@ let intervalId = null;
 let timerRemaining = 0; // ms
 let timerEndTime = 0;
 let timerFinished = false;
+let timerTotal = 0;
+let alarmActive = false;
+let finishedAt = 0;
 
 // Stopwatch state
 let swElapsed = 0; // ms
 let swStart = 0;
 let laps = [];
 
-// Prime audio from the user's Start gesture so completion has the best chance
-// of sounding. Browsers may still suspend a fully backgrounded page.
-let alarmAudioContext = null;
-function getAlarmAudioContext() {
-  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-  if (!AudioContextClass) return null;
-  if (!alarmAudioContext || alarmAudioContext.state === 'closed') alarmAudioContext = new AudioContextClass();
-  return alarmAudioContext;
+function alarmApi() {
+  return window.TeemoTimerAlarm || null;
 }
 
 function primeAlarmAudio() {
-  try {
-    const ctx = getAlarmAudioContext();
-    if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {});
-  } catch (e) { /* silent fallback */ }
+  try { alarmApi()?.prime(); } catch (e) { /* silent fallback */ }
 }
 
 function suspendAlarmAudio() {
-  try { if (alarmAudioContext && alarmAudioContext.state === 'running') alarmAudioContext.suspend().catch(() => {}); } catch (e) {}
+  try { alarmApi()?.cancelScheduled(); } catch (e) { /* silent fallback */ }
+}
+
+function scheduleAlarmAudio() {
+  try {
+    alarmApi()?.schedule(timerEndTime, () => {
+      // 오디오 시계가 종료 시각에 알려 주면 타이머 지연과 관계없이 바로 완료 처리합니다.
+      if (running && mode === 'timer' && timerEndTime - Date.now() < 1000) finishTimer();
+      else reconcileRunningClock();
+    });
+  } catch (e) { /* 오디오가 없으면 시계 보정만 사용합니다. */ }
 }
 
 function playAlarm() {
-  try {
-    const ctx = getAlarmAudioContext();
-    if (!ctx) return;
-    const sound = () => {
-    [0, 200, 400].forEach(delay => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.frequency.value = 880;
-      osc.type = 'sine';
-      gain.gain.value = 0.3;
-      osc.start(ctx.currentTime + delay / 1000);
-      osc.stop(ctx.currentTime + delay / 1000 + 0.15);
-    });
-    setTimeout(() => { if (ctx.state === 'running') ctx.suspend().catch(() => {}); }, 1000);
-    };
-    if (ctx.state === 'suspended') ctx.resume().then(sound).catch(() => {}); else sound();
-  } catch (e) { /* silent fallback */ }
+  try { alarmApi()?.ring(); } catch (e) { /* silent fallback */ }
 }
 
-function switchMode(m) {
-  if (running) doStartStop(); // stop first
-  doReset();
-  mode = m;
+function clockLabel(ms) {
+  return new Intl.DateTimeFormat('ko-KR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(ms));
+}
+
+function endLabel(ms) {
+  const end = new Date(ms);
+  const now = new Date();
+  const sameDay = end.toDateString() === now.toDateString();
+  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).toDateString() === end.toDateString();
+  return `${sameDay ? '' : tomorrow ? '내일 ' : `${end.getMonth() + 1}/${end.getDate()} `}${clockLabel(ms)}`;
+}
+
+function showAlarmBanner(message) {
+  alarmActive = true;
+  document.getElementById('alarmMessage').textContent = message;
+  document.getElementById('alarmBanner').hidden = false;
+  document.title = '⏰ 완료 — 타이머';
+}
+
+function acknowledgeAlarm() {
+  alarmActive = false;
+  try { alarmApi()?.stop(); } catch (e) { /* 무시 */ }
+  document.getElementById('alarmBanner').hidden = true;
+  updateDisplay();
+}
+
+if (alarmApi()) {
+  alarmApi().onRingEnd = () => {
+    if (alarmActive) document.getElementById('alarmMessage').textContent = `⏰ ${clockLabel(finishedAt || Date.now())}에 타이머가 끝났습니다 (알림음은 1분 뒤 멈춤)`;
+  };
+}
+
+function applyModeUI(m) {
   document.querySelectorAll('.mode-tab').forEach((tab, i) => {
     const isActive = (i === 0 && m === 'timer') || (i === 1 && m === 'stopwatch');
     tab.classList.toggle('active', isActive);
@@ -300,8 +353,52 @@ function switchMode(m) {
   });
   document.getElementById('timerSection').style.display = m === 'timer' ? 'block' : 'none';
   document.getElementById('btnLap').style.display = m === 'stopwatch' ? 'flex' : 'none';
-  document.getElementById('displayMs').textContent = m === 'stopwatch' ? '.00' : '';
+}
+
+function switchMode(m) {
+  if (running) doStartStop(); // stop first
+  doReset();
+  mode = m;
+  applyModeUI(m);
   updateDisplay();
+  saveTimerState();
+}
+
+function hasProgress() {
+  if (running) return true;
+  if (mode === 'timer') return !timerFinished && timerTotal > 0 && timerRemaining > 0 && timerRemaining < timerTotal;
+  return swElapsed > 0 || laps.length > 0;
+}
+
+function confirmAction(message, confirmLabel) {
+  const dialog = document.getElementById('confirmDialog');
+  // <dialog>를 지원하지 않는 오래된 브라우저에서는 확인 없이 진행합니다.
+  if (!dialog || typeof dialog.showModal !== 'function') return Promise.resolve(true);
+  return new Promise(resolve => {
+    document.getElementById('confirmDialogDescription').textContent = message;
+    const ok = dialog.querySelector('[data-confirm-ok]');
+    const cancel = dialog.querySelector('[data-confirm-cancel]');
+    ok.textContent = confirmLabel || '지우기';
+    ok.onclick = () => dialog.close('confirm');
+    cancel.onclick = () => dialog.close('cancel');
+    dialog.addEventListener('close', () => resolve(dialog.returnValue === 'confirm'), { once: true });
+    dialog.returnValue = '';
+    dialog.showModal();
+  });
+}
+
+function requestSwitchMode(m) {
+  if (m === mode) return;
+  if (!hasProgress()) { switchMode(m); return; }
+  const label = mode === 'timer' ? '타이머' : '스톱워치';
+  confirmAction(`진행 중인 ${label} 기록이 초기화됩니다. ${m === 'timer' ? '타이머' : '스톱워치'}로 바꿀까요?`, '바꾸기')
+    .then(confirmed => { if (confirmed) switchMode(m); });
+}
+
+function requestReset() {
+  if (!hasProgress()) { doReset(); return; }
+  confirmAction(`진행 중인 ${mode === 'timer' ? '타이머' : '스톱워치'}를 처음 상태로 되돌릴까요?`, '초기화')
+    .then(confirmed => { if (confirmed) doReset(); });
 }
 
 function clampInput(el, max) {
@@ -312,14 +409,27 @@ function clampInput(el, max) {
   syncTimerFromInputs();
 }
 
+// 60 이상인 분·초를 윗자리로 올려 정리합니다. 예: 90초 → 1분 30초
+function normalizeTimerInputs() {
+  if (running) return;
+  const total = Math.floor(getTimerMs() / 1000);
+  document.getElementById('tHour').value = Math.floor(total / 3600);
+  document.getElementById('tMin').value = Math.floor((total % 3600) / 60);
+  document.getElementById('tSec').value = total % 60;
+  syncTimerFromInputs();
+}
+
 function syncTimerFromInputs() {
   if (mode !== 'timer' || running) return;
   timerRemaining = getTimerMs();
+  timerTotal = timerRemaining;
   timerFinished = false;
   updateDisplay();
+  saveTimerState();
 }
 
 function setQuick(min) {
+  if (running) return;
   const h = Math.floor(min / 60);
   const m = min % 60;
   document.getElementById('tHour').value = h;
@@ -332,21 +442,32 @@ function getTimerMs() {
   const h = parseInt(document.getElementById('tHour').value) || 0;
   const m = parseInt(document.getElementById('tMin').value) || 0;
   const s = parseInt(document.getElementById('tSec').value) || 0;
-  return (h * 3600 + m * 60 + s) * 1000;
+  return Math.min(MAX_TIMER_SECONDS, Math.max(0, h * 3600 + m * 60 + s)) * 1000;
 }
 
-function formatTime(ms, showMs) {
-  const totalSec = Math.max(0, Math.floor(ms / 1000));
+// 카운트다운은 남은 초를 올림으로 표시해 5:00에서 시작하고 00:01 다음에 알림이 울립니다.
+function formatTime(ms, showMs, roundUp) {
+  const safe = Math.max(0, ms);
+  const totalSec = roundUp ? Math.ceil(safe / 1000) : Math.floor(safe / 1000);
   const h = Math.floor(totalSec / 3600);
   const m = Math.floor((totalSec % 3600) / 60);
   const s = totalSec % 60;
   const pad = n => String(n).padStart(2, '0');
   const main = h > 0 ? `${pad(h)}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
   if (showMs) {
-    const centis = Math.floor((ms % 1000) / 10);
+    const centis = Math.floor((safe % 1000) / 10);
     return { main, ms: '.' + String(centis).padStart(2, '0') };
   }
   return { main, ms: '' };
+}
+
+function updateEndInfo() {
+  const info = document.getElementById('endInfo');
+  if (mode !== 'timer') { info.textContent = running ? '스톱워치 측정 중' : ''; return; }
+  if (running && timerEndTime) info.textContent = `${endLabel(timerEndTime)}에 종료`;
+  else if (timerFinished && finishedAt) info.textContent = `${clockLabel(finishedAt)}에 종료됨`;
+  else if (!running && timerTotal > 0 && timerRemaining > 0 && timerRemaining < timerTotal) info.textContent = '일시정지 중 · ▶를 누르면 이어서 진행';
+  else info.textContent = '';
 }
 
 function updateDisplay() {
@@ -354,16 +475,28 @@ function updateDisplay() {
   if (mode === 'timer' && !running && timerRemaining === 0 && !timerFinished) {
     ms = getTimerMs();
   }
-  const f = formatTime(ms, mode === 'stopwatch');
+  const f = formatTime(ms, mode === 'stopwatch', mode === 'timer');
   document.getElementById('display').textContent = f.main;
   document.getElementById('displayMs').textContent = f.ms;
+  updateEndInfo();
 
-  // Update document title
-  if (running) {
-    document.title = f.main + (f.ms || '') + ' — 타이머';
+  if (alarmActive) {
+    document.title = '⏰ 완료 — 타이머';
+  } else if (running) {
+    document.title = f.main + (f.ms || '') + (mode === 'timer' ? ' — 타이머' : ' — 스톱워치');
   } else {
-    document.title = '⏱️ 타이머/스톱워치 — 티모집사';
+    document.title = DEFAULT_TITLE;
   }
+}
+
+function setStartButton(isRunning) {
+  const button = document.getElementById('btnStart');
+  button.textContent = isRunning ? '■' : '▶';
+  button.classList.toggle('running', isRunning);
+  button.setAttribute('aria-label', isRunning ? '일시정지' : '시작');
+  document.querySelectorAll('#timerSection input, #timerSection .quick-btn').forEach(el => {
+    if (el.id !== 'notifyToggle') el.disabled = isRunning;
+  });
 }
 
 function finishTimer() {
@@ -372,13 +505,18 @@ function finishTimer() {
   timerEndTime = 0;
   timerFinished = true;
   running = false;
+  finishedAt = Date.now();
   clearInterval(intervalId);
   intervalId = null;
-  document.getElementById('btnStart').textContent = '▶';
-  document.getElementById('btnStart').classList.remove('running');
+  setStartButton(false);
+  showAlarmBanner(`⏰ ${clockLabel(finishedAt)}에 타이머가 끝났습니다`);
   updateDisplay();
   playAlarm();
   showToast('⏰ 타이머 완료!');
+  if (document.getElementById('notifyToggle').checked && document.visibilityState !== 'visible') {
+    try { alarmApi()?.notify('⏰ 타이머 완료', `${formatTime(timerTotal, false, true).main} 타이머가 ${clockLabel(finishedAt)}에 끝났습니다.`); } catch (e) { /* 무시 */ }
+  }
+  saveTimerState();
 }
 
 function reconcileRunningClock() {
@@ -397,6 +535,7 @@ function reconcileRunningClock() {
 }
 
 function doStartStop() {
+  if (alarmActive) acknowledgeAlarm();
   if (running) {
     // Stop
     if (mode === 'timer') {
@@ -410,10 +549,10 @@ function doStartStop() {
     if (mode === 'stopwatch') {
       swElapsed += Date.now() - swStart;
     }
-    document.getElementById('btnStart').textContent = '▶';
-    document.getElementById('btnStart').classList.remove('running');
+    setStartButton(false);
     if (mode === 'timer') suspendAlarmAudio();
     updateDisplay();
+    saveTimerState();
     return;
   }
 
@@ -422,12 +561,16 @@ function doStartStop() {
     primeAlarmAudio();
     if (timerRemaining === 0) {
       timerRemaining = getTimerMs();
+      timerTotal = timerRemaining;
     }
     if (timerRemaining <= 0) return;
+    if (!timerTotal || timerTotal < timerRemaining) timerTotal = timerRemaining;
     timerFinished = false;
+    finishedAt = 0;
     timerEndTime = Date.now() + timerRemaining;
     running = true;
     intervalId = setInterval(reconcileRunningClock, 100);
+    scheduleAlarmAudio();
   } else {
     // Stopwatch
     swStart = Date.now();
@@ -435,8 +578,9 @@ function doStartStop() {
     intervalId = setInterval(reconcileRunningClock, 30);
   }
 
-  document.getElementById('btnStart').textContent = '■';
-  document.getElementById('btnStart').classList.add('running');
+  setStartButton(true);
+  updateDisplay();
+  saveTimerState();
 }
 
 function doReset() {
@@ -446,34 +590,75 @@ function doReset() {
   timerRemaining = 0;
   timerEndTime = 0;
   timerFinished = false;
+  timerTotal = 0;
+  finishedAt = 0;
   swElapsed = 0;
   laps = [];
   document.getElementById('lapsContainer').innerHTML = '';
-  document.getElementById('btnStart').textContent = '▶';
-  document.getElementById('btnStart').classList.remove('running');
-  suspendAlarmAudio();
-  document.title = '⏱️ 타이머/스톱워치 — 티모집사';
+  document.getElementById('lapTools').hidden = true;
+  setStartButton(false);
+  alarmActive = false;
+  document.getElementById('alarmBanner').hidden = true;
+  try { alarmApi()?.stop(); } catch (e) { /* 무시 */ }
+  document.title = DEFAULT_TITLE;
   updateDisplay();
+  saveTimerState();
 }
 
 function doLap() {
   if (mode !== 'stopwatch' || !running) return;
   const current = swElapsed + (Date.now() - swStart);
-  const prevLap = laps.length > 0 ? laps[laps.length - 1] : 0;
   laps.push(current);
   renderLaps();
+  saveTimerState();
 }
 
 function renderLaps() {
   const container = document.getElementById('lapsContainer');
   container.innerHTML = '';
+  document.getElementById('lapTools').hidden = laps.length === 0;
   for (let i = laps.length - 1; i >= 0; i--) {
     const diff = i === 0 ? laps[0] : laps[i] - laps[i - 1];
     const el = document.createElement('div');
     el.className = 'lap-item';
-    el.innerHTML = `<span class="lap-num">랩 ${i + 1}</span><span class="lap-time">${formatTime(laps[i], true).main}${formatTime(laps[i], true).ms}</span><span class="lap-diff">+${formatTime(diff, true).main}${formatTime(diff, true).ms}</span>`;
+    const lapTime = formatTime(laps[i], true);
+    const lapDiff = formatTime(diff, true);
+    el.innerHTML = `<span class="lap-num">랩 ${i + 1}</span><span class="lap-time">${lapTime.main}${lapTime.ms}</span><span class="lap-diff">+${lapDiff.main}${lapDiff.ms}</span>`;
     container.appendChild(el);
   }
+}
+
+function copyText(text) {
+  const fallback = () => new Promise((resolve, reject) => {
+    const helper = document.createElement('textarea');
+    helper.value = text;
+    helper.setAttribute('readonly', '');
+    helper.style.position = 'fixed';
+    helper.style.opacity = '0';
+    document.body.appendChild(helper);
+    helper.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    helper.remove();
+    if (ok) resolve(); else reject(new Error('copy failed'));
+  });
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text).catch(fallback);
+  return fallback();
+}
+
+function copyLaps() {
+  if (!laps.length) { showToast('복사할 랩 기록이 없습니다'); return; }
+  const total = running ? swElapsed + (Date.now() - swStart) : swElapsed;
+  const t = formatTime(total, true);
+  const lines = [`스톱워치 기록 (총 ${t.main}${t.ms}, 랩 ${laps.length}개)`];
+  laps.forEach((lap, i) => {
+    const at = formatTime(lap, true);
+    const diff = formatTime(i === 0 ? lap : lap - laps[i - 1], true);
+    lines.push(`랩 ${i + 1}\t${at.main}${at.ms}\t(+${diff.main}${diff.ms})`);
+  });
+  copyText(lines.join('\n'))
+    .then(() => showToast('랩 기록을 복사했습니다'))
+    .catch(() => showToast('복사하지 못했습니다. 기록을 직접 선택해 복사해 주세요'));
 }
 
 function showToast(msg) {
@@ -484,22 +669,111 @@ function showToast(msg) {
   t._timer = setTimeout(() => t.classList.remove('show'), 2000);
 }
 
+// --- 상태 저장·복원 (새로고침 대비) ---
+function saveTimerState() {
+  try {
+    localStorage.setItem(STATE_KEY, JSON.stringify({
+      v: 1, mode, running, timerRemaining, timerEndTime, timerTotal, timerFinished, finishedAt,
+      swElapsed, swStart, laps: laps.slice(-200),
+      inputs: ['tHour', 'tMin', 'tSec'].map(id => document.getElementById(id).value)
+    }));
+  } catch (e) { /* 저장이 막혀도 타이머는 계속 동작합니다. */ }
+}
+
+function restoreTimerState() {
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(STATE_KEY) || 'null'); } catch (e) { saved = null; }
+  if (!saved || saved.v !== 1) return;
+  const num = (value, max) => Number.isFinite(Number(value)) ? Math.min(max, Math.max(0, Number(value))) : 0;
+  if (Array.isArray(saved.inputs)) {
+    ['tHour', 'tMin', 'tSec'].forEach((id, i) => { document.getElementById(id).value = String(Math.floor(num(saved.inputs[i], 5999))); });
+  }
+  mode = saved.mode === 'stopwatch' ? 'stopwatch' : 'timer';
+  applyModeUI(mode);
+  const now = Date.now();
+  if (mode === 'timer') {
+    timerTotal = num(saved.timerTotal, MAX_TIMER_SECONDS * 1000);
+    if (saved.running && Number(saved.timerEndTime) > now) {
+      timerEndTime = Number(saved.timerEndTime);
+      timerRemaining = timerEndTime - now;
+      running = true;
+      intervalId = setInterval(reconcileRunningClock, 100);
+      setStartButton(true);
+      // 새로고침 뒤에는 사용자 조작이 있어야 오디오를 켤 수 있으므로 첫 입력 때 알림음을 다시 예약합니다.
+      const rearm = () => { if (running && mode === 'timer') { primeAlarmAudio(); scheduleAlarmAudio(); } };
+      document.addEventListener('pointerdown', rearm, { once: true });
+      document.addEventListener('keydown', rearm, { once: true });
+      scheduleAlarmAudio();
+      showToast('새로고침 전 타이머를 이어서 진행합니다. 알림음을 위해 화면을 한 번 눌러 주세요');
+    } else if (saved.running && Number(saved.timerEndTime) > 0) {
+      timerFinished = true;
+      finishedAt = Number(saved.timerEndTime);
+      timerRemaining = 0;
+      showAlarmBanner(`⏰ 페이지를 다시 여는 사이 ${clockLabel(finishedAt)}에 타이머가 끝났습니다`);
+    } else if (saved.timerFinished) {
+      timerFinished = true;
+      finishedAt = num(saved.finishedAt, now);
+      timerRemaining = 0;
+    } else {
+      timerRemaining = num(saved.timerRemaining, MAX_TIMER_SECONDS * 1000);
+    }
+  } else {
+    swElapsed = num(saved.swElapsed, 1000 * 3600 * 1000);
+    laps = Array.isArray(saved.laps) ? saved.laps.map(Number).filter(Number.isFinite).slice(-200) : [];
+    if (saved.running && Number(saved.swStart) > 0 && Number(saved.swStart) <= now) {
+      swStart = Number(saved.swStart);
+      running = true;
+      intervalId = setInterval(reconcileRunningClock, 30);
+      setStartButton(true);
+    }
+    renderLaps();
+  }
+  updateDisplay();
+}
+
+function initNotifyToggle() {
+  const toggle = document.getElementById('notifyToggle');
+  if (!alarmApi()?.notificationsSupported()) {
+    document.getElementById('notifyRow').hidden = true;
+    return;
+  }
+  try { toggle.checked = localStorage.getItem(NOTIFY_KEY) === '1' && Notification.permission === 'granted'; } catch (e) { toggle.checked = false; }
+  toggle.addEventListener('change', () => {
+    const remember = value => { try { localStorage.setItem(NOTIFY_KEY, value ? '1' : '0'); } catch (e) { /* 무시 */ } };
+    if (!toggle.checked) { remember(false); return; }
+    alarmApi().requestNotificationPermission().then(permission => {
+      if (permission === 'granted') {
+        remember(true);
+        showToast('타이머가 끝나면 브라우저 알림도 보냅니다');
+      } else {
+        toggle.checked = false;
+        remember(false);
+        showToast('브라우저 설정에서 이 사이트의 알림이 차단되어 있습니다');
+      }
+    });
+  });
+}
+
 // Keyboard shortcuts
 document.addEventListener('keydown', e => {
   if (e.defaultPrevented || e.repeat || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
   const target = e.target instanceof Element ? e.target : null;
   if (document.querySelector('dialog[open]') || target?.closest('input, textarea, select, button, a, [contenteditable], [role="button"], [role="tab"]')) return;
-  if (e.code === 'Space') { e.preventDefault(); doStartStop(); }
-  if (e.code === 'KeyR') doReset();
+  if (e.code === 'Space') {
+    e.preventDefault();
+    if (alarmActive) acknowledgeAlarm(); else doStartStop();
+  }
+  if (e.code === 'KeyR') requestReset();
   if (e.code === 'KeyL' && mode === 'stopwatch') doLap();
 });
 
 document.addEventListener('visibilitychange', reconcileRunningClock);
 window.addEventListener('pageshow', reconcileRunningClock);
 
+initNotifyToggle();
+restoreTimerState();
+if (!running && mode === 'timer' && !timerFinished && timerRemaining === 0) timerTotal = getTimerMs();
 updateDisplay();
-
-
 </script>
 <script src="/special-chars/theme-toggle.js"></script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>

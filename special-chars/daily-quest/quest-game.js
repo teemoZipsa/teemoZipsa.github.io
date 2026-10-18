@@ -4,6 +4,9 @@
   const STORAGE_KEY = 'teemo_daily_quest_v1';
   const STATE_VERSION = 1;
   const DAY_MS = 24 * 60 * 60 * 1000;
+  // 이보다 짧은 타이머는 연습으로 보고 보상·연속 기록을 주지 않습니다.
+  const MIN_REWARD_MS = 5 * 60 * 1000;
+  const CIRCLED = ['①', '②', '③', '④'];
   const numberFormat = new Intl.NumberFormat('ko-KR');
 
   const MISSIONS = {
@@ -12,6 +15,7 @@
       title: '5분 동안 가장 작은 시작 하나 만들기',
       description: '미뤄둔 일의 첫 동작만 해도 충분해요. 파일을 열거나, 첫 문장을 쓰거나, 도구를 꺼내 보세요.',
       target: '미뤄둔 일의 첫 동작 하나',
+      steps: ['시작할 행동을 한 문장으로 정하기', '5분 동안 그 행동을 실제로 이어가기'],
       goals: ['시작할 행동을 한 문장으로 정했다', '5분 동안 그 행동을 실제로 이어갔다']
     },
     focus25: {
@@ -19,6 +23,7 @@
       title: '25분 동안 핵심 작업 한 덩어리 끝내기',
       description: '가장 중요한 결과 하나를 정하고, 알림이 울릴 때까지 그 일에만 집중해 보세요.',
       target: '가장 중요한 작업 한 가지',
+      steps: ['끝낼 결과를 한 줄로 정하기', '타이머가 끝날 때까지 그 일에만 집중하기'],
       goals: ['끝낼 결과를 한 줄로 정했다', '타이머가 끝날 때까지 한 일에 집중했다']
     },
     tidy10: {
@@ -26,6 +31,7 @@
       title: '10분 동안 눈앞의 한 구역 정리하기',
       description: '범위를 작게 잡는 것이 핵심이에요. 책상 한쪽, 받은 편지함, 다운로드 폴더 중 하나만 정리하세요.',
       target: '책상 또는 폴더 한 구역',
+      steps: ['정리할 범위를 한 구역으로 정하기', '필요한 것과 치울 것을 실제로 나누기'],
       goals: ['정리할 범위를 한 구역으로 제한했다', '필요한 것과 치울 것을 실제로 나눴다']
     },
     move15: {
@@ -33,6 +39,7 @@
       title: '15분 동안 몸을 깨우고 다시 돌아오기',
       description: '가벼운 스트레칭, 산책, 맨몸 운동 중 오늘 가능한 움직임 하나를 골라 끝까지 해보세요.',
       target: '오늘 가능한 움직임 한 가지',
+      steps: ['할 움직임과 범위를 미리 정하기', '무리하지 않고 15분 동안 몸 움직이기'],
       goals: ['할 움직임과 범위를 미리 정했다', '무리하지 않고 15분 동안 몸을 움직였다']
     }
   };
@@ -233,13 +240,16 @@
     const durationMs = Math.max(1000, getTimerMs() || base.minutes * 60000);
     const roundedMinutes = Math.max(1, Math.round(durationMs / 60000));
     const adjusted = Math.abs(durationMs - base.minutes * 60000) > 1000;
-    const bonuses = rewardBonuses();
-    const baseCoins = adjusted ? Math.min(80, Math.max(3, Math.ceil(roundedMinutes * 0.8))) : base.coins;
-    const baseXp = adjusted ? Math.min(120, Math.max(5, roundedMinutes)) : base.xp;
+    const eligible = durationMs >= MIN_REWARD_MS;
+    const bonuses = eligible ? rewardBonuses() : { coins: 0, xp: 0 };
+    const baseCoins = !eligible ? 0 : adjusted ? Math.min(80, Math.max(3, Math.ceil(roundedMinutes * 0.8))) : base.coins;
+    const baseXp = !eligible ? 0 : adjusted ? Math.min(120, Math.max(5, roundedMinutes)) : base.xp;
+    const durationLabel = durationMs < 60000 ? `${Math.round(durationMs / 1000)}초` : `${roundedMinutes}분`;
     return {
       ...base,
-      title: adjusted ? `${roundedMinutes}분 동안 ${base.title.replace(/^\d+분 동안 /, '')}` : base.title,
+      title: adjusted ? `${durationLabel} 동안 ${base.title.replace(/^\d+분 동안 /, '')}` : base.title,
       durationMs,
+      eligible,
       coins: baseCoins + bonuses.coins,
       xp: baseXp + bonuses.xp,
       baseCoins,
@@ -285,16 +295,25 @@
     const bonuses = [];
     if (mission.coinBonus) bonuses.push(`방울 +${mission.coinBonus}냥`);
     if (mission.xpBonus) bonuses.push(`장비 +${mission.xpBonus} XP`);
-    $('#rewardBonusText').textContent = bonuses.length ? bonuses.join(' · ') : '기본 보상';
+    $('#rewardBonusText').textContent = !mission.eligible ? '5분 이상부터 보상' : bonuses.length ? bonuses.join(' · ') : '기본 보상';
 
     const goals = $('#missionGoals');
-    goals.replaceChildren(...mission.goals.map((goal, index) => {
+    const steps = Array.isArray(mission.steps) ? mission.steps : mission.goals;
+    goals.replaceChildren(...steps.map((goal, index) => {
       const span = document.createElement('span');
       span.className = 'mission-goal';
-      span.textContent = `${index + 1} ${goal}`;
+      span.textContent = `${CIRCLED[index] || `${index + 1}.`} ${goal}`;
       return span;
     }));
-    $('#timerRewardSummary').lastElementChild.innerHTML = `완료 확인 후 <strong>${numberFormat.format(mission.coins)}냥과 경험치 ${numberFormat.format(mission.xp)}</strong>가 게임에 바로 반영돼요.`;
+    const summary = $('#timerRewardSummary').lastElementChild;
+    const strong = document.createElement('strong');
+    if (mission.eligible) {
+      strong.textContent = `${numberFormat.format(mission.coins)}냥과 경험치 ${numberFormat.format(mission.xp)}`;
+      summary.replaceChildren('완료 확인 후 ', strong, '가 게임에 바로 반영돼요.');
+    } else {
+      strong.textContent = '5분 미만은 연습 타이머';
+      summary.replaceChildren(strong, '로 진행되어 보상과 연속 기록이 쌓이지 않아요.');
+    }
     renderLinkedMission();
   }
 
@@ -325,9 +344,22 @@
     if (!options?.silent) showToast(`${mission.icon} ${mission.minutes}분 퀘스트로 설정했어요.`);
   }
 
+  // 퀘스트가 시작되면(일시정지·완료 확인 대기 포함) 퀘스트 종류와 시간을 바꿀 수 없게 잠급니다.
   function setMissionControlsDisabled(disabled) {
     $$('.mission-choice').forEach(button => { button.disabled = disabled; });
     $('#missionTarget').readOnly = disabled;
+    $$('#timerSection .timer-inputs input, #timerSection .quick-btn').forEach(control => { control.disabled = disabled; });
+    const note = $('#questLockNote');
+    if (note) note.hidden = !disabled;
+  }
+
+  // 저장된 연속 기록을 오늘 날짜 기준으로 다시 계산합니다. 하루 이상 비면 끊긴 것으로 봅니다.
+  function effectiveStreak() {
+    if (!state.streak || !state.lastCompletedDate) return 0;
+    const gap = dateKeyDifference(state.lastCompletedDate, localDateKey(new Date()));
+    if (gap <= 1) return state.streak;
+    if (gap === 2 && state.shields > 0) return state.streak;
+    return 0;
   }
 
   function updateTimerStatus(status) {
@@ -431,7 +463,7 @@
       days.push(item);
     }
     container.replaceChildren(...days);
-    $('#weeklySummary').textContent = `이번 주 ${numberFormat.format(weekCount)}회`;
+    $('#weeklySummary').textContent = `최근 7일 ${numberFormat.format(weekCount)}회`;
   }
 
   function renderHistory() {
@@ -480,12 +512,15 @@
     $('#xpProgressText').textContent = `${numberFormat.format(progress)} / 100 XP`;
     $('#nextLevelText').textContent = `다음 레벨까지 ${numberFormat.format(100 - progress)}`;
     $('#totalMissionCount').textContent = numberFormat.format(state.totalCompleted);
-    $('#streakCount').textContent = numberFormat.format(state.streak);
+    const streak = effectiveStreak();
+    $('#streakCount').textContent = numberFormat.format(streak);
     $('#shieldCount').textContent = numberFormat.format(state.shields);
     if (!state.totalCompleted) {
       $('#companionMessage').textContent = '첫 퀘스트를 끝내면 아지트가 열려요.';
-    } else if (state.streak >= 7) {
-      $('#companionMessage').textContent = `${state.streak}일째 퀘스트를 이어가고 있어요.`;
+    } else if (streak >= 7) {
+      $('#companionMessage').textContent = `${streak}일째 퀘스트를 이어가고 있어요.`;
+    } else if (state.streak > 1 && !streak) {
+      $('#companionMessage').textContent = `${state.streak}일 연속 기록이 끊겼어요. 오늘 퀘스트로 다시 시작해 보세요.`;
     } else {
       $('#companionMessage').textContent = `지금까지 ${state.totalCompleted}개의 퀘스트를 끝냈어요.`;
     }
@@ -752,6 +787,13 @@
       $('#btnStart').setAttribute('aria-label', '타이머 일시정지');
       updateDisplay();
       updateTimerStatus('running');
+      if (typeof scheduleAlarmAudio === 'function') {
+        // 새로고침 뒤에는 사용자 조작이 있어야 소리를 낼 수 있어 첫 입력 때 알림음을 다시 예약합니다.
+        scheduleAlarmAudio();
+        const rearm = () => { if (running && mode === 'timer') { primeAlarmAudio(); scheduleAlarmAudio(); } };
+        document.addEventListener('pointerdown', rearm, { once: true });
+        document.addEventListener('keydown', rearm, { once: true });
+      }
     } else {
       timerRemaining = session.remaining;
       timerFinished = false;
@@ -769,6 +811,8 @@
     }
     if (state.activeSession?.status === 'paused') {
       preparedSnapshot = state.activeSession.mission;
+      // 일시정지 중 입력값이 바뀌어도 저장된 남은 시간으로만 이어갑니다.
+      if (state.activeSession.remaining > 0) timerRemaining = state.activeSession.remaining;
     } else if (extensionSnapshot) {
       preparedSnapshot = extensionSnapshot;
       extensionSnapshot = null;
@@ -803,6 +847,16 @@
 
   window.addEventListener('teemo:timer-finished', event => {
     const snapshot = state.activeSession?.mission || preparedSnapshot || missionSnapshot();
+    if (!(snapshot.durationMs >= MIN_REWARD_MS)) {
+      state.activeSession = null;
+      preparedSnapshot = null;
+      saveState();
+      setMissionControlsDisabled(false);
+      updateTimerStatus('ready');
+      renderLinkedMission();
+      showToast('연습 타이머가 끝났어요. 5분 이상 퀘스트부터 보상이 쌓여요.');
+      return;
+    }
     state.pendingReview = { ...snapshot, completedAt: event.detail.completedAt || Date.now() };
     state.activeSession = null;
     preparedSnapshot = null;
@@ -899,6 +953,8 @@
     restoreSession();
   }
 
+  window.teemoTimerLocked = () => Boolean(state.activeSession || state.pendingReview);
+  window.teemoQuestInProgress = () => Boolean(state.activeSession);
   window.selectMission = selectMission;
   window.switchJourney = switchJourney;
   window.__teemoDailyQuest = {

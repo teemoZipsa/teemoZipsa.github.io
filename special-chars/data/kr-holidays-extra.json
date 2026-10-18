@@ -1,15 +1,97 @@
 {
   "meta": {
-    "description": "Manual Korean public-holiday additions that are not safely derived from fixed/lunar rules alone, including term-end election days and government-designated special holidays.",
-    "checkedAt": "2026-07-17",
-    "minimumReviewCadence": "Review at least once per year and whenever the government announces a temporary public holiday.",
+    "description": "Korean public-holiday data used by /special-chars/biz-day-calc/. Fixed solar holidays and substitute-holiday rules are computed in the page; this file supplies lunar holidays (converted to solar dates) and manually listed days such as term-end election days and government-designated temporary holidays.",
+    "checkedAt": "2026-09-28",
+    "coverage": {
+      "start": "2024-01-01",
+      "end": "2030-12-31",
+      "note": "Temporary public holidays (관공서의 공휴일에 관한 규정 제2조 제11호) designated after checkedAt are not included until this file is updated."
+    },
+    "minimumReviewCadence": "Review at least once per year, whenever the government announces a temporary public holiday, and whenever 관공서의 공휴일에 관한 규정 or 공직선거법 제34조 is amended.",
+    "rules": {
+      "regulation": "관공서의 공휴일에 관한 규정 (대통령령 제36290호, 2026.4.30. 공포, 노동절 2026.5.1.·제헌절 2026.5.11. 시행)",
+      "substituteSatSun": "제3조①1: 국경일(삼일절·제헌절·광복절·개천절·한글날), 부처님 오신 날, 노동절, 어린이날, 기독탄신일이 토요일이나 일요일과 겹치면 다음 첫 번째 비공휴일",
+      "substituteSundayOnly": "제3조①2: 설날·추석 연휴(전날·당일·다음 날)는 일요일과 겹칠 때만 대체공휴일 발생",
+      "substituteOverlap": "제3조①3: 위 공휴일이 평일에 다른 공휴일과 겹치면 다음 첫 번째 비공휴일 (겹친 날짜 하나당 1일)",
+      "noSubstitute": "1월 1일, 현충일은 대체공휴일 대상이 아님",
+      "saturdaySkip": "제3조③: 대체공휴일이 토요일이면 다음 첫 번째 비공휴일"
+    },
+    "lunarSource": "한국천문연구원 천문우주지식정보 음양력 변환(https://astro.kasi.re.kr/life/pageView/8, 조회 API /life/lunc)으로 2024~2030년 음력 1월 1일·4월 8일·8월 15일의 양력 날짜를 2026-09-28에 조회해 확인했습니다. 설날·추석 연휴는 해당일 전날과 다음 날을 포함합니다. 2028년 설날은 중국 춘절(1월 26일)과 달리 한국 기준 1월 27일입니다.",
     "source": [
+      "https://www.law.go.kr/DRF/lawService.do?OC=test&target=law&type=XML&MST=285779",
+      "https://www.law.go.kr/DRF/lawService.do?OC=test&target=law&type=XML&MST=285629",
+      "https://astro.kasi.re.kr/life/pageView/8",
       "https://law.go.kr/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1018770085",
       "https://law.go.kr/LSW/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1027161473",
       "https://www.nec.go.kr/site/nec/ex/bbs/View.do?bcIdx=192949&cbIdx=1104",
       "https://www.korea.kr/news/policyNewsView.do?newsId=148934578",
       "https://www.korea.kr/news/policyNewsView.do?newsId=148938559",
       "https://www.korea.kr/news/policyNewsView.do?newsId=148941443"
+    ]
+  },
+  "lunar": {
+    "2024": [
+      { "date": "2024-02-09", "name": "설날 연휴", "kind": "lunarNewYear" },
+      { "date": "2024-02-10", "name": "설날", "kind": "lunarNewYear" },
+      { "date": "2024-02-11", "name": "설날 연휴", "kind": "lunarNewYear" },
+      { "date": "2024-05-15", "name": "부처님오신날", "kind": "buddha" },
+      { "date": "2024-09-16", "name": "추석 연휴", "kind": "chuseok" },
+      { "date": "2024-09-17", "name": "추석", "kind": "chuseok" },
+      { "date": "2024-09-18", "name": "추석 연휴", "kind": "chuseok" }
+    ],
+    "2025": [
+      { "date": "2025-01-28", "name": "설날 연휴", "kind": "lunarNewYear" },
+      { "date": "2025-01-29", "name": "설날", "kind": "lunarNewYear" },
+      { "date": "2025-01-30", "name": "설날 연휴", "kind": "lunarNewYear" },
+      { "date": "2025-05-05", "name": "부처님오신날", "kind": "buddha" },
+      { "date": "2025-10-05", "name": "추석 연휴", "kind": "chuseok" },
+      { "date": "2025-10-06", "name": "추석", "kind": "chuseok" },
+      { "date": "2025-10-07", "name": "추석 연휴", "kind": "chuseok" }
+    ],
+    "2026": [
+      { "date": "2026-02-16", "name": "설날 연휴", "kind": "lunarNewYear" },
+      { "date": "2026-02-17", "name": "설날", "kind": "lunarNewYear" },
+      { "date": "2026-02-18", "name": "설날 연휴", "kind": "lunarNewYear" },
+      { "date": "2026-05-24", "name": "부처님오신날", "kind": "buddha" },
+      { "date": "2026-09-24", "name": "추석 연휴", "kind": "chuseok" },
+      { "date": "2026-09-25", "name": "추석", "kind": "chuseok" },
+      { "date": "2026-09-26", "name": "추석 연휴", "kind": "chuseok" }
+    ],
+    "2027": [
+      { "date": "2027-02-06", "name": "설날 연휴", "kind": "lunarNewYear" },
+      { "date": "2027-02-07", "name": "설날", "kind": "lunarNewYear" },
+      { "date": "2027-02-08", "name": "설날 연휴", "kind": "lunarNewYear" },
+      { "date": "2027-05-13", "name": "부처님오신날", "kind": "buddha" },
+      { "date": "2027-09-14", "name": "추석 연휴", "kind": "chuseok" },
+      { "date": "2027-09-15", "name": "추석", "kind": "chuseok" },
+      { "date": "2027-09-16", "name": "추석 연휴", "kind": "chuseok" }
+    ],
+    "2028": [
+      { "date": "2028-01-26", "name": "설날 연휴", "kind": "lunarNewYear" },
+      { "date": "2028-01-27", "name": "설날", "kind": "lunarNewYear" },
+      { "date": "2028-01-28", "name": "설날 연휴", "kind": "lunarNewYear" },
+      { "date": "2028-05-02", "name": "부처님오신날", "kind": "buddha" },
+      { "date": "2028-10-02", "name": "추석 연휴", "kind": "chuseok" },
+      { "date": "2028-10-03", "name": "추석", "kind": "chuseok" },
+      { "date": "2028-10-04", "name": "추석 연휴", "kind": "chuseok" }
+    ],
+    "2029": [
+      { "date": "2029-02-12", "name": "설날 연휴", "kind": "lunarNewYear" },
+      { "date": "2029-02-13", "name": "설날", "kind": "lunarNewYear" },
+      { "date": "2029-02-14", "name": "설날 연휴", "kind": "lunarNewYear" },
+      { "date": "2029-05-20", "name": "부처님오신날", "kind": "buddha" },
+      { "date": "2029-09-21", "name": "추석 연휴", "kind": "chuseok" },
+      { "date": "2029-09-22", "name": "추석", "kind": "chuseok" },
+      { "date": "2029-09-23", "name": "추석 연휴", "kind": "chuseok" }
+    ],
+    "2030": [
+      { "date": "2030-02-02", "name": "설날 연휴", "kind": "lunarNewYear" },
+      { "date": "2030-02-03", "name": "설날", "kind": "lunarNewYear" },
+      { "date": "2030-02-04", "name": "설날 연휴", "kind": "lunarNewYear" },
+      { "date": "2030-05-09", "name": "부처님오신날", "kind": "buddha" },
+      { "date": "2030-09-11", "name": "추석 연휴", "kind": "chuseok" },
+      { "date": "2030-09-12", "name": "추석", "kind": "chuseok" },
+      { "date": "2030-09-13", "name": "추석 연휴", "kind": "chuseok" }
     ]
   },
   "years": {
@@ -47,6 +129,34 @@
         "name": "전국동시지방선거일",
         "type": "term-end-election",
         "source": "공직선거법 제34조에 따른 임기만료에 의한 선거의 선거일"
+      }
+    ],
+    "2028": [
+      {
+        "date": "2028-04-12",
+        "name": "제23대 국회의원선거일",
+        "type": "term-end-election",
+        "status": "statutory-schedule",
+        "source": "공직선거법 제34조제1항제2호, 관공서의 공휴일에 관한 규정 제2조제10호의2",
+        "derivation": "제22대 국회의원 임기는 2024-05-30에 시작해 4년 뒤 2028-05-29에 만료됩니다(헌법 제42조, 공직선거법 제14조제2항). 임기만료일 전 50일은 2028-04-09(일)이고, 그 이후 첫 번째 수요일은 2028-04-12입니다. 선거일과 전날(04-11)·다음 날(04-13)이 공휴일이 아니므로 제34조제2항의 연기 사유가 없습니다. 같은 산식은 2024-05-29 만료 → 2024-04-09(화) 이후 첫 수요일 2024-04-10(실제 제22대 선거일)과 일치합니다."
+      }
+    ],
+    "2030": [
+      {
+        "date": "2030-03-27",
+        "name": "제22대 대통령선거일",
+        "type": "term-end-election",
+        "status": "statutory-schedule",
+        "source": "공직선거법 제34조제1항제1호, 관공서의 공휴일에 관한 규정 제2조제10호의2",
+        "derivation": "제21대 대통령 임기는 궐위 선거로 당선이 결정된 2025-06-04에 시작해(공직선거법 제14조제1항 단서) 5년 뒤인 2030-06-03에 만료됩니다(헌법 제70조). 임기만료일 전 70일은 2030-03-25(월)이고 그 이후 첫 번째 수요일은 2030-03-27입니다. 만료일을 06-04로 보더라도 전 70일은 03-26(화)이어서 결과가 같습니다. 선거일과 전날·다음 날이 공휴일이 아니므로 제34조제2항의 연기 사유가 없습니다. 헌법·법률 개정으로 임기나 선거일이 바뀌면 갱신해야 합니다."
+      },
+      {
+        "date": "2030-06-12",
+        "name": "제10회 전국동시지방선거일",
+        "type": "term-end-election",
+        "status": "statutory-schedule",
+        "source": "공직선거법 제34조제1항제3호·제2항, 관공서의 공휴일에 관한 규정 제2조제10호의2",
+        "derivation": "2026년 제9회 지방선거 당선자의 임기는 2026-07-01부터 2030-06-30까지입니다. 임기만료일 전 30일은 2030-05-31(금)이고 그 이후 첫 번째 수요일은 2030-06-05이지만, 다음 날인 06-06이 현충일(공휴일)이므로 제34조제2항에 따라 그 다음 주 수요일인 2030-06-12이 선거일입니다. 같은 조항으로 연기된 선례로 2018년 제7회 지방선거(산식상 06-06 현충일 → 06-13)가 있습니다. 법률 개정 시 갱신해야 합니다."
       }
     ]
   }

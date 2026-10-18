@@ -11,9 +11,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>📅 날짜/D-Day 계산기 — 티모집사</title>
-<meta name="description" content="D-Day 계산, 두 날짜 사이 일수, 날짜 더하기·빼기를 실시간으로 계산합니다.">
+<meta name="description" content="D-Day, 두 날짜 사이 일수와 'N년 N개월 N일' 기간, 기준일에서 일·주·개월·년 더하기·빼기를 계산합니다. 첫날 포함(초일 산입) 옵션 지원.">
 <meta property="og:title" content="📅 날짜/D-Day 계산기 — 티모집사">
-<meta property="og:description" content="D-Day 계산, 두 날짜 사이 일수, 날짜 더하기·빼기를 실시간으로 계산합니다.">
+<meta property="og:description" content="D-Day, 두 날짜 사이 기간, 날짜 더하기·빼기를 첫날 포함 옵션과 함께 계산합니다.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/date-calc/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
@@ -29,42 +29,51 @@
   .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
   .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.6);transition:transform .3s ease,opacity .3s ease;opacity:0;pointer-events:none;z-index:999}
   .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-  .bottom-bar{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
-  .bottom-bar .info{font-size:11px;color:var(--text-info)}
-  .action-btn{padding:8px 20px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+  .bottom-bar{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--border)}
+  .bottom-bar .info{font-size:12px;color:var(--text-info)}
+  .bottom-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .action-btn{padding:8px 16px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
   .btn-clear{background:var(--bg-btn);color:var(--btn-clear-text)}.btn-clear:hover{background:var(--bg-btn-hover)}
   .btn-copy{background:var(--accent);color:var(--text-on-accent)}.btn-copy:hover{background:var(--accent-hover)}
 
   .counter-body{padding:12px;flex:1}
   .date-section{margin-bottom:16px}
-  .date-section-title{font-size:13px;font-weight:600;color:var(--text-guide);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .date-section-title{font-size:14px;font-weight:600;color:var(--text-guide);margin-bottom:8px;display:flex;align-items:center;gap:6px}
   .date-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
-  .date-row label{font-size:12px;color:var(--text-info);min-width:42px}
-  .date-row input[type="date"],.date-row input[type="number"]{background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:6px 10px;font-size:13px;flex:1;font-family:inherit;outline:none}
-  .date-row input[type="date"]:focus,.date-row input[type="number"]:focus{border-color:var(--accent)}
-  .date-row input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.7)}
-  .checkbox-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:11px;color:var(--text-info);margin-bottom:8px}
-  .checkbox-row input[type="checkbox"]{accent-color:#533483}
+  .date-row>label{font-size:13px;color:var(--text-info);min-width:42px}
+  .date-row input[type="date"],.date-row input[type="number"],.date-row select{background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:6px 10px;font-size:16px;flex:1;min-width:0;font-family:inherit;outline:none;min-height:44px}
+  .date-row select{flex:0 0 auto;min-width:76px}
+  .date-row input:focus,.date-row select:focus{border-color:var(--accent)}
+  .date-row input[aria-invalid="true"]{border-color:var(--status-red-text)}
+  html[data-theme="dark"] .date-row input[type="date"]{color-scheme:dark}
+  html[data-theme="light"] .date-row input[type="date"]{color-scheme:light}
+  .today-btn{background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-guide);padding:6px 12px;font-size:14px;cursor:pointer;font-family:inherit;min-height:44px;min-width:44px;white-space:nowrap}
+  .today-btn:hover{background:var(--bg-btn-hover)}
+  .checkbox-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:13px;color:var(--text-info);margin-bottom:8px}
+  .checkbox-row input[type="checkbox"]{accent-color:var(--accent);width:18px;height:18px;flex:0 0 auto}
+  .checkbox-row>label{flex:1 1 0;min-width:0;line-height:1.5}
   .include-help-toggle{width:40px;height:40px;display:grid;place-items:center;margin-left:2px;border:1px solid var(--border);border-radius:10px;background:var(--bg-btn);color:var(--text-info);font:700 15px/1 inherit;cursor:pointer;touch-action:manipulation}
   .include-help-toggle:hover{background:var(--bg-btn-hover);color:var(--accent-text)}
-  .include-help-text{flex:1 0 100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-guide);color:var(--text-secondary);font-size:11px;line-height:1.65}
+  .include-help-text{flex:1 0 100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-guide);color:var(--text-secondary);font-size:13px;line-height:1.65}
   .date-result-card{background:var(--bg-input);border-radius:10px;padding:14px;text-align:center;margin-top:8px}
   .date-result-value{font-size:28px;font-weight:700;color:var(--text-primary)}
-  .date-result-sub{font-size:12px;color:var(--text-info);margin-top:4px}
+  .date-result-sub{font-size:13px;color:var(--text-info);margin-top:4px;line-height:1.55}
+  .date-result-sub.error{color:var(--status-red-text)}
+  .date-result-period{font-size:14px;color:var(--text-secondary);margin-top:6px;font-weight:600}
+  .date-result-period:empty{display:none}
+  .date-rule{font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.55}
+  .date-rule:empty{display:none}
   .quick-buttons{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-  .quick-btn{background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-guide);padding:5px 12px;font-size:11px;cursor:pointer;transition:background .15s;font-family:inherit}
+  .quick-btn{background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-guide);padding:5px 12px;font-size:12px;cursor:pointer;transition:background .15s;font-family:inherit;min-height:32px}
   .quick-btn:hover{background:var(--bg-btn-hover)}
   .section-divider{border:none;border-top:1px solid var(--border);margin:16px 0}
   .guide-section{margin:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
-  .guide-section summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
+  .guide-section summary{padding:10px 14px;cursor:pointer;font-size:14px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
   .guide-section summary:hover{background:var(--bg-guide-hover)}
   .guide-section[open] summary{background:var(--bg-btn);border-bottom:1px solid var(--border)}
-  .guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
+  .guide-content{padding:12px 14px;font-size:14px;color:var(--text-info);line-height:1.8}
+  .guide-content p+p{margin-top:8px}
   .guide-content ol{padding-left:20px}.guide-content li{margin-bottom:4px}
-.report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:16px;}
-.report-box h2 {font-size:14px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
-.report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
-.report-box strong {color:var(--text-primary);font-weight:600}
 
 .related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:20px 12px}
 .related-tools h2 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
@@ -72,12 +81,7 @@
 .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
 .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
 
-@keyframes fadeIn {
-  from { opacity:0; transform:translateY(10px) }
-  to { opacity:1; transform:translateY(0) }
-}
-
-.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:12px;color:var(--text-info)}
 .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
 .footer a:hover{color:var(--text-secondary)}
 </style>
@@ -94,90 +98,124 @@
 
   <div class="counter-body">
     <div class="date-section">
-      <div class="date-section-title">📆 D-Day 계산</div>
-      <div class="date-row"><label>시작일</label><input aria-label="시작일" type="date" id="ddayStart"></div>
-      <div class="date-row"><label>목표일</label><input aria-label="종료일" type="date" id="ddayEnd"></div>
+      <div class="date-section-title">📆 D-Day · 두 날짜 사이 기간</div>
+      <div class="date-row"><label for="ddayStart">시작일</label><input type="date" id="ddayStart"><button type="button" class="today-btn" onclick="setToday('ddayStart')">오늘</button></div>
+      <div class="date-row"><label for="ddayEnd">목표일</label><input type="date" id="ddayEnd"><button type="button" class="today-btn" onclick="setToday('ddayEnd')">오늘</button></div>
       <div class="checkbox-row">
         <input type="checkbox" id="ddayInclusive">
         <label for="ddayInclusive">양끝 날짜 포함 (초일 산입)</label>
         <button type="button" class="include-help-toggle" id="includeHelpToggle" aria-expanded="false" aria-controls="includeHelpText" onclick="toggleIncludeHelp()" aria-label="양끝 날짜 포함 옵션 설명 보기">ⓘ</button>
-        <div class="include-help-text" id="includeHelpText" hidden>체크하면 시작일과 목표일을 모두 기간에 포함합니다. 예: 1월 1일~1월 3일 또는 역순은 체크 시 3일, 미체크 시 2일입니다. 기념일·만일 계산에는 체크하고, 업무 D-Day에는 보통 체크하지 않습니다.</div>
+        <div class="include-help-text" id="includeHelpText" hidden>체크하면 시작일과 목표일을 모두 기간에 넣어, 시작일을 1일째로 셉니다. 예: 1월 1일~1월 3일은 체크 시 3일, 미체크 시 2일입니다(역순도 같음). 사귄 날·출생일부터 세는 기념일에는 체크하고, 시험·마감까지 남은 날을 보는 D-Day에는 보통 체크하지 않습니다.</div>
       </div>
-      <div class="date-result-card" id="ddayResult">
+      <div class="date-result-card" id="ddayResult" aria-live="polite">
         <div class="date-result-value" id="ddayValue">-</div>
-        <div class="date-result-sub" id="ddaySub">날짜를 선택하세요</div>
+        <div class="date-result-sub" id="ddaySub">목표일을 선택하세요</div>
+        <div class="date-result-period" id="ddayPeriod"></div>
       </div>
-      <div class="report-box" id="ddayReport" style="display:none;"></div>
     </div>
 
     <hr class="section-divider">
 
     <div class="date-section">
-      <div class="date-section-title">🧮 날짜 계산 (기준일 ± 일수)</div>
-      <div class="date-row"><label>기준일</label><input aria-label="기준일" type="date" id="dateBase"></div>
-      <div class="date-row"><label>일수</label><input type="number" id="dateDays" placeholder="예: 100, -30" min="-100000" max="100000" step="1"></div>
+      <div class="date-section-title">🧮 날짜 계산 (기준일 ± 기간)</div>
+      <div class="date-row"><label for="dateBase">기준일</label><input type="date" id="dateBase"><button type="button" class="today-btn" onclick="setToday('dateBase')">오늘</button></div>
+      <div class="date-row">
+        <label for="dateDays">기간</label>
+        <input type="number" id="dateDays" placeholder="예: 100, -30" min="-100000" max="100000" step="1" inputmode="numeric" aria-describedby="dateAddSub">
+        <select id="dateUnit" aria-label="기간 단위">
+          <option value="d">일</option>
+          <option value="w">주</option>
+          <option value="m">개월</option>
+          <option value="y">년</option>
+        </select>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="dateAddInclusive">
+        <label for="dateAddInclusive">기준일을 1일째로 셈 (첫날 포함)</label>
+      </div>
       <div class="quick-buttons">
-        <button class="quick-btn" onclick="applyQuick(7)">+7일</button>
-        <button class="quick-btn" onclick="applyQuick(30)">+30일</button>
-        <button class="quick-btn" onclick="applyQuick(100)">+100일</button>
-        <button class="quick-btn" onclick="applyQuick(365)">+1년</button>
-        <button class="quick-btn" onclick="applyQuick(-7)">-7일</button>
-        <button class="quick-btn" onclick="applyQuick(-30)">-30일</button>
-        <button class="quick-btn" onclick="applyQuick(-100)">-100일</button>
-        <button class="quick-btn" onclick="applyQuick(-365)">-1년</button>
+        <button type="button" class="quick-btn" onclick="applyQuick(7,'d')">+7일</button>
+        <button type="button" class="quick-btn" onclick="applyQuick(30,'d')">+30일</button>
+        <button type="button" class="quick-btn" onclick="applyQuick(100,'d')">+100일</button>
+        <button type="button" class="quick-btn" onclick="applyQuick(1,'m')">+1개월</button>
+        <button type="button" class="quick-btn" onclick="applyQuick(1,'y')">+1년</button>
+        <button type="button" class="quick-btn" onclick="applyQuick(-7,'d')">-7일</button>
+        <button type="button" class="quick-btn" onclick="applyQuick(-30,'d')">-30일</button>
+        <button type="button" class="quick-btn" onclick="applyQuick(-100,'d')">-100일</button>
+        <button type="button" class="quick-btn" onclick="applyQuick(-1,'m')">-1개월</button>
+        <button type="button" class="quick-btn" onclick="applyQuick(-1,'y')">-1년</button>
       </div>
-      <div class="date-result-card" id="dateAddResult">
+      <div class="date-result-card" id="dateAddResult" aria-live="polite">
         <div class="date-result-value" id="dateAddValue">-</div>
-        <div class="date-result-sub" id="dateAddSub">기준일과 일수를 입력하세요</div>
+        <div class="date-result-sub" id="dateAddSub">기준일과 기간을 입력하세요</div>
+        <div class="date-rule" id="dateAddRule"></div>
       </div>
-      <div class="report-box" id="dateAddReport" style="display:none;"></div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <div class="info">계산은 브라우저에서만 처리됩니다</div>
+    <div class="bottom-actions">
+      <button type="button" class="action-btn btn-clear" onclick="clearDateCalc()">초기화</button>
+      <button type="button" class="action-btn btn-clear" onclick="copyShareLink()">링크 복사</button>
+      <button type="button" class="action-btn btn-copy" onclick="copyDateResult()">결과 복사</button>
     </div>
   </div>
 
   <details class="guide-section" open>
-    <summary>📖 날짜 및 D-Day 계산기 활용 가이드 및 상식</summary>
+    <summary>📖 날짜 및 D-Day 계산기 활용 가이드</summary>
     <div class="guide-content">
       <strong>Q. '초일 산입(첫날 포함)'이란 무엇인가요?</strong>
-      <p>날짜를 계산할 때 시작하는 첫날을 1일로 칠 것인지 여부를 말합니다. 이 옵션을 켜면 입력 순서와 관계없이 시작일과 목표일을 모두 포함합니다. 민법상 기본 원칙은 '초일 불산입(첫날을 제외함)'이지만, <b>연인과의 100일 기념일</b>이나 학교 입학일, 신생아 태어난 날(생후 일수) 등을 계산할 때는 첫날을 1일로 포함시키는 '초일 산입'을 주로 사용합니다. 기념일 계산 시에는 체크박스를 활용해주세요!</p>
+      <p>기간을 셀 때 시작하는 날을 1일째로 칠지 정하는 기준입니다. 「민법」 제157조는 기간의 첫날을 넣지 않는 '초일 불산입'을 원칙으로 하지만, 기간이 0시부터 시작하면 첫날을 넣습니다. 생활에서는 사귄 날부터 세는 100일 기념일, 아기의 생후 일수, 입대일부터 세는 복무일수처럼 첫날을 1일째로 세는 경우가 많습니다.</p>
+      <p>이 계산기는 두 부분 모두 같은 기준을 씁니다. 예를 들어 2026년 1월 1일을 첫날로 두면 D-Day 계산에서 '양끝 날짜 포함'을 켰을 때 1월 1일~4월 10일이 100일이고, 날짜 계산에서 '기준일을 1일째로 셈'을 켜고 100일을 더하면 똑같이 4월 10일(금)이 나옵니다. 옵션을 끄면 1월 1일에서 100일 뒤인 4월 11일(토)이 나옵니다.</p>
       <br>
-      <strong>Q. 근로기준법상 퇴직금 산정에도 쓰이나요?</strong>
-      <p>네, 퇴직금 추계를 위한 계속근로기간(재직일수) 계산 시에도 입사일부터 퇴사일까지의 총 일수가 중요합니다. 일반적으로 초일을 산입하여 총 근로일수를 구합니다. 다만 법정 공휴일 연차 등 특수한 캘린더 제외가 필요하다면 별도의 영업일 계산기가 필요할 수 있습니다.</p>
+      <strong>Q. 개월·년 단위는 어떻게 더하나요?</strong>
+      <p>개월과 년은 날짜 수가 아니라 달력 기준으로 더합니다. 2027년 3월 1일에 1년을 더하면 365일 뒤인 2028년 2월 29일이 아니라 2028년 3월 1일입니다. 더한 달에 같은 날짜가 없으면 그 달 마지막 날로 맞춥니다. 1월 31일 + 1개월은 2월 28일(윤년은 29일), 2024년 2월 29일 + 1년은 2025년 2월 28일입니다.</p>
+      <p>'기준일을 1일째로 셈'을 켜면 그 기간의 마지막 날을 보여 줍니다. 2026년 3월 1일에 시작한 1년 계약은 2027년 2월 28일에 끝납니다. 이는 「민법」 제160조처럼 기간을 달력으로 계산하고, 마지막 해·달에서 시작일에 해당하는 날의 전날에 만료하는 방식과 같습니다.</p>
       <br>
-      <strong>Q. 윤년, 윤달도 자동 반영되나요?</strong>
-      <p>네. 이 날짜 계산기는 양력(그레고리력) 기준 세계 표준 Date 포맷을 연산하여, 4년에 한 번 돌아오는 2월 29일 윤년 연산도 정확하게 반영합니다. 목표 날짜가 언제이든 안심하고 사용할 수 있습니다.</p>
+      <strong>Q. 'N년 N개월 N일'은 어떻게 계산하나요?</strong>
+      <p>앞선 날짜에 달력 기준으로 몇 개월을 더할 수 있는지 먼저 세고, 남은 날을 일로 표시합니다. 2026년 1월 31일~3월 1일은 1월 31일 + 1개월이 2월 28일이므로 '1개월 1일'입니다. 양끝 날짜 포함을 켜면 목표일 다음 날까지를 기간으로 보므로 2026년 1월 1일~12월 31일은 '1년'으로 표시됩니다.</p>
       <br>
-      <p style="color:var(--text-muted);font-size:11px;">※ 본 도구는 연인 기념일, 시험 D-day(수능 등), 전역일 관리 등에 직관적이고 빠른 결과를 실시간 제공합니다.</p>
+      <strong>Q. 윤년은 반영되나요? 음력 날짜도 되나요?</strong>
+      <p>양력(그레고리력) 날짜만 계산하며, 2월 29일이 있는 윤년은 자동으로 반영합니다. 음력 날짜와 윤달은 다루지 않으므로 음력 생일이나 제사일은 먼저 양력 날짜로 바꾼 뒤 입력하세요.</p>
+      <br>
+      <p style="color:var(--text-muted);font-size:13px;">※ 입력한 날짜는 브라우저 안에서만 계산하며 서버로 보내지 않습니다. '링크 복사'를 누르면 현재 입력값이 주소에 담긴 링크를 복사하므로, 같은 조건을 동료에게 그대로 보여 줄 수 있습니다.</p>
     </div>
   </details>
 
   <details class="guide-section">
     <summary>🧭 어떤 계산에 어떤 옵션을 써야 하나요?</summary>
     <div class="guide-content">
-      <p><strong>D-Day</strong>는 시험일, 전역일, 프로젝트 마감일처럼 목표일까지 남은 기간을 볼 때 적합합니다. 이 경우 보통 오늘을 0일로 보고 목표일까지의 남은 일수를 계산하므로 초일 산입을 끄는 편이 자연스럽습니다.</p>
-      <p><strong>기념일 계산</strong>은 사귄 날, 출생일, 서비스 시작일처럼 시작일 자체를 1일째로 세는 경우가 많습니다. 100일, 1,000일, 생후 며칠처럼 표현하려면 초일 산입을 켜고 계산하세요.</p>
-      <p><strong>기준일에서 며칠 뒤/전</strong> 계산은 계약 통보 기한, 예약 취소 가능일, 서류 제출 마감일을 미리 확인할 때 유용합니다. 단, 법률·행정 기한은 공휴일 이월이나 영업일 기준이 적용될 수 있으므로 최종 제출일은 공식 안내와 함께 확인해야 합니다.</p>
-      <p>주말과 공휴일을 제외해야 하는 업무 일정은 이 페이지의 단순 날짜 계산보다 <a href="/special-chars/biz-day-calc/">영업일 계산기</a>가 더 적합합니다. 날짜 계산기는 달력상 일수 자체를 빠르게 확인하는 도구이고, 영업일 계산기는 실제 근무일 기준 마감일을 보는 도구로 구분해서 쓰면 결과 해석이 더 정확합니다.</p>
+      <p><strong>D-Day</strong>는 시험일, 전역일, 프로젝트 마감일처럼 목표일까지 남은 날을 볼 때 적합합니다. 오늘을 시작일로 두고 초일 산입을 끄면 'D-30'처럼 표시되며, 목표일 당일이 D-Day입니다.</p>
+      <p><strong>기념일 계산</strong>은 사귄 날, 출생일, 서비스 시작일처럼 시작일 자체를 1일째로 세는 경우가 많습니다. 100일, 1,000일, 생후 며칠을 확인하려면 D-Day 계산에서는 '양끝 날짜 포함'을, 날짜 계산에서는 '기준일을 1일째로 셈'을 켜세요.</p>
+      <p><strong>기준일에서 며칠·몇 개월 뒤/전</strong> 계산은 계약 통보 기한, 예약 취소 가능일, 서류 제출 마감일을 미리 확인할 때 유용합니다. 단, 법률·행정 기한은 마지막 날이 토요일이나 공휴일이면 다음 날로 넘어가는 등(「민법」 제161조) 별도 기준이 적용될 수 있으므로 최종 제출일은 공식 안내와 함께 확인해야 합니다.</p>
+      <p>주말과 공휴일을 빼야 하는 업무 일정은 이 페이지의 달력 일수 계산보다 <a href="/special-chars/biz-day-calc/">영업일 계산기</a>가 더 적합합니다. 날짜 계산기는 달력상 일수와 기간을 확인하는 도구이고, 영업일 계산기는 실제 근무일 기준 마감일을 보는 도구로 나눠 쓰면 결과 해석이 더 정확합니다.</p>
+      <p>재직 기간처럼 '몇 년 몇 개월 며칠'이 필요할 때는 입사일을 시작일, 마지막 근무일을 목표일로 넣고 양끝 날짜 포함을 켜면 됩니다. 퇴직금 산정처럼 법정 기준이 따로 있는 계산은 고용노동부 안내의 기준일 정의를 함께 확인하세요.</p>
     </div>
   </details>
 
   <div class="related-tools">
-    <h2>🔗 연관 생활 도구</h2>
+    <h2>🔗 연관 일정 도구</h2>
     <div class="tool-list">
       <a href="/special-chars/biz-day-calc/"><span>🏢 영업일(근무일) 계산기</span><span>바로가기 →</span></a>
-      <a href="/special-chars/zodiac-calc/"><span>🔮 띠/만세력 계산기</span><span>바로가기 →</span></a>
-      <a href="/special-chars/sub-calc/"><span>💸 구독료 다이어트 계산기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/timezone-conv/"><span>🌍 타임존 변환기 (해외 일정·시차)</span><span>바로가기 →</span></a>
+      <a href="/special-chars/timer/"><span>⏱️ 타이머/스톱워치</span><span>바로가기 →</span></a>
     </div>
   </div>
 
   </main>
-<footer class="footer"><span>실시간 계산</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
+<footer class="footer"><span>양력 날짜 기준 · 브라우저에서 계산</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
 <nav class="site-policy-links" aria-label="사이트 정책"><a href="/about.html">사이트 소개</a><a href="/editorial-policy.html">편집정책</a><a href="/contact.html">문의</a><a href="/privacy.html">개인정보처리방침</a></nav>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),1500)}
+const WEEKDAYS = ['일','월','화','수','목','금','토'];
+const UNIT_LIMITS = { d: 100000, w: 14000, m: 3000, y: 250 };
+const UNIT_LABELS = { d: '일', w: '주', m: '개월', y: '년' };
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),1800)}
 
 function toggleIncludeHelp(){
   const button=document.getElementById('includeHelpToggle');
@@ -189,144 +227,286 @@ function toggleIncludeHelp(){
 }
 
 function parseDateInput(value){
-  const parts=value.split('-').map(Number);
-  if(parts.length!==3||parts.some(Number.isNaN))return null;
-  const [year,month,day]=parts;
+  const match=/^(\d{4})-(\d{2})-(\d{2})$/.exec(value||'');
+  if(!match)return null;
+  const [year,month,day]=match.slice(1).map(Number);
   // Construct local noon explicitly. Parsing "YYYY-MM-DD" directly creates a
   // UTC-midnight Date and can display the previous day in western timezones.
   const date=new Date(year,month-1,day,12);
   return date.getFullYear()===year&&date.getMonth()===month-1&&date.getDate()===day?date:null;
 }
 
-function calendarDayNumber(value){
-  const [year,month,day]=value.split('-').map(Number);
-  return Date.UTC(year,month-1,day)/86400000;
+function isoDate(date){
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
 }
 
+function labelDate(date){
+  return `${isoDate(date)}(${WEEKDAYS[date.getDay()]})`;
+}
+
+function calendarDayNumber(date){
+  return Math.round(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate())/86400000);
+}
+
+function addDays(date,days){
+  const next=new Date(date);
+  next.setDate(next.getDate()+days);
+  return next;
+}
+
+// 달력 기준 개월 더하기. 해당 월에 같은 날짜가 없으면 그 달 마지막 날로 맞춥니다.
+function addMonthsClamped(date,months){
+  const target=new Date(date.getFullYear(),date.getMonth()+months,1,12);
+  const lastDay=new Date(target.getFullYear(),target.getMonth()+1,0,12).getDate();
+  target.setDate(Math.min(date.getDate(),lastDay));
+  return target;
+}
+
+// earlier부터 later 직전까지를 '년·개월·일'로 나눕니다.
+function periodBetween(earlier,later){
+  let months=(later.getFullYear()-earlier.getFullYear())*12+(later.getMonth()-earlier.getMonth());
+  if(months>0&&addMonthsClamped(earlier,months)>later)months--;
+  if(months<0)months=0;
+  const anchor=addMonthsClamped(earlier,months);
+  const days=calendarDayNumber(later)-calendarDayNumber(anchor);
+  return { years:Math.floor(months/12), months:months%12, days };
+}
+
+function formatPeriod(period){
+  const parts=[];
+  if(period.years)parts.push(`${period.years}년`);
+  if(period.months)parts.push(`${period.months}개월`);
+  if(period.days||!parts.length)parts.push(`${period.days}일`);
+  return parts.join(' ');
+}
+
+function todayValue(){
+  return isoDate(new Date());
+}
+
+function setToday(id){
+  document.getElementById(id).value=todayValue();
+  if(id==='dateBase')calcDateAdd();else calcDday();
+}
+
+let lastDdayCopy='';
+let lastDateAddCopy='';
+
 function calcDday(){
-  const start=document.getElementById('ddayStart').value;
-  const end=document.getElementById('ddayEnd').value;
-  const box = document.getElementById('ddayReport');
-  
+  const startValue=document.getElementById('ddayStart').value;
+  const endValue=document.getElementById('ddayEnd').value;
+  const valueEl=document.getElementById('ddayValue');
+  const subEl=document.getElementById('ddaySub');
+  const periodEl=document.getElementById('ddayPeriod');
+  const start=parseDateInput(startValue);
+  const end=parseDateInput(endValue);
+  lastDdayCopy='';
+
   if(!start||!end){
-    document.getElementById('ddayValue').textContent='-';
-    document.getElementById('ddaySub').textContent='날짜를 선택하세요';
-    box.style.display='none';
+    valueEl.textContent='-';
+    subEl.textContent=!start?'시작일을 선택하세요':'목표일을 선택하세요';
+    periodEl.textContent='';
+    syncUrlState();
     return;
   }
-  
+
   const diff=calendarDayNumber(end)-calendarDayNumber(start);
   const inclusive=document.getElementById('ddayInclusive').checked;
   const absD=Math.abs(diff)+(inclusive?1:0);
-  if(inclusive){
-    document.getElementById('ddayValue').textContent=`${absD}일`;
-  } else {
-    if(diff===0) document.getElementById('ddayValue').textContent='D-Day';
-    else if(diff>0) document.getElementById('ddayValue').textContent=`D-${diff}`;
-    else document.getElementById('ddayValue').textContent=`D+${Math.abs(diff)}`;
-  }
-  
+  const earlier=diff>=0?start:end;
+  const later=diff>=0?end:start;
+  const period=periodBetween(earlier,inclusive?addDays(later,1):later);
   const weeks=Math.floor(absD/7);
   const remain=absD%7;
-  const months=Math.floor(absD/30);
-  let sub=`${absD}일`;
-  if(weeks>0) sub+=` = ${weeks}주 ${remain}일`;
-  if(months>0) sub+=` ≈ 약 ${months}개월`;
-  document.getElementById('ddaySub').textContent=sub;
-  
-  // SEO Dynamic Insight
-  box.style.display = 'flex';
-  const formatStart = start.replace(/-/g, '.');
-  const formatEnd = end.replace(/-/g, '.');
-  const dDiff = end >= start ? `앞으로 <strong>${absD}일</strong> 남은 상황` : `시작일로부터 <strong>${absD}일</strong> 경과한 상황`;
-  
-  box.innerHTML = `
-      <h2>💡 맞춤형 D-Day 분석 리포트</h2>
-      <p>설정하신 시작일 <strong>${formatStart}</strong>부터 목표일 <strong>${formatEnd}</strong>까지의 기간을 계산한 결과, 현재 ${dDiff}입니다.</p>
-      <p>초일 산입 옵션에 따라 산출된 이 기간은 어림잡아 <strong>약 ${months}개월</strong>의 시간에 속하며, 주 단위로 환산하면 <strong>${weeks}주 ${remain}일</strong>입니다. 수능 시험일이나 공무원 수험 준비, 연인 간의 100일, 1000일 주년 일정 등 중요한 일생일대의 계획을 단단히 세우고 실행하는 데 이 지표를 유용하게 활용하시기 바랍니다. 브라우저 엔진에 기반한 높은 정확도의 스크립트를 사용하여 윤달까지도 빈틈없이 정밀 반영되었습니다.</p>
-  `;
+  const weekText=weeks>0?` = ${weeks}주${remain?` ${remain}일`:''}`:'';
+  const dLabel=diff===0?'D-Day':diff>0?`D-${diff}`:`D+${Math.abs(diff)}`;
+
+  let sub;
+  if(inclusive){
+    valueEl.textContent=`${absD}일`;
+    if(diff>0) sub=`시작일을 1일째로 세면 목표일은 ${absD}일째 날입니다 (${dLabel}${weekText})`;
+    else if(diff<0) sub=`목표일이 시작일보다 ${Math.abs(diff)}일 앞섭니다 · 두 날짜 포함 ${absD}일 (${dLabel}${weekText})`;
+    else sub='시작일과 목표일이 같아 1일째 날입니다';
+  }else{
+    valueEl.textContent=dLabel;
+    // 시작일이 오늘일 때만 '남음/지남'으로 쓰고, 다른 날짜면 두 날짜 사이 간격으로 설명합니다.
+    const fromToday=startValue===todayValue();
+    if(diff>0) sub=fromToday?`오늘부터 목표일까지 ${absD}일 남음${weekText}`:`시작일부터 목표일까지 ${absD}일${weekText}`;
+    else if(diff<0) sub=fromToday?`목표일이 ${absD}일 지남${weekText}`:`목표일이 시작일보다 ${absD}일 앞${weekText}`;
+    else sub='시작일이 바로 목표일입니다';
+  }
+  subEl.textContent=sub;
+  periodEl.textContent=absD>0?`기간: ${formatPeriod(period)}${inclusive?' (양끝 포함)':''}`:'';
+  lastDdayCopy=`D-Day: ${labelDate(start)} → ${labelDate(end)} = ${valueEl.textContent} (${sub}${absD>0?`, ${formatPeriod(period)}`:''}${inclusive?', 양끝 날짜 포함':''})`;
+  syncUrlState();
+}
+
+function setDateAddError(message){
+  const input=document.getElementById('dateDays');
+  input.setAttribute('aria-invalid',String(Boolean(message)));
+  document.getElementById('dateAddValue').textContent='-';
+  const sub=document.getElementById('dateAddSub');
+  sub.textContent=message;
+  sub.classList.add('error');
+  document.getElementById('dateAddRule').textContent='';
+  lastDateAddCopy='';
 }
 
 function calcDateAdd(){
   const base=document.getElementById('dateBase').value;
   const dayInput=document.getElementById('dateDays');
+  const unit=UNIT_LIMITS[document.getElementById('dateUnit').value]?document.getElementById('dateUnit').value:'d';
+  const inclusive=document.getElementById('dateAddInclusive').checked;
   const dayRaw=dayInput.value.trim();
-  const days=Number(dayRaw);
-  const box = document.getElementById('dateAddReport');
-  const validDays=dayRaw!==''&&Number.isInteger(days)&&Math.abs(days)<=100000;
-  dayInput.setAttribute('aria-invalid',String(dayRaw!==''&&!validDays));
-  
+  const amount=Number(dayRaw);
+  const limit=UNIT_LIMITS[unit];
+  const subEl=document.getElementById('dateAddSub');
+  const ruleEl=document.getElementById('dateAddRule');
+  subEl.classList.remove('error');
+  lastDateAddCopy='';
+
+  if(dayRaw!==''&&!(Number.isInteger(amount)&&Math.abs(amount)<=limit)){
+    setDateAddError(`${(-limit).toLocaleString('ko-KR')}부터 ${limit.toLocaleString('ko-KR')} 사이의 정수를 입력하세요`);
+    syncUrlState();
+    return;
+  }
+  if(dayRaw!==''&&inclusive&&amount===0){
+    setDateAddError('기준일을 1일째로 셀 때는 0을 쓸 수 없습니다. 1 이상 또는 -1 이하를 입력하세요');
+    syncUrlState();
+    return;
+  }
+  dayInput.setAttribute('aria-invalid','false');
+
   if(!base||dayRaw===''){
     document.getElementById('dateAddValue').textContent='-';
-    document.getElementById('dateAddSub').textContent='기준일과 일수를 입력하세요';
-    box.style.display='none';
+    subEl.textContent='기준일과 기간을 입력하세요';
+    ruleEl.textContent='';
+    syncUrlState();
     return;
   }
-  if(!validDays){
-    document.getElementById('dateAddValue').textContent='-';
-    document.getElementById('dateAddSub').textContent='-100,000부터 100,000 사이의 정수를 입력하세요';
-    box.style.display='none';
-    return;
-  }
-  
+
   const d=parseDateInput(base);
   if(!d){
-    document.getElementById('dateAddValue').textContent='-';
-    document.getElementById('dateAddSub').textContent='올바른 기준일을 입력하세요';
-    box.style.display='none';
+    setDateAddError('올바른 기준일을 입력하세요');
+    syncUrlState();
     return;
   }
-  d.setDate(d.getDate()+days);
-  if(!Number.isFinite(d.getTime())){
-    document.getElementById('dateAddValue').textContent='-';
-    document.getElementById('dateAddSub').textContent='계산 가능한 날짜 범위를 벗어났습니다';
-    box.style.display='none';
+  const sign=amount>0?1:amount<0?-1:0;
+  let result;
+  if(unit==='d'||unit==='w'){
+    const days=amount*(unit==='w'?7:1);
+    result=addDays(d,inclusive?days-sign:days);
+  }else{
+    result=addMonthsClamped(d,amount*(unit==='y'?12:1));
+    if(inclusive)result=addDays(result,-sign);
+  }
+  if(!Number.isFinite(result.getTime())||result.getFullYear()<1||result.getFullYear()>9999){
+    setDateAddError('계산 가능한 날짜 범위를 벗어났습니다');
+    syncUrlState();
     return;
   }
-  const yyyy=d.getFullYear();
-  const mm=String(d.getMonth()+1).padStart(2,'0');
-  const dd=String(d.getDate()).padStart(2,'0');
-  const weekdays=['일','월','화','수','목','금','토'];
-  const dayName=weekdays[d.getDay()];
-  
-  document.getElementById('dateAddValue').textContent=`${yyyy}-${mm}-${dd} (${dayName})`;
-  const sign=days>=0?'+':'';
-  document.getElementById('dateAddSub').textContent=`${base} 부터 ${sign}${days}일`;
-  
-  // SEO Dynamic Insight
-  box.style.display = 'flex';
-  const formatBase = base.replace(/-/g, '.');
-  
-  box.innerHTML = `
-      <h2>💡 맞춤형 기준일 연산 리포트</h2>
-      <p>입력하신 기준일 <strong>${formatBase}</strong>을(를) 모태로 <strong>${sign}${days}일</strong>의 시간 편차를 캘린더 알고리즘으로 엄밀하게 추적한 결과, 도달하게 되는 목표 시점은 확실한 <strong>${yyyy}년 ${mm}월 ${dd}일 ${dayName}요일</strong>입니다.</p>
-      <p>이 결과는 부동산 계약 만료 통보기한을 산정하거나, 자동차 취등록세 유예기한(통상 60일), 상속세 신고 기한(6개월) 등 민감한 행정·법률 일정의 흐름을 짚어볼 때 든든한 기준점이 될 수 있습니다. 모든 연산은 웹 접근성 규격을 준수하는 강력한 Date 파싱 체계를 통해 즉시 도출되었습니다.</p>
-  `;
+
+  const signText=amount>=0?'+':'';
+  const amountText=`${signText}${amount.toLocaleString('ko-KR')}${UNIT_LABELS[unit]}`;
+  document.getElementById('dateAddValue').textContent=`${isoDate(result)} (${WEEKDAYS[result.getDay()]})`;
+  let sub=`${base} 부터 ${amountText}`;
+  if(inclusive){
+    const nth=unit==='d'?`${Math.abs(amount).toLocaleString('ko-KR')}일째 날`:`${Math.abs(amount).toLocaleString('ko-KR')}${UNIT_LABELS[unit]} 기간의 ${amount>0?'마지막':'첫'} 날`;
+    sub+=` · 기준일을 1일째로 셀 때 ${nth}`;
+  }
+  subEl.textContent=sub;
+  ruleEl.textContent=(unit==='m'||unit==='y')
+    ?'개월·년은 달력 기준으로 더하며, 해당 달에 같은 날짜가 없으면 그 달 마지막 날로 맞춥니다.'
+    :'';
+  lastDateAddCopy=`날짜 계산: ${labelDate(d)} ${amountText}${inclusive?' (기준일을 1일째로 셈)':''} = ${labelDate(result)}`;
+  syncUrlState();
 }
 
-function applyQuick(days){
-  if(!document.getElementById('dateBase').value){const today=new Date();const y=today.getFullYear();const m=String(today.getMonth()+1).padStart(2,'0');const d=String(today.getDate()).padStart(2,'0');document.getElementById('dateBase').value=`${y}-${m}-${d}`}
-  document.getElementById('dateDays').value=days;calcDateAdd();
+function applyQuick(amount,unit){
+  if(!document.getElementById('dateBase').value)document.getElementById('dateBase').value=todayValue();
+  document.getElementById('dateDays').value=amount;
+  document.getElementById('dateUnit').value=unit||'d';
+  calcDateAdd();
 }
 
 function clearDateCalc(){
-  document.getElementById('ddayStart').value='';document.getElementById('ddayEnd').value='';
+  const today=todayValue();
+  document.getElementById('ddayStart').value=today;
+  document.getElementById('ddayEnd').value='';
   document.getElementById('ddayInclusive').checked=false;
-  document.getElementById('ddayValue').textContent='-';document.getElementById('ddaySub').textContent='날짜를 선택하세요';
-  document.getElementById('dateBase').value='';document.getElementById('dateDays').value='';
-  document.getElementById('dateAddValue').textContent='-';document.getElementById('dateAddSub').textContent='기준일과 일수를 입력하세요';
-  ['ddayReport','dateAddReport'].forEach(id=>{const box=document.getElementById(id);box.innerHTML='';box.style.display='none'});
+  document.getElementById('dateBase').value=today;
+  document.getElementById('dateDays').value='';
+  document.getElementById('dateUnit').value='d';
+  document.getElementById('dateAddInclusive').checked=false;
+  calcDday();
+  calcDateAdd();
   showToast('초기화 완료');
 }
 
+function copyText(text){
+  const fallback=()=>new Promise((resolve,reject)=>{
+    const helper=document.createElement('textarea');
+    helper.value=text;
+    helper.setAttribute('readonly','');
+    helper.style.position='fixed';
+    helper.style.opacity='0';
+    document.body.appendChild(helper);
+    helper.select();
+    let ok=false;
+    try{ok=document.execCommand('copy')}catch(e){ok=false}
+    helper.remove();
+    if(ok)resolve();else reject(new Error('copy failed'));
+  });
+  if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(text).catch(fallback);
+  return fallback();
+}
+
 function copyDateResult(){
-  const dday=document.getElementById('ddayValue').textContent;
-  const ddaySub=document.getElementById('ddaySub').textContent;
-  const dateAdd=document.getElementById('dateAddValue').textContent;
-  const dateAddSub=document.getElementById('dateAddSub').textContent;
-  let text='';if(dday!=='-')text+=`D-Day: ${dday} (${ddaySub})\n`;if(dateAdd!=='-')text+=`날짜 계산: ${dateAdd} (${dateAddSub})`;
+  const text=[lastDdayCopy,lastDateAddCopy].filter(Boolean).join('\n');
   if(!text){showToast('복사할 결과가 없습니다');return}
-  navigator.clipboard.writeText(text.trim()).then(()=>showToast('결과가 복사되었습니다!'));
+  copyText(text)
+    .then(()=>showToast('입력값과 결과를 함께 복사했습니다'))
+    .catch(()=>showToast('복사하지 못했습니다. 결과를 직접 선택해 복사해 주세요'));
+}
+
+// 입력값을 주소에 담아 공유할 수 있게 합니다.
+function syncUrlState(){
+  try{
+    const params=new URLSearchParams();
+    const pairs=[['start','ddayStart'],['end','ddayEnd'],['base','dateBase']];
+    pairs.forEach(([key,id])=>{const value=document.getElementById(id).value;if(parseDateInput(value))params.set(key,value)});
+    if(document.getElementById('ddayInclusive').checked)params.set('incl','1');
+    const amount=document.getElementById('dateDays').value.trim();
+    if(/^-?\d{1,6}$/.test(amount))params.set('n',amount);
+    const unit=document.getElementById('dateUnit').value;
+    if(unit!=='d')params.set('unit',unit);
+    if(document.getElementById('dateAddInclusive').checked)params.set('first','1');
+    const url=new URL(location.href);
+    url.search=params.toString();
+    history.replaceState(null,'',url);
+  }catch(e){/* 주소 갱신이 막혀도 계산은 계속합니다. */}
+}
+
+function applyUrlState(){
+  const params=new URLSearchParams(location.search);
+  const today=todayValue();
+  const pick=(key,fallback)=>parseDateInput(params.get(key)||'')?params.get(key):fallback;
+  document.getElementById('ddayStart').value=pick('start',today);
+  document.getElementById('ddayEnd').value=pick('end','');
+  document.getElementById('ddayInclusive').checked=params.get('incl')==='1';
+  document.getElementById('dateBase').value=pick('base',today);
+  const amount=params.get('n')||'';
+  document.getElementById('dateDays').value=/^-?\d{1,6}$/.test(amount)?amount:'';
+  const unit=params.get('unit');
+  document.getElementById('dateUnit').value=UNIT_LIMITS[unit]?unit:'d';
+  document.getElementById('dateAddInclusive').checked=params.get('first')==='1';
+}
+
+function copyShareLink(){
+  syncUrlState();
+  copyText(location.href)
+    .then(()=>showToast('현재 입력값이 담긴 링크를 복사했습니다'))
+    .catch(()=>showToast('링크를 복사하지 못했습니다. 주소창에서 직접 복사해 주세요'));
 }
 
 document.getElementById('ddayStart').addEventListener('change',calcDday);
@@ -334,6 +514,12 @@ document.getElementById('ddayEnd').addEventListener('change',calcDday);
 document.getElementById('ddayInclusive').addEventListener('change',calcDday);
 document.getElementById('dateBase').addEventListener('change',calcDateAdd);
 document.getElementById('dateDays').addEventListener('input',calcDateAdd);
+document.getElementById('dateUnit').addEventListener('change',calcDateAdd);
+document.getElementById('dateAddInclusive').addEventListener('change',calcDateAdd);
+
+applyUrlState();
+calcDday();
+calcDateAdd();
 </script>
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 <script src="/special-chars/theme-toggle.js"></script>

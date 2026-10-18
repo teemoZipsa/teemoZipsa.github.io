@@ -11,14 +11,14 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
     <title>타임존 변환기 / Timezone Converter</title>
-    <meta name="description" content="세계 주요 도시의 시간을 실시간 변환합니다. 서머타임 자동 반영, 시차 확인">
+    <meta name="description" content="서울·뉴욕·런던 등 세계 주요 도시와 UTC 사이의 시간을 변환하고, 여러 도시의 현지 시각과 업무 시간을 한눈에 비교합니다. 서머타임과 실제 UTC 오프셋 자동 반영.">
     <meta property="og:title" content="타임존 변환기 / Timezone Converter — 티모집사">
-    <meta property="og:description" content="세계 주요 도시의 시간을 실시간 변환합니다. 서머타임 자동 반영, 시차 확인">
+    <meta property="og:description" content="세계 주요 도시·UTC 시간 변환, 여러 도시 업무 시간 비교, 서머타임 자동 반영">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://teemozipsa.com/special-chars/timezone-conv/">
     <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
     <link rel="canonical" href="https://teemozipsa.com/special-chars/timezone-conv/">
-    
+
 <style>
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:start;padding:20px}
@@ -30,53 +30,78 @@
         .counter-body{padding:16px;flex:1}
 
         .tz-card{background:var(--bg-guide);border-radius:10px;padding:16px;margin-bottom:12px}
-        .tz-label{font-size:11px;color:var(--text-info);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+        .tz-label{font-size:12px;color:var(--text-info);font-weight:600;letter-spacing:.5px;margin-bottom:8px}
         .tz-select{width:100%;padding:10px 12px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:inherit;margin-bottom:10px;cursor:pointer}
         .tz-select:focus{outline:none;border-color:var(--accent)}
         .tz-datetime{display:flex;gap:8px}
-        .tz-datetime input{flex:1;padding:10px 12px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:inherit}
+        .tz-datetime input{flex:1;min-width:0;padding:10px 12px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:inherit}
         .tz-datetime input:focus{outline:none;border-color:var(--accent)}
+        .tz-datetime input[aria-invalid="true"]{border-color:var(--status-red-text)}
+        html[data-theme="dark"] .tz-datetime input{color-scheme:dark}
+        html[data-theme="light"] .tz-datetime input{color-scheme:light}
+        .tz-from-offset{font-size:12px;color:var(--text-info);margin-top:8px}
         .tz-result{font-size:28px;font-weight:700;color:var(--text-primary);text-align:center;padding:8px 0}
-        .tz-result-date{font-size:13px;color:var(--text-guide);text-align:center;margin-top:2px}
-        .tz-result-info{font-size:11px;color:var(--text-info);text-align:center;margin-top:4px}
+        .tz-result-date{font-size:14px;color:var(--text-guide);text-align:center;margin-top:2px}
+        .tz-result-info{font-size:13px;color:var(--text-info);text-align:center;margin-top:4px;line-height:1.55}
+        .tz-diff-line{margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:14px;font-weight:600;color:var(--text-secondary);text-align:center;line-height:1.55}
+        .tz-diff-line:empty{display:none}
 
-        .swap-row{display:flex;justify-content:center;gap:10px;margin-bottom:12px}
+        .swap-row{display:flex;justify-content:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
         .btn-swap{padding:10px 20px;background:var(--bg-input);color:var(--text-guide);border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer;transition:all .2s;font-family:inherit;font-weight:600}
         .btn-swap:hover{background:var(--bg-btn);border-color:var(--accent);color:var(--text-primary)}
         .btn-now{padding:10px 20px;background:var(--accent);color:var(--text-on-accent);border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s;font-family:inherit}
         .btn-now:hover{background:var(--accent-hover)}
 
-        .report-box { margin-top: 16px; padding: 20px; background: var(--bg-bar); border: 1px solid var(--border); border-radius: 12px; display: none; animation: fadeIn 0.5s ease-out; }
-        .report-box h3 { font-size: 15px; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-        .report-box p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 8px; }
-        .report-box .highlight { color:var(--accent-text); font-weight: 600; }
+        .multi-card{background:var(--bg-guide);border-radius:10px;padding:16px;margin-bottom:12px}
+        .multi-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+        .multi-head h2{font-size:14px;font-weight:700;color:var(--text-primary)}
+        .multi-head p{font-size:12px;color:var(--text-info)}
+        .multi-add{display:flex;gap:8px;margin-bottom:10px}
+        .multi-add .tz-select{margin-bottom:0;flex:1;min-width:0}
+        .multi-add button{padding:0 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg-btn);color:var(--text-primary);font-weight:600;font-size:14px;line-height:1;font-family:inherit;cursor:pointer;min-height:44px;white-space:nowrap}
+        .multi-add button:hover{border-color:var(--accent)}
+        .multi-list{list-style:none;display:grid;gap:6px}
+        .multi-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;background:var(--bg-app)}
+        .multi-row.is-business{border-color:var(--border-success);background:var(--bg-success)}
+        .multi-city{min-width:0}
+        .multi-city strong{display:block;font-size:14px;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .multi-city span{display:block;font-size:12px;color:var(--text-info);margin-top:2px}
+        .multi-time{text-align:right}
+        .multi-time strong{display:block;font-size:18px;font-variant-numeric:tabular-nums;color:var(--text-primary)}
+        .multi-time span{display:inline-block;margin-top:2px;padding:1px 7px;border-radius:999px;font-size:12px;background:var(--bg-btn);color:var(--text-secondary)}
+        .multi-row.is-business .multi-time span{background:var(--border-success);color:var(--text-success)}
+        .multi-remove{width:44px;height:44px;border:1px solid var(--border);border-radius:8px;background:var(--bg-btn);color:var(--text-muted);font-size:16px;cursor:pointer}
+        .multi-remove:hover{color:var(--status-red-text);border-color:var(--status-red-text)}
+        .multi-empty{font-size:13px;color:var(--text-info);padding:8px 0}
+
         /* 가이드 & 관련 도구 (표준) */
         .guide-section{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
         .guide-section h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
         .guide{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
         .guide:last-child{margin-bottom:0}
-        .guide summary{padding:12px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--bg-guide);transition:background .2s}
+        .guide summary{padding:12px 14px;cursor:pointer;font-size:14px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--bg-guide);transition:background .2s}
         .guide summary::-webkit-details-marker{display:none}
         .guide summary::after{content:'▼';font-size:10px;color:var(--text-muted);transition:transform .3s}
         .guide[open] summary::after{transform:rotate(180deg)}
         .guide summary:hover{background:var(--bg-guide-hover)}
-        .guide-content{padding:14px;font-size:13px;color:var(--text-info);line-height:1.6;border-top:1px solid var(--border);background:var(--bg-app)}
+        .guide-content{padding:14px;font-size:14px;color:var(--text-info);line-height:1.7;border-top:1px solid var(--border);background:var(--bg-app)}
+        .guide-content p+p{margin-top:8px}
         .related-tools{margin-top:20px;background:var(--bg-bar);border-radius:12px;padding:16px;border:1px solid var(--border)}
         .related-tools h2{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
         .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
         .tool-card{background:var(--bg-app);border:1px solid var(--border);padding:10px;border-radius:8px;text-align:center;text-decoration:none;color:var(--text-primary);font-size:13px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
         .tool-card:hover{border-color:var(--accent);color:var(--accent-text);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .bottom-bar{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
-        .bottom-bar .info{font-size:11px;color:var(--text-info)}
-        .action-btn{padding:8px 20px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+        .bottom-bar{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--border)}
+        .bottom-bar .info{font-size:12px;color:var(--text-info)}
+        .bottom-actions{display:flex;gap:8px;flex-wrap:wrap}
+        .action-btn{padding:8px 16px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
         .btn-clear{background:var(--bg-input);color:var(--text-guide);border:1px solid var(--border);}.btn-clear:hover{background:var(--bg-btn);color:var(--text-primary);}
         .btn-copy{background:var(--accent);color:var(--text-on-accent)}.btn-copy:hover{background:var(--accent-hover)}
         .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.6);transition:transform .3s ease,opacity .3s ease;opacity:0;pointer-events:none;z-index:999}
         .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-        @media(max-width:640px){.tz-datetime{flex-direction:column}}
-.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+        @media(max-width:640px){.tz-datetime{flex-direction:column}.multi-row{grid-template-columns:minmax(0,1fr) auto auto;gap:8px}}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:12px;color:var(--text-info)}
 .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
 .footer a:hover{color:var(--text-secondary)}
 </style>
@@ -99,11 +124,12 @@
                 <input aria-label="변환할 날짜" type="date" id="fromDate" onchange="convert()">
                 <input aria-label="변환할 시간" type="time" id="fromTime" step="60" onchange="convert()">
             </div>
+            <div class="tz-from-offset" id="fromOffsetInfo"></div>
         </div>
 
         <div class="swap-row">
-            <button class="btn-now" onclick="setNow()">⏰ 현재 시간</button>
-            <button class="btn-swap" onclick="swapTz()">↕ 전환</button>
+            <button type="button" class="btn-now" onclick="setNow()">⏰ 현재 시각으로</button>
+            <button type="button" class="btn-swap" onclick="swapTz()">↕ 전환</button>
         </div>
 
         <!-- TO -->
@@ -114,29 +140,49 @@
             <div class="tz-result" id="toResult">--:--</div>
             <div class="tz-result-date" id="toResultDate"></div>
             <div class="tz-result-info" id="toResultInfo" role="status" aria-live="polite"></div>
+            <p class="tz-diff-line" id="tzDiffLine"></p>
         </div>
 
-        <!-- 동적 타임존 분석 리포트 -->
-        <div id="reportContainer" class="report-box"></div>
-        
-        <!-- 하단 액션 버튼 -->
-        <div class="bottom-bar">
-            <div class="info">※ 브라우저 시간대 규칙 반영 · DST 경계 시각 경고</div>
-            <div style="display:flex; gap:8px;">
-                <button class="action-btn btn-clear" onclick="resetAll()">초기화</button>
-                <button class="action-btn btn-copy" onclick="copyResult()">결과 복사</button>
+        <!-- 여러 도시 -->
+        <section class="multi-card" aria-labelledby="multiTitle">
+            <div class="multi-head">
+                <h2 id="multiTitle">🗺️ 여러 도시 한눈에</h2>
+                <p>기준 시각에 맞춘 현지 시각 · 평일 09~18시는 업무 시간으로 표시</p>
             </div>
+            <div class="multi-add">
+                <select class="tz-select" id="multiTzSelect" aria-label="목록에 추가할 도시"></select>
+                <button type="button" onclick="addMultiCity()">＋ 추가</button>
+            </div>
+            <ul class="multi-list" id="multiList"></ul>
+        </section>
+    </div>
+
+    <!-- 하단 액션 버튼 -->
+    <div class="bottom-bar">
+        <div class="info">※ 브라우저 시간대 규칙 반영 · DST 경계 시각 경고</div>
+        <div class="bottom-actions">
+            <button type="button" class="action-btn btn-clear" onclick="resetAll()">초기화</button>
+            <button type="button" class="action-btn btn-clear" onclick="copyShareLink()">링크 복사</button>
+            <button type="button" class="action-btn btn-copy" onclick="copyResult()">결과 복사</button>
         </div>
     </div>
 
     <section class="guide-section">
         <h2>💡 타임존 변환기 사용 가이드</h2>
-        
+
         <details class="guide" open>
             <summary>타임존(Timezone)이란 무엇이고 왜 변환해야 하나요?</summary>
             <div class="guide-content">
-                <p>세계는 지구의 자전으로 인해 경도 구역에 따라 서로 다른 로컬 시간대(타임존)를 사용하고 있습니다. <b>타임존 변환기</b>는 특정 기준 지역(예: 대한민국 서울)의 날짜와 시간을 입력하면 브라우저에 포함된 시간대 규칙을 사용해 목표 지역(예: 미국 뉴욕)의 시간으로 변환합니다.</p>
-                <p>글로벌 비즈니스의 화상 회의(Zoom 등), 해외 주식 시장의 개장 시간 파악, 해외 e스포츠 및 라이브 방송 시청 대기, 해외 여행 체류 일정 관리 등 현대의 전 세계적인 연결망 속에서 필수적으로 요구되는 <b>시차 정보를 누구나 쉽고 직관적으로 파악할 수 있도록 돕습니다.</b></p>
+                <p>나라와 지역마다 사용하는 표준시가 달라, 같은 순간이라도 현지 시계가 가리키는 시각이 다릅니다. <b>타임존 변환기</b>는 기준 지역(예: 서울)의 날짜와 시간을 입력하면 브라우저에 내장된 시간대 규칙으로 목표 지역(예: 뉴욕)의 현지 날짜와 시간을 계산합니다.</p>
+                <p>해외 거래처와의 화상 회의, 해외 주식 시장 개장 시간 확인, 해외 행사·방송 시작 시각, 출장·여행 일정처럼 날짜가 바뀌기 쉬운 일정을 정할 때 유용합니다. 페이지를 열면 내 기기의 시간대와 현재 시각이 자동으로 채워집니다.</p>
+            </div>
+        </details>
+
+        <details class="guide">
+            <summary>UTC±, GMT-4 같은 표기는 무엇인가요?</summary>
+            <div class="guide-content">
+                <p>UTC(협정 세계시)는 세계 시간의 기준이며, 각 지역의 시각은 UTC와의 차이로 표시합니다. 서울은 1년 내내 UTC+9이고, 뉴욕은 겨울(표준시, EST)에 UTC−5, 여름(서머타임, EDT)에 UTC−4입니다. 그래서 서울과 뉴욕의 시차는 겨울 14시간, 여름 13시간으로 바뀝니다. 런던도 겨울 UTC+0(GMT), 여름 UTC+1(BST)이라 서울과의 차이가 9시간과 8시간 사이에서 바뀝니다.</p>
+                <p>도시 이름 옆에 고정된 약어(CST 등)를 쓰면 시카고·상하이·타이베이처럼 서로 다른 지역이 같은 약어를 공유해 헷갈릴 수 있습니다. 이 도구는 선택한 날짜에 실제로 적용되는 UTC 오프셋을 계산해 함께 보여 줍니다.</p>
             </div>
         </details>
 
@@ -149,9 +195,17 @@
         </details>
 
         <details class="guide">
-            <summary>오프라인에서도 사용이 가능한가요?</summary>
+            <summary>여러 도시 비교와 업무 시간 표시는 어떤 기준인가요?</summary>
             <div class="guide-content">
-                <p>변환 계산은 브라우저에서 처리됩니다. 필요한 페이지 자원이 미리 캐시된 경우 오프라인에서도 사용할 수 있으며, 입력한 날짜와 시간은 이 변환을 위해 별도 서버로 전송하지 않습니다.</p>
+                <p>'여러 도시 한눈에' 목록은 위에서 입력한 기준 시각을 각 도시의 현지 시각으로 바꿔 보여 줍니다. 현지 시각이 평일 09:00~18:00이면 초록색 '업무 시간'으로, 그 밖의 시간은 '업무 외', 토·일요일은 '주말'로 표시합니다. 여러 나라가 참석하는 회의 시간을 고를 때 모든 도시가 초록색이 되는 시각을 찾으면 됩니다.</p>
+                <p>업무 시간 표시는 단순 기준이며 각 나라의 공휴일, 점심시간, 회사별 근무 시간은 반영하지 않습니다. 목록은 이 브라우저에 저장되어 다음 방문 때도 유지됩니다.</p>
+            </div>
+        </details>
+
+        <details class="guide">
+            <summary>입력한 정보는 어디에 저장되나요?</summary>
+            <div class="guide-content">
+                <p>변환 계산은 브라우저에서만 처리되며 입력한 날짜와 시간을 서버로 보내지 않습니다. 필요한 페이지 자원이 캐시되어 있으면 오프라인에서도 사용할 수 있습니다. '여러 도시' 목록만 이 브라우저의 로컬 저장소에 보관하며, '링크 복사'를 누르면 기준·목표 시간대와 날짜·시간이 주소에 담긴 링크를 복사합니다.</p>
             </div>
         </details>
 
@@ -160,8 +214,8 @@
     <section class="related-tools">
         <h2>🔗 관련 도구</h2>
         <div class="tools-grid">
-            <a href="/special-chars/server-time/" class="tool-card">⌚ 정밀 로컬 시계·응답시간</a>
-            <a href="/special-chars/timer/" class="tool-card">⏳ 타이머</a>
+            <a href="/special-chars/server-time/" class="tool-card">⌚ 업무용 정밀 시계</a>
+            <a href="/special-chars/biz-day-calc/" class="tool-card">🏢 영업일 계산기</a>
             <a href="/special-chars/date-calc/" class="tool-card">📅 디데이 계산기</a>
         </div>
     </section>
@@ -172,43 +226,102 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-const TIMEZONES = [
-    { id:'Asia/Seoul', label:'🇰🇷 서울', abbr:'KST' },
-    { id:'Asia/Tokyo', label:'🇯🇵 도쿄', abbr:'JST' },
-    { id:'Asia/Shanghai', label:'🇨🇳 베이징/상하이', abbr:'CST' },
-    { id:'Asia/Taipei', label:'🇹🇼 타이베이', abbr:'CST' },
-    { id:'Asia/Hong_Kong', label:'🇭🇰 홍콩', abbr:'HKT' },
-    { id:'Asia/Singapore', label:'🇸🇬 싱가포르', abbr:'SGT' },
-    { id:'Asia/Bangkok', label:'🇹🇭 방콕', abbr:'ICT' },
-    { id:'Asia/Ho_Chi_Minh', label:'🇻🇳 호치민', abbr:'ICT' },
-    { id:'Asia/Kolkata', label:'🇮🇳 뭄바이/델리', abbr:'IST' },
-    { id:'Asia/Dubai', label:'🇦🇪 두바이', abbr:'GST' },
-    { id:'Australia/Sydney', label:'🇦🇺 시드니', abbr:'AEST/AEDT' },
-    { id:'Pacific/Auckland', label:'🇳🇿 오클랜드', abbr:'NZST/NZDT' },
-    { id:'Europe/London', label:'🇬🇧 런던', abbr:'GMT/BST' },
-    { id:'Europe/Paris', label:'🇫🇷 파리', abbr:'CET/CEST' },
-    { id:'Europe/Berlin', label:'🇩🇪 베를린', abbr:'CET/CEST' },
-    { id:'Europe/Moscow', label:'🇷🇺 모스크바', abbr:'MSK' },
-    { id:'America/New_York', label:'🇺🇸 뉴욕', abbr:'EST/EDT' },
-    { id:'America/Chicago', label:'🇺🇸 시카고', abbr:'CST/CDT' },
-    { id:'America/Denver', label:'🇺🇸 덴버', abbr:'MST/MDT' },
-    { id:'America/Los_Angeles', label:'🇺🇸 로스앤젤레스', abbr:'PST/PDT' },
-    { id:'America/Anchorage', label:'🇺🇸 앵커리지', abbr:'AKST/AKDT' },
-    { id:'Pacific/Honolulu', label:'🇺🇸 호놀룰루', abbr:'HST' },
-    { id:'America/Sao_Paulo', label:'🇧🇷 상파울루', abbr:'BRT' }
+const TIMEZONE_GROUPS = [
+    ['기준', [
+        { id:'UTC', label:'🌐 UTC (협정 세계시)' }
+    ]],
+    ['아시아', [
+        { id:'Asia/Seoul', label:'🇰🇷 서울' },
+        { id:'Asia/Tokyo', label:'🇯🇵 도쿄' },
+        { id:'Asia/Shanghai', label:'🇨🇳 베이징/상하이' },
+        { id:'Asia/Hong_Kong', label:'🇭🇰 홍콩' },
+        { id:'Asia/Taipei', label:'🇹🇼 타이베이' },
+        { id:'Asia/Manila', label:'🇵🇭 마닐라' },
+        { id:'Asia/Singapore', label:'🇸🇬 싱가포르' },
+        { id:'Asia/Kuala_Lumpur', label:'🇲🇾 쿠알라룸푸르' },
+        { id:'Asia/Jakarta', label:'🇮🇩 자카르타' },
+        { id:'Asia/Bangkok', label:'🇹🇭 방콕' },
+        { id:'Asia/Ho_Chi_Minh', label:'🇻🇳 호치민/하노이' },
+        { id:'Asia/Kolkata', label:'🇮🇳 뭄바이/델리' },
+        { id:'Asia/Dubai', label:'🇦🇪 두바이' },
+        { id:'Asia/Riyadh', label:'🇸🇦 리야드' }
+    ]],
+    ['유럽', [
+        { id:'Europe/London', label:'🇬🇧 런던' },
+        { id:'Europe/Paris', label:'🇫🇷 파리' },
+        { id:'Europe/Berlin', label:'🇩🇪 베를린/프랑크푸르트' },
+        { id:'Europe/Amsterdam', label:'🇳🇱 암스테르담' },
+        { id:'Europe/Madrid', label:'🇪🇸 마드리드' },
+        { id:'Europe/Istanbul', label:'🇹🇷 이스탄불' },
+        { id:'Europe/Moscow', label:'🇷🇺 모스크바' }
+    ]],
+    ['아메리카', [
+        { id:'America/New_York', label:'🇺🇸 뉴욕' },
+        { id:'America/Toronto', label:'🇨🇦 토론토' },
+        { id:'America/Chicago', label:'🇺🇸 시카고' },
+        { id:'America/Denver', label:'🇺🇸 덴버' },
+        { id:'America/Los_Angeles', label:'🇺🇸 로스앤젤레스' },
+        { id:'America/Vancouver', label:'🇨🇦 밴쿠버' },
+        { id:'America/Mexico_City', label:'🇲🇽 멕시코시티' },
+        { id:'America/Sao_Paulo', label:'🇧🇷 상파울루' },
+        { id:'America/Anchorage', label:'🇺🇸 앵커리지' },
+        { id:'Pacific/Honolulu', label:'🇺🇸 호놀룰루' }
+    ]],
+    ['오세아니아', [
+        { id:'Australia/Sydney', label:'🇦🇺 시드니/멜버른' },
+        { id:'Australia/Perth', label:'🇦🇺 퍼스' },
+        { id:'Pacific/Auckland', label:'🇳🇿 오클랜드' }
+    ]]
 ];
+const TIMEZONES = TIMEZONE_GROUPS.flatMap(([, zones]) => zones);
+const MULTI_STORAGE_KEY = 'tz_multi_cities_v1';
+const DEFAULT_MULTI = ['Asia/Seoul', 'America/New_York', 'Europe/London', 'Asia/Singapore'];
+let multiCities = [];
+
+function isValidTimeZone(tz) {
+    if (typeof tz !== 'string' || !tz || tz.length > 64) return false;
+    try { new Intl.DateTimeFormat('en-US', { timeZone: tz }); return true; } catch (e) { return false; }
+}
+
+function detectTimeZone() {
+    try {
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        return isValidTimeZone(tz) ? tz : 'Asia/Seoul';
+    } catch (e) { return 'Asia/Seoul'; }
+}
+
+function tzInfo(tz) {
+    const known = TIMEZONES.find(t => t.id === tz);
+    if (known) return known;
+    const city = tz.split('/').pop().replace(/_/g, ' ');
+    return { id: tz, label: `📍 ${city} (${tz})`, custom: true };
+}
+
+function cityName(tz) {
+    return tzInfo(tz).label.replace(/^\S+\s/, '').replace(/\s*\(.*\)$/, '');
+}
+
+function ensureOption(select, tz) {
+    if ([...select.options].some(option => option.value === tz)) return;
+    const option = new Option(tzInfo(tz).label, tz);
+    select.insertBefore(option, select.firstChild);
+}
+
+function fillSelect(select) {
+    TIMEZONE_GROUPS.forEach(([groupLabel, zones]) => {
+        const group = document.createElement('optgroup');
+        group.label = groupLabel;
+        zones.forEach(tz => group.appendChild(new Option(tz.label, tz.id)));
+        select.appendChild(group);
+    });
+}
 
 function initSelects() {
-    const fromSel = document.getElementById('fromTz');
-    const toSel = document.getElementById('toTz');
-    TIMEZONES.forEach((tz, i) => {
-        const opt1 = new Option(`${tz.label} (${tz.abbr})`, tz.id);
-        const opt2 = new Option(`${tz.label} (${tz.abbr})`, tz.id);
-        fromSel.add(opt1);
-        toSel.add(opt2);
-    });
-    fromSel.value = 'Asia/Seoul';
-    toSel.value = 'America/New_York';
+    ['fromTz', 'toTz', 'multiTzSelect'].forEach(id => fillSelect(document.getElementById(id)));
+    const local = detectTimeZone();
+    ['fromTz', 'toTz', 'multiTzSelect'].forEach(id => ensureOption(document.getElementById(id), local));
+    document.getElementById('fromTz').value = local;
+    document.getElementById('toTz').value = local === 'Asia/Seoul' ? 'America/New_York' : 'Asia/Seoul';
 }
 
 function setNow() {
@@ -254,91 +367,6 @@ function wallTimeToInstant(dateVal, timeVal, tz) {
     return resolveWallTime(dateVal, timeVal, tz).instant;
 }
 
-function convert() {
-    const fromTz = document.getElementById('fromTz').value;
-    const toTz = document.getElementById('toTz').value;
-    const dateVal = document.getElementById('fromDate').value;
-    const timeVal = document.getElementById('fromTime').value;
-
-    if (!dateVal || !timeVal) {
-        document.getElementById('toResult').textContent = '--:--';
-        document.getElementById('toResultDate').textContent = '';
-        document.getElementById('toResultInfo').textContent = '';
-        const rpc = document.getElementById('reportContainer');
-        if (rpc) { rpc.style.display = 'none'; rpc.innerHTML = ''; }
-        document.getElementById('fromTime').setCustomValidity('');
-        document.getElementById('fromTime').removeAttribute('aria-invalid');
-        return;
-    }
-
-    const resolution = resolveWallTime(dateVal, timeVal, fromTz);
-    const timeInput = document.getElementById('fromTime');
-    if (resolution.status === 'nonexistent') {
-        const message = '선택한 현지 시각은 DST 전환으로 존재하지 않습니다. 다른 시각을 선택하세요.';
-        timeInput.setCustomValidity(message);
-        timeInput.setAttribute('aria-invalid', 'true');
-        document.getElementById('toResult').textContent = '--:--';
-        document.getElementById('toResultDate').textContent = '';
-        document.getElementById('toResultInfo').textContent = message;
-        const rpc = document.getElementById('reportContainer');
-        if (rpc) { rpc.style.display = 'none'; rpc.replaceChildren(); }
-        return;
-    }
-    timeInput.setCustomValidity('');
-    timeInput.setAttribute('aria-invalid', 'false');
-    const utcDate = resolution.instant;
-    const fromOffsetMs = getOffsetMs(utcDate, fromTz);
-    const toOffsetMs = getOffsetMs(utcDate, toTz);
-    const toParts = getDateTimeInTz(utcDate, toTz);
-
-    // Display
-    document.getElementById('toResult').textContent = toParts.time;
-
-    const dayName = new Intl.DateTimeFormat('ko-KR', { timeZone: toTz, weekday: 'short' }).format(utcDate);
-    document.getElementById('toResultDate').textContent = `${toParts.date} (${dayName})`;
-
-    // DST info
-    const toTzInfo = TIMEZONES.find(t => t.id === toTz);
-    const ambiguityWarning = resolution.status === 'ambiguous' ? ' · 기준 시간이 DST 종료로 두 번 발생하여 앞선 시각으로 계산했습니다.' : '';
-    document.getElementById('toResultInfo').textContent = (toTzInfo ? toTzInfo.label : '') + ambiguityWarning;
-
-    // Diff
-    const diffMin = Math.round((toOffsetMs - fromOffsetMs) / 60000);
-    const diffH = diffMin / 60;
-    const fromInfo = TIMEZONES.find(t => t.id === fromTz);
-    
-    updateReport(fromInfo, toTzInfo, diffH);
-}
-
-function updateReport(from, to, diffH) {
-    const container = document.getElementById('reportContainer');
-    if (!container || !from || !to) return;
-    
-    container.style.display = 'block';
-    
-    const absDiff = Math.abs(diffH);
-    const diffLabel = diffH > 0 ? `${absDiff}시간 빠름` : diffH < 0 ? `${absDiff}시간 느림` : '동일한 시간대';
-    let analysis = '';
-    
-    if (diffH === 0) {
-        analysis = `선택하신 두 타임존 <b>${from.label}</b>와(과) <b>${to.label}</b>은(는) 사실상 동일한 시각을 나타내어 시차가 발생하지 않습니다. 예기치 않은 서머타임이 적용되는 특수한 경우가 아니라면 전 세계 어디에서든 같은 시간을 공유합니다.`;
-    } else if (diffH > 0) {
-        analysis = `기준 지역인 <b>${from.label}</b>에 비해 <b>${to.label}</b> 지역이 <span class="highlight">${absDiff}시간 더 빠릅니다.</span><br>따라서 현지 시간으로 비즈니스 일정을 계획하거나 알람을 맞출 때 ${absDiff}시간을 선제적으로 더해서 생각하셔야 합니다.`;
-    } else {
-        analysis = `기준 지역인 <b>${from.label}</b>에 비해 <b>${to.label}</b> 지역이 <span class="highlight">${absDiff}시간 더 느립니다.</span><br>글로벌 업무 미팅이나 커뮤니케이션 시 상대방의 시간에 맞춰 ${absDiff}시간을 여유있게 빼서 계산하는 것이 정확합니다.`;
-    }
-
-    container.innerHTML = `
-        <h3>📊 실시간 타임존 변환 분석 리포트</h3>
-        <p><b>변환 요약 결과:</b> ${from.abbr} ▶ ${to.abbr} (<span class="highlight">${diffLabel}</span>)</p>
-        <p style="margin-bottom:4px;"><b>시차 상승/하락 가이드:</b></p>
-        <p>${analysis}</p>
-        <div style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);">
-            <p style="margin-bottom:0; color:var(--text-info);">※ 브라우저에 포함된 IANA 시간대 규칙을 적용했습니다. 정책 변경이나 중요한 예약은 해당 지역의 공식 안내와 함께 확인하세요.</p>
-        </div>
-    `;
-}
-
 function getOffsetMs(date, tz) {
     const formatter = new Intl.DateTimeFormat('en-US', {
         timeZone: tz,
@@ -352,17 +380,220 @@ function getOffsetMs(date, tz) {
         Number(parts.year), Number(parts.month) - 1, Number(parts.day),
         Number(parts.hour), Number(parts.minute), Number(parts.second)
     );
-    return asUtc - date.getTime();
+    return asUtc - Math.floor(date.getTime() / 1000) * 1000;
 }
 
 function getOffsetMinutes(date, tz) {
-    return getOffsetMs(date, tz) / 60000;
+    return Math.round(getOffsetMs(date, tz) / 60000);
+}
+
+function formatUtcOffset(minutes) {
+    if (minutes === 0) return 'UTC+0';
+    const sign = minutes > 0 ? '+' : '−';
+    const abs = Math.abs(minutes);
+    const h = Math.floor(abs / 60);
+    const m = abs % 60;
+    return `UTC${sign}${h}${m ? ':' + String(m).padStart(2, '0') : ''}`;
+}
+
+// 선택한 순간에 적용되는 실제 오프셋과 서머타임 여부를 계산합니다.
+function offsetDetails(date, tz) {
+    const minutes = getOffsetMinutes(date, tz);
+    const year = date.getUTCFullYear();
+    const jan = getOffsetMinutes(new Date(Date.UTC(year, 0, 1)), tz);
+    const jul = getOffsetMinutes(new Date(Date.UTC(year, 6, 1)), tz);
+    const dst = jan !== jul && minutes === Math.max(jan, jul);
+    let abbr = '';
+    try {
+        const name = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'short' })
+            .formatToParts(date).find(part => part.type === 'timeZoneName');
+        if (name && /^[A-Z]{2,5}$/.test(name.value) && name.value !== 'UTC') abbr = name.value;
+    } catch (e) { /* 약어는 선택 정보입니다. */ }
+    return { minutes, text: formatUtcOffset(minutes), dst, abbr };
+}
+
+function describeOffset(details) {
+    return `${details.abbr ? details.abbr + ', ' : ''}${details.text}${details.dst ? ' 서머타임' : ''}`;
+}
+
+function formatHourDiff(minutes) {
+    const abs = Math.abs(minutes);
+    const h = Math.floor(abs / 60);
+    const m = abs % 60;
+    return m ? `${h}시간 ${m}분` : `${h}시간`;
+}
+
+function diffSentence(fromTz, toTz, instant) {
+    const from = offsetDetails(instant, fromTz);
+    const to = offsetDetails(instant, toTz);
+    const diff = to.minutes - from.minutes;
+    const toName = cityName(toTz);
+    const fromName = cityName(fromTz);
+    const head = diff === 0
+        ? `${toName}와 ${fromName}은 같은 시각입니다`
+        : `${toName}은 ${fromName}보다 ${formatHourDiff(diff)} ${diff > 0 ? '빠릅니다' : '느립니다'}`;
+    return `${head} (${toName} ${describeOffset(to)} · ${fromName} ${describeOffset(from)})`;
+}
+
+let lastInstant = null;
+
+function clearOutputs(message) {
+    document.getElementById('toResult').textContent = '--:--';
+    document.getElementById('toResultDate').textContent = '';
+    document.getElementById('toResultInfo').textContent = message || '';
+    document.getElementById('tzDiffLine').textContent = '';
+    document.getElementById('fromOffsetInfo').textContent = '';
+    lastInstant = null;
+    renderMultiList();
+}
+
+function convert() {
+    const fromTz = document.getElementById('fromTz').value;
+    const toTz = document.getElementById('toTz').value;
+    const dateVal = document.getElementById('fromDate').value;
+    const timeVal = document.getElementById('fromTime').value;
+    const timeInput = document.getElementById('fromTime');
+
+    if (!dateVal || !timeVal) {
+        timeInput.setCustomValidity('');
+        timeInput.removeAttribute('aria-invalid');
+        clearOutputs('');
+        syncUrlState();
+        return;
+    }
+
+    const resolution = resolveWallTime(dateVal, timeVal, fromTz);
+    if (resolution.status === 'nonexistent') {
+        const message = '선택한 현지 시각은 DST 전환으로 존재하지 않습니다. 다른 시각을 선택하세요.';
+        timeInput.setCustomValidity(message);
+        timeInput.setAttribute('aria-invalid', 'true');
+        clearOutputs(message);
+        syncUrlState();
+        return;
+    }
+    timeInput.setCustomValidity('');
+    timeInput.setAttribute('aria-invalid', 'false');
+    const utcDate = resolution.instant;
+    lastInstant = utcDate;
+    const toParts = getDateTimeInTz(utcDate, toTz);
+
+    document.getElementById('toResult').textContent = toParts.time;
+    const dayName = new Intl.DateTimeFormat('ko-KR', { timeZone: toTz, weekday: 'short' }).format(utcDate);
+    document.getElementById('toResultDate').textContent = `${toParts.date} (${dayName})`;
+
+    const toDetails = offsetDetails(utcDate, toTz);
+    const fromDetails = offsetDetails(utcDate, fromTz);
+    const ambiguityWarning = resolution.status === 'ambiguous' ? ' · 기준 시간이 DST 종료로 두 번 발생하여 앞선 시각으로 계산했습니다.' : '';
+    document.getElementById('toResultInfo').textContent = `${tzInfo(toTz).label} · ${describeOffset(toDetails)}${ambiguityWarning}`;
+    document.getElementById('fromOffsetInfo').textContent = `${cityName(fromTz)} · ${describeOffset(fromDetails)}`;
+    document.getElementById('tzDiffLine').textContent = diffSentence(fromTz, toTz, utcDate) + '.';
+    renderMultiList();
+    syncUrlState();
+}
+
+// --- 여러 도시 목록 ---
+function loadMultiCities() {
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem(MULTI_STORAGE_KEY) || 'null'); } catch (e) { saved = null; }
+    multiCities = Array.isArray(saved) ? saved.filter(isValidTimeZone).slice(0, 12) : DEFAULT_MULTI.slice();
+    multiCities.forEach(tz => ensureOption(document.getElementById('multiTzSelect'), tz));
+}
+
+function saveMultiCities() {
+    try { localStorage.setItem(MULTI_STORAGE_KEY, JSON.stringify(multiCities)); } catch (e) { /* 저장이 막혀도 이번 방문에서는 사용합니다. */ }
+}
+
+function addMultiCity() {
+    const tz = document.getElementById('multiTzSelect').value;
+    if (!isValidTimeZone(tz)) return;
+    if (multiCities.includes(tz)) { showToast('이미 목록에 있는 도시입니다'); return; }
+    if (multiCities.length >= 12) { showToast('도시는 최대 12개까지 추가할 수 있습니다'); return; }
+    multiCities.push(tz);
+    saveMultiCities();
+    renderMultiList();
+    showToast(`${cityName(tz)}을(를) 추가했습니다`);
+}
+
+function removeMultiCity(tz) {
+    multiCities = multiCities.filter(item => item !== tz);
+    saveMultiCities();
+    renderMultiList();
+}
+
+function businessState(date, tz) {
+    const parts = {};
+    new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+        .formatToParts(date).forEach(part => { parts[part.type] = part.value; });
+    const hour = Number(parts.hour) + Number(parts.minute) / 60;
+    if (parts.weekday === 'Sat' || parts.weekday === 'Sun') return { business: false, label: '주말' };
+    if (hour >= 9 && hour < 18) return { business: true, label: '업무 시간' };
+    if (hour >= 22 || hour < 7) return { business: false, label: '야간' };
+    return { business: false, label: '업무 외' };
+}
+
+function relativeDayLabel(date, tz, baseTz) {
+    const target = getDateTimeInTz(date, tz).date;
+    const base = getDateTimeInTz(date, baseTz).date;
+    if (target === base) return '';
+    return target > base ? ' · 다음 날' : ' · 전날';
+}
+
+function renderMultiList() {
+    const list = document.getElementById('multiList');
+    list.replaceChildren();
+    if (!multiCities.length) {
+        const empty = document.createElement('li');
+        empty.className = 'multi-empty';
+        empty.textContent = '비교할 도시를 추가하세요.';
+        list.appendChild(empty);
+        return;
+    }
+    const instant = lastInstant;
+    const fromTz = document.getElementById('fromTz').value;
+    multiCities.forEach(tz => {
+        const row = document.createElement('li');
+        row.className = 'multi-row';
+        const city = document.createElement('div');
+        city.className = 'multi-city';
+        const name = document.createElement('strong');
+        name.textContent = tzInfo(tz).label;
+        const meta = document.createElement('span');
+        const time = document.createElement('div');
+        time.className = 'multi-time';
+        const clock = document.createElement('strong');
+        const badge = document.createElement('span');
+        if (instant) {
+            const parts = getDateTimeInTz(instant, tz);
+            const state = businessState(instant, tz);
+            const weekday = new Intl.DateTimeFormat('ko-KR', { timeZone: tz, weekday: 'short' }).format(instant);
+            clock.textContent = parts.time;
+            meta.textContent = `${parts.date.slice(5).replace('-', '/')}(${weekday}) · ${describeOffset(offsetDetails(instant, tz))}${relativeDayLabel(instant, tz, fromTz)}`;
+            badge.textContent = state.label;
+            row.classList.toggle('is-business', state.business);
+        } else {
+            clock.textContent = '--:--';
+            meta.textContent = '기준 시간을 입력하세요';
+            badge.textContent = '-';
+        }
+        time.append(clock, badge);
+        city.append(name, meta);
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'multi-remove';
+        remove.textContent = '×';
+        remove.setAttribute('aria-label', `${cityName(tz)} 목록에서 삭제`);
+        remove.addEventListener('click', () => removeMultiCity(tz));
+        row.append(city, time, remove);
+        list.appendChild(row);
+    });
 }
 
 function swapTz() {
     const fromSel = document.getElementById('fromTz');
     const toSel = document.getElementById('toTz');
     const tmp = fromSel.value;
+    ensureOption(fromSel, toSel.value);
+    ensureOption(toSel, tmp);
     fromSel.value = toSel.value;
     toSel.value = tmp;
     convert();
@@ -370,44 +601,94 @@ function swapTz() {
 }
 
 function resetAll() {
-    document.getElementById('fromDate').value = '';
-    const timeInput = document.getElementById('fromTime');
-    timeInput.value = '';
-    timeInput.setCustomValidity('');
-    timeInput.removeAttribute('aria-invalid');
-    document.getElementById('fromTz').value = 'Asia/Seoul';
-    document.getElementById('toTz').value = 'America/New_York';
-    document.getElementById('toResult').textContent = '--:--';
-    document.getElementById('toResultDate').textContent = '';
-    document.getElementById('toResultInfo').textContent = '';
-    const container = document.getElementById('reportContainer');
-    if (container) {
-        container.style.display = 'none';
-        container.innerHTML = '';
+    const local = detectTimeZone();
+    document.getElementById('fromTz').value = local;
+    document.getElementById('toTz').value = local === 'Asia/Seoul' ? 'America/New_York' : 'Asia/Seoul';
+    setNow();
+    showToast('현재 시각으로 초기화했습니다');
+}
+
+// --- 공유·복사 ---
+function syncUrlState() {
+    try {
+        const params = new URLSearchParams();
+        params.set('from', document.getElementById('fromTz').value);
+        params.set('to', document.getElementById('toTz').value);
+        const date = document.getElementById('fromDate').value;
+        const time = document.getElementById('fromTime').value;
+        if (/^\d{4}-\d{2}-\d{2}$/.test(date)) params.set('date', date);
+        if (/^\d{2}:\d{2}$/.test(time.slice(0, 5))) params.set('time', time.slice(0, 5));
+        const url = new URL(location.href);
+        url.search = params.toString();
+        history.replaceState(null, '', url);
+    } catch (e) { /* 주소 갱신이 막혀도 변환은 계속합니다. */ }
+}
+
+function applyUrlState() {
+    const params = new URLSearchParams(location.search);
+    const fromTz = params.get('from');
+    const toTz = params.get('to');
+    if (isValidTimeZone(fromTz)) { ensureOption(document.getElementById('fromTz'), fromTz); document.getElementById('fromTz').value = fromTz; }
+    if (isValidTimeZone(toTz)) { ensureOption(document.getElementById('toTz'), toTz); document.getElementById('toTz').value = toTz; }
+    const date = params.get('date');
+    const time = params.get('time');
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date || '') && /^([01]\d|2[0-3]):[0-5]\d$/.test(time || '')) {
+        document.getElementById('fromDate').value = date;
+        document.getElementById('fromTime').value = time;
+        convert();
+        return true;
     }
-    showToast('초기화되었습니다');
+    return false;
+}
+
+function copyText(text) {
+    const fallback = () => new Promise((resolve, reject) => {
+        const helper = document.createElement('textarea');
+        helper.value = text;
+        helper.setAttribute('readonly', '');
+        helper.style.position = 'fixed';
+        helper.style.opacity = '0';
+        document.body.appendChild(helper);
+        helper.select();
+        let ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        helper.remove();
+        if (ok) resolve(); else reject(new Error('copy failed'));
+    });
+    if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text).catch(fallback);
+    return fallback();
 }
 
 function copyResult() {
     const result = document.getElementById('toResult').textContent;
-    if (result === '--:--') { showToast('먼저 시간을 입력하세요'); return; }
-    const fromTzInfo = TIMEZONES.find(t => t.id === document.getElementById('fromTz').value);
-    const toTzInfo = TIMEZONES.find(t => t.id === document.getElementById('toTz').value);
+    if (result === '--:--' || !lastInstant) { showToast('먼저 시간을 입력하세요'); return; }
+    const fromTz = document.getElementById('fromTz').value;
+    const toTz = document.getElementById('toTz').value;
     const fromDate = document.getElementById('fromDate').value;
     const fromTime = document.getElementById('fromTime').value;
-    const toResultDate = document.getElementById('toResultDate').textContent;
-    
-    const utcDate = wallTimeToInstant(fromDate, fromTime, fromTzInfo.id);
-    const fromOffsetMs = getOffsetMs(utcDate, fromTzInfo.id);
-    const toOffsetMs = getOffsetMs(utcDate, toTzInfo.id);
-    const diffMin = Math.round((toOffsetMs - fromOffsetMs) / 60000);
-    const diffH = diffMin / 60;
-    const absDiffH = Math.abs(diffH);
-    const diffLabel = diffH > 0 ? `${absDiffH}시간 빠름` : diffH < 0 ? `${absDiffH}시간 느림` : '같은 시간대';
-    const diffText = `시차: ${diffH >= 0 ? '+' : ''}${diffH}시간 (${fromTzInfo.label} 기준 ${diffLabel})`;
+    const lines = [
+        '🌍 타임존 변환 결과',
+        `[기준] ${cityName(fromTz)} ${fromDate} ${fromTime} (${describeOffset(offsetDetails(lastInstant, fromTz))})`,
+        `[결과] ${cityName(toTz)} ${document.getElementById('toResultDate').textContent} ${result} (${describeOffset(offsetDetails(lastInstant, toTz))})`,
+        `[시차] ${diffSentence(fromTz, toTz, lastInstant)}`
+    ];
+    const others = multiCities.filter(tz => tz !== fromTz && tz !== toTz);
+    if (others.length) {
+        lines.push('[다른 도시] ' + others.map(tz => {
+            const parts = getDateTimeInTz(lastInstant, tz);
+            return `${cityName(tz)} ${parts.date.slice(5).replace('-', '/')} ${parts.time}`;
+        }).join(', '));
+    }
+    copyText(lines.join('\n'))
+        .then(() => showToast('입력값과 변환 결과를 복사했습니다'))
+        .catch(() => showToast('복사하지 못했습니다. 결과를 직접 선택해 복사해 주세요'));
+}
 
-    const text = `🌍 타임존 변환 결과\n[기준] ${fromTzInfo ? fromTzInfo.label : ''} ${fromDate} ${fromTime}\n[결과] ${toTzInfo ? toTzInfo.label : ''} ${toResultDate} ${result}\n[분석] ${diffText}`;
-    navigator.clipboard.writeText(text).then(() => showToast('결과가 복사되었습니다'));
+function copyShareLink() {
+    syncUrlState();
+    copyText(location.href)
+        .then(() => showToast('현재 조건이 담긴 링크를 복사했습니다'))
+        .catch(() => showToast('링크를 복사하지 못했습니다. 주소창에서 직접 복사해 주세요'));
 }
 
 function showToast(msg) {
@@ -415,10 +696,12 @@ function showToast(msg) {
     t.textContent = msg;
     t.classList.add('show');
     clearTimeout(t._timer);
-    t._timer = setTimeout(() => t.classList.remove('show'), 1500);
+    t._timer = setTimeout(() => t.classList.remove('show'), 1800);
 }
 
 initSelects();
+loadMultiCities();
+if (!applyUrlState()) setNow();
 </script>
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 <script src="/special-chars/theme-toggle.js"></script>

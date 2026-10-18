@@ -247,17 +247,24 @@ body.stopwatch-mode .journey-panel>.mode-tabs{margin-top:0}
 .controls{display:flex;justify-content:center;gap:12px;margin-bottom:20px}
 .ctrl-btn{width:72px;height:72px;border-radius:50%;border:none;font-size:22px;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center}
 .ctrl-btn:active{transform:scale(.92)}
-.btn-start{background:#22c55e;color:var(--text-primary)}
+.btn-start{background:#22c55e;color:#052e16}
 .btn-start:hover{background:#16a34a}
-.btn-start.running{background:#ef4444}
+.btn-start.running{background:#ef4444;color:#fff}
 .btn-start.running:hover{background:#dc2626}
 .btn-pause{background:#f59e0b;color:var(--text-primary)}
 .btn-pause:hover{background:#d97706}
 .btn-reset{background:var(--bg-btn-hover);color:var(--text-label)}
-.btn-reset:hover{background:#4a4a7a;color:var(--text-primary)}
-.btn-lap{background:#3b82f6;color:var(--text-primary)}
+.btn-reset:hover{background:var(--border-hover);color:var(--text-primary)}
+.btn-lap{background:#3b82f6;color:#fff}
 .btn-lap:hover{background:#2563eb}
 
+.end-info{text-align:center;min-height:20px;font-size:13px;color:var(--text-info);margin:-12px 0 16px}
+.alarm-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 16px;padding:12px 14px;border:2px solid var(--accent);border-radius:12px;background:var(--accent-bg);color:var(--text-primary);font-size:14px;font-weight:700}
+.alarm-banner[hidden]{display:none}
+.alarm-banner button{flex:0 0 auto;min-height:40px;padding:8px 14px;border:none;border-radius:8px;background:var(--accent);color:var(--text-on-accent);font-weight:700;font-size:14px;line-height:1;font-family:inherit;cursor:pointer}
+.timer-inputs input:disabled,.quick-btn:disabled{opacity:.55;cursor:not-allowed}
+.lock-note{text-align:center;font-size:12px;color:var(--text-muted);margin:-12px 0 16px}
+.lock-note[hidden]{display:none}
 /* 랩 기록 */
 .laps{max-height:200px;overflow-y:auto;margin-top:8px}
 .laps::-webkit-scrollbar{width:4px}
@@ -360,7 +367,7 @@ body.stopwatch-mode .journey-panel>.mode-tabs{margin-top:0}
         </label>
         <div class="mission-goals" id="missionGoals" aria-label="완료 조건">
           <span class="mission-goal">① 끝낼 결과를 한 줄로 정하기</span>
-          <span class="mission-goal">② 타이머가 끝날 때까지 한 일에 집중</span>
+          <span class="mission-goal">② 타이머가 끝날 때까지 그 일에만 집중하기</span>
         </div>
       </div>
       <div class="mission-reward" aria-label="예상 보상">
@@ -370,8 +377,8 @@ body.stopwatch-mode .journey-panel>.mode-tabs{margin-top:0}
     </section>
 
     <div class="mode-tabs" role="tablist" aria-label="타이머 방식">
-      <button class="mode-tab active" role="tab" aria-selected="true" onclick="switchMode('timer')">⏳ 퀘스트 타이머</button>
-      <button class="mode-tab" role="tab" aria-selected="false" onclick="switchMode('stopwatch')">⏱️ 자유 스톱워치</button>
+      <button class="mode-tab active" role="tab" aria-selected="true" onclick="requestSwitchMode('timer')">⏳ 퀘스트 타이머</button>
+      <button class="mode-tab" role="tab" aria-selected="false" onclick="requestSwitchMode('stopwatch')">⏱️ 자유 스톱워치</button>
     </div>
 
     <div class="content">
@@ -386,6 +393,12 @@ body.stopwatch-mode .journey-panel>.mode-tabs{margin-top:0}
 
       <div class="display" aria-label="남은 시간">
         <span class="time" id="display">00:00:00</span><span class="ms" id="displayMs"></span>
+      </div>
+      <div class="end-info" id="endInfo" aria-live="polite"></div>
+
+      <div class="alarm-banner" id="alarmBanner" role="alert" hidden>
+        <span id="alarmMessage">⏰ 퀘스트 시간이 끝났어요</span>
+        <button type="button" onclick="acknowledgeAlarm()">알람 끄기</button>
       </div>
 
       <!-- 타이머 전용 -->
@@ -414,11 +427,12 @@ body.stopwatch-mode .journey-panel>.mode-tabs{margin-top:0}
           <button class="quick-btn" onclick="setQuick(30)">30분</button>
           <button class="quick-btn" onclick="setQuick(60)">1시간</button>
         </div>
+        <p class="lock-note" id="questLockNote" hidden>🔒 퀘스트 중에는 시간을 바꿀 수 없어요. 그만두려면 ↺를 누르세요.</p>
       </div>
 
       <!-- 컨트롤 -->
       <div class="controls">
-        <button class="ctrl-btn btn-reset" id="btnReset" onclick="doReset()" title="리셋" aria-label="타이머 초기화">↺</button>
+        <button class="ctrl-btn btn-reset" id="btnReset" onclick="requestReset()" title="리셋" aria-label="타이머 초기화">↺</button>
         <button class="ctrl-btn btn-start" id="btnStart" onclick="doStartStop()" aria-label="타이머 시작">▶</button>
         <button class="ctrl-btn btn-lap" id="btnLap" onclick="doLap()" title="랩" aria-label="랩 기록" style="display:none">🏁</button>
       </div>
@@ -434,67 +448,45 @@ body.stopwatch-mode .journey-panel>.mode-tabs{margin-top:0}
   <section class="guide-section">
     <h2>💡 일상 퀘스트 가이드</h2>
     <details class="guide" open>
-      <summary>퀘스트·게임·상점 연결 방식</summary>
+      <summary>퀘스트·게임·상점은 어떻게 연결되나요?</summary>
       <div class="guide-content">
-        퀘스트를 고르면 완료 조건과 예상 보상이 타이머에 표시됩니다. 시간이 끝난 뒤 조건을 확인하면 냥과 경험치가 게임 탭에 반영됩니다. 모은 냥은 상점에서 아지트를 꾸미거나 다음 퀘스트의 보너스 아이템을 준비하는 데 사용할 수 있습니다.
+        퀘스트 탭에서 할 일(시동 5분, 집중 25분, 정리 10분, 몸 깨우기 15분)을 고르고 '이번에 끝낼 것'을 한 줄로 적은 뒤 재생 버튼(▶)을 누르세요. 시간이 끝나면 완료 조건을 스스로 점검하고, 체크를 마치면 냥(재화)과 경험치가 게임 탭에 바로 쌓입니다. 경험치 100마다 레벨이 오르고, 모은 냥은 상점에서 아지트 꾸미기 아이템이나 보상을 늘려 주는 장비, 연속 기록 보호권을 사는 데 씁니다.
       </div>
     </details>
     <details class="guide">
-      <summary>타이머 사용법</summary>
+      <summary>보상은 어떤 기준으로 받나요?</summary>
       <div class="guide-content">
-        시, 분, 초를 직접 입력하거나 숫자 버튼(예: 5분, 1시간)을 눌러 시간을 빠르게 설정하세요. 재생 버튼(▶)을 누르면 카운트다운이 시작되며, 시간이 다 되면 자동으로 알림음이 울립니다.
+        보상은 퀘스트를 시작할 때 설정한 집중 시간으로 정해집니다. 기본 퀘스트 시간을 바꾸면 시간에 비례한 보상으로 다시 계산되며, <b>5분 미만은 연습 타이머로 진행되어 보상과 연속 기록이 쌓이지 않습니다.</b> 퀘스트가 시작되면 일시정지 중에도 시간 입력과 빠른 버튼이 잠겨, 중간에 시간을 줄여 보상을 받는 일이 없도록 했습니다. 시간을 바꾸고 싶다면 ↺로 퀘스트를 그만둔 뒤 다시 시작하세요.
       </div>
     </details>
     <details class="guide">
-      <summary>퀘스트 완료 확인</summary>
+      <summary>완료 확인과 '5분 더'는 무엇인가요?</summary>
       <div class="guide-content">
-        타이머가 끝나면 선택한 퀘스트의 완료 조건이 다시 나타납니다. 실제로 끝낸 항목을 체크하면 보상이 기록됩니다. 퀘스트와 게임 기록은 현재 브라우저에 저장됩니다.
+        타이머가 끝나면 선택한 퀘스트의 완료 조건이 체크리스트로 나타납니다. 실제로 끝낸 항목만 체크하는 자기 점검 방식이며, 모두 체크해야 보상을 받을 수 있습니다. 아직 덜 끝났다면 '5분 더'로 같은 퀘스트를 이어 갈 수 있고 보상은 그대로 유지됩니다. '보상 없이 끝내기'를 누르면 기록을 남기지 않고 종료합니다.
       </div>
     </details>
     <details class="guide">
-      <summary>스톱워치 사용법</summary>
+      <summary>연속 기록과 보호권은 어떻게 계산되나요?</summary>
       <div class="guide-content">
-        스톱워치 탭을 선택한 뒤 재생 버튼(▶)을 누르면 시간이 측정됩니다. 실행 중 랩 버튼(🏁)을 눌러 구간 기록을 남길 수 있습니다. 측정이 끝나면 정지 버튼(■)을 눌러주세요.
+        하루에 퀘스트를 하나 이상 끝내면 연속 기록이 이어집니다. 하루를 건너뛰면 다음 완료 때 기록이 1일부터 다시 시작되고, 게임 탭의 연속 기록도 오늘 날짜 기준으로 끊긴 상태를 보여 줍니다. 상점의 연속 보호권이 있으면 하루를 놓친 뒤 다음 퀘스트를 끝낼 때 한 개를 써서 기록을 지켜 줍니다. 게임 탭의 발자국은 오늘을 포함한 최근 7일의 완료 횟수입니다.
       </div>
     </details>
     <details class="guide">
-      <summary>단축키</summary>
+      <summary>진행 중에 새로고침하거나 탭을 바꾸면?</summary>
       <div class="guide-content">
-        <ul style="padding-left: 20px; list-style-type: disc;">
-          <li><b>스페이스바</b>: 시작 / 정지</li>
-          <li><b>R</b>: 초기화(리셋)</li>
-          <li><b>L</b>: 랩 기록 (스톱워치 모드)</li>
-        </ul>
+        진행 중이거나 일시정지한 퀘스트는 이 브라우저에 저장되어 새로고침 후에도 같은 남은 시간으로 이어집니다. 알림음은 시작할 때 브라우저 오디오 시계에 미리 예약되어 다른 탭을 보고 있어도 제시간에 울리며, '알람 끄기'를 누를 때까지 최대 1분 반복됩니다. 진행 중인 퀘스트가 있을 때 ↺ 버튼, R 키, 자유 스톱워치 탭을 누르면 퀘스트를 그만둘지 먼저 묻습니다.
       </div>
     </details>
     <details class="guide">
-      <summary>언제 어떤 모드를 쓰면 좋나요?</summary>
+      <summary>자유 스톱워치와 단축키</summary>
       <div class="guide-content">
-        타이머는 정해진 시간이 끝났는지 확인해야 하는 작업에 맞습니다. 요리, 휴식 시간, 운동 세트, 25분 집중 작업처럼 종료 알림이 필요한 경우에 사용하세요. 스톱워치는 시간이 얼마나 걸렸는지 측정하는 용도입니다. 발표 리허설, 달리기 기록, 작업 소요 시간 측정, 반복 업무의 평균 시간을 확인할 때 적합합니다.
+        자유 스톱워치는 보상 없이 걸린 시간을 재는 모드입니다. 실행 중 랩 버튼(🏁)으로 구간을 기록할 수 있습니다. 단축키는 스페이스바(시작/정지, 알림음이 울리면 끄기), R(초기화, 퀘스트 중이면 확인), L(스톱워치 랩)입니다. 입력 칸이나 버튼에 포커스가 있을 때는 단축키가 동작하지 않습니다.
       </div>
     </details>
     <details class="guide">
-      <summary>집중 작업에 쓰는 기준</summary>
+      <summary>기록은 어디에 저장되나요?</summary>
       <div class="guide-content">
-        짧은 집중에는 10~15분, 일반적인 포모도로에는 25분, 긴 문서 작업이나 코딩에는 45~60분을 먼저 시도해 보세요. 너무 긴 시간을 한 번에 잡으면 중간에 흐름이 끊기기 쉽습니다. 반복 업무는 스톱워치 랩 기록으로 구간을 나눈 뒤, 실제로 오래 걸리는 단계를 찾아 개선하는 방식이 좋습니다.
-      </div>
-    </details>
-    <details class="guide">
-      <summary>알림이 들리지 않을 때 확인할 점</summary>
-      <div class="guide-content">
-        브라우저 타이머는 실제 종료 시각을 기준으로 남은 시간을 보정하지만, 페이지가 완전히 정지된 동안에는 소리를 낼 수 없습니다. 탭으로 돌아오면 종료 상태를 즉시 반영하고 알림음을 시도합니다. 모바일에서 화면을 끄거나 배터리 절약 모드가 켜져 있으면 브라우저가 실행을 제한할 수 있으므로, 중요한 시험·조리·약 복용 알림은 휴대폰 기본 알람도 같이 설정하세요.
-      </div>
-    </details>
-    <details class="guide">
-      <summary>기록을 남기는 작업에 쓰는 방법</summary>
-      <div class="guide-content">
-        스톱워치 랩은 전체 시간 안에서 구간별 소요 시간을 분리할 때 유용합니다. 발표 연습이라면 도입, 본론, 마무리 구간마다 랩을 누르고, 운동이라면 세트마다 랩을 남기세요. 기록을 비교하면 매번 늦어지는 구간이나 시간을 줄일 수 있는 단계를 쉽게 찾을 수 있습니다.
-      </div>
-    </details>
-    <details class="guide">
-      <summary>공부, 운동, 요리에서 쓰는 예시</summary>
-      <div class="guide-content">
-        공부할 때는 25분 집중과 5분 휴식을 반복하거나, 암기 과목처럼 짧게 끊는 작업은 10분 단위로 나눠 진행할 수 있습니다. 운동에서는 세트 사이 휴식 시간을 60~90초로 맞추거나 인터벌 운동의 운동 시간과 휴식 시간을 번갈아 확인하는 데 쓸 수 있습니다. 요리에서는 삶기, 굽기, 뜸 들이기처럼 단계별 시간이 다를 때 각각 타이머를 다시 설정해 과조리를 줄이는 방식으로 활용하면 좋습니다.
+        레벨, 냥, 완료 기록, 상점 아이템은 모두 이 브라우저의 로컬 저장소에만 저장되며 서버로 보내지 않습니다. 다른 기기나 브라우저와는 공유되지 않고, 브라우저의 사이트 데이터를 지우면 기록도 함께 사라집니다. 기본 알람이 필요한 요리·약 복용 같은 일정은 <a href="/special-chars/timer/">기본 타이머</a>나 휴대폰 알람을 함께 쓰세요.
       </div>
     </details>
   </section>
@@ -563,7 +555,7 @@ body.stopwatch-mode .journey-panel>.mode-tabs{margin-top:0}
       <section class="trail-card" aria-labelledby="weeklyTrailTitle">
         <div class="panel-title-row compact">
           <div><span class="section-kicker">최근 7일</span><h3 id="weeklyTrailTitle">집중 발자국</h3></div>
-          <span class="trail-summary" id="weeklySummary">이번 주 0회</span>
+          <span class="trail-summary" id="weeklySummary">최근 7일 0회</span>
         </div>
         <div class="weekly-trail" id="weeklyTrail" aria-label="최근 7일 퀘스트 완료 기록"></div>
       </section>
@@ -632,10 +624,24 @@ body.stopwatch-mode .journey-panel>.mode-tabs{margin-top:0}
   </div>
 </dialog>
 
+<dialog class="tool-confirm-dialog" id="confirmDialog" aria-labelledby="confirmDialogTitle" aria-describedby="confirmDialogDescription">
+  <div class="tool-confirm-dialog__body">
+    <h2 id="confirmDialogTitle">진행 중인 퀘스트를 그만둘까요?</h2>
+    <p id="confirmDialogDescription"></p>
+    <div class="tool-confirm-dialog__actions">
+      <button type="button" data-confirm-cancel autofocus>계속하기</button>
+      <button type="button" class="tool-confirm-dialog__confirm" data-confirm-ok>그만두기</button>
+    </div>
+  </div>
+</dialog>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 
+<script src="/special-chars/timer/timer-alarm.js"></script>
 <script>
+const DEFAULT_TITLE = '🐾 일상 퀘스트 — 티모집사';
+const MAX_TIMER_SECONDS = 99 * 3600 + 59 * 60 + 59;
 let mode = 'timer'; // 'timer' | 'stopwatch'
 let running = false;
 let intervalId = null;
@@ -644,9 +650,16 @@ let intervalId = null;
 let timerRemaining = 0; // ms
 let timerEndTime = 0;
 let timerFinished = false;
+let alarmActive = false;
+let finishedAt = 0;
 
 function emitTimerEvent(name, detail) {
   window.dispatchEvent(new CustomEvent(name, { detail: detail || {} }));
+}
+
+// quest-game.js가 퀘스트 진행 중(일시정지 포함) 시간 변경을 막을 때 true를 돌려줍니다.
+function isDurationLocked() {
+  return typeof window.teemoTimerLocked === 'function' && window.teemoTimerLocked() === true;
 }
 
 // Stopwatch state
@@ -654,47 +667,96 @@ let swElapsed = 0; // ms
 let swStart = 0;
 let laps = [];
 
-// Prime audio from the user's Start gesture so completion has the best chance
-// of sounding. Browsers may still suspend a fully backgrounded page.
-let alarmAudioContext = null;
-function getAlarmAudioContext() {
-  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-  if (!AudioContextClass) return null;
-  if (!alarmAudioContext || alarmAudioContext.state === 'closed') alarmAudioContext = new AudioContextClass();
-  return alarmAudioContext;
+function alarmApi() {
+  return window.TeemoTimerAlarm || null;
 }
 
 function primeAlarmAudio() {
-  try {
-    const ctx = getAlarmAudioContext();
-    if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {});
-  } catch (e) { /* silent fallback */ }
+  try { alarmApi()?.prime(); } catch (e) { /* silent fallback */ }
 }
 
 function suspendAlarmAudio() {
-  try { if (alarmAudioContext && alarmAudioContext.state === 'running') alarmAudioContext.suspend().catch(() => {}); } catch (e) {}
+  try { alarmApi()?.cancelScheduled(); } catch (e) { /* silent fallback */ }
+}
+
+function scheduleAlarmAudio() {
+  try {
+    alarmApi()?.schedule(timerEndTime, () => {
+      // 오디오 시계가 종료 시각에 알려 주면 타이머 지연과 관계없이 바로 완료 처리합니다.
+      if (running && mode === 'timer' && timerEndTime - Date.now() < 1000) finishTimer();
+      else reconcileRunningClock();
+    });
+  } catch (e) { /* 오디오가 없으면 시계 보정만 사용합니다. */ }
 }
 
 function playAlarm() {
-  try {
-    const ctx = getAlarmAudioContext();
-    if (!ctx) return;
-    const sound = () => {
-    [0, 200, 400].forEach(delay => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.frequency.value = 880;
-      osc.type = 'sine';
-      gain.gain.value = 0.3;
-      osc.start(ctx.currentTime + delay / 1000);
-      osc.stop(ctx.currentTime + delay / 1000 + 0.15);
-    });
-    setTimeout(() => { if (ctx.state === 'running') ctx.suspend().catch(() => {}); }, 1000);
-    };
-    if (ctx.state === 'suspended') ctx.resume().then(sound).catch(() => {}); else sound();
-  } catch (e) { /* silent fallback */ }
+  try { alarmApi()?.ring(); } catch (e) { /* silent fallback */ }
+}
+
+function clockLabel(ms) {
+  return new Intl.DateTimeFormat('ko-KR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(ms));
+}
+
+function showAlarmBanner(message) {
+  alarmActive = true;
+  document.getElementById('alarmMessage').textContent = message;
+  document.getElementById('alarmBanner').hidden = false;
+  document.title = '⏰ 완료 — 일상 퀘스트';
+}
+
+function acknowledgeAlarm() {
+  alarmActive = false;
+  try { alarmApi()?.stop(); } catch (e) { /* 무시 */ }
+  document.getElementById('alarmBanner').hidden = true;
+  updateDisplay();
+}
+
+if (alarmApi()) {
+  alarmApi().onRingEnd = () => {
+    if (alarmActive) document.getElementById('alarmMessage').textContent = `⏰ ${clockLabel(finishedAt || Date.now())}에 퀘스트 시간이 끝났어요`;
+  };
+}
+
+function confirmAction(message, confirmLabel) {
+  const dialog = document.getElementById('confirmDialog');
+  // <dialog>를 지원하지 않는 오래된 브라우저에서는 확인 없이 진행합니다.
+  if (!dialog || typeof dialog.showModal !== 'function') return Promise.resolve(true);
+  return new Promise(resolve => {
+    document.getElementById('confirmDialogDescription').textContent = message;
+    const ok = dialog.querySelector('[data-confirm-ok]');
+    const cancel = dialog.querySelector('[data-confirm-cancel]');
+    ok.textContent = confirmLabel || '그만두기';
+    ok.onclick = () => dialog.close('confirm');
+    cancel.onclick = () => dialog.close('cancel');
+    dialog.addEventListener('close', () => resolve(dialog.returnValue === 'confirm'), { once: true });
+    dialog.returnValue = '';
+    dialog.showModal();
+  });
+}
+
+function hasUnsavedProgress() {
+  if (typeof window.teemoQuestInProgress === 'function' && window.teemoQuestInProgress()) return 'quest';
+  if (running || (mode === 'stopwatch' && (swElapsed > 0 || laps.length > 0))) return 'timer';
+  return '';
+}
+
+function requestReset() {
+  const progress = hasUnsavedProgress();
+  if (!progress) { doReset(); return; }
+  const message = progress === 'quest'
+    ? '진행 중인 퀘스트를 그만두면 보상 없이 종료되고 남은 시간 기록이 사라집니다.'
+    : '진행 중인 기록을 처음 상태로 되돌립니다.';
+  confirmAction(message, progress === 'quest' ? '그만두기' : '초기화').then(confirmed => { if (confirmed) doReset(); });
+}
+
+function requestSwitchMode(m) {
+  if (m === mode) return;
+  const progress = hasUnsavedProgress();
+  if (!progress) { switchMode(m); return; }
+  const message = progress === 'quest'
+    ? `${m === 'stopwatch' ? '자유 스톱워치로 바꾸면' : '퀘스트 타이머로 바꾸면'} 진행 중인 퀘스트가 보상 없이 종료됩니다.`
+    : '진행 중인 스톱워치 기록이 초기화됩니다.';
+  confirmAction(message, '바꾸기').then(confirmed => { if (confirmed) switchMode(m); });
 }
 
 function switchMode(m) {
@@ -714,6 +776,7 @@ function switchMode(m) {
 }
 
 function clampInput(el, max) {
+  if (isDurationLocked()) return;
   let v = parseInt(el.value) || 0;
   if (v < 0) v = 0;
   if (v > max) v = max;
@@ -722,14 +785,26 @@ function clampInput(el, max) {
   emitTimerEvent('teemo:duration-changed', { source: 'input', milliseconds: getTimerMs() });
 }
 
+// 60 이상인 분·초를 윗자리로 올려 정리합니다. 예: 90초 → 1분 30초
+function normalizeTimerInputs() {
+  if (running || isDurationLocked()) return;
+  const total = Math.floor(getTimerMs() / 1000);
+  document.getElementById('tHour').value = Math.floor(total / 3600);
+  document.getElementById('tMin').value = Math.floor((total % 3600) / 60);
+  document.getElementById('tSec').value = total % 60;
+  syncTimerFromInputs();
+  emitTimerEvent('teemo:duration-changed', { source: 'input', milliseconds: getTimerMs() });
+}
+
 function syncTimerFromInputs() {
-  if (mode !== 'timer' || running) return;
+  if (mode !== 'timer' || running || isDurationLocked()) return;
   timerRemaining = getTimerMs();
   timerFinished = false;
   updateDisplay();
 }
 
 function setQuick(min) {
+  if (running || isDurationLocked()) return;
   const h = Math.floor(min / 60);
   const m = min % 60;
   document.getElementById('tHour').value = h;
@@ -743,21 +818,31 @@ function getTimerMs() {
   const h = parseInt(document.getElementById('tHour').value) || 0;
   const m = parseInt(document.getElementById('tMin').value) || 0;
   const s = parseInt(document.getElementById('tSec').value) || 0;
-  return (h * 3600 + m * 60 + s) * 1000;
+  return Math.min(MAX_TIMER_SECONDS, Math.max(0, h * 3600 + m * 60 + s)) * 1000;
 }
 
-function formatTime(ms, showMs) {
-  const totalSec = Math.max(0, Math.floor(ms / 1000));
+// 카운트다운은 남은 초를 올림으로 표시해 25:00에서 시작하고 00:01 다음에 알림이 울립니다.
+function formatTime(ms, showMs, roundUp) {
+  const safe = Math.max(0, ms);
+  const totalSec = roundUp ? Math.ceil(safe / 1000) : Math.floor(safe / 1000);
   const h = Math.floor(totalSec / 3600);
   const m = Math.floor((totalSec % 3600) / 60);
   const s = totalSec % 60;
   const pad = n => String(n).padStart(2, '0');
   const main = h > 0 ? `${pad(h)}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
   if (showMs) {
-    const centis = Math.floor((ms % 1000) / 10);
+    const centis = Math.floor((safe % 1000) / 10);
     return { main, ms: '.' + String(centis).padStart(2, '0') };
   }
   return { main, ms: '' };
+}
+
+function updateEndInfo() {
+  const info = document.getElementById('endInfo');
+  if (!info) return;
+  if (mode === 'timer' && running && timerEndTime) info.textContent = `${clockLabel(timerEndTime)}에 종료`;
+  else if (mode === 'timer' && timerFinished && finishedAt) info.textContent = `${clockLabel(finishedAt)}에 종료됨`;
+  else info.textContent = '';
 }
 
 function updateDisplay() {
@@ -765,15 +850,17 @@ function updateDisplay() {
   if (mode === 'timer' && !running && timerRemaining === 0 && !timerFinished) {
     ms = getTimerMs();
   }
-  const f = formatTime(ms, mode === 'stopwatch');
+  const f = formatTime(ms, mode === 'stopwatch', mode === 'timer');
   document.getElementById('display').textContent = f.main;
   document.getElementById('displayMs').textContent = f.ms;
+  updateEndInfo();
 
-  // Update document title
-  if (running) {
-    document.title = f.main + (f.ms || '') + ' — 타이머';
+  if (alarmActive) {
+    document.title = '⏰ 완료 — 일상 퀘스트';
+  } else if (running) {
+    document.title = f.main + (f.ms || '') + (mode === 'timer' ? ' — 퀘스트' : ' — 스톱워치');
   } else {
-    document.title = '🐾 일상 퀘스트 — 티모집사';
+    document.title = DEFAULT_TITLE;
   }
 }
 
@@ -783,15 +870,17 @@ function finishTimer() {
   timerEndTime = 0;
   timerFinished = true;
   running = false;
+  finishedAt = Date.now();
   clearInterval(intervalId);
   intervalId = null;
   document.getElementById('btnStart').textContent = '▶';
   document.getElementById('btnStart').classList.remove('running');
   document.getElementById('btnStart').setAttribute('aria-label', '타이머 시작');
+  showAlarmBanner(`⏰ ${clockLabel(finishedAt)}에 퀘스트 시간이 끝났어요`);
   updateDisplay();
   playAlarm();
   showToast('⏰ 타이머 완료!');
-  emitTimerEvent('teemo:timer-finished', { completedAt: Date.now() });
+  emitTimerEvent('teemo:timer-finished', { completedAt: finishedAt });
 }
 
 function reconcileRunningClock() {
@@ -810,6 +899,7 @@ function reconcileRunningClock() {
 }
 
 function doStartStop() {
+  if (alarmActive) acknowledgeAlarm();
   if (running) {
     // Stop
     if (mode === 'timer') {
@@ -841,9 +931,11 @@ function doStartStop() {
     }
     if (timerRemaining <= 0) return;
     timerFinished = false;
+    finishedAt = 0;
     timerEndTime = Date.now() + timerRemaining;
     running = true;
     intervalId = setInterval(reconcileRunningClock, 100);
+    scheduleAlarmAudio();
   } else {
     // Stopwatch
     swStart = Date.now();
@@ -854,6 +946,7 @@ function doStartStop() {
   document.getElementById('btnStart').textContent = '■';
   document.getElementById('btnStart').classList.add('running');
   document.getElementById('btnStart').setAttribute('aria-label', mode === 'timer' ? '타이머 일시정지' : '스톱워치 일시정지');
+  updateDisplay();
   emitTimerEvent('teemo:timer-state', { mode, running: true, reason: 'start', remaining: mode === 'timer' ? timerRemaining : swElapsed, endAt: mode === 'timer' ? timerEndTime : 0 });
 }
 
@@ -864,21 +957,23 @@ function doReset() {
   timerRemaining = 0;
   timerEndTime = 0;
   timerFinished = false;
+  finishedAt = 0;
   swElapsed = 0;
   laps = [];
   document.getElementById('lapsContainer').innerHTML = '';
   document.getElementById('btnStart').textContent = '▶';
   document.getElementById('btnStart').classList.remove('running');
-  suspendAlarmAudio();
-  document.title = '🐾 일상 퀘스트 — 티모집사';
-  updateDisplay();
+  alarmActive = false;
+  document.getElementById('alarmBanner').hidden = true;
+  try { alarmApi()?.stop(); } catch (e) { /* 무시 */ }
+  document.title = DEFAULT_TITLE;
   emitTimerEvent('teemo:timer-reset', { mode });
+  updateDisplay();
 }
 
 function doLap() {
   if (mode !== 'stopwatch' || !running) return;
   const current = swElapsed + (Date.now() - swStart);
-  const prevLap = laps.length > 0 ? laps[laps.length - 1] : 0;
   laps.push(current);
   renderLaps();
 }
@@ -890,7 +985,9 @@ function renderLaps() {
     const diff = i === 0 ? laps[0] : laps[i] - laps[i - 1];
     const el = document.createElement('div');
     el.className = 'lap-item';
-    el.innerHTML = `<span class="lap-num">랩 ${i + 1}</span><span class="lap-time">${formatTime(laps[i], true).main}${formatTime(laps[i], true).ms}</span><span class="lap-diff">+${formatTime(diff, true).main}${formatTime(diff, true).ms}</span>`;
+    const lapTime = formatTime(laps[i], true);
+    const lapDiff = formatTime(diff, true);
+    el.innerHTML = `<span class="lap-num">랩 ${i + 1}</span><span class="lap-time">${lapTime.main}${lapTime.ms}</span><span class="lap-diff">+${lapDiff.main}${lapDiff.ms}</span>`;
     container.appendChild(el);
   }
 }
@@ -908,8 +1005,11 @@ document.addEventListener('keydown', e => {
   if (e.defaultPrevented || e.repeat || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
   const target = e.target instanceof Element ? e.target : null;
   if (document.querySelector('dialog[open]') || target?.closest('input, textarea, select, button, a, [contenteditable], [role="button"], [role="tab"]')) return;
-  if (e.code === 'Space') { e.preventDefault(); doStartStop(); }
-  if (e.code === 'KeyR') doReset();
+  if (e.code === 'Space') {
+    e.preventDefault();
+    if (alarmActive) acknowledgeAlarm(); else doStartStop();
+  }
+  if (e.code === 'KeyR') requestReset();
   if (e.code === 'KeyL' && mode === 'stopwatch') doLap();
 });
 
@@ -917,8 +1017,6 @@ document.addEventListener('visibilitychange', reconcileRunningClock);
 window.addEventListener('pageshow', reconcileRunningClock);
 
 updateDisplay();
-
-
 </script>
 <script src="/special-chars/daily-quest/quest-game.js"></script>
 <script src="/special-chars/theme-toggle.js"></script>
