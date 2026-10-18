@@ -11,9 +11,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>🚕 서울 출장 택시비 예상 — 티모집사</title>
-<meta name="description" content="출장 교통비 사전 결재와 정산 참고를 위해 거리, 저속 시간, 심야·시계외 할증과 별도 비용을 반영한 서울 중형택시 예상액을 계산합니다.">
+<meta name="description" content="출장 교통비 사전 결재와 정산 참고를 위해 거리, 저속 시간, 심야 20%·40%·시계외 할증과 별도 비용을 반영한 서울 중형택시 예상액을 계산합니다.">
 <meta property="og:title" content="🚕 서울 출장 택시비 예상 — 티모집사">
-<meta property="og:description" content="출장 사전 결재를 위해 거리·저속 시간·할증을 반영한 서울 택시비를 예상합니다.">
+<meta property="og:description" content="출장 사전 결재를 위해 거리·저속 시간·할증을 반영한 서울 중형택시 요금을 예상합니다.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/taxi-calc/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
@@ -28,76 +28,75 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
 .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
 .body{padding:16px;display:flex;flex-direction:column;gap:14px}
-.section-title{font-size:12px;color:var(--text-info);font-weight:700;letter-spacing:.5px;margin-bottom:2px}
+.section-title{font-size:13px;color:var(--text-info);font-weight:700;letter-spacing:.5px;margin-bottom:2px}
 .input-group{display:flex;flex-direction:column;gap:4px}
-.input-group label{font-size:12px;color:var(--text-info);font-weight:600}
+.input-group label,.group-label{font-size:13px;color:var(--text-info);font-weight:600}
 .input-row{display:flex;align-items:center;gap:8px}
-.input-row input,.input-row select{flex:1;padding:10px 12px;background:var(--bg-guide);border:1.5px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:15px;font-family:inherit;font-weight:600;outline:none;transition:border-color .2s}
-.input-row input:focus,.input-row select:focus{border-color:var(--accent)}
-.input-row .unit{font-size:13px;color:var(--text-info);font-weight:600;white-space:nowrap;min-width:28px}
+.input-row input{flex:1;min-width:0;padding:10px 12px;background:var(--bg-guide);border:1.5px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:16px;font-family:inherit;font-weight:600;outline:none;transition:border-color .2s;min-height:44px}
+.input-row input:focus{border-color:var(--accent)}
+.input-row .unit{font-size:14px;color:var(--text-info);font-weight:600;white-space:nowrap;min-width:28px}
 .condition-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .taxi-toggle-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.condition-grid .input-row input{min-width:0}
-.input-help{font-size:12px;color:var(--text-muted);line-height:1.5}
-.estimate-note{padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-bar);font-size:13px;color:var(--text-info);line-height:1.55}
-.tabs{display:inline-flex;gap:4px;background:var(--bg-bar);border-radius:10px;padding:4px}
-.tab{padding:8px 18px;border:none;border-radius:8px;background:transparent;color:var(--text-info);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;text-align:center}
-.tab.active{background:var(--accent);color:var(--text-on-accent);box-shadow:0 2px 8px rgba(83,52,131,.3)}
-.tab:hover:not(.active){background:var(--bg-btn)}
-.toggle-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--bg-guide);border:1px solid var(--border);border-radius:10px;cursor:pointer;user-select:none}
-.toggle-row .toggle-label{font-size:14px;font-weight:600;color:var(--text-secondary)}
-.toggle-row .toggle-sub{font-size:12px;color:var(--text-muted);margin-top:2px;white-space:normal;overflow:visible;text-overflow:clip}
-.toggle-switch{width:44px;height:24px;background:var(--bg-btn);border-radius:12px;position:relative;transition:background .3s;flex-shrink:0}
-.toggle-switch::after{content:'';position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:2px;left:2px;transition:transform .3s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
-.toggle-switch.on{background:var(--accent)}
-.toggle-switch.on::after{transform:translateX(20px)}
+.estimate-note{padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-bar);font-size:13px;color:var(--text-info);line-height:1.6}
+.input-error{padding:10px 12px;border:1px solid var(--status-red-text);border-radius:8px;background:var(--bg-app);color:var(--status-red-text);font-size:13px;line-height:1.6}
+
+.seg{display:flex;gap:4px;background:var(--bg-bar);border-radius:10px;padding:4px}
+.seg-btn{flex:1;min-width:0;padding:8px 4px;border:none;border-radius:8px;background:transparent;color:var(--text-info);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;min-height:44px;line-height:1.25}
+.seg-btn small{display:block;font-size:12px;font-weight:500;opacity:.9}
+.seg-btn[aria-pressed="true"]{background:var(--accent);color:var(--text-on-accent);box-shadow:0 2px 8px rgba(83,52,131,.3)}
+.seg-btn:hover:not([aria-pressed="true"]){background:var(--bg-btn)}
+
+.toggle-row{display:flex;justify-content:space-between;align-items:center;gap:6px;width:100%;padding:10px 12px;font-size:14px;background:var(--bg-guide);border:1px solid var(--border);border-radius:10px;cursor:pointer;user-select:none;font-family:inherit;color:inherit;text-align:left;min-height:44px}
+.toggle-row .toggle-text{flex:1;min-width:0}
+.toggle-row .toggle-label{display:block;font-size:14px;font-weight:600;color:var(--text-secondary)}
+.toggle-row .toggle-sub{display:block;font-size:12px;color:var(--text-muted);margin-top:2px}
+.toggle-switch{width:40px;height:22px;background:var(--bg-btn);border:1px solid var(--border);border-radius:12px;position:relative;transition:background .3s;flex-shrink:0}
+.toggle-switch::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:1px;left:1px;transition:transform .3s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.toggle-row[aria-pressed="true"]{border-color:var(--accent)}
+.toggle-row[aria-pressed="true"] .toggle-switch{background:var(--accent);border-color:var(--accent)}
+.toggle-row[aria-pressed="true"] .toggle-switch::after{transform:translateX(18px)}
+
 .summary{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.summary-card{background:var(--accent-bg);border:1.5px solid var(--accent);border-radius:10px;padding:14px 10px;text-align:center}
+.summary-card{background:var(--accent-bg);border:1.5px solid var(--accent);border-radius:10px;padding:14px 10px;text-align:center;min-width:0}
 .summary-card.highlight{background:var(--accent);border-color:var(--accent);grid-column:1/-1}
-.summary-card.highlight .s-value{color:var(--text-on-accent)}
-.summary-card.highlight .s-label{color:rgba(255,255,255,.95)}
-.summary-card.highlight .s-sub{color:rgba(255,255,255,.7)}
-.s-label{font-size:11px;color:var(--text-info);margin-bottom:4px}
-.s-value{font-size:22px;font-weight:800;color:var(--accent-text)}
-.s-sub{font-size:11px;color:var(--text-info);margin-top:2px}
+.summary-card.highlight .s-value,.summary-card.highlight .s-label,.summary-card.highlight .s-sub{color:var(--text-on-accent)}
+.s-label{font-size:12px;color:var(--text-info);margin-bottom:4px}
+.s-value{font-size:22px;font-weight:800;color:var(--accent-text);overflow-wrap:anywhere}
+.s-sub{font-size:12px;color:var(--text-info);margin-top:2px}
 .detail-box{background:var(--bg-guide);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.detail-box:empty{display:none}
 .detail-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:6px 0;border-bottom:1px solid var(--border);font-size:14px}
 .detail-row:last-child{border-bottom:none}
 .detail-label{color:var(--text-info)}
-.detail-value{font-weight:700;color:var(--text-primary);font-variant-numeric:tabular-nums}
-.copy-btn{width:100%;padding:11px;background:var(--bg-header);color:var(--text-on-accent);border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .2s}
+.detail-value{font-weight:700;color:var(--text-primary);font-variant-numeric:tabular-nums;text-align:right}
+.formula-line{font-size:13px;color:var(--text-secondary);line-height:1.6;padding:10px 12px;border:1px dashed var(--border);border-radius:8px;overflow-wrap:anywhere}
+.formula-line:empty{display:none}
+.copy-btn{width:100%;padding:11px;background:var(--bg-header);color:var(--text-on-accent);border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .2s;min-height:44px}
 .copy-btn:hover{opacity:.85}
-.copy-btn:active{transform:scale(.98)}
-.action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .export-btn{background:var(--bg-btn);color:var(--text-primary);border:1px solid var(--border)}
-
-.report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:10px}
-.report-box h2 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
-.report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
-.report-box strong {color:var(--text-primary);font-weight:600}
 
 .related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:0 12px 12px}
 .related-tools h2 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
 .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:14px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
-.rate-info-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px;table-layout:fixed}
-.rate-info-source{margin-top:8px;font-size:12px;color:var(--text-muted)}
 .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
-
-@keyframes fadeIn {
-  from { opacity:0; transform:translateY(10px) }
-  to { opacity:1; transform:translateY(0) }
-}
+.rate-info-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px;table-layout:fixed}
+.rate-info-table th,.rate-info-table td{padding:6px;border:1px solid var(--border)}
+.rate-info-table th{background:var(--bg-btn)}
+.rate-info-table td:last-child{text-align:center}
+.rate-info-source{margin-top:8px;font-size:12px;color:var(--text-muted)}
 
 .guide-section{margin:0 12px 12px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.guide-section summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
+.guide-section summary{padding:10px 14px;cursor:pointer;font-size:14px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
 .guide-section summary:hover{background:var(--bg-guide-hover)}
 .guide-section[open] summary{background:var(--bg-btn);border-bottom:1px solid var(--border)}
-.guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
-.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.guide-content{padding:12px 14px;font-size:14px;color:var(--text-info);line-height:1.8}
+.guide-content p{margin-bottom:10px}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:12px;color:var(--text-info)}
 .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
 .footer a:hover{color:var(--text-secondary)}
-.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.4);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.4);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 @media(max-width:420px){
   .condition-grid,.taxi-toggle-grid{grid-template-columns:minmax(0,1fr)}
@@ -113,113 +112,99 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <h1>🚕 서울 출장 택시비 예상</h1>
   </div>
   <div class="body">
-    <!-- 공식 확인된 요율 프리셋 -->
+    <div class="estimate-note"><strong>서울 중형택시 기준</strong> · 요율 2023-02-01 시행, 2026-09-28 확인<br>서울시가 공개한 중형택시 요율만 사용합니다. 다른 지역·모범·대형택시 요율은 추정하지 않습니다.</div>
+
     <div class="input-group">
-      <label>요율 프리셋</label>
+      <label for="distance">예상 이동 거리 (편도)</label>
       <div class="input-row">
-        <select aria-label="택시 요금 지역" id="region" onchange="calc()"></select>
-      </div>
-    </div>
-    <div class="estimate-note"><strong>지원 범위: 서울 중형택시</strong><br>공식 요율과 병산 방식을 확인한 프리셋만 제공합니다. 지역별·차종별 요율을 검증 없이 추정하지 않습니다.</div>
-    <!-- 거리 -->
-    <div class="input-group">
-      <label>예상 이동 거리</label>
-      <div class="input-row">
-        <input aria-label="이동 거리" type="number" id="distance" value="10" min="0.1" max="1000" step="0.5" oninput="calc()">
+        <input type="number" id="distance" value="10" min="0.1" max="1000" step="0.1" inputmode="decimal" oninput="calc()">
         <span class="unit">km</span>
       </div>
     </div>
-    <div class="taxi-toggle-grid">
-      <!-- 심야할증 -->
-      <div class="toggle-row" onclick="toggleNight()" style="padding: 10px 12px; gap: 6px;">
-        <div style="flex:1; min-width:0;">
-          <div class="toggle-label">🌙 심야 최대 할증</div>
-          <div class="toggle-sub" id="nightInfo">적용 시 할증 반영</div>
-        </div>
-        <div class="toggle-switch" id="nightToggle" style="transform: scale(0.9); margin-right: -4px;"></div>
-      </div>
-      <!-- 왕복 -->
-      <div class="toggle-row" onclick="toggleRound()" style="padding: 10px 12px; gap: 6px;">
-        <div style="flex:1; min-width:0;">
-          <div class="toggle-label">🔄 왕복 계산</div>
-          <div class="toggle-sub">편도 요금 × 2</div>
-        </div>
-        <div class="toggle-switch" id="roundToggle" style="transform: scale(0.9); margin-right: -4px;"></div>
+
+    <div class="input-group">
+      <span class="group-label" id="nightLabel">🌙 심야 할증 (탑승 시간대)</span>
+      <div class="seg" role="group" aria-labelledby="nightLabel">
+        <button type="button" class="seg-btn" data-night="0" aria-pressed="true" onclick="setNight(0)">없음<small>04~22시</small></button>
+        <button type="button" class="seg-btn" data-night="20" aria-pressed="false" onclick="setNight(20)">20%<small>22~23·02~04시</small></button>
+        <button type="button" class="seg-btn" data-night="40" aria-pressed="false" onclick="setNight(40)">40%<small>23~02시</small></button>
       </div>
     </div>
+
+    <div class="taxi-toggle-grid">
+      <button type="button" class="toggle-row" id="outCityToggle" aria-pressed="false" onclick="toggleOutCity()">
+        <span class="toggle-text"><span class="toggle-label">🛣️ 시계외 할증 20%</span><span class="toggle-sub">서울 사업구역 밖 운행</span></span>
+        <span class="toggle-switch" aria-hidden="true"></span>
+      </button>
+      <button type="button" class="toggle-row" id="roundToggle" aria-pressed="false" onclick="toggleRound()">
+        <span class="toggle-text"><span class="toggle-label">🔄 왕복 계산</span><span class="toggle-sub">편도 입력 × 2</span></span>
+        <span class="toggle-switch" aria-hidden="true"></span>
+      </button>
+    </div>
+
     <div class="section-title">운행 조건 · 별도 비용 (편도 기준)</div>
     <div class="condition-grid">
       <div class="input-group">
-        <label for="lowSpeedMinutes">총 저속·정차 예상 시간</label>
+        <label for="lowSpeedMinutes">저속·정차 예상 시간</label>
         <div class="input-row">
-          <input type="number" id="lowSpeedMinutes" value="0" min="0" max="1440" step="1" oninput="calc()">
+          <input type="number" id="lowSpeedMinutes" value="0" min="0" max="1440" step="1" inputmode="numeric" oninput="calc()">
           <span class="unit">분</span>
         </div>
       </div>
       <div class="input-group">
-        <label for="outSurcharge">시계외 할증률</label>
+        <label for="people">분담 인원</label>
         <div class="input-row">
-          <input type="number" id="outSurcharge" value="0" min="0" max="20" step="1" oninput="calc()">
-          <span class="unit">%</span>
+          <input type="number" id="people" value="1" min="1" max="10" step="1" inputmode="numeric" oninput="calc()">
+          <span class="unit">명</span>
         </div>
       </div>
       <div class="input-group">
         <label for="tollFee">통행료</label>
         <div class="input-row">
-          <input type="number" id="tollFee" value="0" min="0" max="10000000" step="100" oninput="calc()">
+          <input type="text" id="tollFee" value="0" inputmode="numeric" autocomplete="off" data-group oninput="calc()">
           <span class="unit">원</span>
         </div>
       </div>
       <div class="input-group">
         <label for="callFee">호출료</label>
         <div class="input-row">
-          <input type="number" id="callFee" value="0" min="0" max="10000000" step="100" oninput="calc()">
+          <input type="text" id="callFee" value="0" inputmode="numeric" autocomplete="off" data-group oninput="calc()">
           <span class="unit">원</span>
         </div>
       </div>
       <div class="input-group" style="grid-column:1/-1">
         <label for="additionalFee">기타 추가비용</label>
         <div class="input-row">
-          <input type="number" id="additionalFee" value="0" min="0" max="10000000" step="100" oninput="calc()">
+          <input type="text" id="additionalFee" value="0" inputmode="numeric" autocomplete="off" data-group oninput="calc()">
           <span class="unit">원</span>
         </div>
       </div>
     </div>
-    <div class="estimate-note">서울 중형택시의 부분 동시병산 방식을 단순화해 총 이동거리와 기준속도(15.72km/h) 미만 저속·정차 시간을 함께 봅니다. 기본거리 1.6km에 해당하는 기본시간 약 6.1분을 넘는 저속 시간부터 시간요금으로 추정합니다. 심야 옵션은 23:00~02:00 최대 요율을 전체 운행에 적용하고, 시계외 할증은 서울 기준 최대 20% 범위에서 직접 입력합니다. 통행료·호출료·기타 비용은 할증 대상에서 제외합니다.</div>
-    <div class="estimate-note" id="inputError" role="status" hidden>거리·시간·할증·비용·인원수를 표시된 범위에 맞게 입력하세요.</div>
-    <!-- 인원수 -->
-    <div class="input-group">
-      <label>인원수 (N빵)</label>
-      <div class="input-row">
-        <input aria-label="탑승 인원" type="number" id="people" value="1" min="1" max="10" step="1" oninput="calc()">
-        <span class="unit">명</span>
-      </div>
-    </div>
+    <div class="estimate-note">요금 모델: 기본요금(1.6km) + 131m당 거리요금 + 시속 15.72km 미만 저속·정차 시간의 30초당 시간요금을 더합니다. 서울 중형택시는 저속 구간에서 거리요금과 시간요금이 함께 오르는 ‘부분 동시병산’ 방식이라 두 요금을 모두 합산하고, 기본요금 구간(1.6km, 기준속도로 약 6.1분)에 해당하는 저속 시간은 빼고 셉니다. 통행료·호출료·기타 비용은 할증 대상에서 제외합니다.</div>
+    <div class="input-error" id="inputError" role="alert" hidden></div>
 
-    <!-- 결과 -->
     <div class="summary" id="summary" role="status" aria-live="polite" aria-atomic="true"></div>
-    <div class="detail-box" id="detailBox" style="margin-top:14px"></div>
-    <div id="grandTotalBox" style="margin-top:14px"></div>
-
-    <div class="report-box" id="analysisReport" style="display:none;"></div>
+    <div class="detail-box" id="detailBox"></div>
+    <div id="grandTotalBox"></div>
+    <div class="formula-line" id="formulaLine"></div>
 
     <div class="action-row">
-      <button class="copy-btn" onclick="copyResult()">📋 상세 결과 복사</button>
-      <button class="copy-btn export-btn" onclick="exportResult()">⬇️ CSV 내보내기</button>
+      <button type="button" class="copy-btn" onclick="copyResult()">📋 상세 결과 복사</button>
+      <button type="button" class="copy-btn export-btn" onclick="exportResult()">⬇️ CSV 내보내기</button>
     </div>
   </div>
 
   <details class="guide-section" open>
-    <summary>💡 택시 이용 및 요금 절약 Q&A</summary>
+    <summary>💡 출장 택시비 예상 Q&A</summary>
     <div class="guide-content">
-      <strong>Q. 시외 할증은 언제부터 붙나요?</strong>
-      <p>서울 중형택시는 사업 구역 밖 운행에 20% 할증이 적용될 수 있습니다. 실제 적용 여부를 확인한 뒤 <strong>시계외 할증률</strong>에 0~20%를 입력하세요. 심야 최대 40%와 시계외 20%를 함께 적용하면 단순 합산 최대 60%로 추정합니다.</p>
-      <br>
-      <strong>Q. 차가 막히면 택시 요금이 왜 더 빨리 오르나요?</strong>
-      <p>서울 중형택시는 15.72km/h 미만 구간에서 거리와 시간을 부분 동시병산합니다. 이 도구는 기본거리와 제한속도로 환산한 기본시간 약 6.1분을 총 저속·정차 시간에서 먼저 제외하고, 남은 시간을 30초 단위로 거리요금에 더합니다. 실제 미터기는 저속 구간의 순서와 주행 펄스를 사용하므로 총 거리·시간만으로 완전히 재현할 수 없습니다.</p>
-      <br>
-      <strong>Q. 카카오 T 등 호출 수수료는 택시비와 별개인가요?</strong>
-      <p>대개 미터기 운임과 별도로 표시됩니다. 앱이나 호출 화면에서 확인한 금액을 <strong>호출료</strong>에 입력하면 총 예상액에 합산할 수 있습니다.</p>
+      <p><strong>Q. 심야 할증은 20%와 40% 중 무엇을 골라야 하나요?</strong></p>
+      <p>서울 중형택시는 22~23시와 02~04시에 20%, 23~02시에 40%가 적용됩니다. 탑승 시간대에 맞는 값을 고르고, 두 시간대에 걸치는 이동이라면 결재용 예산은 높은 쪽(40%)으로 잡는 것이 안전합니다.</p>
+      <p><strong>Q. 시계외 할증은 언제 붙나요?</strong></p>
+      <p>서울 사업구역 밖으로 나가는 운행에는 20%가 붙습니다. 심야 할증과 겹치면 서울시 안내 기준 최대 60%(40% + 20%)까지 올라가며, 이 도구는 주간 미터 요금에 합산 할증률을 곱해 추정합니다.</p>
+      <p><strong>Q. 차가 막히면 택시 요금이 왜 더 빨리 오르나요?</strong></p>
+      <p>서울 중형택시는 시속 15.72km 미만으로 달리거나 멈춰 있을 때 30초마다 100원의 시간요금이 거리요금에 더해집니다(부분 동시병산). 모범·대형택시는 저속일 때 시간요금만, 그 이상에서는 거리요금만 받는 상호병산 방식이라 계산이 다릅니다. 이 도구는 총 거리와 총 저속 시간만으로 추정하므로 실제 미터기의 주행 순서까지는 재현하지 못합니다.</p>
+      <p><strong>Q. 호출 앱 이용료는 택시비와 별개인가요?</strong></p>
+      <p>대개 미터 운임과 별도로 표시됩니다. 호출 화면에서 확인한 금액을 <strong>호출료</strong>에 넣으면 총 예상액에 합산되고, 할증은 적용되지 않습니다.</p>
     </div>
   </details>
 
@@ -228,34 +213,23 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <div class="guide-content" id="rateInfo"></div>
   </details>
 
-  <details class="guide-section">
-    <summary>📖 택시비 요금 구조 기초 안내</summary>
-    <div class="guide-content">
-      <p><b>• 요금 산정 방식:</b> 기본요금(기본거리) + 추가거리요금 + 시간추가요금(서행/정차 시)</p>
-      <p><b>• 심야 할증 구간:</b> 서울 중형택시는 22:00~23:00 및 02:00~04:00에 20%, 23:00~02:00에 40%가 적용됩니다. 이 도구의 심야 옵션은 보수적인 최대 예상액을 위해 전체 운행에 40%를 적용합니다.</p>
-      <p><b>• 시계외 할증:</b> 서울 사업 구역 밖 운행은 20%가 적용될 수 있습니다. 실제 적용 여부를 확인한 뒤 0~20%를 직접 입력할 수 있습니다.</p>
-      <p><b>• 별도 비용:</b> 통행료·호출료·기타 비용은 편도 기준으로 입력하며, 왕복 계산 시 2배로 반영됩니다.</p>
-      <p><b>• 공지:</b> 본 결과는 서울시 공개 요율과 사용자가 입력한 저속 시간을 단순화해 계산한 참고용 예상액입니다. 실제 미터기는 운행 경로, 저속 판정, 심야 구간별 주행 비중, 호출 상품과 반올림 방식에 따라 달라질 수 있습니다.</p>
-    </div>
-  </details>
-
   <div class="related-tools">
-    <h2>🔗 맞춤형 교통/생활 계산기</h2>
+    <h2>🔗 연관 출장·생활 계산기</h2>
     <div class="tool-list">
-      <a href="/special-chars/fuel-calc/"><span>⛽ 유류비 계산기</span><span>바로가기 →</span></a>
-      <a href="/special-chars/broker-fee-calc/"><span>🏠 부동산 중개보수 계산기</span><span>바로가기 →</span></a>
-      <a href="/special-chars/sub-calc/"><span>💸 구독료 계산기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/fuel-calc/"><span>⛽ 출장 유류비 계산기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/broker-fee-calc/"><span>🏠 부동산 실무 중개보수 상한 계산</span><span>바로가기 →</span></a>
+      <a href="/special-chars/sub-calc/"><span>💳 업무용 구독·SaaS 비용</span><span>바로가기 →</span></a>
     </div>
   </div>
 
   <section class="work-context" aria-labelledby="taxiWorkTitle">
     <h2 id="taxiWorkTitle">출장 교통비의 사전 예상액 만들기</h2>
-    <p><strong>업무 예시:</strong> 외근·야간 출장 전 결재 문서에 참고할 서울 중형택시 예상액을 거리와 정체 시간을 나눠 계산합니다. 심야와 시계외 할증, 통행료 같은 별도 비용을 구분해 입력하면 어떤 조건이 금액을 바꿨는지 설명하기 쉽습니다.</p>
+    <p><strong>업무 예시:</strong> 외근·야간 출장 전 결재 문서에 참고할 서울 중형택시 예상액을 거리와 정체 시간을 나눠 계산합니다. 심야와 시계외 할증, 통행료 같은 별도 비용을 구분해 입력하면 어떤 조건이 금액을 바꿨는지 설명하기 쉽습니다. 복사·CSV 결과에는 요율 시행일과 확인일이 함께 들어갑니다.</p>
     <p><strong>적용 범위:</strong> 실제 미터기는 주행 중 거리와 저속 시간을 순차적으로 반영하며 호출료, 경로, 교통 상황과 사업자별 서비스에 따라 달라집니다. 이 결과는 영수증을 대신하지 않으며 비용 정산에는 실제 탑승 영수증과 회사 규정을 우선하세요.</p>
-    <p><strong>데이터 처리:</strong> 입력값과 예상액은 서버에 저장하지 않고 브라우저에서 계산합니다. 요율 기준일이 바뀔 수 있으므로 페이지의 적용 기준과 서울시 공식 안내를 확인하고 오래된 결재 양식의 고정 금액을 그대로 재사용하지 마세요.</p>
+    <p><strong>데이터 처리:</strong> 입력값과 예상액은 서버에 저장하지 않고 브라우저에서 계산합니다. 요율은 바뀔 수 있으므로 페이지의 확인일과 서울시 공식 안내를 비교하고, 오래된 결재 양식의 고정 금액을 그대로 재사용하지 마세요.</p>
   </section>
   </main>
-<footer class="footer"><span>서울 중형택시 공식 요율 기반 · 참고용 예상 계산</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
+<footer class="footer"><span>서울 중형택시 요율 2023-02-01 시행 · 2026-09-28 확인</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
 <nav class="site-policy-links" aria-label="사이트 정책"><a href="/about.html">사이트 소개</a><a href="/editorial-policy.html">편집정책</a><a href="/contact.html">문의</a><a href="/privacy.html">개인정보처리방침</a></nav>
 </div>
 
@@ -263,293 +237,297 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 
 <script>
-// === 서울시 공식 중형택시 요율 (2023-02-01 04시 시행, 페이지 수정일 2026-04-03 확인) ===
-const REGIONS = {
-  '서울': {
-    mid: {
-      base: 4800, baseDist: 1600, distPer: 131, distFee: 100, timePer: 30, timeFee: 100,
-      peakBase: 6700, peakDistFee: 140, peakTimeFee: 140
-    },
-    night: { start: 22, end: 4, rate: 0.2, peakRate: 0.4, peakStart: 23, peakEnd: 2 },
-    thresholdKmh: 15.72,
-    sourceUrl: 'https://news.seoul.go.kr/traffic/archives/1659?listPage=1',
-    sourceLabel: '서울특별시 서울 택시요금 (2023-02-01 04시 시행 · 페이지 수정 2026-04-03)'
-  }
+// === 서울특별시 중형택시 요율 (2023-02-01 04시 시행, 2026-09-28 서울시 페이지로 재확인) ===
+const SEOUL_MID = {
+  base: 4800, baseDist: 1600, distPer: 131, distFee: 100, timePer: 30, timeFee: 100,
+  night: {
+    20: { base: 5800, distFee: 120, timeFee: 120, hours: '22~23시·02~04시' },
+    40: { base: 6700, distFee: 140, timeFee: 140, hours: '23~02시' }
+  },
+  outCityRate: 0.2,
+  thresholdKmh: 15.72,
+  effectiveFrom: '2023-02-01',
+  checkedAt: '2026-09-28',
+  sourceUrl: 'https://news.seoul.go.kr/traffic/archives/1659',
+  sourceLabel: '서울특별시 서울 택시요금 안내'
 };
+const RATE_BASIS = `서울 중형택시 요율 ${SEOUL_MID.effectiveFrom} 시행, ${SEOUL_MID.checkedAt} 확인 (${SEOUL_MID.sourceLabel})`;
 
-let isNight = false;
+let nightLevel = 0; // 0, 20, 40
+let isOutCity = false;
 let isRound = false;
 
-// 드롭다운 채우기
-const regionSel = document.getElementById('region');
-for (const r of Object.keys(REGIONS)) {
-  const o = document.createElement('option');
-  o.value = r; o.textContent = r;
-  regionSel.appendChild(o);
+function setNight(level) {
+  if (![0, 20, 40].includes(level)) return;
+  nightLevel = level;
+  document.querySelectorAll('.seg-btn[data-night]').forEach(btn => btn.setAttribute('aria-pressed', String(Number(btn.dataset.night) === level)));
+  calc();
 }
-
-function toggleNight() {
-  isNight = !isNight;
-  document.getElementById('nightToggle').classList.toggle('on', isNight);
+function toggleOutCity() {
+  isOutCity = !isOutCity;
+  document.getElementById('outCityToggle').setAttribute('aria-pressed', String(isOutCity));
   calc();
 }
 function toggleRound() {
   isRound = !isRound;
-  document.getElementById('roundToggle').classList.toggle('on', isRound);
+  document.getElementById('roundToggle').setAttribute('aria-pressed', String(isRound));
   calc();
 }
 
-function fmt(n) { return Math.round(n).toLocaleString('ko-KR'); }
+// ---- 숫자 입력·표시 ----
+function groupDigits(text) {
+  return text.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
 
-function readBounded(id, min, max, options = {}) {
+function applyGrouping(input) {
+  const raw = input.value;
+  const plain = raw.replace(/,/g, '');
+  if (!/^\d*$/.test(plain)) return;
+  const caret = input.selectionStart ?? raw.length;
+  const keep = raw.slice(0, caret).replace(/,/g, '').length;
+  const next = groupDigits(plain);
+  if (next === raw) return;
+  input.value = next;
+  if (document.activeElement === input) {
+    let seen = 0;
+    let pos = 0;
+    while (pos < next.length && seen < keep) {
+      if (next[pos] !== ',') seen += 1;
+      pos += 1;
+    }
+    try { input.setSelectionRange(pos, pos); } catch (error) { /* 무시 */ }
+  }
+}
+
+document.addEventListener('input', event => {
+  if (event.target.matches && event.target.matches('input[data-group]')) applyGrouping(event.target);
+}, true);
+
+function comma(n) { return Math.round(n).toLocaleString('ko-KR'); }
+
+// 페이지 공통 금액 형식 (택시비는 1억 미만이므로 "11,200원" 형식)
+function formatWon(n) { return comma(n) + '원'; }
+
+function readBounded(id, min, max, label, errors, options = {}) {
   const element = document.getElementById(id);
-  const raw = element.value.trim();
+  const raw = element.value.replace(/,/g, '').trim();
   if (options.optional && raw === '') {
     element.removeAttribute('aria-invalid');
     return 0;
   }
   const value = Number(raw);
-  const valid = Number.isFinite(value) && value >= min && value <= max && (!options.integer || Number.isInteger(value));
+  const valid = raw !== '' && /^\d*\.?\d+$/.test(raw) && Number.isFinite(value) && value >= min && value <= max && (!options.integer || Number.isInteger(value));
   if (valid) element.removeAttribute('aria-invalid');
-  else element.setAttribute('aria-invalid', 'true');
+  else {
+    element.setAttribute('aria-invalid', 'true');
+    errors.push(`${label}: ${min.toLocaleString('ko-KR')}~${max.toLocaleString('ko-KR')}${options.unit || ''} 범위${options.integer ? '의 정수' : ''}로 입력하세요.`);
+  }
   return valid ? value : null;
 }
 
-function clearTaxiResult() {
-  document.getElementById('summary').innerHTML = '';
-  document.getElementById('detailBox').innerHTML = '';
-  document.getElementById('grandTotalBox').innerHTML = '';
-  const report = document.getElementById('analysisReport');
-  report.innerHTML = '';
-  report.style.display = 'none';
-  document.getElementById('inputError').hidden = false;
-}
+let lastErrors = [];
 
 function calcFare() {
-  const region = REGIONS[regionSel.value];
-  const distKm = readBounded('distance', 0.1, 1000);
-  const lowSpeedMinutes = readBounded('lowSpeedMinutes', 0, 1440, { optional: true });
-  const outRatePercent = readBounded('outSurcharge', 0, 20, { optional: true });
-  const tollFeeOne = readBounded('tollFee', 0, 10000000, { optional: true });
-  const callFeeOne = readBounded('callFee', 0, 10000000, { optional: true });
-  const additionalFeeOne = readBounded('additionalFee', 0, 10000000, { optional: true });
-  const people = readBounded('people', 1, 10, { integer: true });
-  if (!region || [distKm, lowSpeedMinutes, outRatePercent, tollFeeOne, callFeeOne, additionalFeeOne, people].some(value => value === null)) {
-    return null;
-  }
-  const dist = distKm * 1000;
-  const data = region.mid;
-  const nightData = region.night;
+  const errors = [];
+  const distKm = readBounded('distance', 0.1, 1000, '이동 거리', errors, { unit: 'km' });
+  const lowSpeedMinutes = readBounded('lowSpeedMinutes', 0, 1440, '저속·정차 시간', errors, { optional: true, unit: '분' });
+  const tollFeeOne = readBounded('tollFee', 0, 10000000, '통행료', errors, { optional: true, integer: true, unit: '원' });
+  const callFeeOne = readBounded('callFee', 0, 10000000, '호출료', errors, { optional: true, integer: true, unit: '원' });
+  const additionalFeeOne = readBounded('additionalFee', 0, 10000000, '기타 추가비용', errors, { optional: true, integer: true, unit: '원' });
+  const people = readBounded('people', 1, 10, '분담 인원', errors, { integer: true, unit: '명' });
+  lastErrors = errors;
+  if (errors.length) return null;
 
-  const extraDist = Math.max(0, dist - data.baseDist);
-  const distanceTicks = Math.floor(extraDist / data.distPer);
-  const distExtraOne = distanceTicks * data.distFee;
-  const baseTimeSeconds = data.baseDist / (region.thresholdKmh / 3.6);
+  const data = SEOUL_MID;
+  const dist = distKm * 1000;
+  // 거리요금: 기본거리 1.6km 이후 완성된 131m 단위
+  const distanceTicks = Math.floor(Math.max(0, dist - data.baseDist) / data.distPer);
+  // 시간요금: 기본거리를 기준속도로 달리는 시간(약 6.1분)을 뺀 저속·정차 시간의 완성된 30초 단위
+  const baseTimeSeconds = data.baseDist / (data.thresholdKmh / 3.6);
   const chargeableTimeSeconds = Math.max(0, lowSpeedMinutes * 60 - baseTimeSeconds);
   const timeTicks = Math.floor(chargeableTimeSeconds / data.timePer);
-  const timeExtraOne = timeTicks * data.timeFee;
-  const dayMeterOne = data.base + distExtraOne + timeExtraOne;
+  const dayMeterOne = data.base + distanceTicks * data.distFee + timeTicks * data.timeFee;
 
-  let appliedNightRate = 0;
-  if (isNight) {
-    appliedNightRate = nightData.peakRate;
-  }
-  const nightMeterOne = isNight
-    ? data.peakBase + (distanceTicks * data.peakDistFee) + (timeTicks * data.peakTimeFee)
-    : dayMeterOne;
-  const nightSurchargeOne = nightMeterOne - dayMeterOne;
-  const combinedRate = appliedNightRate + (outRatePercent / 100);
-  const combinedMeterOne = isNight && outRatePercent === 0
-    ? nightMeterOne
-    : dayMeterOne * (1 + combinedRate);
-  const outSurchargeOne = Math.max(0, combinedMeterOne - nightMeterOne);
+  const night = data.night[nightLevel];
+  const nightMeterOne = night ? night.base + distanceTicks * night.distFee + timeTicks * night.timeFee : dayMeterOne;
+  // 시계외 할증이 겹치면 서울시 안내의 합산 할증률(최대 60%)을 주간 미터 요금에 적용
+  const combinedRate = nightLevel / 100 + (isOutCity ? data.outCityRate : 0);
+  const combinedMeterOne = isOutCity ? dayMeterOne * (1 + combinedRate) : nightMeterOne;
   const meterEstimateOne = Math.round(combinedMeterOne / 10) * 10;
+  const multiplier = isRound ? 2 : 1;
   const separateFeesOne = tollFeeOne + callFeeOne + additionalFeeOne;
   const oneway = meterEstimateOne + separateFeesOne;
-  const multiplier = isRound ? 2 : 1;
 
   return {
-    baseFare: data.base,
-    baseDist: data.baseDist,
-    distKm,
-    lowSpeedMinutes,
+    distKm, lowSpeedMinutes, people, multiplier,
+    distanceTicks, timeTicks,
     baseTimeMinutes: baseTimeSeconds / 60,
-    chargeableTimeMinutes: chargeableTimeSeconds / 60,
-    outRatePercent,
-    baseFareTotal: data.base * multiplier,
-    distExtra: distExtraOne * multiplier,
-    timeExtra: timeExtraOne * multiplier,
-    nightSurcharge: nightSurchargeOne * multiplier,
-    outSurcharge: outSurchargeOne * multiplier,
-    tollFee: tollFeeOne * multiplier,
-    callFee: callFeeOne * multiplier,
-    additionalFee: additionalFeeOne * multiplier,
-    nightRate: appliedNightRate,
+    baseFareOne: data.base,
+    distExtraOne: distanceTicks * data.distFee,
+    timeExtraOne: timeTicks * data.timeFee,
+    dayMeterOne,
+    nightSurchargeOne: nightMeterOne - dayMeterOne,
+    outSurchargeOne: isOutCity ? combinedMeterOne - nightMeterOne : 0,
+    combinedRate,
     meterEstimateOne,
-    separateFeesOne,
+    tollFeeOne, callFeeOne, additionalFeeOne, separateFeesOne,
     oneway,
-    total: oneway * multiplier,
-    multiplier,
-    people,
-    distPer: data.distPer,
-    distFee: data.distFee,
-    timePer: data.timePer,
-    timeFee: data.timeFee
+    total: oneway * multiplier
   };
+}
+
+function detailRow(label, value) {
+  const row = document.createElement('div');
+  row.className = 'detail-row';
+  const l = document.createElement('span');
+  l.className = 'detail-label';
+  l.textContent = label;
+  const v = document.createElement('span');
+  v.className = 'detail-value';
+  v.textContent = value;
+  row.append(l, v);
+  return row;
 }
 
 function calc() {
   const result = calcFare();
+  const errorEl = document.getElementById('inputError');
   if (!result) {
-    clearTaxiResult();
-    renderRateInfo();
+    errorEl.hidden = false;
+    errorEl.textContent = lastErrors.join(' ');
+    document.getElementById('summary').innerHTML = '';
+    document.getElementById('detailBox').innerHTML = '';
+    document.getElementById('grandTotalBox').innerHTML = '';
+    document.getElementById('formulaLine').textContent = '';
     return;
   }
-  document.getElementById('inputError').hidden = true;
-  const people = result.people;
-  const perPerson = Math.ceil(result.total / people);
-  const dist = result.distKm;
-  const regionName = regionSel.value;
+  errorEl.hidden = true;
+  errorEl.textContent = '';
+  const m = result.multiplier;
+  const perPerson = Math.ceil(result.total / result.people);
 
-  // 심야 정보
-  const r = REGIONS[regionName];
-  const n = r.night;
-  document.getElementById('nightInfo').textContent =
-    `${n.start}:00~${String(n.end).padStart(2,'0')}:00 (최대 ${Math.round(n.peakRate*100)}%)`;
-
-  const html = `
+  document.getElementById('summary').innerHTML = `
     <div class="summary-card">
       <div class="s-label">편도 미터 운임 추정</div>
-      <div class="s-value">${fmt(result.meterEstimateOne)}</div>
+      <div class="s-value">${comma(result.meterEstimateOne)}</div>
       <div class="s-sub">거리·시간·선택 할증</div>
     </div>
     <div class="summary-card">
       <div class="s-label">편도 별도 비용</div>
-      <div class="s-value">${fmt(result.separateFeesOne)}</div>
+      <div class="s-value">${comma(result.separateFeesOne)}</div>
       <div class="s-sub">통행료·호출료·기타</div>
     </div>`;
-  document.getElementById('summary').innerHTML = html;
 
-  const roundText = result.multiplier === 2 ? ' (편도 입력 × 2)' : '';
-  let detail = `
-    <div class="detail-row"><span class="detail-label">지역</span><span class="detail-value">${regionName}</span></div>
-    <div class="detail-row"><span class="detail-label">차종</span><span class="detail-value">중형택시</span></div>
-    <div class="detail-row"><span class="detail-label">입력 이동 거리${roundText}</span><span class="detail-value">${dist} km${result.multiplier===2?' × 2':''}</span></div>
-    <div class="detail-row"><span class="detail-label">기본요금</span><span class="detail-value">${fmt(result.baseFareTotal)} 원</span></div>
-    <div class="detail-row"><span class="detail-label">거리 추가요금</span><span class="detail-value">${fmt(result.distExtra)} 원</span></div>
-    <div class="detail-row"><span class="detail-label">거리요금 단위</span><span class="detail-value">${result.distPer}m당 ${result.distFee}원</span></div>
-    <div class="detail-row"><span class="detail-label">저속·정차 시간요금 (총 ${result.lowSpeedMinutes}분 - 기본시간 약 ${result.baseTimeMinutes.toFixed(1)}분)</span><span class="detail-value">${fmt(result.timeExtra)} 원</span></div>
-    <div class="detail-row"><span class="detail-label">시간요금 단위</span><span class="detail-value">${result.timePer}초당 ${result.timeFee}원</span></div>`;
-
-  if (isNight) {
-    detail += `<div class="detail-row"><span class="detail-label">🌙 심야할증 (${Math.round(result.nightRate*100)}%)</span><span class="detail-value" style="color:#e67e22">+${fmt(result.nightSurcharge)} 원</span></div>`;
-  }
-  if (result.outRatePercent > 0) {
-    detail += `<div class="detail-row"><span class="detail-label">🛣️ 시계외 할증 (${result.outRatePercent}%)</span><span class="detail-value">+${fmt(result.outSurcharge)} 원</span></div>`;
-  }
-  if (result.tollFee > 0) detail += `<div class="detail-row"><span class="detail-label">통행료</span><span class="detail-value">+${fmt(result.tollFee)} 원</span></div>`;
-  if (result.callFee > 0) detail += `<div class="detail-row"><span class="detail-label">호출료</span><span class="detail-value">+${fmt(result.callFee)} 원</span></div>`;
-  if (result.additionalFee > 0) detail += `<div class="detail-row"><span class="detail-label">기타 추가비용</span><span class="detail-value">+${fmt(result.additionalFee)} 원</span></div>`;
-  if (isRound) {
-    detail += `<div class="detail-row"><span class="detail-label">🔄 왕복</span><span class="detail-value">편도 ${fmt(result.oneway)}원 × 2</span></div>`;
-  }
-
-  document.getElementById('detailBox').innerHTML = detail;
+  const rows = getResultRows(result);
+  document.getElementById('detailBox').replaceChildren(...rows.map(([label, value]) => detailRow(label, value)));
 
   document.getElementById('grandTotalBox').innerHTML = `
-    <div class="summary-card highlight" style="width: 100%; border-radius: 12px; padding: 18px 14px;">
-      <div class="s-label" style="font-size: 13px;">예상 택시비${isRound?' (왕복)':''}</div>
-      <div class="s-value" style="font-size: 26px; margin: 4px 0;">${fmt(result.total)}<span style="font-size:16px;font-weight:600;color:var(--text-on-accent)"> 원</span></div>
-      ${people>1?`<div class="s-sub" style="font-size:13px; margin-top:6px;">1인당 ${fmt(perPerson)}원 (${people}명)</div>`:''}
+    <div class="summary-card highlight" style="border-radius:12px;padding:18px 14px">
+      <div class="s-label">예상 택시비${m === 2 ? ' (왕복)' : ''}</div>
+      <div class="s-value" style="font-size:26px;margin:4px 0">${formatWon(result.total)}</div>
+      ${result.people > 1 ? `<div class="s-sub">1인당 ${formatWon(perPerson)} (${result.people}명, 원 단위 올림)</div>` : `<div class="s-sub">${RATE_BASIS}</div>`}
     </div>`;
 
-  const report = document.getElementById('analysisReport');
-  report.style.display = 'flex';
-  let msg = `<h2>💡 택시비 예상 내역 안내</h2>`;
-  msg += `<p><strong>${regionName} 중형택시</strong> 공식 참고 요율과 입력한 편도 거리 <strong>${dist}km</strong>${result.lowSpeedMinutes>0?`, 저속·정차 <strong>${result.lowSpeedMinutes}분</strong>`:''}을 기준으로 계산했습니다. ${isRound?'왕복 입력값을 2배 적용한 ':''}총 예상액은 <strong>${fmt(result.total)}원</strong>입니다.</p>`;
-  msg += `<p>미터 운임 추정에는 기본·거리·시간 요금${isNight?`과 심야 ${Math.round(result.nightRate*100)}%`:''}${result.outRatePercent>0?`, 시계외 ${result.outRatePercent}%`:''}를 반영했고, 별도 비용 ${fmt(result.separateFeesOne * result.multiplier)}원을 합산했습니다.${people>1?` ${people}명 균등 분담 시 1인당 올림 금액은 <strong>${fmt(perPerson)}원</strong>입니다.`:''}</p>`;
-  msg += `<p>이 값은 실제 호출 견적이나 택시 미터기 확정 요금이 아닙니다. 총 거리와 저속 시간만으로 실제 주행 펄스의 순서를 재현할 수 없고, 운행 경로·심야 구간별 주행 비중·호출 상품에 따라 달라질 수 있습니다.</p>`;
-  report.innerHTML = msg;
+  const day = `${comma(SEOUL_MID.base)} + 거리 ${result.distanceTicks}×${SEOUL_MID.distFee} + 시간 ${result.timeTicks}×${SEOUL_MID.timeFee} = 주간 ${comma(result.dayMeterOne)}원`;
+  const night = SEOUL_MID.night[nightLevel];
+  let meterText;
+  if (isOutCity) meterText = `${day} × (1 + 합산 할증 ${Math.round(result.combinedRate * 100)}%) → ${comma(result.meterEstimateOne)}원`;
+  else if (night) meterText = `심야 ${nightLevel}% 요율 ${comma(night.base)} + 거리 ${result.distanceTicks}×${night.distFee} + 시간 ${result.timeTicks}×${night.timeFee} = ${comma(result.meterEstimateOne)}원`;
+  else meterText = `기본 ${day}`;
+  const tail = (result.separateFeesOne || m === 2)
+    ? ` · 총액 = (편도 미터 ${comma(result.meterEstimateOne)}원${result.separateFeesOne ? ` + 별도 비용 ${comma(result.separateFeesOne)}원` : ''})${m === 2 ? ' × 왕복 2' : ''} = ${formatWon(result.total)}`
+    : '';
+  document.getElementById('formulaLine').textContent = `계산식: ${meterText} (10원 단위 반올림)${tail}`;
+}
 
-  renderRateInfo();
+function getResultRows(result) {
+  const m = result.multiplier;
+  const rows = [
+    ['요율 기준', RATE_BASIS],
+    ['차종', '서울 중형택시'],
+    ['편도 거리', `${result.distKm} km`],
+    ['저속·정차 시간', `${result.lowSpeedMinutes}분 (기본시간 약 ${result.baseTimeMinutes.toFixed(1)}분 제외)`],
+    ['기본요금 (편도)', formatWon(result.baseFareOne)],
+    ['거리 추가요금 (편도)', `${formatWon(result.distExtraOne)} (131m × ${result.distanceTicks})`],
+    ['시간 추가요금 (편도)', `${formatWon(result.timeExtraOne)} (30초 × ${result.timeTicks})`]
+  ];
+  if (nightLevel) rows.push([`심야 할증 ${nightLevel}% (편도)`, `+${formatWon(result.nightSurchargeOne)}`]);
+  if (isOutCity) rows.push([`시계외 할증 20%${nightLevel ? ` (심야 합산 ${Math.round(result.combinedRate * 100)}%)` : ''} (편도)`, `+${formatWon(result.outSurchargeOne)}`]);
+  rows.push(['편도 미터 운임 추정', formatWon(result.meterEstimateOne)]);
+  if (result.tollFeeOne) rows.push(['통행료 (편도)', formatWon(result.tollFeeOne)]);
+  if (result.callFeeOne) rows.push(['호출료 (편도)', formatWon(result.callFeeOne)]);
+  if (result.additionalFeeOne) rows.push(['기타 추가비용 (편도)', formatWon(result.additionalFeeOne)]);
+  rows.push(['계산 구분', m === 2 ? `왕복 (편도 ${formatWon(result.oneway)} × 2)` : '편도']);
+  rows.push(['총 예상액', formatWon(result.total)]);
+  if (result.people > 1) rows.push(['1인당 예상액', `${formatWon(Math.ceil(result.total / result.people))} (${result.people}명, 원 단위 올림)`]);
+  return rows;
 }
 
 function renderRateInfo() {
-  const name = regionSel.value;
-  const r = REGIONS[name];
-  const m = r.mid;
-  const n = r.night;
-
+  const m = SEOUL_MID;
+  const cell = text => `<td>${text}</td>`;
   document.getElementById('rateInfo').innerHTML = `
-    <p><b>${name} 중형택시 공식 참고 요율</b></p>
+    <p><b>서울 중형택시 공식 참고 요율</b> (${m.effectiveFrom} 04시 시행 · ${m.checkedAt} 확인)</p>
     <table class="rate-info-table">
-      <tr style="background:var(--bg-btn)"><th style="padding:6px;border:1px solid var(--border)">구분</th><th style="padding:6px;border:1px solid var(--border)">요율</th></tr>
-      <tr><td style="padding:6px;border:1px solid var(--border)">기본요금</td><td style="padding:6px;border:1px solid var(--border);text-align:center">${fmt(m.base)}원 (${(m.baseDist/1000).toFixed(1)}km)</td></tr>
-      <tr><td style="padding:6px;border:1px solid var(--border)">거리요금</td><td style="padding:6px;border:1px solid var(--border);text-align:center">${m.distPer}m당 ${m.distFee}원</td></tr>
-      <tr><td style="padding:6px;border:1px solid var(--border)">시간요금</td><td style="padding:6px;border:1px solid var(--border);text-align:center">${m.timePer}초당 ${m.timeFee}원 (${r.thresholdKmh}km/h 미만 부분 동시병산)</td></tr>
-      <tr><td style="padding:6px;border:1px solid var(--border)">심야할증</td><td style="padding:6px;border:1px solid var(--border);text-align:center">22~23시·02~04시 20%, 23~02시 40%</td></tr>
-      <tr><td style="padding:6px;border:1px solid var(--border)">시계외 할증</td><td style="padding:6px;border:1px solid var(--border);text-align:center">20% (심야와 중복 시 최대 60%)</td></tr>
+      <tr><th scope="col">구분</th><th scope="col">요율</th></tr>
+      <tr>${cell('기본요금')}${cell(`${comma(m.base)}원 (1.6km까지)`)}</tr>
+      <tr>${cell('거리요금')}${cell(`${m.distPer}m당 ${m.distFee}원`)}</tr>
+      <tr>${cell('시간요금')}${cell(`${m.timePer}초당 ${m.timeFee}원 (${m.thresholdKmh}km/h 미만, 부분 동시병산)`)}</tr>
+      <tr>${cell('심야 20%')}${cell(`${m.night[20].hours}: 기본 ${comma(m.night[20].base)}원, 131m·30초당 ${m.night[20].distFee}원`)}</tr>
+      <tr>${cell('심야 40%')}${cell(`${m.night[40].hours}: 기본 ${comma(m.night[40].base)}원, 131m·30초당 ${m.night[40].distFee}원`)}</tr>
+      <tr>${cell('시계외 할증')}${cell('20% (심야와 중복 시 최대 60%)')}</tr>
     </table>
-    <p class="rate-info-source">* 기준: <a href="${r.sourceUrl}" target="_blank" rel="noopener noreferrer">${r.sourceLabel}</a>. 실제 미터기와 다를 수 있는 참고용 단순 추정입니다.</p>`;
+    <p class="rate-info-source">* 출처: <a href="${m.sourceUrl}" target="_blank" rel="noopener noreferrer">${m.sourceLabel}</a>. 실제 미터기와 다를 수 있는 참고용 단순 추정입니다.</p>`;
+}
+
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+  return new Promise((resolve, reject) => {
+    const helper = document.createElement('textarea');
+    helper.value = text;
+    helper.setAttribute('readonly', '');
+    helper.style.position = 'fixed';
+    helper.style.opacity = '0';
+    document.body.appendChild(helper);
+    helper.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (error) { ok = false; }
+    helper.remove();
+    if (ok) resolve(); else reject(new Error('copy failed'));
+  });
 }
 
 function copyResult() {
   const result = calcFare();
-  if (!result) { showToast('입력값을 확인해 주세요'); return; }
-  const people = result.people;
-  const rows = getResultRows(result, people);
+  if (!result) { showToast(lastErrors[0] || '입력값을 확인해 주세요'); return; }
   const lines = ['🚕 택시비 참고용 예상 내역', '━━━━━━━━━━━━━━━']
-    .concat(rows.map(([label, value]) => `${label}: ${value}`))
-    .concat(['※ 실제 미터기 확정 요금이 아니며 운행 조건과 지역별 세부 기준에 따라 달라질 수 있습니다.']);
-  navigator.clipboard.writeText(lines.join('\n'))
-    .then(()=>showToast('📋 상세 결과가 복사되었습니다'))
-    .catch(()=>showToast('복사 권한을 확인해 주세요'));
-}
-
-function getResultRows(result, people) {
-  const rows = [
-    ['지역', regionSel.value],
-    ['차종', '중형'],
-    ['편도 거리', `${result.distKm} km`],
-    ['총 저속·정차 시간', `${result.lowSpeedMinutes}분 (기본시간 약 ${result.baseTimeMinutes.toFixed(1)}분 제외 후 추정)`],
-    ['기본요금', `${fmt(result.baseFareTotal)}원`],
-    ['거리 추가요금', `${fmt(result.distExtra)}원`],
-    ['시간 추가요금', `${fmt(result.timeExtra)}원`]
-  ];
-  if (isNight) rows.push(['심야 할증', `${Math.round(result.nightRate*100)}% / ${fmt(result.nightSurcharge)}원`]);
-  if (result.outRatePercent > 0) rows.push(['시계외 할증', `${result.outRatePercent}% / ${fmt(result.outSurcharge)}원`]);
-  rows.push(
-    ['통행료', `${fmt(result.tollFee)}원`],
-    ['호출료', `${fmt(result.callFee)}원`],
-    ['기타 추가비용', `${fmt(result.additionalFee)}원`],
-    ['계산 구분', isRound ? '왕복 (편도 입력 × 2)' : '편도'],
-    ['총 예상액', `${fmt(result.total)}원`]
-  );
-  if (people > 1) rows.push(['1인당 예상액', `${fmt(Math.ceil(result.total/people))}원 (${people}명, 원 단위 올림)`]);
-  return rows;
+    .concat(getResultRows(result).map(([label, value]) => `${label}: ${value}`))
+    .concat(['※ 실제 미터기 확정 요금이 아니며 경로·저속 구간 순서·호출 상품에 따라 달라질 수 있습니다.']);
+  copyText(lines.join('\n'))
+    .then(() => showToast('📋 상세 결과가 복사되었습니다'))
+    .catch(() => showToast('복사하지 못했습니다. 결과를 직접 선택해 복사하세요'));
 }
 
 function exportResult() {
   const result = calcFare();
-  if (!result) { showToast('입력값을 확인해 주세요'); return; }
-  const people = result.people;
-  const rows = [['항목','값'], ...getResultRows(result, people), ['안내','참고용 예상액이며 실제 요금과 다를 수 있습니다.']];
-  const csv = '\uFEFF' + rows.map(row => row.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\r\n');
-  const url = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
+  if (!result) { showToast(lastErrors[0] || '입력값을 확인해 주세요'); return; }
+  const rows = [['항목', '값'], ...getResultRows(result), ['출처', SEOUL_MID.sourceUrl], ['안내', '참고용 예상액이며 실제 요금과 다를 수 있습니다.']];
+  const csv = '﻿' + rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\r\n');
+  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
   const a = document.createElement('a');
   a.href = url;
   a.download = 'taxi-fare-estimate.csv';
+  document.body.appendChild(a);
   a.click();
+  a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 0);
   showToast('⬇️ CSV 파일을 내보냈습니다');
 }
 
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),2000)}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),2200)}
 
-// 초기 계산
+renderRateInfo();
 calc();
-
-
 </script>
 <script src="/special-chars/theme-toggle.js"></script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>

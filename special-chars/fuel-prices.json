@@ -1,9 +1,13 @@
 {
-  "updated": "2026-03-30",
+  "updated": "2026-09-28",
   "source": "opinet",
+  "sourceLabel": "한국석유공사 오피넷 전국 주유소 평균 판매가격",
+  "basis": "2026-09-28 오피넷 일간 전국 평균(휘발유 1,858.25원·경유 1,843.80원·LPG 1,098.28원/L)을 원 단위로 반올림",
+  "checkedAt": "2026-09-28",
+  "updateProcedure": "수동 갱신: 오피넷(www.opinet.co.kr) 국내 유가 통계에서 같은 날짜의 전국 평균 휘발유·경유·자동차용 부탄(LPG) 판매가격을 함께 확인한 뒤 prices 세 값과 updated·checkedAt·basis를 한 번에 수정합니다. 세 유종을 같은 날짜로 확인하지 못하면 갱신하지 않습니다. fuel-calc 페이지의 오프라인 대체값(OFFLINE_FALLBACK)도 같은 값·날짜로 맞춥니다.",
   "prices": {
-    "gasoline": 1819,
-    "diesel": 1815,
-    "lpg": 1011
+    "gasoline": 1858,
+    "diesel": 1844,
+    "lpg": 1098
   }
 }

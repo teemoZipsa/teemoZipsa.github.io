@@ -11,9 +11,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>⛽ 출장 유류비 계산기 — 티모집사</title>
-<meta name="description" content="출장 거리·차량 연비·적용 유가를 입력해 예상 유류비와 왕복 비용, 인원별 분담 참고액을 계산합니다.">
+<meta name="description" content="출장 거리·차량 연비·적용 유가로 예상 유류비와 왕복 비용을 계산하거나, 회사 규정의 km당 정액 단가로 출장 교통비를 정산합니다. 전기차(km/kWh)도 지원합니다.">
 <meta property="og:title" content="⛽ 출장 유류비 계산기 — 티모집사">
-<meta property="og:description" content="출장 거리·연비·적용 유가로 왕복 유류비 참고액을 계산합니다.">
+<meta property="og:description" content="출장 거리·연비·적용 유가 또는 km당 정액 단가로 출장 유류비 정산 참고액을 계산합니다.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/fuel-calc/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
@@ -29,96 +29,88 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
 .body{padding:16px;display:flex;flex-direction:column;gap:14px}
 
-.section-title{font-size:12px;color:var(--text-info);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.section-title{font-size:13px;color:var(--text-info);font-weight:700;letter-spacing:.5px;margin-bottom:4px}
 .input-group{display:flex;flex-direction:column;gap:4px}
-.input-group label{font-size:12px;color:var(--text-info);font-weight:600}
+.input-group label{font-size:13px;color:var(--text-info);font-weight:600}
 .input-row{display:flex;align-items:center;gap:8px}
-.input-row input,.input-row select{flex:1;padding:10px 12px;background:var(--bg-guide);border:1.5px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:15px;font-family:inherit;font-weight:600;outline:none;transition:border-color .2s}
+.input-row input,.input-row select{flex:1;min-width:0;padding:10px 12px;background:var(--bg-guide);border:1.5px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:16px;font-family:inherit;font-weight:600;outline:none;transition:border-color .2s;min-height:44px}
 .input-row input:focus,.input-row select:focus{border-color:var(--accent)}
-.input-row .unit{font-size:13px;color:var(--text-info);font-weight:600;white-space:nowrap;min-width:28px}
+.input-row .unit{font-size:14px;color:var(--text-info);font-weight:600;white-space:nowrap;min-width:28px}
 
-/* 유종 탭 */
-.fuel-tabs{display:flex;gap:4px;background:var(--bg-bar);border-radius:10px;padding:4px}
-.fuel-tab{flex:1;padding:10px 6px;border:none;border-radius:8px;background:transparent;color:var(--text-info);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;text-align:center;line-height:1.2}
-.fuel-tab.active{background:var(--accent);color:var(--text-on-accent);box-shadow:0 2px 8px rgba(83,52,131,.3)}
-.fuel-tab:hover:not(.active){background:var(--bg-btn)}
+.mode-tabs,.fuel-tabs{display:flex;gap:4px;background:var(--bg-bar);border-radius:10px;padding:4px}
+.mode-tab,.fuel-tab{flex:1;padding:10px 6px;border:none;border-radius:8px;background:transparent;color:var(--text-info);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;text-align:center;line-height:1.2;min-height:44px;min-width:0}
+.mode-tab[aria-pressed="true"],.fuel-tab[aria-pressed="true"]{background:var(--accent);color:var(--text-on-accent);box-shadow:0 2px 8px rgba(83,52,131,.3)}
+.mode-tab:hover:not([aria-pressed="true"]),.fuel-tab:hover:not([aria-pressed="true"]){background:var(--bg-btn)}
 .fuel-tab .fuel-icon{display:block;font-size:18px;margin-bottom:2px}
+[hidden]{display:none!important}
 
-/* 유가 입력 행 */
-.price-row{display:flex;align-items:center;gap:8px}
-.price-row input{flex:1}
-.price-source{font-size:10px;color:var(--text-info);display:flex;align-items:center;gap:4px;margin-top:2px}
+.price-source{font-size:12px;color:var(--text-info);display:flex;align-items:center;gap:6px;margin-top:2px;flex-wrap:wrap}
 .price-source a{color:var(--accent-text);text-decoration:none;font-weight:600}
 .price-source a:hover{text-decoration:underline}
-.price-date{background:var(--bg-btn);padding:2px 6px;border-radius:4px;font-size:10px;color:var(--text-info);font-weight:500}
-.price-warning{display:none;margin-top:7px;padding:8px 10px;border-radius:8px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.45);color:var(--status-orange-text);font-size:11px;line-height:1.5}
-.price-warning.show{display:block}
+.price-date{background:var(--bg-btn);padding:2px 6px;border-radius:4px;font-size:12px;color:var(--text-info);font-weight:500}
+.price-warning{margin-top:7px;padding:8px 10px;border-radius:8px;background:var(--bg-bar);border:1px solid var(--border);color:var(--text-secondary);font-size:13px;line-height:1.55}
+.price-warning.stale{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.45);color:var(--status-orange-text)}
+.stale-confirm{margin-top:8px;width:100%;min-height:44px;border-radius:8px;border:1px solid var(--status-orange-text);background:var(--bg-app);color:var(--status-orange-text);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
 
-/* 왕복 토글 */
-.toggle-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg-btn);border-radius:8px;cursor:pointer;user-select:none}
+.toggle-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg-btn);border-radius:8px;cursor:pointer;user-select:none;min-height:44px}
 .toggle-row:hover{background:var(--bg-btn-hover)}
 .toggle-label{font-size:14px;flex:1;color:var(--text-primary);font-weight:500}
 .toggle{position:relative;width:44px;height:24px;flex-shrink:0}
-.toggle input{opacity:0;width:0;height:0}
-.toggle .slider{position:absolute;inset:0;background:var(--bg-btn);border:1.5px solid var(--border);border-radius:12px;transition:.3s}
+.toggle input{position:absolute;opacity:0;width:44px;height:24px;margin:0;cursor:pointer}
+.toggle .slider{position:absolute;inset:0;background:var(--bg-btn);border:1.5px solid var(--border);border-radius:12px;transition:.3s;pointer-events:none}
 .toggle .slider::before{content:'';position:absolute;height:18px;width:18px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .toggle input:checked+.slider{background:var(--accent);border-color:var(--accent)}
 .toggle input:checked+.slider::before{transform:translateX(20px)}
+.toggle input:focus-visible+.slider{outline:2px solid var(--accent);outline-offset:2px}
 
-/* 결과 카드 */
+.input-error{padding:10px 12px;border:1px solid var(--status-red-text);border-radius:8px;background:var(--bg-app);color:var(--status-red-text);font-size:13px;line-height:1.6}
+
 .summary{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.summary-card{background:var(--accent-bg);border:1.5px solid var(--accent);border-radius:10px;padding:14px 10px;text-align:center}
+.summary-card{background:var(--accent-bg);border:1.5px solid var(--accent);border-radius:10px;padding:14px 10px;text-align:center;min-width:0}
 .summary-card.highlight{background:var(--accent);border-color:var(--accent);grid-column:1 / -1}
-.summary-card.highlight .s-value{color:var(--text-on-accent)}
-.summary-card.highlight .s-label{color:rgba(255,255,255,.95)}
-.summary-card.highlight .s-sub{color:rgba(255,255,255,.95)}
-.s-label{font-size:11px;color:var(--text-info);margin-bottom:4px}
-.s-value{font-size:22px;font-weight:800;color:var(--accent-text)}
-.s-sub{font-size:11px;color:var(--text-info);margin-top:2px}
+.summary-card.highlight .s-value,.summary-card.highlight .s-label,.summary-card.highlight .s-sub{color:var(--text-on-accent)}
+.s-label{font-size:12px;color:var(--text-info);margin-bottom:4px}
+.s-value{font-size:22px;font-weight:800;color:var(--accent-text);overflow-wrap:anywhere}
+.s-sub{font-size:12px;color:var(--text-info);margin-top:2px}
 
-/* 상세 내역 */
 .detail-box{background:var(--bg-guide);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
-.detail-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+.detail-box:empty{display:none}
+.detail-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:6px 0;border-bottom:1px solid var(--border);font-size:14px}
 .detail-row:last-child{border-bottom:none}
 .detail-label{color:var(--text-info)}
-.detail-value{font-weight:700;color:var(--text-primary);font-variant-numeric:tabular-nums}
+.detail-value{font-weight:700;color:var(--text-primary);font-variant-numeric:tabular-nums;text-align:right;overflow-wrap:anywhere}
+.formula-line{font-size:13px;color:var(--text-secondary);line-height:1.6;padding:10px 12px;border:1px dashed var(--border);border-radius:8px;overflow-wrap:anywhere}
+.formula-line:empty{display:none}
 
-.copy-btn{width:100%;padding:11px;background:var(--bg-header);color:var(--text-on-accent);border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .2s}
+.copy-btn{width:100%;padding:11px;background:var(--bg-header);color:var(--text-on-accent);border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .2s;min-height:44px}
 .copy-btn:hover{opacity:.85}
-.copy-btn:active{transform:scale(.98)}
-
-.report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:10px}
-.report-box h2 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
-.report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
-.report-box strong {color:var(--text-primary);font-weight:600}
 
 .related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:0 12px 12px}
 .related-tools h2 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
-.related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
+.related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:14px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
 .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
 
-@keyframes fadeIn {
-  from { opacity:0; transform:translateY(10px) }
-  to { opacity:1; transform:translateY(0) }
-}
-
 .guide-section{margin:0 12px 12px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.guide-section summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
+.guide-section summary{padding:10px 14px;cursor:pointer;font-size:14px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
 .guide-section summary:hover{background:var(--bg-guide-hover)}
 .guide-section[open] summary{background:var(--bg-btn);border-bottom:1px solid var(--border)}
-.guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
+.guide-content{padding:12px 14px;font-size:14px;color:var(--text-info);line-height:1.8}
+.guide-content p{margin-bottom:10px}
 
-.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
+.footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:12px;color:var(--text-info)}
 .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
 .footer a:hover{color:var(--text-secondary)}
 
-.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.4);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.4);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 @media(max-width:640px){
-.summary{grid-template-columns:1fr}
+  .summary{grid-template-columns:1fr}
   .summary-card.highlight{grid-column:auto}
   .s-value{font-size:18px}
+}
+@media(max-width:380px){
+  .fuel-tab{font-size:13px;padding:8px 2px}
 }
 </style>
 <link rel="stylesheet" href="/special-chars/tool-shell.css">
@@ -131,120 +123,129 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <h1>⛽ 출장 유류비 계산기</h1>
   </div>
   <div class="body">
-    <!-- 유종 선택 -->
     <div>
-      <div class="section-title">유종 선택</div>
-      <div class="fuel-tabs">
-        <button class="fuel-tab active" onclick="setFuel(0)"><span class="fuel-icon">⛽</span>휘발유</button>
-        <button class="fuel-tab" onclick="setFuel(1)"><span class="fuel-icon">🛢️</span>경유</button>
-        <button class="fuel-tab" onclick="setFuel(2)"><span class="fuel-icon">🔵</span>LPG</button>
+      <div class="section-title">정산 방식</div>
+      <div class="mode-tabs" role="group" aria-label="정산 방식">
+        <button type="button" class="mode-tab" id="modeFuel" aria-pressed="true" onclick="setMode('fuel')">연비·유가 실비</button>
+        <button type="button" class="mode-tab" id="modePerKm" aria-pressed="false" onclick="setMode('perKm')">km당 정액</button>
       </div>
     </div>
 
-    <!-- 유가 입력 -->
-    <div class="input-group">
-      <label>참고 유가 (원/L · 직접 수정 가능)</label>
-      <div class="price-row">
-        <div class="input-row" style="flex:1">
-          <input aria-label="연료 가격" type="number" id="fuelPrice" min="1" max="1000000" step="10" oninput="markFuelInput('price')">
-          <span class="unit">원/L</span>
+    <div id="fuelInputs">
+      <div class="section-title">유종 선택</div>
+      <div class="fuel-tabs" role="group" aria-label="유종">
+        <button type="button" class="fuel-tab" aria-pressed="true" onclick="setFuel(0)"><span class="fuel-icon" aria-hidden="true">⛽</span>휘발유</button>
+        <button type="button" class="fuel-tab" aria-pressed="false" onclick="setFuel(1)"><span class="fuel-icon" aria-hidden="true">🛢️</span>경유</button>
+        <button type="button" class="fuel-tab" aria-pressed="false" onclick="setFuel(2)"><span class="fuel-icon" aria-hidden="true">🔵</span>LPG</button>
+        <button type="button" class="fuel-tab" aria-pressed="false" onclick="setFuel(3)"><span class="fuel-icon" aria-hidden="true">🔌</span>전기</button>
+      </div>
+
+      <div class="input-group" style="margin-top:14px">
+        <label for="fuelPrice" id="priceLabel">적용 유가 (직접 수정 가능)</label>
+        <div class="input-row">
+          <input type="text" id="fuelPrice" inputmode="decimal" autocomplete="off" data-group oninput="markFuelInput('price')">
+          <span class="unit" id="priceUnit">원/L</span>
+        </div>
+        <div class="price-source" id="priceSource">
+          <span class="price-date" id="priceDate">불러오는 중…</span>
+          <span id="priceSourceLabel">오피넷 전국 평균 저장값</span>
+          <a href="https://www.opinet.co.kr" target="_blank" rel="noopener">오피넷에서 최신 가격 확인 →</a>
+        </div>
+        <div class="price-warning" id="priceWarning" role="status"></div>
+      </div>
+
+      <div class="input-group" style="margin-top:14px">
+        <label for="efficiency" id="effLabel">차량 연비</label>
+        <div class="input-row">
+          <input type="number" id="efficiency" value="12" min="0.1" max="1000" step="0.1" inputmode="decimal" oninput="markFuelInput('efficiency')">
+          <span class="unit" id="effUnit">km/L</span>
         </div>
       </div>
-      <div class="price-source">
-        <span class="price-date" id="priceDate">로딩 중...</span>
-        <span>저장된 오피넷 전국 평균 참고값</span>
-        <a href="https://www.opinet.co.kr" target="_blank" rel="noopener">최신 유가 확인 →</a>
-      </div>
-      <div class="price-warning" id="priceWarning" role="status"></div>
     </div>
 
-    <!-- 거리 -->
-    <div class="input-group">
-      <label>입력 거리 (왕복 선택 시 편도)</label>
+    <div class="input-group" id="perKmInputs" hidden>
+      <label for="perKmRate">km당 정산 단가 (회사 규정)</label>
       <div class="input-row">
-        <input aria-label="이동 거리" type="number" id="distance" value="300" min="0.1" max="100000" step="10" oninput="calc()">
+        <input type="text" id="perKmRate" inputmode="decimal" autocomplete="off" placeholder="예: 250" data-group oninput="calc()">
+        <span class="unit">원/km</span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label for="distance">이동 거리 (왕복 선택 시 편도)</label>
+      <div class="input-row">
+        <input type="number" id="distance" value="300" min="0.1" max="100000" step="0.1" inputmode="decimal" oninput="calc()">
         <span class="unit">km</span>
       </div>
     </div>
 
-    <!-- 연비 -->
     <div class="input-group">
-      <label id="effLabel">차량 연비</label>
+      <label for="people">분담 인원 (개인 분담이 필요할 때만)</label>
       <div class="input-row">
-        <input aria-label="연비" type="number" id="efficiency" value="12" min="0.1" max="1000" step="0.5" oninput="markFuelInput('efficiency')">
-        <span class="unit">km/L</span>
-      </div>
-    </div>
-
-    <!-- 인원수 -->
-    <div class="input-group">
-      <label>인원수 (N빵)</label>
-      <div class="input-row">
-        <input aria-label="탑승 인원" type="number" id="people" value="1" min="1" max="20" step="1" oninput="calc()">
+        <input type="number" id="people" value="1" min="1" max="20" step="1" inputmode="numeric" oninput="calc()">
         <span class="unit">명</span>
       </div>
     </div>
 
-    <!-- 왕복 토글 -->
-    <div class="toggle-row" onclick="document.getElementById('roundTrip').click()">
+    <label class="toggle-row" for="roundTrip">
       <span class="toggle-label">🔄 왕복 계산 (입력 거리 × 2)</span>
-      <label class="toggle" onclick="event.stopPropagation()">
-        <input aria-label="왕복 계산" type="checkbox" id="roundTrip" onchange="calc()">
-        <span class="slider"></span>
-      </label>
-    </div>
+      <span class="toggle">
+        <input type="checkbox" id="roundTrip" onchange="calc()">
+        <span class="slider" aria-hidden="true"></span>
+      </span>
+    </label>
 
-    <!-- 결과 -->
+    <div class="input-error" id="fuelError" role="alert" hidden></div>
+
     <div class="summary" id="summary" role="status" aria-live="polite" aria-atomic="true"></div>
-
-    <!-- 상세 내역 -->
     <div class="detail-box" id="detailBox"></div>
+    <div class="formula-line" id="formulaLine"></div>
 
-    <div class="report-box" id="analysisReport" style="display:none;"></div>
-
-    <!-- 결과 복사 -->
-    <button class="copy-btn" onclick="copyResult()">📋 결과 복사</button>
+    <button type="button" class="copy-btn" onclick="copyResult()">📋 정산용 결과 복사</button>
   </div>
 
   <details class="guide-section" open>
-    <summary>💡 장거리 운전 & 유류비 절약 Q&A</summary>
+    <summary>💼 출장 유류비 정산 Q&A</summary>
     <div class="guide-content">
-      <strong>Q. 고속도로 정속 주행이 진짜 연비에 도움이 되나요?</strong>
-      <p>급가속·급제동을 줄이고 교통 흐름 안에서 일정하게 주행하면 연비에 도움이 될 수 있습니다. 효율적인 속도와 절감 폭은 차량, 노면, 경사, 바람, 적재량과 정체에 따라 달라지므로 고정 속도나 절감률로 단정할 수 없습니다. 항상 제한속도와 안전을 우선하세요.</p>
-      <br>
-      <strong>Q. 에어컨을 켜는 것과 창문을 여는 것 중 어느 쪽이 연비가 좋나요?</strong>
-      <p>차량과 속도, 외기 온도에 따라 달라 일률적인 전환 속도는 없습니다. 창문을 열면 공기 저항이 늘 수 있고 에어컨도 에너지를 사용합니다. 운전자 집중과 탑승자 안전·쾌적성을 우선하고, 차량 설명서의 효율 운전 안내를 참고하세요.</p>
-      <br>
-      <strong>Q. 휴가철 카풀(N빵)할 때 톨게이트 비용은 어떻게 하나요?</strong>
-      <p>이 계산기는 기름값만 계산합니다. 통행료·주차료 등은 별도로 확인해 동승자끼리 합의한 방식으로 나누세요. 결과의 1인당 금액에는 이런 추가 비용이 포함되지 않습니다.</p>
+      <p><strong>Q. 출장 유류비는 어떤 방식으로 정산하나요?</strong></p>
+      <p>회사마다 크게 두 가지입니다. <b>실비 방식</b>은 이동 거리 ÷ 차량 연비 × 적용 유가로 계산하고, <b>정액 방식</b>은 사내 규정에 정한 km당 단가(예: 1km당 250원)에 거리를 곱합니다. 이 계산기는 두 방식을 모두 지원하므로 먼저 여비 규정에서 어느 방식을 쓰는지, 차종·유종별로 단가가 다른지 확인하세요.</p>
+      <p><strong>Q. 적용 유가에는 어떤 값을 넣어야 하나요?</strong></p>
+      <p>규정에 기준이 있으면 그 값을 따릅니다. 보통은 출장일 기준 오피넷 전국 또는 지역 평균 가격, 혹은 실제 주유 영수증 단가를 사용합니다. 이 도구에 저장된 값은 오피넷 전국 평균을 수동으로 옮겨 둔 참고값이며 기준일이 함께 표시됩니다. 저장값이 30일보다 오래되면 가격을 확인하거나 직접 수정하기 전까지 결과를 보여 주지 않습니다.</p>
+      <p><strong>Q. 통행료와 주차비는 어떻게 처리하나요?</strong></p>
+      <p>이 계산기는 연료비만 계산합니다. 고속도로 통행료, 주차비, 세차비는 영수증을 첨부해 별도 항목으로 정산하는 것이 일반적입니다. 결과를 복사하면 계산 기준과 유가 기준일이 함께 들어가므로 정산서의 산출 근거란에 붙여 넣을 수 있습니다.</p>
+      <p><strong>Q. 여러 명이 한 차로 이동하면 어떻게 나누나요?</strong></p>
+      <p>회사 차량이나 대표 1명이 청구하는 출장이라면 분담 인원을 1명으로 두고 총액을 청구합니다. 동료끼리 개인 차량 비용을 나눠야 할 때만 분담 인원을 입력하세요. 1인당 금액은 연료비만 균등하게 나눈 값입니다.</p>
+      <p><strong>Q. 전기차는 어떻게 계산하나요?</strong></p>
+      <p>유종에서 ‘전기’를 고르고 전비(km/kWh)와 충전 단가(원/kWh)를 입력합니다. 충전 단가는 급속·완속 충전기와 요금제에 따라 크게 달라 저장값을 제공하지 않으므로 실제 충전 영수증이나 회사가 정한 단가를 넣으세요.</p>
     </div>
   </details>
 
   <details class="guide-section">
     <summary>📖 연비 입력값을 정하는 방법</summary>
     <div class="guide-content">
-      <p>같은 차종도 엔진·구동 방식·타이어·주행 환경에 따라 실제 연비가 크게 달라집니다. 차량의 공인 복합연비는 계획 단계의 참고값으로, 최근 트립 컴퓨터나 주유 기록으로 계산한 실연비는 실제 정산에 가까운 값으로 사용할 수 있습니다.</p>
-      <p>계절·정체·고속도로 비중이 다른 여행이라면 보수적인 연비를 넣고 여러 시나리오를 비교하세요.</p>
+      <p>같은 차종도 엔진·구동 방식·타이어·주행 환경에 따라 실제 연비가 크게 달라집니다. 차량의 공인 복합연비는 사전 결재 단계의 참고값으로, 최근 트립 컴퓨터나 주유 기록으로 계산한 실연비는 사후 정산에 가까운 값으로 사용할 수 있습니다.</p>
+      <p>시내 정체 비중이 높은 출장이거나 짐을 많이 싣는 경우에는 보수적인 연비를 넣고, 규정상 차종별 표준 연비가 정해져 있다면 그 값을 우선하세요.</p>
     </div>
   </details>
 
   <div class="related-tools">
-    <h2>🔗 연관 생활/교통 계산기</h2>
+    <h2>🔗 연관 출장·교통 계산기</h2>
     <div class="tool-list">
-      <a href="/special-chars/taxi-calc/"><span>🚖 택시 요금 계산기</span><span>바로가기 →</span></a>
-      <a href="/special-chars/discount-calc/"><span>🛍️ 할인율 계산기</span><span>바로가기 →</span></a>
-      <a href="/special-chars/sub-calc/"><span>💸 구독료 계산기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/taxi-calc/"><span>🚕 서울 출장 택시비 예상</span><span>바로가기 →</span></a>
+      <a href="/special-chars/discount-calc/"><span>🏷️ 할인/세금 계산기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/sub-calc/"><span>💳 업무용 구독·SaaS 비용</span><span>바로가기 →</span></a>
     </div>
   </div>
 
   <section class="work-context" aria-labelledby="fuelWorkTitle">
-    <h2 id="fuelWorkTitle">출장 사전 결재와 교통비 분담액 계산하기</h2>
-    <p><strong>업무 예시:</strong> 출발지와 방문지를 왕복할 때 예상 주행 거리, 업무 차량의 실연비와 회사가 인정하는 적용 유가를 입력해 유류비 참고액을 만듭니다. 여러 명이 개인적으로 분담해야 할 때만 인원 나누기 값을 사용하세요.</p>
-    <p><strong>계산 기준:</strong> 결과는 거리÷연비×유가의 단순 추정값이며 통행료, 주차비, 우회 거리, 공회전과 차량별 연비 차이는 포함하지 않습니다. 비용 정산에는 회사 규정, 실제 영수증과 계기판 기록을 우선하세요.</p>
-    <p><strong>데이터 처리:</strong> 거리·연비·유가 입력은 서버로 전송하지 않고 브라우저에서 계산합니다. 기본 유가는 실시간 가격이 아니므로 결재 기준일의 회사 고시값이나 실제 주유 단가로 직접 수정해야 합니다.</p>
+    <h2 id="fuelWorkTitle">출장 사전 결재와 유류비 정산 근거 만들기</h2>
+    <p><strong>업무 예시:</strong> 출발지와 방문지를 왕복할 때 예상 주행 거리, 업무 차량의 실연비와 회사가 인정하는 적용 유가를 입력해 사전 결재용 유류비 참고액을 만들거나, 규정의 km당 정액 단가로 정산 금액을 계산합니다.</p>
+    <p><strong>계산 기준:</strong> 실비 방식은 거리 ÷ 연비 × 유가, 정액 방식은 거리 × km당 단가이며 금액은 원 단위로 반올림합니다. 통행료, 주차비, 우회 거리와 공회전은 포함하지 않습니다. 비용 정산에는 회사 규정, 실제 영수증과 계기판 기록을 우선하세요.</p>
+    <p><strong>유가 데이터:</strong> 저장 유가는 한국석유공사 오피넷의 전국 평균 판매가격(휘발유·경유·LPG)을 같은 날짜로 확인해 수동으로 갱신하며, 화면과 복사 결과에 기준일을 표시합니다. 실시간 가격이 아니므로 결재 기준일의 가격으로 직접 수정할 수 있습니다.</p>
+    <p><strong>데이터 처리:</strong> 거리·연비·유가 입력은 서버로 전송하거나 저장하지 않고 브라우저에서 계산합니다.</p>
   </section>
   </main>
-<footer class="footer"><span>입력값 기준 즉시 계산 · 유가 직접 수정 가능</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
+<footer class="footer"><span>유가 기준일 표시 · 실비·정액 정산 지원</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
 <nav class="site-policy-links" aria-label="사이트 정책"><a href="/about.html">사이트 소개</a><a href="/editorial-policy.html">편집정책</a><a href="/contact.html">문의</a><a href="/privacy.html">개인정보처리방침</a></nav>
 </div>
 
@@ -252,42 +253,53 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 
 <script>
-// === 유가 데이터 ===
-const DEFAULT_PRICES = { gasoline: 1819, diesel: 1815, lpg: 1011 };
-const DEFAULT_EFF = { gasoline: 12, diesel: 14, lpg: 9 };
-const FUEL_NAMES = ['휘발유', '경유', 'LPG'];
-const FUEL_KEYS = ['gasoline', 'diesel', 'lpg'];
+// 유가 데이터는 /special-chars/fuel-prices.json 하나만 기준으로 사용합니다.
+// 아래 값은 네트워크가 없어 JSON을 받지 못할 때만 쓰는 오프라인 대체값이며 JSON과 같은 날짜로 함께 갱신합니다.
+const OFFLINE_FALLBACK = Object.freeze({ updated: '2026-09-28', sourceLabel: '오피넷 전국 평균 (오프라인 대체값)', prices: { gasoline: 1858, diesel: 1844, lpg: 1098 } });
+const STALE_DAYS = 30;
+const FUELS = [
+  { key: 'gasoline', name: '휘발유', unit: '원/L', effUnit: 'km/L', amountUnit: 'L', defaultEff: 12, needLabel: '필요 연료량', cardLabel: '필요 연료', totalLabel: '총 유류비' },
+  { key: 'diesel', name: '경유', unit: '원/L', effUnit: 'km/L', amountUnit: 'L', defaultEff: 14, needLabel: '필요 연료량', cardLabel: '필요 연료', totalLabel: '총 유류비' },
+  { key: 'lpg', name: 'LPG', unit: '원/L', effUnit: 'km/L', amountUnit: 'L', defaultEff: 9, needLabel: '필요 연료량', cardLabel: '필요 연료', totalLabel: '총 유류비' },
+  { key: 'electric', name: '전기', unit: '원/kWh', effUnit: 'km/kWh', amountUnit: 'kWh', defaultEff: 5, needLabel: '필요 전력량', cardLabel: '필요 전력', totalLabel: '총 충전비' }
+];
 
+let mode = 'fuel';
 let currentFuel = 0;
-let fuelPrices = { ...DEFAULT_PRICES };
-let priceDate = '';
-let priceLoadFailed = false;
+let priceData = null;      // { updated, sourceLabel, prices, offline }
 let fuelPriceDirty = false;
 let efficiencyDirty = false;
+let staleConfirmed = false;
 
-// 오피넷 유가 JSON 로드
 (async function loadPrices() {
   try {
     const res = await fetch('/special-chars/fuel-prices.json?t=' + Date.now());
-    if (!res.ok) throw new Error('fetch failed');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    if (data.prices) {
-      fuelPrices = data.prices;
-      priceDate = data.updated || '';
-    }
-  } catch (e) {
-    // 로드 실패 시 기본값 사용
-    priceLoadFailed = true;
-    console.warn('유가 데이터 로드 실패, 기본값 사용', e);
+    if (!data || !data.prices || !/^\d{4}-\d{2}-\d{2}$/.test(data.updated || '')) throw new Error('invalid data');
+    priceData = { updated: data.updated, sourceLabel: data.sourceLabel || '오피넷 전국 평균', prices: data.prices, offline: false };
+  } catch (error) {
+    priceData = { ...OFFLINE_FALLBACK, offline: true };
   }
   applyFuel({ preserveUserInput: true });
 })();
 
+function setMode(next) {
+  mode = next === 'perKm' ? 'perKm' : 'fuel';
+  document.getElementById('modeFuel').setAttribute('aria-pressed', String(mode === 'fuel'));
+  document.getElementById('modePerKm').setAttribute('aria-pressed', String(mode === 'perKm'));
+  document.getElementById('fuelInputs').hidden = mode !== 'fuel';
+  document.getElementById('perKmInputs').hidden = mode !== 'perKm';
+  calc();
+}
+
 function setFuel(idx) {
+  if (!FUELS[idx]) return;
   currentFuel = idx;
   fuelPriceDirty = false;
   efficiencyDirty = false;
-  document.querySelectorAll('.fuel-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+  staleConfirmed = false;
+  document.querySelectorAll('.fuel-tab').forEach((t, i) => t.setAttribute('aria-pressed', String(i === idx)));
   applyFuel();
 }
 
@@ -297,174 +309,342 @@ function markFuelInput(field) {
   calc();
 }
 
-function applyFuel({ preserveUserInput = false } = {}) {
-  const key = FUEL_KEYS[currentFuel];
-  const price = fuelPrices[key] || DEFAULT_PRICES[key];
-  if (!preserveUserInput || !fuelPriceDirty) document.getElementById('fuelPrice').value = price;
-  if (!preserveUserInput || !efficiencyDirty) document.getElementById('efficiency').value = DEFAULT_EFF[key];
-
-  // 업데이트 날짜
-  const dateEl = document.getElementById('priceDate');
-  const warningEl = document.getElementById('priceWarning');
-  if (priceDate) {
-    dateEl.textContent = priceDate + ' 기준';
-    const updatedAt = new Date(priceDate + 'T00:00:00');
-    const ageDays = Number.isNaN(updatedAt.getTime()) ? null : Math.floor((Date.now() - updatedAt.getTime()) / 86400000);
-    if (ageDays !== null && ageDays > 30) {
-      warningEl.textContent = `⚠️ 저장된 유가가 ${ageDays}일 전 자료입니다. 실제 계산 전 오피넷에서 최신 가격을 확인하거나 위 값을 직접 수정하세요.`;
-      warningEl.classList.add('show');
-    } else {
-      warningEl.textContent = 'ℹ️ 전국 평균 참고값입니다. 지역·주유소별 실제 가격에 맞게 직접 수정할 수 있습니다.';
-      warningEl.classList.add('show');
-    }
-  } else {
-    dateEl.textContent = '기본값';
-    warningEl.textContent = priceLoadFailed
-      ? '⚠️ 저장 유가를 불러오지 못해 기본값을 표시합니다. 실제 유가를 직접 입력하세요.'
-      : 'ℹ️ 기본 참고값입니다. 실제 유가를 직접 입력하세요.';
-    warningEl.classList.add('show');
-  }
+function confirmStalePrice() {
+  staleConfirmed = true;
   calc();
 }
 
-function fmt(n) { return Math.round(n).toLocaleString('ko-KR'); }
-function fmtDistance(n) { return Number(n).toLocaleString('ko-KR', { maximumFractionDigits: 3 }); }
-function fmtLiters(n) { return Number(n).toLocaleString('ko-KR', { maximumFractionDigits: n < 1 ? 3 : 2 }); }
-
-function readFuelInputs() {
-  const dist = Number(document.getElementById('distance').value);
-  const eff = Number(document.getElementById('efficiency').value);
-  const price = Number(document.getElementById('fuelPrice').value);
-  const people = Number(document.getElementById('people').value);
-  const valid = Number.isFinite(dist) && dist >= 0.1 && dist <= 100000 &&
-    Number.isFinite(eff) && eff >= 0.1 && eff <= 1000 &&
-    Number.isFinite(price) && price >= 1 && price <= 1000000 &&
-    Number.isInteger(people) && people >= 1 && people <= 20;
-  return { valid, dist, eff, price, people, roundTrip: document.getElementById('roundTrip').checked };
+function priceAgeDays() {
+  if (!priceData) return null;
+  const updatedAt = new Date(priceData.updated + 'T00:00:00');
+  if (Number.isNaN(updatedAt.getTime())) return null;
+  return Math.floor((Date.now() - updatedAt.getTime()) / 86400000);
 }
 
-function clearFuelResult() {
-  document.getElementById('summary').innerHTML = '';
-  document.getElementById('detailBox').innerHTML = '';
-  const report = document.getElementById('analysisReport');
-  report.innerHTML = '';
-  report.style.display = 'none';
+function storedPrice() {
+  const fuel = FUELS[currentFuel];
+  if (!priceData || fuel.key === 'electric') return null;
+  const value = Number(priceData.prices[fuel.key]);
+  return Number.isFinite(value) && value > 0 ? value : null;
+}
+
+function applyFuel({ preserveUserInput = false } = {}) {
+  const fuel = FUELS[currentFuel];
+  const priceInput = document.getElementById('fuelPrice');
+  const stored = storedPrice();
+  if (!preserveUserInput || !fuelPriceDirty) priceInput.value = stored ? stored.toLocaleString('ko-KR') : '';
+  if (!preserveUserInput || !efficiencyDirty) document.getElementById('efficiency').value = fuel.defaultEff;
+  document.getElementById('priceLabel').textContent = fuel.key === 'electric' ? '충전 단가 (직접 입력)' : '적용 유가 (직접 수정 가능)';
+  document.getElementById('priceUnit').textContent = fuel.unit;
+  document.getElementById('effLabel').textContent = fuel.key === 'electric' ? '차량 전비' : '차량 연비';
+  document.getElementById('effUnit').textContent = fuel.effUnit;
+  priceInput.placeholder = fuel.key === 'electric' ? '예: 충전 영수증 단가' : '';
+  document.getElementById('priceSource').hidden = fuel.key === 'electric';
+  calc();
+}
+
+function renderPriceStatus() {
+  const fuel = FUELS[currentFuel];
+  const dateEl = document.getElementById('priceDate');
+  const labelEl = document.getElementById('priceSourceLabel');
+  const warningEl = document.getElementById('priceWarning');
+  warningEl.classList.remove('stale');
+  warningEl.replaceChildren();
+  if (fuel.key === 'electric') {
+    warningEl.textContent = 'ℹ️ 전기 충전 단가는 충전기·요금제마다 달라 저장값이 없습니다. 충전 영수증이나 회사 기준 단가를 입력하세요.';
+    return;
+  }
+  if (!priceData) { dateEl.textContent = '불러오는 중…'; return; }
+  const age = priceAgeDays();
+  dateEl.textContent = `${priceData.updated} 기준${age !== null ? ` (${age}일 전)` : ''}`;
+  labelEl.textContent = priceData.offline ? '오프라인 대체값 (저장 JSON을 불러오지 못함)' : '오피넷 전국 평균 저장값';
+  if (fuelPriceDirty) {
+    warningEl.textContent = '✏️ 직접 입력한 유가로 계산합니다. 복사 결과에도 ‘사용자 입력 유가’로 표시됩니다.';
+    return;
+  }
+  if (age !== null && age > STALE_DAYS) {
+    warningEl.classList.add('stale');
+    warningEl.append(`⚠️ 저장된 ${fuel.name} 가격이 ${age}일 전(${priceData.updated}) 자료입니다. 오피넷에서 최신 가격을 확인해 위 칸을 고치거나, 이 가격을 그대로 쓸지 확인해야 결과가 표시됩니다.`);
+    if (!staleConfirmed) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'stale-confirm';
+      button.textContent = `${priceData.updated} 가격 그대로 계산`;
+      button.addEventListener('click', confirmStalePrice);
+      warningEl.appendChild(button);
+    } else {
+      warningEl.append(' (오래된 가격 사용을 확인했습니다)');
+    }
+    return;
+  }
+  warningEl.textContent = `ℹ️ ${priceData.updated} 전국 평균 참고값입니다. 지역·주유소별 실제 가격이나 회사 기준 유가로 수정할 수 있습니다.`;
+}
+
+// ---- 숫자 입력·표시 ----
+function groupDigits(text) {
+  return text.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function applyGrouping(input) {
+  const raw = input.value;
+  const plain = raw.replace(/,/g, '');
+  if (!/^\d*(\.\d*)?$/.test(plain)) return;
+  const caret = input.selectionStart ?? raw.length;
+  const keep = raw.slice(0, caret).replace(/,/g, '').length;
+  const [intPart, decPart] = plain.split('.');
+  const next = groupDigits(intPart) + (decPart !== undefined ? '.' + decPart : '');
+  if (next === raw) return;
+  input.value = next;
+  if (document.activeElement === input) {
+    let seen = 0;
+    let pos = 0;
+    while (pos < next.length && seen < keep) {
+      if (next[pos] !== ',') seen += 1;
+      pos += 1;
+    }
+    try { input.setSelectionRange(pos, pos); } catch (error) { /* 무시 */ }
+  }
+}
+
+document.addEventListener('input', event => {
+  if (event.target.matches && event.target.matches('input[data-group]')) applyGrouping(event.target);
+}, true);
+
+function parseDecimal(text) {
+  const raw = String(text ?? '').replace(/[,\s]/g, '');
+  if (!/^(\d+\.?\d*|\.\d+)$/.test(raw)) return NaN;
+  return Number(raw);
+}
+
+function koreanUnits(won) {
+  let rest = Math.round(Math.abs(won));
+  const jo = Math.floor(rest / 1e12); rest -= jo * 1e12;
+  const eok = Math.floor(rest / 1e8); rest -= eok * 1e8;
+  const man = Math.floor(rest / 1e4); rest -= man * 1e4;
+  const parts = [];
+  if (jo) parts.push(jo.toLocaleString('ko-KR') + '조');
+  if (eok) parts.push(eok.toLocaleString('ko-KR') + '억');
+  if (man) parts.push(man.toLocaleString('ko-KR') + '만');
+  if (rest || !parts.length) parts.push(rest.toLocaleString('ko-KR'));
+  return (won < 0 ? '-' : '') + parts.join(' ') + '원';
+}
+
+// 페이지 공통 금액 형식: 1억 이상은 "1억 7,696만 5,000원", 그 미만은 "45,475원"
+function formatWon(n) {
+  const won = Math.round(Number(n.toFixed(6)));
+  return Math.abs(won) >= 1e8 ? koreanUnits(won) : won.toLocaleString('ko-KR') + '원';
+}
+function fmtPrice(n) { return n.toLocaleString('ko-KR', { maximumFractionDigits: 2 }); }
+function fmtDistance(n) { return Number(n).toLocaleString('ko-KR', { maximumFractionDigits: 3 }); }
+function fmtAmount(n) { return Number(n).toLocaleString('ko-KR', { maximumFractionDigits: n < 1 ? 3 : 2 }); }
+
+function todayIso() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
+
+function readInputs() {
+  const errors = [];
+  const mark = (id, bad) => {
+    const el = document.getElementById(id);
+    if (bad) el.setAttribute('aria-invalid', 'true'); else el.removeAttribute('aria-invalid');
+  };
+  const distRaw = document.getElementById('distance').value;
+  const dist = Number(distRaw);
+  const distOk = distRaw.trim() !== '' && Number.isFinite(dist) && dist >= 0.1 && dist <= 100000;
+  mark('distance', !distOk);
+  if (!distOk) errors.push('이동 거리는 0.1~100,000km 범위로 입력하세요.');
+
+  const peopleRaw = document.getElementById('people').value;
+  const people = Number(peopleRaw);
+  const peopleOk = Number.isInteger(people) && people >= 1 && people <= 20;
+  mark('people', !peopleOk);
+  if (!peopleOk) errors.push('분담 인원은 1~20명의 정수로 입력하세요.');
+
+  let price = NaN;
+  let eff = NaN;
+  let perKm = NaN;
+  if (mode === 'fuel') {
+    const fuel = FUELS[currentFuel];
+    const priceText = document.getElementById('fuelPrice').value;
+    price = parseDecimal(priceText);
+    const priceOk = Number.isFinite(price) && price >= 1 && price <= 1000000;
+    mark('fuelPrice', !priceOk && priceText.trim() !== '');
+    if (!priceOk) errors.push(priceText.trim() === ''
+      ? (fuel.key === 'electric' ? '충전 단가(원/kWh)를 입력하세요.' : '적용 유가를 입력하세요.')
+      : `${fuel.key === 'electric' ? '충전 단가' : '적용 유가'}는 1~1,000,000 범위의 숫자로 입력하세요.`);
+    const effRaw = document.getElementById('efficiency').value;
+    eff = Number(effRaw);
+    const effOk = effRaw.trim() !== '' && Number.isFinite(eff) && eff >= 0.1 && eff <= 1000;
+    mark('efficiency', !effOk);
+    if (!effOk) errors.push(`${fuel.key === 'electric' ? '전비' : '연비'}는 0.1~1,000 ${fuel.effUnit} 범위로 입력하세요.`);
+  } else {
+    const perKmText = document.getElementById('perKmRate').value;
+    perKm = parseDecimal(perKmText);
+    const perKmOk = Number.isFinite(perKm) && perKm > 0 && perKm <= 100000;
+    mark('perKmRate', !perKmOk && perKmText.trim() !== '');
+    if (!perKmOk) errors.push(perKmText.trim() === '' ? '회사 규정의 km당 정산 단가를 입력하세요.' : 'km당 정산 단가는 0보다 크고 100,000원 이하인 숫자로 입력하세요.');
+  }
+  const roundTrip = document.getElementById('roundTrip').checked;
+  return { errors, dist, eff, price, perKm, people, roundTrip };
+}
+
+// 오래된 저장 유가를 사용자 확인 없이 쓰려는지 검사합니다.
+function stalePriceBlocked() {
+  if (mode !== 'fuel' || fuelPriceDirty || staleConfirmed) return false;
+  if (FUELS[currentFuel].key === 'electric') return false;
+  const age = priceAgeDays();
+  return age !== null && age > STALE_DAYS;
+}
+
+function computeResult() {
+  const input = readInputs();
+  if (input.errors.length) return { ...input, ok: false };
+  if (stalePriceBlocked()) return { ...input, ok: false, errors: ['저장된 유가가 30일보다 오래되었습니다. 유가를 확인·수정하거나 ‘그대로 계산’ 버튼을 눌러 주세요.'] };
+  const actualDist = input.roundTrip ? input.dist * 2 : input.dist;
+  if (mode === 'perKm') {
+    const totalCost = actualDist * input.perKm;
+    return { ...input, ok: true, actualDist, totalCost, perPerson: totalCost / input.people, amount: null };
+  }
+  const amount = actualDist / input.eff;
+  const totalCost = amount * input.price;
+  return { ...input, ok: true, actualDist, amount, totalCost, perPerson: totalCost / input.people };
+}
+
+function priceBasisText() {
+  const fuel = FUELS[currentFuel];
+  if (fuelPriceDirty || fuel.key === 'electric' || !priceData) return '사용자 입력 단가';
+  return `${priceData.sourceLabel || '오피넷 전국 평균'} ${fuel.name} ${priceData.updated} 기준${priceData.offline ? ' (오프라인 대체값)' : ''}${staleConfirmed ? ' · 오래된 가격 사용 확인' : ''}`;
 }
 
 function calc() {
-  const { valid, dist, eff, price, people, roundTrip } = readFuelInputs();
-  if (!valid) {
-    clearFuelResult();
+  if (mode === 'fuel') renderPriceStatus();
+  const result = computeResult();
+  const errorEl = document.getElementById('fuelError');
+  errorEl.hidden = result.ok;
+  errorEl.textContent = result.ok ? '' : result.errors.join(' ');
+  if (!result.ok) {
+    document.getElementById('summary').innerHTML = '';
+    document.getElementById('detailBox').innerHTML = '';
+    document.getElementById('formulaLine').textContent = '';
     return;
   }
+  const { dist, eff, price, perKm, people, roundTrip, actualDist, amount, totalCost, perPerson } = result;
+  const fuel = FUELS[currentFuel];
 
-  const actualDist = roundTrip ? dist * 2 : dist;
-  const fuelNeeded = actualDist / eff;
-  const totalCost = fuelNeeded * price;
-  const perPerson = totalCost / people;
-
-  // Summary cards
-  const summaryEl = document.getElementById('summary');
   let html = `
     <div class="summary-card highlight">
-      <div class="s-label">${roundTrip ? '왕복 ' : ''}총 유류비</div>
-      <div class="s-value">${fmt(totalCost)}<span style="font-size:14px;font-weight:600"> 원</span></div>
+      <div class="s-label">${roundTrip ? '왕복 ' : ''}${mode === 'perKm' ? '정액 정산액' : fuel.totalLabel}</div>
+      <div class="s-value">${formatWon(totalCost)}</div>
       <div class="s-sub">${roundTrip ? '왕복 ' : ''}${fmtDistance(actualDist)}km 기준</div>
     </div>`;
-
   if (people > 1) {
     html += `
     <div class="summary-card">
       <div class="s-label">1인당 (${people}명)</div>
-      <div class="s-value">${fmt(perPerson)}</div>
-      <div class="s-sub">원</div>
+      <div class="s-value">${formatWon(perPerson)}</div>
+      <div class="s-sub">균등 분담</div>
     </div>`;
   }
-
   if (!roundTrip) {
-    const roundTripCost = fuelNeeded * 2 * price;
     html += `
     <div class="summary-card">
       <div class="s-label">왕복 시</div>
-      <div class="s-value">${fmt(roundTripCost)}</div>
-      <div class="s-sub">원</div>
+      <div class="s-value">${formatWon(totalCost * 2)}</div>
+      <div class="s-sub">입력 거리 × 2</div>
     </div>`;
   }
-
-  html += `
+  if (mode === 'fuel') {
+    html += `
     <div class="summary-card">
-      <div class="s-label">필요 연료</div>
-      <div class="s-value">${fmtLiters(fuelNeeded)}</div>
-      <div class="s-sub">리터</div>
+      <div class="s-label">${fuel.cardLabel}</div>
+      <div class="s-value">${fmtAmount(amount)}</div>
+      <div class="s-sub">${fuel.amountUnit === 'L' ? '리터' : 'kWh'}</div>
     </div>`;
-
-  summaryEl.innerHTML = html;
-
-  // Detail box
-  const detailEl = document.getElementById('detailBox');
-  let detail = `
-    <div class="detail-row"><span class="detail-label">유종</span><span class="detail-value">${FUEL_NAMES[currentFuel]}</span></div>
-    <div class="detail-row"><span class="detail-label">유가</span><span class="detail-value">${fmt(price)} 원/L</span></div>
-    <div class="detail-row"><span class="detail-label">${roundTrip ? '편도 거리' : '주행 거리'}</span><span class="detail-value">${fmtDistance(dist)} km</span></div>`;
-  if (roundTrip) {
-    detail += `<div class="detail-row"><span class="detail-label">왕복 거리</span><span class="detail-value">${fmtDistance(actualDist)} km</span></div>`;
   }
-  detail += `
-    <div class="detail-row"><span class="detail-label">차량 연비</span><span class="detail-value">${document.getElementById('efficiency').value} km/L</span></div>
-    <div class="detail-row"><span class="detail-label">필요 연료량</span><span class="detail-value">${fmtLiters(fuelNeeded)} L</span></div>
-    <div class="detail-row"><span class="detail-label">총 유류비</span><span class="detail-value" style="color:var(--accent-text);font-size:15px">${fmt(totalCost)} 원</span></div>`;
-  if (people > 1) {
-    detail += `<div class="detail-row"><span class="detail-label">1인당 (÷${people})</span><span class="detail-value" style="color:var(--accent-text);font-size:15px">${fmt(perPerson)} 원</span></div>`;
-  }
-  // km당 비용
-  const costPerKm = totalCost / actualDist;
-  detail += `<div class="detail-row"><span class="detail-label">km당 비용</span><span class="detail-value">${fmt(costPerKm)} 원</span></div>`;
-  detailEl.innerHTML = detail;
+  document.getElementById('summary').innerHTML = html;
 
-  // Dynamic Report Logic
-  const report = document.getElementById('analysisReport');
-  report.style.display = 'flex';
-  
-  let msg = `<h2>💡 주행 코스 유류비 분석 리포트</h2>`;
-  
-  msg += `<p><strong>${FUEL_NAMES[currentFuel]}</strong>, 연비 <strong>${eff}km/L</strong>, 총 주행 거리 <strong>${fmtDistance(actualDist)}km</strong>를 기준으로 필요한 연료를 <strong>${fmtLiters(fuelNeeded)}L</strong>로 계산했습니다.</p>`;
-  
-  msg += `<p>입력 유가 <strong>${fmt(price)}원/L</strong>를 반영한 예상 유류비는 <strong>${fmt(totalCost)}원</strong>, 1km당 약 <strong>${fmt(costPerKm)}원</strong>입니다. 실제 소비량은 주행 조건에 따라 달라질 수 있습니다.</p>`;
-  
-  if (people > 1) {
-      msg += `<p><strong>${people}명</strong>이 균등 분담하면 1인당 약 <strong>${fmt(perPerson)}원</strong>입니다. 통행료·주차료 등은 포함되지 않습니다.</p>`;
+  const rows = [];
+  if (mode === 'fuel') {
+    rows.push([fuel.key === 'electric' ? '연료' : '유종', fuel.name]);
+    rows.push([fuel.key === 'electric' ? '충전 단가' : '유가', `${fmtPrice(price)} ${fuel.unit}`]);
+    rows.push(['단가 기준', priceBasisText()]);
   } else {
-      msg += `<p>현재 1명 기준이므로 1인당 금액은 총 유류비와 같습니다. 출발 전 차량 상태와 제조사 권장 타이어 공기압을 확인하세요.</p>`;
+    rows.push(['정산 방식', 'km당 정액 (회사 규정)']);
+    rows.push(['km당 단가', `${fmtPrice(perKm)} 원/km`]);
   }
-  
-  report.innerHTML = msg;
+  rows.push([roundTrip ? '편도 거리' : '주행 거리', `${fmtDistance(dist)} km`]);
+  if (roundTrip) rows.push(['왕복 거리', `${fmtDistance(actualDist)} km`]);
+  if (mode === 'fuel') {
+    rows.push([fuel.key === 'electric' ? '차량 전비' : '차량 연비', `${fmtDistance(eff)} ${fuel.effUnit}`]);
+    rows.push([fuel.needLabel, `${fmtAmount(amount)} ${fuel.amountUnit}`]);
+  }
+  rows.push([mode === 'perKm' ? '정액 정산액' : fuel.totalLabel, formatWon(totalCost)]);
+  if (people > 1) rows.push([`1인당 (÷${people})`, formatWon(perPerson)]);
+  rows.push(['km당 비용', `${fmtPrice(Math.round(totalCost / actualDist * 10) / 10)} 원`]);
+  const detail = document.getElementById('detailBox');
+  detail.replaceChildren(...rows.map(([label, value]) => {
+    const row = document.createElement('div');
+    row.className = 'detail-row';
+    const l = document.createElement('span');
+    l.className = 'detail-label';
+    l.textContent = label;
+    const v = document.createElement('span');
+    v.className = 'detail-value';
+    v.textContent = value;
+    row.append(l, v);
+    return row;
+  }));
+
+  document.getElementById('formulaLine').textContent = mode === 'fuel'
+    ? `계산식: ${fmtDistance(actualDist)}km ÷ ${fmtDistance(eff)}${fuel.effUnit} × ${fmtPrice(price)}${fuel.unit} = ${formatWon(totalCost)}${people > 1 ? ` (1인당 ${formatWon(perPerson)})` : ''}`
+    : `계산식: ${fmtDistance(actualDist)}km × ${fmtPrice(perKm)}원/km = ${formatWon(totalCost)}${people > 1 ? ` (1인당 ${formatWon(perPerson)})` : ''}`;
+}
+
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+  return new Promise((resolve, reject) => {
+    const helper = document.createElement('textarea');
+    helper.value = text;
+    helper.setAttribute('readonly', '');
+    helper.style.position = 'fixed';
+    helper.style.opacity = '0';
+    document.body.appendChild(helper);
+    helper.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (error) { ok = false; }
+    helper.remove();
+    if (ok) resolve(); else reject(new Error('copy failed'));
+  });
 }
 
 function copyResult() {
-  const { valid, dist, eff, price, people, roundTrip } = readFuelInputs();
-  if (!valid) {
-    showToast('거리·연비·유가·인원수를 유효한 범위로 입력하세요');
+  const result = computeResult();
+  if (!result.ok) {
+    showToast(result.errors[0] || '입력값을 확인해 주세요');
     return;
   }
-  const actualDist = roundTrip ? dist * 2 : dist;
-  const fuelNeeded = actualDist / eff;
-  const totalCost = fuelNeeded * price;
-
-  const lines = [
-    `⛽ 유류비 계산 결과`,
-    `━━━━━━━━━━━━━━━`,
-    `유종: ${FUEL_NAMES[currentFuel]} (${fmt(price)}원/L)`,
-    `${roundTrip ? '왕복' : '편도'} 거리: ${fmtDistance(actualDist)}km`,
-    `차량 연비: ${eff}km/L`,
-    `필요 연료: ${fmtLiters(fuelNeeded)}L`,
-    `총 유류비: ${fmt(totalCost)}원`,
-  ];
-  if (people > 1) {
-    lines.push(`1인당 (${people}명): ${fmt(totalCost / people)}원`);
+  const { dist, eff, price, perKm, people, roundTrip, actualDist, amount, totalCost, perPerson } = result;
+  const fuel = FUELS[currentFuel];
+  const lines = ['⛽ 출장 유류비 계산 결과', '━━━━━━━━━━━━━━━'];
+  if (mode === 'fuel') {
+    lines.push(`정산 방식: 실비 (거리 ÷ ${fuel.key === 'electric' ? '전비' : '연비'} × 단가)`);
+    lines.push(`${fuel.key === 'electric' ? '연료' : '유종'}: ${fuel.name} (${fmtPrice(price)}${fuel.unit})`);
+    lines.push(`단가 기준: ${priceBasisText()}`);
+  } else {
+    lines.push(`정산 방식: km당 정액 ${fmtPrice(perKm)}원/km (회사 규정 · 사용자 입력)`);
   }
-  navigator.clipboard.writeText(lines.join('\n'))
-    .then(() => showToast('📋 결과가 복사되었습니다'))
-    .catch(() => showToast('복사 권한을 확인해 주세요'));
+  lines.push(`${roundTrip ? '왕복' : '편도'} 거리: ${fmtDistance(actualDist)}km${roundTrip ? ` (편도 ${fmtDistance(dist)}km × 2)` : ''}`);
+  if (mode === 'fuel') {
+    lines.push(`차량 ${fuel.key === 'electric' ? '전비' : '연비'}: ${fmtDistance(eff)}${fuel.effUnit}`);
+    lines.push(`${fuel.needLabel}: ${fmtAmount(amount)}${fuel.amountUnit}`);
+  }
+  lines.push(`${mode === 'perKm' ? '정액 정산액' : fuel.totalLabel}: ${formatWon(totalCost)}`);
+  if (people > 1) lines.push(`1인당 (${people}명 균등): ${formatWon(perPerson)}`);
+  lines.push(`계산일: ${todayIso()} · 통행료·주차비 별도 · teemozipsa.com 출장 유류비 계산기`);
+  copyText(lines.join('\n'))
+    .then(() => showToast('📋 결과와 계산 기준을 복사했습니다'))
+    .catch(() => showToast('복사하지 못했습니다. 결과를 직접 선택해 복사하세요'));
 }
 
 function showToast(msg) {
@@ -472,11 +652,8 @@ function showToast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.classList.remove('show'), 2000);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2200);
 }
-
-// Scroll top
-
 </script>
 <script src="/special-chars/theme-toggle.js"></script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>

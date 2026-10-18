@@ -11,9 +11,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>💳 업무용 구독·SaaS 비용 계산기 — 티모집사</title>
-<meta name="description" content="팀에서 사용하는 SaaS와 업무 구독의 월 비용을 합산하고 1년·3년·5년 누적 예산과 가격 인상 시나리오를 비교합니다.">
+<meta name="description" content="팀에서 쓰는 SaaS와 업무 구독의 단가·좌석 수·청구 주기·통화를 월 비용으로 환산해 합산하고, 1년·3년·5년 누적 예산과 연 가격 인상 시나리오를 비교합니다.">
 <meta property="og:title" content="💳 업무용 구독·SaaS 비용 계산기 — 티모집사">
-<meta property="og:description" content="업무 구독의 월 합계와 장기 누적 예산, 가격 인상 시나리오를 계산합니다.">
+<meta property="og:description" content="좌석 수·청구 주기·환율을 반영한 업무 구독 월 합계와 장기 누적 예산, 가격 인상 시나리오를 계산합니다.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/sub-calc/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
@@ -30,73 +30,89 @@
   .body{padding:16px;display:flex;flex-direction:column;gap:12px}
 
   .section{background:var(--bg-bar);border-radius:12px;padding:14px 16px;border:1px solid var(--border)}
-  .section-title{font-size:12px;font-weight:700;color:var(--text-info);margin-bottom:10px}
+  .section-title{font-size:13px;font-weight:700;color:var(--text-info);margin-bottom:10px}
+
+  .field{display:flex;flex-direction:column;gap:4px;min-width:0}
+  .field label{font-size:13px;color:var(--text-secondary);font-weight:600}
+  .field input,.field select{background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);padding:8px 10px;font-size:16px;font-family:inherit;outline:none;width:100%;min-width:0;min-height:44px}
+  .field input:focus,.field select:focus{border-color:var(--accent)}
+  .field input::placeholder{color:var(--text-muted)}
+  .settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .field-note{font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.5}
 
   /* 구독 목록 */
-  .sub-list{display:flex;flex-direction:column;gap:6px}
-  .sub-item{display:flex;gap:8px;align-items:center}
-  .sub-item input{background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);padding:8px 10px;font-size:13px;font-family:inherit;outline:none}
-  .sub-item input:focus{border-color:var(--accent)}
-  .sub-item input::placeholder{color:var(--text-muted)}
-  .sub-name{flex:2}
-  .sub-price{flex:1;text-align:right}
-  .sub-del{background:none;border:none;color:var(--text-muted);font-size:16px;cursor:pointer;padding:0;min-width:36px;min-height:36px;border-radius:6px;transition:color .15s}
-  .sub-del:hover{color:var(--status-red-text)}
+  .sub-list{display:flex;flex-direction:column;gap:10px}
+  .sub-item{background:var(--bg-app);border:1px solid var(--border);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0}
+  .sub-top{display:flex;gap:8px;align-items:flex-end}
+  .sub-top .field{flex:1}
+  .sub-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+  .sub-grid .wide{grid-column:span 2}
+  .sub-price{text-align:right}
+  .sub-del{background:none;border:1px solid var(--border);color:var(--text-secondary);font-size:14px;cursor:pointer;padding:0 10px;min-width:44px;min-height:44px;border-radius:8px;font-family:inherit;transition:color .15s}
+  .sub-del:hover{color:var(--status-red-text);border-color:var(--status-red-text)}
+  .sub-meta{font-size:13px;color:var(--text-secondary);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .sub-meta strong{color:var(--text-primary)}
+  .sub-meta .soon{color:var(--status-orange-text);font-weight:700}
 
-  .add-row{display:flex;gap:8px;margin-top:8px}
-  .add-btn{background:var(--bg-input);border:1px solid var(--border);color:var(--text-info);padding:7px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s;flex-shrink:0}
+  .add-row{display:flex;gap:8px;margin-top:10px}
+  .add-btn{background:var(--bg-input);border:1px solid var(--border);color:var(--text-info);padding:7px 14px;min-height:44px;border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit;transition:all .15s;flex:1}
   .add-btn:hover{border-color:var(--accent);color:var(--text-amount)}
-
-  /* 빠른 추가 */
-  .quick-adds{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
-  .quick-add{background:var(--bg-bar);border:1px solid var(--border);color:var(--calc-expr-text);padding:7px 10px;min-height:36px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;transition:all .15s}
+  .quick-title{font-size:12px;color:var(--text-muted);margin-top:10px}
+  .quick-adds{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .quick-add{background:var(--bg-bar);border:1px solid var(--border);color:var(--calc-expr-text);padding:7px 10px;min-height:44px;border-radius:6px;font-size:14px;cursor:pointer;font-family:inherit;transition:all .15s}
   .quick-add:hover{border-color:var(--accent);color:var(--text-amount)}
 
   /* 월 합계 */
   .monthly-total{text-align:center;padding:8px;font-size:14px;color:var(--text-amount);font-weight:700}
   .monthly-total strong{font-size:20px;color:var(--text-primary)}
+  .budget-note{font-size:13px;line-height:1.55;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg-bar);color:var(--text-secondary)}
+  .budget-note.error{border-color:var(--status-red-text);background:var(--bg-app);color:var(--status-red-text)}
+  .budget-note:empty{display:none}
 
   /* 결과 */
   .result-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-  .r-card{background:var(--bg-input);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center}
-  .r-label{font-size:10px;color:var(--calc-expr-text);margin-bottom:3px}
-  .r-value{font-size:15px;font-weight:800;color:var(--status-red-text)}
-  .r-sub{font-size:9px;color:var(--text-muted);margin-top:2px}
+  .r-card{background:var(--bg-input);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;min-width:0}
+  .r-label{font-size:12px;color:var(--calc-expr-text);margin-bottom:3px}
+  .r-value{font-size:15px;font-weight:800;color:var(--text-primary);overflow-wrap:anywhere}
 
   /* 가격 인상 시나리오 */
-  .invest-section{background:var(--bg-success, #1a2a1a);border:1px solid var(--border-success, #2a4a2a);border-radius:12px;padding:14px 16px}
-  .invest-title{font-size:12px;font-weight:700;color:var(--text-success);margin-bottom:8px}
-  .invest-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-  .i-card{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;padding:10px 8px;text-align:center}
-  .i-card .r-label{color:var(--text-secondary)}
-  .i-card .r-value{color:var(--text-success)}
-  .invest-note{font-size:10px;color:var(--text-success);margin-top:8px;text-align:center}
+  .scenario-section{background:var(--bg-success, #1a2a1a);border:1px solid var(--border-success, #2a4a2a);border-radius:12px;padding:14px 16px}
+  .scenario-title{font-size:13px;font-weight:700;color:var(--text-success);margin-bottom:8px}
+  .scenario-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .s-card{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;padding:10px 8px;text-align:center;min-width:0}
+  .s-card .r-label{color:var(--text-secondary)}
+  .s-card .r-value{color:var(--text-success)}
+  .formula-line{font-size:13px;color:var(--text-secondary);line-height:1.6;margin-top:10px;overflow-wrap:anywhere}
+  .formula-line:empty{display:none}
 
-  /* 예산 요약 */
-  .punchline{display:none;text-align:center;padding:8px 16px;font-size:13px;color:var(--text-highlight);line-height:1.5;animation:fadeIn .6s ease}
-  .punchline{display:none;text-align:center;padding:8px 16px;font-size:13px;color:var(--text-highlight);line-height:1.5;animation:fadeIn .6s ease}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-
-  .report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--status-red-text);animation:fadeIn .5s ease-in-out;margin-top:12px}
-  .report-box h2 {font-size:15px;font-weight:700;color:var(--status-red-text);margin-bottom:4px}
-  .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
-  .report-box strong {color:var(--text-primary);font-weight:600}
+  .action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .copy-btn{width:100%;padding:11px;background:var(--bg-header);color:var(--text-on-accent);border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;min-height:44px}
+  .storage-clear{background:var(--bg-btn);color:var(--text-secondary);border:1px solid var(--border);border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;min-height:44px;padding:0 12px}
+  .storage-clear:hover{border-color:var(--status-red-text);color:var(--status-red-text)}
+  .storage-note{font-size:12px;color:var(--text-muted);text-align:center}
 
   .related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:12px}
   .related-tools h2 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
-  .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
+  .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:14px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
   .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
 
-  .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text)}
+  .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:12px;color:var(--calc-expr-text)}
   .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
   .footer a:hover{color:var(--text-guide)}
   .guide-section{margin:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
-  .guide-section summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
+  .guide-section summary{padding:10px 14px;cursor:pointer;font-size:14px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
   .guide-section summary:hover{background:var(--bg-guide-hover)}
   .guide-section[open] summary{background:var(--bg-btn);border-bottom:1px solid var(--border)}
-  .guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
-  .guide-content ol{padding-left:20px}.guide-content li{margin-bottom:4px}
+  .guide-content{padding:12px 14px;font-size:14px;color:var(--text-info);line-height:1.8}
+  .guide-content p{margin-bottom:10px}
+  .toast{position:fixed;bottom:30px;left:50%;transform:translate(-50%,80px);opacity:0;pointer-events:none;z-index:999}
+  .toast.show{transform:translate(-50%,0);opacity:1}
+  @media(max-width:420px){
+    .sub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .sub-grid .wide{grid-column:1/-1}
+    .result-grid,.scenario-grid{grid-template-columns:1fr}
+  }
 </style>
 <link rel="stylesheet" href="/special-chars/tool-shell.css">
 </head>
@@ -109,24 +125,39 @@
   </div>
   <div class="body">
     <div class="section">
+      <div class="section-title">⚙️ 예산 가정</div>
+      <div class="settings-grid">
+        <div class="field">
+          <label for="increaseRate">연 가격 인상률 (%)</label>
+          <input id="increaseRate" type="text" inputmode="decimal" value="5" autocomplete="off" oninput="calc()">
+        </div>
+        <div class="field">
+          <label for="fxRate">USD 환율 (원/USD)</label>
+          <input id="fxRate" type="text" inputmode="decimal" placeholder="USD 항목이 있을 때" autocomplete="off" data-group oninput="calc()">
+        </div>
+      </div>
+      <div class="field-note">환율은 자동으로 불러오지 않습니다. 결재 기준일의 환율(예: 카드사 청구 환율 또는 회사 고시 환율)을 직접 입력하세요.</div>
+    </div>
+
+    <div class="section">
       <div class="section-title">📋 팀 업무 구독 목록</div>
       <div class="sub-list" id="subList"></div>
       <div class="add-row">
-        <button class="add-btn" onclick="addItem()">+ 항목 추가</button>
+        <button type="button" class="add-btn" onclick="addItem()">+ 항목 추가</button>
       </div>
+      <div class="quick-title">자주 쓰는 항목 (이름만 채우고 금액 칸으로 이동합니다)</div>
       <div class="quick-adds">
-        <button class="quick-add" onclick="quickAdd('AI 업무 도구',0)">AI 도구</button>
-        <button class="quick-add" onclick="quickAdd('협업 메신저',0)">협업 메신저</button>
-        <button class="quick-add" onclick="quickAdd('문서·위키',0)">문서·위키</button>
-        <button class="quick-add" onclick="quickAdd('화상 회의',0)">화상 회의</button>
-        <button class="quick-add" onclick="quickAdd('디자인 도구',0)">디자인</button>
-        <button class="quick-add" onclick="quickAdd('클라우드 저장소',0)">클라우드</button>
-        <button class="quick-add" onclick="quickAdd('개발 도구',0)">개발 도구</button>
-        <button class="quick-add" onclick="quickAdd('데이터 분석',0)">데이터 분석</button>
+        <button type="button" class="quick-add" onclick="quickAdd('AI 업무 도구')">AI 도구</button>
+        <button type="button" class="quick-add" onclick="quickAdd('협업 메신저')">협업 메신저</button>
+        <button type="button" class="quick-add" onclick="quickAdd('문서·위키')">문서·위키</button>
+        <button type="button" class="quick-add" onclick="quickAdd('화상 회의')">화상 회의</button>
+        <button type="button" class="quick-add" onclick="quickAdd('디자인 도구')">디자인</button>
+        <button type="button" class="quick-add" onclick="quickAdd('클라우드 저장소')">클라우드</button>
       </div>
     </div>
 
     <div class="monthly-total" id="monthlyTotal" role="status" aria-live="polite" aria-atomic="true">월 합계: <strong>0원</strong></div>
+    <div class="budget-note" id="budgetNote" role="status" aria-live="polite"></div>
 
     <div class="section">
       <div class="section-title">📊 현재 단가 유지 시 누적 예산</div>
@@ -146,39 +177,42 @@
       </div>
     </div>
 
-    <div class="invest-section">
-      <div class="invest-title">📈 매년 5% 가격 인상 시 누적 예산</div>
-      <div class="invest-grid">
-        <div class="i-card">
-          <div class="r-label">1년 후</div>
-          <div class="r-value" id="inv1">-</div>
-        </div>
-        <div class="i-card">
-          <div class="r-label">3년 후</div>
+    <div class="scenario-section">
+      <div class="scenario-title" id="scenarioTitle">📈 매년 5% 가격 인상 시 누적 예산</div>
+      <div class="scenario-grid">
+        <div class="s-card">
+          <div class="r-label">3년 누적</div>
           <div class="r-value" id="inv3">-</div>
         </div>
-        <div class="i-card">
-          <div class="r-label">5년 후</div>
+        <div class="s-card">
+          <div class="r-label">5년 누적</div>
           <div class="r-value" id="inv5">-</div>
         </div>
+        <div class="s-card">
+          <div class="r-label">5년 인상 추가분</div>
+          <div class="r-value" id="invDiff">-</div>
+        </div>
       </div>
-      <div class="invest-note">※ 현재 월 비용이 매년 한 번 5% 인상된다고 가정한 예산 시나리오</div>
+      <div class="formula-line" id="formulaLine"></div>
     </div>
 
-    <div class="punchline" id="punchline"></div>
-    <div class="report-box" id="analysisReport" style="display:none;"></div>
+    <div class="action-row">
+      <button type="button" class="copy-btn" onclick="exportCsv()">⬇️ CSV 내보내기</button>
+      <button type="button" class="storage-clear" onclick="requestClear()">목록 모두 지우기</button>
+    </div>
+    <div class="storage-note">목록은 이 브라우저에만 저장되어 다음 방문 때 복원됩니다.</div>
   </div>
   <details class="guide-section" open>
     <summary>💬 업무용 구독 예산 관리 Q&A</summary>
     <div class="guide-content">
-      <strong>Q. 어떤 금액을 입력해야 하나요?</strong>
-      <p>좌석 수를 반영한 실제 월 청구 예상액을 입력합니다. 연간 선결제 서비스는 총액을 12로 나눈 월 환산액을 별도로 기록하고, 부가세 포함 여부와 적용 환율을 팀 안에서 통일해야 비교가 가능합니다.</p>
-      <br>
-      <strong>Q. 5% 인상 시나리오는 실제 견적인가요?</strong>
-      <p>아닙니다. 장기 예산에 가격 변동 여유를 두기 위한 단순 가정입니다. 실제 가격은 서비스, 계약 통화, 좌석 구간과 할인 조건에 따라 달라지므로 갱신 전 공급사 견적과 계약서를 다시 확인해야 합니다.</p>
-      <br>
-      <strong>Q. 갱신 전에 무엇을 확인하나요?</strong>
-      <p>실사용 좌석, 중복 기능, 퇴사자 계정, 월간·연간 요금 차이와 해지 통보 기한을 확인합니다. 계산 결과는 예산 초안이며 구매 승인, 보안 검토와 계약 갱신 절차를 대신하지 않습니다.</p>
+      <p><strong>Q. 어떤 금액을 입력해야 하나요?</strong></p>
+      <p>청구서에 적힌 좌석당 단가와 좌석 수, 청구 주기를 그대로 입력합니다. 연간 선결제는 ‘연’을 고르면 12로 나눈 월 환산액으로 합산합니다. 달러 요금은 29.99처럼 소수점까지 입력하고, 위쪽에 적용할 환율을 넣으면 원화로 환산합니다. 부가세 포함 여부는 팀 안에서 한 기준으로 통일해야 비교할 수 있습니다.</p>
+      <p><strong>Q. 가격 인상 시나리오는 실제 견적인가요?</strong></p>
+      <p>아닙니다. 첫해는 현재 단가를 유지하고 2년차부터 매년 한 번 입력한 비율만큼 오른다고 가정한 예산 여유분입니다. 실제 가격은 서비스, 계약 통화, 좌석 구간과 할인 조건에 따라 달라지므로 갱신 전 공급사 견적과 계약서를 다시 확인해야 합니다.</p>
+      <p><strong>Q. 갱신일은 왜 기록하나요?</strong></p>
+      <p>자동 갱신 서비스는 해지 통보 기한을 놓치면 1년 요금이 다시 청구되는 경우가 많습니다. 갱신일을 넣으면 60일 이내 갱신 예정 항목을 따로 표시하므로 실사용 좌석, 중복 기능, 퇴사자 계정과 월간·연간 요금 차이를 미리 점검할 수 있습니다.</p>
+      <p><strong>Q. CSV에는 무엇이 들어가나요?</strong></p>
+      <p>항목별 단가·통화·좌석·주기·월/연 환산액과 합계, 그리고 적용한 환율·인상률과 작성일이 함께 기록됩니다. 환율은 사용자가 입력한 값이므로 결재 문서에는 환율 기준일을 따로 적어 두는 것이 좋습니다.</p>
     </div>
   </details>
 
@@ -186,164 +220,498 @@
     <h2>🔗 연관 업무 계산기</h2>
     <div class="tool-list">
       <a href="/special-chars/percent-calc/"><span>🔢 퍼센트 계산기</span><span>바로가기 →</span></a>
-      <a href="/special-chars/discount-calc/"><span>🏷️ 할인·부가세 계산기</span><span>바로가기 →</span></a>
-      <a href="/special-chars/avg-price/"><span>📦 가중 평균 단가</span><span>바로가기 →</span></a>
+      <a href="/special-chars/discount-calc/"><span>🏷️ 할인/세금 계산기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/avg-price/"><span>📦 가중 평균 단가 계산기</span><span>바로가기 →</span></a>
     </div>
   </div>
   <section class="work-context" aria-labelledby="subscriptionWorkTitle">
     <h2 id="subscriptionWorkTitle">팀 SaaS 갱신 예산을 한 번에 정리하기</h2>
-    <p><strong>업무 예시:</strong> AI, 협업, 디자인과 클라우드 도구의 좌석별 월 청구액을 합산해 연간 예산 초안을 만들고, 가격 인상 여유를 둔 3년·5년 시나리오와 비교합니다.</p>
-    <p><strong>적용 한계:</strong> 환율, 부가세, 사용량 과금, 연간 할인과 좌석 구간은 자동 반영하지 않습니다. 실제 구매 승인에는 공급사 견적서, 계약 통화와 갱신 조건을 우선하세요.</p>
-    <p><strong>데이터 처리:</strong> 서비스 이름과 금액은 현재 브라우저 메모리에서만 계산하며 서버에 업로드하지 않습니다. 계약 단가가 기밀이면 화면 공유와 클립보드 사용에도 주의하세요.</p>
+    <p><strong>업무 예시:</strong> AI, 협업, 디자인과 클라우드 도구의 좌석 단가·좌석 수·청구 주기를 월 비용으로 환산해 합산하고, 연간 예산 초안과 가격 인상 여유를 둔 3년·5년 시나리오를 비교합니다.</p>
+    <p><strong>계산 기준:</strong> 월 환산액 = 단가 × 좌석 수 ÷ (연간 청구면 12) × (달러면 입력 환율)입니다. 누적 예산은 월 합계 × 12개월 × 연수이며, 인상 시나리오는 2년차부터 매년 인상률을 복리로 적용합니다. 표시 금액은 원 단위로 반올림합니다.</p>
+    <p><strong>적용 한계:</strong> 부가세, 사용량 과금, 연간 할인, 좌석 구간 할인과 환율 변동은 자동 반영하지 않습니다. 실제 구매 승인에는 공급사 견적서, 계약 통화와 갱신 조건을 우선하세요.</p>
+    <p><strong>데이터 처리:</strong> 서비스 이름과 금액은 서버에 업로드하지 않고 브라우저에서 계산하며, 이어서 쓸 수 있도록 이 브라우저의 localStorage에만 저장합니다. ‘목록 모두 지우기’로 저장값을 삭제할 수 있고, 계약 단가가 기밀이면 공용 PC에서는 사용 후 지우세요.</p>
   </section>
     </main>
-<footer class="footer"><span>실시간 계산</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
+<footer class="footer"><span>실시간 계산 · 목록은 이 브라우저에만 저장</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
 <nav class="site-policy-links" aria-label="사이트 정책"><a href="/about.html">사이트 소개</a><a href="/editorial-policy.html">편집정책</a><a href="/contact.html">문의</a><a href="/privacy.html">개인정보처리방침</a></nav>
 </div>
+
+<dialog class="tool-confirm-dialog" id="clearDialog" aria-labelledby="clearDialogTitle" aria-describedby="clearDialogDescription">
+  <div class="tool-confirm-dialog__body">
+    <h2 id="clearDialogTitle">구독 목록을 모두 지울까요?</h2>
+    <p id="clearDialogDescription">화면의 항목과 이 브라우저에 저장된 목록·환율·인상률이 함께 삭제되며 되돌릴 수 없습니다.</p>
+    <div class="tool-confirm-dialog__actions">
+      <button type="button" data-dialog-cancel autofocus>취소</button>
+      <button type="button" class="tool-confirm-dialog__confirm" data-dialog-accept>모두 지우기</button>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
-let subs = [];
+const STORAGE_KEY = 'teemozipsa:sub-calc:v1';
+const MAX_UNIT_PRICE = 1_000_000_000_000;
+const MAX_SEATS = 100000;
+const MAX_ITEMS = 60;
 let nextId = 1;
-const MAX_MONTHLY_PRICE = 1_000_000_000_000;
+let restoring = false;
 
-function safePrice(value) {
-  const price = Number(value);
-  return Number.isFinite(price) && price >= 0 && price <= MAX_MONTHLY_PRICE ? price : 0;
+// ---- 공통 숫자 처리 ----
+function groupDigits(text) {
+  return text.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
-function addItem(name='', price=0) {
-  subs.push({ id: nextId++, name, price: safePrice(price) });
-  render();
-}
-
-function quickAdd(name, price) {
-  subs.push({ id: nextId++, name, price: safePrice(price) });
-  render();
-}
-
-function removeItem(id) {
-  subs = subs.filter(s => s.id !== id);
-  render();
-}
-
-function updateItem(id, field, val) {
-  const item = subs.find(s => s.id === id);
-  if (!item) return false;
-  if (field === 'name') {
-    item.name = val;
-    calc();
-    return true;
+function applyGrouping(input) {
+  const raw = input.value;
+  const plain = raw.replace(/,/g, '');
+  if (!/^\d*(\.\d*)?$/.test(plain)) return;
+  const caret = input.selectionStart ?? raw.length;
+  const keep = raw.slice(0, caret).replace(/,/g, '').length;
+  const [intPart, decPart] = plain.split('.');
+  const next = groupDigits(intPart) + (decPart !== undefined ? '.' + decPart : '');
+  if (next === raw) return;
+  input.value = next;
+  if (document.activeElement === input) {
+    let seen = 0;
+    let pos = 0;
+    while (pos < next.length && seen < keep) {
+      if (next[pos] !== ',') seen += 1;
+      pos += 1;
+    }
+    try { input.setSelectionRange(pos, pos); } catch (error) { /* 무시 */ }
   }
-  const cleaned = val.replace(/,/g, '').trim();
-  const parsed = cleaned === '' ? 0 : Number(cleaned);
-  const valid = cleaned === '' || (/^\d+$/.test(cleaned) && Number.isFinite(parsed) && parsed <= MAX_MONTHLY_PRICE);
-  item.price = valid ? parsed : 0;
-  calc();
-  return valid;
 }
 
-function render() {
-  const list = document.getElementById('subList');
-  list.replaceChildren();
-  subs.forEach(s => {
-    const div = document.createElement('div');
-    div.className = 'sub-item';
+document.addEventListener('input', event => {
+  if (event.target.matches && event.target.matches('input[data-group]')) applyGrouping(event.target);
+}, true);
 
-    const nameInput = document.createElement('input');
-    nameInput.className = 'sub-name';
-    nameInput.value = s.name;
-    nameInput.placeholder = '서비스 이름';
-    nameInput.setAttribute('aria-label', '구독 서비스 이름');
-    nameInput.addEventListener('input', () => updateItem(s.id, 'name', nameInput.value));
-
-    const priceInput = document.createElement('input');
-    priceInput.className = 'sub-price';
-    priceInput.value = s.price || '';
-    priceInput.placeholder = '월 금액';
-    priceInput.inputMode = 'numeric';
-    priceInput.maxLength = 17;
-    priceInput.setAttribute('aria-label', '월 구독 금액');
-    priceInput.addEventListener('input', () => {
-      const valid = updateItem(s.id, 'price', priceInput.value);
-      priceInput.setAttribute('aria-invalid', String(!valid));
-      priceInput.setCustomValidity(valid ? '' : '월 금액은 0원 이상 1조 원 이하의 정수로 입력하세요.');
-    });
-
-    const deleteBtn = document.createElement('button');
-    deleteBtn.type = 'button';
-    deleteBtn.className = 'sub-del';
-    deleteBtn.textContent = '✕';
-    deleteBtn.title = '구독 삭제';
-    deleteBtn.setAttribute('aria-label', '구독 삭제');
-    deleteBtn.addEventListener('click', () => removeItem(s.id));
-
-    div.append(nameInput, priceInput, deleteBtn);
-    list.appendChild(div);
-  });
-  calc();
+function readNumber(text, { max = Infinity, integer = false } = {}) {
+  const raw = String(text ?? '').replace(/[,\s]/g, '');
+  if (raw === '') return { state: 'empty' };
+  if (!/^(\d+\.?\d*|\.\d+)$/.test(raw)) return { state: 'invalid' };
+  const value = Number(raw);
+  if (!Number.isFinite(value) || value > max) return { state: 'tooLarge' };
+  if (integer && !Number.isInteger(value)) return { state: 'invalid' };
+  return { state: 'ok', value };
 }
 
-function fmtWon(n) {
+function koreanUnits(won) {
+  let rest = Math.round(Math.abs(won));
+  const jo = Math.floor(rest / 1e12); rest -= jo * 1e12;
+  const eok = Math.floor(rest / 1e8); rest -= eok * 1e8;
+  const man = Math.floor(rest / 1e4); rest -= man * 1e4;
+  const parts = [];
+  if (jo) parts.push(jo.toLocaleString('ko-KR') + '조');
+  if (eok) parts.push(eok.toLocaleString('ko-KR') + '억');
+  if (man) parts.push(man.toLocaleString('ko-KR') + '만');
+  if (rest || !parts.length) parts.push(rest.toLocaleString('ko-KR'));
+  return (won < 0 ? '-' : '') + parts.join(' ') + '원';
+}
+
+// 페이지 공통 금액 형식: 1억 이상은 "1억 7,696만 5,000원", 그 미만은 "176,965원"
+function formatWon(n) {
   if (!Number.isFinite(n) || n < 0) return '-';
-  return Math.round(n).toLocaleString('ko-KR') + '원';
+  const won = Math.round(Number(n.toFixed(6))); // 부동소수점 오차(0.4999…)로 반올림이 흔들리지 않게 보정
+  return won >= 1e8 ? koreanUnits(won) : won.toLocaleString('ko-KR') + '원';
 }
 
-function calcEscalatedBudget(monthly, years) {
+function todayIso() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
+
+// ---- 목록 ----
+function makeField(labelText, control, className) {
+  const field = document.createElement('div');
+  field.className = 'field' + (className ? ' ' + className : '');
+  const label = document.createElement('label');
+  label.htmlFor = control.id;
+  label.textContent = labelText;
+  field.append(label, control);
+  return field;
+}
+
+function makeSelect(id, className, options, value) {
+  const select = document.createElement('select');
+  select.id = id;
+  select.className = className;
+  for (const [optionValue, text] of options) {
+    const option = document.createElement('option');
+    option.value = optionValue;
+    option.textContent = text;
+    select.appendChild(option);
+  }
+  if (options.some(([optionValue]) => optionValue === value)) select.value = value;
+  select.addEventListener('change', calc);
+  return select;
+}
+
+function addItem(name = '', price = '', options = {}) {
+  if (document.querySelectorAll('.sub-item').length >= MAX_ITEMS) {
+    showToast(`항목은 최대 ${MAX_ITEMS}개까지 추가할 수 있습니다`);
+    return null;
+  }
+  const id = nextId++;
+  const item = document.createElement('div');
+  item.className = 'sub-item';
+  item.dataset.id = String(id);
+
+  const nameInput = document.createElement('input');
+  nameInput.id = `subName${id}`;
+  nameInput.className = 'sub-name';
+  nameInput.maxLength = 80;
+  nameInput.placeholder = '서비스 이름';
+  nameInput.value = String(name ?? '').slice(0, 200);
+  nameInput.addEventListener('input', calc);
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.type = 'button';
+  deleteBtn.className = 'sub-del';
+  deleteBtn.textContent = '삭제';
+  deleteBtn.addEventListener('click', () => { item.remove(); calc(); });
+
+  const top = document.createElement('div');
+  top.className = 'sub-top';
+  top.append(makeField('서비스 이름', nameInput), deleteBtn);
+
+  const priceInput = document.createElement('input');
+  priceInput.id = `subPrice${id}`;
+  priceInput.className = 'sub-price';
+  priceInput.inputMode = 'decimal';
+  priceInput.autocomplete = 'off';
+  priceInput.placeholder = '예: 29.99';
+  priceInput.dataset.group = '';
+  priceInput.value = price === '' || price === null || price === undefined ? '' : String(price);
+  applyGrouping(priceInput);
+  priceInput.addEventListener('input', calc);
+
+  const seatsInput = document.createElement('input');
+  seatsInput.id = `subSeats${id}`;
+  seatsInput.className = 'sub-seats';
+  seatsInput.inputMode = 'numeric';
+  seatsInput.autocomplete = 'off';
+  seatsInput.value = String(options.seats ?? '1');
+  seatsInput.addEventListener('input', calc);
+
+  const currency = makeSelect(`subCurrency${id}`, 'sub-currency', [['KRW', '원'], ['USD', 'USD']], options.currency || 'KRW');
+  const cycle = makeSelect(`subCycle${id}`, 'sub-cycle', [['month', '월 청구'], ['year', '연 청구']], options.cycle || 'month');
+
+  const renewal = document.createElement('input');
+  renewal.type = 'date';
+  renewal.id = `subRenewal${id}`;
+  renewal.className = 'sub-renewal';
+  renewal.value = /^\d{4}-\d{2}-\d{2}$/.test(options.renewal || '') ? options.renewal : '';
+  renewal.addEventListener('input', calc);
+
+  const grid = document.createElement('div');
+  grid.className = 'sub-grid';
+  grid.append(
+    makeField('단가(좌석당)', priceInput),
+    makeField('통화', currency),
+    makeField('좌석 수', seatsInput),
+    makeField('청구 주기', cycle),
+    makeField('다음 갱신일 (선택)', renewal, 'wide')
+  );
+
+  const meta = document.createElement('div');
+  meta.className = 'sub-meta';
+  const monthly = document.createElement('span');
+  monthly.className = 'sub-monthly';
+  const due = document.createElement('span');
+  due.className = 'sub-due';
+  meta.append(monthly, due);
+
+  item.append(top, grid, meta);
+  document.getElementById('subList').appendChild(item);
+  relabel();
+  if (!restoring) calc();
+  return item;
+}
+
+function quickAdd(name) {
+  const item = addItem(name, '');
+  if (item) item.querySelector('.sub-price').focus();
+}
+
+function relabel() {
+  document.querySelectorAll('.sub-item').forEach((item, index) => {
+    const nameValue = item.querySelector('.sub-name').value.trim();
+    item.querySelector('.sub-del').setAttribute('aria-label', `${nameValue || `${index + 1}번째 항목`} 삭제`);
+  });
+}
+
+function readItems(fx) {
+  const items = [];
+  const problems = [];
+  let missing = 0;
+  let usdCount = 0;
+  const today = new Date(todayIso() + 'T00:00:00');
+  document.querySelectorAll('.sub-item').forEach((row, index) => {
+    const name = row.querySelector('.sub-name').value.trim() || `${index + 1}번째 항목`;
+    const priceInput = row.querySelector('.sub-price');
+    const seatsInput = row.querySelector('.sub-seats');
+    const currency = row.querySelector('.sub-currency').value;
+    const cycle = row.querySelector('.sub-cycle').value;
+    const renewal = row.querySelector('.sub-renewal').value;
+    const price = readNumber(priceInput.value, { max: MAX_UNIT_PRICE });
+    const seats = readNumber(seatsInput.value, { max: MAX_SEATS, integer: true });
+    const priceBad = price.state !== 'ok' && price.state !== 'empty';
+    const seatsBad = seats.state !== 'ok' || seats.value < 1;
+    priceInput.setAttribute('aria-invalid', String(priceBad));
+    seatsInput.setAttribute('aria-invalid', String(seatsBad));
+    const monthlyEl = row.querySelector('.sub-monthly');
+    const dueEl = row.querySelector('.sub-due');
+    dueEl.textContent = '';
+    dueEl.className = 'sub-due';
+    if (renewal) {
+      const days = Math.round((new Date(renewal + 'T00:00:00') - today) / 86400000);
+      if (Number.isFinite(days)) {
+        dueEl.textContent = days < 0 ? `갱신일 지남 (${-days}일 전)` : days === 0 ? '오늘 갱신' : `갱신 D-${days}`;
+        if (days <= 60) dueEl.classList.add('soon');
+      }
+    }
+    if (priceBad) {
+      problems.push(`${name}: 단가는 0 이상 1조 이하 숫자(소수점 가능)로 입력하세요.`);
+      monthlyEl.textContent = '단가 확인 필요';
+      return;
+    }
+    if (seatsBad) {
+      problems.push(`${name}: 좌석 수는 1 이상 ${MAX_SEATS.toLocaleString('ko-KR')} 이하 정수로 입력하세요.`);
+      monthlyEl.textContent = '좌석 수 확인 필요';
+      return;
+    }
+    if (price.state === 'empty') {
+      missing += 1;
+      monthlyEl.textContent = '금액 미입력 · 합계 제외';
+      return;
+    }
+    if (currency === 'USD') usdCount += 1;
+    const rate = currency === 'USD' ? fx : 1;
+    const monthlyWon = rate ? price.value * seats.value * rate / (cycle === 'year' ? 12 : 1) : NaN;
+    monthlyEl.replaceChildren();
+    const strong = document.createElement('strong');
+    strong.textContent = Number.isFinite(monthlyWon) ? formatWon(monthlyWon) : '환율 입력 필요';
+    monthlyEl.append('월 환산 ', strong);
+    items.push({ name, price: price.value, currency, seats: seats.value, cycle, renewal, monthlyWon, dueDays: renewal ? Math.round((new Date(renewal + 'T00:00:00') - today) / 86400000) : null });
+  });
+  return { items, problems, missing, usdCount };
+}
+
+function calcEscalatedBudget(monthly, years, rate) {
   if (!Number.isFinite(monthly) || monthly < 0) return 0;
   let result = 0;
-  for (let year = 0; year < years; year += 1) result += monthly * 12 * Math.pow(1.05, year);
-  return Number.isFinite(result) ? Math.round(result) : 0;
+  for (let year = 0; year < years; year += 1) result += monthly * 12 * Math.pow(1 + rate, year);
+  return Number.isFinite(result) ? result : 0;
+}
+
+let lastResult = null;
+
+function setResults(values) {
+  for (const [id, value] of Object.entries(values)) document.getElementById(id).textContent = value;
 }
 
 function calc() {
-  const rawTotal = subs.reduce((sum, s) => sum + safePrice(s.price), 0);
-  const total = Number.isFinite(rawTotal) ? rawTotal : 0;
-  document.getElementById('monthlyTotal').innerHTML = `월 합계: <strong>${total.toLocaleString()}원</strong>`;
+  relabel();
+  const rateInput = document.getElementById('increaseRate');
+  const fxInput = document.getElementById('fxRate');
+  const rateField = readNumber(rateInput.value, { max: 100 });
+  const fxField = readNumber(fxInput.value, { max: 1_000_000 });
+  const rateOk = rateField.state === 'ok';
+  rateInput.setAttribute('aria-invalid', String(!rateOk));
+  const fx = fxField.state === 'ok' && fxField.value > 0 ? fxField.value : null;
+  const { items, problems, missing, usdCount } = readItems(fx);
+  fxInput.setAttribute('aria-invalid', String(fxField.state !== 'empty' && !fx));
+  if (!rateOk) problems.push('연 가격 인상률은 0~100% 범위의 숫자로 입력하세요.');
+  if (fxField.state !== 'empty' && !fx) problems.push('USD 환율은 0보다 큰 숫자로 입력하세요.');
+  else if (usdCount && !fx) {
+    problems.push(`USD 항목 ${usdCount}개가 있어 USD 환율(원/USD)을 입력해야 합니다.`);
+    fxInput.setAttribute('aria-invalid', 'true');
+  }
+  saveState();
 
+  const totalEl = document.getElementById('monthlyTotal');
+  const noteEl = document.getElementById('budgetNote');
+  const rate = rateOk ? rateField.value / 100 : 0;
+  document.getElementById('scenarioTitle').textContent = `📈 매년 ${rateOk ? rateField.value.toLocaleString('ko-KR', { maximumFractionDigits: 2 }) : '?'}% 가격 인상 시 누적 예산`;
+
+  if (problems.length) {
+    lastResult = null;
+    totalEl.replaceChildren('월 합계: ', Object.assign(document.createElement('strong'), { textContent: '입력 확인 필요' }));
+    noteEl.className = 'budget-note error';
+    noteEl.textContent = problems.slice(0, 3).join(' ') + (problems.length > 3 ? ` 외 ${problems.length - 3}건` : '');
+    setResults({ y1: '-', y3: '-', y5: '-', inv3: '-', inv5: '-', invDiff: '-' });
+    document.getElementById('formulaLine').textContent = '';
+    return;
+  }
+
+  const total = items.reduce((sum, item) => sum + item.monthlyWon, 0);
+  totalEl.replaceChildren('월 합계: ', Object.assign(document.createElement('strong'), { textContent: formatWon(total) }));
+  const notes = [];
+  if (missing) notes.push(`금액을 입력하지 않은 ${missing}개 항목은 합계에서 제외했습니다.`);
+  const soon = items.filter(item => item.dueDays !== null && item.dueDays >= 0 && item.dueDays <= 60).sort((a, b) => a.dueDays - b.dueDays);
+  if (soon.length) notes.push(`60일 이내 갱신 예정: ${soon.slice(0, 4).map(item => `${item.name}(D-${item.dueDays})`).join(', ')}${soon.length > 4 ? ` 외 ${soon.length - 4}개` : ''}.`);
+  if (usdCount && fx) notes.push(`USD 항목 ${usdCount}개는 입력 환율 ${fx.toLocaleString('ko-KR', { maximumFractionDigits: 2 })}원/USD로 환산했습니다.`);
+  noteEl.className = 'budget-note';
+  noteEl.textContent = notes.join(' ');
+
+  if (!(total > 0)) {
+    lastResult = null;
+    setResults({ y1: '-', y3: '-', y5: '-', inv3: '-', inv5: '-', invDiff: '-' });
+    document.getElementById('formulaLine').textContent = '';
+    return;
+  }
   const y1 = total * 12;
   const y3 = total * 36;
   const y5 = total * 60;
-
-  document.getElementById('y1').textContent = y1 ? fmtWon(y1) : '-';
-  document.getElementById('y3').textContent = y3 ? fmtWon(y3) : '-';
-  document.getElementById('y5').textContent = y5 ? fmtWon(y5) : '-';
-
-  // 연 5% 가격 인상 예산 시나리오
-  document.getElementById('inv1').textContent = total ? fmtWon(calcEscalatedBudget(total, 1)) : '-';
-  document.getElementById('inv3').textContent = total ? fmtWon(calcEscalatedBudget(total, 3)) : '-';
-  document.getElementById('inv5').textContent = total ? fmtWon(calcEscalatedBudget(total, 5)) : '-';
-
-  // 예산 분석 리포트
-  const punch = document.getElementById('punchline');
-  punch.style.display = 'none';
-
-  const report = document.getElementById('analysisReport');
-  if (total > 0) {
-    report.style.display = 'flex';
-    let msg = `<h2>💡 업무 구독 예산 요약</h2>`;
-    msg += `<p>입력한 업무 구독의 월 합계는 <strong>${total.toLocaleString()}원</strong>이며 현재 단가가 유지되면 1년 <strong>${fmtWon(y1)}</strong>, 5년 <strong>${fmtWon(y5)}</strong>입니다.</p>`;
-    
-    const inv5 = calcEscalatedBudget(total, 5);
-    const diff = inv5 - y5;
-    
-    msg += `<p><strong>가격 인상 여유:</strong> 매년 한 번 5% 인상된다고 가정하면 5년 누적액은 <strong>${fmtWon(inv5)}</strong>으로, 현재 단가 유지 대비 <strong>${fmtWon(diff)}</strong>의 추가 예산이 필요합니다.</p>`;
-    
-    if (y1 >= 1000000) {
-        msg += `<p>📋 <strong>검토 항목:</strong> 연간 금액이 100만 원 이상입니다. 실제 사용 좌석, 중복 기능, 연간 계약 할인과 갱신 통보 기한을 구매 담당자와 확인하세요.</p>`;
-    } else if (y1 >= 400000) {
-        msg += `<p>⚠️ <strong>확인:</strong> 월간·연간 결제 주기와 부가세 포함 여부가 섞여 있다면 같은 기준으로 환산한 뒤 비교하세요.</p>`;
-    } else {
-        msg += `<p>✅ <strong>다음 단계:</strong> 금액이 작아도 담당자, 좌석 수와 다음 갱신일을 함께 기록하면 누락된 자동 갱신을 줄일 수 있습니다.</p>`;
-    }
-    
-    report.innerHTML = msg;
-  } else {
-    report.style.display = 'none';
-  }
+  const inv3 = calcEscalatedBudget(total, 3, rate);
+  const inv5 = calcEscalatedBudget(total, 5, rate);
+  setResults({
+    y1: formatWon(y1), y3: formatWon(y3), y5: formatWon(y5),
+    inv3: formatWon(inv3), inv5: formatWon(inv5), invDiff: formatWon(inv5 - y5)
+  });
+  const pct = rateField.value.toLocaleString('ko-KR', { maximumFractionDigits: 2 });
+  const growth = (1 + rate).toLocaleString('ko-KR', { maximumFractionDigits: 4 });
+  document.getElementById('formulaLine').textContent =
+    `계산식: 월 합계 ${formatWon(total)} × 12개월 × (1 + ${growth}¹ + … + ${growth}⁴) = 5년 ${formatWon(inv5)} · 첫해는 인상 없이 ${formatWon(y1)}입니다. (인상률 ${pct}%)`;
+  lastResult = { items, total, y1, y3, y5, inv3, inv5, fx, pct, missing };
 }
 
-// 업무 예시 항목
-addItem('AI 업무 도구', 0);
-addItem('협업 도구', 0);
+// ---- 저장 ----
+function collectState() {
+  return {
+    rate: document.getElementById('increaseRate').value,
+    fx: document.getElementById('fxRate').value,
+    items: [...document.querySelectorAll('.sub-item')].map(row => ({
+      name: row.querySelector('.sub-name').value,
+      price: row.querySelector('.sub-price').value,
+      seats: row.querySelector('.sub-seats').value,
+      currency: row.querySelector('.sub-currency').value,
+      cycle: row.querySelector('.sub-cycle').value,
+      renewal: row.querySelector('.sub-renewal').value
+    }))
+  };
+}
+
+function saveState() {
+  if (restoring) return;
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(collectState())); } catch (error) { /* 저장소를 쓸 수 없으면 계산만 합니다 */ }
+}
+
+function restoreState() {
+  let data = null;
+  try { data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (error) { data = null; }
+  if (!data || typeof data !== 'object' || !Array.isArray(data.items)) return false;
+  const text = value => (typeof value === 'string' ? value.slice(0, 200) : '');
+  restoring = true;
+  try {
+    document.getElementById('increaseRate').value = text(data.rate) || '5';
+    document.getElementById('fxRate').value = text(data.fx);
+    data.items.slice(0, MAX_ITEMS).forEach(item => {
+      if (!item || typeof item !== 'object') return;
+      addItem(text(item.name), text(item.price), {
+        seats: text(item.seats) || '1',
+        currency: item.currency === 'USD' ? 'USD' : 'KRW',
+        cycle: item.cycle === 'year' ? 'year' : 'month',
+        renewal: text(item.renewal)
+      });
+    });
+  } finally {
+    restoring = false;
+  }
+  if (!document.querySelector('.sub-item')) {
+    restoring = true;
+    addItem();
+    restoring = false;
+  }
+  return true;
+}
+
+function openDialog(dialogId) {
+  const dialog = document.getElementById(dialogId);
+  if (!dialog || typeof dialog.showModal !== 'function') return Promise.resolve(null);
+  return new Promise(resolve => {
+    const accept = dialog.querySelector('[data-dialog-accept]');
+    const cancel = dialog.querySelector('[data-dialog-cancel]');
+    const onCancel = event => { event.preventDefault(); dialog.close('cancel'); };
+    accept.onclick = () => dialog.close('accept');
+    cancel.onclick = () => dialog.close('cancel');
+    dialog.addEventListener('cancel', onCancel);
+    dialog.addEventListener('close', () => {
+      dialog.removeEventListener('cancel', onCancel);
+      resolve(dialog.returnValue === 'accept');
+    }, { once: true });
+    dialog.returnValue = '';
+    dialog.showModal();
+  });
+}
+
+async function requestClear() {
+  const accepted = await openDialog('clearDialog');
+  if (accepted === null) { showToast('이 브라우저는 확인 창을 지원하지 않아 지우지 않았습니다'); return; }
+  if (!accepted) return;
+  document.getElementById('subList').replaceChildren();
+  document.getElementById('increaseRate').value = '5';
+  document.getElementById('fxRate').value = '';
+  restoring = true; // 지운 직후 빈 목록을 다시 저장하지 않습니다.
+  try { addItem(); calc(); } finally { restoring = false; }
+  try { localStorage.removeItem(STORAGE_KEY); } catch (error) { /* 무시 */ }
+  showToast('목록과 저장된 값을 지웠습니다');
+}
+
+// ---- CSV ----
+function csvCell(value) {
+  let text = String(value ?? '');
+  if (/^[=+\-@\t\r]/.test(text)) text = "'" + text;
+  return `"${text.replace(/"/g, '""')}"`;
+}
+
+function exportCsv() {
+  calc();
+  if (!lastResult) { showToast('금액을 입력하고 오류를 해결한 뒤 내보내세요'); return; }
+  const r = lastResult;
+  const rows = [['서비스', '단가', '통화', '좌석 수', '청구 주기', '월 환산(원)', '연 환산(원)', '다음 갱신일']];
+  for (const item of r.items) {
+    rows.push([item.name, item.price, item.currency, item.seats, item.cycle === 'year' ? '연' : '월', Math.round(item.monthlyWon), Math.round(item.monthlyWon * 12), item.renewal || '']);
+  }
+  rows.push([]);
+  rows.push(['월 합계(원)', Math.round(r.total)]);
+  rows.push(['1년 누적(원)', Math.round(r.y1)], ['3년 누적(원)', Math.round(r.y3)], ['5년 누적(원)', Math.round(r.y5)]);
+  rows.push([`${r.pct}% 인상 3년 누적(원)`, Math.round(r.inv3)], [`${r.pct}% 인상 5년 누적(원)`, Math.round(r.inv5)]);
+  rows.push([]);
+  rows.push(['작성일', todayIso()]);
+  rows.push(['USD 환율 기준', r.fx ? `${r.fx}원/USD (사용자 입력, ${todayIso()} 작성 기준)` : 'USD 항목 없음']);
+  rows.push(['가격 인상 가정', `2년차부터 매년 ${r.pct}% (사용자 입력 가정, 공급사 견적 아님)`]);
+  if (r.missing) rows.push(['제외 항목', `금액 미입력 ${r.missing}개`]);
+  rows.push(['출처', 'teemozipsa.com 업무용 구독·SaaS 비용 계산기 (참고용 예산 초안)']);
+  const csv = '﻿' + rows.map(row => row.map(csvCell).join(',')).join('\r\n');
+  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `saas-budget-${todayIso()}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 0);
+  showToast('⬇️ CSV 파일을 내보냈습니다');
+}
+
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+// 저장된 목록이 없으면 예시 항목 두 개로 시작합니다(금액은 비워 둠).
+if (!restoreState()) {
+  restoring = true;
+  addItem('AI 업무 도구', '');
+  addItem('협업 도구', '');
+  restoring = false;
+}
+calc();
 </script>
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 <script src="/special-chars/theme-toggle.js"></script>

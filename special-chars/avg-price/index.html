@@ -11,9 +11,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>📦 가중 평균 단가 계산기 — 티모집사</title>
-<meta name="description" content="현재 수량·평균 단가와 추가 구매 수량·단가를 입력해 재고, 자재와 상품의 새로운 가중 평균 단가를 계산합니다.">
+<meta name="description" content="현재 보유분과 여러 건의 추가 구매 수량·단가를 합쳐 재고·자재·상품의 가중 평균 단가를 계산하고, 목표 평균 단가에 필요한 구매 수량을 역산합니다.">
 <meta property="og:title" content="📦 가중 평균 단가 계산기 — 티모집사">
-<meta property="og:description" content="기존 보유분과 추가 구매분을 합친 새로운 수량 가중 평균 단가를 계산합니다.">
+<meta property="og:description" content="기존 보유분과 여러 건의 추가 구매분을 합친 수량 가중 평균 단가와 목표 단가 역산을 계산합니다.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/avg-price/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
@@ -39,123 +39,105 @@
 
   .body{padding:16px;display:flex;flex-direction:column;gap:16px}
 
-  /* 섹션 */
   .section{
     background:var(--bg-bar);border-radius:12px;padding:14px 16px;
     border:1px solid var(--border);
   }
   .section-title{
-    font-size:12px;font-weight:700;color:var(--text-info);
+    font-size:13px;font-weight:700;color:var(--text-info);
     margin-bottom:10px;display:flex;align-items:center;gap:6px;
   }
   .section-title .badge{
-    font-size:10px;padding:2px 8px;border-radius:4px;
+    font-size:12px;padding:2px 8px;border-radius:4px;
     font-weight:600;
   }
-  .badge-hold{background:#1e3a5f;color:#60a5fa}
-  .badge-add{background:#3a1e5f;color:#c084fc}
+  .badge-hold{background:#1e3a5f;color:#bfdbfe}
+  .badge-add{background:#3a1e5f;color:#e9d5ff}
+  .badge-goal{background:#1e4d3a;color:#bbf7d0}
 
   .field-row{display:flex;gap:10px;margin-bottom:8px}
   .field-row:last-child{margin-bottom:0}
-  .field{flex:1;display:flex;flex-direction:column;gap:3px}
-  .field label{font-size:10px;color:var(--calc-expr-text);font-weight:600}
-  .field input{
+  .field{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0}
+  .field label{font-size:13px;color:var(--calc-expr-text);font-weight:600}
+  .field input,.field select{
     background:var(--bg-input);border:1px solid var(--border);border-radius:8px;
-    color:var(--text-primary);padding:10px 12px;font-size:15px;font-family:inherit;
-    outline:none;width:100%;
+    color:var(--text-primary);padding:10px 12px;font-size:16px;font-family:inherit;
+    outline:none;width:100%;min-height:44px;
   }
-  .field input:focus{border-color:var(--accent)}
+  .field input:focus,.field select:focus{border-color:var(--accent)}
   .field input::placeholder{color:var(--text-muted)}
 
-  /* 수량↔금액 토글 */
-  .toggle-row{
-    display:flex;align-items:center;gap:8px;margin-bottom:8px;
-  }
-  .toggle-label{font-size:11px;color:var(--calc-expr-text)}
-  .toggle-btn{
-    display:flex;background:var(--bg-input);border:1px solid var(--border);
-    border-radius:8px;overflow:hidden;
-  }
+  .toggle-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+  .toggle-label{font-size:13px;color:var(--calc-expr-text)}
+  .toggle-btn{display:flex;background:var(--bg-input);border:1px solid var(--border);border-radius:8px;overflow:hidden}
   .toggle-opt{
-    padding:5px 12px;font-size:11px;cursor:pointer;
+    padding:8px 14px;font-size:14px;cursor:pointer;
     font-family:inherit;border:none;background:none;
-    color:var(--calc-expr-text);transition:all .15s;font-weight:600;min-height:24px;
+    color:var(--calc-expr-text);transition:all .15s;font-weight:600;min-height:44px;min-width:44px;
   }
-  .toggle-opt.active{background:var(--accent);color:var(--text-on-accent)}
+  .toggle-opt[aria-pressed="true"]{background:var(--accent);color:var(--text-on-accent)}
 
-  /* 결과 */
-  .result-section{
-    background:var(--bg-input);
-    border:1px solid var(--border);border-radius:14px;
-    padding:18px;
-  }
-  .result-title{
-    font-size:12px;font-weight:700;color:var(--text-info);
-    margin-bottom:12px;display:flex;align-items:center;gap:6px;
-  }
+  .lot{border-top:1px dashed var(--border);padding-top:10px;margin-top:10px}
+  .lot:first-child{border-top:0;padding-top:0;margin-top:0}
+  .lot-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:13px;font-weight:700;color:var(--text-secondary)}
+  .lot-remove{background:none;border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);font-size:13px;font-family:inherit;cursor:pointer;min-height:44px;min-width:44px;padding:0 12px}
+  .lot-remove:hover{border-color:var(--status-red-text);color:var(--status-red-text)}
+  .add-lot{width:100%;margin-top:10px;background:var(--bg-input);border:1px dashed var(--border);border-radius:8px;color:var(--text-info);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;min-height:44px}
+  .add-lot:hover{border-color:var(--accent);color:var(--accent-text)}
+  .add-lot:disabled{opacity:.5;cursor:not-allowed}
 
-  .result-main{
-    text-align:center;margin-bottom:14px;
-  }
-  .result-label{font-size:11px;color:var(--calc-expr-text);margin-bottom:4px}
-  .result-value{
-    font-size:32px;font-weight:800;color:var(--text-primary);
-    letter-spacing:-0.5px;
-  }
-  .result-change{
-    font-size:13px;font-weight:700;margin-top:4px;
-  }
-  .change-down{color:#f87171}
+
+  .result-section{background:var(--bg-input);border:1px solid var(--border);border-radius:14px;padding:18px}
+  .result-title{font-size:13px;font-weight:700;color:var(--text-info);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .result-main{text-align:center;margin-bottom:14px}
+  .result-label{font-size:13px;color:var(--calc-expr-text);margin-bottom:4px}
+  .result-value{font-size:32px;font-weight:800;color:var(--text-primary);letter-spacing:-0.5px;overflow-wrap:anywhere;transition:color .3s}
+  .result-unit{font-size:18px;font-weight:700;margin-left:4px;color:var(--text-secondary)}
+  .result-change{font-size:13px;font-weight:700;margin-top:4px}
+  .change-down{color:var(--status-red-text)}
   .change-up{color:var(--text-success)}
   .change-same{color:var(--text-info)}
+  .change-error{color:var(--status-red-text);background:var(--bg-app);border-radius:8px;padding:8px 10px;margin-top:8px;line-height:1.5}
+  .result-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .r-stat{background:var(--bg-app);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;min-width:0}
+  .r-stat .r-label{font-size:12px;color:var(--calc-expr-text);margin-bottom:3px}
+  .r-stat .r-value{font-size:14px;font-weight:700;color:var(--text-amount);overflow-wrap:anywhere}
+  .formula-line{margin-top:12px;padding-top:10px;border-top:1px dashed var(--border);font-size:13px;color:var(--text-secondary);line-height:1.6;overflow-wrap:anywhere}
+  .formula-line:empty{display:none}
 
-  .result-stats{
-    display:grid;grid-template-columns:1fr 1fr;gap:8px;
-  }
-  .r-stat{
-    background:var(--bg-app);border:1px solid var(--border);border-radius:8px;
-    padding:10px;text-align:center;
-  }
-  .r-stat .r-label{font-size:10px;color:var(--calc-expr-text);margin-bottom:3px}
-  .r-stat .r-value{font-size:14px;font-weight:700;color:var(--text-amount)}
+  .hint{font-size:12px;color:var(--text-muted);text-align:center;padding:4px 0;overflow-wrap:anywhere}
+  .goal-result{margin-top:10px;padding:10px 12px;border-radius:8px;background:var(--bg-app);border:1px solid var(--border);font-size:13px;color:var(--text-secondary);line-height:1.6;overflow-wrap:anywhere}
+  .goal-result strong{color:var(--text-primary)}
 
-  /* 안내 */
-  .hint{
-    font-size:11px;color:var(--text-muted);text-align:center;
-    padding:4px 0;
-  }
+  .storage-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .storage-note{font-size:12px;color:var(--text-muted);flex:1;min-width:0}
+  .storage-clear{background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;min-height:44px;padding:0 14px}
+  .storage-clear:hover{border-color:var(--status-red-text);color:var(--status-red-text)}
 
   .footer{
     background:var(--bg-bar);padding:10px 16px;
     display:flex;justify-content:space-between;align-items:center;
-    border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text);
+    border-top:1px solid var(--border);font-size:12px;color:var(--calc-expr-text);
   }
   .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
   .footer a:hover{color:var(--text-guide)}
 
-  /* 애니메이션 */
-  .result-value{transition:color .3s}
   .guide-section{margin:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
-  .guide-section summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
+  .guide-section summary{padding:10px 14px;cursor:pointer;font-size:14px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
   .guide-section summary:hover{background:var(--bg-guide-hover)}
   .guide-section[open] summary{background:var(--bg-btn);border-bottom:1px solid var(--border)}
-  .guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
+  .guide-content{padding:12px 14px;font-size:14px;color:var(--text-info);line-height:1.8}
   .guide-content ol{padding-left:20px}.guide-content li{margin-bottom:4px}
-.report-box {background:var(--bg-guide);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:16px}
-  .report-box h2 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
-  .report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
-  .report-box strong {color:var(--text-primary);font-weight:600}
+  .guide-content p{margin-bottom:10px}
 
   .related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:0 12px 12px}
   .related-tools h2 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
-  .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
+  .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:14px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
   .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
 
-  @keyframes fadeIn {
-    from { opacity:0; transform:translateY(10px) }
-    to { opacity:1; transform:translateY(0) }
-  }
+  .toast{position:fixed;bottom:30px;left:50%;transform:translate(-50%,80px);opacity:0;pointer-events:none;z-index:999}
+  .toast.show{transform:translate(-50%,0);opacity:1}
 </style>
 <link rel="stylesheet" href="/special-chars/tool-shell.css">
 </head>
@@ -169,6 +151,22 @@
   </div>
 
   <div class="body">
+    <div class="section">
+      <div class="field-row">
+        <div class="field">
+          <label for="unitSelect">금액 단위</label>
+          <select id="unitSelect" onchange="onUnitChange()">
+            <option value="KRW">원 (KRW)</option>
+            <option value="USD">달러 (USD)</option>
+            <option value="JPY">엔 (JPY)</option>
+            <option value="EUR">유로 (EUR)</option>
+            <option value="NONE">단위 표시 안 함</option>
+          </select>
+        </div>
+      </div>
+      <div class="hint">단위는 표시용입니다. 환율은 적용하지 않으므로 모든 단가를 같은 통화로 입력하세요.</div>
+    </div>
+
     <!-- 1단: 기존 보유 -->
     <div class="section">
       <div class="section-title">
@@ -176,12 +174,12 @@
       </div>
       <div class="field-row">
         <div class="field">
-          <label>현재 평균 단가</label>
-          <input type="text" id="curPrice" placeholder="예: 50000" oninput="calc()" inputmode="decimal">
+          <label for="curPrice">현재 평균 단가</label>
+          <input type="text" id="curPrice" placeholder="예: 50,000" oninput="calc()" inputmode="decimal" autocomplete="off" data-group>
         </div>
         <div class="field">
-          <label>보유 수량</label>
-          <input type="text" id="curQty" placeholder="예: 10" oninput="calc()" inputmode="decimal">
+          <label for="curQty">보유 수량</label>
+          <input type="text" id="curQty" placeholder="예: 10" oninput="calc()" inputmode="decimal" autocomplete="off" data-group>
         </div>
       </div>
       <div class="hint" id="curTotal">현재 합계 금액: -</div>
@@ -192,34 +190,38 @@
       <div class="section-title">
         <span class="badge badge-add">2</span> 추가 입고·구매
       </div>
-      <div class="field-row">
-        <div class="field">
-          <label>추가 구매 단가</label>
-          <input type="text" id="addPrice" placeholder="예: 40000" oninput="calc()" inputmode="decimal">
-        </div>
-        <div class="field">
-          <label id="addLabel">추가 수량</label>
-          <input type="text" id="addQtyOrAmt" placeholder="예: 5" oninput="calc()" inputmode="decimal">
-        </div>
-      </div>
-      <div class="toggle-row">
+      <div class="toggle-row" role="group" aria-label="추가 구매 입력 방식">
         <span class="toggle-label">입력 방식:</span>
         <div class="toggle-btn">
-          <button class="toggle-opt active" id="togQty" onclick="setMode('qty')">수량</button>
-          <button class="toggle-opt" id="togAmt" onclick="setMode('amt')">금액 (원)</button>
+          <button type="button" class="toggle-opt" id="togQty" aria-pressed="true" onclick="setMode('qty')">수량</button>
+          <button type="button" class="toggle-opt" id="togAmt" aria-pressed="false" onclick="setMode('amt')">구매 금액</button>
         </div>
       </div>
-      <div class="hint" id="addConvert">-</div>
+      <div id="lotList">
+        <div class="lot" data-lot="1">
+          <div class="lot-head"><span>구매 1</span></div>
+          <div class="field-row">
+            <div class="field">
+              <label for="addPrice">구매 단가</label>
+              <input type="text" id="addPrice" class="lot-price" placeholder="예: 40,000" oninput="calc()" inputmode="decimal" autocomplete="off" data-group>
+            </div>
+            <div class="field">
+              <label for="addQtyOrAmt" id="addLabel" class="lot-value-label">구매 수량</label>
+              <input type="text" id="addQtyOrAmt" class="lot-value" placeholder="예: 5" oninput="calc()" inputmode="decimal" autocomplete="off" data-group>
+            </div>
+          </div>
+          <div class="hint lot-hint" id="addConvert">-</div>
+        </div>
+      </div>
+      <button type="button" class="add-lot" id="addLotBtn" onclick="addLot()">+ 구매 건 추가</button>
     </div>
 
     <!-- 3단: 결과 -->
     <div class="result-section" role="status" aria-live="polite" aria-atomic="true">
-      <div class="result-title">
-        📊 최종 결과
-      </div>
+      <div class="result-title">📊 최종 결과</div>
       <div class="result-main">
         <div class="result-label">최종 평균 단가</div>
-        <div class="result-value" id="finalPrice">-</div>
+        <div class="result-value"><span id="finalPrice">-</span><span class="result-unit" id="finalPriceUnit"></span></div>
         <div class="result-change" id="priceChange"></div>
       </div>
       <div class="result-stats">
@@ -232,33 +234,56 @@
           <div class="r-value" id="finalQty">-</div>
         </div>
       </div>
+      <div class="formula-line" id="formulaLine"></div>
     </div>
-    
-    <div class="report-box" id="analysisReport" style="display:none;"></div>
+
+    <!-- 4단: 목표 단가 역산 -->
+    <div class="section">
+      <div class="section-title">
+        <span class="badge badge-goal">3</span> 목표 평균 단가 맞추기 (선택)
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="targetAvg">목표 평균 단가</label>
+          <input type="text" id="targetAvg" placeholder="예: 45,000" oninput="calc()" inputmode="decimal" autocomplete="off" data-group>
+        </div>
+        <div class="field">
+          <label for="targetBuyPrice">예상 구매 단가</label>
+          <input type="text" id="targetBuyPrice" placeholder="예: 38,000" oninput="calc()" inputmode="decimal" autocomplete="off" data-group>
+        </div>
+      </div>
+      <div class="goal-result" id="goalResult">위 결과(현재 보유분 + 입력한 구매 건)를 기준으로, 예상 구매 단가로 몇 개를 더 사야 목표 평균 단가가 되는지 계산합니다.</div>
+    </div>
+
+    <div class="storage-row">
+      <span class="storage-note">입력값은 이 브라우저에만 저장되어 다음 방문 때 복원됩니다.</span>
+      <button type="button" class="storage-clear" onclick="requestClear()">입력값 모두 지우기</button>
+    </div>
   </div>
 
   <details class="guide-section">
     <summary>📖 사용 방법</summary>
     <div class="guide-content">
       <ol>
-        <li>현재 재고 또는 보유분의 수량과 평균 단가를 입력하세요.</li>
-        <li>추가 구매할 수량과 단가를 입력하면 새 가중 평균 단가가 계산됩니다.</li>
-        <li>추가 구매 총액만 알고 있다면 금액 모드를 선택해 수량을 역산할 수 있습니다.</li>
-        <li>가격·수량·추가 금액은 모두 0보다 큰 유한한 값만 사용할 수 있습니다.</li>
+        <li>금액 단위를 고르고 현재 재고 또는 보유분의 평균 단가와 수량을 입력합니다.</li>
+        <li>추가로 들어온 구매 건의 단가와 수량을 입력합니다. 단가가 다른 입고가 여러 번이라면 ‘구매 건 추가’로 최대 20건까지 나눠 입력할 수 있습니다.</li>
+        <li>구매 총액만 알고 있다면 입력 방식을 ‘구매 금액’으로 바꿉니다. 수량은 구매 금액 ÷ 단가로 역산합니다.</li>
+        <li>목표 평균 단가와 예상 구매 단가를 넣으면 목표에 필요한 추가 구매 수량을 계산합니다.</li>
+        <li>단가·수량·금액은 0보다 큰 숫자만 사용할 수 있으며, 잘못 입력하면 결과 대신 오류 문구가 표시됩니다.</li>
       </ol>
     </div>
   </details>
   <details class="guide-section" open>
     <summary>💡 가중 평균 단가 업무 가이드</summary>
     <div class="guide-content">
-      <strong>Q. 단가 두 개를 단순 평균하면 왜 틀리나요?</strong>
-      <p>각 구매의 수량이 다르면 단가에 같은 비중을 줄 수 없습니다. 가중 평균 단가는 각 단가에 해당 수량을 곱해 합산한 뒤 전체 수량으로 나눕니다. 예를 들어 1개를 1만 원, 9개를 2만 원에 샀다면 평균은 1만5천 원이 아니라 1만9천 원입니다.</p>
-      <br>
-      <strong>Q. 어떤 업무에 사용할 수 있나요?</strong>
-      <p>서로 다른 단가로 입고된 재고의 참고 평균, 여러 공급처에서 구매한 자재의 평균 매입가, 행사 물품의 수량별 평균 비용을 빠르게 확인할 때 사용할 수 있습니다. 회계상 재고평가 방식은 이동평균법·총평균법 등 조직 기준이 따로 있으므로 이 결과가 장부 금액을 자동 확정하지는 않습니다.</p>
-      <br>
-      <strong>Q. 세금과 부대비용은 포함되나요?</strong>
-      <p>입력한 단가와 수량만 반영합니다. 부가세, 배송비, 관세, 할인과 반품이 있다면 회사의 원가 산정 기준에 맞춰 단가에 먼저 포함하거나 별도 항목으로 관리해야 합니다. 최종 발주·회계 자료는 세금계산서와 재고 시스템 기록을 우선하세요.</p>
+      <p><strong>Q. 단가 두 개를 단순 평균하면 왜 틀리나요?</strong></p>
+      <p>구매마다 수량이 다르면 각 단가에 같은 비중을 줄 수 없습니다. 가중 평균 단가는 각 단가에 수량을 곱해 합산한 뒤 전체 수량으로 나눕니다. 예를 들어 1개를 1만 원, 9개를 2만 원에 샀다면 평균은 1만 5천 원이 아니라 (10,000×1 + 20,000×9) ÷ 10 = 19,000원입니다.</p>
+      <p><strong>Q. 목표 평균 단가에 필요한 수량은 어떻게 계산하나요?</strong></p>
+      <p>현재 총금액을 C, 총수량을 Q, 목표 평균을 T, 새로 살 단가를 P라고 하면 필요한 수량은 (T×Q − C) ÷ (P − T)입니다. 평균을 낮추려면 P가 T보다 낮아야 하고, 평균을 높이려면 P가 T보다 높아야 합니다. P와 T가 같으면 아무리 많이 사도 평균이 T에 도달하지 않습니다. 개수 단위로만 살 수 있다면 결과를 올림한 수량과 그때의 평균도 함께 확인하세요.</p>
+      <p><strong>Q. 어떤 업무에 사용할 수 있나요?</strong></p>
+      <p>서로 다른 단가로 입고된 재고의 참고 평균, 여러 공급처에서 구매한 자재의 평균 매입가, 행사 물품의 수량별 평균 비용을 빠르게 확인할 때 사용합니다. 회계상 재고평가 방식은 이동평균법·총평균법·선입선출법 등 조직 기준이 따로 있으므로 이 결과가 장부 금액을 확정하지는 않습니다.</p>
+      <p><strong>Q. 세금과 부대비용은 포함되나요?</strong></p>
+      <p>입력한 단가와 수량만 반영합니다. 부가세, 배송비, 관세, 할인과 반품이 있다면 회사의 원가 산정 기준에 맞춰 단가에 먼저 포함하거나 별도 항목으로 관리합니다. 최종 발주·회계 자료는 세금계산서와 재고 시스템 기록을 우선합니다.</p>
     </div>
   </details>
 
@@ -266,172 +291,505 @@
     <h2>🔗 연관 업무 계산기</h2>
     <div class="tool-list">
       <a href="/special-chars/percent-calc/"><span>🔢 퍼센트 계산기</span><span>바로가기 →</span></a>
-      <a href="/special-chars/discount-calc/"><span>🏷️ 할인·부가세 계산기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/discount-calc/"><span>🏷️ 할인/세금 계산기</span><span>바로가기 →</span></a>
       <a href="/special-chars/unit-conv/"><span>📐 업무 단위 변환기</span><span>바로가기 →</span></a>
     </div>
   </div>
   <section class="work-context" aria-labelledby="averageCostWorkTitle">
     <h2 id="averageCostWorkTitle">재고·자재의 평균 매입 단가 확인하기</h2>
-    <p><strong>업무 예시:</strong> 기존 보유분과 신규 입고분의 수량·단가를 합쳐 보고서에 쓸 참고 평균 단가를 만듭니다. 계산식은 ‘각 수량×단가의 합계 ÷ 전체 수량’이며 입력한 통화 단위는 결과에도 그대로 유지됩니다.</p>
-    <p><strong>적용 한계:</strong> 회계 시스템의 이동평균, 선입선출, 환율 적용과 원가 배부 규칙을 대신하지 않습니다. 부가세·배송비·반품이 있는 경우 조직의 원가 정책에 맞춰 별도로 반영하고 최종 장부와 대조하세요.</p>
-    <p><strong>데이터 처리:</strong> 수량과 단가는 서버로 전송하거나 저장하지 않고 브라우저에서 계산합니다. 거래처명이나 계약번호 같은 식별 정보는 입력할 필요가 없습니다.</p>
+    <p><strong>업무 예시:</strong> 기존 보유분과 여러 차례 입고된 물량의 수량·단가를 합쳐 보고서에 쓸 참고 평균 단가를 만듭니다. 계산식은 ‘각 수량×단가의 합계 ÷ 전체 수량’이며, 선택한 금액 단위(원·달러·엔·유로 또는 단위 없음)가 결과에 그대로 표시됩니다.</p>
+    <p><strong>적용 한계:</strong> 회계 시스템의 이동평균, 선입선출, 환율 적용과 원가 배부 규칙을 대신하지 않습니다. 통화가 다른 구매분을 섞으면 결과가 틀리므로 먼저 같은 통화로 환산해 입력합니다. 부가세·배송비·반품이 있는 경우 조직의 원가 정책에 맞춰 별도로 반영하고 최종 장부와 대조합니다.</p>
+    <p><strong>데이터 처리:</strong> 수량과 단가는 서버로 전송하지 않고 브라우저에서 계산합니다. 다음 방문 때 이어서 쓸 수 있도록 입력값만 이 브라우저의 localStorage에 저장하며, ‘입력값 모두 지우기’로 언제든 삭제할 수 있습니다. 거래처명이나 계약번호 같은 식별 정보는 입력할 필요가 없습니다.</p>
   </section>
     </main>
-<footer class="footer"><span>숫자 입력 즉시 실시간 계산</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
+<footer class="footer"><span>숫자 입력 즉시 계산 · 입력값은 이 브라우저에만 저장</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
 <nav class="site-policy-links" aria-label="사이트 정책"><a href="/about.html">사이트 소개</a><a href="/editorial-policy.html">편집정책</a><a href="/contact.html">문의</a><a href="/privacy.html">개인정보처리방침</a></nav>
 </div>
 
-<script>
-let inputMode = 'qty'; // 'qty' or 'amt'
+<dialog class="tool-confirm-dialog" id="clearDialog" aria-labelledby="clearDialogTitle" aria-describedby="clearDialogDescription">
+  <div class="tool-confirm-dialog__body">
+    <h2 id="clearDialogTitle">입력값을 모두 지울까요?</h2>
+    <p id="clearDialogDescription">화면의 단가·수량과 이 브라우저에 저장된 입력값이 함께 삭제되며 되돌릴 수 없습니다.</p>
+    <div class="tool-confirm-dialog__actions">
+      <button type="button" data-dialog-cancel autofocus>취소</button>
+      <button type="button" class="tool-confirm-dialog__confirm" data-dialog-accept>모두 지우기</button>
+    </div>
+  </div>
+</dialog>
 
-function setMode(mode) {
-  inputMode = mode;
-  document.getElementById('togQty').classList.toggle('active', mode === 'qty');
-  document.getElementById('togAmt').classList.toggle('active', mode === 'amt');
-  document.getElementById('addLabel').textContent = mode === 'qty' ? '추가 수량' : '추가 금액 (원)';
-  document.getElementById('addQtyOrAmt').placeholder = mode === 'qty' ? '예: 5' : '예: 200000';
-  document.getElementById('addQtyOrAmt').value = '';
-  document.getElementById('addConvert').textContent = '-';
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const STORAGE_KEY = 'teemozipsa:avg-price:v1';
+const MAX_LOTS = 20;
+const MAX_VALUE = 1e15;
+const UNIT_SUFFIX = { KRW: '원', USD: ' USD', JPY: '엔', EUR: ' EUR', NONE: '' };
+let inputMode = 'qty'; // 'qty' 또는 'amt'
+let lotSeq = 1;
+
+function currentUnit() {
+  const value = document.getElementById('unitSelect').value;
+  return Object.hasOwn(UNIT_SUFFIX, value) ? value : 'KRW';
+}
+
+// ---- 숫자 입력과 표시 ----
+function groupDigits(text) {
+  return text.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function applyGrouping(input) {
+  const raw = input.value;
+  const plain = raw.replace(/,/g, '');
+  if (!/^\d*(\.\d*)?$/.test(plain)) return;
+  const caret = input.selectionStart ?? raw.length;
+  const keep = raw.slice(0, caret).replace(/,/g, '').length;
+  const [intPart, decPart] = plain.split('.');
+  const next = groupDigits(intPart) + (decPart !== undefined ? '.' + decPart : '');
+  if (next === raw) return;
+  input.value = next;
+  if (document.activeElement === input) {
+    let seen = 0;
+    let pos = 0;
+    while (pos < next.length && seen < keep) {
+      if (next[pos] !== ',') seen += 1;
+      pos += 1;
+    }
+    try { input.setSelectionRange(pos, pos); } catch (error) { /* 일부 입력 형식은 커서 지정을 지원하지 않음 */ }
+  }
+}
+
+document.addEventListener('input', event => {
+  if (event.target.matches && event.target.matches('input[data-group]')) applyGrouping(event.target);
+}, true);
+
+function toInputText(n) {
+  const text = String(Number(n.toFixed(6)));
+  if (!/^\d+(\.\d+)?$/.test(text)) return '';
+  const [intPart, decPart] = text.split('.');
+  return groupDigits(intPart) + (decPart ? '.' + decPart : '');
+}
+
+function readField(input) {
+  const raw = input.value.replace(/[,\s]/g, '');
+  if (raw === '') return { state: 'empty' };
+  if (!/^(\d+\.?\d*|\.\d+)$/.test(raw)) return { state: 'invalid' };
+  const value = Number(raw);
+  if (!Number.isFinite(value) || value > MAX_VALUE) return { state: 'tooLarge' };
+  if (value <= 0) return { state: 'nonPositive' };
+  return { state: 'ok', value };
+}
+
+function fmtNum(n, maxDec = 2) {
+  if (!Number.isFinite(n)) return '-';
+  return n.toLocaleString('ko-KR', { maximumFractionDigits: maxDec });
+}
+
+function koreanUnits(won) {
+  let rest = Math.round(Math.abs(won));
+  const jo = Math.floor(rest / 1e12); rest -= jo * 1e12;
+  const eok = Math.floor(rest / 1e8); rest -= eok * 1e8;
+  const man = Math.floor(rest / 1e4); rest -= man * 1e4;
+  const parts = [];
+  if (jo) parts.push(jo.toLocaleString('ko-KR') + '조');
+  if (eok) parts.push(eok.toLocaleString('ko-KR') + '억');
+  if (man) parts.push(man.toLocaleString('ko-KR') + '만');
+  if (rest || !parts.length) parts.push(rest.toLocaleString('ko-KR'));
+  return (won < 0 ? '-' : '') + parts.join(' ') + '원';
+}
+
+// 페이지 공통 금액 형식: 원은 1억 이상이면 "1억 7,696만 5,000원", 그 미만은 "176,965원"처럼 정확히 표시합니다.
+function formatMoney(n) {
+  if (!Number.isFinite(n)) return '-';
+  const unit = currentUnit();
+  if (unit === 'KRW' && Math.abs(n) >= 1e8) return koreanUnits(n);
+  return fmtNum(n, 2) + UNIT_SUFFIX[unit];
+}
+
+// ---- 구매 건 관리 ----
+function lotRows() {
+  return [...document.querySelectorAll('#lotList .lot')];
+}
+
+function valueLabelText() {
+  return inputMode === 'qty' ? '구매 수량' : '구매 금액';
+}
+
+function addLot(price = '', value = '', { silent = false } = {}) {
+  if (lotRows().length >= MAX_LOTS) {
+    showToast(`구매 건은 최대 ${MAX_LOTS}건까지 입력할 수 있습니다`);
+    return null;
+  }
+  lotSeq += 1;
+  const id = lotSeq;
+  const lot = document.createElement('div');
+  lot.className = 'lot';
+  lot.dataset.lot = String(id);
+
+  const head = document.createElement('div');
+  head.className = 'lot-head';
+  const title = document.createElement('span');
+  const remove = document.createElement('button');
+  remove.type = 'button';
+  remove.className = 'lot-remove';
+  remove.textContent = '삭제';
+  remove.addEventListener('click', () => removeLot(lot));
+  head.append(title, remove);
+
+  const row = document.createElement('div');
+  row.className = 'field-row';
+  const makeField = (labelText, inputClass, placeholder, fieldValue, labelClass) => {
+    const field = document.createElement('div');
+    field.className = 'field';
+    const label = document.createElement('label');
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = `${inputClass}-${id}`;
+    input.className = inputClass;
+    input.inputMode = 'decimal';
+    input.autocomplete = 'off';
+    input.placeholder = placeholder;
+    input.dataset.group = '';
+    input.value = fieldValue;
+    input.addEventListener('input', calc);
+    label.htmlFor = input.id;
+    label.textContent = labelText;
+    if (labelClass) label.className = labelClass;
+    field.append(label, input);
+    return field;
+  };
+  row.append(
+    makeField('구매 단가', 'lot-price', '예: 38,000', price),
+    makeField(valueLabelText(), 'lot-value', inputMode === 'qty' ? '예: 5' : '예: 200,000', value, 'lot-value-label')
+  );
+  const hint = document.createElement('div');
+  hint.className = 'hint lot-hint';
+  hint.textContent = '-';
+  lot.append(head, row, hint);
+  document.getElementById('lotList').appendChild(lot);
+  renumberLots();
+  if (!silent) {
+    row.querySelector('input').focus();
+    calc();
+  }
+  return lot;
+}
+
+function removeLot(lot) {
+  lot.remove();
+  renumberLots();
   calc();
 }
 
-function parseNum(id) {
-  const v = document.getElementById(id).value.replace(/,/g, '').trim();
-  if (v === '' || v === '-') return NaN;
-  return Number(v);
+function renumberLots() {
+  const rows = lotRows();
+  rows.forEach((lot, index) => {
+    const title = lot.querySelector('.lot-head span');
+    if (title) title.textContent = `구매 ${index + 1}`;
+    const remove = lot.querySelector('.lot-remove');
+    if (remove) remove.setAttribute('aria-label', `구매 ${index + 1} 삭제`);
+  });
+  document.getElementById('addLotBtn').disabled = rows.length >= MAX_LOTS;
 }
 
-function isPositiveFinite(value) {
-  return Number.isFinite(value) && value > 0;
+function setMode(mode) {
+  if (mode !== 'qty' && mode !== 'amt') return;
+  if (mode !== inputMode) {
+    // 이미 입력한 값은 새 방식으로 환산해 유지합니다.
+    lotRows().forEach(lot => {
+      const priceInput = lot.querySelector('.lot-price');
+      const valueInput = lot.querySelector('.lot-value');
+      const price = readField(priceInput);
+      const value = readField(valueInput);
+      if (value.state === 'empty') return;
+      if (price.state !== 'ok' || value.state !== 'ok') { valueInput.value = ''; return; }
+      const converted = mode === 'amt' ? price.value * value.value : value.value / price.value;
+      valueInput.value = toInputText(converted);
+    });
+  }
+  inputMode = mode;
+  document.getElementById('togQty').setAttribute('aria-pressed', String(mode === 'qty'));
+  document.getElementById('togAmt').setAttribute('aria-pressed', String(mode === 'amt'));
+  document.querySelectorAll('.lot-value-label').forEach(label => { label.textContent = valueLabelText(); });
+  document.querySelectorAll('.lot-value').forEach(input => { input.placeholder = mode === 'qty' ? '예: 5' : '예: 200,000'; });
+  calc();
 }
 
-function clearResults(message) {
+function onUnitChange() {
+  calc();
+}
+
+// ---- 결과 ----
+function setInvalid(input, invalid) {
+  if (invalid) input.setAttribute('aria-invalid', 'true');
+  else input.removeAttribute('aria-invalid');
+}
+
+function clearResults(message, isError) {
   document.getElementById('finalPrice').textContent = '-';
+  document.getElementById('finalPriceUnit').textContent = '';
   document.getElementById('finalInvest').textContent = '-';
   document.getElementById('finalQty').textContent = '-';
+  document.getElementById('formulaLine').textContent = '';
   const changeEl = document.getElementById('priceChange');
   changeEl.textContent = message || '';
-  changeEl.className = 'result-change change-same';
-  document.getElementById('analysisReport').style.display = 'none';
+  changeEl.className = 'result-change ' + (isError ? 'change-error' : 'change-same');
+  document.getElementById('goalResult').textContent = '위 결과(현재 보유분 + 입력한 구매 건)를 기준으로, 예상 구매 단가로 몇 개를 더 사야 목표 평균 단가가 되는지 계산합니다.';
 }
 
-function fmtNum(n, maxDec) {
-  if (isNaN(n) || !isFinite(n)) return '-';
-  // 정수면 콤마, 소수면 적절한 자릿수
-  if (Number.isInteger(n) && Math.abs(n) < 1e15) return n.toLocaleString('ko-KR');
-  // 소수점 자릿수 자동 결정
-  const str = n.toString();
-  const dotIdx = str.indexOf('.');
-  if (dotIdx >= 0) {
-    const decLen = str.length - dotIdx - 1;
-    const dec = Math.min(decLen, maxDec || 8);
-    return n.toLocaleString('ko-KR', { minimumFractionDigits: 0, maximumFractionDigits: dec });
-  }
-  return n.toLocaleString('ko-KR');
-}
-
-function fmtWon(n) {
-  if (isNaN(n)) return '-';
-  if (n >= 1e8) {
-    const eok = Math.floor(n / 1e8);
-    const man = Math.floor((n % 1e8) / 1e4);
-    return man > 0 ? `${eok.toLocaleString()}억 ${man.toLocaleString()}만원` : `${eok.toLocaleString()}억원`;
-  }
-  if (n >= 1e4) return `${Math.floor(n / 1e4).toLocaleString()}만원`;
-  return fmtNum(n, 2) + '원';
-}
+const FIELD_MESSAGES = {
+  invalid: '숫자와 소수점만 입력하세요.',
+  nonPositive: '0보다 큰 숫자로 입력하세요.',
+  tooLarge: '1,000조 이하로 입력하세요.'
+};
 
 function calc() {
-  const curPrice = parseNum('curPrice');
-  const curQty = parseNum('curQty');
-  const addPrice = parseNum('addPrice');
-  const rawInput = parseNum('addQtyOrAmt');
+  const errors = [];
+  const check = (input, name) => {
+    const field = readField(input);
+    const bad = field.state !== 'ok' && field.state !== 'empty';
+    setInvalid(input, bad);
+    if (bad) errors.push(`${name}: ${FIELD_MESSAGES[field.state]}`);
+    return field;
+  };
 
-  // 현재 합계 금액 표시
-  if (isPositiveFinite(curPrice) && isPositiveFinite(curQty)) {
-    const curTotal = curPrice * curQty;
-    document.getElementById('curTotal').textContent = '현재 합계 금액: ' + fmtWon(curTotal);
+  const curPriceInput = document.getElementById('curPrice');
+  const curQtyInput = document.getElementById('curQty');
+  const curPrice = check(curPriceInput, '현재 평균 단가');
+  const curQty = check(curQtyInput, '보유 수량');
+  if (curPrice.state === 'ok' && curQty.state === 'ok') {
+    document.getElementById('curTotal').textContent = '현재 합계 금액: ' + formatMoney(curPrice.value * curQty.value);
   } else {
     document.getElementById('curTotal').textContent = '현재 합계 금액: -';
   }
 
-  // 추가 수량 계산
-  let addQty = NaN;
-  if (inputMode === 'qty') {
-    addQty = rawInput;
-    if (isPositiveFinite(addQty) && isPositiveFinite(addPrice)) {
-      const addTotal = addPrice * addQty;
-      document.getElementById('addConvert').textContent = '= ' + fmtWon(addTotal);
-    } else {
-      document.getElementById('addConvert').textContent = '-';
-    }
-  } else {
-    // 금액 → 수량 역산
-    const addAmt = rawInput;
-    if (isPositiveFinite(addAmt) && isPositiveFinite(addPrice)) {
-      addQty = addAmt / addPrice;
-      document.getElementById('addConvert').textContent = '= ' + fmtNum(addQty, 8) + '개';
-    } else {
-      document.getElementById('addConvert').textContent = '-';
-    }
-  }
-
-  const report = document.getElementById('analysisReport');
-
-  // 최종 계산
-  if ([curPrice, curQty, addPrice, addQty].every(isPositiveFinite)) {
-    const totalInvest = curPrice * curQty + addPrice * addQty;
-    const totalQty = curQty + addQty;
-    const finalAvg = totalInvest / totalQty;
-
-    if (![totalInvest, totalQty, finalAvg].every(isPositiveFinite)) {
-      clearResults('입력값이 너무 크거나 합계가 유효하지 않습니다.');
+  const lots = [];
+  let lotIncomplete = false;
+  lotRows().forEach((lot, index) => {
+    const priceInput = lot.querySelector('.lot-price');
+    const valueInput = lot.querySelector('.lot-value');
+    const hint = lot.querySelector('.lot-hint');
+    const priceEmpty = priceInput.value.trim() === '';
+    const valueEmpty = valueInput.value.trim() === '';
+    if (priceEmpty && valueEmpty) {
+      setInvalid(priceInput, false);
+      setInvalid(valueInput, false);
+      hint.textContent = '-';
       return;
     }
-
-    document.getElementById('finalPrice').textContent = fmtNum(finalAvg, 8);
-    document.getElementById('finalInvest').textContent = fmtWon(totalInvest);
-    document.getElementById('finalQty').textContent = fmtNum(totalQty, 8);
-
-    // 변동 표시
-    const diff = finalAvg - curPrice;
-    const pct = ((diff / curPrice) * 100).toFixed(2);
-    const changeEl = document.getElementById('priceChange');
-    
-    let actionType = '';
-    let reportDesc = '';
-
-    if (diff < 0) {
-      changeEl.textContent = `▼ ${fmtNum(Math.abs(diff), 4)} (${pct}%) — 평균 단가 하락`;
-      changeEl.className = 'result-change change-down';
-      actionType = '평균 단가 하락';
-      reportDesc = `기존 평균 단가 <strong>${fmtNum(curPrice, 8)}</strong>보다 낮은 단가의 구매분이 추가되어 최종 평균 단가가 <strong>${fmtNum(finalAvg, 8)}</strong>로 낮아졌습니다.`;
-    } else if (diff > 0) {
-      changeEl.textContent = `▲ ${fmtNum(diff, 4)} (+${pct}%) — 평균 단가 상승`;
-      changeEl.className = 'result-change change-up';
-      actionType = '평균 단가 상승';
-      reportDesc = `기존 평균 단가 <strong>${fmtNum(curPrice, 8)}</strong>보다 높은 단가의 구매분이 추가되어 최종 평균 단가가 <strong>${fmtNum(finalAvg, 8)}</strong>로 높아졌습니다.`;
+    const price = check(priceInput, `구매 ${index + 1} 단가`);
+    const value = check(valueInput, `구매 ${index + 1} ${inputMode === 'qty' ? '수량' : '금액'}`);
+    if (price.state === 'empty' || value.state === 'empty') lotIncomplete = true;
+    if (price.state === 'ok' && value.state === 'ok') {
+      const qty = inputMode === 'qty' ? value.value : value.value / price.value;
+      lots.push({ price: price.value, qty });
+      hint.textContent = inputMode === 'qty' ? '= ' + formatMoney(price.value * qty) : '= ' + fmtNum(qty, 4) + '개';
     } else {
-      changeEl.textContent = '변동 없음';
-      changeEl.className = 'result-change change-same';
-      actionType = '평균 단가 유지';
-      reportDesc = `기존 평균 단가와 같은 단가로 구매분이 추가되어 평균 단가는 유지되고 전체 수량은 <strong>${fmtNum(totalQty, 8)}</strong>로 증가했습니다.`;
+      hint.textContent = '-';
     }
+  });
 
-    report.style.display = 'flex';
-    report.innerHTML = `
-      <h2>💡 ${actionType} 계산 결과</h2>
-      <p>입력한 구매 데이터를 합치면 총 금액은 <strong>${fmtWon(totalInvest)}</strong>, 전체 수량은 <strong>${fmtNum(totalQty, 8)}</strong>입니다.</p>
-      <p>${reportDesc}</p>
-      <p>⚠️ <strong>확인:</strong> 세금·배송비·할인·반품은 입력값에 포함한 경우에만 결과에 반영됩니다.</p>
-    `;
+  saveState();
 
+  if (errors.length) {
+    clearResults(errors[0] + (errors.length > 1 ? ` 외 ${errors.length - 1}건을 확인하세요.` : ''), true);
+    return;
+  }
+  if (curPrice.state !== 'ok' || curQty.state !== 'ok' || !lots.length || lotIncomplete) {
+    clearResults(lotIncomplete ? '구매 건마다 단가와 수량(또는 금액)을 모두 입력하세요.' : '', false);
+    return;
+  }
+
+  const totalInvest = curPrice.value * curQty.value + lots.reduce((sum, lot) => sum + lot.price * lot.qty, 0);
+  const totalQty = curQty.value + lots.reduce((sum, lot) => sum + lot.qty, 0);
+  const finalAvg = totalInvest / totalQty;
+  if (![totalInvest, totalQty, finalAvg].every(value => Number.isFinite(value) && value > 0) || totalInvest > MAX_VALUE * 1000) {
+    clearResults('입력값이 너무 커서 합계를 계산할 수 없습니다. 단가나 수량을 줄여 입력하세요.', true);
+    return;
+  }
+
+  document.getElementById('finalPrice').textContent = fmtNum(finalAvg, 2);
+  document.getElementById('finalPriceUnit').textContent = UNIT_SUFFIX[currentUnit()].trim();
+  document.getElementById('finalInvest').textContent = formatMoney(totalInvest);
+  document.getElementById('finalQty').textContent = fmtNum(totalQty, 4);
+
+  const diff = finalAvg - curPrice.value;
+  const pct = (diff / curPrice.value) * 100;
+  const changeEl = document.getElementById('priceChange');
+  if (Math.abs(diff) < 1e-9 * curPrice.value) {
+    changeEl.textContent = '기존 평균 단가와 같습니다';
+    changeEl.className = 'result-change change-same';
+  } else if (diff < 0) {
+    changeEl.textContent = `▼ ${formatMoney(Math.abs(diff))} (${fmtNum(pct, 2)}%) 기존보다 하락`;
+    changeEl.className = 'result-change change-down';
   } else {
-    const values = [curPrice, curQty, addPrice, rawInput];
-    const hasInvalidValue = values.some(value => !Number.isNaN(value) && !isPositiveFinite(value));
-    clearResults(hasInvalidValue ? '가격과 수량·금액은 모두 0보다 큰 유한한 값이어야 합니다.' : '');
+    changeEl.textContent = `▲ ${formatMoney(diff)} (+${fmtNum(pct, 2)}%) 기존보다 상승`;
+    changeEl.className = 'result-change change-up';
+  }
+
+  const terms = [{ price: curPrice.value, qty: curQty.value }, ...lots];
+  const formula = terms.length <= 4
+    ? `(${terms.map(term => `${fmtNum(term.price, 2)}×${fmtNum(term.qty, 4)}`).join(' + ')}) ÷ ${fmtNum(totalQty, 4)}`
+    : `총 금액 ${fmtNum(totalInvest, 2)} ÷ 총 수량 ${fmtNum(totalQty, 4)}`;
+  document.getElementById('formulaLine').textContent = `계산식: ${formula} = ${fmtNum(finalAvg, 2)}${UNIT_SUFFIX[currentUnit()]}`;
+
+  renderGoal(totalInvest, totalQty, finalAvg);
+}
+
+function renderGoal(totalInvest, totalQty, currentAvg) {
+  const box = document.getElementById('goalResult');
+  const targetInput = document.getElementById('targetAvg');
+  const buyInput = document.getElementById('targetBuyPrice');
+  const target = readField(targetInput);
+  const buy = readField(buyInput);
+  setInvalid(targetInput, target.state !== 'ok' && target.state !== 'empty');
+  setInvalid(buyInput, buy.state !== 'ok' && buy.state !== 'empty');
+  if (target.state === 'empty' || buy.state === 'empty') {
+    box.textContent = `현재 평균 ${formatMoney(currentAvg)} 기준으로 목표 평균 단가와 예상 구매 단가를 입력하면 필요한 수량을 계산합니다.`;
+    return;
+  }
+  if (target.state !== 'ok' || buy.state !== 'ok') {
+    box.textContent = '목표 평균 단가와 예상 구매 단가는 0보다 큰 숫자로 입력하세요.';
+    return;
+  }
+  const T = target.value;
+  const P = buy.value;
+  if (Math.abs(currentAvg - T) < 1e-9 * T) {
+    box.textContent = '현재 평균 단가가 이미 목표와 같습니다.';
+    return;
+  }
+  const needsLower = T < currentAvg;
+  if ((needsLower && P >= T) || (!needsLower && P <= T)) {
+    box.textContent = needsLower
+      ? `평균을 ${formatMoney(T)}까지 낮추려면 목표보다 싼 단가로 사야 합니다. 예상 구매 단가(${formatMoney(P)})로는 도달할 수 없습니다.`
+      : `평균을 ${formatMoney(T)}까지 올리려면 목표보다 비싼 단가로 사야 합니다. 예상 구매 단가(${formatMoney(P)})로는 도달할 수 없습니다.`;
+    return;
+  }
+  const needed = (T * totalQty - totalInvest) / (P - T);
+  if (!Number.isFinite(needed) || needed <= 0) {
+    box.textContent = '입력값으로는 필요한 수량을 계산할 수 없습니다.';
+    return;
+  }
+  const whole = Math.ceil(needed - 1e-9);
+  const wholeAvg = (totalInvest + P * whole) / (totalQty + whole);
+  box.replaceChildren();
+  const main = document.createElement('div');
+  const strong = document.createElement('strong');
+  strong.textContent = `${fmtNum(needed, 2)}개 (구매 금액 ${formatMoney(needed * P)})`;
+  main.append('필요 수량: ', strong);
+  const detail = document.createElement('div');
+  detail.textContent = Number.isInteger(Number(needed.toFixed(6)))
+    ? `계산식: (${fmtNum(T, 2)}×${fmtNum(totalQty, 4)} − ${fmtNum(totalInvest, 2)}) ÷ (${fmtNum(P, 2)} − ${fmtNum(T, 2)})`
+    : `개수 단위로 산다면 ${whole.toLocaleString('ko-KR')}개 구매 시 평균 ${formatMoney(wholeAvg)}입니다.`;
+  box.append(main, detail);
+}
+
+// ---- 저장 ----
+function collectState() {
+  return {
+    unit: currentUnit(),
+    mode: inputMode,
+    cur: [document.getElementById('curPrice').value, document.getElementById('curQty').value],
+    lots: lotRows().map(lot => [lot.querySelector('.lot-price').value, lot.querySelector('.lot-value').value]),
+    target: [document.getElementById('targetAvg').value, document.getElementById('targetBuyPrice').value]
+  };
+}
+
+let restoring = false;
+function saveState() {
+  if (restoring) return;
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(collectState())); } catch (error) { /* 저장소를 쓸 수 없으면 계산만 합니다 */ }
+}
+
+function cleanText(value) {
+  return typeof value === 'string' ? value.slice(0, 40) : '';
+}
+
+function restoreState() {
+  let data = null;
+  try { data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (error) { data = null; }
+  if (!data || typeof data !== 'object') return;
+  restoring = true;
+  try {
+    if (Object.hasOwn(UNIT_SUFFIX, data.unit)) document.getElementById('unitSelect').value = data.unit;
+    if (data.mode === 'amt') {
+      inputMode = 'amt';
+      document.getElementById('togQty').setAttribute('aria-pressed', 'false');
+      document.getElementById('togAmt').setAttribute('aria-pressed', 'true');
+      document.querySelectorAll('.lot-value-label').forEach(label => { label.textContent = valueLabelText(); });
+    }
+    if (Array.isArray(data.cur)) {
+      document.getElementById('curPrice').value = cleanText(data.cur[0]);
+      document.getElementById('curQty').value = cleanText(data.cur[1]);
+    }
+    if (Array.isArray(data.lots) && data.lots.length) {
+      const [first, ...rest] = data.lots.slice(0, MAX_LOTS);
+      if (Array.isArray(first)) {
+        document.getElementById('addPrice').value = cleanText(first[0]);
+        document.getElementById('addQtyOrAmt').value = cleanText(first[1]);
+      }
+      rest.forEach(item => { if (Array.isArray(item)) addLot(cleanText(item[0]), cleanText(item[1]), { silent: true }); });
+    }
+    if (Array.isArray(data.target)) {
+      document.getElementById('targetAvg').value = cleanText(data.target[0]);
+      document.getElementById('targetBuyPrice').value = cleanText(data.target[1]);
+    }
+  } finally {
+    restoring = false;
   }
 }
+
+function openDialog(dialogId) {
+  const dialog = document.getElementById(dialogId);
+  if (!dialog || typeof dialog.showModal !== 'function') return Promise.resolve(null);
+  return new Promise(resolve => {
+    const accept = dialog.querySelector('[data-dialog-accept]');
+    const cancel = dialog.querySelector('[data-dialog-cancel]');
+    const onCancel = event => { event.preventDefault(); dialog.close('cancel'); };
+    accept.onclick = () => dialog.close('accept');
+    cancel.onclick = () => dialog.close('cancel');
+    dialog.addEventListener('cancel', onCancel);
+    dialog.addEventListener('close', () => {
+      dialog.removeEventListener('cancel', onCancel);
+      resolve(dialog.returnValue === 'accept');
+    }, { once: true });
+    dialog.returnValue = '';
+    dialog.showModal();
+  });
+}
+
+async function requestClear() {
+  const accepted = await openDialog('clearDialog');
+  if (accepted === null) { showToast('이 브라우저는 확인 창을 지원하지 않아 지우지 않았습니다'); return; }
+  if (!accepted) return;
+  lotRows().slice(1).forEach(lot => lot.remove());
+  ['curPrice', 'curQty', 'addPrice', 'addQtyOrAmt', 'targetAvg', 'targetBuyPrice'].forEach(id => {
+    const input = document.getElementById(id);
+    input.value = '';
+    input.removeAttribute('aria-invalid');
+  });
+  document.getElementById('unitSelect').value = 'KRW';
+  inputMode = 'qty';
+  document.getElementById('togQty').setAttribute('aria-pressed', 'true');
+  document.getElementById('togAmt').setAttribute('aria-pressed', 'false');
+  document.querySelectorAll('.lot-value-label').forEach(label => { label.textContent = valueLabelText(); });
+  renumberLots();
+  restoring = true; // 지운 직후 빈 값을 다시 저장하지 않습니다.
+  try { calc(); } finally { restoring = false; }
+  try { localStorage.removeItem(STORAGE_KEY); } catch (error) { /* 무시 */ }
+  showToast('입력값과 저장된 값을 지웠습니다');
+}
+
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+restoreState();
+renumberLots();
+calc();
 </script>
 
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
