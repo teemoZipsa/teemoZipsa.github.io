@@ -118,9 +118,13 @@ async function main() {
       await page.selectOption('#limitType', 'bytes-euckr');
       const emoji = await page.evaluate(() => ({ chars: statChars.textContent, bytes: statBytes.textContent, type: statBytesType.textContent }));
       assert(emoji.chars === '1' && emoji.bytes === '—' && /불가|unsupported/.test(emoji.type), `combined emoji was miscounted: ${JSON.stringify(emoji)}`);
-      await page.fill('#counterInput', '한글');
-      const korean = await page.evaluate(() => ({ chars: statChars.textContent, bytes: statBytes.textContent }));
-      assert(korean.chars === '2' && korean.bytes === '4', `representable EUC-KR text is wrong: ${JSON.stringify(korean)}`);
+      await page.fill('#counterInput', '한글\n');
+      const korean = await page.evaluate(() => ({ chars: statChars.textContent, bytes: statBytes.textContent, utf8: statUtf8.textContent, lines: statLines.textContent }));
+      assert(korean.chars === '3' && korean.bytes === '5' && korean.utf8 === '7' && korean.lines === '1', `representable EUC-KR/UTF-8 text is wrong: ${JSON.stringify(korean)}`);
+      await page.selectOption('#limitType', 'chars');
+      await page.fill('#limitValue', '-5');
+      const invalid = await page.evaluate(() => ({ invalid: limitValue.getAttribute('aria-invalid'), error: limitError.textContent, progress: getComputedStyle(progressWrap).display }));
+      assert(invalid.invalid === 'true' && invalid.error && invalid.progress === 'none', `negative limit was accepted: ${JSON.stringify(invalid)}`);
     });
   }
 

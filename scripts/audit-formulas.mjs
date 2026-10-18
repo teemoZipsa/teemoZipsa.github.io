@@ -87,6 +87,35 @@ const lunarHolidays = {
     { kind: 'chuseok', date: '2027-09-14', name: '추석 연휴' },
     { kind: 'chuseok', date: '2027-09-15', name: '추석' },
     { kind: 'chuseok', date: '2027-09-16', name: '추석 연휴' }
+  ],
+  // 2028~2030: 한국천문연구원 음양력 변환(astro.kasi.re.kr /life/lunc) 음력 1/1·4/8·8/15 조회값, 2026-09-28 확인.
+  // 2028 설날은 한국 기준 1/27(중국 춘절 1/26과 다름).
+  2028: [
+    { kind: 'lunarNewYear', date: '2028-01-26', name: '설날 연휴' },
+    { kind: 'lunarNewYear', date: '2028-01-27', name: '설날' },
+    { kind: 'lunarNewYear', date: '2028-01-28', name: '설날 연휴' },
+    { kind: 'buddha', date: '2028-05-02', name: '부처님오신날' },
+    { kind: 'chuseok', date: '2028-10-02', name: '추석 연휴' },
+    { kind: 'chuseok', date: '2028-10-03', name: '추석' },
+    { kind: 'chuseok', date: '2028-10-04', name: '추석 연휴' }
+  ],
+  2029: [
+    { kind: 'lunarNewYear', date: '2029-02-12', name: '설날 연휴' },
+    { kind: 'lunarNewYear', date: '2029-02-13', name: '설날' },
+    { kind: 'lunarNewYear', date: '2029-02-14', name: '설날 연휴' },
+    { kind: 'buddha', date: '2029-05-20', name: '부처님오신날' },
+    { kind: 'chuseok', date: '2029-09-21', name: '추석 연휴' },
+    { kind: 'chuseok', date: '2029-09-22', name: '추석' },
+    { kind: 'chuseok', date: '2029-09-23', name: '추석 연휴' }
+  ],
+  2030: [
+    { kind: 'lunarNewYear', date: '2030-02-02', name: '설날 연휴' },
+    { kind: 'lunarNewYear', date: '2030-02-03', name: '설날' },
+    { kind: 'lunarNewYear', date: '2030-02-04', name: '설날 연휴' },
+    { kind: 'buddha', date: '2030-05-09', name: '부처님오신날' },
+    { kind: 'chuseok', date: '2030-09-11', name: '추석 연휴' },
+    { kind: 'chuseok', date: '2030-09-12', name: '추석' },
+    { kind: 'chuseok', date: '2030-09-13', name: '추석 연휴' }
   ]
 };
 
@@ -171,11 +200,13 @@ function businessAdd({ startDate, businessDays, excludeHolidays, includeSaturday
   return { targetDate: isoDate(current), totalDays, weekendDays, holidayCount: holidays.length };
 }
 
-function businessBetween({ fromDate, toDate, excludeHolidays, includeSaturday }) {
+// includeStart (default true) follows Excel NETWORKDAYS: both endpoints are counted.
+// includeStart=false keeps the older rule: start excluded, end included.
+function businessBetween({ fromDate, toDate, excludeHolidays, includeSaturday, includeStart = true }) {
   let from = dateFromIso(fromDate);
   let to = dateFromIso(toDate);
   if (from > to) [from, to] = [to, from];
-  let current = new Date(from);
+  let current = includeStart ? addDays(from, -1) : new Date(from);
   let businessDays = 0;
   let totalDays = 0;
   let weekendDays = 0;
@@ -197,56 +228,126 @@ function businessBetween({ fromDate, toDate, excludeHolidays, includeSaturday })
   return { businessDays, totalDays, weekendDays, holidayCount: holidays.length };
 }
 
-function loanCalc({ principal: P, annualRate, years, method }) {
-  const months = years * 12;
+// Installment-rounded model (2026-09-28): each month's interest is round(balance*r) in KRW,
+// the equal payment / equal principal share is rounded to KRW, and the last installment settles
+// the remaining balance so the schedule's principal column sums exactly to P.
+function loanCalc({ principal: P, annualRate, years, months: monthInput, method }) {
+  const months = monthInput ?? years * 12;
   const r = annualRate / 100 / 12;
+  const payments = [];
+  let balance = P;
   let totalInterest = 0;
-  let firstPayment = 0;
   if (method === 'equalPayment') {
-    const monthly = P * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1);
-    firstPayment = monthly;
-    let remaining = P;
+    const level = r === 0 ? Math.floor(P / months) : roundWon(P * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1));
     for (let i = 1; i <= months; i++) {
-      const interest = remaining * r;
-      const principal = monthly - interest;
-      remaining -= principal;
+      const interest = roundWon(balance * r);
+      const principal = i === months ? balance : Math.min(balance, Math.max(0, level - interest));
+      balance -= principal;
       totalInterest += interest;
+      payments.push(principal + interest);
     }
   } else if (method === 'equalPrincipal') {
-    const monthlyPrincipal = P / months;
-    let remaining = P;
+    let share = roundWon(P / months);
+    if (share * (months - 1) > P) share = Math.floor(P / months);
     for (let i = 1; i <= months; i++) {
-      const interest = remaining * r;
-      const payment = monthlyPrincipal + interest;
-      if (i === 1) firstPayment = payment;
-      remaining -= monthlyPrincipal;
+      const interest = roundWon(balance * r);
+      const principal = i === months ? balance : share;
+      balance -= principal;
       totalInterest += interest;
+      payments.push(principal + interest);
     }
   } else {
-    const monthlyInterest = P * r;
-    firstPayment = monthlyInterest;
-    totalInterest = monthlyInterest * months;
+    const interest = roundWon(P * r);
+    for (let i = 1; i <= months; i++) {
+      totalInterest += interest;
+      payments.push(interest + (i === months ? P : 0));
+    }
   }
   return {
-    firstPayment: roundWon(firstPayment),
-    totalInterest: roundWon(totalInterest),
-    totalPayment: roundWon(P + totalInterest)
+    firstPayment: payments[0],
+    lastPayment: payments[payments.length - 1],
+    totalInterest,
+    totalPayment: P + totalInterest
   };
 }
 
+// 원 미만 절사 정책: 할인액·부가세는 버리고, 나머지는 뺄셈·덧셈으로 구해 항목 합계가 맞도록 한다.
 function discountCalc(input) {
-  const discountAmount = input.discountAmount ?? input.price * input.discountRate / 100;
-  const base = input.vat && !input.preTax ? input.price / 1.1 : input.price;
-  const afterDiscount = base - discountAmount;
-  const vatAmount = input.vat ? afterDiscount * 0.1 : 0;
-  const result = {
-    discountAmount: roundWon(discountAmount),
-    afterDiscount: roundWon(afterDiscount),
-    vatAmount: roundWon(vatAmount),
-    finalAmount: roundWon(Math.max(0, afterDiscount + vatAmount))
-  };
-  if (input.vat && !input.preTax) result.base = roundWon(base);
+  const truncate = n => Math.floor(n + 1e-7);
+  const price = input.price;
+  const discountAmount = input.discountAmount ?? truncate(price * input.discountRate / 100);
+  if (input.vatMode === 'inclusive') {
+    const finalAmount = price - discountAmount;
+    const vatAmount = truncate(finalAmount * 10 / 110);
+    return {
+      base: price - truncate(price * 10 / 110),
+      discountAmount,
+      afterDiscount: finalAmount - vatAmount,
+      vatAmount,
+      finalAmount
+    };
+  }
+  const afterDiscount = price - discountAmount;
+  const vatAmount = input.vatMode === 'exclusive' ? truncate(afterDiscount * 0.1) : 0;
+  return { discountAmount, afterDiscount, vatAmount, finalAmount: afterDiscount + vatAmount };
+}
+
+// 월 환산 시간: (주 소정근로 + 주휴) × 365 ÷ 7 ÷ 12를 정수로 반올림(주 40시간 = 209시간, 고용노동부 월 환산 관행).
+function wageCalc(input) {
+  const weeksPerMonth = 365 / 7 / 12;
+  const scheduledWeekly = Math.min(Math.min(input.hoursDay, 8) * input.daysWeek, 40);
+  const overtimeWeekly = input.hoursDay * input.daysWeek - scheduledWeekly + (input.extraOvertime ?? 0);
+  const holidayHours = input.weeklyHoliday !== false && scheduledWeekly >= 15 ? 8 * scheduledWeekly / 40 : 0;
+  const monthlyHours = Math.round((scheduledWeekly + holidayHours) * weeksPerMonth);
+  const overtimeMultiplier = input.bizSize === 'under5' ? 1 : 1.5;
+  const nightPremium = input.bizSize === 'under5' ? 0 : 0.5;
+  const paidHours = monthlyHours + (overtimeWeekly * overtimeMultiplier + (input.nightHours ?? 0) * nightPremium) * weeksPerMonth;
+  let hourly;
+  let monthly;
+  if (input.hourly !== undefined) {
+    hourly = input.hourly;
+    monthly = hourly * paidHours;
+  } else {
+    monthly = input.monthly ?? input.yearly / 12;
+    hourly = monthly / paidHours;
+  }
+  const result = { hourly: roundWon(hourly), monthly: roundWon(monthly), yearly: roundWon(monthly * 12), monthlyHours };
+  if (input.taxType === 'insurance') {
+    const rates = {
+      2026: { pension: 0.0475, health: 0.03595, employment: 0.009 },
+      2027: { pension: 0.05, health: 0.03595, employment: 0.009 }
+    }[input.year];
+    const floor10 = n => Math.floor((n + 1e-7) / 10) * 10;
+    const gross = roundWon(monthly);
+    const pensionBase = Math.min(6590000, Math.max(410000, Math.floor(gross / 1000) * 1000));
+    const pension = floor10(pensionBase * rates.pension);
+    const health = floor10(gross * rates.health);
+    const longTermCare = floor10(health * 0.9448 / 7.19);
+    const employment = floor10(gross * rates.employment);
+    result.deductions = pension + health + longTermCare + employment;
+    result.netMonthly = gross - result.deductions;
+  }
   return result;
+}
+
+function compoundCalc({ start, ratePercent, periods, decimals = 2, target }) {
+  const round = (n, d) => Math.round(n * 10 ** d) / 10 ** d;
+  const finalValue = start * (1 + ratePercent / 100) ** periods;
+  const result = {
+    finalValue: round(finalValue, decimals),
+    totalRatePercent: round((finalValue / start - 1) * 100, 1)
+  };
+  if (target !== undefined) result.requiredRatePercent = round(((target / start) ** (1 / periods) - 1) * 100, 2);
+  return result;
+}
+
+function percentCalc({ mode, a, b, reverseType = 'discount', rounding = 'auto', asPercent = false }) {
+  const money = n => rounding === 'round' ? Math.round(n) : rounding === 'floor' ? Math.floor(n) : Math.round(n * 1e4) / 1e4;
+  const pct = n => Math.round(n * 100) / 100;
+  if (mode === 'of') return { result: money(a * b / 100) };
+  if (mode === 'change') return { result: asPercent ? pct(b - a) : pct((b - a) / Math.abs(a) * 100) };
+  if (mode === 'ratio') return { result: pct(a / b * 100) };
+  return { result: money(a / (reverseType === 'markup' ? 1 + b / 100 : 1 - b / 100)) };
 }
 
 const housingSale = [
@@ -336,32 +437,33 @@ function petAgeCalc({ petType, size, ageYears }) {
   return { valid: true, humanAge: roundWon(24 + (ageYears - 2) * rates[size]) };
 }
 
-function taxiCalc({ distanceKm, lowSpeedMinutes = 0, night = false, outRatePercent = 0 }) {
+// Seoul medium taxi, partial simultaneous charging (부분 동시병산): distance ticks and low-speed time ticks are both
+// charged. Night is 0/20/40% using the published night tables; out-of-city is an on/off 20% toggle applied as a
+// combined rate to the daytime meter (max 60%).
+function taxiCalc({ distanceKm, lowSpeedMinutes = 0, night = false, nightRate, outRatePercent = 0 }) {
+  const nightLevel = nightRate ?? (night ? 40 : 0);
   const valid = Number.isFinite(distanceKm) && distanceKm >= 0.1 && distanceKm <= 1000 &&
     Number.isFinite(lowSpeedMinutes) && lowSpeedMinutes >= 0 && lowSpeedMinutes <= 1440 &&
-    Number.isFinite(outRatePercent) && outRatePercent >= 0 && outRatePercent <= 20;
+    [0, 20].includes(outRatePercent) && [0, 20, 40].includes(nightLevel);
   if (!valid) return { valid: false };
-  const data = {
-    base: 4800, baseDist: 1600, distPer: 131, distFee: 100, timePer: 30, timeFee: 100,
-    peakBase: 6700, peakDistFee: 140, peakTimeFee: 140, thresholdKmh: 15.72
-  };
+  const data = { base: 4800, baseDist: 1600, distPer: 131, distFee: 100, timePer: 30, timeFee: 100, thresholdKmh: 15.72 };
+  const nightTables = { 20: { base: 5800, fee: 120 }, 40: { base: 6700, fee: 140 } };
   const distanceTicks = Math.floor(Math.max(0, distanceKm * 1000 - data.baseDist) / data.distPer);
   const baseTimeSeconds = data.baseDist / (data.thresholdKmh / 3.6);
   const timeTicks = Math.floor(Math.max(0, lowSpeedMinutes * 60 - baseTimeSeconds) / data.timePer);
   const dayMeter = data.base + distanceTicks * data.distFee + timeTicks * data.timeFee;
-  const nightMeter = night
-    ? data.peakBase + distanceTicks * data.peakDistFee + timeTicks * data.peakTimeFee
-    : dayMeter;
-  const combinedRate = (night ? 0.4 : 0) + outRatePercent / 100;
-  const combinedMeter = night && outRatePercent === 0 ? nightMeter : dayMeter * (1 + combinedRate);
+  const table = nightTables[nightLevel];
+  const nightMeter = table ? table.base + (distanceTicks + timeTicks) * table.fee : dayMeter;
+  const combinedMeter = outRatePercent === 20 ? dayMeter * (1 + nightLevel / 100 + 0.2) : nightMeter;
   return { valid: true, meterEstimateOne: Math.round(combinedMeter / 10) * 10 };
 }
 
 function gpaCalc({ scale, courses = [] }) {
   const gradeTables = {
     4.5: { 'A+':4.5,'A0':4.0,'B+':3.5,'B0':3.0,'C+':2.5,'C0':2.0,'D+':1.5,'D0':1.0,'F':0,'P':-1 },
-    4.3: { 'A+':4.3,'A0':4.0,'B+':3.3,'B0':3.0,'C+':2.3,'C0':2.0,'D+':1.3,'D0':1.0,'F':0,'P':-1 },
-    4.0: { 'A+':4.0,'A0':4.0,'B+':3.3,'B0':3.0,'C+':2.3,'C0':2.0,'D+':1.3,'D0':1.0,'F':0,'P':-1 }
+    // 4.3 and US-style 4.0 tables include minus grades (A-=3.7, B-=2.7, C-=1.7, D-=0.7); 4.5 has none.
+    4.3: { 'A+':4.3,'A0':4.0,'A-':3.7,'B+':3.3,'B0':3.0,'B-':2.7,'C+':2.3,'C0':2.0,'C-':1.7,'D+':1.3,'D0':1.0,'D-':0.7,'F':0,'P':-1 },
+    4.0: { 'A+':4.0,'A0':4.0,'A-':3.7,'B+':3.3,'B0':3.0,'B-':2.7,'C+':2.3,'C0':2.0,'C-':1.7,'D+':1.3,'D0':1.0,'D-':0.7,'F':0,'P':-1 }
   };
   const table = gradeTables[scale];
   if (!table || !Array.isArray(courses)) return { valid: false };
@@ -434,6 +536,9 @@ const calculators = {
   'taxi-calc': taxiCalc,
   'gpa-calc': gpaCalc,
   'fuel-calc': fuelCalc,
+  'wage-calc': wageCalc,
+  'compound-interest': compoundCalc,
+  'percent-calc': percentCalc,
   'biz-day-calc': inputs => inputs.operation === 'add' ? businessAdd(inputs) : businessBetween(inputs)
 };
 

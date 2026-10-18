@@ -21,7 +21,10 @@ const routes = {
   'pet-age-calc': '/special-chars/pet-age-calc/',
   'taxi-calc': '/special-chars/taxi-calc/',
   'gpa-calc': '/special-chars/gpa-calc/',
-  'fuel-calc': '/special-chars/fuel-calc/'
+  'fuel-calc': '/special-chars/fuel-calc/',
+  'wage-calc': '/special-chars/wage-calc/',
+  'compound-interest': '/special-chars/compound-interest/',
+  'percent-calc': '/special-chars/percent-calc/'
 };
 
 function contentType(file) {
@@ -100,10 +103,12 @@ const runners = {
     };
     document.getElementById('principal').value = String(inputs.principal);
     document.getElementById('rate').value = String(inputs.annualRate);
-    document.getElementById('years').value = String(inputs.years);
+    document.getElementById('years').value = String(inputs.months ?? inputs.years);
+    document.getElementById('termUnit').value = inputs.months === undefined ? 'year' : 'month';
     setMethod({ equalPayment: 0, equalPrincipal: 1, bullet: 2 }[inputs.method]);
     return {
       firstPayment: numberFrom(document.getElementById('r-monthly').textContent),
+      lastPayment: numberFrom(document.querySelector('#compareBody tr.selected td:nth-child(3)')?.textContent),
       totalInterest: numberFrom(document.getElementById('r-interest').textContent),
       totalPayment: numberFrom(document.getElementById('r-total').textContent)
     };
@@ -115,8 +120,7 @@ const runners = {
       return match ? Number(match[0]) : null;
     };
     document.getElementById('price').value = String(inputs.price);
-    document.getElementById('vatToggle').checked = Boolean(inputs.vat);
-    document.getElementById('vatExToggle').checked = Boolean(inputs.preTax);
+    document.querySelector(`input[name="vatMode"][value="${inputs.vatMode}"]`).checked = true;
     if (Object.hasOwn(inputs, 'discountAmount')) {
       document.getElementById('discountAmt').value = String(inputs.discountAmount);
       calcByAmt();
@@ -124,10 +128,8 @@ const runners = {
       document.getElementById('discountRate').value = String(inputs.discountRate);
       calc();
     }
-    const reportText = document.getElementById('analysisReport').textContent.replace(/\s+/g, ' ');
-    const baseMatch = reportText.match(/세전 원금[^0-9]*([\d,]+)원/);
     return {
-      base: baseMatch ? numberFrom(baseMatch[1]) : null,
+      base: numberFrom(document.getElementById('resBase')?.textContent),
       discountAmount: numberFrom(document.getElementById('resDiscount').textContent),
       afterDiscount: numberFrom(document.getElementById('resAfterDiscount').textContent),
       vatAmount: numberFrom(document.getElementById('resVat').textContent),
@@ -149,6 +151,7 @@ const runners = {
     } else {
       document.getElementById('fromDate').value = inputs.fromDate;
       document.getElementById('toDate').value = inputs.toDate;
+      document.getElementById('includeStartDay').checked = inputs.includeStart !== false;
     }
     calculate();
 
@@ -186,7 +189,7 @@ const runners = {
       label: card.querySelector('.s-label')?.textContent.trim() || '',
       value: numberFrom(card.querySelector('.s-value')?.textContent)
     }));
-    const total = cards.find(card => card.label.startsWith('중개수수료'))?.value ?? null;
+    const total = cards.find(card => card.label.startsWith('예상 지급액'))?.value ?? null;
     const ratePercent = cards.find(card => card.label === '적용 요율')?.value ?? null;
     const fee = cards.find(card => card.label.startsWith('중개보수'))?.value ?? null;
     return {
@@ -243,15 +246,14 @@ const runners = {
   }, caseItem.inputs),
 
   'taxi-calc': (page, caseItem) => page.evaluate(inputs => {
-    document.getElementById('region').value = '서울';
     document.getElementById('distance').value = String(inputs.distanceKm);
     document.getElementById('lowSpeedMinutes').value = String(inputs.lowSpeedMinutes ?? 0);
-    document.getElementById('outSurcharge').value = String(inputs.outRatePercent ?? 0);
     document.getElementById('tollFee').value = '0';
     document.getElementById('callFee').value = '0';
     document.getElementById('additionalFee').value = '0';
     document.getElementById('people').value = '1';
-    if (isNight !== Boolean(inputs.night)) toggleNight();
+    setNight(inputs.nightRate ?? (inputs.night ? 40 : 0));
+    if (isOutCity !== ((inputs.outRatePercent ?? 0) === 20)) toggleOutCity();
     if (isRound) toggleRound();
     const result = calcFare();
     calc();
@@ -299,6 +301,8 @@ const runners = {
     document.getElementById('fuelPrice').value = String(inputs.pricePerLiter);
     document.getElementById('people').value = String(inputs.people);
     document.getElementById('roundTrip').checked = Boolean(inputs.roundTrip);
+    // A typed price counts as user-confirmed, so the >30-day stale-data gate does not block the case.
+    document.getElementById('fuelPrice').dispatchEvent(new Event('input', { bubbles: true }));
     calc();
 
     const details = Object.fromEntries([...document.querySelectorAll('#detailBox .detail-row')].map(row => [
@@ -319,6 +323,64 @@ const runners = {
       perPerson: inputs.people > 1 ? numberFrom(details[`1인당 (÷${inputs.people})`]) : totalCost,
       roundTripCost: inputs.roundTrip ? null : numberFrom(cards['왕복 시'])
     } : { valid: false };
+  }, caseItem.inputs),
+
+  'wage-calc': (page, caseItem) => page.evaluate(inputs => {
+    const numberFrom = value => {
+      const match = String(value ?? '').replace(/,/g, '').match(/-?\d+(?:\.\d+)?/);
+      return match ? Number(match[0]) : null;
+    };
+    document.getElementById('wageYear').value = String(inputs.year);
+    updateMinWageBanner();
+    document.getElementById('bizSize').value = inputs.bizSize ?? '5plus';
+    document.getElementById('hoursDay').value = String(inputs.hoursDay);
+    document.getElementById('daysWeek').value = String(inputs.daysWeek);
+    document.getElementById('weeklyHol').value = inputs.weeklyHoliday === false ? 'no' : 'yes';
+    document.getElementById('overtime').value = String(inputs.extraOvertime ?? 0);
+    document.getElementById('nighttime').value = String(inputs.nightHours ?? 0);
+    document.getElementById('taxType').value = inputs.taxType ?? 'none';
+    const source = ['hourly', 'monthly', 'yearly'].find(key => Object.hasOwn(inputs, key));
+    const field = document.getElementById(source);
+    field.value = String(inputs[source]);
+    formatAndCalc(field, source);
+    return {
+      hourly: numberFrom(document.getElementById('rHourly').textContent),
+      monthly: numberFrom(document.getElementById('rMonthly').textContent),
+      yearly: numberFrom(document.getElementById('rYearly').textContent),
+      monthlyHours: numberFrom(document.getElementById('r-hours').textContent),
+      deductions: numberFrom(document.getElementById('rDeduct').textContent),
+      netMonthly: numberFrom(document.getElementById('rMonthlyAt').textContent)
+    };
+  }, caseItem.inputs),
+
+  'compound-interest': (page, caseItem) => page.evaluate(inputs => {
+    const numberFrom = value => {
+      const match = String(value ?? '').replace(/,/g, '').match(/-?\d+(?:\.\d+)?/);
+      return match ? Number(match[0]) : null;
+    };
+    document.getElementById('principal').value = String(inputs.start);
+    document.getElementById('rate').value = String(inputs.ratePercent);
+    document.getElementById('times').value = String(inputs.periods);
+    document.getElementById('decimals').value = String(inputs.decimals ?? 2);
+    document.getElementById('target').value = inputs.target === undefined ? '' : String(inputs.target);
+    calculate();
+    return {
+      finalValue: numberFrom(document.getElementById('sumTotal').textContent),
+      totalRatePercent: numberFrom(document.getElementById('sumRate').textContent),
+      requiredRatePercent: numberFrom(document.getElementById('requiredRate')?.textContent)
+    };
+  }, caseItem.inputs),
+
+  'percent-calc': (page, caseItem) => page.evaluate(inputs => {
+    const index = { of: 0, change: 1, ratio: 2, reverse: 3 }[inputs.mode];
+    document.getElementById('roundMode').value = inputs.rounding ?? 'auto';
+    if (index === 3) setM3Type(inputs.reverseType ?? 'discount');
+    if (index === 1) document.getElementById('m1pp').checked = Boolean(inputs.asPercent);
+    document.getElementById(`m${index}a`).value = String(inputs.a);
+    document.getElementById(`m${index}b`).value = String(inputs.b);
+    [calc0, calc1, calc2, calc3][index]();
+    const raw = document.querySelector(`#r${index} .result-value`)?.dataset.raw;
+    return { result: raw === undefined ? null : Number(raw) };
   }, caseItem.inputs)
 };
 

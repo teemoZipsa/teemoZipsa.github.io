@@ -202,7 +202,7 @@ async function main() {
     });
     assert(rotationState.angles.every(angle => angle === 90), `${locale} rotateAll did not update every angle: ${JSON.stringify(rotationState)}`);
     assert(rotationState.visibleBadges === 1, `${locale} rotateAll stopped after a missing badge: ${JSON.stringify(rotationState)}`);
-    assert(rotationState.download?.filename === 'rotated.pdf' && rotationState.download.bytes > 0, `${locale} rotated PDF was not produced: ${JSON.stringify(rotationState)}`);
+    assert(rotationState.download?.filename === 'first_rotated.pdf' && rotationState.download.bytes > 0, `${locale} rotated PDF was not produced: ${JSON.stringify(rotationState)}`);
 
     await page.evaluate(() => {
       resetAll();
@@ -221,15 +221,15 @@ async function main() {
     assert(pageOrder.focusInsideMovedCard, `${locale} PDF page reorder lost keyboard focus`);
 
     const resetState = await page.evaluate(() => {
-      updateReport('audit', 'audit.pdf', 1, 'audit', 'audit');
+      showResultLine('audit.pdf', 1, 'audit');
       resetAll();
       return {
         arrays: [mergeFiles.length, rotateAngles.length, reorderPages.length, img2pdfFiles.length],
         bytes: [splitPdfBytes, rotatePdfBytes, reorderPdfBytes, wmPdfBytes, deletePdfBytes, pagenumPdfBytes, metadataPdfBytes, blankPdfBytes].map(value => value === null),
         lists: ['mergeFileList','img2pdfFileList','rotateThumbs','reorderThumbs','wmPreview'].map(id => document.getElementById(id).children.length),
         visibleControls: ['mergeBtn','splitInfo','rotateControls','reorderControls','watermarkControls','deleteInfo','img2pdfBtn','pagenumControls','metadataControls','blankControls'].filter(id => getComputedStyle(document.getElementById(id)).display !== 'none'),
-        reportChildren: document.querySelector('#reportContainer').children.length,
-        reportDisplay: getComputedStyle(document.querySelector('#reportContainer')).display,
+        reportChildren: document.querySelector('#resultLine').children.length,
+        reportDisplay: getComputedStyle(document.querySelector('#resultLine')).display,
         pageCounts: ['splitPageCount','deletePageCount','blankPageCount'].map(id => document.getElementById(id).textContent),
         loading: [...document.querySelectorAll('.loading.show')].length
       };
@@ -269,12 +269,29 @@ async function main() {
     const result = await page.evaluate(() => {
       document.querySelector('#price').value = '11000';
       document.querySelector('#discountRate').value = '10';
-      document.querySelector('#vatToggle').checked = true;
-      document.querySelector('#vatExToggle').checked = false;
+      document.querySelector('input[name="vatMode"][value="inclusive"]').checked = true;
       calc();
-      return document.querySelector('#resFinal').textContent;
+      const byRate = document.querySelector('#resFinal').textContent;
+      document.querySelector('#discountAmt').value = '1100';
+      calcByAmt();
+      const byAmount = { final: document.querySelector('#resFinal').textContent, vat: document.querySelector('#resVat').textContent };
+      document.querySelector('#price').value = '50000';
+      document.querySelector('#discountAmt').value = '3333';
+      setVatMode('none');
+      calcByAmt();
+      setVatMode('exclusive');
+      const keptAmount = document.querySelector('#resDiscount').textContent;
+      setVatMode('none');
+      document.querySelector('#price').value = '12345';
+      document.querySelector('#discountRate').value = '10';
+      calc();
+      const parts = ['#resDiscount', '#resAfterDiscount'].map(id => Number(document.querySelector(id).textContent.replace(/[^\d]/g, '')));
+      return { byRate, byAmount, keptAmount, parts };
     });
-    assert(result.includes('9,900'), `expected 9,900, got ${result}`);
+    assert(result.byRate.includes('9,900'), `expected 9,900, got ${JSON.stringify(result)}`);
+    assert(result.byAmount.final.includes('9,900') && result.byAmount.vat.includes('900'), `VAT-inclusive discount amount was not applied to the gross price: ${JSON.stringify(result)}`);
+    assert(result.keptAmount.includes('3,333'), `discount amount source was lost after a VAT mode change: ${JSON.stringify(result)}`);
+    assert(result.parts[0] + result.parts[1] === 12345, `discount parts do not add up to the price: ${JSON.stringify(result)}`);
   });
 
   await scenario('discount bounds and report safety', '/special-chars/discount-calc/', async page => {
@@ -285,7 +302,7 @@ async function main() {
       calc();
       const injection = {
         marker: window.__discountXss,
-        images: document.querySelectorAll('#analysisReport img').length,
+        images: document.querySelectorAll('main img').length,
         invalid: document.querySelector('#discountRate').getAttribute('aria-invalid')
       };
       document.querySelector('#price').value = '9'.repeat(400);
@@ -306,6 +323,137 @@ async function main() {
       return document.querySelector('#r-hol').textContent;
     });
     assert(label.includes('대상 아님'), `weekly allowance was not rejected for 10 hours: ${label}`);
+  });
+
+  await scenario('wage weekly allowance cap, labels, and goal period', '/special-chars/wage-calc/', async page => {
+    const result = await page.evaluate(() => {
+      document.querySelector('#wageYear').value = '2026';
+      onYearChange();
+      applyMinWage();
+      document.querySelector('#hoursDay').value = '10';
+      document.querySelector('#daysWeek').value = '5';
+      calc();
+      const longDay = { hol: document.querySelector('#r-hol').textContent, ot: document.querySelector('#r-ot').textContent };
+      document.querySelector('#hoursDay').value = '8';
+      calc();
+      const goal = document.querySelector('#goalAmount');
+      goal.value = '3,000,000';
+      calcGoal();
+      return {
+        longDay,
+        monthly: document.querySelector('#rMonthly').textContent,
+        copy: document.querySelector('#rMonthly').closest('.r-card').dataset.copy,
+        goal: document.querySelector('#goalResult').textContent,
+        labels: ['hoursDay', 'overtime', 'nighttime'].map(id => document.querySelector(`label[for="${id}"]`)?.textContent || '')
+      };
+    });
+    assert(result.longDay.hol.includes('주 8시간') && result.longDay.ot.includes('하루 8시간 초과 10'), `10-hour days were not split into 8h weekly allowance and overtime: ${JSON.stringify(result)}`);
+    assert(result.monthly === '2,156,880원' && result.copy === '2156880', `full-won monthly display or raw copy value is wrong: ${JSON.stringify(result)}`);
+    assert(result.goal.includes('1.4개월'), `goal period ignored the weekly allowance/5-day schedule: ${JSON.stringify(result)}`);
+    assert(result.labels[0].includes('하루') && result.labels[1].includes('주당') && result.labels[2].includes('주당'), `wage field labels are inconsistent: ${JSON.stringify(result)}`);
+  });
+
+  await scenario('percent zero division, %p, and won rounding', '/special-chars/percent-calc/', async page => {
+    const result = await page.evaluate(() => {
+      document.querySelector('#m1a').value = '0';
+      document.querySelector('#m1b').value = '5';
+      calc1();
+      const zero = { text: document.querySelector('#r1').textContent, invalid: document.querySelector('#m1a').getAttribute('aria-invalid') };
+      document.querySelector('#m1pp').checked = true;
+      document.querySelector('#m1a').value = '3';
+      calc1();
+      const pp = document.querySelector('#r1 .result-value').textContent;
+      document.querySelector('#m3a').value = '1,000';
+      document.querySelector('#m3b').value = '99.9';
+      calc3();
+      const detail = document.querySelector('#r3').textContent;
+      setM3Type('markup');
+      document.querySelector('#m3b').value = '10';
+      document.querySelector('#roundMode').value = 'round';
+      calc3();
+      const markup = document.querySelector('#r3 .result-value').textContent;
+      const style = selector => getComputedStyle(document.querySelector(selector)).backgroundColor;
+      return { zero, pp, detail, markup, pressedVisible: style('[data-m3-type="markup"]') !== style('[data-m3-type="discount"]') };
+    });
+    assert(result.zero.text.includes('0으로 나눌 수 없습니다') && result.zero.invalid === 'true', `division by zero was not explained: ${JSON.stringify(result)}`);
+    assert(result.pp === '+2%p', `percentage-point difference is wrong: ${JSON.stringify(result)}`);
+    assert(!/0\.0999|e-/.test(result.detail) && result.detail.includes('1,000,000'), `reverse formula leaked float noise: ${JSON.stringify(result)}`);
+    assert(result.markup === '909' && result.pressedVisible, `won rounding or toggle state failed: ${JSON.stringify(result)}`);
+  });
+
+  await scenario('calculator exact decimals, percent keys, and error lock', '/special-chars/calculator/', async page => {
+    const result = await page.evaluate(() => {
+      const run = keys => {
+        clearAll();
+        for (const k of keys) {
+          if (/^\d$/.test(k)) inputNum(k);
+          else if (k === '.') inputDot();
+          else if (k === '=') equals();
+          else if (k === '%') percent();
+          else if (k === '±') toggleSign();
+          else if (k === '⌫') backspace();
+          else inputOp(k);
+        }
+        return document.querySelector('#result').textContent;
+      };
+      const out = {
+        big: run([...'1234567891', '×', ...'1234', '=']),
+        decimals: run([...'0.1', '+', ...'0.2', '=']),
+        chain: run(['2', '+', '3', '×', '4', '=']),
+        chainExpr: document.querySelector('#expr').textContent,
+        vat: run([...'50000', '+', ...'10', '%', '=']),
+        reverse: run([...'40000', '÷', ...'80', '%', '=']),
+        divZero: run(['5', '÷', '0', '='])
+      };
+      backspace();
+      out.afterErrorBackspace = document.querySelector('#result').textContent;
+      run(['5', '÷', '0', '=']);
+      inputOp('+');
+      out.afterErrorOp = document.querySelector('#result').textContent;
+      out.signBackspace = run(['5', '±', '⌫', '×', '3', '=']);
+      out.repeat = run(['2', '+', '3', '=', '=', '=']);
+      out.history = document.querySelectorAll('#historyList li').length;
+      return out;
+    });
+    assert(result.big === '1,523,456,777,494' && result.decimals === '0.3', `calculator lost precision: ${JSON.stringify(result)}`);
+    assert(result.chain === '20' && result.chainExpr === '2 + 3 × 4 =', `calculator hid the running expression: ${JSON.stringify(result)}`);
+    assert(result.vat === '55,000' && result.reverse === '50,000', `calculator percent key semantics are wrong: ${JSON.stringify(result)}`);
+    assert(result.divZero === '0으로 나눌 수 없습니다' && result.afterErrorBackspace === '0' && result.afterErrorOp === '0으로 나눌 수 없습니다', `calculator error state is not locked: ${JSON.stringify(result)}`);
+    assert(result.signBackspace === '0' && result.repeat === '11' && result.history === 9, `calculator sign/repeat/history failed: ${JSON.stringify(result)}`);
+  });
+
+  await scenario('unit shoe, data base, DPI, and search', '/special-chars/unit-conv/', async page => {
+    const result = await page.evaluate(() => {
+      const fire = el => el.dispatchEvent(new Event('input', { bubbles: true }));
+      switchUnitCat('shoe');
+      const kr = document.querySelector('#conv-shoe-kr');
+      kr.value = '270';
+      fire(kr);
+      const shoe = [document.querySelector('#conv-shoe-us').value, document.querySelector('#conv-shoe-eu').value];
+      switchUnitCat('digital');
+      const gb = document.querySelector('#conv-data-gb');
+      gb.value = '1';
+      fire(gb);
+      const decimalMb = document.querySelector('#conv-data-mb').value;
+      const base = document.querySelector('#conv-data-base');
+      base.value = '1024';
+      base.dispatchEvent(new Event('change', { bubbles: true }));
+      const gib = document.querySelector('#conv-data-gb');
+      gib.value = '1';
+      fire(gib);
+      const binary = { label: document.querySelector('label[for="conv-data-gb"]').textContent, mb: document.querySelector('#conv-data-mb').value };
+      const px = document.querySelector('#conv-pxmm-a');
+      px.value = '96';
+      fire(px);
+      const mm = document.querySelector('#conv-pxmm-b').value;
+      document.querySelector('#unitSearch').value = '온스';
+      renderConverters();
+      const ozRows = [...document.querySelectorAll('#unitConvArea .conv-row-title')].map(el => el.textContent);
+      return { shoe, decimalMb, binary, mm, ozRows, overflow: getComputedStyle(document.querySelector('.counter-body')).overflowY };
+    });
+    assert(result.shoe[0] === '9' && result.shoe[1] === '42', `men's 270mm shoe conversion is wrong: ${JSON.stringify(result)}`);
+    assert(result.decimalMb === '1,000' && result.binary.label === 'GiB' && result.binary.mb === '1,024', `data unit bases are mislabeled: ${JSON.stringify(result)}`);
+    assert(result.mm === '25.4' && result.ozRows.length === 2 && result.overflow === 'visible', `DPI default, oz split, or nested scroll failed: ${JSON.stringify(result)}`);
   });
 
   await scenario('date direction and local parsing', '/special-chars/date-calc/', async page => {
@@ -349,6 +497,39 @@ async function main() {
       };
     });
     assert(result.average === '150' && result.total.includes('3,000') && result.quantity === '20', `weighted average result is wrong: ${JSON.stringify(result)}`);
+  });
+
+  await scenario('average price exact money and multi-lot', '/special-chars/avg-price/', async page => {
+    const result = await page.evaluate(() => {
+      document.querySelector('#curPrice').value = '12,345';
+      document.querySelector('#curQty').value = '3';
+      document.querySelector('#addPrice').value = '19990';
+      document.querySelector('#addQtyOrAmt').value = '7';
+      calc();
+      const small = document.querySelector('#finalInvest').textContent;
+      const lot = addLot('50,000,000', '2', { silent: true });
+      calc();
+      const big = document.querySelector('#finalInvest').textContent;
+      lot.remove();
+      document.querySelector('#curPrice').value = '50000'; document.querySelector('#curQty').value = '10';
+      document.querySelector('#addPrice').value = '40000'; document.querySelector('#addQtyOrAmt').value = '5';
+      calc();
+      return { small, big, average: document.querySelector('#finalPrice').textContent, formula: document.querySelector('#formulaLine').textContent };
+    });
+    assert(result.small === '176,965원', `money was floored instead of exact: ${result.small}`);
+    assert(result.big === '1억 17만 6,965원', `Korean-unit money is not exact: ${result.big}`);
+    assert(result.average === '46,666.67' && result.formula.includes('÷ 15'), `average precision/formula is wrong: ${JSON.stringify(result)}`);
+  });
+
+  await scenario('broker exact Korean amount hint and kept amount', '/special-chars/broker-fee-calc/', async page => {
+    const result = await page.evaluate(() => {
+      document.querySelector('#price').value = '123,456,789'; calc();
+      const hint = document.querySelector('#priceHint').textContent;
+      setTrade(1);
+      return { hint, kept: document.querySelector('#price').value, summary: document.querySelector('#summary').textContent };
+    });
+    assert(result.hint === '= 1억 2,345만 6,789원', `Korean amount hint is inexact: ${result.hint}`);
+    assert(result.kept === '123,456,789' && result.summary.includes('370,370'), `trade switch overwrote the typed amount: ${JSON.stringify(result)}`);
   });
 
   await scenario('officetel fee requirements', '/special-chars/broker-fee-calc/', async page => {
@@ -527,11 +708,32 @@ async function main() {
       document.querySelector('#hzInput').value = '440'; calcHzToNote(); const hz440 = document.querySelector('#hzToNoteResult').textContent;
       document.querySelector('#refHz').value = '442'; calcNote(); calcHzToNote(); const hz442 = document.querySelector('#hzToNoteResult').textContent;
       document.querySelector('#delayBpm').value = '-120'; calcDelay();
-      return { bars120, bars60, hz440, hz442, delay: document.querySelector('#delayQuarter').textContent };
+      const delayInvalid = document.querySelector('#delayBpm').getAttribute('aria-invalid');
+      document.querySelector('#songBpm').value = '88'; document.querySelector('#songBars').value = '22'; calcSong();
+      const roundedClock = document.querySelector('#songLength').textContent;
+      const roundedDetail = document.querySelector('#songDetail').textContent;
+      document.querySelector('#songBpm').value = '120'; document.querySelector('#songBars').value = '1';
+      document.querySelector('#songTimeSig').value = '6/8'; calcSong();
+      const sixEightBar = document.querySelector('#songDetail').textContent;
+      const from = document.querySelector('#transposeFrom');
+      from.value = '5'; semitones = 0; calcTranspose(); const fMajorScale = document.querySelector('#transposeScale').textContent;
+      from.value = '0'; semitones = 3; calcTranspose(); const cUpThree = document.querySelector('#transposeTo').textContent;
+      document.querySelector('#metroTimeSig').value = '6/8'; updateMetroBeats(); setMetroBpm(120);
+      const metroPulse = beatSeconds(metroBpm, metroNoteValue) * metroBeatsPerBar;
+      return { bars120, bars60, hz440, hz442, delay: document.querySelector('#delayQuarter').textContent, delayInvalid, roundedClock, roundedDetail, sixEightBar, fMajorScale, cUpThree, metroPulse };
     });
     assert(result.bars120 !== result.bars60, 'reverse bar count stayed stale after BPM change');
     assert(result.hz440 !== result.hz442, 'Hz-to-note result stayed stale after reference change');
-    assert(result.delay.includes('유효한 BPM'), `negative BPM produced ${result.delay}`);
+    assert(result.delay.includes('유효한 BPM') && result.delayInvalid === 'true', `negative BPM produced ${result.delay} (aria-invalid=${result.delayInvalid})`);
+    assert(result.roundedClock === '1:00' && result.roundedDetail.includes('1분 0.0초'), `song length rounding disagrees: ${result.roundedClock} / ${result.roundedDetail}`);
+    assert(result.sixEightBar.includes('1.50초') && Math.abs(result.metroPulse - 1.5) < 1e-9, `6/8 bar length differs between tabs: ${result.sixEightBar} vs metronome ${result.metroPulse}`);
+    assert(result.fMajorScale.includes('Bb') && !result.fMajorScale.includes('A#'), `F major scale is misspelled: ${result.fMajorScale}`);
+    assert(result.cUpThree.startsWith('Eb Major'), `C +3 semitones should be Eb Major: ${result.cUpThree}`);
+    await page.evaluate(() => switchTab(1));
+    await page.locator('#metroBpmInput').fill('');
+    await page.locator('#metroBpmInput').pressSequentially('150');
+    const typedBpm = await page.evaluate(() => metroBpm);
+    assert(typedBpm === 150, `metronome BPM field rewrote a partial entry: typed 150, got ${typedBpm}`);
   });
 
   await scenario('sample-accurate metronome engine', '/special-chars/music-calc/', async page => {
@@ -714,10 +916,24 @@ async function main() {
   await scenario('fractional fuel display', '/special-chars/fuel-calc/', async page => {
     const text = await page.evaluate(() => {
       document.querySelector('#distance').value = '0.1'; document.querySelector('#efficiency').value = '15';
-      document.querySelector('#fuelPrice').value = '2000'; document.querySelector('#people').value = '1'; calc();
+      document.querySelector('#fuelPrice').value = '2000'; document.querySelector('#people').value = '1';
+      document.querySelector('#fuelPrice').dispatchEvent(new Event('input', { bubbles: true })); calc();
       return document.querySelector('#summary').textContent;
     });
     assert(text.includes('0.1km') && text.includes('0.007'), `fractional evidence was rounded away: ${text}`);
+  });
+
+  await scenario('fuel stale price requires confirmation', '/special-chars/fuel-calc/', async page => {
+    await page.waitForFunction(() => document.querySelector('#priceDate').textContent.includes('기준'));
+    const state = await page.evaluate(() => {
+      priceData = { ...priceData, updated: '2000-01-01' };
+      fuelPriceDirty = false; staleConfirmed = false; calc();
+      const blocked = { summary: document.querySelector('#summary').textContent.trim(), error: document.querySelector('#fuelError').textContent, button: Boolean(document.querySelector('.stale-confirm')) };
+      document.querySelector('.stale-confirm').click();
+      return { blocked, confirmed: document.querySelector('#detailBox').textContent };
+    });
+    assert(state.blocked.summary === '' && state.blocked.error.includes('30일') && state.blocked.button, `stale fuel price leaked a result: ${JSON.stringify(state.blocked)}`);
+    assert(state.confirmed.includes('2000-01-01') && state.confirmed.includes('총 유류비'), `confirmed stale price did not show its basis date: ${state.confirmed}`);
   });
 
   await scenario('speech preset state', '/special-chars/speech-timer/', async page => {
@@ -873,14 +1089,32 @@ async function main() {
   await scenario('quick-reply safe custom actions', '/special-chars/quick-reply/', async page => {
     await page.evaluate(() => localStorage.setItem('qr_customs', JSON.stringify(['회의 "최종" <img src=x onerror=1>', '남길 문구'])));
     await page.reload({ waitUntil: 'domcontentloaded' });
-    const result = await page.evaluate(() => {
-      switchTab('custom');
-      document.querySelector('button[title="삭제"]').click();
-      return { stored: JSON.parse(localStorage.getItem('qr_customs')), injected: document.querySelectorAll('.msg-text img').length, copyButtons: document.querySelectorAll('.msg-copy').length };
-    });
+    await page.evaluate(() => { switchTab('custom'); document.querySelector('button[title="삭제"]').click(); });
+    await page.locator('#confirmDialog [data-confirm-cancel]').click();
+    const kept = await page.evaluate(() => JSON.parse(localStorage.getItem('qr_customs')).length);
+    assert(kept === 2, `custom delete ran without confirmation: ${kept}`);
+    await page.locator('button[title="삭제"]').first().click();
+    await page.locator('#confirmDialog [data-confirm-ok]').click();
+    await page.waitForFunction(() => JSON.parse(localStorage.getItem('qr_customs')).length === 1);
+    const result = await page.evaluate(() => ({ stored: JSON.parse(localStorage.getItem('qr_customs')), injected: document.querySelectorAll('.msg-text img').length, copyButtons: document.querySelectorAll('.msg-copy').length }));
     assert(result.stored.length === 1 && result.stored[0] === '남길 문구', `custom delete failed: ${JSON.stringify(result.stored)}`);
     assert(result.injected === 0 && result.copyButtons === 1, 'custom text escaped the safe DOM renderer');
+
+    await page.evaluate(() => { localStorage.setItem('qr_customs', JSON.stringify(['{이름}님 <b>회의</b>'])); });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.locator('#fillName').fill('<img src=x onerror=1>');
+    const filled = await page.evaluate(() => { switchTab('custom'); return { text: document.querySelector('.msg-text').textContent, injected: document.querySelectorAll('.msg-text img, .msg-text b').length }; });
+    assert(filled.text === '<img src=x onerror=1>님 <b>회의</b>' && filled.injected === 0, `quick-reply fill-in was not rendered safely: ${JSON.stringify(filled)}`);
   });
+
+  await scenario('quick-reply list reachable without inner scroll', '/special-chars/quick-reply/', async page => {
+    const layout = await page.evaluate(() => {
+      window.scrollTo(0, document.documentElement.scrollHeight);
+      const add = document.querySelector('.btn-add').getBoundingClientRect();
+      return { overflow: getComputedStyle(document.querySelector('#msgList')).overflowY, addVisible: add.top >= 0 && add.bottom <= innerHeight };
+    });
+    assert(layout.overflow === 'visible' && layout.addVisible, `quick-reply list or actions are unreachable: ${JSON.stringify(layout)}`);
+  }, { viewport: { width: 1280, height: 800 } });
 
   await scenario('UTM URL preservation', '/special-chars/utm-builder/', async page => {
     const result = await page.evaluate(() => {
@@ -992,10 +1226,44 @@ async function main() {
       mode: document.querySelector('[data-mode="word"]').getAttribute('aria-pressed')
     }));
     assert(ignoredState.added === '0' && ignoredState.removed === '0' && ignoredState.mode === 'true', `ignored word changes remained: ${JSON.stringify(ignoredState)}`);
+
+    await page.locator('#ignoreSpace').uncheck();
+    await page.waitForFunction(() => document.querySelector('#resultStatus').textContent.includes('공백'));
+    assert(await page.locator('#blockCount').textContent() === '0', 'whitespace-only word change was counted as a change block');
+  });
+
+  await scenario('document diff large edits, fallback warning, and change navigation', '/special-chars/text-diff/', async page => {
+    await page.evaluate(() => {
+      document.querySelector('#oldText').value = Array.from({ length: 1000 }, (_, index) => `line ${index} original`).join('\n');
+      document.querySelector('#newText').value = Array.from({ length: 1000 }, (_, index) => index % 2 ? `line ${index} changed` : `line ${index} original`).join('\n');
+      document.querySelector('#newText').dispatchEvent(new Event('input'));
+    });
+    await page.waitForFunction(() => document.querySelector('#blockCount').textContent === '500');
+    assert(await page.locator('#sameCount').textContent() === '500' && await page.locator('#diffOutput .limit-note').count() === 0, 'a 1,000-line diff with 500 edits fell back to full replacement');
+    await page.locator('#changesOnly').check();
+    await page.locator('#nextChange').click();
+    await page.locator('#nextChange').click();
+    assert(await page.locator('#navPosition').textContent() === '2 / 500' && await page.locator('#diffOutput .change-current').count() === 1, 'change navigation did not move to the second block');
+
+    await page.evaluate(() => {
+      document.querySelector('#oldText').value = Array.from({ length: 3000 }, (_, index) => `a${index}`).join('\n');
+      document.querySelector('#newText').value = Array.from({ length: 3000 }, (_, index) => `b${index}`).join('\n');
+      document.querySelector('#newText').dispatchEvent(new Event('input'));
+    });
+    await page.waitForFunction(() => document.querySelector('#resultStatus').textContent.includes('간이 비교'), null, { timeout: 10000 });
+    assert(await page.locator('#diffOutput .limit-note').count() === 1, 'full-replacement fallback did not show a visible warning');
   });
 
   await scenario('table cleaner parsing, cleanup, conversion, and DOM safety', '/special-chars/table-cleaner/', async page => {
     await page.locator('#sourceInput').fill('Name\tDept\tBlank\n Alice <img src=x onerror="window.__tableXss=1"> \tOps\t\n\t\t\nAlice <img src=x onerror="window.__tableXss=1">\tOps\t\nBob\tDev\t');
+    await page.waitForFunction(() => document.querySelector('#rowCount').textContent === '4');
+    const defaults = await page.evaluate(() => ({
+      rows: document.querySelector('#rowCount').textContent,
+      cols: document.querySelector('#colCount').textContent,
+      note: document.querySelector('#removalNote').textContent
+    }));
+    assert(defaults.cols === '3' && defaults.note.includes('중복 행 삭제'), `table defaults deleted data or hid duplicate hint: ${JSON.stringify(defaults)}`);
+    await page.locator('#removeDuplicates').check();
     await page.waitForFunction(() => document.querySelector('#rowCount').textContent === '3');
     const cleaned = await page.evaluate(() => ({
       rows: document.querySelector('#rowCount').textContent,
@@ -1003,10 +1271,12 @@ async function main() {
       removed: document.querySelector('#removedCount').textContent,
       output: document.querySelector('#outputArea').value,
       images: document.querySelectorAll('#tableWrap img').length,
-      preview: document.querySelector('#tableWrap').textContent
+      preview: document.querySelector('#tableWrap').textContent,
+      note: document.querySelector('#removalNote').textContent
     }));
-    assert(cleaned.rows === '3' && cleaned.cols === '2' && cleaned.removed === '3', `table cleanup summary is wrong: ${JSON.stringify(cleaned)}`);
-    assert(cleaned.output.includes('Name,Dept') && cleaned.output.includes('Bob,Dev'), `CSV output is wrong: ${cleaned.output}`);
+    assert(cleaned.rows === '3' && cleaned.cols === '3' && cleaned.removed === '2', `table cleanup summary is wrong: ${JSON.stringify(cleaned)}`);
+    assert(cleaned.note.includes('원본 3행') && cleaned.note.includes('원본 4행'), `table removal note is missing source rows: ${cleaned.note}`);
+    assert(cleaned.output.includes('Name,Dept,Blank') && cleaned.output.includes('Bob,Dev'), `CSV output is wrong: ${cleaned.output}`);
     assert(cleaned.images === 0 && cleaned.preview.includes('<img src=x'), `table preview was not rendered safely: ${JSON.stringify(cleaned)}`);
 
     await page.locator('#formatSelect').selectOption('json');
@@ -1019,6 +1289,17 @@ async function main() {
     await page.locator('#sourceInput').fill('Name,Note\nAlice,"x,y"');
     await page.waitForFunction(() => document.querySelector('#colCount').textContent === '2');
     assert((await page.locator('#outputArea').inputValue()).includes('"x,y"'), 'quoted CSV cell lost its comma');
+
+    await page.locator('#sourceInput').fill('Status,Note\n"긴급" 처리,ok');
+    await page.waitForFunction(() => document.querySelector('#outputArea').value.includes('처리'));
+    assert((await page.locator('#outputArea').inputValue()).includes('"""긴급"" 처리"'), 'inline quotes inside a CSV cell were dropped');
+
+    await page.locator('#formatSelect').selectOption('json');
+    await page.locator('#sourceInput').fill('a,a,a_2\n1,2,3');
+    await page.waitForFunction(() => document.querySelector('#outputArea').value.includes('"3"'));
+    const headerKeys = JSON.parse(await page.locator('#outputArea').inputValue())[0];
+    assert(Object.keys(headerKeys).length === 3 && headerKeys.a_2 === '3', `duplicate headers overwrote a JSON column: ${JSON.stringify(headerKeys)}`);
+    await page.locator('#formatSelect').selectOption('csv');
 
     await page.locator('#sourceInput').fill('Name,Note\nAlice,"not closed');
     await page.waitForFunction(() => document.querySelector('#sourceInput').getAttribute('aria-invalid') === 'true');
@@ -1057,10 +1338,14 @@ async function main() {
       mimeType: 'image/png',
       buffer: transparent
     });
-    await page.waitForFunction(() => getComputedStyle(document.querySelector('#reportBox')).display !== 'none');
+    await page.waitForFunction(() => getComputedStyle(document.querySelector('#fileInfo')).display !== 'none' && document.querySelector('#fileInfo').textContent.includes('evil'));
     await page.waitForTimeout(50);
-    const state = await page.evaluate(() => ({ marker: window.__base64Xss, images: document.querySelectorAll('#reportBox img').length }));
-    assert(state.marker === 0 && state.images === 0, `Base64 filename injected markup: ${JSON.stringify(state)}`);
+    const state = await page.evaluate(() => ({
+      marker: window.__base64Xss,
+      images: document.querySelectorAll('#fileInfo img, #fileResult img').length,
+      literal: document.querySelector('#fileInfo').textContent.includes('evil<img src=x onerror=')
+    }));
+    assert(state.marker === 0 && state.images === 0 && state.literal, `Base64 filename injected markup or was not shown as plain text: ${JSON.stringify(state)}`);
   });
 
   for (const [locale, routePath] of [['ko', '/special-chars/qr-code/']]) {
@@ -1101,12 +1386,61 @@ async function main() {
   await scenario('emoji random retry cap', '/special-chars/emoji-mixer/', async page => {
     let imageRequests = 0;
     page.on('request', request => { if (request.url().includes('gstatic.com/android/keyboard/emojikitchen')) imageRequests += 1; });
-    await page.waitForFunction(() => window.emojiData && window.emojiData.data, null, { timeout: 5000 }).catch(async () => {
-      await page.waitForFunction(() => document.querySelector('#mainContent').style.display === 'block');
-    });
+    await page.waitForFunction(() => document.querySelector('#mainContent').style.display === 'block');
     await page.evaluate(() => randomCombo());
     await page.waitForFunction(() => getComputedStyle(document.querySelector('#noResult')).display !== 'none', null, { timeout: 5000 });
     assert(imageRequests > 0 && imageRequests <= 8, `random fallback made ${imageRequests} image requests`);
+  });
+
+  await scenario('emoji variation selector lookup and supported grid', '/special-chars/emoji-mixer/', async page => {
+    await page.waitForFunction(() => document.querySelector('#mainContent').style.display === 'block');
+    const state = await page.evaluate(() => ({
+      heart: findComboUrl('❤', '😀'),
+      unsupported: [...document.querySelectorAll('.emoji-btn')].filter(button => findEmojiIndex(button.textContent) === -1).length
+    }));
+    assert(state.heart && state.heart.includes('2764-fe0f'), `❤️ + 😀 combination was not found: ${state.heart}`);
+    assert(state.unsupported === 0, `${state.unsupported} emoji without any combination remain selectable`);
+  });
+
+  await scenario('special character search ranking and compose order', '/special-chars/', async page => {
+    await page.hover('#charGrid .char-btn >> nth=2');
+    const first = async query => {
+      await page.locator('#searchInput').fill(query);
+      return page.locator('#charGrid .char-btn').first().textContent();
+    };
+    const results = { dollar: await first('달러'), won: await first('원화'), shape: await first('도형'), heart: await first('heart'), company: await first('주식회사') };
+    assert(results.dollar === '$' && results.won === '₩' && results.shape === '■' && results.heart === '♡' && results.company === '㈜', `special character search ranking is wrong: ${JSON.stringify(results)}`);
+    await page.locator('#searchInput').fill('');
+    for (const ch of ['★', '☆', '♠']) await page.locator('#charGrid .char-btn', { hasText: ch }).first().click();
+    assert(await page.locator('#composeInput').inputValue() === '★☆♠', 'compose box did not keep click order');
+  });
+
+  await scenario('keyboard layout recovery for capitals and mixed English', '/special-chars/korean-english-converter/', async page => {
+    const state = await page.evaluate(() => ({
+      auto: engToKor('Dkssud', false),
+      caps: engToKor('DKSSUDGKTPDY', false),
+      shift: engToKor('Rkwl', false),
+      mixed: engToKor('dkssudgktpdy PPT wkfy', true),
+      chips: [...document.querySelectorAll('.example-chip')].every(chip => {
+        const [input, output] = chip.textContent.split('→');
+        return engToKor(input, false) === output;
+      })
+    }));
+    assert(state.auto === '안녕' && state.caps === '안녕하세요' && state.shift === '까지', `capital letters were not mapped: ${JSON.stringify(state)}`);
+    assert(state.mixed === '안녕하세요 PPT 자료' && state.chips, `mixed text or example chips are wrong: ${JSON.stringify(state)}`);
+  });
+
+  await scenario('speech timer spoken-length adjustment and target length', '/special-chars/speech-timer/', async page => {
+    await page.locator('#script').fill('2026년 3분기 AI 매출은 3.5% 증가');
+    await page.locator('#targetMinutes').fill('-1');
+    const state = await page.evaluate(() => ({
+      spoken: statSpoken.textContent,
+      invalid: targetMinutes.getAttribute('aria-invalid'),
+      saved: localStorage.getItem('speechTimer_text'),
+      report: document.querySelectorAll('#reportContainer').length
+    }));
+    assert(state.spoken === '24' && state.invalid === 'true', `spoken length or target validation is wrong: ${JSON.stringify(state)}`);
+    assert(state.saved === null && state.report === 0, `script was saved without opt-in or filler report remained: ${JSON.stringify(state)}`);
   });
 
   await scenario('self-hosted PDF engine, offline render, and image drop', '/special-chars/pdf-tool/', async (page, context, base) => {
@@ -1141,10 +1475,11 @@ async function main() {
     assert(await page.locator('#img2pdfFileList .file-item').count() === 1, 'image-to-PDF drop rejected a PNG');
     await page.evaluate(() => {
       window.__pdfXss = 0;
-      updateReport('<img src=x onerror="window.__pdfXss=1">', 'evil.pdf', 1, '<img src=x onerror="window.__pdfXss=1">', '<img src=x onerror="window.__pdfXss=1">');
+      showResultLine('<img src=x onerror="window.__pdfXss=1">.pdf', 1, '<img src=x onerror="window.__pdfXss=1">');
+      showError('<img src=x onerror="window.__pdfXss=1">');
     });
     await page.waitForTimeout(50);
-    const reportState = await page.evaluate(() => ({ marker: window.__pdfXss, images: document.querySelectorAll('#reportContainer img').length }));
+    const reportState = await page.evaluate(() => ({ marker: window.__pdfXss, images: document.querySelectorAll('#resultLine img').length }));
     assert(reportState.marker === 0 && reportState.images === 0, `PDF report injected markup: ${JSON.stringify(reportState)}`);
   });
 
@@ -1174,7 +1509,8 @@ async function main() {
     const resourceOrigins = await page.evaluate(() => performance.getEntriesByType('resource').map(entry => new URL(entry.name).origin));
     assert(resourceOrigins.every(origin => origin === new URL(base).origin), `background remover loaded a third-party resource: ${resourceOrigins.join(', ')}`);
     const moduleSource = (await page.locator('script[type="module"]').allTextContents()).join('\n');
-    assert(moduleSource.includes('escapeHtml(origFile.name)'), 'background-remover report does not escape the selected filename');
+    // The filename is rendered only through textContent; the module must not contain an HTML sink at all.
+    assert(!/\.innerHTML\b|insertAdjacentHTML|outerHTML\s*=/.test(moduleSource), 'background-remover module reintroduced an HTML sink');
   });
 
   if (runBackgroundInference) {
@@ -1267,19 +1603,69 @@ async function main() {
     });
     assert(rgba[0] > 245 && rgba[1] > 245 && rgba[2] > 245 && rgba[3] === 255, `transparent pixel was not composited white: ${rgba}`);
     await page.locator('#fileInput').setInputFiles({ name: 'broken.png', mimeType: 'image/png', buffer: Buffer.from('broken') });
-    await page.waitForFunction(() => document.querySelector('#saved').textContent.includes('손상'));
-    assert(await page.locator('#dlBtn').evaluate(element => getComputedStyle(element).display === 'none'), 'broken image left download enabled');
-    await page.evaluate(() => {
-      window.__compressFilenameXss = 0;
-      updateReport(
-        { name: '<img src=x onerror="window.__compressFilenameXss=1">.png', size: 100, type: 'image/png' },
-        new Blob([new Uint8Array(10)], { type: 'image/jpeg' }),
-        1, 1, 1, 1, 90
-      );
-    });
+    await page.waitForFunction(() => document.querySelector('#fileMsg').textContent.includes('손상'));
+    const brokenState = await page.evaluate(() => ({
+      queued: state.items.map(item => item.name),
+      messageVisible: !document.querySelector('#fileMsg').hidden
+    }));
+    assert(brokenState.messageVisible && !brokenState.queued.includes('broken.png'), `broken image was queued for download: ${JSON.stringify(brokenState)}`);
+    // The filename is rendered in the file list and rejection message; both must treat it as text.
+    await page.evaluate(() => { window.__compressFilenameXss = 0; });
+    const hostileName = '<img src=x onerror="window.__compressFilenameXss=1">.png';
+    await page.locator('#fileInput').setInputFiles([
+      { name: hostileName, mimeType: 'image/png', buffer: transparent },
+      { name: `${hostileName}.heic`, mimeType: 'image/heic', buffer: Buffer.from('heic') }
+    ]);
+    await page.waitForFunction(() => document.querySelectorAll('#fileList .file-row').length === 2);
     await page.waitForTimeout(50);
-    const reportState = await page.evaluate(() => ({ marker: window.__compressFilenameXss, images: document.querySelectorAll('#reportContainer img').length }));
-    assert(reportState.marker === 0 && reportState.images === 0, `image-compressor filename injected markup: ${JSON.stringify(reportState)}`);
+    const nameState = await page.evaluate(name => ({
+      marker: window.__compressFilenameXss,
+      images: document.querySelectorAll('#fileList img, #fileMsg img').length,
+      listed: document.querySelector('#fileList').textContent.includes(name),
+      heicGuidance: document.querySelector('#fileMsg').textContent.includes('높은 호환성')
+    }), hostileName);
+    assert(nameState.marker === 0 && nameState.images === 0 && nameState.listed, `image-compressor filename injected markup: ${JSON.stringify(nameState)}`);
+    assert(nameState.heicGuidance, 'HEIC input did not show conversion guidance');
+  });
+
+  await scenario('image format converter SVG scale and 24MP input', '/special-chars/image-format-converter/', async page => {
+    const logo = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="40"><rect width="120" height="40" fill="#1e3a8a"/></svg>');
+    await page.locator('#fileInput').setInputFiles({ name: 'logo.svg', mimeType: 'image/svg+xml', buffer: logo });
+    await page.waitForFunction(() => state.items[0]?.status === 'done');
+    await page.locator('[data-size="4"]').click();
+    await page.waitForFunction(() => state.items[0]?.status === 'done' && state.items[0].outWidth === 480);
+    const scaled = await page.evaluate(() => ({ width: state.items[0].outWidth, height: state.items[0].outHeight, name: outputName(state.items[0]) }));
+    assert(scaled.width === 480 && scaled.height === 160 && scaled.name === 'logo@4x.png', `SVG 4x export is wrong: ${JSON.stringify(scaled)}`);
+    const photo = Buffer.from(await page.evaluate(() => {
+      const canvas = document.createElement('canvas'); canvas.width = 5712; canvas.height = 4284;
+      const context = canvas.getContext('2d'); context.fillStyle = '#3a7'; context.fillRect(0, 0, 5712, 4284);
+      return canvas.toDataURL('image/jpeg', 0.6).split(',')[1];
+    }), 'base64');
+    await page.locator('[data-size="1"]').click();
+    await page.locator('#fileInput').setInputFiles({ name: 'iphone-24mp.jpg', mimeType: 'image/jpeg', buffer: photo });
+    await page.waitForFunction(() => state.items.length === 2 && state.items.every(item => item.status === 'done' || item.status === 'failed'), null, { timeout: 20000 });
+    const photoState = await page.evaluate(() => ({ status: state.items[1].status, width: state.items[1].outWidth, message: document.querySelector('#fileMsg').textContent }));
+    assert(photoState.status === 'done' && photoState.width === 5712, `24MP photo was rejected: ${JSON.stringify(photoState)}`);
+  });
+
+  await scenario('bg-remover compare slider geometry', '/special-chars/bg-remover/', async page => {
+    const state = await page.evaluate(async () => {
+      const canvas = document.createElement('canvas'); canvas.width = 400; canvas.height = 200;
+      canvas.getContext('2d').fillRect(0, 0, 400, 200);
+      const url = canvas.toDataURL('image/png');
+      const before = document.querySelector('#compareBefore');
+      const after = document.querySelector('#compareAfter');
+      before.src = url; after.src = url;
+      await Promise.all([before.decode(), after.decode()]);
+      document.querySelector('#resultArea').classList.add('active');
+      setView('compare');
+      const range = document.querySelector('#compareRange');
+      range.value = '25'; range.dispatchEvent(new Event('input'));
+      const box = element => { const rect = element.getBoundingClientRect(); return [rect.left, rect.top, rect.width, rect.height].map(Math.round); };
+      return { before: box(before), after: box(after), split: getComputedStyle(document.querySelector('#compareView')).getPropertyValue('--split').trim() };
+    });
+    assert(JSON.stringify(state.before) === JSON.stringify(state.after), `compare images are not aligned: ${JSON.stringify(state)}`);
+    assert(state.split === '25%', `keyboard range did not move the split: ${state.split}`);
   });
 
   await scenario('PWA offline self-hosted QR and PDF engines', '/special-chars/', async (page, context, baseUrl) => {

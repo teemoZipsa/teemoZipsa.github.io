@@ -163,9 +163,11 @@ function attachDiagnostics(page, base) {
     problems.push(`console: ${text}`);
   });
   page.on('requestfailed', request => {
-    if (request.url().startsWith(`${base}/`)) {
-      problems.push(`request failed: ${request.url()} (${request.failure()?.errorText || 'unknown'})`);
-    }
+    if (!request.url().startsWith(`${base}/`)) return;
+    const errorText = request.failure()?.errorText || 'unknown';
+    // Chromium reports bodiless HEAD requests (server-time clock probes) as aborted even after a 200 response arrives.
+    if (request.method() === 'HEAD' && errorText === 'net::ERR_ABORTED') return;
+    problems.push(`request failed: ${request.url()} (${errorText})`);
   });
   page.on('response', response => {
     if (response.url().startsWith(`${base}/`) && response.status() >= 400) {
@@ -254,10 +256,8 @@ async function runInteractions(context, base, config) {
     ['VAT-inclusive discount', '/special-chars/discount-calc/', async page => {
       await page.locator('#price').fill('11000');
       await page.locator('#discountRate').fill('10');
-      await activate(page.locator('.toggle-row').nth(0));
-      await activate(page.locator('.toggle-row').nth(1));
-      assert(await page.locator('#vatToggle').isChecked(), 'the visible VAT toggle did not select VAT');
-      assert(!await page.locator('#vatExToggle').isChecked(), 'the visible tax-exclusive toggle did not turn off');
+      await activate(page.locator('#vatModeGroup label').filter({ has: page.locator('input[value="inclusive"]') }));
+      assert(await page.locator('input[name="vatMode"][value="inclusive"]').isChecked(), 'the visible VAT-inclusive option did not select');
       assert((await page.locator('#resFinal').innerText()).includes('9,900'), 'expected a final price of 9,900');
     }],
     ['password touch and generation', '/special-chars/password-gen/', async page => {
@@ -273,7 +273,8 @@ async function runInteractions(context, base, config) {
       await activate(page.locator('.quick-btn').first());
       assert(await page.locator('#display').innerText() === '01:00', '1-minute quick setting did not update the display');
       await activate(page.locator('#btnStart'));
-      await page.waitForTimeout(120);
+      // The countdown display rounds up, so it only leaves 01:00 after a full second.
+      await page.waitForTimeout(1100);
       await activate(page.locator('#btnStart'));
       assert((await page.locator('#display').innerText()).startsWith('00:59'), 'timer did not start and stop through the visible control');
     }],
