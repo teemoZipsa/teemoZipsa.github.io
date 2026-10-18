@@ -11,51 +11,77 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
     <title>🎨 실무 색상 코드 변환기 — 티모집사</title>
-    <meta name="description" content="디자인 시안과 웹 문서에 쓰는 HEX·RGB·HSL 색상 코드를 실시간 변환하고 보색·유사색을 확인합니다.">
+    <meta name="description" content="디자인 시안과 웹 문서에 쓰는 HEX·RGB·HSL 색상 코드를 투명도까지 실시간 변환하고, WCAG 명암비와 보색·유사색을 확인합니다.">
     <meta property="og:title" content="🎨 실무 색상 코드 변환기 — 티모집사">
-    <meta property="og:description" content="디자인 시안과 웹 문서의 HEX·RGB·HSL 값을 변환하고 배색 후보를 확인합니다.">
+    <meta property="og:description" content="디자인 시안과 웹 문서의 HEX·RGB·HSL 값을 변환하고 WCAG 명암비와 배색 후보를 확인합니다.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://teemozipsa.com/special-chars/color-conv/">
     <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
     <link rel="canonical" href="https://teemozipsa.com/special-chars/color-conv/">
-    
+
 <style>
         *{margin:0;padding:0;box-sizing:border-box}
+        [hidden]{display:none!important}
         body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:start;padding:20px}
-        .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
+        .app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
         .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
         .header h1{font-size:15px;font-weight:600;color:#fff}
         .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
         .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
         .counter-body{padding:16px}
+        .mono{font-family:ui-monospace,'Cascadia Mono','SFMono-Regular',Consolas,'D2Coding','Liberation Mono',monospace}
+        .checker{background-color:var(--bg-app);background-image:conic-gradient(var(--bg-btn) 25%,transparent 0 50%,var(--bg-btn) 0 75%,transparent 0);background-size:16px 16px}
 
         .preview-area{display:flex;gap:12px;margin-bottom:16px;align-items:stretch}
-        .color-preview{flex:1;min-height:120px;border-radius:12px;border:2px solid #3a3a6a;transition:background .2s}
+        .color-preview{flex:1;min-height:120px;border-radius:12px;border:2px solid var(--border);overflow:hidden;position:relative}
+        .preview-fill{position:absolute;inset:0;transition:background .2s}
         .picker-wrap{display:flex;flex-direction:column;gap:8px;justify-content:center;align-items:center}
-        .picker-wrap label{font-size:11px;color:var(--text-info)}
+        .picker-wrap label{font-size:13px;color:var(--text-info)}
         input[type="color"]{width:60px;height:60px;border:none;border-radius:10px;cursor:pointer;background:transparent;padding:0}
         input[type="color"]::-webkit-color-swatch-wrapper{padding:2px}
         input[type="color"]::-webkit-color-swatch{border-radius:8px;border:1px solid var(--border)}
 
         .code-section{background:var(--bg-guide);border-radius:10px;padding:16px;margin-bottom:12px}
-        .code-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-        .code-row:last-child{margin-bottom:0}
-        .code-label{width:40px;font-size:12px;font-weight:700;color:var(--text-guide);text-align:right;flex-shrink:0}
-        .code-input{flex:1;padding:10px 12px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Pretendard',monospace}
+        .code-field{margin-bottom:10px}
+        .code-row{display:flex;align-items:center;gap:8px}
+        .code-label{width:40px;font-size:13px;font-weight:700;color:var(--text-guide);text-align:right;flex-shrink:0}
+        .code-input{flex:1;min-width:0;padding:10px 12px;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:14px}
         .code-input:focus{outline:none;border-color:var(--accent)}
-        .btn-copy-small{padding:8px 12px;background:var(--accent);color:var(--text-on-accent);border:none;border-radius:6px;font-size:11px;cursor:pointer;transition:background .2s;font-family:inherit;white-space:nowrap}
+        .btn-copy-small{padding:8px 12px;background:var(--accent);color:var(--text-on-accent);border:none;border-radius:6px;font-size:13px;cursor:pointer;transition:background .2s;font-family:inherit;white-space:nowrap}
         .btn-copy-small:hover{background:var(--accent-hover)}
+        .field-error{margin:6px 0 0 48px;font-size:13px;font-weight:600;line-height:1.5;color:var(--status-red-text)}
+        .field-error:empty{display:none}
+        .code-note{font-size:12px;color:var(--text-muted);line-height:1.55;margin-top:4px}
 
-        .related-section{background:var(--bg-guide);border-radius:10px;padding:16px;margin-bottom:12px}
-        .related-title{font-size:13px;font-weight:600;color:var(--text-guide);margin-bottom:10px}
+        .related-section,.contrast-section{background:var(--bg-guide);border-radius:10px;padding:16px;margin-bottom:12px}
+        .related-title{font-size:14px;font-weight:700;color:var(--text-guide);margin-bottom:10px}
         .related-colors{display:flex;gap:8px;flex-wrap:wrap}
-        .related-chip{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg-input);border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:all .2s;font-family:inherit;text-align:left}
-        .related-chip:hover{border-color:var(--accent);transform:translateY(-1px)}
-        .chip-swatch{width:28px;height:28px;border-radius:6px;border:1px solid rgba(255,255,255,.1);flex-shrink:0}
+        .related-chip{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg-input);border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:all .2s;font-family:inherit;text-align:left;color:var(--text-primary)}
+        .related-chip:hover:not(:disabled){border-color:var(--accent);transform:translateY(-1px)}
+        .related-chip:disabled{cursor:not-allowed;opacity:.6}
+        .chip-swatch{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);flex-shrink:0}
         .chip-info,.chip-label,.chip-hex{display:block}
-        .chip-info{font-size:11px}
+        .chip-info{font-size:12px}
         .chip-label{color:var(--text-info);margin-bottom:1px}
-        .chip-hex{color:var(--text-primary);font-weight:600;font-family:monospace}
+        .chip-hex{color:var(--text-primary);font-weight:600}
+
+        .contrast-row{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
+        .contrast-row:last-of-type{border-bottom:0}
+        .contrast-sample{flex:0 0 112px;height:56px;border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;position:relative;overflow:hidden}
+        .contrast-sample .sample-bg{position:absolute;inset:0}
+        .contrast-sample::after{content:'가나다 Aa';position:relative;color:var(--sample-color,#fff)}
+        .contrast-info{flex:1;min-width:0}
+        .contrast-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+        .contrast-head strong{font-size:14px}
+        .ratio{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}
+        .badges{display:flex;flex-wrap:wrap;gap:4px}
+        .badge{padding:2px 8px;border-radius:10px;font-size:12px;font-weight:700;border:1px solid currentColor;background:var(--bg-app)}
+        .badge.pass{color:var(--status-green-text)}
+        .badge.fail{color:var(--status-red-text)}
+        .custom-color{display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap}
+        .custom-color input[type="color"]{width:44px;height:44px}
+        .custom-color .code-input{flex:1 1 140px}
+        .contrast-summary{margin-top:10px;padding:10px 12px;border-left:3px solid var(--accent);border-radius:6px;background:var(--bg-app);font-size:14px;line-height:1.6}
 
         .guide-section{margin:12px; padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-app); margin-top:20px;}
         .guide-title{font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:12px;}
@@ -67,21 +93,17 @@
         .guide-item .guide-content{padding:12px; font-size:13px; color:var(--text-info); line-height:1.6;}
         .related-tools{margin-top:16px; padding-top:16px; border-top:1px solid var(--border);}
         .tag-container{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
-        .tool-tag{padding:6px 12px; background:rgba(83,52,131,0.1); color:var(--accent-text); border-radius:16px; font-size:11px; font-weight:600; text-decoration:none; transition:all 0.2s;}
+        .tool-tag{padding:6px 12px; background:var(--accent-bg); color:var(--accent-text); border-radius:16px; font-size:11px; font-weight:600; text-decoration:none; transition:all 0.2s;}
         .tool-tag:hover{background:var(--accent); color:var(--text-on-accent);}
-        
-        .report-box {margin-top:16px; padding:16px; background:rgba(83,52,131,0.05); border-left:4px solid var(--accent); border-radius:8px; font-size:13px; line-height:1.6; color:var(--text-primary); display:none;}
-        .report-box.show {display:block; animation:fadeIn 0.4s;}
-        @keyframes fadeIn {from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)}}
 
         .bottom-bar{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
-        .bottom-bar .info{font-size:11px;color:var(--text-info)}
-        .action-btn{padding:8px 20px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
-        .btn-clear{background:var(--bg-btn);color:var(--text-guide)}.btn-clear:hover{background:var(--bg-btn-hover)}
+        .bottom-bar .info{font-size:12px;color:var(--text-info)}
+        .action-btn{padding:8px 20px;border:none;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+        .btn-clear{background:var(--bg-btn);color:var(--text-primary)}.btn-clear:hover{background:var(--bg-btn-hover)}
         .btn-copy{background:var(--accent);color:var(--text-on-accent)}.btn-copy:hover{background:var(--accent-hover)}
-        .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.6);transition:transform .3s ease,opacity .3s ease;opacity:0;pointer-events:none;z-index:999}
+        .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:14px;font-weight:500;box-shadow:var(--shadow-lg);transition:transform .3s ease,opacity .3s ease;opacity:0;pointer-events:none;z-index:999}
         .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-        @media(max-width:640px){.preview-area{flex-direction:column}.color-preview{min-height:80px}.related-colors{flex-direction:column}}
+        @media(max-width:640px){.preview-area{flex-direction:column}.color-preview{min-height:80px}.related-colors{flex-direction:column}.contrast-row{align-items:flex-start}.contrast-sample{flex-basis:88px;font-size:16px}.field-error{margin-left:0}}
 .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
 .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
 .footer a:hover{color:var(--text-secondary)}
@@ -97,70 +119,104 @@
     </div>
     <div class="counter-body">
         <div class="preview-area">
-            <div class="color-preview" id="colorPreview" style="background:var(--accent)" role="img" aria-label="현재 색상 미리보기: #533483"></div>
+            <div class="color-preview checker" id="colorPreview" role="img" aria-label="현재 색상 미리보기: #533483"><div class="preview-fill" id="previewFill"></div></div>
             <div class="picker-wrap">
                 <label for="colorPicker">컬러 피커</label>
-                <input type="color" id="colorPicker" value="#533483" oninput="fromPicker(this.value)">
+                <input type="color" id="colorPicker" value="#533483">
             </div>
         </div>
 
         <div class="code-section">
-            <div class="code-row">
-                <label class="code-label" for="hexInput">HEX</label>
-                <input type="text" class="code-input" id="hexInput" value="#533483" placeholder="#RRGGBB" oninput="fromHex(this.value)">
-                <button class="btn-copy-small" onclick="copyVal('hexInput')">복사</button>
+            <div class="code-field">
+                <div class="code-row">
+                    <label class="code-label" for="hexInput">HEX</label>
+                    <input type="text" class="code-input mono" id="hexInput" value="#533483" placeholder="#RRGGBB 또는 #RRGGBBAA" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="hexError">
+                    <button type="button" class="btn-copy-small" data-copy="hex" aria-label="HEX 값 복사">복사</button>
+                </div>
+                <p class="field-error" id="hexError" role="alert"></p>
             </div>
-            <div class="code-row">
-                <label class="code-label" for="rgbInput">RGB</label>
-                <input type="text" class="code-input" id="rgbInput" placeholder="rgb(R, G, B)" oninput="fromRgb(this.value)">
-                <button class="btn-copy-small" onclick="copyVal('rgbInput')">복사</button>
+            <div class="code-field">
+                <div class="code-row">
+                    <label class="code-label" for="rgbInput">RGB</label>
+                    <input type="text" class="code-input mono" id="rgbInput" placeholder="rgb(R, G, B)" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="rgbError">
+                    <button type="button" class="btn-copy-small" data-copy="rgb" aria-label="RGB 값 복사">복사</button>
+                </div>
+                <p class="field-error" id="rgbError" role="alert"></p>
             </div>
-            <div class="code-row">
-                <label class="code-label" for="hslInput">HSL</label>
-                <input type="text" class="code-input" id="hslInput" placeholder="hsl(H, S%, L%)" oninput="fromHsl(this.value)">
-                <button class="btn-copy-small" onclick="copyVal('hslInput')">복사</button>
+            <div class="code-field">
+                <div class="code-row">
+                    <label class="code-label" for="hslInput">HSL</label>
+                    <input type="text" class="code-input mono" id="hslInput" placeholder="hsl(H, S%, L%)" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="hslError">
+                    <button type="button" class="btn-copy-small" data-copy="hsl" aria-label="HSL 값 복사">복사</button>
+                </div>
+                <p class="field-error" id="hslError" role="alert"></p>
             </div>
+            <p class="code-note">#RGB·#RGBA·#RRGGBBAA, rgba(83, 52, 131, 0.5), CSS 최신 문법 rgb(83 52 131 / 50%), 쉼표 없이 띄어 쓴 83 52 131도 읽습니다. HSL은 HEX로 되돌려도 값이 바뀌지 않도록 필요한 경우 소수점 한 자리까지 표시합니다.</p>
+        </div>
+
+        <div class="contrast-section" aria-labelledby="contrastTitle">
+            <div class="related-title" id="contrastTitle">♿ WCAG 명암비 확인 (이 색을 배경으로 쓸 때)</div>
+            <div class="contrast-row" id="contrastWhite"></div>
+            <div class="contrast-row" id="contrastBlack"></div>
+            <div class="contrast-row" id="contrastCustom"></div>
+            <div class="custom-color">
+                <label for="textColorInput">비교할 글자색</label>
+                <input type="color" id="textColorPicker" value="#222222" aria-label="비교할 글자색 선택">
+                <input type="text" class="code-input mono" id="textColorInput" value="#222222" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="textColorError">
+            </div>
+            <p class="field-error" id="textColorError" role="alert" style="margin-left:0"></p>
+            <p class="contrast-summary" id="contrastSummary" role="status" aria-live="polite"></p>
         </div>
 
         <div class="related-section">
-            <div class="related-title" id="relatedTitle">관련 색상</div>
+            <div class="related-title" id="relatedTitle">관련 색상 (누르면 선택)</div>
             <div class="related-colors" id="relatedColors" role="group" aria-labelledby="relatedTitle"></div>
         </div>
-        <div id="reportBox" class="report-box" role="status" aria-live="polite"></div>
     </div>
 
     <div class="bottom-bar">
-        <span class="info">💡 클릭 한번으로 모든 코드를 복사하세요.</span>
+        <span class="info">💡 전체 복사는 HEX·RGB·HSL을 한 번에 복사합니다.</span>
         <div style="display:flex; gap:8px;">
-            <button class="action-btn btn-clear" onclick="resetColor()">초기화</button>
-            <button class="action-btn btn-copy" onclick="copyAll()">전체 복사</button>
+            <button type="button" class="action-btn btn-clear" id="resetBtn">초기화</button>
+            <button type="button" class="action-btn btn-copy" id="copyAllBtn">전체 복사</button>
         </div>
     </div>
 
     <div class="guide-section">
         <div class="guide-title">🤔 색상 코드 변환기 관련 Q&A</div>
-        
+
         <details class="guide-item">
             <summary>HEX 코드와 RGB 코드는 어떤 차이가 있나요?</summary>
             <div class="guide-content">
-                <strong>HEX 코드</strong>는 16진수로 색상을 표현하는 방식으로, 웹(HTML/CSS) 디자인에서 가장 보편적으로 사용됩니다. (예: <code>#533483</code>)<br/>
-                <strong>RGB 코드</strong>는 빛의 3원색인 Red, Green, Blue를 각각 0~255의 숫자로 나타내어 화면에 출력하는 방식입니다. 사진 보정, 모니터 출력 등에 주로 사용됩니다.
+                두 표기는 같은 sRGB 색을 서로 다른 진법으로 적은 것입니다. <strong>HEX</strong> <code>#533483</code>은 빨강 0x53(83), 초록 0x34(52), 파랑 0x83(131)을 16진수 두 자리씩 이어 쓴 것이고, <strong>RGB</strong> <code>rgb(83, 52, 131)</code>은 같은 값을 10진수로 적은 것입니다. 그래서 둘 사이를 변환해도 색은 전혀 바뀌지 않습니다. CSS, Figma 같은 디자인 도구, 오피스 프로그램 대부분이 두 형식을 모두 지원하므로 붙여넣을 곳이 요구하는 표기에 맞추면 됩니다. 세 자리 <code>#53A</code>는 각 자리를 두 번 쓴 줄임 표기로 <code>#5533AA</code>와 같습니다.
             </div>
         </details>
-        
+
+        <details class="guide-item">
+            <summary>투명도(알파)가 있는 색은 어떻게 입력하나요?</summary>
+            <div class="guide-content">
+                여덟 자리 HEX <code>#53348380</code>의 마지막 두 자리, <code>rgba(83, 52, 131, 0.5)</code>, CSS 최신 문법 <code>rgb(83 52 131 / 50%)</code> 가운데 편한 형식으로 입력하면 됩니다. 알파 <code>80</code>은 16진수 128이므로 128/255 ≈ 0.5입니다. 결과는 호환성이 가장 넓은 쉼표 표기(rgba, hsla)로 보여 줍니다. 투명한 색은 뒤에 깔린 배경에 따라 실제 모습이 달라지므로 미리보기의 체크무늬를 참고하고, 명암비는 투명도를 뺀 불투명 색 기준으로 계산된다는 점에 유의하세요.
+            </div>
+        </details>
+
         <details class="guide-item">
             <summary>HSL은 언제 주로 사용하나요?</summary>
             <div class="guide-content">
-                <strong>HSL (Hue, Saturation, Lightness)</strong>는 '색상, 채도, 명도'로 구성된 단위입니다.<br/>
-                직관적으로 명도나 채도를 증감시키기 편해, 웹 접근성(대비)을 조절하거나 다크 모드용 컬러 팔레트를 만들 때 효율적으로 활용됩니다.
+                <strong>HSL(Hue 색상, Saturation 채도, Lightness 밝기)</strong>은 같은 색상에서 밝기나 채도만 조절하기 쉬워 버튼의 호버 색, 비활성 색, 다크 모드 팔레트를 만들 때 편리합니다. 다만 HSL의 밝기는 사람이 느끼는 밝기와 다릅니다. 같은 50%라도 노란색은 파란색보다 훨씬 밝게 보이므로 글자 대비는 HSL 값이 아니라 WCAG 명암비로 확인해야 합니다. 또한 HSL을 정수로 반올림하면 HEX로 되돌렸을 때 채널 값이 1~5만큼 어긋날 수 있어, 이 도구는 필요한 경우 소수점 한 자리까지 표시합니다.
             </div>
         </details>
-        
+
+        <details class="guide-item">
+            <summary>WCAG 명암비 기준은 어떻게 판단하나요?</summary>
+            <div class="guide-content">
+                웹 콘텐츠 접근성 지침(WCAG 2.x)은 본문 글자에 4.5:1 이상(AA), 18pt(약 24px) 이상이거나 14pt(약 18.7px) 이상 굵은 큰 글자에 3:1 이상(AA)을 요구합니다. 더 엄격한 AAA 기준은 각각 7:1과 4.5:1이며, 버튼 테두리·아이콘 같은 UI 요소는 3:1 이상이 기준입니다. 명암비는 두 색의 상대 휘도로 계산하며, 이 도구는 기준을 넘긴 것처럼 보이지 않도록 소수점 셋째 자리에서 버림해 표시합니다. 흰색·검정 글자가 모두 기준에 못 미치면 '밝게'·'어둡게' 후보를 눌러 배경색을 조정해 보세요.
+            </div>
+        </details>
+
         <details class="guide-item">
             <summary>관련 색상의 '보색'이란 무엇인가요?</summary>
             <div class="guide-content">
-                <strong>보색(Complementary Color)</strong>은 색상환에서 서로 마주보고 있는 반대되는 색을 말합니다.<br/>
-                디자인에서 강렬한 대비를 주고 싶을 때나, 핵심 버튼(CTA)의 컬러를 선정할 때 보색이나 유사색을 참고하면 조화로운 배색이 가능합니다.
+                <strong>보색(Complementary Color)</strong>은 색상환에서 서로 마주보는 반대 색으로, HSL 색상 값에 180°를 더해 구합니다. 유사색은 ±30°만큼 떨어진 이웃 색입니다. 강한 대비가 필요한 강조 요소나 조화로운 보조색 후보를 찾을 때 참고할 수 있지만, 브랜드 팔레트나 명암비를 자동으로 보장하지는 않습니다. 회색·흰색·검정 같은 무채색은 색상 값이 없어 보색과 유사색이 원래 색과 같으므로 선택할 수 없게 표시하고, 이미 가장 밝거나 어두운 색도 '밝게'·'어둡게' 후보를 비활성화합니다.
             </div>
         </details>
 
@@ -174,7 +230,7 @@
     </div>
     <section class="work-context" aria-labelledby="colorWorkTitle">
       <h2 id="colorWorkTitle">디자인 시안과 웹 문서의 색상값 맞추기</h2>
-      <p><strong>업무 예시:</strong> 디자이너가 전달한 HEX 값을 RGB로 바꾸거나, 프레젠테이션과 웹 스타일에 쓰인 RGB 값을 HSL로 확인할 때 사용합니다. 보색과 유사색은 배너·버튼 후보를 탐색하는 참고값이며 브랜드 팔레트를 자동으로 보장하지 않습니다.</p>
+      <p><strong>업무 예시:</strong> 디자이너가 전달한 HEX 값을 RGB로 바꾸거나, Figma에서 복사한 <code>rgba()</code> 값을 CSS용 HEX로 옮길 때 사용합니다. 버튼·배너 배경색을 정할 때는 명암비 영역에서 흰색·검정 글자와의 대비를 함께 확인하세요. 보색과 유사색은 후보를 탐색하는 참고값이며 브랜드 팔레트를 자동으로 보장하지 않습니다.</p>
       <p><strong>해석 기준:</strong> 같은 코드라도 모니터의 색 영역, 밝기, 브라우저와 출력 장비에 따라 실제 보이는 색은 달라질 수 있습니다. 인쇄물은 RGB가 아닌 CMYK와 별색 기준이 필요하므로 인쇄소의 교정본을 우선하세요.</p>
       <p><strong>데이터 처리:</strong> 입력한 색상 코드는 서버에 업로드하지 않고 현재 브라우저에서 변환합니다. 복사한 값은 붙여넣을 대상의 알파 채널 지원 여부와 CSS 문법을 확인한 뒤 사용하세요.</p>
     </section>
@@ -186,18 +242,31 @@
 
 <script>
 // --- Conversion helpers ---
+const NUMBER = '[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)';
+const NUMBER_RE = new RegExp(`^${NUMBER}$`);
+const PERCENT_RE = new RegExp(`^(${NUMBER})%$`);
+const HUE_RE = new RegExp(`^(${NUMBER})(?:deg)?$`, 'i');
+
+function parseHex(value) {
+    const m = /^#?([0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i.exec(String(value).trim());
+    if (!m) return null;
+    let hex = m[1];
+    if (hex.length <= 4) hex = [...hex].map(ch => ch + ch).join('');
+    const n = parseInt(hex.slice(0, 6), 16);
+    const alpha = hex.length === 8 ? parseInt(hex.slice(6), 16) / 255 : 1;
+    return { rgb: { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 }, alpha };
+}
+
 function hexToRgb(hex) {
-    if (!/^#?(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(hex)) return null;
-    hex = hex.replace(/^#/,'');
-    if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
-    const n = parseInt(hex, 16);
-    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+    const parsed = parseHex(hex);
+    return parsed ? parsed.rgb : null;
 }
 
 function rgbToHex(r, g, b) {
     return '#' + [r, g, b].map(x => Math.max(0, Math.min(255, Math.round(x))).toString(16).padStart(2, '0')).join('');
 }
 
+// 정밀한 HSL 값을 돌려준다 (표시할 때만 반올림).
 function rgbToHsl(r, g, b) {
     r /= 255; g /= 255; b /= 255;
     const max = Math.max(r, g, b), min = Math.min(r, g, b);
@@ -212,7 +281,7 @@ function rgbToHsl(r, g, b) {
             case b: h = ((r - g) / d + 4) / 6; break;
         }
     }
-    return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
+    return { h: h * 360, s: s * 100, l: l * 100 };
 }
 
 function hslToRgb(h, s, l) {
@@ -230,58 +299,172 @@ function hslToRgb(h, s, l) {
     return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
 }
 
+function parseAlpha(token) {
+    if (token === null || token === undefined) return 1;
+    const percent = PERCENT_RE.exec(token);
+    const value = percent ? Number(percent[1]) / 100 : NUMBER_RE.test(token) ? Number(token) : NaN;
+    return Number.isFinite(value) && value >= 0 && value <= 1 ? value : null;
+}
+
+// "a, b, c", "a, b, c, d", "a b c", "a b c / d" 형태를 나눈다.
+function splitColorArgs(body) {
+    let main = body.trim();
+    let alphaToken = null;
+    if (main.includes('/')) {
+        const pieces = main.split('/');
+        if (pieces.length !== 2 || main.includes(',')) return null;
+        main = pieces[0].trim();
+        alphaToken = pieces[1].trim();
+        if (!alphaToken) return null;
+    }
+    let parts;
+    if (main.includes(',')) {
+        parts = main.split(',').map(part => part.trim());
+        if (parts.length === 4) alphaToken = parts.pop();
+    } else {
+        parts = main.split(/\s+/);
+    }
+    if (parts.length !== 3 || parts.some(part => !part)) return null;
+    return { parts, alphaToken };
+}
+
+function unwrap(value, names) {
+    const input = String(value).trim();
+    const m = new RegExp(`^(${names})\\(\\s*([^()]*?)\\s*\\)$`, 'i').exec(input);
+    if (m) return m[2];
+    return /^[\d.+\-\s,/%]+$/.test(input) ? input : null;
+}
+
+function parseRgbString(value) {
+    const body = unwrap(value, 'rgba?');
+    if (body === null) return null;
+    const args = splitColorArgs(body);
+    if (!args) return null;
+    const channels = args.parts.map(token => {
+        const percent = PERCENT_RE.exec(token);
+        if (percent) { const p = Number(percent[1]); return p >= 0 && p <= 100 ? p * 2.55 : NaN; }
+        if (!NUMBER_RE.test(token)) return NaN;
+        const n = Number(token);
+        return n >= 0 && n <= 255 ? n : NaN;
+    });
+    const alpha = parseAlpha(args.alphaToken);
+    if (channels.some(v => !Number.isFinite(v)) || alpha === null) return null;
+    return { rgb: { r: Math.round(channels[0]), g: Math.round(channels[1]), b: Math.round(channels[2]) }, alpha };
+}
+
+function parseHslString(value) {
+    const body = unwrap(value, 'hsla?');
+    if (body === null) return null;
+    const args = splitColorArgs(body);
+    if (!args) return null;
+    const hue = HUE_RE.exec(args.parts[0]);
+    const pct = token => { const m = PERCENT_RE.exec(token); return m ? Number(m[1]) : NUMBER_RE.test(token) ? Number(token) : NaN; };
+    const h = hue ? Number(hue[1]) : NaN;
+    const s = pct(args.parts[1]);
+    const l = pct(args.parts[2]);
+    const alpha = parseAlpha(args.alphaToken);
+    const valid = [h, s, l].every(Number.isFinite) && h >= 0 && h <= 360 && s >= 0 && s <= 100 && l >= 0 && l <= 100 && alpha !== null;
+    if (!valid) return null;
+    return { rgb: hslToRgb(h === 360 ? 0 : h, s, l), alpha };
+}
+
+function parseAnyColor(value) {
+    const input = String(value).trim();
+    if (/^hsla?\(/i.test(input)) return parseHslString(input);
+    if (/^rgba?\(/i.test(input) || /^\d/.test(input) && /[\s,]/.test(input)) return parseRgbString(input);
+    return parseHex(input);
+}
+
+// --- Formatting ---
+const trimNumber = value => String(Number(value.toFixed(1)));
+
+function formatAlpha(alpha) {
+    const byte = Math.round(alpha * 255);
+    for (const digits of [0, 1, 2, 3]) {
+        const candidate = Number(alpha.toFixed(digits));
+        if (Math.round(candidate * 255) === byte) return String(candidate);
+    }
+    return alpha.toFixed(3);
+}
+
+function hslDisplay(rgb) {
+    const exact = rgbToHsl(rgb.r, rgb.g, rgb.b);
+    const same = values => { const back = hslToRgb(values.h >= 360 ? 0 : values.h, values.s, values.l); return back.r === rgb.r && back.g === rgb.g && back.b === rgb.b; };
+    const whole = { h: Math.round(exact.h) % 360, s: Math.round(exact.s), l: Math.round(exact.l) };
+    if (same(whole)) return { h: String(whole.h), s: String(whole.s), l: String(whole.l) };
+    let h = Number(exact.h.toFixed(1));
+    if (h >= 360) h = 0;
+    return { h: String(h), s: trimNumber(exact.s), l: trimNumber(exact.l) };
+}
+
+function formatHex(rgb, alpha) {
+    const hex = rgbToHex(rgb.r, rgb.g, rgb.b).toUpperCase();
+    return alpha < 1 ? hex + Math.round(alpha * 255).toString(16).padStart(2, '0').toUpperCase() : hex;
+}
+function formatRgb(rgb, alpha) {
+    return alpha < 1 ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${formatAlpha(alpha)})` : `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+}
+function formatHsl(rgb, alpha) {
+    const hsl = hslDisplay(rgb);
+    return alpha < 1 ? `hsla(${hsl.h}, ${hsl.s}%, ${hsl.l}%, ${formatAlpha(alpha)})` : `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+}
+function formatFor(kind) {
+    if (kind === 'hex') return formatHex(currentRgb, currentAlpha);
+    if (kind === 'rgb') return formatRgb(currentRgb, currentAlpha);
+    return formatHsl(currentRgb, currentAlpha);
+}
+
+// --- WCAG contrast ---
+function luminance({ r, g, b }) {
+    const channel = v => { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+    return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+}
+function contrastRatio(a, b) {
+    const la = luminance(a), lb = luminance(b);
+    return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+}
+const displayRatio = ratio => (Math.floor(ratio * 100) / 100).toFixed(2);
+
 // --- State ---
 let currentRgb = { r: 83, g: 52, b: 131 };
+let currentAlpha = 1;
+let textColor = { r: 34, g: 34, b: 34 };
 let _updating = false;
+
+const ERROR_MESSAGES = {
+    hexInput: 'HEX 형식을 확인하세요. 예: #533483, #53A, #53348380',
+    rgbInput: 'RGB 형식을 확인하세요. 각 값은 0~255입니다. 예: rgb(83, 52, 131), rgba(83, 52, 131, 0.5), 83 52 131',
+    hslInput: 'HSL 형식을 확인하세요. 색상 0~360, 채도·밝기 0~100%입니다. 예: hsl(264, 43%, 36%)'
+};
 
 function setInputValidity(id, valid) {
     document.getElementById(id).setAttribute('aria-invalid', String(!valid));
+    const error = document.getElementById(id.replace('Input', 'Error'));
+    if (error) error.textContent = valid ? '' : ERROR_MESSAGES[id];
 }
 
 function updateUI(source) {
     if (_updating) return;
     _updating = true;
-    const { r, g, b } = currentRgb;
-    const hex = rgbToHex(r, g, b);
-    const hsl = rgbToHsl(r, g, b);
+    const hex6 = rgbToHex(currentRgb.r, currentRgb.g, currentRgb.b);
+    const hexLabel = formatHex(currentRgb, currentAlpha);
 
-    document.getElementById('colorPreview').style.background = hex;
-    document.getElementById('colorPreview').setAttribute('aria-label', `현재 색상 미리보기: ${hex.toUpperCase()}`);
-    document.getElementById('colorPicker').value = hex;
+    document.getElementById('previewFill').style.background = formatRgb(currentRgb, currentAlpha);
+    document.getElementById('colorPreview').setAttribute('aria-label', `현재 색상 미리보기: ${hexLabel}`);
+    document.getElementById('colorPicker').value = hex6;
 
-    if (source !== 'hex') document.getElementById('hexInput').value = hex.toUpperCase();
-    if (source !== 'rgb') document.getElementById('rgbInput').value = `rgb(${r}, ${g}, ${b})`;
-    if (source !== 'hsl') document.getElementById('hslInput').value = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+    if (source !== 'hex') document.getElementById('hexInput').value = formatFor('hex');
+    if (source !== 'rgb') document.getElementById('rgbInput').value = formatFor('rgb');
+    if (source !== 'hsl') document.getElementById('hslInput').value = formatFor('hsl');
 
-    updateRelated(hsl);
-    updateReportBox(hsl, hex.toUpperCase());
+    updateRelated(rgbToHsl(currentRgb.r, currentRgb.g, currentRgb.b));
+    updateContrast();
     _updating = false;
 }
 
-function updateReportBox(hsl, hex) {
-    const box = document.getElementById('reportBox');
-    
-    let text = `🎨 현재 선택하신 색상은 <b>HEX ${hex}</b> 입니다.<br/>`;
-    
-    let brightness = hsl.l;
-    let saturation = hsl.s;
-    
-    if (brightness < 30) {
-        text += `이 색상은 명도가 매우 낮아(어두워) 배경으로 쓰일 경우 <b>흰색 글씨</b>와 배치하면 대비감이 뛰어납니다. (다크 테마 베이스 추천)`;
-    } else if (brightness > 80) {
-        text += `이 색상은 명도가 매우 높아(밝아) <b>어두운 글씨</b>와 배치했을 때 눈이 편안한 배경색으로 활용하기 좋습니다.`;
-    } else {
-        if (saturation > 70) {
-            text += `채도가 높아 눈에 아주 잘 띄는 색상입니다. 시선을 집중시켜야 하는 <b>강조 버튼(Call To Action)이나 배지(Badge)</b>포인트 컬러로 좋습니다.`;
-        } else if (saturation < 30) {
-            text += `채도가 낮아 차분하고 부드러운 분위기를 줍니다. 부가적인 텍스트 요거나 은은한 보조 배경색으로 추천합니다.`;
-        } else {
-            text += `너무 밝지도, 어둡지도 않은 중립적인 컬러로 디자인 여러 요소에 범용적으로 활용할 수 있습니다.`;
-        }
-    }
-    
-    box.innerHTML = text;
-    box.classList.add('show');
+function applyParsed(parsed) {
+    currentRgb = { r: parsed.rgb.r, g: parsed.rgb.g, b: parsed.rgb.b };
+    currentAlpha = parsed.alpha;
 }
 
 function fromPicker(val) {
@@ -293,12 +476,29 @@ function fromPicker(val) {
 }
 
 function fromHex(val) {
-    val = val.trim();
-    const rgb = hexToRgb(val);
-    setInputValidity('hexInput', Boolean(rgb));
-    if (!rgb) return false;
-    currentRgb = rgb;
+    const parsed = parseHex(val);
+    setInputValidity('hexInput', Boolean(parsed));
+    if (!parsed) return false;
+    applyParsed(parsed);
     updateUI('hex');
+    return true;
+}
+
+function fromRgb(val) {
+    const parsed = parseRgbString(val);
+    setInputValidity('rgbInput', Boolean(parsed));
+    if (!parsed) return false;
+    applyParsed(parsed);
+    updateUI('rgb');
+    return true;
+}
+
+function fromHsl(val) {
+    const parsed = parseHslString(val);
+    setInputValidity('hslInput', Boolean(parsed));
+    if (!parsed) return false;
+    applyParsed(parsed);
+    updateUI('hsl');
     return true;
 }
 
@@ -306,73 +506,158 @@ function selectRelatedColor(val) {
     const rgb = hexToRgb(val);
     if (!rgb) return;
     currentRgb = rgb;
+    ['hexInput','rgbInput','hslInput'].forEach(id => setInputValidity(id, true));
     updateUI('related');
 }
 
-function fromRgb(val) {
-    const input = val.trim();
-    const m = /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/i.exec(input)
-        || /^(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})$/.exec(input);
-    const values = m ? m.slice(1).map(Number) : [];
-    const valid = values.length === 3 && values.every(value => value >= 0 && value <= 255);
-    setInputValidity('rgbInput', valid);
-    if (!valid) return false;
-    currentRgb = { r: values[0], g: values[1], b: values[2] };
-    updateUI('rgb');
-    return true;
-}
-
-function fromHsl(val) {
-    const number = '(\\d+(?:\\.\\d+)?)';
-    const wrapped = new RegExp(`^hsl\\(\\s*${number}\\s*,\\s*${number}%\\s*,\\s*${number}%\\s*\\)$`, 'i');
-    const plain = new RegExp(`^${number}\\s*,\\s*${number}%\\s*,\\s*${number}%$`);
-    const m = wrapped.exec(val.trim()) || plain.exec(val.trim());
-    const values = m ? m.slice(1).map(Number) : [];
-    const valid = values.length === 3 && values.every(Number.isFinite)
-        && values[0] >= 0 && values[0] <= 360
-        && values[1] >= 0 && values[1] <= 100
-        && values[2] >= 0 && values[2] <= 100;
-    setInputValidity('hslInput', valid);
-    if (!valid) return false;
-    currentRgb = hslToRgb(values[0] === 360 ? 0 : values[0], values[1], values[2]);
-    updateUI('hsl');
-    return true;
-}
-
 function updateRelated(hsl) {
+    const achromatic = hsl.s < 0.05;
     const items = [
-        { label: '보색', h: (hsl.h + 180) % 360, s: hsl.s, l: hsl.l },
-        { label: '유사색 1', h: (hsl.h + 30) % 360, s: hsl.s, l: hsl.l },
-        { label: '유사색 2', h: (hsl.h + 330) % 360, s: hsl.s, l: hsl.l },
-        { label: '밝게', h: hsl.h, s: hsl.s, l: Math.min(90, hsl.l + 20) },
-        { label: '어둡게', h: hsl.h, s: hsl.s, l: Math.max(10, hsl.l - 20) }
+        { label: '보색', h: (hsl.h + 180) % 360, s: hsl.s, l: hsl.l, same: '무채색이라 변화 없음' },
+        { label: '유사색 1', h: (hsl.h + 30) % 360, s: hsl.s, l: hsl.l, same: '무채색이라 변화 없음' },
+        { label: '유사색 2', h: (hsl.h + 330) % 360, s: hsl.s, l: hsl.l, same: '무채색이라 변화 없음' },
+        { label: '밝게', h: hsl.h, s: hsl.s, l: Math.min(100, hsl.l + 20), same: '이미 가장 밝음' },
+        { label: '어둡게', h: hsl.h, s: hsl.s, l: Math.max(0, hsl.l - 20), same: '이미 가장 어두움' }
     ];
     const el = document.getElementById('relatedColors');
-    el.innerHTML = items.map(item => {
+    el.textContent = '';
+    items.forEach(item => {
         const rgb = hslToRgb(item.h, item.s, item.l);
         const hex = rgbToHex(rgb.r, rgb.g, rgb.b).toUpperCase();
-        return `<button type="button" class="related-chip" aria-label="${item.label} ${hex} 선택" onclick="selectRelatedColor('${hex}')">
-            <span class="chip-swatch" style="background:${hex}"></span>
-            <span class="chip-info"><span class="chip-label">${item.label}</span><span class="chip-hex">${hex}</span></span>
-        </button>`;
-    }).join('');
+        const unchanged = rgb.r === currentRgb.r && rgb.g === currentRgb.g && rgb.b === currentRgb.b;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'related-chip';
+        button.disabled = unchanged || (achromatic && item.label !== '밝게' && item.label !== '어둡게');
+        button.dataset.hex = hex;
+        button.setAttribute('aria-label', button.disabled ? `${item.label}: ${item.same}` : `${item.label} ${hex} 선택`);
+        const swatch = document.createElement('span');
+        swatch.className = 'chip-swatch';
+        swatch.style.background = hex;
+        const info = document.createElement('span');
+        info.className = 'chip-info';
+        const label = document.createElement('span');
+        label.className = 'chip-label';
+        label.textContent = item.label;
+        const code = document.createElement('span');
+        code.className = 'chip-hex mono';
+        code.textContent = button.disabled ? item.same : hex;
+        info.append(label, code);
+        button.append(swatch, info);
+        el.appendChild(button);
+    });
 }
 
-function copyVal(id) {
-    const val = document.getElementById(id).value;
-    navigator.clipboard.writeText(val).then(() => showToast('복사되었습니다'));
+function renderContrastRow(id, title, fg) {
+    const row = document.getElementById(id);
+    const ratio = contrastRatio(currentRgb, fg);
+    const checks = [
+        ['AA 본문', 4.5], ['AA 큰 글자', 3], ['AAA 본문', 7], ['AAA 큰 글자', 4.5], ['UI 요소', 3]
+    ];
+    row.textContent = '';
+    const sample = document.createElement('span');
+    sample.className = 'contrast-sample';
+    sample.setAttribute('aria-hidden', 'true');
+    sample.style.setProperty('--sample-color', rgbToHex(fg.r, fg.g, fg.b));
+    const sampleBg = document.createElement('span');
+    sampleBg.className = 'sample-bg';
+    sampleBg.style.background = rgbToHex(currentRgb.r, currentRgb.g, currentRgb.b);
+    sample.appendChild(sampleBg);
+    const info = document.createElement('div');
+    info.className = 'contrast-info';
+    const head = document.createElement('div');
+    head.className = 'contrast-head';
+    const name = document.createElement('strong');
+    name.textContent = title;
+    const value = document.createElement('span');
+    value.className = 'ratio';
+    value.textContent = `${displayRatio(ratio)}:1`;
+    head.append(name, value);
+    const badges = document.createElement('div');
+    badges.className = 'badges';
+    checks.forEach(([label, min]) => {
+        const pass = ratio >= min;
+        const badge = document.createElement('span');
+        badge.className = `badge ${pass ? 'pass' : 'fail'}`;
+        badge.textContent = `${pass ? '✓' : '✗'} ${label} ${pass ? '통과' : '미달'}`;
+        badges.appendChild(badge);
+    });
+    info.append(head, badges);
+    row.append(sample, info);
+    return ratio;
+}
+
+function updateContrast() {
+    const white = renderContrastRow('contrastWhite', '흰색 글자 #FFFFFF', { r: 255, g: 255, b: 255 });
+    const black = renderContrastRow('contrastBlack', '검정 글자 #000000', { r: 0, g: 0, b: 0 });
+    const custom = renderContrastRow('contrastCustom', `직접 고른 글자 ${rgbToHex(textColor.r, textColor.g, textColor.b).toUpperCase()}`, textColor);
+    const better = white >= black ? ['흰색', white] : ['검정', black];
+    let summary;
+    if (better[1] >= 4.5) {
+        summary = `이 배경에는 ${better[0]} 글자가 더 잘 읽힙니다 (${displayRatio(better[1])}:1, 본문 AA 통과).`;
+    } else if (better[1] >= 3) {
+        summary = `흰색·검정 모두 본문 기준 4.5:1에 못 미칩니다. ${better[0]} 글자(${displayRatio(better[1])}:1)는 24px 이상 큰 글자나 아이콘에만 쓰고, 본문에는 '밝게'·'어둡게' 후보로 배경을 조정하세요.`;
+    } else {
+        summary = `흰색·검정 모두 3:1에도 못 미칩니다. 글자를 올리는 배경색으로는 적합하지 않습니다.`;
+    }
+    summary += ` 직접 고른 글자색은 ${displayRatio(custom)}:1입니다.`;
+    if (currentAlpha < 1) summary += ' 투명도가 있는 색은 실제 뒤 배경에 따라 대비가 달라지며, 여기서는 투명도를 뺀 불투명 색으로 계산했습니다.';
+    document.getElementById('contrastSummary').textContent = summary;
+}
+
+function setTextColor(value, source) {
+    const parsed = parseAnyColor(value);
+    const input = document.getElementById('textColorInput');
+    input.setAttribute('aria-invalid', String(!parsed));
+    document.getElementById('textColorError').textContent = parsed ? '' : '글자색 형식을 확인하세요. 예: #222222, rgb(34, 34, 34)';
+    if (!parsed) return false;
+    textColor = parsed.rgb;
+    const hex = rgbToHex(textColor.r, textColor.g, textColor.b);
+    document.getElementById('textColorPicker').value = hex;
+    if (source !== 'text') input.value = hex.toUpperCase();
+    updateContrast();
+    return true;
+}
+
+// --- Copy ---
+function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+    return new Promise((resolve, reject) => {
+        const helper = document.createElement('textarea');
+        helper.value = text;
+        helper.setAttribute('readonly', '');
+        helper.style.position = 'fixed';
+        helper.style.opacity = '0';
+        document.body.appendChild(helper);
+        helper.select();
+        let ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        helper.remove();
+        ok ? resolve() : reject(new Error('copy failed'));
+    });
+}
+
+function copyVal(kind) {
+    const input = document.getElementById(kind + 'Input');
+    if (input.getAttribute('aria-invalid') === 'true') { showToast('형식 오류를 먼저 고쳐 주세요'); input.focus(); return; }
+    const value = formatFor(kind);
+    copyText(value).then(() => showToast(`${value} 복사됨`)).catch(() => {
+        input.value = value;
+        input.focus();
+        input.select();
+        showToast('복사하지 못했습니다. 선택된 값을 직접 복사하세요');
+    });
 }
 
 function copyAll() {
-    const hex = document.getElementById('hexInput').value;
-    const rgb = document.getElementById('rgbInput').value;
-    const hsl = document.getElementById('hslInput').value;
-    const text = `${hex}\n${rgb}\n${hsl}`;
-    navigator.clipboard.writeText(text).then(() => showToast('전체 색상 코드가 복사되었습니다'));
+    const text = ['hex', 'rgb', 'hsl'].map(formatFor).join('\n');
+    copyText(text).then(() => showToast('HEX·RGB·HSL 코드를 복사했습니다')).catch(() => showToast('복사하지 못했습니다. 각 칸의 값을 직접 복사하세요'));
 }
 
 function resetColor() {
     currentRgb = { r: 83, g: 52, b: 131 };
+    currentAlpha = 1;
+    ['hexInput','rgbInput','hslInput'].forEach(id => setInputValidity(id, true));
     updateUI('reset');
     showToast('초기화되었습니다');
 }
@@ -384,6 +669,26 @@ function showToast(msg) {
     clearTimeout(t._timer);
     t._timer = setTimeout(() => t.classList.remove('show'), 1500);
 }
+
+// --- Events ---
+document.getElementById('colorPicker').addEventListener('input', event => fromPicker(event.target.value));
+document.getElementById('hexInput').addEventListener('input', event => fromHex(event.target.value));
+document.getElementById('rgbInput').addEventListener('input', event => fromRgb(event.target.value));
+document.getElementById('hslInput').addEventListener('input', event => fromHsl(event.target.value));
+// 입력을 마치면 표준 표기로 정리한다 (값이 바뀌지 않는 범위에서).
+['hex', 'rgb', 'hsl'].forEach(kind => {
+    const input = document.getElementById(kind + 'Input');
+    input.addEventListener('change', () => { if (input.getAttribute('aria-invalid') !== 'true') input.value = formatFor(kind); });
+});
+document.querySelectorAll('[data-copy]').forEach(button => button.addEventListener('click', () => copyVal(button.dataset.copy)));
+document.getElementById('relatedColors').addEventListener('click', event => {
+    const chip = event.target.closest('.related-chip');
+    if (chip && !chip.disabled) selectRelatedColor(chip.dataset.hex);
+});
+document.getElementById('textColorPicker').addEventListener('input', event => setTextColor(event.target.value, 'picker'));
+document.getElementById('textColorInput').addEventListener('input', event => setTextColor(event.target.value, 'text'));
+document.getElementById('resetBtn').addEventListener('click', resetColor);
+document.getElementById('copyAllBtn').addEventListener('click', copyAll);
 
 // Init
 updateUI('init');

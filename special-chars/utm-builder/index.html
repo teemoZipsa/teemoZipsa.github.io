@@ -11,7 +11,7 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
     <title>UTM 파라미터 생성기 / UTM Builder</title>
-    <meta name="description" content="마케팅 캠페인 URL에 UTM 추적 파라미터를 쉽게 추가하세요. Google Analytics 트래픽 소스 분석에 활용">
+    <meta name="description" content="마케팅 캠페인 URL에 UTM 추적 파라미터를 쉽게 추가하세요. 기존 쿼리 보존, 대소문자·공백 경고, 여러 채널 URL 일괄 생성과 CSV 복사 지원.">
     <meta property="og:title" content="UTM 파라미터 생성기 / UTM Builder — 티모집사">
     <meta property="og:description" content="마케팅 캠페인 URL에 UTM 추적 파라미터를 쉽게 추가하세요. Google Analytics 트래픽 소스 분석에 활용">
     <meta property="og:type" content="website">
@@ -21,51 +21,83 @@
 
 <style>
         *{margin:0;padding:0;box-sizing:border-box}
+        [hidden]{display:none!important}
         body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:start;padding:20px}
-        .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
+        .app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
         .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
         .header h1{font-size:15px;font-weight:600;color:#fff}
         .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
         .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
         .tool-body{padding:16px;flex:1}
+        .mono{font-family:ui-monospace,'Cascadia Mono','SFMono-Regular',Consolas,'D2Coding','Liberation Mono',monospace}
 
         .field-group{margin-bottom:12px}
         .field-label{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text-secondary);margin-bottom:6px}
-        .field-label .required{color:var(--status-red-text);font-size:11px}
-        .field-label .optional{color:var(--text-muted);font-size:11px}
-        .field-input{width:100%;padding:10px 12px;background:var(--bg-guide);border:1.5px solid #333366;border-radius:8px;color:var(--text-primary);font-size:14px;font-family:inherit;transition:border-color .2s}
-        .field-input:focus{outline:none;border-color:#7c5cbf}
+        .field-label .required{color:var(--status-red-text);font-size:12px}
+        .field-label .optional{color:var(--text-muted);font-size:12px}
+        .field-input{width:100%;padding:10px 12px;background:var(--bg-guide);border:1.5px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:inherit;transition:border-color .2s}
+        .field-input:focus{outline:none;border-color:var(--accent)}
         .field-input::placeholder{color:var(--text-muted)}
-        .field-input.error{border-color:var(--status-red-text)}
+        .field-error{margin-top:6px;font-size:13px;font-weight:600;line-height:1.5;color:var(--status-red-text)}
+        .field-error:empty{display:none}
+        .field-warn{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;margin-top:6px;padding:8px 10px;border-radius:8px;border:1px solid var(--status-orange-text);background:var(--bg-bar);font-size:13px;line-height:1.5;color:var(--status-orange-text)}
+        .field-warn .warn-text{flex:1 1 220px;min-width:0}
+        .field-note{margin-top:6px;padding:8px 10px;border-left:3px solid var(--accent);border-radius:6px;background:var(--bg-bar);font-size:13px;line-height:1.55;color:var(--text-secondary)}
+        .fix-btn{padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg-app);color:var(--text-primary);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+        .fix-btn:hover{border-color:var(--accent);color:var(--accent-text)}
 
         .presets{margin-bottom:16px}
-        .presets-label{font-size:12px;color:var(--text-info);margin-bottom:8px}
+        .presets-label{font-size:13px;color:var(--text-info);margin-bottom:8px}
         .preset-btns{display:flex;flex-wrap:wrap;gap:6px}
         .preset-btn{padding:6px 12px;background:var(--bg-btn);border:1px solid var(--border);border-radius:16px;color:var(--text-secondary);font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit}
-        .preset-btn:hover{background:var(--bg-btn-hover);border-color:#5a5a9a}
+        .preset-btn:hover{background:var(--bg-btn-hover);border-color:var(--border-hover)}
         .preset-btn.active{background:var(--accent);border-color:var(--accent);color:var(--text-on-accent)}
 
         .divider{height:1px;background:var(--bg-btn);margin:16px 0}
 
         .result-section{background:var(--bg-guide);border-radius:10px;padding:16px;margin-bottom:12px}
-        .result-label{font-size:12px;color:var(--text-info);margin-bottom:8px;display:flex;align-items:center;gap:6px}
-        .result-url{width:100%;padding:10px 12px;background:var(--bg-body);border:1.5px solid #333366;border-radius:8px;color:#7cc6fe;font-size:13px;font-family:'Pretendard',monospace;resize:none;min-height:60px;line-height:1.5}
-        .result-url:focus{outline:none;border-color:#7c5cbf}
+        .result-label{font-size:13px;color:var(--text-info);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+        .result-status{font-size:13px;color:var(--text-secondary);margin-bottom:8px;line-height:1.5}
+        .result-url{display:block;width:100%;padding:10px 12px;background:var(--bg-body);border:1.5px solid var(--border);border-radius:8px;color:var(--text-code);font-size:13px;resize:none;min-height:60px;line-height:1.5;word-break:break-all}
+        .result-url:focus{outline:none;border-color:var(--accent)}
         .result-placeholder{color:var(--text-muted);font-size:13px;padding:10px 0}
+        .result-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+        .action-btn{padding:9px 16px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;min-height:40px}
+        .btn-clear{background:var(--bg-btn);color:var(--text-primary)}
+        .btn-clear:hover{background:var(--bg-btn-hover)}
+        .btn-copy{background:var(--accent);color:var(--text-on-accent)}
+        .btn-copy:hover{background:var(--accent-hover)}
+        .btn-copy:disabled{opacity:.45;cursor:not-allowed}
+        .result-hint{margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.5}
 
-        .param-table{width:100%;margin-top:12px;border-collapse:collapse}
-        .param-table th{text-align:left;font-size:11px;color:var(--text-info);font-weight:500;padding:6px 8px;border-bottom:1px solid var(--border)}
-        .param-table td{font-size:12px;padding:6px 8px;border-bottom:1px solid var(--border);color:var(--text-secondary);word-break:break-all}
-        .param-table td:first-child{color:var(--accent-text);font-weight:500;white-space:nowrap}
+        .table-wrap{overflow-x:auto;margin-top:12px}
+        .param-table{width:100%;border-collapse:collapse}
+        .param-table th{text-align:left;font-size:12px;color:var(--text-info);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--border)}
+        .param-table td{font-size:13px;padding:6px 8px;border-bottom:1px solid var(--border);color:var(--text-secondary);word-break:break-all}
+        .param-table td:first-child{color:var(--accent-text);font-weight:600;white-space:nowrap}
         .param-table tr:last-child td{border-bottom:none}
+        .param-table .origin{white-space:nowrap;color:var(--text-muted);font-size:12px}
+
+        .bulk-section{background:var(--bg-bar);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden}
+        .bulk-section summary{padding:12px 14px;cursor:pointer;font-size:14px;font-weight:700;color:var(--text-primary);list-style:none}
+        .bulk-section summary::-webkit-details-marker{display:none}
+        .bulk-section[open] summary{border-bottom:1px solid var(--border)}
+        .bulk-body{padding:14px}
+        .bulk-help{font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:10px}
+        .bulk-body label{display:block;font-size:13px;color:var(--text-secondary);margin:10px 0 6px;line-height:1.45}
+        .bulk-body textarea{width:100%;padding:10px 12px;background:var(--bg-guide);border:1.5px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:14px;resize:vertical;line-height:1.5}
+        .bulk-body .check-row{display:flex;align-items:center;gap:8px;cursor:pointer}
+        .check-row input{width:18px;height:18px;accent-color:var(--accent)}
+        .bulk-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+        .bulk-table td:last-child{min-width:260px}
 
         .guide-section{background:var(--bg-bar);border-radius:12px;margin:16px;border:1px solid var(--border);transition:all .3s ease;overflow:hidden}
-        .guide-section summary{padding:14px 18px;cursor:pointer;font-size:14px;font-weight:700;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:8px;background:var(--bg-guide);transition:background .2s}
-        .guide-section summary::-webkit-details-marker{display:none}
-        .guide-section summary::before{content:'▶';font-size:11px;color:var(--accent-text);transition:transform .3s}
-        .guide-section[open] summary::before{transform:rotate(90deg)}
-        .guide-section summary:hover{background:var(--bg-guide-hover)}
-        .guide-section[open] summary{border-bottom:1px solid var(--border)}
+        .guide-section > summary{padding:14px 18px;cursor:pointer;font-size:14px;font-weight:700;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:8px;background:var(--bg-guide);transition:background .2s}
+        .guide-section > summary::-webkit-details-marker{display:none}
+        .guide-section > summary::before{content:'▶';font-size:11px;color:var(--accent-text);transition:transform .3s}
+        .guide-section[open] > summary::before{transform:rotate(90deg)}
+        .guide-section > summary:hover{background:var(--bg-guide-hover)}
+        .guide-section[open] > summary{border-bottom:1px solid var(--border)}
         .guide-content{padding:20px;font-size:13px;color:var(--text-info);line-height:1.7}
         .guide-block{margin-bottom:18px}
         .guide-block:last-child{margin-bottom:0}
@@ -73,52 +105,32 @@
         .tags-container{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px;padding-top:16px;border-top:1px dashed var(--border);align-items:center}
         .tag-title{font-size:12px;font-weight:600;color:var(--text-muted)}
         .related-tag{background:var(--bg-btn);color:var(--text-amount);padding:4px 10px;border-radius:12px;font-size:12px;font-weight:600;text-decoration:none;transition:all .2s;border:1px solid var(--border)}
-        .related-tag:hover{background:var(--accent);color:#fff;border-color:var(--accent);transform:translateY(-1px)}
-        .report-container{margin-top:16px;background:var(--bg-bar);border:1px solid var(--border);border-radius:12px;padding:16px;animation:fadeIn .4s ease-out}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-        .report-title{font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:10px;display:flex;align-items:center;gap:6px}
-        .report-box{background:var(--bg-body);border-radius:8px;padding:14px;border:1px solid var(--border)}
-        .report-list{list-style:none;margin:0;padding:0}
-        .report-list li{position:relative;padding-left:14px;margin-bottom:8px;font-size:13px;color:var(--text-info)}
-        .report-list li::before{content:'•';position:absolute;left:0;color:var(--accent-text);font-weight:bold}
-        .report-list li:last-child{margin-bottom:0}
-        .report-list li a{color:var(--accent-text);text-decoration:none;font-weight:600;transition:opacity .2s}
-        .report-list li a:hover{opacity:.8;text-decoration:underline}
-
-        .bottom-bar{background:var(--bg-body);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #222250}
-        .bottom-bar .info{font-size:11px;color:var(--text-muted)}
-        .bottom-actions{display:flex;gap:8px}
-        .action-btn{padding:8px 16px;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .2s}
-        .btn-clear{background:var(--bg-btn);color:var(--text-secondary)}
-        .btn-clear:hover{background:var(--bg-btn-hover)}
-        .btn-copy{background:var(--accent);color:var(--text-on-accent)}
-        .btn-copy:hover{background:var(--accent-hover)}
-        .btn-copy:disabled{opacity:.4;cursor:not-allowed}
+        .related-tag:hover{background:var(--accent);color:var(--text-on-accent);border-color:var(--accent);transform:translateY(-1px)}
 
         .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:20px;font-size:13px;opacity:0;transition:all .3s;z-index:999;white-space:nowrap}
         .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 
         .history-section{margin-top:12px}
-        .history-label{font-size:12px;color:var(--text-info);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
-        .history-clear{font-size:11px;color:var(--text-muted);cursor:pointer;background:none;border:none;font-family:inherit;transition:color .2s;min-height:36px;padding:4px 8px}
+        .history-label{font-size:13px;color:var(--text-info);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+        .history-clear{font-size:14px;color:var(--text-muted);cursor:pointer;background:none;border:none;font-family:inherit;transition:color .2s;min-height:36px;padding:4px 8px}
         .history-clear:hover{color:var(--status-red-text)}
         .history-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg-body);border-radius:6px;margin-bottom:4px;transition:background .2s}
         .history-item:hover{background:var(--bg-input)}
         .history-item .hi-load{display:flex;align-items:center;gap:8px;flex:1;min-width:0;background:none;border:0;padding:4px;color:inherit;font:inherit;text-align:left;cursor:pointer}
-        .history-item .hi-campaign{font-size:12px;color:var(--accent-text);font-weight:500;flex-shrink:0}
-        .history-item .hi-url{font-size:11px;color:#7cc6fe;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-        .history-item .hi-copy{flex-shrink:0;font-size:11px;color:var(--text-muted);background:var(--bg-btn);border:none;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:inherit;transition:all .2s;min-width:44px;min-height:36px}
+        .history-item .hi-campaign{font-size:13px;color:var(--accent-text);font-weight:600;flex-shrink:0}
+        .history-item .hi-url{font-size:12px;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+        .history-item .hi-copy{flex-shrink:0;font-size:14px;color:var(--text-primary);background:var(--bg-btn);border:none;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:inherit;transition:all .2s;min-width:44px;min-height:36px}
         .history-item .hi-copy:hover{background:var(--accent);color:var(--text-on-accent)}
 
         @media(max-width:640px){
             body{padding:10px}
             .app{border-radius:8px}
             .header{padding:12px 14px}
-            .header h1{font-size:15px;font-weight:600;color:#fff}
             .tool-body{padding:12px}
             .guide-section{margin:0 12px 12px}
             .preset-btns{gap:4px}
-            .preset-btn{padding:5px 10px;font-size:11px}
+            .preset-btn{padding:5px 10px}
+            .result-actions .action-btn{flex:1 1 auto}
         }
 .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
 .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
@@ -138,20 +150,25 @@
         <!-- URL 입력 -->
         <div class="field-group">
             <label class="field-label" for="urlInput">🌐 웹사이트 URL <span class="required">필수</span></label>
-            <input type="url" id="urlInput" class="field-input" placeholder="https://example.com/page" oninput="generateURL()">
+            <input type="url" id="urlInput" class="field-input" placeholder="https://example.com/page" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="urlError existingUtmNote">
+            <p class="field-error" id="urlError" role="alert"></p>
+            <div class="field-note" id="existingUtmNote" hidden>
+                <span id="existingUtmText"></span>
+                <button type="button" class="fix-btn" id="importExistingBtn">기존 값을 입력칸으로 불러오기</button>
+            </div>
         </div>
 
         <!-- 프리셋 -->
         <div class="presets">
-            <div class="presets-label">⚡ 빠른 입력 (프리셋)</div>
+            <div class="presets-label">⚡ 빠른 입력 (프리셋) · 다시 누르면 해제됩니다</div>
             <div class="preset-btns" role="group" aria-label="UTM 빠른 입력 프리셋">
-                <button type="button" class="preset-btn" aria-pressed="false" onclick="applyPreset('google','cpc',this)">Google 검색광고</button>
-                <button type="button" class="preset-btn" aria-pressed="false" onclick="applyPreset('facebook','paid_social',this)">Facebook 광고</button>
-                <button type="button" class="preset-btn" aria-pressed="false" onclick="applyPreset('instagram','social',this)">Instagram</button>
-                <button type="button" class="preset-btn" aria-pressed="false" onclick="applyPreset('naver_blog','referral',this)">네이버 블로그</button>
-                <button type="button" class="preset-btn" aria-pressed="false" onclick="applyPreset('newsletter','email',this)">이메일 뉴스레터</button>
-                <button type="button" class="preset-btn" aria-pressed="false" onclick="applyPreset('youtube','video',this)">YouTube</button>
-                <button type="button" class="preset-btn" aria-pressed="false" onclick="applyPreset('kakao','social',this)">카카오톡</button>
+                <button type="button" class="preset-btn" aria-pressed="false" data-source="google" data-medium="cpc">Google 검색광고</button>
+                <button type="button" class="preset-btn" aria-pressed="false" data-source="facebook" data-medium="paid_social">Facebook 광고</button>
+                <button type="button" class="preset-btn" aria-pressed="false" data-source="instagram" data-medium="social">Instagram</button>
+                <button type="button" class="preset-btn" aria-pressed="false" data-source="naver_blog" data-medium="referral">네이버 블로그</button>
+                <button type="button" class="preset-btn" aria-pressed="false" data-source="newsletter" data-medium="email">이메일 뉴스레터</button>
+                <button type="button" class="preset-btn" aria-pressed="false" data-source="youtube" data-medium="video">YouTube</button>
+                <button type="button" class="preset-btn" aria-pressed="false" data-source="kakao" data-medium="social">카카오톡</button>
             </div>
         </div>
 
@@ -160,23 +177,28 @@
         <!-- UTM 파라미터 입력 -->
         <div class="field-group">
             <label class="field-label" for="utm_source">utm_source <span class="required">필수</span></label>
-            <input type="text" id="utm_source" class="field-input" placeholder="트래픽 소스 (예: google, facebook, newsletter)" oninput="generateURL()">
+            <input type="text" id="utm_source" class="field-input utm-field" placeholder="트래픽 소스 (예: google, facebook, newsletter)" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="warn_utm_source">
+            <div class="field-warn" id="warn_utm_source" hidden></div>
         </div>
         <div class="field-group">
             <label class="field-label" for="utm_medium">utm_medium <span class="required">필수</span></label>
-            <input type="text" id="utm_medium" class="field-input" placeholder="매체 유형 (예: cpc, email, social, banner)" oninput="generateURL()">
+            <input type="text" id="utm_medium" class="field-input utm-field" placeholder="매체 유형 (예: cpc, email, social, banner)" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="warn_utm_medium">
+            <div class="field-warn" id="warn_utm_medium" hidden></div>
         </div>
         <div class="field-group">
             <label class="field-label" for="utm_campaign">utm_campaign <span class="required">필수</span></label>
-            <input type="text" id="utm_campaign" class="field-input" placeholder="캠페인 이름 (예: spring_sale, launch_2026)" oninput="generateURL()">
+            <input type="text" id="utm_campaign" class="field-input utm-field" placeholder="캠페인 이름 (예: spring_sale, launch_2026)" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="warn_utm_campaign">
+            <div class="field-warn" id="warn_utm_campaign" hidden></div>
         </div>
         <div class="field-group">
             <label class="field-label" for="utm_term">utm_term <span class="optional">선택</span></label>
-            <input type="text" id="utm_term" class="field-input" placeholder="검색 키워드 (예: running_shoes)" oninput="generateURL()">
+            <input type="text" id="utm_term" class="field-input utm-field" placeholder="검색 키워드 (예: running_shoes)" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="warn_utm_term">
+            <div class="field-warn" id="warn_utm_term" hidden></div>
         </div>
         <div class="field-group">
             <label class="field-label" for="utm_content">utm_content <span class="optional">선택</span></label>
-            <input type="text" id="utm_content" class="field-input" placeholder="광고 콘텐츠 구분 (예: header_banner, cta_button)" oninput="generateURL()">
+            <input type="text" id="utm_content" class="field-input utm-field" placeholder="광고 콘텐츠 구분 (예: header_banner, cta_button)" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="warn_utm_content">
+            <div class="field-warn" id="warn_utm_content" hidden></div>
         </div>
 
         <div class="divider"></div>
@@ -184,35 +206,61 @@
         <!-- 결과 -->
         <div class="result-section">
             <label class="result-label" for="resultURL">📋 생성된 URL</label>
+            <p class="result-status" id="resultStatus" role="status" aria-live="polite" aria-atomic="true">URL과 필수 파라미터를 입력하세요</p>
             <div id="resultPlaceholder" class="result-placeholder">위에서 URL과 UTM 파라미터를 입력하면 여기에 결과가 표시됩니다.</div>
-            <textarea id="resultURL" class="result-url" readonly aria-describedby="bottomInfo" style="display:none"></textarea>
-            <table class="param-table" id="paramTable" style="display:none">
-                <thead><tr><th>파라미터</th><th>값</th></tr></thead>
-                <tbody id="paramBody"></tbody>
-            </table>
+            <textarea id="resultURL" class="result-url mono" readonly aria-describedby="resultStatus" hidden></textarea>
+            <div class="result-actions">
+                <button type="button" class="action-btn btn-copy" id="copyBtn" disabled>URL 복사</button>
+                <a class="action-btn btn-clear" href="/special-chars/qr-code/">📱 QR 코드 만들기</a>
+                <button type="button" class="action-btn btn-clear" id="clearBtn">초기화</button>
+            </div>
+            <p class="result-hint">기존 URL의 쿼리와 #앵커는 그대로 두고, 값을 입력한 UTM 항목만 추가하거나 바꿉니다. 복사한 URL은 최근 기록에 저장되며, QR 코드 생성기에 붙여넣어 인쇄물용 QR을 만들 수 있습니다.</p>
+            <div class="table-wrap" id="paramTableWrap" hidden>
+                <table class="param-table" id="paramTable">
+                    <thead><tr><th scope="col">파라미터</th><th scope="col">값</th><th scope="col">출처</th></tr></thead>
+                    <tbody id="paramBody"></tbody>
+                </table>
+            </div>
         </div>
 
-        <!-- 동적 분석 리포트 영역 -->
-        <div class="report-container" id="reportContainer" style="display:none;">
-            <div class="report-title">📊 실시간 캠페인 URL 분석 리포트</div>
-            <div class="report-box" id="reportBox"></div>
-        </div>
+        <!-- 일괄 생성 -->
+        <details class="bulk-section" id="bulkSection">
+            <summary>📑 여러 채널용 URL 한 번에 만들기 (CSV·스프레드시트 복사)</summary>
+            <div class="bulk-body">
+                <p class="bulk-help">위에 입력한 웹사이트 URL, utm_campaign, utm_term을 공통으로 쓰고, 아래 목록의 조합마다 URL을 만듭니다. 소스 목록에 매체를 쓰지 않으면 위의 utm_medium 값을 사용합니다.</p>
+                <label for="bulkSources">소스 목록 · 줄마다 하나 (<span class="mono">source, medium</span> 형식 가능)</label>
+                <textarea id="bulkSources" rows="4" class="mono" placeholder="google, cpc&#10;naver, cpc&#10;newsletter, email" autocapitalize="off" spellcheck="false"></textarea>
+                <label for="bulkContents">utm_content 목록 · 줄마다 하나 (선택)</label>
+                <textarea id="bulkContents" rows="3" class="mono" placeholder="header_banner&#10;cta_button" autocapitalize="off" spellcheck="false"></textarea>
+                <label class="check-row"><input type="checkbox" id="bulkNormalize" checked> 대문자는 소문자로, 공백은 _로 자동 정리</label>
+                <div class="bulk-actions">
+                    <button type="button" class="action-btn btn-copy" id="bulkBtn">조합 만들기</button>
+                </div>
+                <p class="field-error" id="bulkError" role="alert"></p>
+                <div id="bulkResult" hidden>
+                    <p class="result-status" id="bulkStatus"></p>
+                    <div class="table-wrap">
+                        <table class="param-table bulk-table">
+                            <thead><tr><th scope="col">source</th><th scope="col">medium</th><th scope="col">content</th><th scope="col">URL</th></tr></thead>
+                            <tbody id="bulkBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="bulk-actions">
+                        <button type="button" class="action-btn btn-copy" id="bulkTsvBtn">스프레드시트용 복사 (TSV)</button>
+                        <button type="button" class="action-btn btn-clear" id="bulkCsvBtn">CSV 복사</button>
+                        <button type="button" class="action-btn btn-clear" id="bulkCsvSaveBtn">CSV 파일 저장</button>
+                    </div>
+                </div>
+            </div>
+        </details>
 
         <!-- 히스토리 -->
-        <div class="history-section" id="historySection" style="display:none">
+        <div class="history-section" id="historySection" hidden>
             <div class="history-label">
-                <span>🕒 최근 생성 기록</span>
-                <button type="button" class="history-clear" onclick="clearHistory()">전체 삭제</button>
+                <span id="historyTitle">🕒 최근 복사한 URL</span>
+                <button type="button" class="history-clear" id="historyClearBtn">전체 삭제</button>
             </div>
-            <div id="historyList" aria-label="최근 생성 기록"></div>
-        </div>
-    </div>
-
-    <div class="bottom-bar">
-        <span class="info" id="bottomInfo" role="status" aria-live="polite" aria-atomic="true">URL과 필수 파라미터를 입력하세요</span>
-        <div class="bottom-actions">
-            <button type="button" class="action-btn btn-clear" onclick="clearAll()">초기화</button>
-            <button type="button" class="action-btn btn-copy" id="copyBtn" onclick="copyURL()" disabled>URL 복사</button>
+            <div id="historyList" role="group" aria-labelledby="historyTitle"></div>
         </div>
     </div>
 
@@ -221,23 +269,33 @@
         <div class="guide-content">
             <div class="guide-block">
                 <h3>💡 UTM 파라미터란 정확히 무엇인가요?</h3>
-                <p>UTM(Urchin Tracking Module) 파라미터는 마케팅 캠페인이나 웹사이트 링크 뒤에 붙여서 트래픽의 출처와 유형을 추적하기 위한 짧은 코드 텍스트입니다. Google Analytics 등의 로그 수집 도구에서 방문자가 '어떤 광고'나 '어떤 배너'를 통해 접속했는지 정밀하게 파악하기 위한 가장 기본적이고 필수적인 로그 데이터 구성 요소입니다.</p>
+                <p>UTM(Urchin Tracking Module) 파라미터는 마케팅 캠페인이나 웹사이트 링크 뒤에 붙여서 트래픽의 출처와 유형을 추적하기 위한 짧은 코드 텍스트입니다. Google Analytics 4 같은 분석 도구는 방문자가 링크를 눌러 들어올 때 URL의 <code>utm_source</code>(어디서), <code>utm_medium</code>(어떤 매체로), <code>utm_campaign</code>(어떤 캠페인으로) 값을 읽어 유입 경로 보고서에 기록합니다. <code>utm_term</code>은 검색 키워드, <code>utm_content</code>는 같은 캠페인 안에서 배너·버튼처럼 서로 다른 소재를 구분할 때 씁니다.</p>
             </div>
 
             <div class="guide-block">
-                <h3>🔒 파라미터 조합 중 보안 우려가 있나요?</h3>
-<p>본 UTM 파라미터 생성기는 URL 조합을 현재 브라우저에서 처리하며 입력한 주소와 캠페인 값을 앱 서버로 전송하지 않습니다. 다만 생성된 URL을 메신저·문서·분석 도구에 붙여넣은 뒤의 저장과 공유 범위는 해당 서비스가 관리합니다. 공개되면 안 되는 고객정보나 내부 식별값은 UTM 값에 넣지 마세요.</p>
+                <h3>🧩 원래 URL에 쿼리나 UTM이 이미 있으면 어떻게 되나요?</h3>
+                <p>입력한 URL의 경로, 기존 쿼리 문자열, <code>#</code> 앵커는 글자 그대로 유지하고 끝에 UTM 파라미터만 덧붙입니다. 서명이 붙은 링크나 값 없는 파라미터(<code>?flag</code>), 인코딩된 문자(<code>%20</code>)가 다시 인코딩되어 망가지지 않도록 하기 위해서입니다. URL에 이미 UTM 값이 있다면 같은 항목에 값을 입력했을 때만 새 값으로 바뀌고, 비워 둔 항목의 기존 값은 그대로 남습니다. '기존 값을 입력칸으로 불러오기'를 누르면 기존 값을 입력칸으로 옮겨 한곳에서 고칠 수 있습니다.</p>
             </div>
 
             <div class="guide-block">
                 <h3>🚀 일관성 있는 UTM 파라미터 관리를 위한 팁이 있나요?</h3>
-                <p>팀 내에서 소문자 사용, 공백 대신 언더바(_)나 하이픈(-) 지정 등 명확한 네이밍 규칙(Naming Convention)을 정립하세요. 구글(google, Google)과 네이버(naver, Naver)조차 대소문자에 따라 별도 출처로 다르게 집계되기 때문입니다. 상단의 '빠른 입력(프리셋)' 기능을 적극 활용하시면 규칙 오타를 방지하고 표준화된 파라미터 주소를 빠르게 배포할 수 있습니다.</p>
+                <p>팀 내에서 소문자 사용, 공백 대신 언더바(_)나 하이픈(-) 지정 등 명확한 네이밍 규칙(Naming Convention)을 정립하세요. GA4는 값의 대소문자를 구분하므로 <code>Naver</code>와 <code>naver</code>가 서로 다른 소스로 집계되고, 공백은 URL에서 <code>%20</code>으로 바뀌어 보고서와 링크가 읽기 어려워집니다. 이 도구는 대문자나 공백이 들어간 값에 경고를 표시하고 '소문자로 변환', '공백을 _로' 버튼으로 바로 고칠 수 있게 합니다. 상단의 '빠른 입력(프리셋)'을 활용하면 자주 쓰는 소스·매체 이름의 오타도 줄일 수 있습니다.</p>
             </div>
-            
+
+            <div class="guide-block">
+                <h3>📑 여러 채널에 뿌릴 링크를 한 번에 만들 수 있나요?</h3>
+                <p>'여러 채널용 URL 한 번에 만들기'를 열고 소스 목록과 콘텐츠 목록을 줄마다 입력하면 모든 조합의 URL을 표로 만들어 줍니다. '스프레드시트용 복사'는 탭으로 구분된 값(TSV)이라 구글 시트나 엑셀에 붙여넣으면 열이 자동으로 나뉘고, CSV 복사·저장은 광고 관리 도구나 문서에 첨부할 때 편리합니다. 한 번에 최대 200개 조합까지 만들 수 있습니다.</p>
+            </div>
+
+            <div class="guide-block">
+                <h3>🔒 파라미터 조합 중 보안 우려가 있나요?</h3>
+                <p>본 UTM 파라미터 생성기는 URL 조합을 현재 브라우저에서 처리하며 입력한 주소와 캠페인 값을 앱 서버로 전송하지 않습니다. 최근 복사한 URL 기록은 이 브라우저의 로컬 저장소에만 남고 '전체 삭제'로 지울 수 있습니다. 다만 생성된 URL을 메신저·문서·분석 도구에 붙여넣은 뒤의 저장과 공유 범위는 해당 서비스가 관리합니다. UTM 값은 링크를 받은 누구에게나 보이므로 고객정보, 이메일 주소, 내부 식별값은 넣지 마세요.</p>
+            </div>
+
             <div class="tags-container">
                 <span class="tag-title">관련 유틸리티 도구:</span>
+                <a href="https://teemozipsa.com/special-chars/qr-code/" class="related-tag">QR 코드 생성기</a>
                 <a href="https://teemozipsa.com/special-chars/char-counter/" class="related-tag">글자수 계산기</a>
-                <a href="https://teemozipsa.com/special-chars/base64-tool/" class="related-tag">Base64 인코더/디코더</a>
             </div>
         </div>
     </details>
@@ -251,261 +309,482 @@
 <script>
 const HISTORY_KEY = 'utm_history';
 const MAX_HISTORY = 10;
-let activePreset = null;
+const MAX_BULK_ROWS = 200;
+const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+const REQUIRED_KEYS = ['utm_source', 'utm_medium', 'utm_campaign'];
+const $ = id => document.getElementById(id);
 
-function generateURL() {
-    const base = document.getElementById('urlInput').value.trim();
-    const source = document.getElementById('utm_source').value.trim();
-    const medium = document.getElementById('utm_medium').value.trim();
-    const campaign = document.getElementById('utm_campaign').value.trim();
-    const term = document.getElementById('utm_term').value.trim();
-    const content = document.getElementById('utm_content').value.trim();
+let lastResult = null; // { url, parsed }
+let bulkRows = [];
 
-    const placeholder = document.getElementById('resultPlaceholder');
-    const resultEl = document.getElementById('resultURL');
-    const tableEl = document.getElementById('paramTable');
-    const bodyEl = document.getElementById('paramBody');
-    const copyBtn = document.getElementById('copyBtn');
-    const info = document.getElementById('bottomInfo');
+/* ---------- URL 도우미 ---------- */
+function decodeComponent(value) {
+    try { return decodeURIComponent(value.replace(/\+/g, ' ')); } catch { return value; }
+}
+function pairKey(pair) {
+    const index = pair.indexOf('=');
+    return decodeComponent(index < 0 ? pair : pair.slice(0, index));
+}
+function pairValue(pair) {
+    const index = pair.indexOf('=');
+    return index < 0 ? '' : decodeComponent(pair.slice(index + 1));
+}
+function queryPairs(url) {
+    return url.search ? url.search.slice(1).split('&').filter(Boolean) : [];
+}
 
-    // URL 유효성
-    document.getElementById('urlInput').classList.remove('error');
-    document.getElementById('urlInput').setAttribute('aria-invalid', 'false');
-    if (!base) {
-        placeholder.textContent = '위에서 URL과 UTM 파라미터를 입력하면 여기에 결과가 표시됩니다.';
-        placeholder.style.display = '';
-        resultEl.style.display = 'none';
-        tableEl.style.display = 'none';
-        copyBtn?.setAttribute('disabled', true);
-        if(info) info.textContent = 'URL과 필수 파라미터를 입력하세요';
-        updateReport([]);
-        return;
-    }
-
-    let url;
+function parseBaseUrl(base) {
     try {
         const normalizedBase = /^[a-z][a-z\d+.-]*:\/\//i.test(base) ? base : 'https://' + base;
-        url = new URL(normalizedBase);
-        if (!/^https?:$/.test(url.protocol)) throw new Error('Unsupported URL protocol');
+        const url = new URL(normalizedBase);
+        if (!/^https?:$/.test(url.protocol)) return { error: 'http 또는 https 주소만 사용할 수 있습니다.' };
+        if (!url.hostname) return { error: '도메인이 없습니다. URL을 다시 확인하세요.' };
+        return { url };
     } catch {
-        document.getElementById('urlInput').classList.add('error');
-        document.getElementById('urlInput').setAttribute('aria-invalid', 'true');
-        placeholder.textContent = '올바른 URL 형식이 아닙니다.';
-        placeholder.style.display = '';
-        resultEl.style.display = 'none';
-        tableEl.style.display = 'none';
-        copyBtn?.setAttribute('disabled', true);
-        if(info) info.textContent = 'URL 형식을 확인하세요';
-        updateReport([]);
+        return { error: '올바른 URL 형식이 아닙니다. 예: https://example.com/page' };
+    }
+}
+
+// 기존 쿼리 문자열은 글자 그대로 두고, 값이 있는 UTM 키만 교체·추가한다.
+function buildUtmUrl(url, values) {
+    const applied = UTM_KEYS.filter(key => values[key]);
+    const replaced = new Set(applied);
+    const kept = queryPairs(url).filter(pair => !replaced.has(pairKey(pair)));
+    const added = applied.map(key => `${key}=${encodeURIComponent(values[key])}`);
+    const query = kept.concat(added).join('&');
+    const bare = new URL(url.href);
+    bare.search = '';
+    bare.hash = '';
+    return bare.href + (query ? '?' + query : '') + url.hash;
+}
+
+function existingUtm(url) {
+    const found = {};
+    queryPairs(url).forEach(pair => {
+        const key = pairKey(pair);
+        if (UTM_KEYS.includes(key) && !(key in found)) found[key] = pairValue(pair);
+    });
+    return found;
+}
+
+function stripUtm(url) {
+    const kept = queryPairs(url).filter(pair => !UTM_KEYS.includes(pairKey(pair)));
+    const bare = new URL(url.href);
+    bare.search = '';
+    bare.hash = '';
+    return bare.href + (kept.length ? '?' + kept.join('&') : '') + url.hash;
+}
+
+function readValues() {
+    const values = {};
+    UTM_KEYS.forEach(key => { values[key] = $(key).value.trim(); });
+    return values;
+}
+
+/* ---------- 값 경고 ---------- */
+function valueIssues(value) {
+    return {
+        upper: /[A-Z]/.test(value),
+        space: /\s/.test(value),
+        nonAscii: /[^\x00-\x7F]/.test(value)
+    };
+}
+
+function renderWarning(key) {
+    const box = $('warn_' + key);
+    const value = $(key).value.trim();
+    const issues = valueIssues(value);
+    box.textContent = '';
+    const messages = [];
+    if (issues.upper) messages.push('대문자가 있습니다. GA4는 대소문자를 구분해 따로 집계합니다.');
+    if (issues.space) messages.push('공백은 URL에서 %20으로 바뀌어 읽기 어려워집니다.');
+    if (!messages.length && issues.nonAscii) messages.push('한글은 URL에서 %EC… 형태로 인코딩되어 링크가 길어집니다. 보고서에는 한글로 표시됩니다.');
+    if (!messages.length) { box.hidden = true; return; }
+    const text = document.createElement('span');
+    text.className = 'warn-text';
+    text.textContent = '⚠ ' + messages.join(' ');
+    box.appendChild(text);
+    if (issues.upper) box.appendChild(fixButton(key, 'lower', '소문자로 변환'));
+    if (issues.space) box.appendChild(fixButton(key, 'space', '공백을 _로'));
+    box.hidden = false;
+}
+
+function fixButton(key, type, label) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'fix-btn';
+    button.textContent = label;
+    button.setAttribute('aria-label', `${key} ${label}`);
+    button.addEventListener('click', () => {
+        const input = $(key);
+        input.value = type === 'lower' ? input.value.toLowerCase() : input.value.trim().replace(/\s+/g, '_');
+        syncPresetState();
+        generateURL();
+        input.focus();
+    });
+    return button;
+}
+
+/* ---------- 결과 ---------- */
+function showEmptyResult(message, status) {
+    $('resultPlaceholder').textContent = message;
+    $('resultPlaceholder').hidden = false;
+    $('resultURL').hidden = true;
+    $('resultURL').value = '';
+    $('paramTableWrap').hidden = true;
+    $('copyBtn').disabled = true;
+    $('resultStatus').textContent = status;
+    lastResult = null;
+}
+
+function generateURL() {
+    const urlInput = $('urlInput');
+    const base = urlInput.value.trim();
+    const values = readValues();
+    UTM_KEYS.forEach(renderWarning);
+
+    urlInput.setAttribute('aria-invalid', 'false');
+    $('urlError').textContent = '';
+    $('existingUtmNote').hidden = true;
+
+    if (!base) {
+        showEmptyResult('위에서 URL과 UTM 파라미터를 입력하면 여기에 결과가 표시됩니다.', 'URL과 필수 파라미터를 입력하세요');
         return;
     }
 
-    // UTM 파라미터 설정
-    const params = { utm_source: source, utm_medium: medium, utm_campaign: campaign, utm_term: term, utm_content: content };
-    Object.entries(params).forEach(([k, v]) => {
-        if (v) url.searchParams.set(k, v);
-        else url.searchParams.delete(k);
-    });
+    const parsed = parseBaseUrl(base);
+    if (parsed.error) {
+        urlInput.setAttribute('aria-invalid', 'true');
+        $('urlError').textContent = parsed.error;
+        showEmptyResult('올바른 URL 형식이 아닙니다.', 'URL 형식을 확인하세요');
+        return;
+    }
 
-    const finalURL = url.toString();
+    const url = parsed.url;
+    const existing = existingUtm(url);
+    const existingKeys = Object.keys(existing);
+    if (existingKeys.length) {
+        $('existingUtmText').textContent = `입력한 URL에 이미 ${existingKeys.map(key => `${key}=${existing[key]}`).join(', ')} 값이 있습니다. 같은 항목에 값을 입력하면 새 값으로 바뀌고, 비워 두면 그대로 유지됩니다.`;
+        $('existingUtmNote').hidden = false;
+    }
 
-    // 필수 파라미터 체크
-    const filled = [source, medium, campaign].filter(Boolean).length;
-    const missing = 3 - filled;
+    const finalURL = buildUtmUrl(url, values);
+    const rows = UTM_KEYS.map(key => {
+        if (values[key]) return [key, values[key], existing[key] !== undefined ? '입력값 (기존 값 교체)' : '입력값'];
+        if (existing[key] !== undefined) return [key, existing[key], '기존 URL 값 유지'];
+        return null;
+    }).filter(Boolean);
 
-    placeholder.style.display = 'none';
-    resultEl.style.display = '';
+    const resultEl = $('resultURL');
+    $('resultPlaceholder').hidden = true;
+    resultEl.hidden = false;
     resultEl.value = finalURL;
     resultEl.style.height = 'auto';
     resultEl.style.height = resultEl.scrollHeight + 'px';
 
-    // 파라미터 테이블
-    const activeParams = Object.entries(params).filter(([, v]) => v);
-    if (activeParams.length > 0) {
-        tableEl.style.display = '';
-        bodyEl.innerHTML = activeParams.map(([k, v]) => `<tr><td>${k}</td><td>${escapeHtml(v)}</td></tr>`).join('');
-    } else {
-        tableEl.style.display = 'none';
-    }
-
-    if (missing > 0) {
-        if(copyBtn) copyBtn.disabled = false;
-        if(info) info.textContent = `필수 파라미터 ${missing}개 미입력 (사용은 가능)`;
-    } else {
-        if(copyBtn) copyBtn.disabled = false;
-        if(info) info.textContent = `UTM 파라미터 ${activeParams.length}개 적용됨`;
-    }
-
-    updateReport(activeParams);
-}
-
-function updateReport(activeParams) {
-  const container = document.getElementById('reportContainer');
-  const box = document.getElementById('reportBox');
-  if (!activeParams || activeParams.length === 0) {
-    container.style.display = 'none';
-    return;
-  }
-  
-  container.style.display = 'block';
-  
-  const firstParam = activeParams[0][0];
-  
-  box.innerHTML = `
-    <ul class="report-list">
-      <li><strong>파라미터 주입 분석:</strong> 현재 URL 구조에 총 <strong>${activeParams.length}</strong>개의 트래픽 추적 파라미터(UTM)가 성공적으로 병합 파싱되었습니다.</li>
-      <li><strong>데이터 속성 검토:</strong> 추출된 파라미터 중 기본 키 제약인 <code>${firstParam}</code> 옵션을 기반으로 가장 높은 우선순위의 유입 출처 트래킹 데이터 세트가 구축되었습니다.</li>
-      <li><strong>로컬 보안 및 무결성:</strong> 현재 이 마케팅 파라미터 변환 조합 과정은 외부 서버 통신 없이 사용자 브라우저 샌드박스 내부에서 100% 로컬 연산되어 어떠한 캠페인 정보나 보안 데이터도 유출되지 않습니다.</li>
-      <li><strong>추가 추천 가이드:</strong> 장문 파라미터 추가 등으로 URL 길이가 너무 길어 관리가 불편하다면 <a href="https://teemozipsa.com/special-chars/base64-tool/">Base64 인코더 도구</a> 등을 통한 문자열 보호도 테스트해 보세요.</li>
-    </ul>
-  `;
-}
-
-function escapeHtml(str) {
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function applyPreset(source, medium, btn) {
-    document.getElementById('utm_source').value = source;
-    document.getElementById('utm_medium').value = medium;
-
-    // 활성 프리셋 표시
-    document.querySelectorAll('.preset-btn').forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-pressed', 'false');
+    const body = $('paramBody');
+    body.textContent = '';
+    rows.forEach(([key, value, origin]) => {
+        const tr = document.createElement('tr');
+        [key, value, origin].forEach((cell, index) => {
+            const td = document.createElement('td');
+            td.textContent = cell;
+            if (index === 2) td.className = 'origin';
+            tr.appendChild(td);
+        });
+        body.appendChild(tr);
     });
-    if (activePreset === btn) {
-        activePreset = null;
-    } else {
-        btn.classList.add('active');
-        btn.setAttribute('aria-pressed', 'true');
-        activePreset = btn;
-    }
+    $('paramTableWrap').hidden = rows.length === 0;
 
+    const missing = REQUIRED_KEYS.filter(key => !values[key] && existing[key] === undefined);
+    $('copyBtn').disabled = rows.length === 0;
+    if (!rows.length) {
+        $('resultStatus').textContent = 'utm_source, utm_medium, utm_campaign을 입력하세요';
+    } else if (missing.length) {
+        $('resultStatus').textContent = `필수 항목 미입력: ${missing.join(', ')} — 비워 둔 항목은 GA4 보고서에 (not set)으로 표시될 수 있습니다`;
+    } else {
+        $('resultStatus').textContent = `UTM 파라미터 ${rows.length}개 적용됨 · URL ${finalURL.length.toLocaleString('ko-KR')}자`;
+    }
+    lastResult = { url: finalURL };
+}
+
+function importExisting() {
+    const parsed = parseBaseUrl($('urlInput').value.trim());
+    if (!parsed.url) return;
+    const existing = existingUtm(parsed.url);
+    Object.entries(existing).forEach(([key, value]) => {
+        if (!$(key).value.trim()) $(key).value = value;
+    });
+    $('urlInput').value = stripUtm(parsed.url);
+    syncPresetState();
     generateURL();
-    document.getElementById('utm_campaign').focus();
+    showToast('기존 UTM 값을 입력칸으로 옮겼습니다');
+}
+
+/* ---------- 프리셋 ---------- */
+function syncPresetState() {
+    const source = $('utm_source').value.trim();
+    const medium = $('utm_medium').value.trim();
+    document.querySelectorAll('.preset-btn').forEach(button => {
+        const active = button.dataset.source === source && button.dataset.medium === medium;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-pressed', String(active));
+    });
+}
+
+function applyPreset(button) {
+    const isActive = button.getAttribute('aria-pressed') === 'true';
+    if (isActive) {
+        if ($('utm_source').value.trim() === button.dataset.source) $('utm_source').value = '';
+        if ($('utm_medium').value.trim() === button.dataset.medium) $('utm_medium').value = '';
+        showToast('프리셋을 해제했습니다');
+    } else {
+        $('utm_source').value = button.dataset.source;
+        $('utm_medium').value = button.dataset.medium;
+    }
+    syncPresetState();
+    generateURL();
+    if (!isActive) $('utm_campaign').focus();
+}
+
+/* ---------- 복사 ---------- */
+function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+    return new Promise((resolve, reject) => {
+        const helper = document.createElement('textarea');
+        helper.value = text;
+        helper.setAttribute('readonly', '');
+        helper.style.position = 'fixed';
+        helper.style.opacity = '0';
+        document.body.appendChild(helper);
+        helper.select();
+        let ok = false;
+        try { ok = document.execCommand('copy'); } catch { ok = false; }
+        helper.remove();
+        ok ? resolve() : reject(new Error('copy failed'));
+    });
 }
 
 function copyURL() {
-    const url = document.getElementById('resultURL').value;
-    if (!url) return;
-
-    navigator.clipboard.writeText(url).then(() => {
+    if (!lastResult) return;
+    const url = lastResult.url;
+    copyText(url).then(() => {
         showToast('URL이 클립보드에 복사되었습니다!');
         saveToHistory(url);
     }).catch(() => {
-        // fallback
-        const ta = document.createElement('textarea');
-        ta.value = url;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        showToast('URL이 클립보드에 복사되었습니다!');
-        saveToHistory(url);
+        const field = $('resultURL');
+        field.focus();
+        field.select();
+        showToast('복사하지 못했습니다. 선택된 URL을 직접 복사하세요');
     });
 }
 
 function clearAll() {
-    ['urlInput', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].forEach(id => {
-        document.getElementById(id).value = '';
-        document.getElementById(id).classList.remove('error');
-    });
-    document.querySelectorAll('.preset-btn').forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-pressed', 'false');
-    });
-    activePreset = null;
-    document.getElementById('resultPlaceholder').textContent = '위에서 URL과 UTM 파라미터를 입력하면 여기에 결과가 표시됩니다.';
+    ['urlInput', ...UTM_KEYS].forEach(id => { $(id).value = ''; });
+    syncPresetState();
     generateURL();
     showToast('초기화되었습니다');
 }
 
+let toastTimer = null;
 function showToast(msg) {
-    const t = document.getElementById('toast');
+    const t = $('toast');
     t.textContent = msg;
     t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2000);
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
 }
 
-// 히스토리
+/* ---------- 일괄 생성 ---------- */
+function cleanValue(value, normalize) {
+    const trimmed = value.trim();
+    return normalize ? trimmed.toLowerCase().replace(/\s+/g, '_') : trimmed;
+}
+
+function generateBulk() {
+    const error = $('bulkError');
+    error.textContent = '';
+    $('bulkResult').hidden = true;
+    const parsed = parseBaseUrl($('urlInput').value.trim());
+    if (!$('urlInput').value.trim() || parsed.error) {
+        error.textContent = '먼저 위의 웹사이트 URL을 올바르게 입력하세요.';
+        return;
+    }
+    const normalize = $('bulkNormalize').checked;
+    const values = readValues();
+    const sources = $('bulkSources').value.split(/\r?\n/).map(line => line.trim()).filter(Boolean).map(line => {
+        const [source, medium = ''] = line.split(/\s*[,\t]\s*/);
+        return { source: cleanValue(source, normalize), medium: cleanValue(medium || values.utm_medium, normalize) };
+    }).filter(item => item.source);
+    const contents = $('bulkContents').value.split(/\r?\n/).map(line => cleanValue(line, normalize)).filter(Boolean);
+    if (!sources.length) { error.textContent = '소스 목록을 한 줄 이상 입력하세요.'; return; }
+    const contentList = contents.length ? contents : [values.utm_content];
+    if (sources.length * contentList.length > MAX_BULK_ROWS) {
+        error.textContent = `조합이 ${(sources.length * contentList.length).toLocaleString('ko-KR')}개입니다. 한 번에 ${MAX_BULK_ROWS}개까지 만들 수 있습니다.`;
+        return;
+    }
+    const campaign = normalize ? cleanValue(values.utm_campaign, true) : values.utm_campaign;
+    const term = normalize ? cleanValue(values.utm_term, true) : values.utm_term;
+    bulkRows = [];
+    sources.forEach(({ source, medium }) => {
+        contentList.forEach(content => {
+            const rowValues = { utm_source: source, utm_medium: medium, utm_campaign: campaign, utm_term: term, utm_content: content };
+            bulkRows.push({ source, medium, campaign, content, url: buildUtmUrl(parsed.url, rowValues) });
+        });
+    });
+    const body = $('bulkBody');
+    body.textContent = '';
+    bulkRows.forEach(row => {
+        const tr = document.createElement('tr');
+        [row.source, row.medium || '—', row.content || '—', row.url].forEach((cell, index) => {
+            const td = document.createElement('td');
+            td.textContent = cell;
+            if (index === 3) td.className = 'mono';
+            tr.appendChild(td);
+        });
+        body.appendChild(tr);
+    });
+    const missing = [!campaign && 'utm_campaign', bulkRows.some(row => !row.medium) && 'utm_medium'].filter(Boolean);
+    $('bulkStatus').textContent = `${bulkRows.length}개 URL을 만들었습니다.` + (missing.length ? ` 비어 있는 필수 항목: ${missing.join(', ')}` : '');
+    $('bulkResult').hidden = false;
+}
+
+function safeCell(value) {
+    // 스프레드시트가 수식으로 해석하지 않도록 =, +, -, @로 시작하는 값 앞에 '를 붙인다.
+    return /^[=+\-@]/.test(value) ? "'" + value : value;
+}
+
+function bulkTable(separator) {
+    const header = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'url'];
+    const rows = bulkRows.map(row => [row.source, row.medium, row.campaign, row.content, row.url].map(safeCell));
+    const format = cell => {
+        if (separator === '\t') return String(cell).replace(/[\t\r\n]+/g, ' ');
+        return /[",\r\n]/.test(cell) ? `"${String(cell).replace(/"/g, '""')}"` : cell;
+    };
+    return [header, ...rows].map(row => row.map(format).join(separator)).join('\r\n');
+}
+
+function copyBulk(separator) {
+    if (!bulkRows.length) return;
+    copyText(bulkTable(separator))
+        .then(() => showToast(separator === '\t' ? '스프레드시트에 붙여넣을 수 있게 복사했습니다' : 'CSV 형식으로 복사했습니다'))
+        .catch(() => showToast('복사하지 못했습니다. CSV 파일 저장을 이용하세요'));
+}
+
+function saveBulkCsv() {
+    if (!bulkRows.length) return;
+    const blob = new Blob(['﻿' + bulkTable(',')], { type: 'text/csv;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'utm-links.csv';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    showToast('CSV 파일 저장을 시작했습니다');
+}
+
+/* ---------- 히스토리 ---------- */
 function getHistory() {
-    try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch { return []; }
+    try {
+        const parsed = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+        return Array.isArray(parsed) ? parsed.filter(item => item && typeof item.url === 'string') : [];
+    } catch { return []; }
+}
+
+function writeHistory(history) {
+    try {
+        if (history.length) localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+        else localStorage.removeItem(HISTORY_KEY);
+        return true;
+    } catch { return false; }
 }
 
 function saveToHistory(url) {
-    const history = getHistory();
-    // 중복 제거
-    const idx = history.findIndex(h => h.url === url);
-    if (idx !== -1) history.splice(idx, 1);
-
-    const source = document.getElementById('utm_source').value.trim();
-    const campaign = document.getElementById('utm_campaign').value.trim();
-    history.unshift({ url, label: campaign || source || 'URL', time: Date.now() });
-    if (history.length > MAX_HISTORY) history.pop();
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    const history = getHistory().filter(item => item.url !== url);
+    const values = readValues();
+    history.unshift({ url, label: values.utm_campaign || values.utm_source || 'URL', time: Date.now() });
+    if (history.length > MAX_HISTORY) history.length = MAX_HISTORY;
+    writeHistory(history);
     renderHistory();
 }
 
 function clearHistory() {
-    localStorage.removeItem(HISTORY_KEY);
+    const ok = writeHistory([]);
     renderHistory();
-    showToast('기록이 삭제되었습니다');
+    showToast(ok ? '기록이 삭제되었습니다' : '브라우저 저장소에 접근할 수 없습니다');
 }
 
 function renderHistory() {
     const history = getHistory();
-    const section = document.getElementById('historySection');
-    const list = document.getElementById('historyList');
-
-    if (history.length === 0) {
-        section.style.display = 'none';
-        return;
-    }
-
-    section.style.display = '';
-    list.innerHTML = history.map((h, i) => `
-        <div class="history-item">
-            <button type="button" class="hi-load" onclick="loadHistory(${i})" aria-label="${escapeHtml(h.label)} 기록 불러오기">
-                <span class="hi-campaign">${escapeHtml(h.label)}</span>
-                <span class="hi-url">${escapeHtml(h.url)}</span>
-            </button>
-            <button type="button" class="hi-copy" onclick="copyHistoryItem(${i})" aria-label="${escapeHtml(h.label)} URL 복사">복사</button>
-        </div>
-    `).join('');
-}
-
-function loadHistory(idx) {
-    const history = getHistory();
-    if (!history[idx]) return;
-    try {
-        const url = new URL(history[idx].url);
-        ['source', 'medium', 'campaign', 'term', 'content'].forEach(key => {
-            document.getElementById('utm_' + key).value = url.searchParams.get('utm_' + key) || '';
-            url.searchParams.delete('utm_' + key);
-        });
-        document.getElementById('urlInput').value = url.toString();
-        document.querySelectorAll('.preset-btn').forEach(b => {
-            b.classList.remove('active');
-            b.setAttribute('aria-pressed', 'false');
-        });
-        activePreset = null;
-        generateURL();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        showToast('기록에서 불러왔습니다');
-    } catch {}
-}
-
-function copyHistoryItem(idx) {
-    const history = getHistory();
-    if (!history[idx]) return;
-    navigator.clipboard.writeText(history[idx].url).then(() => {
-        showToast('URL이 복사되었습니다!');
+    const section = $('historySection');
+    const list = $('historyList');
+    list.textContent = '';
+    section.hidden = history.length === 0;
+    history.forEach((item, index) => {
+        const label = String(item.label || 'URL');
+        const row = document.createElement('div');
+        row.className = 'history-item';
+        const load = document.createElement('button');
+        load.type = 'button';
+        load.className = 'hi-load';
+        load.setAttribute('aria-label', `${label} 기록 불러오기`);
+        const campaign = document.createElement('span');
+        campaign.className = 'hi-campaign';
+        campaign.textContent = label;
+        const urlText = document.createElement('span');
+        urlText.className = 'hi-url';
+        urlText.textContent = item.url;
+        load.append(campaign, urlText);
+        load.addEventListener('click', () => loadHistory(index));
+        const copy = document.createElement('button');
+        copy.type = 'button';
+        copy.className = 'hi-copy';
+        copy.textContent = '복사';
+        copy.setAttribute('aria-label', `${label} URL 복사`);
+        copy.addEventListener('click', () => copyHistoryItem(index));
+        row.append(load, copy);
+        list.appendChild(row);
     });
 }
 
-// 초기화
+function loadHistory(idx) {
+    const item = getHistory()[idx];
+    if (!item) return;
+    let url;
+    try { url = new URL(item.url); } catch { showToast('기록의 URL을 읽을 수 없습니다'); return; }
+    const existing = existingUtm(url);
+    UTM_KEYS.forEach(key => { $(key).value = existing[key] || ''; });
+    $('urlInput').value = stripUtm(url);
+    syncPresetState();
+    generateURL();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    showToast('기록에서 불러왔습니다');
+}
+
+function copyHistoryItem(idx) {
+    const item = getHistory()[idx];
+    if (!item) return;
+    copyText(item.url)
+        .then(() => showToast('URL이 복사되었습니다!'))
+        .catch(() => showToast('복사하지 못했습니다. 기록을 불러온 뒤 결과 칸에서 직접 복사하세요'));
+}
+
+/* ---------- 이벤트 ---------- */
+$('urlInput').addEventListener('input', generateURL);
+UTM_KEYS.forEach(key => $(key).addEventListener('input', () => { syncPresetState(); generateURL(); }));
+document.querySelectorAll('.preset-btn').forEach(button => button.addEventListener('click', () => applyPreset(button)));
+$('importExistingBtn').addEventListener('click', importExisting);
+$('copyBtn').addEventListener('click', copyURL);
+$('clearBtn').addEventListener('click', clearAll);
+$('bulkBtn').addEventListener('click', generateBulk);
+$('bulkTsvBtn').addEventListener('click', () => copyBulk('\t'));
+$('bulkCsvBtn').addEventListener('click', () => copyBulk(','));
+$('bulkCsvSaveBtn').addEventListener('click', saveBulkCsv);
+$('historyClearBtn').addEventListener('click', clearHistory);
+
 renderHistory();
+generateURL();
 </script>
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 <script src="/special-chars/theme-toggle.js"></script>

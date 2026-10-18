@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="/special-chars/theme.css">
 <link rel="stylesheet" href="/special-chars/site-links.css">
 <title>🌐 공인 IP·접속 환경 확인 — 티모집사</title>
-<meta name="description" content="사내 IT 문의, 방화벽 허용 요청과 원격 지원에 필요한 공인 IP 주소와 접속 환경을 확인하고 복사합니다.">
+<meta name="description" content="사내 IT 문의, 방화벽 허용 요청과 원격 지원에 필요한 공인 IPv4·IPv6 주소와 브라우저·운영체제 정보를 확인하고 한 번에 복사합니다.">
 <meta property="og:title" content="🌐 공인 IP·접속 환경 확인 — 티모집사">
 <meta property="og:description" content="IT 문의와 방화벽 허용 요청에 필요한 공인 IP·접속 환경을 확인합니다.">
 <meta property="og:type" content="website">
@@ -19,6 +19,7 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
+[hidden]{display:none!important}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
 .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;overflow:hidden}
 .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
@@ -26,29 +27,38 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
 .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
 .content{padding:24px 20px}
+.mono{font-family:ui-monospace,'Cascadia Mono','SFMono-Regular',Consolas,'D2Coding','Liberation Mono',monospace}
 
-.ip-hero{background:var(--bg-btn);border:1px solid var(--border);border-radius:12px;padding:32px 20px;text-align:center;margin-bottom:20px;position:relative}
-.ip-label{font-size:13px;color:var(--text-muted);font-weight:700;margin-bottom:8px}
-.ip-value{font-size:42px;font-weight:800;letter-spacing:1px;color:var(--accent-text);word-break:break-all;line-height:1.2;margin-bottom:16px;font-variant-numeric:tabular-nums}
-.ip-type-badge{display:inline-block;background:var(--bg-bar);padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:8px}
-
-.copy-btn{background:var(--bg-bar);border:1px solid var(--border);color:var(--text-primary);padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;font-family:inherit}
-.copy-btn:hover{background:var(--bg-btn-hover);border-color:var(--text-muted)}
-.copy-btn.copied{background:#10b981;color:#fff;border-color:#10b981}
-
-.detail-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px}
-.detail-item{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px}
-.detail-item:last-child{border-bottom:none;padding-bottom:0}
-.detail-item:first-child{padding-top:0}
-.d-label{color:var(--text-muted);font-weight:600}
-.d-value{color:var(--text-primary);font-weight:500;text-align:right;max-width:65%;word-break:break-all}
-
-.loading-spinner{display:inline-block;width:30px;height:30px;border:3px solid rgba(99,102,241,0.2);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:10px}
+.ip-hero{background:var(--bg-btn);border:1px solid var(--border);border-radius:12px;padding:18px 16px;margin-bottom:20px}
+.ip-row{padding:12px 0;border-bottom:1px solid var(--border)}
+.ip-row:first-child{padding-top:0}
+.ip-row-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.ip-type-badge{display:inline-block;background:var(--bg-bar);padding:4px 10px;border-radius:12px;font-size:12px;font-weight:700;color:var(--text-secondary)}
+.ip-status{font-size:12px;color:var(--text-muted);text-align:right}
+.ip-line{display:flex;align-items:center;gap:10px}
+.ip-value{flex:1;min-width:0;font-weight:800;color:var(--accent-text);word-break:break-all;line-height:1.3;font-variant-numeric:tabular-nums}
+.ip-value.v4{font-size:26px}
+.ip-value.v6{font-size:17px}
+.ip-value.muted{font-size:14px;font-weight:600;color:var(--text-muted);font-family:inherit}
+.ip-note{margin-top:4px;font-size:12px;color:var(--text-muted);line-height:1.5}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;vertical-align:-2px;margin-right:4px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-.report-box {margin-top:16px; margin-bottom:14px; padding:16px; background:rgba(83,52,131,0.05); border-left:4px solid var(--accent); border-radius:8px; font-size:13px; line-height:1.6; color:var(--text-primary); display:none;}
-.report-box.show {display:block; animation:fadeIn 0.4s;}
-@keyframes fadeIn {from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)}}
+.copy-btn{background:var(--bg-bar);border:1px solid var(--border);color:var(--text-primary);padding:8px 14px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;flex-shrink:0;min-height:40px}
+.copy-btn:hover:not(:disabled){background:var(--bg-btn-hover)}
+.copy-btn:disabled{opacity:.45;cursor:not-allowed}
+.copy-btn.primary{background:var(--accent);border-color:var(--accent);color:var(--text-on-accent)}
+.copy-btn.primary:hover:not(:disabled){background:var(--accent-hover)}
+.hero-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.hero-actions .copy-btn{flex:1 1 auto}
+.services{margin-top:12px;font-size:12px;color:var(--text-muted);line-height:1.55}
+
+.detail-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px}
+.detail-item{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px}
+.detail-item:last-child{border-bottom:none;padding-bottom:0}
+.detail-item:first-child{padding-top:0}
+.d-label{color:var(--text-muted);font-weight:600;flex-shrink:0}
+.d-value{color:var(--text-primary);font-weight:500;text-align:right;min-width:0;word-break:break-word}
 
 .guide-section{margin-top:20px; padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-app);}
 .guide-title{font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:12px;}
@@ -60,8 +70,10 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .guide-item .guide-content{padding:12px; font-size:13px; color:var(--text-info); line-height:1.6;}
 .related-tools{margin-top:16px; padding-top:16px; border-top:1px solid var(--border);}
 .tag-container{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
-.tool-tag{padding:6px 12px; background:rgba(83,52,131,0.1); color:var(--accent-text); border-radius:16px; font-size:11px; font-weight:600; text-decoration:none; transition:all 0.2s;}
+.tool-tag{padding:6px 12px; background:var(--accent-bg); color:var(--accent-text); border-radius:16px; font-size:11px; font-weight:600; text-decoration:none; transition:all 0.2s;}
 .tool-tag:hover{background:var(--accent); color:var(--text-on-accent);}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
 .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
 .footer a:hover{color:var(--text-secondary)}
@@ -75,59 +87,98 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <a href="https://teemozipsa.com/" class="back-btn">← 도구 모음</a>
     <h1>🌐 공인 IP · 접속 환경 확인</h1>
   </div>
-  
+
   <div class="content">
-    <div class="ip-hero" id="ipContain">
-      <div id="loader" class="loading-spinner"></div>
-      <div id="ipContent" role="status" aria-live="polite" aria-atomic="true" style="display:none">
-        <div class="ip-type-badge" id="ipType">IPv4</div>
-        <div class="ip-label">현재 접속 중인 공인 IP 주소</div>
-        <div class="ip-value" id="myIp">...</div>
-        <div style="display:flex; justify-content:center; gap:8px;">
-          <button class="copy-btn" id="copyBtn" onclick="copyIp()"><span>📋</span> IP 복사하기</button>
-          <button class="copy-btn" style="background:var(--bg-card); color:var(--text-secondary); border-color:var(--border);" onclick="refreshIp()" id="refreshBtn" title="새로고침"><span>🔄</span></button>
+    <section class="ip-hero" aria-label="공인 IP 주소">
+      <div class="ip-row">
+        <div class="ip-row-head">
+          <span class="ip-type-badge">IPv4 공인 주소</span>
+          <span class="ip-status" id="v4Status" role="status"></span>
         </div>
+        <div class="ip-line">
+          <div class="ip-value v4 mono" id="v4Value">…</div>
+          <button type="button" class="copy-btn" id="copyV4" disabled aria-label="IPv4 주소 복사">📋 복사</button>
+        </div>
+        <p class="ip-note" id="v4Note" hidden></p>
       </div>
-    </div>
+      <div class="ip-row">
+        <div class="ip-row-head">
+          <span class="ip-type-badge">IPv6 공인 주소</span>
+          <span class="ip-status" id="v6Status" role="status"></span>
+        </div>
+        <div class="ip-line">
+          <div class="ip-value v6 mono" id="v6Value">…</div>
+          <button type="button" class="copy-btn" id="copyV6" disabled aria-label="IPv6 주소 복사">📋 복사</button>
+        </div>
+        <p class="ip-note" id="v6Note" hidden></p>
+      </div>
+      <div class="hero-actions">
+        <button type="button" class="copy-btn primary" id="copyReport">🧾 IT 문의용 정보 복사</button>
+        <button type="button" class="copy-btn" id="refreshBtn">🔄 다시 조회</button>
+      </div>
+      <p class="services" id="serviceList">조회 서비스: <strong>api.ipify.org</strong>(IPv4), <strong>api6.ipify.org</strong>(IPv6), <strong>cloudflare.com</strong>(국가·기본 연결·프로토콜, 실패 시 api.country.is). 이 페이지를 열면 브라우저가 이 서비스들에 직접 요청을 보냅니다.</p>
+    </section>
 
     <div class="detail-card">
       <div class="detail-item">
         <span class="d-label">접속 국가</span>
-        <span class="d-value" id="locStr">...</span>
+        <span class="d-value" id="locStr">…</span>
+      </div>
+      <div class="detail-item">
+        <span class="d-label">기본 연결 경로</span>
+        <span class="d-value" id="pathStr">…</span>
       </div>
       <div class="detail-item">
         <span class="d-label">통신 프로토콜</span>
-        <span class="d-value" id="httpStr">...</span>
+        <span class="d-value" id="httpStr">…</span>
       </div>
       <div class="detail-item">
-        <span class="d-label">사용 브라우저</span>
-        <span class="d-value" id="uaStr">...</span>
+        <span class="d-label">브라우저</span>
+        <span class="d-value" id="uaStr">…</span>
+      </div>
+      <div class="detail-item">
+        <span class="d-label">운영체제</span>
+        <span class="d-value" id="osStr">…</span>
+      </div>
+      <div class="detail-item">
+        <span class="d-label">확인 시각</span>
+        <span class="d-value" id="timeStr">…</span>
       </div>
     </div>
-    
-    <div id="reportBox" class="report-box"></div>
 
     <div class="guide-section">
       <div class="guide-title">🤔 내 IP 주소 확인 가이드 & Q&A</div>
       <details class="guide-item">
         <summary>IP (Internet Protocol) 주소란 무엇인가요?</summary>
         <div class="guide-content">
-          네트워크 상에서 데이터를 송수신하기 위해 스마트폰, PC 등 통신 기기마다 부여되는 고유한 논리적 주소입니다. 인터넷 세상의 '우편번호'와 같은 역할을 하며, 본 도구에서 표시되는 것은 아파트 동/호수 같은 내부 사설 IP가 아니라 외부 인터넷 망으로 통신할 때 사용되는 <strong>공인 IP(Public IP)</strong>입니다.
-        </div>
-      </details>
-      <details class="guide-item">
-        <summary>내 IP 위치가 실제 위치와 다르게 나와요.</summary>
-        <div class="guide-content">
-          IP 주소에 매핑된 위치 정보는 통신사(SKT, KT, LG 등)가 할당받은 지역 네트워크 라우터의 위치를 기반으로 합니다. 따라서 GPS 방식이 아니기 때문에 본인의 정확한 실제 위치나 동(洞) 단위까지 일치하지 않으며, 인근 통신사 국사 또는 데이터센터 위치가 표시되는 것이 정상입니다.
+          네트워크에서 데이터를 주고받기 위해 스마트폰, PC 같은 통신 기기에 부여되는 논리적 주소입니다. 인터넷의 '우편 주소'와 같은 역할을 합니다. 공유기나 회사 내부망 안에서만 쓰는 주소는 사설 IP, 그 네트워크가 인터넷으로 나갈 때 바깥에서 보이는 주소는 <strong>공인 IP(Public IP)</strong>라고 부르며, 이 도구가 보여 주는 것은 공인 IP입니다. 같은 공유기나 회사 네트워크를 쓰는 여러 기기는 보통 하나의 공인 IP를 함께 사용합니다.
         </div>
       </details>
       <details class="guide-item">
         <summary>IPv4와 IPv6의 차이점은 무엇인가요?</summary>
         <div class="guide-content">
-          <strong>IPv4</strong>는 <code>192.168.0.1</code>처럼 4개 숫자 묶음으로 표기되는 구형 체계이며, 주소 고갈 문제를 겪고 있습니다. 이를 해결하기 위해 도입된 <strong>IPv6</strong>는 <code>2001:0db8:85a3::</code> 등 16진수로 훨씬 길고 복잡하게 표현되는 차세대 인터넷 프로토콜 표준입니다. 접속 환경(통신사, 공유기 설정)에 따라 표시되는 버전이 다를 수 있습니다.
+          <strong>IPv4</strong>는 <code>203.0.113.10</code>처럼 0~255 사이 숫자 네 개를 점으로 이은 형식이고, <strong>IPv6</strong>는 <code>2001:db8::1</code>처럼 16진수 묶음을 콜론으로 이은 훨씬 긴 형식입니다(두 예시 모두 문서용으로 예약된 주소입니다). <code>192.168.x.x</code>나 <code>10.x.x.x</code>는 공유기·사내망 안에서만 쓰는 사설 IPv4라 이 도구에는 나타나지 않습니다. 국내 LTE·5G와 일부 가정용 인터넷은 IPv4와 IPv6를 함께 쓰는 듀얼 스택이라 웹사이트가 IPv6 주소만 보는 경우가 많습니다. 그래서 이 도구는 IPv4 전용 조회와 IPv6 전용 조회를 동시에 실행해 두 주소를 모두 보여 줍니다.
         </div>
       </details>
-      
+      <details class="guide-item">
+        <summary>방화벽 허용 요청에는 어떤 주소를 전달해야 하나요?</summary>
+        <div class="guide-content">
+          사내 방화벽, 클라우드 보안 그룹, 외부 협력사 시스템의 허용 목록은 대부분 IPv4 기준이므로 IPv4 주소를 먼저 전달합니다. 상대 시스템이 IPv6 접속도 받는다면 IPv6 주소를 함께 적어야 접속이 막히지 않습니다. 모바일 데이터나 일반 가정용 인터넷의 공인 IP는 재접속할 때마다 바뀔 수 있어, 고정 IP가 아니라면 허용 목록이 금방 무효가 될 수 있다는 점도 함께 알려 주세요. 'IT 문의용 정보 복사'를 누르면 IPv4·IPv6·브라우저·운영체제·확인 시각이 한 번에 복사되어 티켓이나 메신저에 바로 붙여넣을 수 있습니다.
+        </div>
+      </details>
+      <details class="guide-item">
+        <summary>접속 국가가 실제 위치와 다르게 나와요.</summary>
+        <div class="guide-content">
+          이 도구는 IP 주소 기준의 국가만 표시하며 시·군·동 단위 위치는 조회하지 않습니다. 국가 정보는 조회 서비스가 IP 주소 할당·위치 데이터베이스를 바탕으로 판단한 값이므로 GPS 위치와는 다릅니다. VPN, 해외 로밍, 회사 프록시, 브라우저의 IP 보호·비공개 릴레이 기능을 쓰면 실제로 있는 나라와 다른 국가가 표시될 수 있으며, 이는 정상적인 동작입니다.
+        </div>
+      </details>
+      <details class="guide-item">
+        <summary>브라우저와 운영체제는 어떻게 판별하나요?</summary>
+        <div class="guide-content">
+          브라우저가 보내는 사용자 에이전트(User-Agent) 문자열과, 지원되는 경우 User-Agent Client Hints 정보를 읽어 판별합니다. 네이버 웨일, 삼성 인터넷, Opera, Edge처럼 Chrome 기반 브라우저도 구분하고, 카카오톡·네이버 앱 안에서 열면 인앱 브라우저로 표시합니다. 최신 Chrome 계열은 개인정보 보호를 위해 일부 정보를 줄여 보내므로, Client Hints를 지원하지 않는 환경에서는 Windows 10과 11이 'Windows 10/11'로 함께 표시될 수 있습니다.
+        </div>
+      </details>
+
       <div class="related-tools">
         <div class="guide-title" style="font-size:12px; margin-bottom:8px;">🛠 연관 도구 추천</div>
         <div class="tag-container">
@@ -139,155 +190,339 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </div>
   <section class="work-context" aria-labelledby="ipWorkTitle">
     <h2 id="ipWorkTitle">IT 지원과 방화벽 허용 요청에 쓰는 방법</h2>
-    <p><strong>업무 예시:</strong> 외부 시스템 접속이 차단됐을 때 공인 IP를 복사해 사내 IT 담당자에게 전달하거나, 원격 지원 전에 브라우저와 운영체제 정보를 함께 확인할 수 있습니다. 사설 IP나 사내 장비 주소를 찾는 도구는 아닙니다.</p>
+    <p><strong>업무 예시:</strong> 외부 시스템 접속이 차단됐을 때 'IT 문의용 정보 복사'로 공인 IP와 접속 환경을 한 번에 복사해 사내 IT 담당자에게 전달하거나, 원격 지원 전에 브라우저와 운영체제 정보를 함께 확인할 수 있습니다. 사설 IP나 사내 장비 주소를 찾는 도구는 아닙니다.</p>
     <p><strong>확인 기준:</strong> 회사 VPN, 프록시, 모바일 테더링을 사용하면 실제 기기 위치가 아니라 해당 네트워크의 출구 IP가 표시될 수 있습니다. IPv4와 IPv6 허용 규칙이 다를 수 있으므로 요청 대상 시스템이 요구하는 주소 형식을 먼저 확인하세요.</p>
-    <p><strong>개인정보 처리:</strong> 공인 IP 확인을 위해 페이지에 표시된 외부 조회 서비스로 네트워크 요청이 전송됩니다. 결과를 복사해 메신저나 티켓에 남길 때는 조직의 보안 정책과 보관 기간을 따르세요.</p>
+    <p><strong>개인정보 처리:</strong> 공인 IP 확인을 위해 이 페이지를 열거나 다시 조회할 때 브라우저가 화면 위쪽 '조회 서비스'에 적힌 외부 서비스(ipify, Cloudflare, 필요 시 country.is)로 직접 요청을 보냅니다. 각 서비스의 로그 보관 여부는 해당 서비스 정책을 따르며, 이 사이트 서버에는 조회 결과가 저장되지 않습니다. 결과를 복사해 메신저나 티켓에 남길 때는 조직의 보안 정책과 보관 기간을 따르세요.</p>
   </section>
   </main>
 <footer class="footer"><span>외부 공인 IP 조회 서비스 사용</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
 <nav class="site-policy-links" aria-label="사이트 정책"><a href="/about.html">사이트 소개</a><a href="/editorial-policy.html">편집정책</a><a href="/contact.html">문의</a><a href="/privacy.html">개인정보처리방침</a></nav>
 </div>
 
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 <script>
-function isValidIp(value) {
-  if (typeof value !== 'string') return false;
-  const candidate = value.trim();
-  if (/^(?:\d{1,3}\.){3}\d{1,3}$/.test(candidate)) {
-    return candidate.split('.').every(part => Number(part) >= 0 && Number(part) <= 255);
-  }
-  if (!candidate.includes(':')) return false;
-  try {
-    return new URL(`http://[${candidate}]/`).hostname.startsWith('[');
-  } catch(e) {
-    return false;
-  }
-}
+const ENDPOINTS = {
+  v4: 'https://api.ipify.org?format=json',
+  v6: 'https://api6.ipify.org?format=json',
+  trace: 'https://cloudflare.com/cdn-cgi/trace',
+  country: 'https://api.country.is'
+};
+const TIMEOUT_MS = 8000;
+const $ = id => document.getElementById(id);
 
 let ipRequestSequence = 0;
+const state = { v4: null, v6: null, loc: '', http: '', primary: '', checkedAt: null, browser: '', os: '' };
+
+function isValidIpv4(value) {
+  return typeof value === 'string' && /^(?:\d{1,3}\.){3}\d{1,3}$/.test(value.trim())
+    && value.trim().split('.').every(part => Number(part) <= 255);
+}
+
+function isValidIpv6(value) {
+  if (typeof value !== 'string' || !value.includes(':')) return false;
+  try { return new URL(`http://[${value.trim()}]/`).hostname.startsWith('['); } catch (e) { return false; }
+}
+
+function isValidIp(value) { return isValidIpv4(value) || isValidIpv6(value); }
+
 async function fetchWithTimeout(url) {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 8000);
+  const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
   try {
-    return await fetch(url, { signal: controller.signal, cache: 'no-store' });
+    const res = await fetch(url, { signal: controller.signal, cache: 'no-store', credentials: 'omit' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res;
   } finally {
     clearTimeout(timeoutId);
   }
 }
 
-function refreshIp() {
-  document.getElementById('loader').style.display = 'inline-block';
-  document.getElementById('ipContent').style.display = 'none';
-  document.getElementById('reportBox').classList.remove('show');
-  fetchIpInfo();
+/* ---------- 브라우저·운영체제 판별 ---------- */
+function detectBrowser(ua) {
+  const major = pattern => { const m = pattern.exec(ua); return m ? m[1] : ''; };
+  const rules = [
+    [/KAKAOTALK(?:\/|\s)(\d+)/i, '카카오톡 인앱 브라우저'],
+    [/NAVER\(inapp;[^)]*?(\d+)(?:\.\d+)*\)/, '네이버 앱 인앱 브라우저'],
+    [/Instagram\s(\d+)/, 'Instagram 인앱 브라우저'],
+    [/(?:FBAV|FBAN)\/(\d+)?/, 'Facebook 인앱 브라우저'],
+    [/\bLine\/(\d+)/, 'LINE 인앱 브라우저'],
+    [/CriOS\/(\d+)/, 'Chrome (iOS)'],
+    [/FxiOS\/(\d+)/, 'Firefox (iOS)'],
+    [/EdgiOS\/(\d+)/, 'Microsoft Edge (iOS)'],
+    [/Whale\/(\d+)/, '네이버 웨일'],
+    [/SamsungBrowser\/(\d+)/, '삼성 인터넷'],
+    [/(?:OPR|OPX|Opera)\/(\d+)/, 'Opera'],
+    [/YaBrowser\/(\d+)/, 'Yandex Browser'],
+    [/Edg(?:A)?\/(\d+)/, 'Microsoft Edge'],
+    [/Firefox\/(\d+)/, 'Mozilla Firefox'],
+    [/(?:Chrome|Chromium)\/(\d+)/, 'Google Chrome'],
+    [/Version\/(\d+)(?:\.\d+)*.*Safari\//, 'Apple Safari']
+  ];
+  for (const [pattern, name] of rules) {
+    if (pattern.test(ua)) {
+      const version = major(pattern);
+      return version ? `${name} ${version}` : name;
+    }
+  }
+  if (/AppleWebKit/.test(ua) && /(iPhone|iPad|iPod)/.test(ua)) return 'iOS 웹뷰 (앱 내 브라우저)';
+  return '기타 웹 브라우저';
+}
+
+function detectOs(ua, hints) {
+  const touchMac = /Macintosh/.test(ua) && typeof navigator !== 'undefined' && navigator.maxTouchPoints > 1;
+  if (/(iPhone|iPod)/.test(ua)) {
+    const m = /OS (\d+)[_.](\d+)/.exec(ua);
+    return m ? `iOS ${m[1]}.${m[2]}` : 'iOS';
+  }
+  if (/iPad/.test(ua) || touchMac) {
+    const m = /OS (\d+)[_.](\d+)/.exec(ua);
+    return m ? `iPadOS ${m[1]}.${m[2]}` : 'iPadOS';
+  }
+  if (/Android/.test(ua)) {
+    if (hints && hints.platformVersion) return `Android ${hints.platformVersion.split('.')[0]}`;
+    const m = /Android (\d+(?:\.\d+)?)/.exec(ua);
+    // Chrome의 축소된 UA는 "Android 10; K"로 고정되므로 버전을 믿지 않는다.
+    if (m && !/Android 10; K\)/.test(ua)) return `Android ${m[1]}`;
+    return 'Android';
+  }
+  if (/CrOS/.test(ua)) return 'ChromeOS';
+  if (/Windows NT 10\.0/.test(ua)) {
+    if (hints && hints.platformVersion) return Number(hints.platformVersion.split('.')[0]) >= 13 ? 'Windows 11' : 'Windows 10';
+    return 'Windows 10/11';
+  }
+  if (/Windows NT 6\.3/.test(ua)) return 'Windows 8.1';
+  if (/Windows NT 6\.2/.test(ua)) return 'Windows 8';
+  if (/Windows NT 6\.1/.test(ua)) return 'Windows 7';
+  if (/Windows/.test(ua)) return 'Windows';
+  if (/Mac OS X|Macintosh/.test(ua)) {
+    if (hints && hints.platformVersion) return `macOS ${hints.platformVersion.split('.').slice(0, 2).join('.')}`;
+    return 'macOS';
+  }
+  if (/Linux/.test(ua)) return 'Linux';
+  return '알 수 없음';
+}
+
+async function detectEnvironment() {
+  const ua = navigator.userAgent || '';
+  state.browser = detectBrowser(ua);
+  state.os = detectOs(ua, null);
+  renderEnvironment();
+  try {
+    const uaData = navigator.userAgentData;
+    if (uaData && typeof uaData.getHighEntropyValues === 'function') {
+      const hints = await uaData.getHighEntropyValues(['platformVersion']);
+      state.os = detectOs(ua, hints);
+      renderEnvironment();
+    }
+  } catch (e) {}
+}
+
+function renderEnvironment() {
+  $('uaStr').textContent = state.browser || '알 수 없음';
+  $('osStr').textContent = state.os || '알 수 없음';
+}
+
+/* ---------- 조회 ---------- */
+function countryName(code) {
+  if (!code || !/^[A-Z]{2}$/i.test(code)) return '';
+  const upper = code.toUpperCase();
+  if (upper === 'XX' || upper === 'T1') return upper === 'T1' ? 'Tor 네트워크 (T1)' : '';
+  try {
+    if (typeof Intl.DisplayNames === 'function') return `${new Intl.DisplayNames(['ko'], { type: 'region' }).of(upper)} (${upper})`;
+  } catch (e) {}
+  return upper;
+}
+
+function formatTime(date) {
+  const pad = n => String(n).padStart(2, '0');
+  const offset = -date.getTimezoneOffset();
+  const sign = offset >= 0 ? '+' : '-';
+  const abs = Math.abs(offset);
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())} (UTC${sign}${pad(Math.floor(abs / 60))}:${pad(abs % 60)})`;
+}
+
+function setFamily(family, status, ip, note) {
+  state[family] = { status, ip: ip || '' };
+  const value = $(family + 'Value');
+  const label = $(family + 'Status');
+  const noteEl = $(family + 'Note');
+  const copy = $(family === 'v4' ? 'copyV4' : 'copyV6');
+  value.classList.toggle('muted', status !== 'ok');
+  if (status === 'loading') {
+    value.textContent = '…';
+    label.innerHTML = '<span class="spinner" aria-hidden="true"></span>조회 중';
+  } else if (status === 'ok') {
+    value.textContent = ip;
+    label.textContent = '확인됨';
+  } else {
+    value.textContent = family === 'v4' ? 'IPv4 주소를 확인하지 못했습니다' : 'IPv6 연결이 확인되지 않았습니다';
+    label.textContent = '확인 불가';
+  }
+  copy.disabled = status !== 'ok';
+  noteEl.textContent = note || '';
+  noteEl.hidden = !note;
+}
+
+function renderDetails(done) {
+  $('locStr').textContent = state.loc || (done ? '확인 불가' : '조회 중…');
+  $('httpStr').textContent = state.http || (done ? '확인 불가' : '조회 중…');
+  if (state.primary) {
+    $('pathStr').textContent = state.primary === 'v6'
+      ? 'IPv6 (웹사이트는 주로 IPv6 주소를 봅니다)'
+      : 'IPv4 (웹사이트는 IPv4 주소를 봅니다)';
+  } else {
+    $('pathStr').textContent = done ? '확인 불가' : '조회 중…';
+  }
+  $('timeStr').textContent = state.checkedAt ? formatTime(state.checkedAt) : '…';
+}
+
+async function lookupFamily(family, requestId) {
+  try {
+    const res = await fetchWithTimeout(ENDPOINTS[family]);
+    const json = await res.json();
+    const ip = String(json && json.ip || '').trim();
+    const valid = family === 'v4' ? isValidIpv4(ip) : isValidIpv6(ip);
+    if (!valid) throw new Error('invalid ip');
+    if (requestId === ipRequestSequence) setFamily(family, 'ok', ip);
+    return ip;
+  } catch (e) {
+    return '';
+  }
+}
+
+async function lookupTrace(requestId) {
+  try {
+    const res = await fetchWithTimeout(ENDPOINTS.trace);
+    const text = await res.text();
+    const data = {};
+    text.split('\n').forEach(line => {
+      const index = line.indexOf('=');
+      if (index > 0) data[line.slice(0, index)] = line.slice(index + 1).trim();
+    });
+    if (!isValidIp(data.ip)) throw new Error('invalid trace');
+    return { ip: data.ip, loc: data.loc || '', http: data.http || '', tls: data.tls || '' };
+  } catch (e) {
+    try {
+      const res = await fetchWithTimeout(ENDPOINTS.country);
+      const json = await res.json();
+      if (!isValidIp(json && json.ip)) throw new Error('invalid country.is');
+      return { ip: json.ip, loc: json.country || '', http: '', tls: '' };
+    } catch (e2) {
+      return null;
+    }
+  }
 }
 
 async function fetchIpInfo() {
   const requestId = ++ipRequestSequence;
-  let ip = '알 수 없음', loc = '알 수 없음', http = '알 수 없음', ua = navigator.userAgent;
-  try {
-    try {
-      const res = await fetchWithTimeout('https://cloudflare.com/cdn-cgi/trace');
-      if (!res.ok) throw new Error(`Cloudflare HTTP ${res.status}`);
-      const text = await res.text();
-      text.split('\n').filter(Boolean).forEach(line => {
-        const [k, v] = line.split('=');
-        if (k === 'ip') ip = v;
-        if (k === 'loc') loc = v;
-        if (k === 'http') http = v;
-        if (k === 'uag') ua = v;
-      });
-      if (!isValidIp(ip)) throw new Error('Cloudflare 응답에 유효한 IP가 없습니다.');
-    } catch(err) {
-      console.warn("Cloudflare lookup unavailable, trying fallback", err);
-      try {
-        const res = await fetchWithTimeout('https://api.country.is');
-        if (!res.ok) throw new Error(`country.is HTTP ${res.status}`);
-        const json = await res.json();
-        ip = json.ip;
-        loc = json.country || '알 수 없음';
-        if (!isValidIp(ip)) throw new Error('country.is 응답에 유효한 IP가 없습니다.');
-      } catch(e2) {
-        const res = await fetchWithTimeout('https://api64.ipify.org?format=json');
-        if (!res.ok) throw new Error(`ipify HTTP ${res.status}`);
-        const json = await res.json();
-        ip = json.ip;
-        if (!isValidIp(ip)) throw new Error('ipify 응답에 유효한 IP가 없습니다.');
-      }
-    }
+  Object.assign(state, { loc: '', http: '', primary: '', checkedAt: new Date() });
+  setFamily('v4', 'loading');
+  setFamily('v6', 'loading');
+  renderDetails(false);
+  $('refreshBtn').disabled = true;
 
-    if (requestId !== ipRequestSequence) return;
+  const tracePromise = lookupTrace(requestId).then(trace => {
+    if (requestId !== ipRequestSequence || !trace) return trace;
+    state.loc = countryName(trace.loc);
+    state.http = [trace.http && trace.http.toUpperCase().replace('HTTP/', 'HTTP/'), trace.tls].filter(Boolean).join(' · ');
+    state.primary = isValidIpv6(trace.ip) ? 'v6' : 'v4';
+    renderDetails(false);
+    return trace;
+  });
+  const [v4, v6, trace] = await Promise.all([lookupFamily('v4', requestId), lookupFamily('v6', requestId), tracePromise]);
+  if (requestId !== ipRequestSequence) return;
 
-    const isV6 = ip.includes(':');
-
-    document.getElementById('loader').style.display = 'none';
-    document.getElementById('ipContent').style.display = 'block';
-
-    document.getElementById('myIp').textContent = ip;
-    document.getElementById('myIp').style.fontSize = ip.length > 20 ? '28px' : '42px';
-    document.getElementById('ipType').textContent = isV6 ? 'IPv6 프로토콜' : 'IPv4 프로토콜';
-    
-    let locKor = loc;
-    if (loc !== '알 수 없음' && typeof Intl.DisplayNames === 'function') {
-      try { locKor = new Intl.DisplayNames(['ko'], {type: 'region'}).of(loc) + ` (${loc})`; } catch(e){}
-    }
-    
-    document.getElementById('locStr').textContent = locKor;
-    document.getElementById('httpStr').textContent = http;
-    
-    let uaSimple = '기타 웹 브라우저';
-    if(ua.includes('Edg/')) uaSimple = 'Microsoft Edge';
-    else if(ua.includes('Chrome')) uaSimple = 'Google Chrome';
-    else if(ua.includes('Safari') && !ua.includes('Chrome')) uaSimple = 'Apple Safari';
-    else if(ua.includes('Firefox')) uaSimple = 'Mozilla Firefox';
-    
-    const os = ua.includes('Windows') ? 'Windows' : ua.includes('Mac') ? 'macOS/iOS' : ua.includes('Android') ? 'Android' : 'Linux';
-    document.getElementById('uaStr').textContent = `${uaSimple} (${os})`;
-
-    updateReport(ip, isV6 ? 'IPv6' : 'IPv4', locKor, http, uaSimple, os);
-
-  } catch(e) {
-    if (requestId !== ipRequestSequence) return;
-    document.getElementById('loader').style.display = 'none';
-    document.getElementById('ipContent').style.display = 'block';
-    document.getElementById('myIp').textContent = '조회 실패(네트워크·차단 설정 확인)';
-    document.getElementById('myIp').style.fontSize = '24px';
-    document.getElementById('ipType').textContent = '조회 실패';
-    document.getElementById('locStr').textContent = '—';
-    document.getElementById('httpStr').textContent = '—';
-    document.getElementById('uaStr').textContent = '—';
-    const report = document.getElementById('reportBox');
-    report.textContent = '';
-    report.classList.remove('show');
+  // 한쪽 전용 조회가 막혔어도 Cloudflare가 본 주소로 보완한다.
+  if (!v4) {
+    if (trace && isValidIpv4(trace.ip)) setFamily('v4', 'ok', trace.ip, 'IPv4 전용 조회가 실패해 Cloudflare가 확인한 주소를 표시합니다.');
+    else setFamily('v4', 'fail', '', 'IPv6 전용 네트워크이거나 조회 요청이 차단되었을 수 있습니다. 광고 차단 확장 프로그램, 회사 보안 정책을 확인하세요.');
   }
-}
-
-function updateReport(ip, ver, loc, proto, browser, os) {
-  const box = document.getElementById('reportBox');
-  if(!ip || ip.includes('오류')) return;
-  const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  })[char]);
-  box.innerHTML = `🛡️ <b>네트워크 접속 분석 리포트</b><br/>확인된 공인 IP 주소는 <b>${escapeHtml(ip)}</b>이며, <b>${escapeHtml(ver)}</b> 환경에서 접속되었습니다. 국가 코드는 <b>${escapeHtml(loc)}</b>, HTTP 연결 정보는 <b>${escapeHtml(proto)}</b>, 브라우저 표시는 <b>${escapeHtml(os)}</b> 기반 <b>${escapeHtml(browser)}</b>입니다. IP 확인을 위해 Cloudflare, country.is 또는 ipify 중 사용 가능한 외부 조회 서비스에 브라우저가 직접 연결하며, 각 서비스의 로그 보관 여부는 해당 서비스 정책을 따릅니다.`;
-  box.classList.add('show');
-}
-
-async function copyIp() {
-  const ip = document.getElementById('myIp').textContent;
-  if(ip === '...' || ip.includes('실패')) return;
-  const btn = document.getElementById('copyBtn');
-  try {
-    await navigator.clipboard.writeText(ip);
-    btn.innerHTML = '<span>✅</span> 복사 완료!';
-    btn.classList.add('copied');
-  } catch(e) {
-    btn.innerHTML = '<span>⚠️</span> 복사 실패';
+  if (!v6) {
+    if (trace && isValidIpv6(trace.ip)) setFamily('v6', 'ok', trace.ip, 'IPv6 전용 조회가 실패해 Cloudflare가 확인한 주소를 표시합니다.');
+    else setFamily('v6', 'fail', '', 'IPv4만 쓰는 네트워크에서는 정상입니다. 웹사이트는 IPv4 주소로 접속을 받습니다.');
   }
-  setTimeout(() => {
-    btn.innerHTML = '<span>📋</span> IP 복사하기';
-    btn.classList.remove('copied');
-  }, 2000);
+  if (!state.primary && (v4 || v6)) state.primary = v6 && !v4 ? 'v6' : 'v4';
+  state.checkedAt = new Date();
+  renderDetails(true);
+  $('refreshBtn').disabled = false;
+  if (!v4 && !v6 && !trace) showToast('공인 IP를 조회하지 못했습니다. 네트워크와 차단 설정을 확인하세요');
 }
 
+/* ---------- 복사 ---------- */
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+  return new Promise((resolve, reject) => {
+    const helper = document.createElement('textarea');
+    helper.value = text;
+    helper.setAttribute('readonly', '');
+    helper.style.position = 'fixed';
+    helper.style.opacity = '0';
+    document.body.appendChild(helper);
+    helper.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    helper.remove();
+    ok ? resolve() : reject(new Error('copy failed'));
+  });
+}
+
+function selectText(element) {
+  try {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  } catch (e) {}
+}
+
+function copyIp(family) {
+  const entry = state[family];
+  if (!entry || entry.status !== 'ok') return;
+  copyText(entry.ip)
+    .then(() => showToast(`${family === 'v4' ? 'IPv4' : 'IPv6'} 주소를 복사했습니다`))
+    .catch(() => { selectText($(family + 'Value')); showToast('복사하지 못했습니다. 선택된 주소를 직접 복사하세요'); });
+}
+
+function buildReport() {
+  const ip = family => state[family] && state[family].status === 'ok' ? state[family].ip : '확인되지 않음';
+  return [
+    '[접속 환경 정보]',
+    `IPv4: ${ip('v4')}`,
+    `IPv6: ${ip('v6')}`,
+    `기본 연결: ${state.primary === 'v6' ? 'IPv6' : state.primary === 'v4' ? 'IPv4' : '확인되지 않음'}`,
+    `국가: ${state.loc || '확인되지 않음'}`,
+    `브라우저: ${state.browser || '알 수 없음'}`,
+    `운영체제: ${state.os || '알 수 없음'}`,
+    `확인 시각: ${state.checkedAt ? formatTime(state.checkedAt) : '알 수 없음'}`
+  ].join('\n');
+}
+
+function copyReport() {
+  const text = buildReport();
+  copyText(text)
+    .then(() => showToast('IT 문의용 정보를 복사했습니다'))
+    .catch(() => showToast('복사하지 못했습니다. 화면의 값을 직접 복사하세요'));
+}
+
+let toastTimer = null;
+function showToast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function refreshIp() { fetchIpInfo(); }
+
+$('copyV4').addEventListener('click', () => copyIp('v4'));
+$('copyV6').addEventListener('click', () => copyIp('v6'));
+$('copyReport').addEventListener('click', copyReport);
+$('refreshBtn').addEventListener('click', refreshIp);
+
+detectEnvironment();
 fetchIpInfo();
 </script>
 <script src="/special-chars/theme-toggle.js"></script>

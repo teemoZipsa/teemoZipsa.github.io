@@ -28,49 +28,76 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
 .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
 .content{padding:24px 20px}
+.mono{font-family:ui-monospace,'Cascadia Mono','SFMono-Regular',Consolas,'D2Coding','Liberation Mono',monospace}
 
-.pw-display{background:var(--bg-bar);border:2px solid #3a3a6a;border-radius:12px;padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;min-height:60px}
-.pw-text{flex:1;font-family:'Pretendard',monospace;font-size:20px;font-weight:600;word-break:break-all;line-height:1.4;color:var(--text-primary);letter-spacing:1px}
+.pw-display{background:var(--bg-bar);border:2px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;min-height:60px}
+.pw-text{flex:1;min-width:0;font-size:20px;font-weight:600;word-break:break-all;line-height:1.45;color:var(--text-primary);letter-spacing:.5px}
+.pw-text.is-message{font-family:inherit;font-size:14px;font-weight:600;letter-spacing:0;color:var(--status-red-text)}
 .pw-actions{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
-.pw-btn{width:40px;height:40px;border-radius:10px;border:none;font-size:18px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
-.pw-btn:active{transform:scale(.9)}
+.pw-btn{width:44px;height:44px;border-radius:10px;border:none;font-size:18px;cursor:pointer;transition:background .2s,transform .1s;display:flex;align-items:center;justify-content:center}
+.pw-btn:active{transform:scale(.94)}
 .btn-copy{background:var(--accent);color:var(--text-on-accent)}
 .btn-copy:hover{background:var(--accent-hover)}
 .btn-regen{background:var(--bg-btn);color:var(--text-label)}
 .btn-regen:hover{background:var(--bg-btn-hover);color:var(--text-primary)}
 
 .strength-bar{height:6px;background:var(--bg-btn);border-radius:3px;margin-bottom:6px;overflow:hidden}
-.strength-fill{height:100%;border-radius:3px;transition:width .3s,background .3s}
-.strength-label{font-size:12px;text-align:right;margin-bottom:16px;font-weight:600}
+.strength-fill{height:100%;width:0;border-radius:3px;transition:width .3s,background .3s}
+.strength-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:18px;font-size:13px}
+.strength-label{font-weight:700}
+.strength-detail{color:var(--text-muted)}
 
-.section-title{font-size:13px;color:var(--text-section);font-weight:600;margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px}
+.section-title{font-size:13px;color:var(--text-section);font-weight:600;margin-bottom:10px;letter-spacing:.3px}
 
-.length-row{display:flex;align-items:center;gap:12px;margin-bottom:18px}
-.length-row input[type=range]{flex:1;accent-color:#533483;height:6px}
-.length-value{background:var(--bg-btn);padding:6px 12px;border-radius:8px;font-size:16px;font-weight:700;min-width:44px;text-align:center;color:var(--text-primary)}
+.length-row{display:flex;align-items:center;gap:8px;margin-bottom:18px}
+.length-row input[type=range]{flex:1;min-width:0;accent-color:var(--accent);height:6px}
+.length-value{background:var(--bg-btn);padding:6px 10px;border-radius:8px;font-size:16px;font-weight:700;min-width:48px;text-align:center;color:var(--text-primary);font-variant-numeric:tabular-nums}
+.step-btn{width:44px;height:44px;border:1px solid var(--border);border-radius:10px;background:var(--bg-bar);color:var(--text-primary);font-size:18px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:inherit}
+.step-btn:hover{background:var(--bg-btn-hover)}
 
-.options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .option{position:relative;display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg-btn);border-radius:10px;cursor:pointer;user-select:none;transition:background .2s}
 .option:hover{background:var(--bg-btn-hover)}
+.option.wide{grid-column:1 / -1}
 .option input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
-.checkbox{width:22px;height:22px;border:2px solid #555;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s;flex-shrink:0}
+.checkbox{width:22px;height:22px;border:2px solid var(--text-muted);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;line-height:1;color:transparent;background:var(--bg-app);transition:background .2s,border-color .2s,color .2s;flex-shrink:0}
 .option input:focus-visible~.checkbox{outline:3px solid var(--focus-ring);outline-offset:3px}
-.option input:checked~.checkbox{background:var(--accent);border-color:var(--accent)}
-.option-label{font-size:13px;line-height:1.3}
-.option-label small{display:block;color:var(--text-muted);font-size:11px;margin-top:2px}
+.option input:checked~.checkbox{background:var(--accent);border-color:var(--accent);color:var(--text-on-accent)}
+.option-label{font-size:14px;line-height:1.3}
+.option-label small{display:block;color:var(--text-muted);font-size:12px;margin-top:2px}
 
-.history-section{margin-top:20px}
-.history-list{max-height:160px;overflow-y:auto}
-.history-list::-webkit-scrollbar{width:4px}
-.history-list::-webkit-scrollbar-thumb{background:var(--bg-btn-hover);border-radius:2px}
-.history-item{display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;border:0;border-bottom:1px solid var(--border);background:none;text-align:left;font-size:13px;font-family:monospace;color:var(--text-label);cursor:pointer;transition:background .2s}
-.history-item:hover{background:rgba(83,52,131,.15);color:var(--text-primary)}
-.history-item .idx{color:var(--text-muted);font-size:11px;width:16px}
+.symbol-field{margin-bottom:20px}
+.symbol-field label{display:block;font-size:14px;font-weight:600;color:var(--text-secondary);margin-bottom:6px}
+.symbol-row{display:flex;gap:8px}
+.symbol-row input{flex:1;min-width:0;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-input);color:var(--text-primary);font-size:16px}
+.symbol-row input:disabled{opacity:.55}
+.small-btn{padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-bar);color:var(--text-primary);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.small-btn:hover{background:var(--bg-btn-hover)}
+.field-note{margin-top:6px;font-size:12px;line-height:1.5;color:var(--text-muted)}
+.field-error{margin-top:6px;font-size:13px;line-height:1.5;color:var(--status-red-text);font-weight:600}
+.field-error:empty{display:none}
+
+.bulk-section{margin-top:4px;padding-top:18px;border-top:1px solid var(--border)}
+.bulk-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.bulk-row label{font-size:14px;color:var(--text-secondary)}
+.bulk-row select{padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--bg-input);color:var(--text-primary);font-size:16px}
+.primary-btn{padding:10px 14px;border:none;border-radius:8px;background:var(--accent);color:var(--text-on-accent);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.primary-btn:hover{background:var(--accent-hover)}
+.bulk-list{list-style:none;margin:12px 0 8px;max-height:260px;overflow-y:auto;border:1px solid var(--border);border-radius:8px}
+.bulk-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+.history-section{margin-top:20px;padding-top:18px;border-top:1px solid var(--border)}
+.history-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.history-head .section-title{margin-bottom:0}
+.history-list{max-height:200px;overflow-y:auto}
+.history-list::-webkit-scrollbar,.bulk-list::-webkit-scrollbar{width:4px}
+.history-list::-webkit-scrollbar-thumb,.bulk-list::-webkit-scrollbar-thumb{background:var(--bg-btn-hover);border-radius:2px}
+.history-item{display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;border:0;border-bottom:1px solid var(--border);background:none;text-align:left;font-size:14px;color:var(--text-primary);cursor:pointer;transition:background .2s}
+.bulk-list li:last-child .history-item,.history-list .history-item:last-child{border-bottom:0}
+.history-item:hover{background:var(--bg-hover)}
+.history-item .idx{color:var(--text-muted);font-size:12px;min-width:18px;font-family:'Pretendard',sans-serif}
+.history-item .val{flex:1;min-width:0;word-break:break-all}
 .history-empty{text-align:center;color:var(--text-muted);padding:16px;font-size:13px}
-
-.report-box {margin-top:16px; margin-bottom:14px; padding:16px; background:rgba(83,52,131,0.05); border-left:4px solid var(--accent); border-radius:8px; font-size:13px; line-height:1.6; color:var(--text-primary); display:none;}
-.report-box.show {display:block; animation:fadeIn 0.4s;}
-@keyframes fadeIn {from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)}}
 
 .guide-section{margin:20px; padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-app);}
 .guide-title{font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:12px;}
@@ -82,7 +109,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .guide-item .guide-content{padding:12px; font-size:13px; color:var(--text-info); line-height:1.6;}
 .related-tools{margin-top:16px; padding-top:16px; border-top:1px solid var(--border);}
 .tag-container{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
-.tool-tag{padding:6px 12px; background:rgba(83,52,131,0.1); color:var(--accent-text); border-radius:16px; font-size:11px; font-weight:600; text-decoration:none; transition:all 0.2s;}
+.tool-tag{padding:6px 12px; background:var(--accent-bg); color:var(--accent-text); border-radius:16px; font-size:11px; font-weight:600; text-decoration:none; transition:all 0.2s;}
 .tool-tag:hover{background:var(--accent); color:var(--text-on-accent);}
 
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
@@ -102,81 +129,140 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </div>
   <div class="content">
     <div class="pw-display">
-      <output class="pw-text" id="pwText" aria-label="생성된 비밀번호" aria-live="polite" aria-atomic="true">-</output>
+      <output class="pw-text mono" id="pwText" aria-label="생성된 비밀번호" aria-live="polite" aria-atomic="true">-</output>
       <div class="pw-actions">
-        <button type="button" class="pw-btn btn-copy" onclick="copyPw()" title="복사" aria-label="비밀번호 복사">📋</button>
-        <button type="button" class="pw-btn btn-regen" onclick="generate()" title="재생성" aria-label="비밀번호 재생성">🔄</button>
+        <button type="button" class="pw-btn btn-copy" id="copyBtn" title="복사" aria-label="비밀번호 복사">📋</button>
+        <button type="button" class="pw-btn btn-regen" id="regenBtn" title="새로 만들기" aria-label="비밀번호 새로 만들기">🔄</button>
       </div>
     </div>
 
-    <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
-    <div class="strength-label" id="strengthLabel">-</div>
+    <div class="strength-bar" aria-hidden="true"><div class="strength-fill" id="strengthFill"></div></div>
+    <div class="strength-row">
+      <span class="strength-label" id="strengthLabel">-</span>
+      <span class="strength-detail" id="strengthDetail"></span>
+    </div>
 
-    <div class="section-title">길이</div>
+    <div class="section-title" id="lengthTitle">길이</div>
     <div class="length-row">
-      <input aria-label="비밀번호 길이" type="range" id="pwLength" min="4" max="64" value="16" oninput="onLengthChange()">
-      <div class="length-value" id="lengthDisplay">16</div>
+      <button type="button" class="step-btn" id="lengthDown" aria-label="길이 1자 줄이기">−</button>
+      <input aria-labelledby="lengthTitle" type="range" id="pwLength" min="4" max="64" value="16">
+      <button type="button" class="step-btn" id="lengthUp" aria-label="길이 1자 늘리기">+</button>
+      <div class="length-value" id="lengthDisplay" aria-hidden="true">16</div>
     </div>
 
     <div class="section-title">포함 문자</div>
     <div class="options">
       <label class="option">
-        <input type="checkbox" id="optUpper" checked onchange="generate()">
-        <span class="checkbox">✓</span>
+        <input type="checkbox" id="optUpper" checked>
+        <span class="checkbox" aria-hidden="true">✓</span>
         <span class="option-label">대문자<small>A-Z</small></span>
       </label>
       <label class="option">
-        <input type="checkbox" id="optLower" checked onchange="generate()">
-        <span class="checkbox">✓</span>
+        <input type="checkbox" id="optLower" checked>
+        <span class="checkbox" aria-hidden="true">✓</span>
         <span class="option-label">소문자<small>a-z</small></span>
       </label>
       <label class="option">
-        <input type="checkbox" id="optNum" checked onchange="generate()">
-        <span class="checkbox">✓</span>
+        <input type="checkbox" id="optNum" checked>
+        <span class="checkbox" aria-hidden="true">✓</span>
         <span class="option-label">숫자<small>0-9</small></span>
       </label>
       <label class="option">
-        <input type="checkbox" id="optSpecial" checked onchange="generate()">
-        <span class="checkbox">✓</span>
-        <span class="option-label">특수문자<small>!@#$%...</small></span>
+        <input type="checkbox" id="optSpecial" checked>
+        <span class="checkbox" aria-hidden="true">✓</span>
+        <span class="option-label">특수문자<small>아래 목록에서 선택</small></span>
+      </label>
+      <label class="option wide">
+        <input type="checkbox" id="optAmbiguous">
+        <span class="checkbox" aria-hidden="true">✓</span>
+        <span class="option-label">헷갈리는 문자 제외<small class="mono">I l 1 | O 0 o</small></span>
       </label>
     </div>
 
+    <div class="symbol-field">
+      <label for="symbolSet">사용할 특수문자</label>
+      <div class="symbol-row">
+        <input type="text" id="symbolSet" class="mono" value="!@#$%^&amp;*()_+-=[]{}|;:,.&lt;&gt;?" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="symbolNote symbolError">
+        <button type="button" class="small-btn" id="symbolReset">기본값</button>
+      </div>
+      <p class="field-note" id="symbolNote">가입하려는 사이트가 허용하는 특수문자만 남겨 두세요.</p>
+      <p class="field-error" id="symbolError" role="alert"></p>
+    </div>
+
+    <div class="bulk-section">
+      <div class="section-title">여러 개 한 번에 만들기</div>
+      <div class="bulk-row">
+        <label for="bulkCount">개수</label>
+        <select id="bulkCount">
+          <option value="5">5개</option>
+          <option value="10" selected>10개</option>
+          <option value="20">20개</option>
+          <option value="50">50개</option>
+        </select>
+        <button type="button" class="primary-btn" id="bulkBtn">현재 설정으로 생성</button>
+      </div>
+      <div id="bulkResult" hidden>
+        <ol class="bulk-list" id="bulkList" aria-label="한 번에 생성한 비밀번호 (눌러서 복사)"></ol>
+        <div class="bulk-actions">
+          <button type="button" class="small-btn" id="bulkCopy">모두 복사 (줄바꿈 구분)</button>
+          <button type="button" class="small-btn" id="bulkClear">목록 지우기</button>
+        </div>
+      </div>
+    </div>
+
     <div class="history-section">
-      <div class="section-title">최근 생성 기록</div>
-      <div class="history-list" id="historyList" aria-label="최근 생성된 비밀번호">
-        <div class="history-empty">아직 생성된 비밀번호가 없습니다</div>
+      <div class="history-head">
+        <div class="section-title" id="historyTitle">최근 기록 (복사·새로 만들기)</div>
+        <button type="button" class="small-btn" id="historyClear">기록 지우기</button>
+      </div>
+      <div class="history-list" id="historyList" role="group" aria-labelledby="historyTitle">
+        <div class="history-empty">복사하거나 🔄로 새로 만든 비밀번호가 여기에 남습니다</div>
       </div>
     </div>
   </div>
-
-  <div id="reportBox" class="report-box" style="margin-left:20px; margin-right:20px;"></div>
 
   <div class="guide-section">
     <div class="guide-title">🤔 안전한 비밀번호 Q&A</div>
     <details class="guide-item">
       <summary>안전한 비밀번호란 무엇인가요?</summary>
       <div class="guide-content">
-        컴퓨터 시스템과 온라인 계정을 해킹으로부터 보호하기 위해 추측하기 어렵고(무작위성) 기계적인 암호 대입 공격(Brute Force Attack)을 견뎌낼 수 있게 만든 비밀번호입니다. 
-        대문자, 소문자, 숫자, 특수문자를 혼합하고 12자리 이상의 길이로 설정하는 것이 국제 표준 보안 권장 사항입니다.
+        공격자가 추측하거나 자동 대입 공격(Brute Force Attack)으로 찾아내기 어려운 비밀번호입니다. 핵심은 충분한 길이와 예측 불가능성입니다. 미국 표준기술연구소(NIST)의 디지털 신원 지침 SP 800-63B 개정 4판은 비밀번호만으로 로그인하는 경우 최소 15자, 2단계 인증과 함께 쓰는 경우 최소 8자를 요구하고, 대문자·숫자·특수문자를 반드시 섞도록 강제하는 구성 규칙은 두지 않도록 권고합니다. 사람이 규칙에 억지로 맞추다 보면 <code>Password1!</code>처럼 예측하기 쉬운 패턴이 생기기 때문입니다. 이 도구처럼 완전히 무작위로 만든다면 문자 종류를 늘리는 것도 강도를 높이지만, 길이를 늘리는 효과가 더 큽니다.
+      </div>
+    </details>
+    <details class="guide-item">
+      <summary>강도 표시(비트)는 어떻게 계산하나요?</summary>
+      <div class="guide-content">
+        선택한 문자 풀의 크기와 길이로 계산한 엔트로피(비트)입니다. 대문자·소문자·숫자와 기본 특수문자 26종을 모두 쓰면 문자 풀은 88종이고, 한 글자마다 log₂88 ≈ 6.46비트가 더해져 16자면 약 103비트가 됩니다. 문자 종류마다 최소 한 글자를 넣도록 보장하면서 줄어드는 조합 수만큼은 빼서 보정합니다. 45비트 미만은 약함, 45~63비트는 보통, 64~79비트는 강함, 80비트 이상은 매우 강함으로 표시합니다. 이 계산은 이 도구처럼 무작위로 만든 비밀번호에만 해당하며, 사람이 직접 지은 비밀번호의 강도를 판정하는 기준은 아닙니다.
       </div>
     </details>
     <details class="guide-item">
       <summary>내 비밀번호는 서버에 저장되나요?</summary>
       <div class="guide-content">
-        이 도구는 현재 브라우저에서 <code>crypto.getRandomValues()</code>를 사용해 비밀번호를 생성하며 앱 서버로 결과를 전송하거나 저장하지 않습니다. 최근 생성 기록은 페이지 메모리에만 유지되어 새로고침하거나 탭을 닫으면 사라집니다. 다만 기기 보안, 브라우저 확장 프로그램, 클립보드 기록까지 이 페이지가 통제할 수는 없으므로 신뢰할 수 있는 기기에서 사용하고 결과는 비밀번호 관리자에 보관하세요.
+        이 도구는 현재 브라우저에서 <code>crypto.getRandomValues()</code>를 사용해 비밀번호를 생성하며 앱 서버로 결과를 전송하거나 저장하지 않습니다. 최근 기록은 페이지 메모리에만 유지되어 새로고침하거나 탭을 닫으면 사라지고, '기록 지우기'로 즉시 비울 수도 있습니다. 다만 기기 보안, 브라우저 확장 프로그램, 클립보드 기록까지 이 페이지가 통제할 수는 없으므로 신뢰할 수 있는 기기에서 사용하고 결과는 비밀번호 관리자에 보관하세요.
       </div>
     </details>
     <details class="guide-item">
-      <summary>최근 생성 기록은 어떻게 활용하나요?</summary>
+      <summary>최근 기록에는 어떤 비밀번호가 남나요?</summary>
       <div class="guide-content">
-        여러 사이트에 가입하거나 복수의 비밀번호가 필요할 때, 미리 여러 개를 생성해 두고 클릭 한 번으로 복사하여 빠르게 사용할 수 있도록 돕는 임시 보관함입니다.
+        길이 슬라이더를 움직이거나 옵션을 바꿀 때마다 비밀번호가 새로 만들어지지만, 기록에는 복사했거나 🔄 버튼으로 새로 만든 비밀번호만 최대 10개까지 남습니다. 가입 도중 다른 값을 복사해 버렸을 때 직전 비밀번호로 되돌아가거나, 방금 쓴 비밀번호를 비밀번호 관리자에 저장했는지 확인하는 용도로 활용합니다. 여러 계정에 쓸 비밀번호가 한꺼번에 필요하다면 '여러 개 한 번에 만들기'를 이용하세요. 공용 PC에서는 사용 후 '기록 지우기'를 눌러 주세요.
       </div>
     </details>
     <details class="guide-item">
       <summary>몇 자리로 만드는 것이 좋나요?</summary>
       <div class="guide-content">
-        일반 로그인 계정은 최소 12자리 이상을 권장하고, 금융·메일·클라우드처럼 중요한 계정은 16자리 이상을 권장합니다. 같은 길이라도 사전에 있는 단어를 조합한 문장보다 무작위 문자 조합이 자동 대입 공격에 더 강합니다. 사이트가 허용한다면 대문자, 소문자, 숫자, 특수문자를 모두 포함하세요.
+        비밀번호만으로 로그인하는 계정은 최소 15자를 권장하고, 2단계 인증을 켠 계정도 12자 이상이면 여유가 있습니다. 금융·메일·클라우드처럼 중요한 계정은 16자 이상을 권장합니다. 같은 길이라면 문자 종류가 많을수록 강도가 올라가지만, 길이를 늘리는 쪽이 효과가 더 큽니다. 예를 들어 네 종류를 모두 섞은 8자는 약 50비트이고, 소문자만 쓴 16자는 약 75비트입니다.
+      </div>
+    </details>
+    <details class="guide-item">
+      <summary>헷갈리는 문자 제외는 언제 쓰나요?</summary>
+      <div class="guide-content">
+        종이에 적어 전달하는 임시 비밀번호, Wi-Fi 비밀번호처럼 사람이 눈으로 보고 직접 입력해야 할 때 유용합니다. 대문자 I, 소문자 l, 숫자 1, 세로선 |, 대문자 O, 숫자 0, 소문자 o를 빼 두면 글꼴에 따라 비슷해 보이는 문자 때문에 생기는 입력 실수를 줄일 수 있습니다. 문자 풀이 줄어드는 만큼 강도가 약간 낮아지므로 길이를 1~2자 늘리면 충분합니다.
+      </div>
+    </details>
+    <details class="guide-item">
+      <summary>특수문자 목록은 왜 바꿀 수 있나요?</summary>
+      <div class="guide-content">
+        일부 사이트는 특정 특수문자만 허용하거나 따옴표·꺾쇠·백슬래시 같은 문자를 거부합니다. '사용할 특수문자' 칸에 해당 사이트가 허용하는 문자만 남기면 가입 단계에서 거절되는 일을 줄일 수 있습니다. 영문자·숫자·한글·공백은 특수문자 칸에 넣을 수 없으며, 입력하면 제외했다는 안내가 표시됩니다. 특수문자를 아예 허용하지 않는 사이트라면 체크를 해제하고 길이를 늘리는 편이 좋습니다.
       </div>
     </details>
     <details class="guide-item">
@@ -189,12 +275,6 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <summary>생성한 비밀번호는 어디에 저장해야 하나요?</summary>
       <div class="guide-content">
         무작위 비밀번호는 사람이 외우기 어렵기 때문에 안전한 비밀번호 관리자에 저장하는 방식이 현실적입니다. 브라우저 기본 비밀번호 관리자, 운영체제 키체인, 전용 비밀번호 관리 앱 중 하나를 정해 계정별로 다른 비밀번호를 보관하세요. 메모장, 메신저 대화, 이메일 임시보관함처럼 검색되거나 동기화 범위를 알기 어려운 곳에 원문 그대로 저장하는 것은 피하는 편이 좋습니다.
-      </div>
-    </details>
-    <details class="guide-item">
-      <summary>특수문자를 꼭 넣어야 하나요?</summary>
-      <div class="guide-content">
-        사이트 정책에 따라 특수문자를 요구하는 곳도 있지만, 보안 강도에서 가장 중요한 요소는 길이와 예측 불가능성입니다. 8자리 특수문자 조합보다 16자리 이상의 충분히 긴 무작위 조합이 더 안전한 경우가 많습니다. 다만 여러 사이트가 서로 다른 규칙을 갖고 있으므로 이 도구에서 길이와 문자 종류를 바꿔가며 조건에 맞는 비밀번호를 만들 수 있습니다.
       </div>
     </details>
     <details class="guide-item">
@@ -224,18 +304,68 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 const UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const LOWER = 'abcdefghijklmnopqrstuvwxyz';
 const NUMS = '0123456789';
-const SPECIAL = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+const DEFAULT_SYMBOLS = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+const AMBIGUOUS = new Set(['I', 'l', '1', '|', 'O', '0', 'o']);
+const MAX_HISTORY = 10;
 
-let history = [];
+let pwHistory = [];
 let currentPassword = '';
+let bulkPasswords = [];
 
-function getSelectedGroups() {
+const $ = id => document.getElementById(id);
+
+function readSymbols() {
+  const allowed = [];
+  const rejected = [];
+  for (const ch of $('symbolSet').value) {
+    if (/\s/.test(ch)) continue;
+    if (/^[!-\/:-@\[-`{-~]$/.test(ch)) {
+      if (!allowed.includes(ch)) allowed.push(ch);
+    } else if (!rejected.includes(ch)) {
+      rejected.push(ch);
+    }
+  }
+  return { allowed: allowed.join(''), rejected };
+}
+
+function getConfig() {
+  const exclude = $('optAmbiguous').checked;
+  const clean = chars => exclude ? [...chars].filter(ch => !AMBIGUOUS.has(ch)).join('') : chars;
   const groups = [];
-  if (document.getElementById('optUpper').checked) groups.push(UPPER);
-  if (document.getElementById('optLower').checked) groups.push(LOWER);
-  if (document.getElementById('optNum').checked) groups.push(NUMS);
-  if (document.getElementById('optSpecial').checked) groups.push(SPECIAL);
-  return groups;
+  const special = $('optSpecial').checked;
+  const symbolInput = $('symbolSet');
+  let symbolMessage = '';
+  let symbolInvalid = false;
+
+  if ($('optUpper').checked) groups.push(clean(UPPER));
+  if ($('optLower').checked) groups.push(clean(LOWER));
+  if ($('optNum').checked) groups.push(clean(NUMS));
+
+  symbolInput.disabled = !special;
+  if (special) {
+    const { allowed, rejected } = readSymbols();
+    const usable = clean(allowed);
+    if (rejected.length) symbolMessage = `특수문자가 아닌 문자는 제외했습니다: ${rejected.slice(0, 8).join(' ')}`;
+    if (!usable) {
+      symbolInvalid = true;
+      symbolMessage = allowed ? '헷갈리는 문자를 빼고 나니 남은 특수문자가 없습니다. 특수문자를 더 입력하세요.' : '사용할 특수문자를 1개 이상 입력하세요.';
+    } else {
+      groups.push(usable);
+    }
+  }
+  symbolInput.setAttribute('aria-invalid', String(symbolInvalid));
+  $('symbolError').textContent = symbolMessage;
+  const symbolCount = special ? clean(readSymbols().allowed).length : 0;
+  $('symbolNote').textContent = special
+    ? `현재 ${symbolCount}종을 사용합니다. 가입하려는 사이트가 허용하는 특수문자만 남겨 두세요.`
+    : '특수문자를 포함하려면 위의 특수문자 옵션을 켜세요.';
+
+  const length = parseInt($('pwLength').value, 10);
+  let error = '';
+  if (symbolInvalid) error = '사용할 특수문자를 확인하세요';
+  else if (!groups.length) error = '최소 1개 옵션을 선택하세요';
+  else if (length < groups.length) error = '선택한 문자 종류 수 이상으로 길이를 설정하세요';
+  return { groups, length, error };
 }
 
 function secureRandomIndex(max) {
@@ -255,129 +385,229 @@ function secureShuffle(values) {
   return values;
 }
 
-function generate() {
-  const groups = getSelectedGroups();
-  if (groups.length === 0) {
-    currentPassword = '';
-    document.getElementById('pwText').textContent = '최소 1개 옵션을 선택하세요';
-    updateStrength('');
-    return;
-  }
-  const len = parseInt(document.getElementById('pwLength').value);
-  if (len < groups.length) {
-    currentPassword = '';
-    document.getElementById('pwText').textContent = '선택한 문자 종류 수 이상으로 길이를 설정하세요';
-    updateStrength('');
-    return;
-  }
+function makePassword(groups, length) {
   const charset = groups.join('');
   const characters = groups.map(group => group[secureRandomIndex(group.length)]);
-  while (characters.length < len) characters.push(charset[secureRandomIndex(charset.length)]);
-  const pw = secureShuffle(characters).join('');
-  currentPassword = pw;
-  document.getElementById('pwText').textContent = pw;
-  updateStrength(pw);
-
-  // Add to history (max 10, no duplicates)
-  history = history.filter(h => h !== pw);
-  history.unshift(pw);
-  if (history.length > 10) history.pop();
-  renderHistory();
+  while (characters.length < length) characters.push(charset[secureRandomIndex(charset.length)]);
+  return secureShuffle(characters).join('');
 }
 
-function updateStrength(pw) {
-  const fill = document.getElementById('strengthFill');
-  const label = document.getElementById('strengthLabel');
-  if (!pw) {
+// Entropy of a uniformly random string over the pool that contains every selected group.
+function estimateBits(groups, length) {
+  const pool = groups.reduce((sum, group) => sum + group.length, 0);
+  let share = 0;
+  for (let mask = 0; mask < (1 << groups.length); mask++) {
+    let removed = 0;
+    let picked = 0;
+    groups.forEach((group, index) => {
+      if (mask & (1 << index)) { removed += group.length; picked++; }
+    });
+    share += (picked % 2 ? -1 : 1) * Math.pow((pool - removed) / pool, length);
+  }
+  return length * Math.log2(pool) + Math.log2(Math.max(share, Number.MIN_VALUE));
+}
+
+function generate(options = {}) {
+  const config = getConfig();
+  const output = $('pwText');
+  $('lengthDisplay').textContent = config.length;
+  if (config.error) {
+    currentPassword = '';
+    output.textContent = config.error;
+    output.classList.add('is-message');
+    updateStrength(null);
+    return '';
+  }
+  const pw = makePassword(config.groups, config.length);
+  currentPassword = pw;
+  output.textContent = pw;
+  output.classList.remove('is-message');
+  updateStrength(config);
+  if (options.record) addToHistory(pw);
+  return pw;
+}
+
+function updateStrength(config) {
+  const fill = $('strengthFill');
+  const label = $('strengthLabel');
+  const detail = $('strengthDetail');
+  if (!config) {
     fill.style.width = '0%';
     label.textContent = '-';
-    label.style.color = '#666';
+    label.style.color = 'var(--text-muted)';
+    detail.textContent = '';
     return;
   }
-
-  let score = 0;
-  if (pw.length >= 8) score++;
-  if (pw.length >= 12) score++;
-  if (pw.length >= 16) score++;
-  if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score++;
-  if (/\d/.test(pw)) score++;
-  if (/[^a-zA-Z0-9]/.test(pw)) score++;
-
+  const bits = estimateBits(config.groups, config.length);
+  const pool = config.groups.reduce((sum, group) => sum + group.length, 0);
   const levels = [
-    { max: 2, pct: '20%', color: 'var(--status-red-text)', text: '약함' },
-    { max: 3, pct: '45%', color: 'var(--status-orange-text)', text: '보통' },
-    { max: 4, pct: '70%', color: 'var(--status-green-text)', text: '강함' },
-    { max: 99, pct: '100%', color: 'var(--status-green-text)', text: '매우 강함' }
+    { max: 45, color: 'var(--status-red-text)', text: '약함' },
+    { max: 64, color: 'var(--status-orange-text)', text: '보통' },
+    { max: 80, color: 'var(--status-green-text)', text: '강함' },
+    { max: Infinity, color: 'var(--status-green-text)', text: '매우 강함' }
   ];
-  const lv = levels.find(l => score <= l.max);
-  fill.style.width = lv.pct;
-  fill.style.background = lv.color;
-  label.textContent = '강도: ' + lv.text;
-  label.style.color = lv.color;
-  
-  updateReport(pw, score, lv.text);
+  const level = levels.find(item => bits < item.max);
+  fill.style.width = `${Math.max(4, Math.min(100, bits))}%`;
+  fill.style.background = level.color;
+  label.textContent = `강도: ${level.text} · 약 ${Math.floor(bits)}비트`;
+  label.style.color = level.color;
+  detail.textContent = `문자 ${pool}종 × ${config.length}자 기준`;
 }
 
-function updateReport(pw, score, lvText) {
-  const box = document.getElementById('reportBox');
-  if (!pw) {
-    box.classList.remove('show');
-    return;
-  }
-  
-  let types = [];
-  if (/[A-Z]/.test(pw)) types.push('대문자');
-  if (/[a-z]/.test(pw)) types.push('소문자');
-  if (/\d/.test(pw)) types.push('숫자');
-  if (/[^a-zA-Z0-9]/.test(pw)) types.push('특수문자');
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+  return new Promise((resolve, reject) => {
+    const helper = document.createElement('textarea');
+    helper.value = text;
+    helper.setAttribute('readonly', '');
+    helper.style.position = 'fixed';
+    helper.style.opacity = '0';
+    document.body.appendChild(helper);
+    helper.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    helper.remove();
+    ok ? resolve() : reject(new Error('copy failed'));
+  });
+}
 
-  let desc = '';
-  if (score <= 2) desc = `현재 보안 수준은 <b style="color:#ef4444">${lvText}</b>입니다. 더 안전한 계정 보호를 위해 길이를 늘리거나 다양한 문자를 포함하여 재생성하는 것을 권장합니다.`;
-  else if (score === 3) desc = `현재 보안 수준은 <b style="color:#f59e0b">${lvText}</b>입니다. 일반적인 웹사이트의 로그인 비밀번호로 무난하게 사용할 수 있습니다.`;
-  else desc = `현재 길이와 문자 구성 기준 보안 수준은 <b style="color:var(--status-green-text)">${lvText}</b>입니다. 이 표시는 간단한 추정치이며 유출·피싱까지 막아주지는 않습니다. 계정마다 다른 비밀번호를 사용하고 비밀번호 관리자와 2단계 인증을 함께 사용하세요.`;
-
-  box.innerHTML = `🛡️ <b>비밀번호 보안 분석 리포트</b><br/>생성된 암호는 총 <b>${pw.length}자리</b> 길이이며, <b>${types.join(', ')}</b> 조합으로 구성되었습니다. <br/>${desc}`;
-  box.classList.add('show');
+function selectElementText(element) {
+  try {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  } catch (e) {}
 }
 
 function copyPw() {
-  if (!currentPassword) return;
-  navigator.clipboard.writeText(currentPassword).then(() => showToast('📋 비밀번호가 복사되었습니다'));
+  if (!currentPassword) { showToast('복사할 비밀번호가 없습니다. 옵션을 확인하세요'); return; }
+  const pw = currentPassword;
+  copyText(pw).then(() => {
+    addToHistory(pw);
+    showToast('📋 비밀번호가 복사되었습니다');
+  }).catch(() => {
+    selectElementText($('pwText'));
+    showToast('복사하지 못했습니다. 선택된 비밀번호를 직접 복사하세요');
+  });
+}
+
+function addToHistory(pw) {
+  pwHistory = pwHistory.filter(item => item !== pw);
+  pwHistory.unshift(pw);
+  if (pwHistory.length > MAX_HISTORY) pwHistory.length = MAX_HISTORY;
+  renderHistory();
+}
+
+function renderPasswordButton(pw, index, onCopy, labelPrefix) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'history-item';
+  button.setAttribute('aria-label', `${labelPrefix} ${index + 1}번째 비밀번호 복사`);
+  const idx = document.createElement('span');
+  idx.className = 'idx';
+  idx.textContent = index + 1;
+  const val = document.createElement('span');
+  val.className = 'val mono';
+  val.textContent = pw;
+  button.append(idx, val);
+  button.addEventListener('click', () => onCopy(pw, val));
+  return button;
+}
+
+function copyListItem(pw, element) {
+  copyText(pw).then(() => showToast('📋 복사되었습니다')).catch(() => {
+    selectElementText(element);
+    showToast('복사하지 못했습니다. 선택된 값을 직접 복사하세요');
+  });
 }
 
 function renderHistory() {
-  const container = document.getElementById('historyList');
-  if (history.length === 0) {
-    container.innerHTML = '<div class="history-empty">아직 생성된 비밀번호가 없습니다</div>';
+  const container = $('historyList');
+  container.textContent = '';
+  if (!pwHistory.length) {
+    const empty = document.createElement('div');
+    empty.className = 'history-empty';
+    empty.textContent = '복사하거나 🔄로 새로 만든 비밀번호가 여기에 남습니다';
+    container.appendChild(empty);
     return;
   }
-  container.innerHTML = history.map((pw, i) =>
-    `<button type="button" class="history-item" onclick="copyHistoryItem(${i})" aria-label="${i + 1}번째 비밀번호 복사"><span class="idx">${i + 1}</span><span>${escapeHtml(pw)}</span></button>`
-  ).join('');
+  pwHistory.forEach((pw, i) => container.appendChild(renderPasswordButton(pw, i, copyListItem, '최근 기록')));
 }
 
-function copyHistoryItem(idx) {
-  navigator.clipboard.writeText(history[idx]).then(() => showToast('📋 복사되었습니다'));
+function clearHistory() {
+  pwHistory = [];
+  renderHistory();
+  showToast('최근 기록을 지웠습니다');
 }
 
-function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function generateBulk() {
+  const config = getConfig();
+  if (config.error) { showToast(config.error); return; }
+  const count = parseInt($('bulkCount').value, 10) || 10;
+  bulkPasswords = Array.from({ length: count }, () => makePassword(config.groups, config.length));
+  const list = $('bulkList');
+  list.textContent = '';
+  bulkPasswords.forEach((pw, i) => {
+    const item = document.createElement('li');
+    item.appendChild(renderPasswordButton(pw, i, copyListItem, '한 번에 생성한'));
+    list.appendChild(item);
+  });
+  $('bulkResult').hidden = false;
+  showToast(`${count}개를 만들었습니다. 항목을 누르면 하나씩 복사됩니다`);
+}
+
+function copyBulk() {
+  if (!bulkPasswords.length) return;
+  copyText(bulkPasswords.join('\n'))
+    .then(() => showToast(`📋 ${bulkPasswords.length}개를 줄바꿈으로 구분해 복사했습니다`))
+    .catch(() => {
+      selectElementText($('bulkList'));
+      showToast('복사하지 못했습니다. 선택된 목록을 직접 복사하세요');
+    });
+}
+
+function clearBulk() {
+  bulkPasswords = [];
+  $('bulkList').textContent = '';
+  $('bulkResult').hidden = true;
+}
 
 function onLengthChange() {
-  document.getElementById('lengthDisplay').textContent = document.getElementById('pwLength').value;
+  $('lengthDisplay').textContent = $('pwLength').value;
   generate();
 }
 
+function stepLength(delta) {
+  const range = $('pwLength');
+  const next = Math.min(Number(range.max), Math.max(Number(range.min), Number(range.value) + delta));
+  range.value = String(next);
+  onLengthChange();
+}
+
 function showToast(msg) {
-  const t = document.getElementById('toast');
+  const t = $('toast');
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.classList.remove('show'), 1500);
+  t._timer = setTimeout(() => t.classList.remove('show'), 1800);
 }
 
+$('copyBtn').addEventListener('click', copyPw);
+$('regenBtn').addEventListener('click', () => generate({ record: true }));
+$('pwLength').addEventListener('input', onLengthChange);
+$('lengthDown').addEventListener('click', () => stepLength(-1));
+$('lengthUp').addEventListener('click', () => stepLength(1));
+['optUpper', 'optLower', 'optNum', 'optSpecial', 'optAmbiguous'].forEach(id => $(id).addEventListener('change', () => generate()));
+$('symbolSet').addEventListener('input', () => generate());
+$('symbolReset').addEventListener('click', () => { $('symbolSet').value = DEFAULT_SYMBOLS; generate(); });
+$('bulkBtn').addEventListener('click', generateBulk);
+$('bulkCopy').addEventListener('click', copyBulk);
+$('bulkClear').addEventListener('click', clearBulk);
+$('historyClear').addEventListener('click', clearHistory);
+
 generate();
-
-
 </script>
 <script src="/special-chars/theme-toggle.js"></script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>

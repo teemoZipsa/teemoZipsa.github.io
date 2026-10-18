@@ -11,9 +11,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>🔣 Base64 인코더/디코더 — 티모집사</title>
-<meta name="description" content="텍스트와 이미지를 Base64로 인코딩·디코딩하세요. 서버 전송 없이 100% 브라우저 로컬 처리.">
+<meta name="description" content="텍스트와 파일을 Base64로 인코딩·디코딩하세요. URL-safe·JWT·data URL 자동 인식, 서버 전송 없이 100% 브라우저 로컬 처리.">
 <meta property="og:title" content="🔣 Base64 인코더/디코더 — 티모집사">
-<meta property="og:description" content="텍스트와 이미지를 Base64로 인코딩·디코딩하세요. 100% 브라우저 로컬 처리.">
+<meta property="og:description" content="텍스트와 파일을 Base64로 인코딩·디코딩하세요. 100% 브라우저 로컬 처리.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/base64-tool/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
@@ -21,6 +21,7 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
+[hidden]{display:none!important}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
 .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:540px;max-width:100%;overflow:hidden}
 .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
@@ -28,36 +29,54 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
 .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
 .content{padding:20px}
+.mono{font-family:ui-monospace,'Cascadia Mono','SFMono-Regular',Consolas,'D2Coding','Liberation Mono',monospace}
 .mode-tabs{display:flex;gap:6px;margin-bottom:16px}
-.mode-tab{flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--bg-bar);color:var(--text-section);font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s;font-family:inherit}
-.mode-tab.active{background:var(--accent);border-color:var(--accent);color:var(--text-on-accent)}
-.mode-tab:hover:not(.active){background:var(--bg-hover);border-color:var(--border-hover)}
-.section-title{display:block;font-size:12px;color:var(--text-section);font-weight:600;margin-bottom:6px}
-.text-area{width:100%;min-height:100px;background:var(--bg-bar);border:2px solid var(--border);border-radius:12px;padding:14px;font-size:14px;color:var(--text-primary);resize:vertical;outline:none;font-family:'Pretendard',monospace;line-height:1.5;transition:border-color .2s;margin-bottom:14px}
+.mode-tab{flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--bg-bar);color:var(--text-section);font-size:14px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s;font-family:inherit}
+.mode-tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--text-on-accent)}
+.mode-tab:hover:not([aria-selected="true"]){background:var(--bg-hover);border-color:var(--border-hover)}
+.section-title{display:block;font-size:13px;color:var(--text-section);font-weight:600;margin-bottom:6px}
+.direction{border:0;margin-bottom:14px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.seg-opt{position:relative;cursor:pointer}
+.seg-opt input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.seg-opt span{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:52px;padding:8px;border:1px solid var(--border);border-radius:10px;background:var(--bg-bar);color:var(--text-primary);font-weight:700;text-align:center;transition:background .2s,border-color .2s}
+.seg-opt small{font-weight:500;color:var(--text-muted);margin-top:2px}
+.seg-opt input:checked + span{border-color:var(--accent);background:var(--accent-bg);box-shadow:inset 0 0 0 1px var(--accent)}
+.seg-opt input:focus-visible + span{outline:3px solid var(--focus-ring);outline-offset:3px}
+.text-area{display:block;width:100%;min-height:110px;background:var(--bg-bar);border:2px solid var(--border);border-radius:12px;padding:14px;font-size:14px;color:var(--text-primary);resize:vertical;outline:none;line-height:1.5;transition:border-color .2s;margin-bottom:8px}
 .text-area:focus{border-color:var(--accent)}
 .text-area::placeholder{color:var(--text-placeholder)}
-.actions{display:flex;gap:8px;margin-bottom:14px}
-.btn{flex:1;padding:11px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.text-area[readonly]{background:var(--bg-input)}
+.check-row{display:flex;align-items:flex-start;gap:8px;margin:4px 0 10px;font-size:14px;color:var(--text-secondary);cursor:pointer}
+.check-row input{margin-top:3px;width:18px;height:18px;accent-color:var(--accent);flex-shrink:0}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}
+.btn{flex:1 1 auto;min-width:0;padding:11px 12px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
 .btn-primary{background:var(--accent);color:var(--text-on-accent)}
 .btn-primary:hover{background:var(--accent-hover)}
-.btn-secondary{background:var(--bg-bar);border:1px solid var(--border);color:var(--text-info)}
+.btn-secondary{background:var(--bg-bar);border:1px solid var(--border);color:var(--text-primary)}
 .btn-secondary:hover{background:var(--bg-hover)}
-.result-box{background:var(--bg-bar);border:2px solid var(--border);border-radius:12px;padding:14px;min-height:60px;margin-bottom:14px;position:relative;word-break:break-all;line-height:1.5}
-.result-text{font-size:13px;color:var(--text-amount);font-family:'Pretendard',monospace}
-.result-placeholder{color:var(--text-placeholder);font-size:14px}
-.char-count{position:absolute;bottom:6px;right:10px;font-size:10px;color:var(--text-muted)}
-.image-section{display:none;margin-bottom:14px}
-.drop-zone{border:2px dashed var(--border);border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg-bar)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.inline-btn{padding:6px 12px;border:1px solid var(--accent);border-radius:8px;background:var(--bg-app);color:var(--accent-text);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.meta-line{font-size:13px;color:var(--text-muted);line-height:1.5;min-height:1.5em}
+.limit-note{margin-top:6px;font-size:12px;line-height:1.5;color:var(--text-muted)}
+.input-error{display:none;margin:8px 0;padding:10px 12px;border:1px solid var(--status-red-text);border-radius:8px;background:var(--bg-bar);color:var(--status-red-text);font-size:13px;font-weight:600;line-height:1.5}
+.input-error.show{display:block}
+.notice{margin:8px 0;padding:10px 12px;border-left:3px solid var(--accent);border-radius:6px;background:var(--bg-bar);color:var(--text-secondary);font-size:13px;line-height:1.55}
+.hint{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:4px 0 10px;padding:8px 10px;border:1px dashed var(--border-hover);border-radius:8px;font-size:13px;color:var(--text-secondary)}
+.binary-box{margin-bottom:8px;padding:14px;border:2px dashed var(--border);border-radius:12px;background:var(--bg-bar);font-size:14px;line-height:1.55}
+.binary-box strong{display:block;margin-bottom:4px}
+.binary-box p{color:var(--text-secondary);font-size:13px}
+.drop-zone{border:2px dashed var(--border);border-radius:12px;padding:36px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg-bar)}
 .drop-zone:hover,.drop-zone.dragover{border-color:var(--accent);background:var(--bg-hover)}
 .drop-zone .icon{font-size:36px;margin-bottom:8px}
-.drop-zone .text{font-size:13px;color:var(--calc-expr-text)}
-.drop-zone .sub{font-size:11px;color:var(--text-placeholder);margin-top:4px}
-.drop-zone input{display:none}
-.preview-img{max-width:100%;max-height:200px;border-radius:8px;margin:12px auto;display:block}
-.copy-row{display:flex;gap:8px;margin-bottom:14px}
-.report-box {margin-top:16px; margin-bottom:14px; padding:16px; background:rgba(83,52,131,0.05); border-left:4px solid var(--accent); border-radius:8px; font-size:13px; line-height:1.6; color:var(--text-primary); display:none;}
-.report-box.show {display:block; animation:fadeIn 0.4s;}
-@keyframes fadeIn {from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)}}
+.drop-zone .text{font-size:14px;color:var(--text-secondary)}
+.drop-zone .sub{font-size:12px;color:var(--text-muted);margin-top:4px}
+.file-input{display:none}
+.file-info{margin:14px 0 8px;padding:10px 12px;border-radius:8px;background:var(--bg-bar);font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+.file-info .name{font-weight:700}
+.file-info .sub{display:block;color:var(--text-muted);font-size:13px}
+.preview-img{max-width:100%;max-height:200px;border-radius:8px;margin:8px auto 12px;display:block;background:var(--bg-bar)}
+.select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-input);color:var(--text-primary);font-size:16px;margin-bottom:12px;font-family:inherit}
 
 .guide-section{margin:12px; padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-app); margin-top:20px;}
 .guide-title{font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:12px;}
@@ -69,7 +88,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .guide-item .guide-content{padding:12px; font-size:13px; color:var(--text-info); line-height:1.6;}
 .related-tools{margin-top:16px; padding-top:16px; border-top:1px solid var(--border);}
 .tag-container{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
-.tool-tag{padding:6px 12px; background:rgba(83,52,131,0.1); color:var(--accent-text); border-radius:16px; font-size:11px; font-weight:600; text-decoration:none; transition:all 0.2s;}
+.tool-tag{padding:6px 12px; background:var(--accent-bg); color:var(--accent-text); border-radius:16px; font-size:11px; font-weight:600; text-decoration:none; transition:all 0.2s;}
 .tool-tag:hover{background:var(--accent); color:var(--text-on-accent);}
 
 .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
@@ -77,9 +96,6 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .footer a:hover{color:var(--text-secondary)}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-.limit-note{margin-top:6px;font-size:11px;line-height:1.5;color:var(--text-muted)}
-.input-error{display:none;margin-top:8px;padding:10px 12px;border:1px solid #ef4444;border-radius:8px;background:rgba(239,68,68,.08);color:#f87171;font-size:12px;line-height:1.5}
-.input-error.show{display:block}
 </style>
 <link rel="stylesheet" href="/special-chars/tool-shell.css">
 </head>
@@ -91,68 +107,88 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <h1>🔣 Base64 인코더/디코더</h1>
   </div>
   <div class="content">
-    <div class="mode-tabs">
-      <button class="mode-tab active" onclick="setMode('text')">📝 텍스트</button>
-      <button class="mode-tab" onclick="setMode('image')">🖼️ 이미지</button>
+    <div class="mode-tabs" role="tablist" aria-label="변환 대상">
+      <button type="button" class="mode-tab" role="tab" id="tabText" data-mode="text" aria-selected="true" aria-controls="textMode">📝 텍스트</button>
+      <button type="button" class="mode-tab" role="tab" id="tabFile" data-mode="file" aria-selected="false" aria-controls="imageMode" tabindex="-1">📁 파일</button>
     </div>
 
     <!-- 텍스트 모드 -->
-    <div id="textMode">
-      <label class="section-title" for="inputText">원본 텍스트</label>
-      <textarea class="text-area" id="inputText" placeholder="인코딩할 텍스트를 입력하세요..." oninput="autoConvert()" aria-describedby="textLimit textError"></textarea>
+    <section id="textMode" role="tabpanel" aria-labelledby="tabText">
+      <fieldset class="direction">
+        <legend class="section-title">변환 방향</legend>
+        <div class="seg">
+          <label class="seg-opt"><input type="radio" name="direction" value="encode" checked><span>🔒 인코딩<small>텍스트 → Base64</small></span></label>
+          <label class="seg-opt"><input type="radio" name="direction" value="decode"><span>🔓 디코딩<small>Base64 → 텍스트·파일</small></span></label>
+        </div>
+      </fieldset>
 
-      <div class="actions">
-        <button class="btn btn-primary" onclick="encode()">🔒 인코딩</button>
-        <button class="btn btn-primary" onclick="decode()">🔓 디코딩</button>
-        <button class="btn btn-secondary" onclick="swapText()">🔄 교환</button>
+      <label class="section-title" for="inputText" id="inputLabel">원본 텍스트</label>
+      <textarea class="text-area mono" id="inputText" placeholder="인코딩할 텍스트를 입력하면 바로 변환됩니다" spellcheck="false" aria-describedby="textLimit textError"></textarea>
+      <div class="hint" id="decodeHint" hidden>
+        <span>입력값이 Base64 문자열처럼 보입니다.</span>
+        <button type="button" class="inline-btn" id="switchToDecode">디코딩으로 전환</button>
       </div>
-
-      <label class="section-title" for="outputText">Base64 결과</label>
-      <textarea class="text-area" id="outputText" placeholder="결과가 여기에 표시됩니다..." oninput="autoConvertReverse()" aria-describedby="textLimit textError"></textarea>
+      <label class="check-row" id="urlSafeRow"><input type="checkbox" id="urlSafe"><span>URL-safe 형식으로 출력 (+/ 대신 -_ 사용, = 생략 · URL·JWT용)</span></label>
       <p class="limit-note" id="textLimit">원본 텍스트는 100만 자, 디코딩할 Base64 문자열은 800만 자까지 처리합니다.</p>
       <div class="input-error" id="textError" role="alert"></div>
+      <p class="notice" id="textNotice" role="status" hidden></p>
+
+      <label class="section-title" for="outputText" id="outputLabel">Base64 결과</label>
+      <textarea class="text-area mono" id="outputText" readonly placeholder="결과가 여기에 표시됩니다" aria-describedby="textMeta"></textarea>
+      <div class="binary-box" id="binaryBox" hidden>
+        <strong id="binaryTitle">바이너리 데이터</strong>
+        <p id="binaryDesc"></p>
+        <img id="binaryPreview" class="preview-img" hidden alt="디코딩한 이미지 미리보기">
+      </div>
+      <p class="meta-line" id="textMeta"></p>
 
       <div class="actions">
-        <button class="btn btn-primary" onclick="copyOutput()">📋 결과 복사</button>
-        <button class="btn btn-secondary" onclick="clearText()">🗑️ 초기화</button>
+        <button type="button" class="btn btn-primary" id="copyOutputBtn">📋 결과 복사</button>
+        <button type="button" class="btn btn-secondary" id="saveOutputBtn">💾 파일로 저장</button>
+        <button type="button" class="btn btn-secondary" id="useOutputBtn">⇅ 결과를 입력으로</button>
+        <button type="button" class="btn btn-secondary" id="clearTextBtn">🗑️ 초기화</button>
       </div>
-    </div>
+    </section>
 
-    <!-- 이미지 모드 -->
-    <div id="imageMode" class="image-section">
-      <div class="section-title" id="imageFileLabel">이미지 파일 선택</div>
-      <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-labelledby="imageFileLabel imageFileHelp" onclick="document.getElementById('fileInput').click()">
-        <div class="icon">📁</div>
-        <div class="text">클릭하거나 이미지를 드래그하세요</div>
-        <div class="sub" id="imageFileHelp">JPG, PNG, GIF, WebP, SVG · 최대 10MB</div>
-        <input type="file" id="fileInput" accept="image/*" aria-label="변환할 이미지 파일" onchange="handleFile(this.files[0])">
+    <!-- 파일 모드 -->
+    <section id="imageMode" class="image-section" role="tabpanel" aria-labelledby="tabFile" hidden>
+      <div class="section-title" id="imageFileLabel">파일 선택</div>
+      <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-labelledby="imageFileLabel imageFileHelp">
+        <div class="icon" aria-hidden="true">📁</div>
+        <div class="text">클릭하거나 파일을 끌어다 놓으세요</div>
+        <div class="sub" id="imageFileHelp">이미지·PDF·문서 등 모든 형식 · 최대 10MB</div>
       </div>
+      <input type="file" id="fileInput" class="file-input" aria-label="Base64로 변환할 파일" tabindex="-1">
       <div class="input-error" id="fileError" role="alert"></div>
 
-      <img id="previewImg" class="preview-img" style="display:none" alt="선택한 이미지 미리보기">
-
-      <div id="imageResult" style="display:none">
-        <div class="section-title">Base64 데이터 URL</div>
-        <div class="result-box">
-          <div class="result-text" id="imageBase64" style="max-height:150px;overflow-y:auto"></div>
-          <div class="char-count" id="b64Length"></div>
-        </div>
+      <img id="previewImg" class="preview-img" hidden alt="선택한 이미지 미리보기">
+      <div id="fileResult" hidden>
+        <p class="file-info" id="fileInfo"></p>
+        <label class="section-title" for="fileFormat">복사 형식</label>
+        <select class="select" id="fileFormat">
+          <option value="base64">Base64 문자열만</option>
+          <option value="dataurl">Data URL (data:…;base64,…)</option>
+          <option value="html" data-image-only="true">HTML &lt;img&gt; 태그</option>
+          <option value="css" data-image-only="true">CSS background-image</option>
+        </select>
+        <label class="section-title" for="fileOutput">변환 결과</label>
+        <textarea class="text-area mono" id="fileOutput" readonly aria-describedby="fileMeta"></textarea>
+        <p class="meta-line" id="fileMeta"></p>
         <div class="actions">
-          <button class="btn btn-primary" onclick="copyImageBase64()">📋 복사</button>
-          <button class="btn btn-secondary" onclick="clearImage()">🗑️ 초기화</button>
+          <button type="button" class="btn btn-primary" id="copyFileBtn">📋 복사</button>
+          <button type="button" class="btn btn-secondary" id="saveFileBtn">💾 .txt로 저장</button>
+          <button type="button" class="btn btn-secondary" id="clearFileBtn">🗑️ 초기화</button>
         </div>
       </div>
-    </div>
+    </section>
   </div>
-  
-  <div id="reportBox" class="report-box" style="margin-left:20px; margin-right:20px;" role="status" aria-live="polite"></div>
 
   <div class="guide-section">
     <div class="guide-title">🤔 Base64 인코딩 관련 Q&A</div>
     <details class="guide-item">
       <summary>Base64 인코딩이란 무엇인가요?</summary>
       <div class="guide-content">
-        컴퓨터 분야에서 쓰이는 Base64(베이스 64) 코딩 기법은 8비트 이진 데이터(예: 이미지 파일, 실행파일, 일반 문자열 등)를 화면에 표시되는 문자 코드표(ASCII)의 일반적인 64개 아스키 문자로 변환하여 나타내는 방식입니다. 텍스트만 허용하는 형식에서 데이터를 표현하거나 저장하기 쉬워지지만, 암호화나 전송 보안을 제공하지는 않습니다.
+        Base64는 이미지 파일, 실행 파일, 일반 문자열 같은 8비트 이진 데이터를 알파벳 대소문자, 숫자, <code>+</code>, <code>/</code>의 64개 문자로 바꿔 표현하는 방식입니다. 3바이트를 4글자로 바꾸기 때문에 결과는 원본보다 약 33% 길어지고, 길이를 4의 배수로 맞추기 위해 끝에 <code>=</code> 패딩이 붙을 수 있습니다. 텍스트만 허용하는 이메일 본문, JSON, HTML 속성 안에 바이너리 데이터를 넣을 때 쓰이지만, 암호화나 전송 보안을 제공하지는 않습니다. 한글처럼 ASCII 밖의 문자는 먼저 UTF-8 바이트로 바꾼 뒤 인코딩하므로 한 글자가 3바이트로 계산됩니다.
       </div>
     </details>
     <details class="guide-item">
@@ -162,16 +198,27 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       </div>
     </details>
     <details class="guide-item">
+      <summary>URL-safe Base64와 JWT는 어떻게 처리하나요?</summary>
+      <div class="guide-content">
+        표준 Base64의 <code>+</code>와 <code>/</code>는 URL에서 특별한 의미를 가지므로, URL·파일 이름·JWT 토큰에서는 이를 <code>-</code>와 <code>_</code>로 바꾸고 끝의 <code>=</code>를 생략한 URL-safe 형식을 씁니다. 디코딩할 때는 두 형식을 자동으로 구분하고, 빠진 패딩과 줄바꿈·공백, <code>data:image/png;base64,</code> 같은 접두어도 알아서 정리합니다. 점(.)으로 나뉜 세 부분으로 된 JWT를 붙여넣으면 헤더와 페이로드를 각각 JSON으로 풀어 보여 줍니다. 다만 서명은 검증하지 않으므로 토큰이 위조되지 않았다는 보장은 되지 않습니다.
+      </div>
+    </details>
+    <details class="guide-item">
+      <summary>디코딩 결과가 '바이너리 데이터'로 나오는 이유는 무엇인가요?</summary>
+      <div class="guide-content">
+        디코딩한 바이트가 올바른 UTF-8 텍스트가 아니면 억지로 글자로 바꾸지 않고 바이너리 데이터로 안내합니다. 이미지나 PDF를 Base64로 만든 문자열이라면 파일 머리 부분의 식별 바이트로 PNG·JPEG·GIF·WebP·PDF·ZIP 등의 형식을 판별해 알맞은 확장자로 저장할 수 있게 합니다. 텍스트였어야 하는데 바이너리로 나온다면 복사 과정에서 문자열 일부가 잘렸거나, UTF-8이 아닌 EUC-KR 등 다른 인코딩으로 만들어진 문자열일 가능성이 큽니다.
+      </div>
+    </details>
+    <details class="guide-item">
       <summary>이미지를 Base64로 언제 주로 변환하나요?</summary>
       <div class="guide-content">
-        HTML 문서 내에 작은 크기의 로고 이미지나 아이콘을 삽입할 때 주로 사용됩니다.<br/>
-        문서 내에 <code>&lt;img src="data:image/png;base64,...(데이터)..." /&gt;</code> 형태로 포함시키면 별도의 이미지 파일을 다운로드하기 위한 추가적인 네트워크 HTTP 요청이 발생하지 않아 페이지 로딩 속도를 일부 개선하는 데 도움을 줍니다. 단, 이미지 용량이 너무 크면 문서의 텍스트 크기가 과도하게 커질 수 있으므로 수 킬로바이트 이하의 소형 이미지에 권장됩니다.
+        HTML 문서나 이메일 템플릿 안에 작은 로고 이미지나 아이콘을 직접 넣을 때 주로 사용합니다. 파일 탭에서 이미지를 고른 뒤 복사 형식을 'HTML &lt;img&gt; 태그'나 'CSS background-image'로 바꾸면 <code>&lt;img src="data:image/png;base64,..."&gt;</code> 형태를 바로 붙여넣을 수 있습니다. 별도의 이미지 요청이 줄어드는 대신 문서 자체가 커지고 브라우저 캐시를 따로 활용하지 못하므로, 수 킬로바이트 이하의 작은 이미지에만 권장됩니다.
       </div>
     </details>
     <details class="guide-item">
       <summary>지원 범위와 주의할 한계는 무엇인가요?</summary>
       <div class="guide-content">
-        텍스트 입력은 최대 100만 자, Base64 디코딩 입력은 최대 800만 자, 이미지 파일은 최대 10MB까지 처리합니다. Base64 결과는 원본보다 대체로 약 33% 커지므로 큰 파일 전송이나 저장 용도로는 적합하지 않습니다. 이 제한은 브라우저 탭의 메모리 사용과 응답 중단을 줄이기 위한 기준입니다.
+        텍스트 입력은 최대 100만 자, Base64 디코딩 입력은 최대 800만 자, 파일은 형식과 관계없이 최대 10MB까지 처리합니다. 결과가 매우 길면 화면에는 앞부분만 미리 보여 주고, 복사와 저장 버튼은 전체 결과를 사용합니다. Base64 결과는 원본보다 약 33% 커지므로 큰 파일 전송이나 저장 용도로는 적합하지 않습니다. 모든 변환은 브라우저 안에서 처리되며 입력한 텍스트나 파일을 서버로 업로드하지 않습니다.
       </div>
     </details>
 
@@ -192,173 +239,541 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 <button class="scroll-top-btn" id="scrollTopBtn" aria-label="맨 위로">↑</button>
 
 <script>
-let currentMode='text';
-const MAX_SOURCE_CHARS=1000000;
-const MAX_BASE64_CHARS=8000000;
-const MAX_FILE_BYTES=10*1024*1024;
+const MAX_SOURCE_CHARS = 1000000;
+const MAX_BASE64_CHARS = 8000000;
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
+const PREVIEW_CHARS = 100000;
+const $ = id => document.getElementById(id);
 
-function setInputError(id,message=''){
-  const error=document.getElementById(id);
-  error.textContent=message;
-  error.classList.toggle('show',Boolean(message));
+let currentMode = 'text';
+let textOutput = null;   // { kind: 'text'|'binary', text?, bytes?, mime, ext, label }
+let fileState = null;    // { name, type, size, dataUrl, base64 }
+let convertTimer = null;
+const objectUrls = { binary: null, file: null };
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return `${bytes.toLocaleString('ko-KR')}바이트`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)}KB`;
+  return `${(bytes / 1024 / 1024).toFixed(2)}MB`;
 }
 
-function validateTextLimit(value,limit,label){
-  if(value.length<=limit){setInputError('textError');return true;}
-  setInputError('textError',`${label}은(는) 최대 ${limit.toLocaleString()}자까지 처리할 수 있습니다. 입력을 줄인 뒤 다시 시도하세요.`);
+function setInputError(id, message = '') {
+  const error = $(id);
+  error.textContent = message;
+  error.classList.toggle('show', Boolean(message));
+  if (id === 'textError') $('inputText').setAttribute('aria-invalid', String(Boolean(message)));
+}
+
+function setNotice(messages) {
+  const notice = $('textNotice');
+  const list = (messages || []).filter(Boolean);
+  notice.textContent = list.join(' ');
+  notice.hidden = !list.length;
+}
+
+function validateTextLimit(value, limit, label) {
+  if (value.length <= limit) return true;
+  setInputError('textError', `${label}은(는) 최대 ${limit.toLocaleString('ko-KR')}자까지 처리할 수 있습니다. 입력을 줄인 뒤 다시 시도하세요.`);
   return false;
 }
 
-function setMode(m){
-  currentMode=m;
-  document.querySelectorAll('.mode-tab').forEach((tab,i)=>{
-    tab.classList.toggle('active',i===(m==='text'?0:1));
+/* ---------- 모드(탭) ---------- */
+function setMode(mode) {
+  currentMode = mode === 'text' ? 'text' : 'file';
+  document.querySelectorAll('.mode-tab').forEach(tab => {
+    const active = tab.dataset.mode === currentMode;
+    tab.setAttribute('aria-selected', String(active));
+    tab.tabIndex = active ? 0 : -1;
+    tab.classList.toggle('active', active);
   });
-  document.getElementById('textMode').style.display=m==='text'?'block':'none';
-  document.getElementById('imageMode').style.display=m==='image'?'block':'none';
-  document.getElementById('reportBox').classList.remove('show');
+  $('textMode').hidden = currentMode !== 'text';
+  $('imageMode').hidden = currentMode !== 'file';
 }
 
-// UTF-8 safe Base64
-function utf8ToBase64(str){
-  const bytes=new TextEncoder().encode(str);
-  let binary='';
-  bytes.forEach(b=>binary+=String.fromCharCode(b));
+document.querySelectorAll('.mode-tab').forEach((tab, index, tabs) => {
+  tab.addEventListener('click', () => setMode(tab.dataset.mode));
+  tab.addEventListener('keydown', event => {
+    let next = null;
+    if (event.key === 'ArrowRight') next = tabs[(index + 1) % tabs.length];
+    else if (event.key === 'ArrowLeft') next = tabs[(index - 1 + tabs.length) % tabs.length];
+    else if (event.key === 'Home') next = tabs[0];
+    else if (event.key === 'End') next = tabs[tabs.length - 1];
+    if (!next) return;
+    event.preventDefault();
+    setMode(next.dataset.mode);
+    next.focus();
+  });
+});
+
+/* ---------- 바이트 변환 도우미 ---------- */
+function bytesToBase64(bytes) {
+  let binary = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) {
+    binary += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  }
   return btoa(binary);
 }
 
-function base64ToUtf8(b64){
-  const binary=atob(b64);
-  const bytes=new Uint8Array(binary.length);
-  for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
-  return new TextDecoder().decode(bytes);
+function base64ToBytes(b64) {
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
 }
 
-function encode(){
-  const input=document.getElementById('inputText').value;
-  if(!input){showToast('텍스트를 입력하세요');return;}
-  if(!validateTextLimit(input,MAX_SOURCE_CHARS,'원본 텍스트')) return;
-  try{
-    const result=utf8ToBase64(input);
-    document.getElementById('outputText').value=result;
-    showToast('인코딩 완료! 🔒');
-    updateReport({type:'encode', length:result.length});
-  }catch(e){showToast('인코딩 실패: '+e.message);}
+function toUrlSafe(b64) {
+  return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-function decode(){
-  const input=document.getElementById('outputText').value||document.getElementById('inputText').value;
-  if(!input){showToast('Base64 문자열을 입력하세요');return;}
-  if(!validateTextLimit(input,MAX_BASE64_CHARS,'Base64 문자열')) return;
-  try{
-    const result=base64ToUtf8(input.trim());
-    if(document.getElementById('outputText').value){
-      document.getElementById('inputText').value=result;
-    } else {
-      document.getElementById('outputText').value=result;
-    }
-    showToast('디코딩 완료! 🔓');
-    updateReport({type:'decode', length:result.length});
-  }catch(e){showToast('유효하지 않은 Base64 문자열이거나 지원하지 않는 형식입니다.');}
-}
-
-function updateReport(data) {
-  const box = document.getElementById('reportBox');
-  let text = '';
-  if(data.type === 'encode') {
-      text = `🔒 <b>Base64 텍스트 인코딩 분석</b><br/>원본 텍스트가 총 <b>${data.length.toLocaleString()}자</b>의 Base64 데이터 문자열로 변환되었습니다. ASCII 텍스트 형식으로 표현되므로 텍스트 전용 채널에서 다루기 쉽지만, Base64 자체는 암호화나 전송 보안을 제공하지 않습니다.`;
-  } else if(data.type === 'decode') {
-    text = `🔓 <b>Base64 텍스트 디코딩 분석</b><br/>입력하신 Base64 데이터가 성공적으로 파싱되어 총 <b>${data.length.toLocaleString()}자</b>의 원본 UTF-8 텍스트로 복원(디코딩)되었습니다.`;
-  } else if(data.type === 'image') {
-    text = `🖼️ <b>Base64 이미지 변환 완료</b><br/>업로드된 이미지가 Data URI Scheme 형태의 Base64 코드로 변환되었습니다. 변환된 코드의 용량은 약 <b>${data.kb} KB</b>입니다. 이 코드를 복사하여 브라우저 주소창이나 HTML <code>&lt;img src=""&gt;</code> 속성에 붙여넣으면 이미지가 즉시 렌더링됩니다.`;
+function decodeUtf8Strict(bytes) {
+  try {
+    const text = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+    return /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/.test(text) ? null : text;
+  } catch (e) {
+    return null;
   }
-  box.innerHTML = text;
-  box.classList.add('show');
 }
 
-function swapText(){
-  const input=document.getElementById('inputText');
-  const output=document.getElementById('outputText');
-  const tmp=input.value;
-  input.value=output.value;
-  output.value=tmp;
+const MIME_EXT = {
+  'image/png': 'png', 'image/jpeg': 'jpg', 'image/gif': 'gif', 'image/webp': 'webp', 'image/svg+xml': 'svg',
+  'image/avif': 'avif', 'image/bmp': 'bmp', 'image/x-icon': 'ico', 'application/pdf': 'pdf',
+  'application/zip': 'zip', 'application/json': 'json', 'text/plain': 'txt', 'text/html': 'html',
+  'text/css': 'css', 'text/csv': 'csv', 'audio/mpeg': 'mp3', 'video/mp4': 'mp4'
+};
+
+function detectFileType(bytes, hintedMime) {
+  const at = (offset, text) => bytes.length >= offset + text.length && [...text].every((ch, i) => bytes[offset + i] === ch.charCodeAt(0));
+  const b = index => bytes[index];
+  if (b(0) === 0x89 && at(1, 'PNG')) return { ext: 'png', mime: 'image/png', label: 'PNG 이미지' };
+  if (b(0) === 0xFF && b(1) === 0xD8 && b(2) === 0xFF) return { ext: 'jpg', mime: 'image/jpeg', label: 'JPEG 이미지' };
+  if (at(0, 'GIF8')) return { ext: 'gif', mime: 'image/gif', label: 'GIF 이미지' };
+  if (at(0, 'RIFF') && at(8, 'WEBP')) return { ext: 'webp', mime: 'image/webp', label: 'WebP 이미지' };
+  if (at(4, 'ftypavif')) return { ext: 'avif', mime: 'image/avif', label: 'AVIF 이미지' };
+  if (at(4, 'ftyphei') || at(4, 'ftypmif1')) return { ext: 'heic', mime: 'image/heic', label: 'HEIC 이미지' };
+  if (at(4, 'ftyp')) return { ext: 'mp4', mime: 'video/mp4', label: 'MP4 동영상' };
+  if (at(0, '%PDF')) return { ext: 'pdf', mime: 'application/pdf', label: 'PDF 문서' };
+  if (b(0) === 0x50 && b(1) === 0x4B && [3, 5, 7].includes(b(2))) return { ext: 'zip', mime: 'application/zip', label: 'ZIP 압축 파일(DOCX·XLSX·PPTX 포함)' };
+  if (b(0) === 0x1F && b(1) === 0x8B) return { ext: 'gz', mime: 'application/gzip', label: 'GZIP 압축 파일' };
+  if (b(0) === 0 && b(1) === 0 && b(2) === 1 && b(3) === 0) return { ext: 'ico', mime: 'image/x-icon', label: 'ICO 아이콘' };
+  if (at(0, 'BM') && bytes.length > 26) return { ext: 'bmp', mime: 'image/bmp', label: 'BMP 이미지' };
+  if (at(0, 'ID3')) return { ext: 'mp3', mime: 'audio/mpeg', label: 'MP3 오디오' };
+  if (at(0, 'OggS')) return { ext: 'ogg', mime: 'audio/ogg', label: 'OGG 오디오' };
+  if (at(0, 'wOF2')) return { ext: 'woff2', mime: 'font/woff2', label: 'WOFF2 글꼴' };
+  if (hintedMime && MIME_EXT[hintedMime]) return { ext: MIME_EXT[hintedMime], mime: hintedMime, label: `${hintedMime} 데이터` };
+  return { ext: 'bin', mime: 'application/octet-stream', label: '형식을 알 수 없는 바이너리' };
 }
 
-function autoConvert(){
-  if(document.getElementById('inputText').value.length<=MAX_SOURCE_CHARS) setInputError('textError');
-}
-function autoConvertReverse(){
-  if(document.getElementById('outputText').value.length<=MAX_BASE64_CHARS) setInputError('textError');
+/* ---------- Base64 입력 정리 ---------- */
+function normalizeBase64(raw) {
+  const notes = [];
+  let value = raw.trim();
+  let mime = '';
+  const dataMatch = /^data:([^,;]*)((?:;[^,;]*)*?);base64,/i.exec(value);
+  if (dataMatch) {
+    mime = dataMatch[1].trim().toLowerCase();
+    value = value.slice(dataMatch[0].length);
+    notes.push(`data URL 접두어(${mime || '형식 미지정'})를 떼고 디코딩했습니다.`);
+  } else if (/^data:[^,]*,/i.test(value)) {
+    return { error: 'Base64가 아닌 data URL입니다. ";base64," 표시가 있는 data URL만 디코딩할 수 있습니다.' };
+  }
+  const compact = value.replace(/\s+/g, '');
+  if (compact.length !== value.length) notes.push('줄바꿈과 공백을 제거했습니다.');
+  const invalid = /[^A-Za-z0-9+/\-_=]/.exec(compact);
+  if (invalid) {
+    return { error: `앞에서 ${(invalid.index + 1).toLocaleString('ko-KR')}번째 문자 "${invalid[0]}"는 Base64에 쓰이지 않습니다. 인코딩하려던 텍스트라면 변환 방향을 '인코딩'으로 바꾸세요.` };
+  }
+  let body = compact.replace(/=+$/, '');
+  if (body.includes('=')) return { error: '= 패딩 기호는 문자열 끝에만 올 수 있습니다. 여러 Base64 값이 붙어 있지 않은지 확인하세요.' };
+  if (/[-_]/.test(body)) {
+    body = body.replace(/-/g, '+').replace(/_/g, '/');
+    notes.push('URL-safe 형식(-, _)으로 인식했습니다.');
+  }
+  if (body.length % 4 === 1) return { error: '문자 수가 Base64 규칙에 맞지 않습니다. 복사 과정에서 한 글자가 빠지거나 더해졌을 수 있습니다.' };
+  return { b64: body + '='.repeat((4 - body.length % 4) % 4), mime, notes };
 }
 
-function copyOutput(){
-  const text=document.getElementById('outputText').value;
-  if(!text){showToast('복사할 내용이 없습니다');return;}
-  navigator.clipboard.writeText(text).then(()=>showToast('복사 완료! 📋'));
+function tryJwt(raw) {
+  const value = raw.trim();
+  if (!/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*$/.test(value)) return null;
+  const parts = value.split('.');
+  try {
+    const decodePart = part => {
+      const normalized = normalizeBase64(part);
+      if (normalized.error) throw new Error(normalized.error);
+      const text = decodeUtf8Strict(base64ToBytes(normalized.b64));
+      if (text === null) throw new Error('not text');
+      return JSON.parse(text);
+    };
+    const header = decodePart(parts[0]);
+    const payload = decodePart(parts[1]);
+    if (!header || typeof header !== 'object' || !('alg' in header)) return null;
+    return `// 헤더\n${JSON.stringify(header, null, 2)}\n\n// 페이로드\n${JSON.stringify(payload, null, 2)}`;
+  } catch (e) {
+    return null;
+  }
 }
 
-function clearText(){
-  document.getElementById('inputText').value='';
-  document.getElementById('outputText').value='';
-  document.getElementById('reportBox').classList.remove('show');
+function looksLikeBase64Text(raw) {
+  const value = raw.trim();
+  if (/^data:[^,]*;base64,/i.test(value)) return true;
+  if (tryJwt(value)) return true;
+  const compact = value.replace(/\s+/g, '');
+  if (compact.length < 8 || !/^[A-Za-z0-9+/\-_]+={0,2}$/.test(compact)) return false;
+  const normalized = normalizeBase64(compact);
+  if (normalized.error) return false;
+  try { return decodeUtf8Strict(base64ToBytes(normalized.b64)) !== null; } catch (e) { return false; }
+}
+
+/* ---------- 텍스트 모드 ---------- */
+function getDirection() {
+  return document.querySelector('input[name="direction"]:checked').value;
+}
+
+function setDirection(direction) {
+  document.querySelector(`input[name="direction"][value="${direction}"]`).checked = true;
+  applyDirectionLabels();
+}
+
+function applyDirectionLabels() {
+  const encode = getDirection() === 'encode';
+  $('inputLabel').textContent = encode ? '원본 텍스트' : 'Base64 문자열';
+  $('outputLabel').textContent = encode ? 'Base64 결과' : '디코딩 결과';
+  $('inputText').placeholder = encode
+    ? '인코딩할 텍스트를 입력하면 바로 변환됩니다'
+    : 'Base64 문자열, data URL, JWT를 붙여넣으면 바로 디코딩됩니다';
+  $('urlSafeRow').hidden = !encode;
+}
+
+function revokeUrl(key) {
+  if (objectUrls[key]) { URL.revokeObjectURL(objectUrls[key]); objectUrls[key] = null; }
+}
+
+function showTextOutput(text) {
+  const output = $('outputText');
+  output.hidden = false;
+  $('binaryBox').hidden = true;
+  revokeUrl('binary');
+  output.value = text.length > PREVIEW_CHARS ? text.slice(0, PREVIEW_CHARS) : text;
+}
+
+function showBinaryOutput(bytes, type) {
+  $('outputText').value = '';
+  $('outputText').hidden = true;
+  $('binaryBox').hidden = false;
+  $('binaryTitle').textContent = `텍스트가 아닌 바이너리 데이터입니다 · ${type.label}`;
+  $('binaryDesc').textContent = type.ext === 'bin'
+    ? `${formatBytes(bytes.length)}. UTF-8 텍스트로 읽을 수 없습니다. 문자열 일부가 잘렸거나 다른 인코딩(EUC-KR 등)으로 만든 값일 수 있습니다. 필요하면 .bin 파일로 저장하세요.`
+    : `${formatBytes(bytes.length)}. '파일로 저장'을 누르면 .${type.ext} 파일로 받을 수 있습니다.`;
+  const preview = $('binaryPreview');
+  revokeUrl('binary');
+  if (/^image\/(png|jpeg|gif|webp|avif|bmp|x-icon)$/.test(type.mime)) {
+    objectUrls.binary = URL.createObjectURL(new Blob([bytes], { type: type.mime }));
+    preview.src = objectUrls.binary;
+    preview.hidden = false;
+  } else {
+    preview.removeAttribute('src');
+    preview.hidden = true;
+  }
+}
+
+function resetTextOutput() {
+  textOutput = null;
+  showTextOutput('');
+  $('textMeta').textContent = '';
+  updateTextButtons();
+}
+
+function updateTextButtons() {
+  const hasText = Boolean(textOutput && textOutput.kind === 'text' && textOutput.text);
+  const hasAny = Boolean(textOutput && (hasText || textOutput.kind === 'binary'));
+  $('copyOutputBtn').disabled = !hasText;
+  $('useOutputBtn').disabled = !hasText;
+  $('saveOutputBtn').disabled = !hasAny;
+}
+
+function convertText() {
+  clearTimeout(convertTimer);
+  const raw = $('inputText').value;
+  const encode = getDirection() === 'encode';
   setInputError('textError');
+  setNotice([]);
+  $('decodeHint').hidden = true;
+  if (!raw) { resetTextOutput(); return false; }
+
+  if (encode) {
+    if (!validateTextLimit(raw, MAX_SOURCE_CHARS, '원본 텍스트')) { resetTextOutput(); return false; }
+    const bytes = new TextEncoder().encode(raw);
+    let b64 = bytesToBase64(bytes);
+    if ($('urlSafe').checked) b64 = toUrlSafe(b64);
+    textOutput = { kind: 'text', text: b64, mime: 'text/plain', ext: 'txt', name: 'base64' };
+    showTextOutput(b64);
+    $('textMeta').textContent = `입력 ${raw.length.toLocaleString('ko-KR')}자 · UTF-8 ${formatBytes(bytes.length)} → Base64 ${b64.length.toLocaleString('ko-KR')}자`;
+    if (raw.length <= 20000 && looksLikeBase64Text(raw)) $('decodeHint').hidden = false;
+  } else {
+    if (!validateTextLimit(raw, MAX_BASE64_CHARS, 'Base64 문자열')) { resetTextOutput(); return false; }
+    const jwt = tryJwt(raw);
+    if (jwt) {
+      textOutput = { kind: 'text', text: jwt, mime: 'application/json', ext: 'txt', name: 'jwt-decoded' };
+      showTextOutput(jwt);
+      setNotice(['JWT로 인식해 헤더와 페이로드를 각각 디코딩했습니다. 서명은 검증하지 않으며, 토큰에 담긴 정보는 누구나 읽을 수 있습니다.']);
+      $('textMeta').textContent = `JWT 3개 부분 중 헤더·페이로드 표시`;
+      updateTextButtons();
+      return true;
+    }
+    const normalized = normalizeBase64(raw);
+    if (normalized.error) { setInputError('textError', normalized.error); resetTextOutput(); return false; }
+    let bytes;
+    try { bytes = base64ToBytes(normalized.b64); } catch (e) {
+      setInputError('textError', '유효하지 않은 Base64 문자열입니다.');
+      resetTextOutput();
+      return false;
+    }
+    const text = decodeUtf8Strict(bytes);
+    const notes = normalized.notes.slice();
+    if (text !== null) {
+      const ext = normalized.mime && MIME_EXT[normalized.mime] ? MIME_EXT[normalized.mime] : 'txt';
+      textOutput = { kind: 'text', text, mime: normalized.mime || 'text/plain', ext, name: 'decoded' };
+      showTextOutput(text);
+      $('textMeta').textContent = `Base64 ${normalized.b64.length.toLocaleString('ko-KR')}자 → ${formatBytes(bytes.length)} → 텍스트 ${text.length.toLocaleString('ko-KR')}자`;
+    } else {
+      const type = detectFileType(bytes, normalized.mime);
+      textOutput = { kind: 'binary', bytes, mime: type.mime, ext: type.ext, name: 'decoded', label: type.label };
+      showBinaryOutput(bytes, type);
+      $('textMeta').textContent = `Base64 ${normalized.b64.length.toLocaleString('ko-KR')}자 → ${formatBytes(bytes.length)}`;
+    }
+    setNotice(notes);
+  }
+  if (textOutput && textOutput.kind === 'text' && textOutput.text.length > PREVIEW_CHARS) {
+    const notice = $('textNotice');
+    const extra = `결과가 ${textOutput.text.length.toLocaleString('ko-KR')}자로 길어 앞 ${PREVIEW_CHARS.toLocaleString('ko-KR')}자만 미리 보여 줍니다. 복사·저장 버튼은 전체 결과를 사용합니다.`;
+    notice.textContent = notice.hidden ? extra : `${notice.textContent} ${extra}`;
+    notice.hidden = false;
+  }
+  updateTextButtons();
+  return true;
 }
 
-// 이미지 모드
-const dropZone=document.getElementById('dropZone');
-dropZone.addEventListener('keydown',e=>{
-  if(e.key==='Enter'||e.key===' '){e.preventDefault();document.getElementById('fileInput').click();}
-});
-dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('dragover');});
-dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('dragover'));
-dropZone.addEventListener('drop',e=>{
-  e.preventDefault();dropZone.classList.remove('dragover');
-  if(e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
-});
+function scheduleConvert() {
+  clearTimeout(convertTimer);
+  const size = $('inputText').value.length;
+  if (size > 50000) convertTimer = setTimeout(convertText, 250);
+  else convertText();
+}
 
-function handleFile(file){
+function encode() { setDirection('encode'); return convertText(); }
+function decode() { setDirection('decode'); return convertText(); }
+
+function useOutputAsInput() {
+  if (!textOutput || textOutput.kind !== 'text') return;
+  const nextDirection = getDirection() === 'encode' ? 'decode' : 'encode';
+  $('inputText').value = textOutput.text;
+  setDirection(nextDirection);
+  convertText();
+  $('inputText').focus();
+  showToast(nextDirection === 'decode' ? '결과를 입력으로 옮겨 디코딩했습니다' : '결과를 입력으로 옮겨 인코딩했습니다');
+}
+
+function clearText() {
+  $('inputText').value = '';
+  setInputError('textError');
+  setNotice([]);
+  $('decodeHint').hidden = true;
+  resetTextOutput();
+}
+
+/* ---------- 복사·저장 ---------- */
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+  return new Promise((resolve, reject) => {
+    const helper = document.createElement('textarea');
+    helper.value = text;
+    helper.setAttribute('readonly', '');
+    helper.style.position = 'fixed';
+    helper.style.opacity = '0';
+    document.body.appendChild(helper);
+    helper.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    helper.remove();
+    ok ? resolve() : reject(new Error('copy failed'));
+  });
+}
+
+function copyWithFeedback(text, field, successMessage) {
+  copyText(text).then(() => showToast(successMessage)).catch(() => {
+    if (field && field.value.length === text.length) { field.focus(); field.select(); }
+    showToast(field && field.value.length === text.length
+      ? '복사하지 못했습니다. 선택된 결과를 직접 복사하세요'
+      : '복사하지 못했습니다. 파일로 저장 버튼을 이용하세요');
+  });
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function copyOutput() {
+  if (!textOutput || textOutput.kind !== 'text' || !textOutput.text) { showToast('복사할 내용이 없습니다'); return; }
+  copyWithFeedback(textOutput.text, $('outputText'), '복사 완료! 📋');
+}
+
+function saveOutput() {
+  if (!textOutput) { showToast('저장할 결과가 없습니다'); return; }
+  if (textOutput.kind === 'binary') {
+    downloadBlob(new Blob([textOutput.bytes], { type: textOutput.mime }), `${textOutput.name}.${textOutput.ext}`);
+  } else {
+    downloadBlob(new Blob([textOutput.text], { type: 'text/plain;charset=utf-8' }), `${textOutput.name}.${textOutput.ext}`);
+  }
+  showToast('파일 저장을 시작했습니다');
+}
+
+/* ---------- 파일 모드 ---------- */
+const dropZone = $('dropZone');
+dropZone.addEventListener('click', () => $('fileInput').click());
+dropZone.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('fileInput').click(); }
+});
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+$('fileInput').addEventListener('change', function () { handleFile(this.files[0]); });
+
+function handleFile(file) {
   setInputError('fileError');
-  if(!file||!file.type.startsWith('image/')){document.getElementById('fileInput').value='';setInputError('fileError','지원되는 이미지 파일을 선택하세요.');showToast('이미지 파일을 선택하세요');return;}
-  if(file.size>MAX_FILE_BYTES){document.getElementById('fileInput').value='';setInputError('fileError','파일이 10MB 제한을 초과했습니다. 더 작은 이미지를 선택하세요.');showToast('10MB 이하 이미지를 선택하세요');return;}
-  const reader=new FileReader();
-  reader.onload=function(e){
-    const dataUrl=e.target.result;
-    const kbText = (dataUrl.length/1024).toFixed(1);
-    document.getElementById('previewImg').src=dataUrl;
-    document.getElementById('previewImg').style.display='block';
-    document.getElementById('imageBase64').textContent=dataUrl;
-    document.getElementById('b64Length').textContent=`${kbText} KB`;
-    document.getElementById('imageResult').style.display='block';
-    showToast('이미지 변환 완료!');
-    updateReport({type:'image', kb:kbText});
+  if (!file) return;
+  if (file.size > MAX_FILE_BYTES) {
+    $('fileInput').value = '';
+    setInputError('fileError', `파일이 10MB 제한을 초과했습니다(${formatBytes(file.size)}). 더 작은 파일을 선택하세요.`);
+    showToast('10MB 이하 파일을 선택하세요');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const dataUrl = String(e.target.result || '');
+    const comma = dataUrl.indexOf(',');
+    const header = comma >= 0 ? dataUrl.slice(0, comma) : '';
+    const base64 = comma >= 0 ? dataUrl.slice(comma + 1) : '';
+    const mime = file.type || (/^data:([^;,]+)/.exec(header) || [])[1] || 'application/octet-stream';
+    fileState = { name: file.name, type: mime, size: file.size, base64, dataUrl: `data:${mime};base64,${base64}` };
+    renderFileResult(file);
+    showToast('파일 변환 완료!');
   };
-  reader.onerror=function(){setInputError('fileError','파일을 읽지 못했습니다. 다른 이미지를 선택하세요.');};
+  reader.onerror = function () { setInputError('fileError', '파일을 읽지 못했습니다. 다른 파일을 선택하세요.'); };
   reader.readAsDataURL(file);
 }
 
-function copyImageBase64(){
-  const text=document.getElementById('imageBase64').textContent;
-  if(!text){showToast('복사할 내용이 없습니다');return;}
-  navigator.clipboard.writeText(text).then(()=>showToast('복사 완료! 📋'));
+function renderFileResult(file) {
+  const info = $('fileInfo');
+  info.textContent = '';
+  const name = document.createElement('span');
+  name.className = 'name';
+  name.textContent = fileState.name || '(이름 없음)';
+  const sub = document.createElement('span');
+  sub.className = 'sub';
+  sub.textContent = `${fileState.type} · 원본 ${formatBytes(fileState.size)} → Base64 ${fileState.base64.length.toLocaleString('ko-KR')}자`;
+  info.append(name, sub);
+
+  const isImage = /^image\//.test(fileState.type);
+  const preview = $('previewImg');
+  revokeUrl('file');
+  if (isImage) {
+    objectUrls.file = URL.createObjectURL(file);
+    preview.src = objectUrls.file;
+    preview.hidden = false;
+  } else {
+    preview.removeAttribute('src');
+    preview.hidden = true;
+  }
+  const format = $('fileFormat');
+  format.querySelectorAll('option[data-image-only]').forEach(option => { option.disabled = !isImage; });
+  if (!isImage && format.selectedOptions[0].disabled) format.value = 'base64';
+  $('fileResult').hidden = false;
+  renderFileOutput();
 }
 
-function clearImage(){
-  document.getElementById('previewImg').style.display='none';
-  document.getElementById('imageResult').style.display='none';
-  document.getElementById('fileInput').value='';
-  document.getElementById('reportBox').classList.remove('show');
-  document.getElementById('previewImg').removeAttribute('src');
-  document.getElementById('imageBase64').textContent='';
+function fileOutputText() {
+  if (!fileState) return '';
+  switch ($('fileFormat').value) {
+    case 'dataurl': return fileState.dataUrl;
+    case 'html': return `<img src="${fileState.dataUrl}" alt="">`;
+    case 'css': return `background-image: url("${fileState.dataUrl}");`;
+    default: return fileState.base64;
+  }
+}
+
+function renderFileOutput() {
+  const text = fileOutputText();
+  const output = $('fileOutput');
+  const truncated = text.length > PREVIEW_CHARS;
+  output.value = truncated ? text.slice(0, PREVIEW_CHARS) : text;
+  $('fileMeta').textContent = truncated
+    ? `결과 ${text.length.toLocaleString('ko-KR')}자 중 앞 ${PREVIEW_CHARS.toLocaleString('ko-KR')}자만 미리 보여 줍니다. 복사·저장은 전체 결과를 사용합니다.`
+    : `결과 ${text.length.toLocaleString('ko-KR')}자`;
+}
+
+function copyFileOutput() {
+  const text = fileOutputText();
+  if (!text) { showToast('복사할 내용이 없습니다'); return; }
+  copyWithFeedback(text, $('fileOutput'), '복사 완료! 📋');
+}
+
+function saveFileOutput() {
+  const text = fileOutputText();
+  if (!text) { showToast('저장할 결과가 없습니다'); return; }
+  const base = (fileState.name || 'file').replace(/\.[^.]+$/, '') || 'file';
+  downloadBlob(new Blob([text], { type: 'text/plain;charset=utf-8' }), `${base}.base64.txt`);
+  showToast('파일 저장을 시작했습니다');
+}
+
+function clearImage() {
+  fileState = null;
+  revokeUrl('file');
+  $('previewImg').removeAttribute('src');
+  $('previewImg').hidden = true;
+  $('fileResult').hidden = true;
+  $('fileInfo').textContent = '';
+  $('fileOutput').value = '';
+  $('fileMeta').textContent = '';
+  $('fileInput').value = '';
   setInputError('fileError');
 }
 
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2000);
+let toastTimer = null;
+function showToast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
 }
 
+/* ---------- 이벤트 연결 ---------- */
+$('inputText').addEventListener('input', scheduleConvert);
+document.querySelectorAll('input[name="direction"]').forEach(radio => radio.addEventListener('change', () => { applyDirectionLabels(); convertText(); }));
+$('urlSafe').addEventListener('change', convertText);
+$('switchToDecode').addEventListener('click', () => { decode(); $('inputText').focus(); });
+$('copyOutputBtn').addEventListener('click', copyOutput);
+$('saveOutputBtn').addEventListener('click', saveOutput);
+$('useOutputBtn').addEventListener('click', useOutputAsInput);
+$('clearTextBtn').addEventListener('click', clearText);
+$('fileFormat').addEventListener('change', renderFileOutput);
+$('copyFileBtn').addEventListener('click', copyFileOutput);
+$('saveFileBtn').addEventListener('click', saveFileOutput);
+$('clearFileBtn').addEventListener('click', clearImage);
 
+applyDirectionLabels();
+updateTextButtons();
 </script>
 <script src="/special-chars/theme-toggle.js"></script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
