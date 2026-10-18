@@ -11,9 +11,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>📷 QR 코드 생성기 — 티모집사</title>
-<meta name="description" content="텍스트, URL, 연락처 등을 QR 코드로 즉시 생성하세요. 오류 복원 수준을 선택하고 표준 4모듈 여백이 포함된 PNG로 다운로드할 수 있습니다.">
+<meta name="description" content="텍스트·URL·Wi-Fi·연락처(vCard)·이메일·전화 QR 코드를 브라우저에서 바로 만들고 PNG·SVG로 저장하세요. 오류 복원 수준 선택, 인쇄 크기 안내, 표준 4모듈 여백을 지원합니다.">
 <meta property="og:title" content="📷 QR 코드 생성기 — 티모집사">
-<meta property="og:description" content="오류 복원 수준과 크기를 선택해 표준 여백이 포함된 QR 코드 PNG를 생성하세요.">
+<meta property="og:description" content="URL·Wi-Fi·연락처 QR 코드를 만들고 인쇄용 SVG 또는 PNG로 저장하세요.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/qr-code/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
@@ -23,6 +23,7 @@
 <script>(function(){if(typeof qrcode==='function'&&qrcode.stringToBytesFuncs&&typeof qrcode.stringToBytesFuncs['UTF-8']==='function'){qrcode.stringToBytes=qrcode.stringToBytesFuncs['UTF-8'];window.__qrUtf8Ready=true}else{window.__qrLibraryError=true}})()</script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
+  [hidden]{display:none !important}
   body{font-family:'Pretendard',sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:flex-start}
   .app{background:var(--bg-app);border-radius:16px;box-shadow:var(--shadow-lg);width:440px;max-width:100%;overflow:hidden}
   .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
@@ -30,19 +31,30 @@
   .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
   .header h1{font-size:15px;font-weight:600;color:#fff}
   .body{padding:16px;display:flex;flex-direction:column;gap:14px}
-  textarea{background:var(--bg-bar);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);padding:14px;font-size:14px;font-family:inherit;outline:none;resize:vertical;min-height:100px;width:100%}
-  textarea:focus{border-color:var(--accent)}
-  textarea::placeholder{color:var(--text-placeholder)}
-  .qr-box{display:none;background:#fff;border-radius:12px;padding:20px;text-align:center;align-self:center}
-  .qr-box canvas{max-width:100%}
-  .btn-row{display:flex;gap:8px}
-  .btn{flex:1;padding:10px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .2s}
-  .btn-primary{background:linear-gradient(135deg,#533483,#6b44a3);color:var(--text-on-accent)}
+  textarea,.field input,.field select{background:var(--bg-bar);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-family:inherit;outline:none;width:100%}
+  textarea{padding:14px;font-size:14px;resize:vertical;min-height:100px}
+  .field input,.field select{padding:10px 12px}
+  textarea:focus,.field input:focus,.field select:focus{border-color:var(--accent)}
+  textarea::placeholder,.field input::placeholder{color:var(--text-placeholder)}
+  .template{display:flex;flex-direction:column;gap:10px}
+  .field{display:flex;flex-direction:column;gap:5px;color:var(--calc-expr-text);font-weight:600}
+  .field .optional{font-weight:400;color:var(--text-placeholder)}
+  .check-row{display:flex;align-items:center;gap:8px;color:var(--text-secondary);cursor:pointer}
+  .check-row input{width:18px;height:18px;accent-color:var(--accent)}
+  .field-error{font-size:13px;font-weight:600;line-height:1.5;color:var(--status-red-text)}
+  /* QR 코드는 어떤 테마에서도 흰 바탕·검은 모듈이어야 스캔 대비가 확보되므로 색을 고정합니다. */
+  .qr-box{background:#fff;border-radius:12px;padding:16px;text-align:center;align-self:center;max-width:100%}
+  .qr-box canvas{display:block;width:min(100%,260px);height:auto;image-rendering:pixelated}
+  .qr-info{font-size:13px;line-height:1.55;color:var(--text-info);text-align:center}
+  .btn-row{display:flex;flex-wrap:wrap;gap:8px}
+  .btn{flex:1 1 auto;white-space:nowrap;padding:10px 12px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .2s}
+  .btn-primary{background:var(--accent);color:var(--text-on-accent)}
   .btn-secondary{background:var(--bg-bar);border:1px solid var(--border);color:var(--text-info)}
-  .btn:hover{opacity:.85}
+  .btn:hover:not(:disabled){opacity:.85}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
   .size-row{display:flex;align-items:center;gap:10px}
   .size-row label{font-size:11px;color:var(--calc-expr-text);font-weight:600;white-space:nowrap}
-  .size-row select{background:var(--bg-bar);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:6px 10px;font-size:12px;font-family:inherit;outline:none}
+  .size-row select{flex:1 1 auto;min-width:0;background:var(--bg-bar);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:6px 10px;font-size:12px;font-family:inherit;outline:none}
   .setting-note{font-size:11px;color:var(--text-placeholder);line-height:1.5;margin-top:-8px}
   .storage-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:-6px}
   .storage-row .setting-note{margin:0;flex:1}
@@ -51,12 +63,8 @@
   .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
   .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
   .footer a:hover{color:var(--text-secondary)}
-  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:var(--shadow-md);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
   .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-
-  .report-box {margin-top:16px; margin-bottom:14px; padding:16px; background:rgba(83,52,131,0.05); border-left:4px solid var(--accent); border-radius:8px; font-size:13px; line-height:1.6; color:var(--text-primary); display:none;}
-  .report-box.show {display:block; animation:fadeIn 0.4s;}
-  @keyframes fadeIn {from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)}}
 
   .guide-section{margin:12px; padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-app); margin-top:20px;}
   .guide-title{font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:12px;}
@@ -66,9 +74,11 @@
   .guide-item[open] summary::after{transform:rotate(180deg);}
   .guide-item[open] summary{border-bottom:1px solid var(--border); background:var(--bg-btn);}
   .guide-item .guide-content{padding:12px; font-size:13px; color:var(--text-info); line-height:1.6;}
+  .guide-content ul{padding-left:18px;margin:6px 0}
+  .guide-content li{margin-bottom:4px}
   .related-tools{margin-top:16px; padding-top:16px; border-top:1px solid var(--border);}
   .tag-container{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
-  .tool-tag{padding:6px 12px; background:rgba(83,52,131,0.1); color:var(--accent-text); border-radius:16px; font-size:11px; font-weight:600; text-decoration:none; transition:all 0.2s;}
+  .tool-tag{padding:6px 12px; background:var(--accent-bg); color:var(--accent-text); border-radius:16px; font-size:11px; font-weight:600; text-decoration:none; transition:all 0.2s;}
   .tool-tag:hover{background:var(--accent); color:var(--text-on-accent);}
 </style>
 <link rel="stylesheet" href="/special-chars/tool-shell.css">
@@ -83,18 +93,67 @@
     <h1>📷 QR 코드 생성기</h1>
   </div>
   <div class="body">
-    <textarea id="qrInput" maxlength="5000" placeholder="URL, 텍스트, 연락처 등을 입력하세요...&#10;예: https://teemozipsa.com/" oninput="scheduleGenerate()" aria-label="QR 코드로 만들 내용" aria-describedby="storageNote"></textarea>
-    <div class="storage-row">
-      <p class="setting-note" id="storageNote">입력 내용은 다음 방문 때 복원할 수 있도록 이 브라우저에만 자동 저장됩니다.</p>
-      <button type="button" class="storage-clear" onclick="clearStoredInput()">저장된 입력 지우기</button>
-    </div>
     <div class="size-row">
-      <label for="qrSize">모듈 크기:</label>
-      <select id="qrSize" onchange="generate()">
-        <option value="4">작게 (모듈당 4px)</option>
-        <option value="6" selected>보통 (모듈당 6px)</option>
-        <option value="8">크게 (모듈당 8px)</option>
-        <option value="12">매우 크게 (모듈당 12px)</option>
+      <label for="qrType">내용 종류:</label>
+      <select id="qrType" onchange="changeType()">
+        <option value="text" selected>텍스트 · URL</option>
+        <option value="wifi">Wi-Fi 접속</option>
+        <option value="vcard">연락처 (vCard)</option>
+        <option value="email">이메일 보내기</option>
+        <option value="tel">전화 걸기</option>
+      </select>
+    </div>
+
+    <div class="template" data-template="text">
+      <textarea id="qrInput" maxlength="5000" placeholder="URL, 텍스트 등을 입력하세요...&#10;예: https://teemozipsa.com/" oninput="scheduleGenerate()" aria-label="QR 코드로 만들 내용" aria-describedby="storageNote qrFieldError"></textarea>
+      <div class="storage-row">
+        <p class="setting-note" id="storageNote">텍스트·URL 입력은 다음 방문 때 복원할 수 있도록 이 브라우저에만 저장됩니다. 앞뒤 공백과 줄바꿈은 QR에 넣지 않습니다.</p>
+        <button type="button" class="storage-clear" onclick="requestClearStoredInput()">저장된 입력 지우기</button>
+      </div>
+    </div>
+
+    <div class="template" data-template="wifi" hidden>
+      <label class="field">네트워크 이름 (SSID)<input id="wifiSsid" maxlength="32" autocomplete="off" spellcheck="false" oninput="scheduleGenerate()" aria-describedby="qrFieldError"></label>
+      <label class="field">보안 방식
+        <select id="wifiAuth" onchange="generate()">
+          <option value="WPA" selected>WPA · WPA2 · WPA3 (일반 가정·사무실)</option>
+          <option value="WEP">WEP (구형 공유기)</option>
+          <option value="nopass">암호 없음</option>
+        </select>
+      </label>
+      <label class="field">비밀번호<input id="wifiPass" type="text" maxlength="64" autocomplete="off" spellcheck="false" oninput="scheduleGenerate()" aria-describedby="qrFieldError"></label>
+      <label class="check-row"><input type="checkbox" id="wifiHidden" onchange="generate()"> 숨겨진 네트워크 (SSID 브로드캐스트 안 함)</label>
+      <p class="setting-note" style="margin-top:0">Wi-Fi·연락처·이메일·전화 입력은 저장하지 않습니다. 비밀번호는 QR 안에 그대로 담기므로 공개 장소에 붙일 때 유의하세요.</p>
+    </div>
+
+    <div class="template" data-template="vcard" hidden>
+      <label class="field">이름<input id="vcName" maxlength="60" autocomplete="off" placeholder="예: 홍길동" oninput="scheduleGenerate()" aria-describedby="qrFieldError"></label>
+      <label class="field">휴대폰 <span class="optional">(선택)</span><input id="vcTel" type="tel" maxlength="30" autocomplete="off" placeholder="예: 010-1234-5678" oninput="scheduleGenerate()" aria-describedby="qrFieldError"></label>
+      <label class="field">이메일 <span class="optional">(선택)</span><input id="vcEmail" type="email" maxlength="120" autocomplete="off" oninput="scheduleGenerate()" aria-describedby="qrFieldError"></label>
+      <label class="field">회사 <span class="optional">(선택)</span><input id="vcOrg" maxlength="80" autocomplete="off" oninput="scheduleGenerate()"></label>
+      <label class="field">직함 <span class="optional">(선택)</span><input id="vcTitle" maxlength="60" autocomplete="off" oninput="scheduleGenerate()"></label>
+      <label class="field">웹사이트 <span class="optional">(선택)</span><input id="vcUrl" type="url" maxlength="200" autocomplete="off" placeholder="https://" oninput="scheduleGenerate()"></label>
+    </div>
+
+    <div class="template" data-template="email" hidden>
+      <label class="field">받는 사람<input id="mailTo" type="email" maxlength="120" autocomplete="off" placeholder="name@example.com" oninput="scheduleGenerate()" aria-describedby="qrFieldError"></label>
+      <label class="field">제목 <span class="optional">(선택)</span><input id="mailSubject" maxlength="120" autocomplete="off" oninput="scheduleGenerate()"></label>
+      <label class="field">본문 <span class="optional">(선택)</span><textarea id="mailBody" maxlength="1000" style="min-height:80px" oninput="scheduleGenerate()"></textarea></label>
+    </div>
+
+    <div class="template" data-template="tel" hidden>
+      <label class="field">전화번호<input id="telNumber" type="tel" maxlength="30" autocomplete="off" placeholder="예: 02-123-4567" oninput="scheduleGenerate()" aria-describedby="qrFieldError"></label>
+    </div>
+
+    <p class="field-error" id="qrFieldError" aria-live="polite" hidden></p>
+
+    <div class="size-row">
+      <label for="qrSize">PNG 크기:</label>
+      <select id="qrSize" onchange="generate()" aria-describedby="qrInfo">
+        <option value="300">작게 · 약 300px</option>
+        <option value="600" selected>보통 · 약 600px (화면·문서)</option>
+        <option value="1000">크게 · 약 1000px (인쇄 약 8cm)</option>
+        <option value="2000">매우 크게 · 약 2000px (대형 인쇄)</option>
       </select>
     </div>
     <div class="size-row">
@@ -107,63 +166,76 @@
       </select>
     </div>
     <p class="setting-note" id="errorLevelHelp">높은 수준은 훼손에 강하지만 같은 내용도 QR 패턴이 더 촘촘해질 수 있습니다.</p>
-    <div class="qr-box" id="qrBox"></div>
+    <div class="qr-box" id="qrBox" hidden></div>
+    <p class="qr-info" id="qrInfo" hidden></p>
     <div class="btn-row">
-      <button type="button" class="btn btn-primary" onclick="downloadQR()" disabled>📥 PNG 다운로드</button>
-      <button type="button" class="btn btn-secondary" onclick="copyQR()" disabled>📋 클립보드 복사</button>
+      <button type="button" class="btn btn-primary" onclick="downloadQR()" disabled>📥 PNG 저장</button>
+      <button type="button" class="btn btn-secondary" onclick="downloadSvg()" disabled>📐 SVG 저장</button>
+      <button type="button" class="btn btn-secondary" onclick="copyQR()" disabled>📋 이미지 복사</button>
     </div>
   </div>
-
-  <div id="reportBox" class="report-box" style="margin-left:20px; margin-right:20px;" role="status" aria-live="polite"></div>
 
   <div class="guide-section">
     <div class="guide-title">🤔 QR코드 생성 가이드라인 및 Q&A</div>
     <details class="guide-item">
       <summary>입력 데이터에 제한이 있나요?</summary>
       <div class="guide-content">
-        텍스트, 웹사이트 URL, 연락처 정보, 위치 데이터 등을 넣을 수 있지만 용량은 인코딩 방식과 선택한 오류 복원 수준에 따라 제한됩니다. 같은 내용이라도 높은 오류 복원 수준을 선택하면 더 큰 버전의 QR 코드가 필요할 수 있습니다. 스마트폰 스캔용으로는 짧고 안정적인 URL이나 표준 연락처(vCard) 포맷을 권장합니다.
+        이 생성기는 UTF-8 바이트 방식으로 인코딩하며, 가장 큰 40버전 기준 최대 용량은 오류 복원 L 2,953바이트, M 2,331바이트, Q 1,663바이트, H 1,273바이트입니다. 영문·숫자는 1글자가 1바이트지만 한글은 1글자가 3바이트이므로 M 수준에서 한글은 약 770자까지 들어갑니다. 다만 용량 한도에 가까울수록 모듈이 177×177까지 촘촘해져 인쇄물에서는 읽기 어렵습니다. 스마트폰 스캔용으로는 짧고 안정적인 URL을 넣는 편이 가장 확실합니다. 입력 앞뒤의 공백과 줄바꿈은 자동으로 제외해, 복사한 URL 끝에 붙은 줄바꿈 때문에 링크로 인식되지 않는 문제를 막습니다.
       </div>
     </details>
     <details class="guide-item">
       <summary>QR 코드를 인쇄할 때 최소 크기는 얼마인가요?</summary>
       <div class="guide-content">
-        모든 QR에 통하는 고정 최소 크기는 없습니다. 데이터가 많아 모듈 수가 늘수록 같은 인쇄 크기에서 각 모듈이 작아집니다. 사방 4모듈 여백을 유지하고, 실제 사용 거리·인쇄 품질·휴대폰 카메라를 기준으로 시험 출력해 크기를 정하세요. 작은 홍보물도 가능하면 2~3cm 이상에서 먼저 테스트하는 편이 안전합니다.
+        모든 QR에 통하는 고정 최소 크기는 없습니다. 데이터가 많아 모듈 수가 늘수록 같은 인쇄 크기에서 각 모듈이 작아집니다. 흔히 쓰는 경험칙은 <b>QR 한 변 ≥ 스캔 거리의 약 1/10</b>로, 30cm 거리에서 읽는 명함은 약 3cm, 2m 떨어진 포스터는 약 20cm가 기준입니다. QR 아래에 표시되는 “300dpi로 인쇄하면 약 ○cm”는 PNG를 해상도 손실 없이 인쇄할 수 있는 크기입니다. 인쇄물에는 크기를 마음대로 조절해도 깨지지 않는 <b>SVG 저장</b>을 권장하며, 사방 4모듈 여백을 유지한 채 실제 거리에서 시험 출력해 크기를 정하세요.
+      </div>
+    </details>
+    <details class="guide-item">
+      <summary>Wi-Fi·연락처·이메일 QR은 어떻게 동작하나요?</summary>
+      <div class="guide-content">
+        <ul>
+          <li><b>Wi-Fi 접속</b>: <code>WIFI:T:WPA;S:이름;P:비밀번호;;</code> 형식으로 만들어, 최신 iPhone·Android 기본 카메라로 스캔하면 비밀번호 입력 없이 접속을 제안합니다. 비밀번호가 QR 안에 평문으로 담기므로 사진으로 찍힌 QR도 누구나 읽을 수 있다는 점을 기억하세요. 손님용 네트워크를 따로 만들어 쓰는 편이 안전합니다.</li>
+          <li><b>연락처 (vCard 3.0)</b>: 스캔하면 이름·전화·이메일·회사가 채워진 “연락처 추가” 화면이 열립니다. 항목이 많을수록 QR이 촘촘해지므로 명함에는 꼭 필요한 항목만 넣으세요.</li>
+          <li><b>이메일 보내기</b>: <code>mailto:</code> 링크로, 받는 사람·제목·본문이 채워진 메일 작성 화면을 엽니다.</li>
+          <li><b>전화 걸기</b>: <code>tel:</code> 링크로 전화 앱에 번호를 띄웁니다. 실제 발신은 사용자가 직접 누릅니다.</li>
+        </ul>
+        스캐너 앱마다 지원 범위가 조금씩 다르므로 배포 전 대상 기기에서 확인하세요.
       </div>
     </details>
     <details class="guide-item">
       <summary>QR 코드가 제대로 스캔되지 않으면 어떻게 하나요?</summary>
       <div class="guide-content">
         QR 코드 인식률 저하의 주요 원인은 다음과 같습니다.<br>
-        1. 인쇄 크기가 너무 작거나 이미지가 훼손/왜곡된 경우<br>
-        2. 배경색과 QR 패턴(검은색 픽셀들) 사이의 명암비가 충분치 않은 경우 (밝은 배경에 어두운 패턴을 권장합니다)<br>
-        3. 너무 많은 텍스트 데이터를 욱여넣어 패턴이 현저히 조밀해진 경우<br>
-        오류 복원 수준은 L(약 7%), M(약 15%), Q(약 25%), H(약 30%) 중에서 선택할 수 있습니다. 수치는 복원 가능한 손상의 일반적인 근사치이며, 실제 인식률은 카메라·인쇄 품질·왜곡 정도에 따라 달라집니다. 일반 용도에는 M을 권장합니다.
+        1. 인쇄 크기가 너무 작거나 이미지가 훼손·왜곡된 경우<br>
+        2. 배경색과 QR 패턴 사이의 명암비가 충분하지 않은 경우 (밝은 배경에 어두운 패턴을 권장합니다)<br>
+        3. 너무 많은 데이터를 넣어 패턴이 지나치게 촘촘해진 경우<br>
+        오류 복원 수준은 L(약 7%), M(약 15%), Q(약 25%), H(약 30%) 중에서 선택할 수 있습니다. 수치는 복원 가능한 손상의 일반적인 근사치이며, 실제 인식률은 카메라·인쇄 품질·왜곡 정도에 따라 달라집니다. 일반 용도에는 M을, 로고를 얹거나 거친 환경에 붙일 때는 Q 이상을 권장합니다.
       </div>
     </details>
     <details class="guide-item">
       <summary>URL을 넣을 때 주의할 점은 무엇인가요?</summary>
       <div class="guide-content">
-        홍보물이나 명함에 넣는 QR 코드는 되도록 짧고 안정적인 URL을 사용하세요. 임시 세션이 붙은 주소, 로그인 후에만 열리는 주소, 너무 긴 추적 파라미터가 붙은 주소는 스캔 후 오류가 날 수 있습니다. 공개 페이지라면 브라우저에서 한 번 직접 열어보고, 모바일 데이터 환경에서도 접근되는지 확인한 뒤 QR 코드를 배포하는 것이 안전합니다.
+        홍보물이나 명함에 넣는 QR 코드는 되도록 짧고 안정적인 URL을 사용하세요. 임시 세션이 붙은 주소, 로그인 후에만 열리는 주소, 너무 긴 추적 파라미터가 붙은 주소는 스캔 후 오류가 나거나 QR을 불필요하게 촘촘하게 만듭니다. 캠페인 성과를 측정하려면 UTM 파라미터를 붙인 주소를 쓰되 길이를 확인하고, 공개 페이지라면 모바일 데이터 환경에서도 열리는지 확인한 뒤 배포하는 것이 안전합니다.
       </div>
     </details>
     <details class="guide-item">
-      <summary>다운로드한 QR 이미지는 어떻게 보관하나요?</summary>
+      <summary>PNG와 SVG 중 무엇으로 저장하나요?</summary>
       <div class="guide-content">
-        다운로드 PNG에는 QR 표준에서 권장하는 <b>사방 4모듈의 흰색 quiet zone(여백)</b>이 이미지 안에 포함됩니다. 인쇄용 원본은 이 여백까지 유지하고, 자르거나 어두운 배경으로 덮지 마세요. 문서에서 지나치게 작게 축소하거나 색상을 바꾸고 로고를 얹는 편집도 인식률을 낮출 수 있으므로 실제 스마트폰 카메라로 테스트한 뒤 사용하세요.
+        두 형식 모두 QR 표준에서 권장하는 <b>사방 4모듈의 흰색 여백(quiet zone)</b>을 이미지 안에 포함합니다. 문서·메신저·웹에 붙일 때는 PNG, 인쇄소에 넘기거나 디자인 프로그램에서 크기를 바꿀 때는 벡터 형식인 SVG가 적합합니다. 파일 이름은 입력 내용에서 따와 <code>qr_도메인.png</code>처럼 자동으로 붙습니다. 여백을 잘라내거나 어두운 배경 위에 올리지 말고, 색상을 바꾸거나 로고를 얹는 편집 뒤에는 반드시 스마트폰으로 다시 스캔해 보세요.
       </div>
     </details>
     <details class="guide-item">
       <summary>배포 전 테스트 체크리스트</summary>
       <div class="guide-content">
-        QR 코드를 공유하기 전에는 최소 두 가지 환경에서 테스트하세요. 하나는 내 휴대폰 기본 카메라, 다른 하나는 다른 사람의 휴대폰이나 다른 브라우저입니다. 실내 조명, 종이 인쇄, 화면 캡처처럼 실제 사용 상황과 비슷한 환경에서 열어보면 명암비나 크기 문제를 미리 찾을 수 있습니다.
+        QR 코드를 공유하기 전에는 최소 두 가지 환경에서 테스트하세요. 하나는 내 휴대폰 기본 카메라, 다른 하나는 다른 사람의 휴대폰이나 다른 스캐너 앱입니다. 실내 조명, 종이 인쇄, 화면 캡처처럼 실제 사용 상황과 비슷한 환경에서 열어보면 명암비나 크기 문제를 미리 찾을 수 있습니다. 생성은 모두 이 브라우저 안에서 이루어지며 입력 내용은 서버로 전송되지 않습니다.
       </div>
     </details>
 
     <div class="related-tools">
       <div class="guide-title" style="font-size:12px; margin-bottom:8px;">🛠 연관 도구 추천</div>
       <div class="tag-container">
-        <a href="/special-chars/base64-tool/" class="tool-tag">Base64 디코딩/인코딩</a>
-        <a href="/special-chars/color-conv/" class="tool-tag">컬러 코드 변환기</a>
+        <a href="/special-chars/utm-builder/" class="tool-tag">UTM 생성기</a>
+        <a href="/special-chars/base64-tool/" class="tool-tag">Base64 인코더/디코더</a>
+        <a href="/special-chars/color-conv/" class="tool-tag">실무 색상 코드 변환</a>
       </div>
     </div>
   </div>
@@ -171,22 +243,43 @@
 <footer class="footer"><span>100% 브라우저 로컬 생성 (서버 미전송)</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
 <nav class="site-policy-links" aria-label="사이트 정책"><a href="/about.html">사이트 소개</a><a href="/editorial-policy.html">편집정책</a><a href="/contact.html">문의</a><a href="/privacy.html">개인정보처리방침</a></nav>
 </div>
+
+<dialog class="tool-confirm-dialog" id="confirmDialog" aria-labelledby="confirmDialogTitle" aria-describedby="confirmDialogDescription">
+  <div class="tool-confirm-dialog__body">
+    <h2 id="confirmDialogTitle">입력 내용을 지울까요?</h2>
+    <p id="confirmDialogDescription">입력칸의 내용과 이 브라우저에 저장된 기록을 함께 지웁니다. 지운 내용은 되돌릴 수 없습니다.</p>
+    <div class="tool-confirm-dialog__actions">
+      <button type="button" data-dialog-cancel autofocus>취소</button>
+      <button type="button" class="tool-confirm-dialog__confirm" data-dialog-confirm>지우기</button>
+    </div>
+  </div>
+</dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 let currentDataUrl = '';
+let currentQr = null;
 const QUIET_ZONE_MODULES = 4;
 const QR_BYTE_CAPACITY = Object.freeze({ L: 2953, M: 2331, Q: 1663, H: 1273 });
+const QR_DARK = '#000000';
+const STORAGE_KEY = 'qrCode_text';
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 let generateTimer = 0;
-// 자동 저장: 페이지 로드 시 이전 입력 복원
-(function(){try{const saved=localStorage.getItem('qrCode_text');if(saved){document.getElementById('qrInput').value=saved;setTimeout(generate,0)}}catch(e){}})();
+
+// 텍스트·URL 입력만 복원합니다. Wi-Fi 비밀번호 같은 템플릿 입력은 저장하지 않습니다.
+(function(){try{const saved=localStorage.getItem(STORAGE_KEY);if(saved){document.getElementById('qrInput').value=saved;setTimeout(generate,0)}}catch(e){}})();
+
+function byId(id) { return document.getElementById(id); }
+function currentType() { return byId('qrType').value; }
+
+function changeType() {
+  const type = currentType();
+  document.querySelectorAll('.template').forEach(section => { section.hidden = section.dataset.template !== type; });
+  generate();
+}
 
 function scheduleGenerate() {
   clearTimeout(generateTimer);
-  if (!document.getElementById('qrInput').value.trim()) {
-    generate();
-    return;
-  }
-  invalidateOutput('QR 코드를 생성하는 중입니다…');
+  invalidateOutput();
   generateTimer = setTimeout(generate, 180);
 }
 
@@ -194,75 +287,200 @@ function setOutputReady(ready) {
   document.querySelectorAll('.btn-row .btn').forEach(button => { button.disabled = !ready; });
 }
 
-function invalidateOutput(message = '') {
+function invalidateOutput() {
   currentDataUrl = '';
+  currentQr = null;
   setOutputReady(false);
-  const box = document.getElementById('qrBox');
-  if (message) {
-    box.innerHTML = `<p style="color:var(--text-info);font-size:12px">${message}</p>`;
-    box.style.display = 'block';
+}
+
+function clearOutput() {
+  invalidateOutput();
+  byId('qrBox').hidden = true;
+  byId('qrBox').replaceChildren();
+  byId('qrInfo').hidden = true;
+  byId('qrInfo').textContent = '';
+}
+
+function showFieldError(fieldId, message) {
+  document.querySelectorAll('[aria-invalid="true"]').forEach(field => field.removeAttribute('aria-invalid'));
+  const error = byId('qrFieldError');
+  if (!message) {
+    error.hidden = true;
+    error.textContent = '';
+    return;
   }
-  document.getElementById('reportBox').classList.remove('show');
+  if (fieldId && byId(fieldId)) byId(fieldId).setAttribute('aria-invalid', 'true');
+  error.textContent = message;
+  error.hidden = false;
+}
+
+function fieldText(id) { return byId(id).value.trim(); }
+
+function textSlug(text) {
+  if (/^https?:\/\//i.test(text)) {
+    try {
+      const url = new URL(text);
+      const segment = url.pathname.split('/').filter(Boolean)[0] || '';
+      return url.hostname.replace(/^www\./, '') + (segment ? `_${segment}` : '');
+    } catch (e) { /* 일반 텍스트로 처리 */ }
+  }
+  return text.slice(0, 24);
+}
+
+function fileSlug(value) {
+  const slug = String(value || '')
+    .normalize('NFC')
+    .replace(/[\\/:*?"<>|#%&{}$!'@+`=^~\[\];,\s]+/g, '-')
+    .replace(/[\u0000-\u001f]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^[-.]+|[-.]+$/g, '')
+    .slice(0, 40);
+  return slug || 'code';
+}
+
+// 선택한 종류에 맞춰 QR에 넣을 문자열을 만듭니다. { empty } | { error, fieldId } | { text, slug }
+function buildPayload(type) {
+  const invalid = (fieldId, error) => ({ error, fieldId });
+  if (type === 'wifi') {
+    const ssid = byId('wifiSsid').value;
+    const pass = byId('wifiPass').value;
+    const auth = byId('wifiAuth').value;
+    if (!ssid.trim() && !pass) return { empty: true };
+    if (!ssid.trim()) return invalid('wifiSsid', '네트워크 이름(SSID)을 입력하세요.');
+    if (auth !== 'nopass' && !pass) return invalid('wifiPass', '비밀번호를 입력하거나 보안 방식을 “암호 없음”으로 바꾸세요.');
+    if (auth === 'WPA' && (pass.length < 8 || pass.length > 63) && !/^[0-9a-f]{64}$/i.test(pass)) {
+      return invalid('wifiPass', 'WPA 계열 비밀번호는 8~63자입니다.');
+    }
+    const escape = value => value.replace(/([\\;,:"])/g, '\\$1');
+    const password = auth === 'nopass' ? '' : `P:${escape(pass)};`;
+    return { text: `WIFI:T:${auth};S:${escape(ssid)};${password}${byId('wifiHidden').checked ? 'H:true;' : ''};`, slug: `wifi_${ssid}` };
+  }
+  if (type === 'vcard') {
+    const name = fieldText('vcName'), tel = fieldText('vcTel'), email = fieldText('vcEmail');
+    const org = fieldText('vcOrg'), title = fieldText('vcTitle'), url = fieldText('vcUrl');
+    if (![name, tel, email, org, title, url].some(Boolean)) return { empty: true };
+    if (!name) return invalid('vcName', '이름을 입력하세요.');
+    if (tel && !/^\+?[\d\s()-]{3,}$/.test(tel)) return invalid('vcTel', '전화번호는 숫자와 +, -, 괄호, 공백만 입력하세요.');
+    if (email && !EMAIL_PATTERN.test(email)) return invalid('vcEmail', '이메일 주소 형식을 확인하세요.');
+    const escape = value => value.replace(/\\/g, '\\\\').replace(/\r?\n/g, '\\n').replace(/([,;])/g, '\\$1');
+    const lines = ['BEGIN:VCARD', 'VERSION:3.0', `N:${escape(name)};;;;`, `FN:${escape(name)}`];
+    if (org) lines.push(`ORG:${escape(org)}`);
+    if (title) lines.push(`TITLE:${escape(title)}`);
+    if (tel) lines.push(`TEL;TYPE=CELL:${tel.replace(/\s+/g, '')}`);
+    if (email) lines.push(`EMAIL:${email}`);
+    if (url) lines.push(`URL:${url}`);
+    lines.push('END:VCARD');
+    return { text: lines.join('\r\n'), slug: `contact_${name}` };
+  }
+  if (type === 'email') {
+    const to = fieldText('mailTo'), subject = fieldText('mailSubject'), body = fieldText('mailBody');
+    if (!to && !subject && !body) return { empty: true };
+    if (!EMAIL_PATTERN.test(to)) return invalid('mailTo', '받는 사람 이메일 주소를 확인하세요.');
+    const params = [];
+    if (subject) params.push(`subject=${encodeURIComponent(subject)}`);
+    if (body) params.push(`body=${encodeURIComponent(body)}`);
+    return { text: `mailto:${to}${params.length ? `?${params.join('&')}` : ''}`, slug: `mail_${to.split('@')[0]}` };
+  }
+  if (type === 'tel') {
+    const raw = fieldText('telNumber');
+    if (!raw) return { empty: true };
+    const digits = raw.replace(/[\s()-]/g, '');
+    if (!/^\+?\d{3,20}$/.test(digits)) return invalid('telNumber', '전화번호는 숫자와 +, -, 괄호, 공백만 입력하세요.');
+    return { text: `tel:${digits}`, slug: `tel_${digits}` };
+  }
+  const text = byId('qrInput').value.trim();
+  if (!text) return { empty: true };
+  return { text, slug: textSlug(text) };
+}
+
+function requestClearStoredInput() {
+  if (!byId('qrInput').value.trim()) {
+    clearStoredInput();
+    return;
+  }
+  askConfirmation().then(confirmed => { if (confirmed) clearStoredInput(); });
+}
+
+function askConfirmation() {
+  const dialog = byId('confirmDialog');
+  if (!dialog || typeof dialog.showModal !== 'function') return Promise.resolve(true);
+  return new Promise(resolve => {
+    const handleCancel = event => {
+      event.preventDefault();
+      dialog.close('cancel');
+    };
+    dialog.querySelector('[data-dialog-confirm]').onclick = () => dialog.close('confirm');
+    dialog.querySelector('[data-dialog-cancel]').onclick = () => dialog.close('cancel');
+    dialog.addEventListener('cancel', handleCancel);
+    dialog.addEventListener('close', () => {
+      dialog.removeEventListener('cancel', handleCancel);
+      resolve(dialog.returnValue === 'confirm');
+    }, { once: true });
+    dialog.returnValue = '';
+    dialog.showModal();
+  });
 }
 
 function clearStoredInput() {
   clearTimeout(generateTimer);
   generateTimer = 0;
-  document.getElementById('qrInput').value = '';
-  try { localStorage.removeItem('qrCode_text'); } catch(e) {}
-  document.getElementById('qrBox').style.display = 'none';
-  invalidateOutput();
+  byId('qrInput').value = '';
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  if (currentType() === 'text') {
+    clearOutput();
+    showFieldError(null, '');
+  }
   showToast('입력과 브라우저 저장 내용을 지웠습니다.');
 }
 
 function generate() {
   clearTimeout(generateTimer);
   generateTimer = 0;
-  currentDataUrl = '';
-  setOutputReady(false);
-  const raw = document.getElementById('qrInput').value;
-  // 자동 저장
-  try{localStorage.setItem('qrCode_text',raw)}catch(e){}
-  const text = raw;
-  const box = document.getElementById('qrBox');
-  if (!text.trim()) {
-    box.style.display = 'none';
-    currentDataUrl = '';
-    document.getElementById('reportBox').classList.remove('show');
+  invalidateOutput();
+  const type = currentType();
+  if (type === 'text') {
+    try { localStorage.setItem(STORAGE_KEY, byId('qrInput').value); } catch(e) {}
+  }
+  const payload = buildPayload(type);
+  if (payload.empty) {
+    clearOutput();
+    showFieldError(null, '');
+    return;
+  }
+  if (payload.error) {
+    clearOutput();
+    showFieldError(payload.fieldId, payload.error);
     return;
   }
   if (!window.__qrUtf8Ready || typeof qrcode !== 'function') {
-    box.innerHTML = '<p style="color:#f87171;font-size:12px">로컬 QR 라이브러리를 불러오지 못했습니다. 페이지를 새로고침해 주세요.</p>';
-    box.style.display = 'block';
-    currentDataUrl = '';
-    document.getElementById('reportBox').classList.remove('show');
+    clearOutput();
+    showFieldError(null, '로컬 QR 라이브러리를 불러오지 못했습니다. 페이지를 새로고침해 주세요.');
     return;
   }
-  const cellSize = parseInt(document.getElementById('qrSize').value);
-  const errorLevel = document.getElementById('qrError').value;
-  const byteLength = qrcode.stringToBytes(text).length;
+  const primaryField = type === 'text' ? 'qrInput' : document.querySelector(`.template[data-template="${type}"] input, .template[data-template="${type}"] textarea`)?.id;
+  const errorLevel = byId('qrError').value;
+  const byteLength = qrcode.stringToBytes(payload.text).length;
   if (byteLength > QR_BYTE_CAPACITY[errorLevel]) {
-    box.innerHTML = `<p style="color:#f87171;font-size:12px">현재 ${errorLevel} 레벨의 바이트 용량(${QR_BYTE_CAPACITY[errorLevel].toLocaleString()}바이트)을 초과했습니다. 입력을 줄이거나 더 낮은 오류 복원 수준을 선택하세요.</p>`;
-    box.style.display = 'block';
-    currentDataUrl = '';
-    document.getElementById('reportBox').classList.remove('show');
+    clearOutput();
+    showFieldError(primaryField, `내용이 ${byteLength.toLocaleString()}바이트로, ${errorLevel} 수준 최대 용량(${QR_BYTE_CAPACITY[errorLevel].toLocaleString()}바이트)을 넘습니다. 내용을 줄이거나 더 낮은 오류 복원 수준을 선택하세요.`);
     return;
   }
   try {
     const qr = qrcode(0, errorLevel);
-    qr.addData(text);
+    qr.addData(payload.text);
     qr.make();
     const moduleCount = qr.getModuleCount();
     const totalModuleCount = moduleCount + (QUIET_ZONE_MODULES * 2);
+    const cellSize = Math.max(1, Math.round(Number(byId('qrSize').value) / totalModuleCount));
     const size = totalModuleCount * cellSize;
     const canvas = document.createElement('canvas');
     canvas.width = size; canvas.height = size;
     canvas.setAttribute('role', 'img');
     canvas.setAttribute('aria-label', `${moduleCount}x${moduleCount} 모듈 QR 코드, 사방 ${QUIET_ZONE_MODULES}모듈 여백 포함`);
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, size, size);
-    ctx.fillStyle = '#1a1a2e';
+    ctx.fillStyle = QR_DARK;
     for (let r = 0; r < moduleCount; r++) {
       for (let c = 0; c < moduleCount; c++) {
         if (qr.isDark(r, c)) {
@@ -270,61 +488,99 @@ function generate() {
         }
       }
     }
-    box.innerHTML = '';
-    box.appendChild(canvas);
-    box.style.display = 'block';
+    const box = byId('qrBox');
+    box.replaceChildren(canvas);
+    box.hidden = false;
+    showFieldError(null, '');
     currentDataUrl = canvas.toDataURL('image/png');
+    currentQr = { qr, moduleCount, size, slug: fileSlug(payload.slug) };
+    const version = (moduleCount - 17) / 4;
+    const printCm = (size / 300 * 2.54).toFixed(1);
+    const info = byId('qrInfo');
+    info.textContent = `버전 ${version} (${moduleCount}×${moduleCount}모듈) · 오류 복원 ${errorLevel} · ${byteLength.toLocaleString()}바이트 · PNG ${size}×${size}px, 300dpi로 인쇄하면 약 ${printCm}cm`;
+    info.hidden = false;
     setOutputReady(true);
-    updateReport(text, size, moduleCount, totalModuleCount, errorLevel, byteLength);
   } catch(e) {
-    box.innerHTML = '<p style="color:#f87171;font-size:12px">텍스트가 너무 길거나 인코딩할 수 없습니다.</p>';
-    box.style.display = 'block';
-    currentDataUrl = '';
-    document.getElementById('reportBox').classList.remove('show');
+    clearOutput();
+    showFieldError(primaryField, '이 내용은 QR 코드로 만들 수 없습니다. 내용을 줄여 다시 시도하세요.');
   }
 }
 
-function updateReport(text, size, moduleCount, totalModuleCount, errorLevel, byteLength) {
-  const box = document.getElementById('reportBox');
-  if(!text) {
-    box.classList.remove('show');
+function saveBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 30000);
+}
+
+function canvasBlob(canvas) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('PNG를 만들 수 없습니다.')), 'image/png');
+  });
+}
+
+async function downloadQR() {
+  const canvas = document.querySelector('#qrBox canvas');
+  if (!currentQr || !canvas) return;
+  try {
+    saveBlob(await canvasBlob(canvas), `qr_${currentQr.slug}.png`);
+  } catch (e) {
+    showToast('PNG를 저장하지 못했습니다. 다시 시도해 주세요.');
+  }
+}
+
+function buildSvg() {
+  const { qr, moduleCount, size } = currentQr;
+  const total = moduleCount + (QUIET_ZONE_MODULES * 2);
+  let path = '';
+  for (let r = 0; r < moduleCount; r++) {
+    let c = 0;
+    while (c < moduleCount) {
+      if (!qr.isDark(r, c)) { c++; continue; }
+      const start = c;
+      while (c < moduleCount && qr.isDark(r, c)) c++;
+      path += `M${start + QUIET_ZONE_MODULES} ${r + QUIET_ZONE_MODULES}h${c - start}v1h-${c - start}z`;
+    }
+  }
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${total} ${total}" width="${size}" height="${size}" shape-rendering="crispEdges"><rect width="${total}" height="${total}" fill="#ffffff"/><path d="${path}" fill="${QR_DARK}"/></svg>\n`;
+}
+
+function downloadSvg() {
+  if (!currentQr) return;
+  saveBlob(new Blob([buildSvg()], { type: 'image/svg+xml' }), `qr_${currentQr.slug}.svg`);
+}
+
+async function copyQR() {
+  const canvas = document.querySelector('#qrBox canvas');
+  if (!currentQr || !canvas) return;
+  if (!navigator.clipboard || typeof navigator.clipboard.write !== 'function' || typeof ClipboardItem === 'undefined') {
+    showToast('이 브라우저는 이미지 복사를 지원하지 않습니다. PNG로 저장해 주세요.');
     return;
   }
-  const normalized = text.trim();
-  let type = "일반 텍스트";
-  if(normalized.startsWith("http://") || normalized.startsWith("https://")) {
-    type = "웹사이트 URL";
-  } else if(normalized.startsWith("tel:") || /\d{2,3}-\d{3,4}-\d{4}/.test(normalized)) {
-    type = "전화번호/연락처";
-  } else if(normalized.startsWith("mailto:")) {
-    type = "이메일 주소";
-  }
-  
-  box.innerHTML = `📷 <b>QR 코드 생성 리포트</b><br/>입력 데이터는 <b>[${type}]</b> 형식이며 총 <b>${text.length}자 · ${byteLength.toLocaleString()}바이트(UTF-8)</b>입니다. 오류 복원은 <b>${errorLevel} 레벨</b>, QR 본체는 <b>${moduleCount}×${moduleCount}모듈</b>입니다. PNG 안에 사방 ${QUIET_ZONE_MODULES}모듈 여백을 더해 전체 격자는 <b>${totalModuleCount}×${totalModuleCount}모듈</b>, 실제 이미지 해상도는 <b>${size}×${size}px</b>입니다. 배포 전 실제 스마트폰으로 스캔해 보세요.`;
-  box.classList.add('show');
-}
-function downloadQR() {
-  if (!currentDataUrl) return;
-  const a = document.createElement('a');
-  a.href = currentDataUrl;
-  a.download = 'qrcode.png';
-  a.click();
-}
-async function copyQR() {
-  if (!currentDataUrl) return;
+  // Safari는 사용자 클릭과 같은 흐름에서 ClipboardItem을 만들어야 하므로 Blob을 Promise로 넘깁니다.
+  const blobPromise = canvasBlob(canvas);
   try {
-    const res = await fetch(currentDataUrl);
-    const blob = await res.blob();
-    await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
-    showToast('QR 코드가 클립보드에 복사되었습니다! 📋');
-  } catch(e) { showToast('복사 실패: 브라우저가 지원하지 않습니다.'); }
+    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blobPromise })]);
+    showToast('QR 이미지를 클립보드에 복사했습니다.');
+  } catch (firstError) {
+    try {
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': await blobPromise })]);
+      showToast('QR 이미지를 클립보드에 복사했습니다.');
+    } catch (secondError) {
+      showToast('복사하지 못했습니다. 브라우저 권한을 확인하거나 PNG로 저장해 주세요.');
+    }
+  }
 }
 
 function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
   clearTimeout(t._timer);
-  t._timer=setTimeout(()=>t.classList.remove('show'),1500)
+  t._timer=setTimeout(()=>t.classList.remove('show'),2400)
 }
 </script>
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
