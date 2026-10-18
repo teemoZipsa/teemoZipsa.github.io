@@ -11,9 +11,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>📏 글자 수 계산기 — 티모집사</title>
-<meta name="description" content="글자 수, 공백 제외, 단어 수, 줄 수, 바이트(UTF-8/EUC-KR)를 실시간으로 계산합니다.">
+<meta name="description" content="공백 포함·제외 글자 수, 단어 수, 줄 수, UTF-8·EUC-KR 바이트와 200자 원고지 매수를 실시간으로 계산하고 제한을 넘은 부분을 찾아 줍니다.">
 <meta property="og:title" content="📏 글자 수 계산기 — 티모집사">
-<meta property="og:description" content="글자 수, 공백 제외, 단어 수, 줄 수, 바이트(UTF-8/EUC-KR)를 실시간으로 계산합니다.">
+<meta property="og:description" content="공백 포함·제외 글자 수, UTF-8·EUC-KR 바이트, 원고지 매수를 실시간으로 계산합니다.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/char-counter/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
@@ -22,39 +22,57 @@
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px}
-  .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
+  .app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
   .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
   .header h1{font-size:15px;font-weight:600;color:#fff}
   .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
   .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
-  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.6);transition:transform .3s ease,opacity .3s ease;opacity:0;pointer-events:none;z-index:999}
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:14px;font-weight:500;box-shadow:var(--shadow-accent);transition:transform .3s ease,opacity .3s ease;opacity:0;pointer-events:none;z-index:999}
   .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
   .bottom-bar{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
-  .bottom-bar .info{font-size:11px;color:var(--text-info)}
-  .action-btn{padding:8px 20px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+  .action-btn{padding:8px 20px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
   .btn-clear{background:var(--bg-btn);color:var(--btn-clear-text)}.btn-clear:hover{background:var(--bg-btn-hover)}
   .btn-copy{background:var(--accent);color:var(--text-on-accent)}.btn-copy:hover{background:var(--accent-hover)}
 
   .counter-body{padding:12px;flex:1}
   #counterInput{width:100%;height:200px;resize:vertical;background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:14px;padding:12px;font-family:inherit;outline:none;line-height:1.6}
   #counterInput:focus{border-color:var(--accent)}
-  #counterInput::placeholder{color:var(--text-muted)588}
-  .limit-bar{display:flex;gap:8px;margin-top:10px;align-items:center}
-  .limit-bar select,.limit-bar input{background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:6px 10px;font-size:12px;font-family:inherit;outline:none}
+  #counterInput::placeholder{color:var(--text-placeholder)}
+  .save-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;margin-top:8px}
+  .save-toggle{display:inline-flex;align-items:center;gap:8px;min-height:36px;font-size:14px;color:var(--text-secondary);cursor:pointer}
+  .save-toggle input{width:18px;height:18px;accent-color:var(--accent)}
+  .storage-note{font-size:12px;color:var(--text-muted);line-height:1.5}
+  .limit-bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+  .limit-bar select,.limit-bar input{background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:6px 10px;font-size:12px;font-family:inherit;outline:none;min-height:40px}
   .limit-bar select{cursor:pointer}
-  .limit-bar input{width:100px}
-  .stat-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}
+  .limit-bar input{width:120px}
+  .limit-error{flex-basis:100%;font-size:13px;color:var(--status-red-text)}
+  .limit-error:empty{display:none}
+  .stat-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
   .stat-card{background:var(--bg-input);border:1px solid var(--border);border-radius:8px;padding:12px 8px;text-align:center}
   .stat-value{font-size:24px;font-weight:700;color:var(--text-primary);font-variant-numeric:tabular-nums}
-  .stat-label{font-size:11px;color:var(--text-info);margin-top:4px}
-  .stat-sub{font-size:9px;color:var(--calc-expr-text);margin-top:2px}
+  .stat-label{font-size:12px;color:var(--text-info);margin-top:4px}
+  .stat-sub{font-size:12px;color:var(--text-muted);margin-top:2px}
+  /* 전역 margin 초기화 때문에 모달이 왼쪽 위에 붙지 않도록 가운데 정렬을 되살린다. */
+  dialog.tool-confirm-dialog{margin:auto}
+  .manuscript-line{margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6}
+  .manuscript-line strong{color:var(--text-primary);font-variant-numeric:tabular-nums}
   .progress-wrap{margin-top:12px}
   .progress-bar{height:8px;background:var(--bg-btn);border-radius:4px;overflow:hidden}
   .progress-fill{height:100%;background:var(--accent);border-radius:4px;transition:width .2s,background-color .3s}
-  .progress-fill.warn{background:#e67e22}
-  .progress-fill.over{background:#e74c3c}
-  .progress-text{font-size:11px;color:var(--text-info);text-align:right;margin-top:4px}
-  @media(max-width:600px){.stat-cards{grid-template-columns:repeat(3,1fr)}}
+  .progress-fill.warn{background:var(--status-orange-bg)}
+  .progress-fill.over{background:var(--status-red-bg)}
+  .progress-text{font-size:13px;color:var(--text-info);text-align:right;margin-top:4px;font-variant-numeric:tabular-nums}
+  .progress-text.over{color:var(--status-red-text);font-weight:700}
+  .overflow-box{display:none;margin-top:10px;padding:10px 12px;border:1px solid var(--status-red-text);border-radius:8px;background:var(--bg-input)}
+  .overflow-box.show{display:block}
+  .overflow-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+  .overflow-title{font-size:14px;font-weight:700;color:var(--status-red-text)}
+  .overflow-select{min-height:36px;padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg-card);color:var(--text-primary);font:600 14px 'Pretendard',sans-serif;cursor:pointer}
+  .overflow-select:hover{border-color:var(--border-hover)}
+  .overflow-preview{margin-top:8px;font-size:14px;line-height:1.6;color:var(--text-secondary);white-space:pre-wrap;overflow-wrap:anywhere}
+  .overflow-preview mark{background:var(--status-red-bg);color:var(--text-on-accent);border-radius:3px;padding:0 1px}
+  @media(max-width:600px){.stat-cards{grid-template-columns:repeat(2,1fr)}}
   .guide-section{margin:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
   .guide-section summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
   .guide-section summary:hover{background:var(--bg-guide-hover)}
@@ -62,9 +80,6 @@
   .guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
   .guide-content ol{padding-left:20px}.guide-content li{margin-bottom:4px}
   .guide-content p{margin-bottom:8px}
-  .report-box{margin-top:16px;padding:16px;border-radius:8px;background:var(--bg-input);border:1px solid var(--accent);color:var(--text-primary);font-size:13px;line-height:1.6;display:none;animation:fadeIn .3s}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-  .report-box strong{color:var(--accent-text)}
   .related-tools{margin:12px;padding:16px;background:var(--bg-input);border-radius:8px;border:1px solid var(--border)}
   .related-tools h2{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text-primary);display:flex;align-items:center;gap:6px}
   .tool-tags{display:flex;flex-wrap:wrap;gap:8px}
@@ -73,6 +88,12 @@
 .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
 .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
 .footer a:hover{color:var(--text-secondary)}
+@media(max-width:640px){
+  .limit-bar select,.limit-bar input{min-height:44px}
+  .limit-bar select{flex:1 1 180px}
+  .limit-bar input{flex:1 1 120px}
+  .save-toggle,.overflow-select{min-height:44px}
+}
 </style>
 <link rel="stylesheet" href="/special-chars/tool-shell.css">
 </head>
@@ -86,67 +107,89 @@
   </div>
 
   <div class="counter-body">
-    <textarea id="counterInput" placeholder="여기에 텍스트를 입력하세요..." oninput="updateCounter()"></textarea>
+    <textarea id="counterInput" aria-label="글자 수를 셀 텍스트" placeholder="여기에 텍스트를 입력하거나 붙여넣으세요..." oninput="updateCounter()"></textarea>
+
+    <div class="save-row">
+      <label class="save-toggle"><input type="checkbox" id="autosaveToggle" checked onchange="toggleAutosave()"> 이 브라우저에 입력 내용 자동 저장</label>
+      <span class="storage-note" id="storageNote" role="status" aria-live="polite">입력한 글은 이 기기의 브라우저 저장소에만 남아 다시 열면 복원됩니다. 공용 PC에서는 체크를 해제하세요.</span>
+    </div>
 
     <div class="limit-bar">
       <select aria-label="글자 수 제한 기준" id="limitType" onchange="updateCounter()">
         <option value="none">제한 없음</option>
-        <option value="chars">글자 수 제한</option>
+        <option value="chars">글자 수 제한 (공백 포함)</option>
+        <option value="chars-nospace">글자 수 제한 (공백 제외)</option>
         <option value="bytes-utf8">바이트 제한 (UTF-8)</option>
         <option value="bytes-euckr">바이트 제한 (EUC-KR)</option>
       </select>
-      <input type="number" id="limitValue" placeholder="예: 500" oninput="updateCounter()" style="display:none">
+      <input type="number" id="limitValue" aria-label="제한 값" aria-describedby="limitError" placeholder="예: 500" min="1" max="10000000" step="1" inputmode="numeric" oninput="updateCounter()" style="display:none">
+      <span class="limit-error" id="limitError" aria-live="polite"></span>
     </div>
 
     <div class="stat-cards">
-      <div class="stat-card"><div class="stat-value" id="statChars">0</div><div class="stat-label">전체 글자</div></div>
-      <div class="stat-card"><div class="stat-value" id="statNoSpace">0</div><div class="stat-label">공백 제외</div></div>
+      <div class="stat-card"><div class="stat-value" id="statChars">0</div><div class="stat-label">공백 포함 글자</div></div>
+      <div class="stat-card"><div class="stat-value" id="statNoSpace">0</div><div class="stat-label">공백 제외 글자</div></div>
       <div class="stat-card"><div class="stat-value" id="statWords">0</div><div class="stat-label">단어</div></div>
       <div class="stat-card"><div class="stat-value" id="statLines">0</div><div class="stat-label">줄</div></div>
-      <div class="stat-card"><div class="stat-value" id="statBytes">0</div><div class="stat-label">바이트</div><div class="stat-sub" id="statBytesType">UTF-8</div></div>
+      <div class="stat-card"><div class="stat-value" id="statUtf8">0</div><div class="stat-label">UTF-8 바이트</div><div class="stat-sub">한글 3바이트</div></div>
+      <div class="stat-card"><div class="stat-value" id="statBytes">0</div><div class="stat-label">EUC-KR 바이트</div><div class="stat-sub" id="statBytesType">한글 2바이트</div></div>
     </div>
+
+    <p class="manuscript-line" id="manuscriptLine">200자 원고지 <strong id="statManuscript">0</strong>매 (추정)</p>
 
     <div class="progress-wrap" id="progressWrap" style="display:none">
       <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-      <div class="progress-text" id="progressText">0 / 500</div>
+      <div class="progress-text" id="progressText" role="status" aria-live="polite">0 / 500</div>
     </div>
-    
-    <div id="reportBox" class="report-box" style="display:none;"></div>
+
+    <div class="overflow-box" id="overflowBox">
+      <div class="overflow-head">
+        <span class="overflow-title" id="overflowTitle">제한을 넘은 부분</span>
+        <button type="button" class="overflow-select" onclick="selectOverflow()">입력창에서 초과 부분 선택</button>
+      </div>
+      <p class="overflow-preview" id="overflowPreview"></p>
+    </div>
   </div>
 
   <div class="bottom-bar">
-    <button class="action-btn btn-clear" onclick="clearCounter()">초기화</button>
-    <button class="action-btn btn-copy" onclick="copyStats()">결과 복사</button>
+    <button type="button" class="action-btn btn-clear" onclick="clearCounter()">초기화</button>
+    <button type="button" class="action-btn btn-copy" onclick="copyStats()">결과 복사</button>
   </div>
 
   <details class="guide-section" open>
-    <summary>✅ 글자 수 및 바이트 계산기 완벽 가이드</summary>
+    <summary>✅ 글자 수와 바이트 계산 기준</summary>
     <div class="guide-content">
-      <strong>1. 자기소개서 바이트 계산, 왜 중요한가요?</strong>
-      <p>이력서나 자소서를 작성할 때 제출처마다 요구하는 바이트 기준이 다릅니다. 이 도구는 <strong>UTF-8</strong> 바이트와 브라우저의 웹 호환 <strong>EUC-KR</strong> 문자표를 구분해 계산합니다. 제출처가 별도 계산 규칙을 안내한다면 그 규칙을 우선 확인하세요.</p>
-      
+      <strong>1. 자기소개서 제출처는 어떤 기준을 쓰나요?</strong>
+      <p>채용 사이트마다 "공백 포함 글자 수", "공백 제외 글자 수", "바이트" 중 하나를 기준으로 제한합니다. 이 도구는 세 기준을 모두 한 화면에 보여 주므로 제출처 안내문에 적힌 기준과 같은 숫자를 확인하면 됩니다. 바이트 제한이라면 한글 1자를 2바이트로 세는 EUC-KR 방식을 쓰는 곳이 많지만, UTF-8(한글 3바이트)로 세는 곳도 있으니 안내문을 먼저 확인하세요.</p>
+
       <strong>2. EUC-KR과 UTF-8의 차이점 (한글 2바이트 vs 3바이트)</strong>
-      <p>• <strong>EUC-KR:</strong> 표현 가능한 한글·한자는 보통 2바이트이고 ASCII는 1바이트입니다. 이모지와 일부 현대 유니코드 문자는 표현할 수 없으므로, 그런 문자가 있으면 가짜 합계 대신 ‘지원 불가’를 표시합니다.<br>
-      • <strong>UTF-8:</strong> 모든 유니코드 텍스트를 인코딩할 수 있으며 글자에 따라 바이트 수가 달라집니다.</p>
+      <p>• <strong>EUC-KR:</strong> 한글·한자는 2바이트, 영문·숫자·기본 기호(ASCII)는 1바이트입니다. 이 도구는 브라우저의 웹 표준 EUC-KR 문자표(확장 완성형 CP949 포함)로 표현 가능 여부를 판단합니다. 이모지와 일부 최신 유니코드 문자는 EUC-KR로 표현할 수 없으므로, 그런 문자가 있으면 추정 합계 대신 ‘표현 불가’ 글자 수를 표시합니다.<br>
+      • <strong>UTF-8:</strong> 모든 유니코드 문자를 인코딩할 수 있으며 한글은 3바이트, 영문·숫자는 1바이트, 이모지는 대부분 4바이트 이상입니다.</p>
 
       <strong>3. 이모지나 결합 문자는 몇 글자인가요?</strong>
-      <p>사용자가 화면에서 한 글자로 보는 결합 이모지와 결합 문자를 유니코드 grapheme 기준으로 셉니다. 브라우저가 이 기준을 지원하지 않는 경우에는 유니코드 코드 포인트 단위로 대체 계산합니다.</p>
+      <p>화면에서 한 글자로 보이는 결합 이모지(예: 가족 이모지)와 결합 문자는 유니코드 grapheme 기준으로 1자로 셉니다. 브라우저가 이 기준을 지원하지 않으면 코드 포인트 단위로 대신 셉니다. 제출 시스템이 다른 방식으로 세면 숫자가 조금 다를 수 있습니다.</p>
 
-      <strong>4. 단어 수는 어떻게 계산되나요?</strong>
-<p>띄어쓰기나 줄바꿈으로 구분된 문자열의 덩어리를 1개 단어로 셉니다. 영문 에세이, 보고서와 번역 작업의 분량을 확인할 때 유용하지만, 제출처가 하이픈·숫자·각주를 세는 별도 규칙을 안내한다면 그 기준을 우선하세요.</p>
+      <strong>4. 단어 수와 줄 수는 어떻게 계산되나요?</strong>
+      <p>단어는 띄어쓰기나 줄바꿈으로 나뉜 덩어리를 1개로 셉니다. 줄 수는 줄바꿈으로 나뉜 줄의 개수이며, 글 끝에 붙은 마지막 줄바꿈 하나는 새 줄로 세지 않습니다. 영문 에세이나 번역 분량을 확인할 때 참고하되, 제출처가 하이픈·숫자·각주를 세는 별도 규칙을 안내한다면 그 기준을 우선하세요.</p>
 
-      <strong>5. 글자 수 제한 설정 시 최적의 팁</strong>
-      <p>제한 설정에서 목표 글자 수나 바이트를 지정하면, 실시간 진행률(Progress 바)과 동적 리포트가 함께 나타납니다. <strong>실시간 잔여량 및 초과 알림</strong>을 통해 퇴고 작업을 훨씬 빠르고 정확하게 마무리할 수 있습니다.</p>
+      <strong>5. 제한 설정과 초과 부분 확인</strong>
+      <p>제한 기준과 1 이상의 정수를 입력하면 진행 막대와 남은 분량이 표시됩니다. 제한을 넘으면 넘친 부분의 앞뒤 문맥을 강조해 보여 주고, ‘입력창에서 초과 부분 선택’을 누르면 입력창에서 해당 구간이 선택되어 바로 줄이거나 옮길 수 있습니다.</p>
+
+      <strong>6. 원고지 매수는 어떻게 추정하나요?</strong>
+      <p>200자 원고지(한 줄 20칸 × 10줄)에 옮겨 쓴다고 가정하고, 문단마다 첫 칸 들여쓰기 1칸과 띄어쓰기 칸을 포함해 필요한 줄 수를 더한 뒤 10줄을 1매로 계산합니다. 영문 소문자·숫자를 한 칸에 두 자씩 쓰는 규칙이나 문장부호 위치 규칙은 반영하지 않으므로 실제 매수와 약간 다를 수 있습니다.</p>
+
+      <strong>7. 입력한 글은 어디에 저장되나요?</strong>
+      <p>계산은 모두 현재 브라우저 안에서 이루어지며 서버로 전송되지 않습니다. ‘자동 저장’이 켜져 있으면 입력한 글이 이 기기의 브라우저 저장소(localStorage)에 남아 다음 방문 때 복원됩니다. 체크를 해제하면 저장된 글이 즉시 삭제되고 이후로는 저장하지 않으며, ‘초기화’를 누르면 입력창과 저장된 글이 함께 지워집니다.</p>
     </div>
   </details>
 
   <div class="related-tools">
-    <h2>💡 유용한 업무/문서 도구</h2>
+    <h2>💡 함께 쓰면 좋은 글쓰기 도구</h2>
     <div class="tool-tags">
-      <a href="/special-chars/biz-day-calc/" class="tool-tag">📅 영업일 계산기</a>
-      <a href="/special-chars/date-calc/" class="tool-tag">⏳ D-Day 계산기</a>
-      <a href="/special-chars/percent-calc/" class="tool-tag">📊 퍼센트 계산기</a>
-      <a href="/special-chars/wage-calc/" class="tool-tag">💰 주휴/급여 계산기</a>
+      <a href="/special-chars/text-diff/" class="tool-tag">🔎 문서 변경사항 비교</a>
+      <a href="/special-chars/korean-english-converter/" class="tool-tag">⌨️ 한영 타자 복구</a>
+      <a href="/special-chars/speech-timer/" class="tool-tag">🎤 발표시간 계산기</a>
+      <a href="/special-chars/" class="tool-tag">⌨ 특수 문자 입력기</a>
     </div>
   </div>
 
@@ -157,11 +200,26 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<dialog class="tool-confirm-dialog" id="confirmDialog" aria-labelledby="confirmDialogTitle" aria-describedby="confirmDialogDescription">
+  <div class="tool-confirm-dialog__body">
+    <h2 id="confirmDialogTitle">입력한 글을 지울까요?</h2>
+    <p id="confirmDialogDescription">입력창의 글과 이 브라우저에 자동 저장된 글이 함께 지워지며 되돌릴 수 없습니다.</p>
+    <div class="tool-confirm-dialog__actions">
+      <button type="button" data-confirm-cancel autofocus>취소</button>
+      <button type="button" class="tool-confirm-dialog__confirm" data-confirm-ok>지우기</button>
+    </div>
+  </div>
+</dialog>
+
 <script>
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),1500)}
+const STORAGE_TEXT_KEY='charCounter_text';
+const STORAGE_PREF_KEY='charCounter_autosave';
+const MAX_LIMIT=10000000;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),1800)}
 
 const graphemeSegmenter=typeof Intl.Segmenter==='function'?new Intl.Segmenter(undefined,{granularity:'grapheme'}):null;
 let euckrCharset;
+let overflowRange=null;
 
 function splitGraphemes(text){return graphemeSegmenter?Array.from(graphemeSegmenter.segment(text),item=>item.segment):[...text]}
 function countGraphemes(text){return splitGraphemes(text).length}
@@ -177,9 +235,20 @@ function getEuckrCharset(){
     let offset=0;
     for(let lead=0x81;lead<=0xfe;lead++)for(const trail of trails){encoded[offset++]=lead;encoded[offset++]=trail;encoded[offset++]=0}
     const decoded=new TextDecoder('euc-kr').decode(encoded).split('\0');
-    euckrCharset=new Set(decoded.filter(value=>value&&!value.includes('\uFFFD')&&[...value].length===1));
+    euckrCharset=new Set(decoded.filter(value=>value&&!value.includes('�')&&[...value].length===1));
   }catch(error){euckrCharset=null}
   return euckrCharset;
+}
+
+// 글자 묶음(grapheme) 하나의 EUC-KR 바이트. 표현할 수 없으면 null.
+function euckrGraphemeBytes(grapheme,charset){
+  let bytes=0;
+  for(const character of grapheme){
+    if(character.codePointAt(0)<=0x7f)bytes+=1;
+    else if(charset.has(character))bytes+=2;
+    else return null;
+  }
+  return bytes;
 }
 
 function calcEuckrBytes(text){
@@ -188,108 +257,221 @@ function calcEuckrBytes(text){
   if(!charset)return{bytes:0,unsupported:graphemes.length,available:false};
   let bytes=0,unsupported=0;
   for(const grapheme of graphemes){
-    let graphemeBytes=0,representable=true;
-    for(const character of grapheme){
-      if(character.codePointAt(0)<=0x7f)graphemeBytes+=1;
-      else if(charset.has(character))graphemeBytes+=2;
-      else representable=false;
-    }
-    if(representable)bytes+=graphemeBytes;else unsupported++;
+    const graphemeBytes=euckrGraphemeBytes(grapheme,charset);
+    if(graphemeBytes===null)unsupported++;else bytes+=graphemeBytes;
   }
   return{bytes,unsupported,available:true};
 }
 
-// 자동 저장: 페이지 로드 시 이전 입력 복원
-(function(){try{const saved=localStorage.getItem('charCounter_text');if(saved){document.getElementById('counterInput').value=saved;updateCounter()}}catch(error){}})();
+function countLines(text){
+  if(!text)return 0;
+  // 글 끝의 줄바꿈 하나는 새 줄로 세지 않는다.
+  return text.replace(/\r\n?/g,'\n').replace(/\n$/,'').split('\n').length;
+}
+
+// 200자 원고지(20칸 × 10줄) 추정: 문단 첫 칸 들여쓰기와 띄어쓰기 칸을 포함한다.
+function manuscriptPages(text){
+  let lines=0;
+  text.replace(/\r\n?/g,'\n').split('\n').forEach(paragraph=>{
+    const body=paragraph.trim();
+    if(body)lines+=Math.ceil((1+countGraphemes(body))/20);
+  });
+  return lines/10;
+}
+
+function readLimit(){
+  const input=document.getElementById('limitValue');
+  const error=document.getElementById('limitError');
+  const raw=input.value.trim();
+  const badInput=Boolean(input.validity&&input.validity.badInput);
+  if((!raw&&!badInput)||input.style.display==='none'){input.removeAttribute('aria-invalid');error.textContent='';return 0}
+  const value=Number(raw);
+  if(badInput||!Number.isInteger(value)||value<1||value>MAX_LIMIT){
+    input.setAttribute('aria-invalid','true');
+    error.textContent=`제한 값은 1 이상 ${MAX_LIMIT.toLocaleString('ko-KR')} 이하의 정수로 입력해 주세요.`;
+    return 0;
+  }
+  input.removeAttribute('aria-invalid');
+  error.textContent='';
+  return value;
+}
+
+function readAutosavePref(){try{return localStorage.getItem(STORAGE_PREF_KEY)!=='off'}catch(error){return null}}
+
+function saveText(text){
+  if(!document.getElementById('autosaveToggle').checked)return;
+  try{if(text)localStorage.setItem(STORAGE_TEXT_KEY,text);else localStorage.removeItem(STORAGE_TEXT_KEY)}catch(error){}
+}
+
+function toggleAutosave(){
+  const enabled=document.getElementById('autosaveToggle').checked;
+  const note=document.getElementById('storageNote');
+  try{
+    localStorage.setItem(STORAGE_PREF_KEY,enabled?'on':'off');
+    if(enabled){saveText(document.getElementById('counterInput').value);note.textContent='자동 저장을 켰습니다. 입력한 글은 이 기기의 브라우저 저장소에만 남습니다.'}
+    else{localStorage.removeItem(STORAGE_TEXT_KEY);note.textContent='자동 저장을 껐고, 이 브라우저에 저장돼 있던 글도 지웠습니다.'}
+  }catch(error){note.textContent='이 브라우저에서는 저장소를 사용할 수 없어 입력 내용이 저장되지 않습니다.'}
+}
 
 function updateCounter(){
   const text=document.getElementById('counterInput').value;
-  // 자동 저장: 입력할 때마다 localStorage에 저장
-  try{localStorage.setItem('charCounter_text',text)}catch(e){}
+  saveText(text);
   const chars=countGraphemes(text);
   const noSpace=countGraphemes(text.replace(/\s/g,''));
   const words=text.trim()?text.trim().split(/\s+/).length:0;
-  const lines=text?text.split('\n').length:0;
+  const lines=countLines(text);
   const utf8Bytes=new TextEncoder().encode(text).length;
   const euckrBytes=calcEuckrBytes(text);
   document.getElementById('statChars').textContent=chars.toLocaleString();
   document.getElementById('statNoSpace').textContent=noSpace.toLocaleString();
   document.getElementById('statWords').textContent=words.toLocaleString();
   document.getElementById('statLines').textContent=lines.toLocaleString();
+  document.getElementById('statUtf8').textContent=utf8Bytes.toLocaleString();
+  document.getElementById('statBytes').textContent=euckrBytes.available&&euckrBytes.unsupported===0?euckrBytes.bytes.toLocaleString():'—';
+  document.getElementById('statBytesType').textContent=!euckrBytes.available?'이 브라우저 미지원':euckrBytes.unsupported?`EUC-KR 표현 불가 ${euckrBytes.unsupported.toLocaleString()}자`:'한글 2바이트';
+  const pages=manuscriptPages(text);
+  document.getElementById('statManuscript').textContent=pages.toLocaleString('ko-KR',{minimumFractionDigits:1,maximumFractionDigits:1});
   const limitType=document.getElementById('limitType').value;
-  if(limitType==='bytes-euckr'){
-    document.getElementById('statBytes').textContent=euckrBytes.available&&euckrBytes.unsupported===0?euckrBytes.bytes.toLocaleString():'—';
-    document.getElementById('statBytesType').textContent=!euckrBytes.available?'EUC-KR 미지원':euckrBytes.unsupported?`EUC-KR 불가 ${euckrBytes.unsupported}자`:'EUC-KR';
-  }
-  else{document.getElementById('statBytes').textContent=utf8Bytes.toLocaleString();document.getElementById('statBytesType').textContent='UTF-8'}
   document.getElementById('limitValue').style.display=limitType==='none'?'none':'';
-  updateProgress(limitType,chars,utf8Bytes,euckrBytes);
-  updateReportBox(text, chars, noSpace, words, limitType);
+  updateProgress(text,limitType,{chars,noSpace,utf8:utf8Bytes,euckr:euckrBytes});
 }
 
-function updateReportBox(text, chars, noSpace, words, limitType) {
-  const reportBox = document.getElementById('reportBox');
-  if(!text) {
-    reportBox.style.display = 'none';
-    return;
+// 제한을 처음 넘기는 지점(UTF-16 인덱스)을 글자 묶음 단위로 찾는다.
+function findOverflowStart(text,limitType,limit){
+  const charset=limitType==='bytes-euckr'?getEuckrCharset():null;
+  const encoder=new TextEncoder();
+  let used=0,index=0;
+  for(const grapheme of splitGraphemes(text)){
+    let cost=1;
+    if(limitType==='chars-nospace')cost=/^\s+$/.test(grapheme)?0:1;
+    else if(limitType==='bytes-utf8')cost=encoder.encode(grapheme).length;
+    else if(limitType==='bytes-euckr')cost=euckrGraphemeBytes(grapheme,charset)||0;
+    if(used+cost>limit)return index;
+    used+=cost;
+    index+=grapheme.length;
   }
-  
-  const euckr = calcEuckrBytes(text);
-  const utf8 = new TextEncoder().encode(text).length;
-  let reportHTML = `입력하신 텍스트는 총 <strong>${chars.toLocaleString()}자</strong>(공백 제외 <strong>${noSpace.toLocaleString()}자</strong>) 분량이며, <strong>${words.toLocaleString()}개</strong>의 단어로 구성되어 있습니다.<br>`;
-  reportHTML += euckr.available&&euckr.unsupported===0
-    ? `웹 호환 <strong>EUC-KR로는 ${euckr.bytes.toLocaleString()} Byte</strong>, <strong>UTF-8로는 ${utf8.toLocaleString()} Byte</strong>를 차지합니다.`
-    : `웹 호환 EUC-KR로 표현할 수 없는 글자가 <strong>${euckr.unsupported.toLocaleString()}자</strong> 포함되어 EUC-KR 합계를 제공하지 않습니다. <strong>UTF-8로는 ${utf8.toLocaleString()} Byte</strong>입니다.`;
-  
-  const limit = parseInt(document.getElementById('limitValue').value)||0;
-  if(limitType !== 'none' && limit > 0) {
-    let current = limitType==='chars' ? chars : (limitType==='bytes-utf8' ? utf8 : (euckr.available&&euckr.unsupported===0?euckr.bytes:null));
-    let unit = limitType==='chars' ? '자' : 'Byte';
-    if(current===null){reportHTML += `<br><br>👉 EUC-KR로 표현할 수 없는 글자를 제거하거나 UTF-8 제한을 선택해야 정확한 잔여량을 계산할 수 있습니다.`;reportBox.innerHTML=reportHTML;reportBox.style.display='block';return}
-    let diff = limit - current;
-    if(diff > 0) {
-       reportHTML += `<br><br>👉 설정한 제한(${limit.toLocaleString()}${unit})까지 <strong>${diff.toLocaleString()}${unit} 남았습니다.</strong>`;
-    } else if (diff < 0) {
-       reportHTML += `<br><br>👉 설정한 제한(${limit.toLocaleString()}${unit})을 <strong style="color:#e74c3c">${Math.abs(diff).toLocaleString()}${unit} 초과했습니다.</strong> 내용을 더 요약해 주세요.`;
-    } else {
-       reportHTML += `<br><br>👉 설정한 제한(${limit.toLocaleString()}${unit})에 정확히 일치합니다! 완벽하네요.`;
-    }
-  }
-  
-  reportBox.innerHTML = reportHTML;
-  reportBox.style.display = 'block';
+  return -1;
 }
 
-function updateProgress(limitType,chars,utf8,euckr){
+function renderOverflow(text,start){
+  const box=document.getElementById('overflowBox');
+  const preview=document.getElementById('overflowPreview');
+  if(start<0){box.classList.remove('show');overflowRange=null;return}
+  overflowRange={start,end:text.length};
+  const before=text.slice(Math.max(0,start-24),start);
+  const over=text.slice(start);
+  const shownOver=over.length>140?over.slice(0,140):over;
+  preview.replaceChildren();
+  preview.append((start>24?'…':'')+before);
+  const mark=document.createElement('mark');
+  mark.textContent=shownOver;
+  preview.append(mark);
+  if(over.length>140)preview.append('…');
+  document.getElementById('overflowTitle').textContent=`제한을 넘은 부분 (${countGraphemes(over).toLocaleString()}자)`;
+  box.classList.add('show');
+}
+
+function updateProgress(text,limitType,counts){
   const wrap=document.getElementById('progressWrap');
-  if(limitType==='none'){wrap.style.display='none';return}
-  const limit=parseInt(document.getElementById('limitValue').value)||0;
-  if(!limit){wrap.style.display='none';return}
+  const progressText=document.getElementById('progressText');
+  const limit=limitType==='none'?0:readLimit();
+  if(limitType==='none')readLimit();
+  if(!limit){wrap.style.display='none';renderOverflow(text,-1);return}
   wrap.style.display='';
-  if(limitType==='bytes-euckr'&&(!euckr.available||euckr.unsupported>0)){
-    const fill=document.getElementById('progressFill');fill.style.width='0%';fill.className='progress-fill over';
-    document.getElementById('progressText').textContent=`EUC-KR 지원 불가 ${euckr.unsupported.toLocaleString()}자`;
+  const fill=document.getElementById('progressFill');
+  if(limitType==='bytes-euckr'&&(!counts.euckr.available||counts.euckr.unsupported>0)){
+    fill.style.width='0%';fill.className='progress-fill over';
+    progressText.className='progress-text over';
+    progressText.textContent=`EUC-KR로 표현할 수 없는 글자 ${counts.euckr.unsupported.toLocaleString()}자가 있어 바이트를 셀 수 없습니다`;
+    renderOverflow(text,-1);
     return;
   }
-  let current=limitType==='chars'?chars:limitType==='bytes-utf8'?utf8:euckr.bytes;
+  const current=limitType==='chars'?counts.chars:limitType==='chars-nospace'?counts.noSpace:limitType==='bytes-utf8'?counts.utf8:counts.euckr.bytes;
+  const unit=limitType.startsWith('bytes')?'바이트':'자';
   const pct=Math.min((current/limit)*100,100);
-  const fill=document.getElementById('progressFill');
   fill.style.width=pct+'%';
   fill.className='progress-fill'+(current>limit?' over':pct>80?' warn':'');
-  document.getElementById('progressText').textContent=current.toLocaleString()+' / '+limit.toLocaleString()+(current>limit?' ⚠ 초과!':'');
+  const diff=limit-current;
+  progressText.className='progress-text'+(diff<0?' over':'');
+  progressText.textContent=`${current.toLocaleString()} / ${limit.toLocaleString()}${unit} · `+(diff<0?`${Math.abs(diff).toLocaleString()}${unit} 초과`:`${diff.toLocaleString()}${unit} 남음`);
+  renderOverflow(text,diff<0?findOverflowStart(text,limitType,limit):-1);
 }
 
-function clearCounter(){document.getElementById('counterInput').value='';try{localStorage.removeItem('charCounter_text')}catch(e){}updateCounter();showToast('초기화 완료')}
+function selectOverflow(){
+  if(!overflowRange)return;
+  const input=document.getElementById('counterInput');
+  input.focus();
+  input.setSelectionRange(overflowRange.start,overflowRange.end);
+  showToast('초과 부분을 선택했습니다');
+}
+
+function askConfirm(){
+  const dialog=document.getElementById('confirmDialog');
+  if(!dialog||typeof dialog.showModal!=='function')return Promise.resolve(true);
+  return new Promise(resolve=>{
+    dialog.querySelector('[data-confirm-ok]').onclick=()=>dialog.close('confirm');
+    dialog.querySelector('[data-confirm-cancel]').onclick=()=>dialog.close('cancel');
+    const onClose=()=>{if(dialog.open)return;dialog.removeEventListener('close',onClose);resolve(dialog.returnValue==='confirm')};
+    dialog.addEventListener('close',onClose);
+    dialog.returnValue='';
+    dialog.showModal();
+  });
+}
+
+function clearCounter(){
+  const input=document.getElementById('counterInput');
+  if(!input.value){try{localStorage.removeItem(STORAGE_TEXT_KEY)}catch(e){}input.focus();return}
+  askConfirm().then(ok=>{
+    if(!ok)return;
+    input.value='';
+    try{localStorage.removeItem(STORAGE_TEXT_KEY)}catch(e){}
+    updateCounter();
+    input.focus();
+    showToast('입력창과 저장된 글을 지웠습니다');
+  });
+}
+
+function copyText(text){
+  if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(text).catch(()=>legacyCopy(text));
+  return legacyCopy(text);
+}
+
+function legacyCopy(text){
+  const helper=document.createElement('textarea');
+  helper.value=text;helper.setAttribute('readonly','');
+  helper.style.position='fixed';helper.style.opacity='0';
+  document.body.appendChild(helper);helper.select();
+  let copied=false;
+  try{copied=document.execCommand('copy')}catch(error){copied=false}
+  helper.remove();
+  return copied?Promise.resolve():Promise.reject(new Error('copy failed'));
+}
 
 function copyStats(){
   const text=document.getElementById('counterInput').value;
   const chars=countGraphemes(text);const noSpace=countGraphemes(text.replace(/\s/g,''));
-  const words=text.trim()?text.trim().split(/\s+/).length:0;const lines=text?text.split('\n').length:0;
+  const words=text.trim()?text.trim().split(/\s+/).length:0;const lines=countLines(text);
   const utf8=new TextEncoder().encode(text).length;const euckr=calcEuckrBytes(text);
-  const euckrText=euckr.available&&euckr.unsupported===0?`${euckr.bytes}`:`지원 불가 (${euckr.unsupported}자)`;
-  const result=`전체 글자: ${chars}\n공백 제외: ${noSpace}\n단어 수: ${words}\n줄 수: ${lines}\nUTF-8 바이트: ${utf8}\nEUC-KR 바이트: ${euckrText}`;
-  navigator.clipboard.writeText(result).then(()=>showToast('결과가 복사되었습니다!'));
+  const euckrText=euckr.available&&euckr.unsupported===0?`${euckr.bytes}`:`계산 불가 (표현 불가 ${euckr.unsupported}자)`;
+  const result=`공백 포함 글자: ${chars}\n공백 제외 글자: ${noSpace}\n단어 수: ${words}\n줄 수: ${lines}\nUTF-8 바이트: ${utf8}\nEUC-KR 바이트: ${euckrText}\n200자 원고지(추정): ${manuscriptPages(text).toFixed(1)}매`;
+  copyText(result).then(()=>showToast('계산 결과를 복사했습니다')).catch(()=>showToast('클립보드에 복사하지 못했습니다. 숫자를 직접 선택해 복사해 주세요.'));
 }
+
+// 자동 저장 설정과 이전 입력 복원
+(function(){
+  const toggle=document.getElementById('autosaveToggle');
+  const pref=readAutosavePref();
+  toggle.checked=pref===true;
+  if(pref===null){
+    toggle.disabled=true;
+    document.getElementById('storageNote').textContent='이 브라우저에서는 저장소를 사용할 수 없어 입력한 글을 저장하지 않습니다.';
+  }else if(toggle.checked){
+    try{const saved=localStorage.getItem(STORAGE_TEXT_KEY);if(saved){document.getElementById('counterInput').value=saved;document.getElementById('storageNote').textContent='이전에 자동 저장된 글을 불러왔습니다. 공용 PC라면 체크를 해제해 저장된 글을 지우세요.'}}catch(error){}
+  }else{
+    document.getElementById('storageNote').textContent='자동 저장이 꺼져 있어 입력한 글을 저장하지 않습니다.';
+  }
+  updateCounter();
+})();
 </script>
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 <script src="/special-chars/theme-toggle.js"></script>

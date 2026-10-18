@@ -66,16 +66,11 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .tag-title{font-size:12px;font-weight:600;color:var(--text-muted)}
 .related-tag{background:var(--bg-btn);color:var(--text-amount);padding:4px 10px;border-radius:12px;font-size:12px;font-weight:600;text-decoration:none;transition:all .2s;border:1px solid var(--border)}
 .related-tag:hover{background:var(--accent);color:#fff;border-color:var(--accent);transform:translateY(-1px)}
-.report-container{margin-top:16px;background:var(--bg-bar);border:1px solid var(--border);border-radius:12px;padding:16px;animation:fadeIn .4s ease-out}
-@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-.report-title{font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.report-box{background:var(--bg-body);border-radius:8px;padding:14px;border:1px solid var(--border)}
-.report-list{list-style:none;margin:0;padding:0}
-.report-list li{position:relative;padding-left:14px;margin-bottom:8px;font-size:13px;color:var(--text-info)}
-.report-list li::before{content:'•';position:absolute;left:0;color:var(--accent-text);font-weight:bold}
-.report-list li:last-child{margin-bottom:0}
-.report-list li a{color:var(--accent-text);text-decoration:none;font-weight:600;transition:opacity .2s}
-.report-list li a:hover{opacity:.8;text-decoration:underline}
+.option-row{margin:-4px 0 14px}
+.option-toggle{display:inline-flex;align-items:flex-start;gap:8px;min-height:36px;font-size:14px;line-height:1.5;color:var(--text-secondary);cursor:pointer}
+.option-toggle input{width:18px;height:18px;margin-top:2px;flex:0 0 auto;accent-color:var(--accent)}
+.option-help{margin-top:2px;font-size:13px;line-height:1.6;color:var(--text-muted)}
+@media(max-width:640px){.option-toggle{min-height:44px}}
 .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text)}
 .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
 .footer a:hover{color:var(--text-guide)}
@@ -96,16 +91,21 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </div>
   <div class="content">
     <div class="mode-tabs">
-      <button class="mode-tab active" id="tab-e2k" onclick="setMode('engToKor')">🔤 영타 → 한글</button>
-      <button class="mode-tab" id="tab-k2e" onclick="setMode('korToEng')">🔤 한타 → 영어</button>
+      <button type="button" class="mode-tab active" id="tab-e2k" aria-pressed="true" onclick="setMode('engToKor')">🔤 영타 → 한글</button>
+      <button type="button" class="mode-tab" id="tab-k2e" aria-pressed="false" onclick="setMode('korToEng')">🔤 한타 → 영어</button>
     </div>
 
     <div class="input-group">
-      <label id="inputLabel">영타로 잘못 친 텍스트를 입력하세요</label>
+      <label id="inputLabel" for="inputText">영타로 잘못 친 텍스트를 입력하세요</label>
       <div style="position:relative">
         <textarea class="input-area" id="inputText" placeholder="예: dkssud" oninput="convert()"></textarea>
-        <button class="paste-btn" onclick="pasteFromClipboard()" title="클립보드에서 붙여넣기">📋 붙여넣기</button>
+        <button type="button" class="paste-btn" onclick="pasteFromClipboard()" title="클립보드에서 붙여넣기">📋 붙여넣기</button>
       </div>
+    </div>
+
+    <div class="option-row" id="keepEnglishRow">
+      <label class="option-toggle"><input type="checkbox" id="keepEnglish" onchange="renderExamples();convert()"> 영문 단어로 보이는 부분은 그대로 두기</label>
+      <p class="option-help">예: dkssudgktpdy PPT wkfy → 안녕하세요 PPT 자료. 한글 음절로 조합되지 않는 단어(PPT, Excel 등)만 남기며, 오타가 섞인 짧은 단어도 남을 수 있으니 결과를 확인하세요.</p>
     </div>
 
 
@@ -117,44 +117,44 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     </div>
 
     <div class="actions">
-      <button class="btn btn-copy" onclick="copyResult()">📋 결과 복사</button>
-      <button class="btn btn-clear" onclick="clearAll()">🗑️ 초기화</button>
-    </div>
-
-    <!-- 동적 분석 리포트 영역 -->
-    <div class="report-container" id="reportContainer" style="display:none;">
-      <div class="report-title">📊 실시간 타이핑 분석 리포트</div>
-      <div class="report-box" id="reportBox"></div>
+      <button type="button" class="btn btn-copy" onclick="copyResult()">📋 결과 복사</button>
+      <button type="button" class="btn btn-clear" onclick="clearAll()">🗑️ 초기화</button>
     </div>
 
     <div class="examples" id="examples">
-      <div class="examples-title">💡 예시 (클릭하면 입력됩니다)</div>
+      <div class="examples-title">💡 예시 (누르면 입력됩니다 · 결과는 현재 설정으로 계산)</div>
       <div class="example-chips" id="exampleChips"></div>
     </div>
   </div>
 
   <details class="guide-section">
-    <summary>📖 한영 타자 변환기 완벽 사용 가이드 및 Q&A</summary>
+    <summary>📖 한영 타자 복구 사용 방법과 변환 기준</summary>
     <div class="guide-content">
       <div class="guide-block">
-        <h3>💡 한영 타자 변환율 및 정확도는 어떻게 되나요?</h3>
-        <p>본 변환기는 한글 자소(자음과 모음)의 조합 패턴을 분석하여 오타를 교정합니다. 영타로 잘못 친 텍스트나 한글 상태에서 입력된 영문을 100% 브라우저 내에서 즉각적으로 복원해 줍니다. 타이핑 실수가 발생했을 때 가장 빠르고 정확하게 본래의 문장으로 되돌릴 수 있는 최적의 한영 변환 도구입니다.</p>
+        <h3>💡 어떤 방식으로 복구하나요?</h3>
+        <p>표준 두벌식 자판에서 같은 자리에 있는 영문 키와 한글 자모를 서로 바꾼 뒤, 한글 입력기처럼 초성·중성·종성을 조합해 음절을 만듭니다. 예를 들어 "dkssud"는 ㅇ·ㅏ·ㄴ·ㄴ·ㅕ·ㅇ으로 바뀌어 "안녕"이 됩니다. 반대로 ‘한타 → 영어’는 한글 음절을 자모로 나눈 뒤 같은 자리의 영문 키로 바꿉니다.</p>
+        <p>대문자도 처리합니다. 워드나 아웃룩이 문장 첫 글자를 자동으로 대문자로 바꾼 "Dkssud"는 "안녕"으로, Caps Lock이 켜진 채 입력한 "DKSSUD"는 한 단어 전체를 소문자로 보고 "안녕"으로 복구합니다. 다만 Q·W·E·R·T·O·P는 Shift를 누르면 쌍자음(ㅃ·ㅉ·ㄸ·ㄲ·ㅆ)과 ㅒ·ㅖ가 되는 키라서, 이 글자가 문장 첫머리에서 자동으로 대문자가 된 경우에는 결과를 한 번 더 확인하세요.</p>
       </div>
 
       <div class="guide-block">
-        <h3>🔒 변환된 텍스트는 안전하게 보호되나요?</h3>
-        <p>네, 안전합니다. 모든 입력 내용과 변환 결과는 사용자 기기(웹 브라우저)에서만 암호화 없이 로컬 연산으로 처리됩니다. 외부 서버로 전송되는 데이터가 일절 없으므로 이메일, 비밀번호, 결제 정보 등 보안이 중요한 개인정보나 기밀 문서 내용도 철저히 보장되며 안심하고 변환할 수 있습니다.</p>
+        <h3>🧩 영문 단어가 섞인 문장은 어떻게 하나요?</h3>
+        <p>한글 자판으로 쳐야 할 문장 사이에 "PPT", "Excel"처럼 원래 영어로 쓴 단어가 있으면 기본 설정에서는 그 단어까지 한글 자모로 바뀝니다. ‘영문 단어로 보이는 부분은 그대로 두기’를 켜면 단어별로 변환해 보고, 한글 음절로 제대로 조합되지 않는 단어는 원래 영문을 유지합니다. 이 판단은 추정이므로 "go"(→해)처럼 우연히 한글 음절이 되는 짧은 영단어는 바뀔 수 있고, 오타가 섞인 짧은 한글 단어는 영문으로 남을 수 있습니다.</p>
       </div>
 
       <div class="guide-block">
-        <h3>🚀 장문이나 특수문자가 포함된 문장도 변환 가능한가요?</h3>
-        <p>물론입니다. 글자 수 제한 없이 변환이 가능하며, 키보드에 매핑되지 않은 특수문자(!@# 등), 숫자, 그리고 띄어쓰기는 본래의 입력 형태 그대로 유지하면서 오직 문자 영역에 대해서만 한/영 전환 로직을 반영하여 원본의 의도를 훼손하지 않고 완벽하게 변환을 지원합니다.</p>
+        <h3>🔒 민감한 문장을 넣어도 되나요?</h3>
+        <p>입력한 텍스트와 변환 결과는 현재 브라우저 안에서만 계산되며 서버로 전송하거나 저장하지 않습니다. 그래도 복사한 결과는 운영체제 클립보드 기록에 남을 수 있으므로, 비밀번호나 인증번호처럼 민감한 값은 변환 도구에 붙여넣지 말고 올바른 자판으로 직접 다시 입력하는 편이 안전합니다.</p>
       </div>
-      
+
+      <div class="guide-block">
+        <h3>🚀 긴 글이나 숫자·기호가 섞인 문장도 되나요?</h3>
+        <p>길이 제한은 두지 않지만 아주 긴 문서는 브라우저에서 느려질 수 있습니다. 숫자, 띄어쓰기, 줄바꿈, 자판 위치와 관계없는 기호(!@# 등)는 입력한 그대로 둡니다. 세벌식이나 모바일 천지인 자판으로 입력한 글, 자동 완성으로 이미 다른 단어로 바뀐 글은 키 위치가 달라 복구할 수 없습니다.</p>
+      </div>
+
       <div class="tags-container">
         <span class="tag-title">관련 유틸리티 도구:</span>
         <a href="https://teemozipsa.com/special-chars/char-counter/" class="related-tag">글자수 계산기</a>
-        <a href="https://teemozipsa.com/special-chars/base64-tool/" class="related-tag">Base64 인코더/디코더</a>
+        <a href="https://teemozipsa.com/special-chars/text-diff/" class="related-tag">문서 변경사항 비교</a>
       </div>
     </div>
   </details>
@@ -226,16 +226,26 @@ function composeSyllable(cho,jung,jong){
   return String.fromCharCode(0xAC00+ci*21*28+ji*28+ki);
 }
 
-// 영타 → 한글 변환
-function engToKor(text){
-  // 영문을 자모로 변환
+// Shift로 다른 자모가 되는 키(ㅃㅉㄸㄲㅆㅒㅖ)
+const SHIFT_KEYS = new Set(['Q','W','E','R','T','O','P']);
+
+// 영문 한 단어를 자모 배열로 바꾼다. 대문자는 소문자 자리로 보고, Q·W·E·R·T·O·P만 쌍자음·ㅒ·ㅖ로 읽는다.
+// 두 글자 이상이 모두 대문자이고 Shift 키가 아닌 글자가 섞여 있으면 Caps Lock 입력으로 보고 전부 소문자로 읽는다.
+function tokenToJamos(token){
+  const letters=token.replace(/[^A-Za-z]/g,'');
+  const capsLock=letters.length>=2&&letters===letters.toUpperCase()&&[...letters].some(ch=>!SHIFT_KEYS.has(ch));
+  const source=capsLock?token.toLowerCase():token;
   const jamos=[];
-  for(const ch of text){
+  for(const ch of source){
     if(engToJamo[ch]) jamos.push(engToJamo[ch]);
+    else if(/[A-Z]/.test(ch)&&engToJamo[ch.toLowerCase()]) jamos.push(engToJamo[ch.toLowerCase()]);
     else jamos.push(ch);
   }
+  return jamos;
+}
 
-  // 자모를 음절로 조합
+// 자모 배열을 한글 입력기처럼 음절로 조합한다.
+function composeJamos(jamos){
   let result='';
   let i=0;
   while(i<jamos.length){
@@ -263,7 +273,6 @@ function engToKor(text){
 
           // 다음에 모음이 오면 종성이 아니라 다음 음절의 초성
           if(jongIdx+1<jamos.length && isJung(jamos[jongIdx+1])){
-            // 종성 없이 현재 음절 완성
             result+=composeSyllable(cur,jung,'');
             i=jongIdx;
             continue;
@@ -301,16 +310,30 @@ function engToKor(text){
       // 초성만 있으면 자음 그대로
       result+=cur;
       i++;
-    } else if(isJung(cur)){
-      // 모음만 단독
-      result+=cur;
-      i++;
     } else {
+      // 모음 단독이나 자판과 무관한 문자는 그대로
       result+=cur;
       i++;
     }
   }
   return result;
+}
+
+// 변환 결과가 한글 음절로 거의 조합되지 않으면(예: PPT → ㅖㅖㅆ) 원래 영문 단어로 본다.
+// ㅋㅋ·ㅠㅠ처럼 같은 자모를 반복한 부분은 한글 표현으로 보고 계산에서 뺀다.
+function looksLikeEnglish(converted){
+  const core=converted.replace(/([ㄱ-ㆎ])\1+/g,'');
+  const syllables=(core.match(/[가-힣]/g)||[]).length;
+  const stray=(core.match(/[ㄱ-ㆎ]/g)||[]).length;
+  return stray>0&&stray*2>=syllables;
+}
+
+// 영타 → 한글 변환
+function engToKor(text,keepEnglish){
+  return text.replace(/[A-Za-z]+/g,token=>{
+    const converted=composeJamos(tokenToJamos(token));
+    return keepEnglish&&looksLikeEnglish(converted)?token:converted;
+  });
 }
 
 // 한글 음절 분해
@@ -357,32 +380,40 @@ function decomposeJung(jung){
 }
 
 let mode='engToKor';
+let lastResult='';
+const RESULT_PLACEHOLDER='입력하면 자동으로 변환됩니다';
 
-const engExamples=[
-  ['dkssud','안녕'],['tksrmfdlqfur','사랑이란'],['skansk','나는나'],
-  ['rhksflwk','관리자'],['dkswud','안녕'],['ahtdj','메세']
-];
-const korExamples=[
-  ['ㅗ디ㅣㅐ','hello'],['ㅈㅐㄱ디','world'],['ㅎㅐㅐㅇ','good'],
-  ['ㅅㅗㅁㄷ','than'],['ㄱㄷㅁㅊㅅ','react'],['ㅔㅁㅅㅗㅐㅜ','python']
-];
+// 예시 결과는 화면에 그릴 때 실제 변환 함수로 계산해 항상 현재 동작과 일치시킨다.
+const engExamples=['dkssudgktpdy','rkatkgkqslek','ghldml wkfy','Dkssud','DKSSUDGKTPDY','dkssudgktpdy PPT wkfy'];
+const korExamples=['ㅗ디ㅣㅐ','재깅','ㅡㄷㄷ샤ㅜㅎ','ㅔㅛ쇄ㅜ','ㄱ데ㅐㄱㅅ','캐ㅐㅡ'];
+
+function keepEnglishEnabled(){
+  return document.getElementById('keepEnglish').checked;
+}
+
+function runConvert(text){
+  return mode==='engToKor'?engToKor(text,keepEnglishEnabled()):korToEng(text);
+}
 
 function setMode(m){
   const prevMode = mode;
   const inputEl = document.getElementById('inputText');
-  const resultEl = document.getElementById('resultText');
-  
-  // 모드 전환 시 텍스트 위치 교환
-  if(prevMode !== m && resultEl.textContent && resultEl.textContent !== '입력하면 자동으로 변환됩니다') {
-    inputEl.value = resultEl.textContent;
+
+  // 모드 전환 시 변환 결과를 입력으로 옮겨 되돌리기 쉽게 한다
+  if(prevMode !== m && lastResult) {
+    inputEl.value = lastResult;
   }
-  
+
   mode = m;
-  document.getElementById('tab-e2k').classList.toggle('active', m === 'engToKor');
-  document.getElementById('tab-k2e').classList.toggle('active', m === 'korToEng');
+  [['tab-e2k','engToKor'],['tab-k2e','korToEng']].forEach(([id,value])=>{
+    const tab=document.getElementById(id);
+    tab.classList.toggle('active', m === value);
+    tab.setAttribute('aria-pressed', String(m === value));
+  });
   document.getElementById('inputLabel').textContent =
     m === 'engToKor' ? '영타로 잘못 친 텍스트를 입력하세요' : '한타로 잘못 친 텍스트를 입력하세요';
   inputEl.placeholder = m === 'engToKor' ? '예: dkssud' : '예: ㅗ디ㅣㅐ';
+  document.getElementById('keepEnglishRow').hidden = m !== 'engToKor';
   renderExamples();
   convert();
 }
@@ -394,19 +425,28 @@ async function pasteFromClipboard() {
     if (text) {
       document.getElementById('inputText').value = text;
       convert();
-      showToast('클립보드에서 붙여넣기 완료! 📋');
+      showToast('클립보드 내용을 붙여넣었습니다');
+    } else {
+      showToast('클립보드가 비어 있습니다');
     }
   } catch (e) {
-    showToast('클립보드 접근 권한이 필요합니다');
+    showToast('클립보드를 읽을 수 없습니다. 입력창에 직접 붙여넣어 주세요.');
   }
 }
 
 function renderExamples(){
   const chips=document.getElementById('exampleChips');
   const examples=mode==='engToKor'?engExamples:korExamples;
-  chips.innerHTML=examples.map(([inp,out])=>
-    `<button class="example-chip" onclick="useExample('${inp}')">${inp}<span>→</span>${out}</button>`
-  ).join('');
+  chips.replaceChildren(...examples.map(input=>{
+    const button=document.createElement('button');
+    button.type='button';
+    button.className='example-chip';
+    const arrow=document.createElement('span');
+    arrow.textContent='→';
+    button.append(input,arrow,runConvert(input));
+    button.addEventListener('click',()=>useExample(input));
+    return button;
+  }));
 }
 
 function useExample(text){
@@ -414,55 +454,55 @@ function useExample(text){
   convert();
 }
 
-function updateReport(resultLen, modeLabel) {
-  const container = document.getElementById('reportContainer');
-  const box = document.getElementById('reportBox');
-  if (resultLen === 0) {
-    container.style.display = 'none';
-    return;
-  }
-  
-  container.style.display = 'block';
-  
-  box.innerHTML = `
-    <ul class="report-list">
-      <li><strong>변환 모드:</strong> <code>${modeLabel}</code> 형태로 텍스트를 파싱하여 최적의 결과를 찾았습니다.</li>
-      <li><strong>글자수 분석:</strong> 총 <strong>${resultLen.toLocaleString()}</strong>자의 텍스트가 대기 시간 없이 실시간으로 교정되었습니다.</li>
-      <li><strong>로컬 보안:</strong> 현재 이 한영 변환 과정은 외부 서버 통신 없이 사용자 브라우저 보안 샌드박스 내부에서 100% 로컬로 연산되며 어떠한 데이터도 수집되지 않습니다.</li>
-      <li><strong>추가 추천:</strong> 장문 오타 교정 작업 후 글자 수 확인이 필요하다면 <a href="https://teemozipsa.com/special-chars/char-counter/">글자수 계산기</a>를 함께 활용해 보세요.</li>
-    </ul>
-  `;
-}
-
 function convert(){
   const input=document.getElementById('inputText').value;
   const resultEl=document.getElementById('resultText');
   if(!input){
-    resultEl.innerHTML='<span class="result-placeholder">입력하면 자동으로 변환됩니다</span>';
-    updateReport(0, '');
+    lastResult='';
+    resultEl.innerHTML='<span class="result-placeholder">'+RESULT_PLACEHOLDER+'</span>';
     return;
   }
-  const result=mode==='engToKor'?engToKor(input):korToEng(input);
-  resultEl.textContent=result;
-  updateReport(result.length, mode === 'engToKor' ? '영타 → 한글' : '한타 → 영어');
+  lastResult=runConvert(input);
+  resultEl.textContent=lastResult;
+}
+
+function copyText(text){
+  if(navigator.clipboard&&window.isSecureContext) return navigator.clipboard.writeText(text).catch(()=>legacyCopy(text));
+  return legacyCopy(text);
+}
+
+function legacyCopy(text){
+  const helper=document.createElement('textarea');
+  helper.value=text;
+  helper.setAttribute('readonly','');
+  helper.style.position='fixed';
+  helper.style.opacity='0';
+  document.body.appendChild(helper);
+  helper.select();
+  let copied=false;
+  try{copied=document.execCommand('copy')}catch(e){copied=false}
+  helper.remove();
+  return copied?Promise.resolve():Promise.reject(new Error('copy failed'));
 }
 
 function copyResult(){
-  const text=document.getElementById('resultText').textContent;
-  if(!text||text==='입력하면 자동으로 변환됩니다'){showToast('변환할 내용이 없습니다');return;}
-  navigator.clipboard.writeText(text).then(()=>showToast('복사 완료! 📋'));
+  if(!lastResult){showToast('복사할 변환 결과가 없습니다');return;}
+  copyText(lastResult)
+    .then(()=>showToast('변환 결과를 복사했습니다'))
+    .catch(()=>showToast('클립보드에 복사하지 못했습니다. 결과를 직접 선택해 복사해 주세요.'));
 }
 
 function clearAll(){
   document.getElementById('inputText').value='';
-  document.getElementById('resultText').innerHTML='<span class="result-placeholder">입력하면 자동으로 변환됩니다</span>';
-  updateReport(0, '');
+  convert();
+  document.getElementById('inputText').focus();
 }
 
 function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2000);
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>t.classList.remove('show'),2000);
 }
 renderExamples();
 </script>

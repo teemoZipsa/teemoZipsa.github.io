@@ -11,9 +11,9 @@
 <meta name="google-site-verification" content="TyyNKYVi782xFUYEwSxrYkTFRbP7qeWK7TUds1zObD0" />
 <meta name="naver-site-verification" content="810c74e464975f32e3aa19b595eaf90aa6b6de84" />
 <title>특수 문자 & 이모지 입력기</title>
-<meta name="description" content="특수문자, 이모지, 기호를 클릭 한 번으로 복사하세요. 글자 수 계산기, 날짜 계산기 등 22가지 무료 온라인 도구 모음.">
+<meta name="description" content="특수문자, 기호, 이모지를 검색해 누르면 바로 복사하고, 조합 입력창에 순서대로 모아 한 번에 복사합니다. ㈜·※·㉑처럼 문서에 자주 쓰는 기호도 찾을 수 있습니다.">
 <meta property="og:title" content="특수 문자 & 이모지 입력기 — 티모집사">
-<meta property="og:description" content="특수문자, 이모지, 기호를 클릭 한 번으로 복사하세요. 22가지 무료 온라인 도구 모음.">
+<meta property="og:description" content="특수문자·기호·이모지를 검색해 복사하고 조합 입력창에 모아 한 번에 복사합니다.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
@@ -66,6 +66,24 @@
   .header .search-box input::placeholder { color: rgba(255,255,255,0.5); }
   .header .search-box svg { width: 14px; height: 14px; fill: rgba(255,255,255,0.6); }
 
+  .compose-panel {
+    background: var(--bg-bar); padding: 10px 16px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .compose-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+  .compose-label { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+  .compose-count { font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .compose-row { display: flex; gap: 8px; align-items: stretch; }
+  .compose-input {
+    flex: 1; min-width: 0; min-height: 44px; max-height: 120px; resize: vertical;
+    padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px;
+    background: var(--bg-card); color: var(--text-primary);
+    font: 400 16px/1.5 'Pretendard', sans-serif;
+  }
+  .compose-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .compose-input::placeholder { color: var(--text-placeholder); }
+  .compose-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+  .compose-actions .action-btn { height: auto; min-height: 36px; padding: 6px 12px; font-size: 13px; }
   .workspace-panel {
     background: var(--bg-bar); padding: 8px 16px;
     display: flex; align-items: center; justify-content: space-between; gap: 10px;
@@ -159,7 +177,7 @@
     box-shadow: var(--shadow-accent);
   }
   .char-btn:active { transform: scale(0.95); background: var(--accent-hover); }
-  .char-btn.copied { background: #2ecc71 !important; border-color: #27ae60 !important; }
+  .char-btn.copied, .char-btn-small.copied { background: var(--status-green-bg) !important; border-color: var(--status-green-bg) !important; color: var(--text-on-accent); }
   .char-btn.emoji-cell {
     font-size: 24px; background: var(--bg-emoji-cell); border-color: var(--border-emoji);
   }
@@ -215,6 +233,25 @@
 .skip-link{position:fixed;left:12px;top:8px;z-index:1000;padding:10px 14px;border-radius:8px;background:var(--accent);color:var(--text-on-accent);font-weight:700;transform:translateY(-150%);transition:transform .15s}
 .skip-link:focus{transform:translateY(0)}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+/* 전역 margin 초기화 때문에 모달이 왼쪽 위에 붙지 않도록 가운데 정렬을 되살린다. */
+dialog.tool-confirm-dialog{margin:auto}
+.search-empty{grid-column:1/-1;padding:32px 8px;text-align:center;font-size:14px;line-height:1.7;color:var(--text-info)}
+@media (max-width: 640px) {
+  .compose-panel, .workspace-panel { padding-inline: 12px; }
+  .compose-row { flex-direction: column; }
+  .compose-actions { flex-direction: row; }
+  .compose-actions .action-btn { flex: 1; min-height: 44px; }
+  .workspace-panel { flex-wrap: wrap; gap: 8px; }
+  .recent-left { flex: 1 1 180px; min-width: 0; }
+  .action-groups { flex: 0 0 auto; }
+  .action-groups .action-btn { min-height: 44px; }
+  .char-btn-small { width: 44px; height: 44px; }
+  /* 탭은 한 줄 가로 스크롤로 두어 문자 목록이 첫 화면에 보이게 한다. */
+  .tab-groups { padding: 4px 8px 0; }
+  .tab-row { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; }
+  .tab { flex: 0 0 auto; }
+  .grid-container { height: auto; max-height: none; overflow: visible; padding: 10px; }
+}
 </style>
 <link rel="stylesheet" href="/special-chars/tool-shell.css">
 </head>
@@ -233,14 +270,26 @@
   </div>
 
   <div id="tool-special-chars">
+    <div class="compose-panel">
+      <div class="compose-head">
+        <label class="compose-label" for="composeInput">조합 입력창</label>
+        <span class="compose-count" id="composeCount" aria-live="polite">0자</span>
+      </div>
+      <div class="compose-row">
+        <textarea class="compose-input" id="composeInput" rows="2" spellcheck="false" placeholder="문자를 누를 때마다 누른 순서대로 여기에 쌓입니다. 직접 입력하거나 고칠 수도 있습니다."></textarea>
+        <div class="compose-actions">
+          <button type="button" class="action-btn btn-accent" onclick="copyCompose()">조합 복사</button>
+          <button type="button" class="action-btn btn-clear" onclick="clearCompose()">비우기</button>
+        </div>
+      </div>
+    </div>
     <div class="workspace-panel">
       <div class="recent-left">
         <span class="recent-label">최근 사용 ▸</span>
-        <div class="recent-chars" id="recentChars"></div>
+        <div class="recent-chars" id="recentChars" aria-label="최근 사용한 문자"></div>
       </div>
       <div class="action-groups">
-        <button class="action-btn btn-accent" onclick="copyMultiInput()">전체 복사</button>
-        <button class="action-btn btn-clear" onclick="clearRecent()">전체 삭제</button>
+        <button type="button" class="action-btn btn-clear" onclick="clearRecent()">최근 목록 지우기</button>
       </div>
     </div>
 
@@ -254,13 +303,13 @@
     <details class="guide-section" id="guide-start" tabindex="-1">
       <summary>📖 사용 방법</summary>
       <div class="guide-content">
-        <p>자주 쓰는 특수문자, 수학 기호, 화살표, 괄호, 통화 기호, 이모지를 한 화면에서 찾고 바로 복사하는 도구입니다. 검색창에는 문자 이름, 초성, 영문 키워드, 유니코드 값을 입력할 수 있습니다.</p>
+        <p>자주 쓰는 특수문자, 문서 기호, 수학 기호, 화살표, 괄호, 통화 기호, 이모지를 한 화면에서 찾아 복사하는 도구입니다. 검색창에는 "하트", "통화", "주식회사" 같은 이름, "ㅎㅌ" 같은 초성, "heart" 같은 영문 키워드, "U+2605" 같은 유니코드 값을 입력할 수 있습니다. 이름이 정확히 같거나 앞부분이 같은 키워드의 결과를 먼저 보여 줍니다.</p>
         <ol>
-          <li>상단 카테고리 탭에서 원하는 문자 종류를 선택하세요.</li>
-          <li>원하는 특수문자나 이모지를 클릭하면 자동으로 클립보드에 복사됩니다.</li>
-          <li>하단 입력창에서 복사된 문자를 확인하고, "전체 복사" 버튼으로 한꺼번에 복사할 수 있습니다.</li>
+          <li>카테고리 탭을 고르거나 검색창에 찾는 문자를 입력하세요.</li>
+          <li>문자를 누르면 그 문자 하나가 클립보드에 복사되고, 위쪽 조합 입력창 끝(또는 커서 위치)에 누른 순서대로 추가됩니다.</li>
+          <li>여러 문자를 이어 붙여야 할 때는 조합 입력창에서 내용을 확인·수정한 뒤 "조합 복사"로 한 번에 복사하세요.</li>
         </ol>
-        <p>입력값은 브라우저 안에서만 처리되며 서버로 전송되지 않습니다. 문서 작성, 닉네임 꾸미기, SNS 게시글, 개발 문서의 기호 입력처럼 반복적으로 문자를 찾아야 할 때 빠르게 사용할 수 있습니다.</p>
+        <p>문자 검색과 복사는 브라우저 안에서만 처리되며 서버로 전송되지 않습니다. 최근 사용한 문자 20개는 다음 방문 때 다시 쓸 수 있도록 이 브라우저의 로컬 저장소에 남고, "최근 목록 지우기"로 삭제할 수 있습니다. 조합 입력창의 내용은 저장하지 않으므로 페이지를 닫으면 사라집니다.</p>
       </div>
     </details>
     <details class="guide-section">
@@ -268,7 +317,7 @@
       <div class="guide-content">
         <p>특수문자는 모양이 비슷해 보여도 서로 다른 유니코드 문자일 수 있습니다. 예를 들어 하이픈, 마이너스, 긴 대시, 물결표는 검색과 정렬, 코드 처리에서 다르게 취급될 수 있습니다. 문서 제출이나 개발 작업에 넣을 때는 복사 후 실제 입력창에서 깨지지 않는지 확인하세요.</p>
         <p>SNS 닉네임이나 제목 꾸미기에는 별, 하트, 화살표 같은 장식 문자가 편하지만, 너무 많은 기호를 넣으면 검색성과 접근성이 떨어질 수 있습니다. 공식 문서, 계약서, 코드에는 의미가 명확한 표준 기호만 쓰는 것이 안전합니다.</p>
-        <p>이 도구는 선택한 문자를 서버로 보내지 않고 브라우저에서 바로 복사합니다. 자주 쓰는 기호는 하단 입력창에 모아 한 번에 복사할 수 있어 반복 작성 시간을 줄일 수 있습니다.</p>
+        <p>한글 문서에서 자주 찾는 ㈜(주식회사), ※(참고 표시), 〃(위와 같음), ㆍ(가운뎃점 대용), ①~㊿(원 숫자)는 "기호"와 "원/괄호" 탭에 모아 두었습니다. 다만 ㆍ는 원래 한글 옛 모음(아래아)이므로, 맞춤법상 가운뎃점이 필요한 곳에는 · (U+00B7)를 쓰는 편이 정확합니다.</p>
       </div>
     </details>
     <details class="guide-section">
@@ -276,7 +325,7 @@
       <div class="guide-content">
         <p>문서 작성에서는 체크 표시, 화살표, 통화 기호처럼 의미가 분명한 문자를 쓰는 것이 좋습니다. 반면 SNS 제목이나 닉네임에서는 장식 문자를 조금만 섞어 가독성을 유지하는 편이 좋습니다.</p>
         <p>개발 문서나 데이터 입력 작업에서는 눈으로 비슷한 문자 때문에 오류가 생길 수 있습니다. 예를 들어 영문 소문자 l, 숫자 1, 세로선 |처럼 헷갈리는 문자는 복사 후 실제 시스템에서 어떻게 표시되는지 확인하세요.</p>
-        <p>검색창에는 "화살표", "하트", "원", "통화", "수학"처럼 용도별 단어를 넣으면 원하는 문자 묶음을 빠르게 찾을 수 있습니다. 자주 쓰는 조합은 하단 입력창에 모아두고 한 번에 복사하면 반복 작업 시간이 줄어듭니다.</p>
+        <p>검색창에는 "화살표", "하트", "원", "통화", "수학"처럼 용도별 단어를 넣으면 원하는 문자 묶음을 빠르게 찾을 수 있습니다. "【공지】", "★☆★"처럼 여러 기호를 이어 쓰는 제목은 문자를 차례로 눌러 조합 입력창에 만든 뒤 한 번에 복사하면 됩니다.</p>
       </div>
     </details>
     <details class="guide-section">
@@ -310,9 +359,21 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<dialog class="tool-confirm-dialog" id="confirmDialog" aria-labelledby="confirmDialogTitle" aria-describedby="confirmDialogDescription">
+  <div class="tool-confirm-dialog__body">
+    <h2 id="confirmDialogTitle">삭제할까요?</h2>
+    <p id="confirmDialogDescription"></p>
+    <div class="tool-confirm-dialog__actions">
+      <button type="button" data-confirm-cancel autofocus>취소</button>
+      <button type="button" class="tool-confirm-dialog__confirm" data-confirm-ok>삭제</button>
+    </div>
+  </div>
+</dialog>
+
 <script>
 const SPECIAL = {
   "기호": {
+    "문서 기호": "※㈜㈔〃ㆍ§¶№℡☎〒",
     "일반 기호": "★☆♠♣♥♦♤♧♡♢♩♪♫♬♭♮♯✝✞✡✿❀❁❂❃❄❅❆❇❈❉❊❋",
     "화살표": "←↑→↓↔↕↖↗↘↙⇐⇑⇒⇓⇔⇕⇦⇧⇨⇩➔➜➝➞➟➠➡➢➣➤➥➦➧➨➩➪➫➬➭➮➯➲",
     "수학 기호": "±×÷≠≤≥≦≧⩽⩾≈∞∑∏∫∂√∝∟∠∥∦∧∨∩∪∈∉⊂⊃⊆⊇∀∃∄∅∇∝≡≢≪≫⊕⊖⊗⊘⊙⊚⊛⊜⊝∓∔≅≆≇≊≋≌≍≎≏≐≑∘∙⋅⋆⋇⋈⋉⋊⋋⋌⋍⋎⋏⋐⋑⋒⋓²³⁴½⅓¼",
@@ -326,7 +387,7 @@ const SPECIAL = {
     "꺾쇠/화살괄호": "‹›«»"
   },
   "구두점/대시": {
-    "가운뎃점": "·‧∙⋅",
+    "가운뎃점": "·ㆍ‧∙⋅",
     "말줄임/생략": "…‥",
     "대시류": "—–―‐",
     "글머리 기호": "•◦▪▫▸▹‣⁃",
@@ -348,7 +409,7 @@ const SPECIAL = {
     "로마 숫자": "ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⅪⅫⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⅺⅻ"
   },
   "원/괄호": {
-    "원 숫자": "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳",
+    "원 숫자": "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿",
     "괄호 숫자": "⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂⒃⒄⒅⒆⒇",
     "원 영문 대문자": "ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏ",
     "원 영문 소문자": "ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ",
@@ -577,7 +638,7 @@ const SEARCH_KEYWORDS = {
   '음표': '♩♪♫♬🎵🎶',
   '음악': '♩♪♫♬🎵🎶🎼',
   // 전화
-  '전화': '☎📞📟',
+  '전화': '☎📞📟℡',
   // 기타 자주 쓰는 것들
   '저작권': '©',
   '코피라이트': '©',
@@ -603,7 +664,8 @@ const SEARCH_KEYWORDS = {
   '사분의일': '¼',
   '사분의삼': '¾',
   // 원 숫자
-  '원문자': '①②③④⑤⑥⑦⑧⑨⑩',
+  '원문자': '①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳',
+  '원숫자': '①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳',
   // 화폐
   '돈': '₩$€£¥₿',
   '원화': '₩',
@@ -630,6 +692,82 @@ const SEARCH_KEYWORDS = {
   '맥주': '🍺🍻',
   '와인': '🍷🍾',
   '케이크': '🎂🍰🧁',
+  // 문서 기호
+  '참고': '※',
+  '당구장': '※',
+  '주식회사': '㈜',
+  '사단법인': '㈔',
+  '법인': '㈜㈔',
+  '같음': '〃',
+  '위와같음': '〃',
+  '동일': '〃',
+  '가운뎃점': '·ㆍ‧∙',
+  '가운데점': '·ㆍ‧∙',
+  '아래아': 'ㆍ',
+  '우편': '〒',
+  '번호': '№',
+  '물결': '～〜∼',
+  '물결표': '～〜∼',
+  '따옴표': '“”‘’「」『』',
+  '낫표': '「」『』',
+  '괄호': '【】〔〕〈〉《》「」『』',
+  '글머리': '•◦▪▸‣⁃※',
+  '통화': '₩$€£¥₿¢',
+  '화폐': '₩$€£¥₿¢',
+  // 영문 키워드
+  'heart': '♡♥❤💕💖💗💘❣',
+  'star': '★☆✦✧✶✷⭐🌟',
+  'arrow': '←↑→↓↔↕⇐⇑⇒⇓⇔➔➜➡',
+  'left': '←⇐↖↙⬅',
+  'right': '→⇒↗↘➡',
+  'up': '↑⇑⬆',
+  'down': '↓⇓⬇',
+  'check': '✓✔☑✅',
+  'cross': '✗✖✘☒❌',
+  'circle': '○◎●◉◌◍',
+  'square': '□■▢▣',
+  'triangle': '△▲▵▴▽▼',
+  'diamond': '◇◆◈',
+  'music': '♩♪♫♬🎵🎶',
+  'note': '※♩♪',
+  'phone': '☎📞℡',
+  'registered': '®',
+  'trademark': '™',
+  'degree': '°℃℉',
+  'celsius': '℃',
+  'fahrenheit': '℉',
+  'percent': '%‰‱',
+  'currency': '₩$€£¥₿¢',
+  'money': '₩$€£¥₿',
+  'won': '₩',
+  'dollar': '$',
+  'euro': '€',
+  'yen': '¥',
+  'pound': '£',
+  'bitcoin': '₿',
+  'bullet': '•◦▪▸‣⁃',
+  'dot': '·•∙ㆍ',
+  'dash': '—–―‐',
+  'quote': '“”‘’「」『』',
+  'bracket': '【】〔〕〈〉《》',
+  'fraction': '½⅓⅔¼¾',
+  'roman': 'ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ',
+  'sun': '☀🌞',
+  'moon': '🌙🌕🌛',
+  'cloud': '☁⛅',
+  'rain': '🌧☔',
+  'snow': '❄☃⛄',
+  'fire': '🔥',
+  'smile': '😀😃😄😊🙂',
+  'cat': '🐱🐈',
+  'dog': '🐶🐕',
+  'coffee': '☕',
+  'cake': '🎂🍰🧁',
+  'flag': '🏁🚩🎌🏳',
+  'korea': '🇰🇷',
+  'warning': '⚠',
+  'company': '㈜',
+  'ditto': '〃',
 };
 
 const SPECIAL_KEYS = Object.keys(SPECIAL);
@@ -638,6 +776,8 @@ const EMOJI_KEYS = Object.keys(EMOJI);
 let currentTab = "기호";
 let recentChars;
 try { recentChars = JSON.parse(localStorage.getItem('recentChars') || '[]'); } catch { recentChars = []; }
+if (!Array.isArray(recentChars)) recentChars = [];
+recentChars = recentChars.filter(ch => typeof ch === 'string' && ch.length > 0 && ch.length <= 16).slice(0, 20);
 
 // ZWJ 이모지, 국기 등 올바르게 분리
 function splitChars(str) {
@@ -686,7 +826,6 @@ function configureCharacterButton(btn, ch) {
   btn.title = `${ch}  (U+${code})`;
   btn.setAttribute('aria-label', `${ch} 복사, 유니코드 U+${code}`);
   btn.onclick = () => copyChar(ch, btn);
-  btn.onmouseenter = () => { document.getElementById('codeInfo').textContent = `U+${code}`; };
 }
 
 function applyGridRovingTabindex() {
@@ -784,23 +923,107 @@ function renderGrid(filter = '') {
   applyGridRovingTabindex();
 }
 
+// 클립보드 API가 막힌 환경(비보안 연결, 권한 거부)에서도 복사를 시도하고 실패를 알린다.
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    return navigator.clipboard.writeText(text).catch(() => legacyCopy(text));
+  }
+  return legacyCopy(text);
+}
+
+function legacyCopy(text) {
+  const active = document.activeElement;
+  const helper = document.createElement('textarea');
+  helper.value = text;
+  helper.setAttribute('readonly', '');
+  helper.style.position = 'fixed';
+  helper.style.opacity = '0';
+  document.body.appendChild(helper);
+  helper.select();
+  let copied = false;
+  try { copied = document.execCommand('copy'); } catch { copied = false; }
+  helper.remove();
+  if (active && typeof active.focus === 'function') active.focus({ preventScroll: true });
+  return copied ? Promise.resolve() : Promise.reject(new Error('copy failed'));
+}
+
+const composeInput = document.getElementById('composeInput');
+let composeCaret = null;
+
+function updateComposeCount() {
+  document.getElementById('composeCount').textContent = `${splitChars(composeInput.value).length.toLocaleString('ko-KR')}자`;
+}
+
+function rememberComposeCaret() {
+  composeCaret = composeInput.selectionEnd;
+}
+
+// 누른 문자를 조합 입력창의 마지막 커서 위치(없으면 끝)에 순서대로 넣는다.
+function appendToCompose(ch) {
+  const value = composeInput.value;
+  const position = composeCaret === null || composeCaret > value.length ? value.length : composeCaret;
+  composeInput.value = value.slice(0, position) + ch + value.slice(position);
+  composeCaret = position + ch.length;
+  updateComposeCount();
+}
+
 function copyChar(ch, btnEl) {
-  navigator.clipboard.writeText(ch).then(() => {
-    showToast(`'${ch}' 복사됨!`);
-    
-    if (btnEl) {
+  appendToCompose(ch);
+  addRecent(ch);
+  copyText(ch).then(() => {
+    showToast(`'${ch}' 복사함 · 조합 입력창에 추가`);
+    if (btnEl && btnEl.isConnected) {
       btnEl.classList.add('copied');
       setTimeout(() => btnEl.classList.remove('copied'), 400);
     }
-    addRecent(ch);
+  }).catch(() => {
+    showToast('클립보드에 복사하지 못했습니다. 조합 입력창에서 선택해 복사해 주세요.');
   });
 }
 
-function copyMultiInput() {
-  if (recentChars.length === 0) return;
-  const comboText = recentChars.join('');
-  navigator.clipboard.writeText(comboText).then(() => {
-    showToast(`전체 복사됨: ${comboText}`);
+function copyCompose() {
+  const text = composeInput.value;
+  if (!text) { showToast('조합 입력창이 비어 있습니다. 문자를 눌러 추가하세요.'); return; }
+  copyText(text).then(() => {
+    showToast(`조합 복사함: ${splitChars(text).length.toLocaleString('ko-KR')}자`);
+  }).catch(() => {
+    composeInput.focus();
+    composeInput.select();
+    showToast('클립보드에 복사하지 못했습니다. 선택된 내용을 Ctrl+C로 복사해 주세요.');
+  });
+}
+
+function askConfirm(title, message, confirmLabel) {
+  const dialog = document.getElementById('confirmDialog');
+  if (!dialog || typeof dialog.showModal !== 'function') return Promise.resolve(true);
+  return new Promise(resolve => {
+    dialog.querySelector('#confirmDialogTitle').textContent = title;
+    dialog.querySelector('#confirmDialogDescription').textContent = message;
+    const okButton = dialog.querySelector('[data-confirm-ok]');
+    okButton.textContent = confirmLabel;
+    okButton.onclick = () => dialog.close('confirm');
+    dialog.querySelector('[data-confirm-cancel]').onclick = () => dialog.close('cancel');
+    // 이전 대화상자의 close 이벤트가 늦게 도착해도 다시 열린 대화상자의 결과로 쓰지 않는다.
+    const onClose = () => {
+      if (dialog.open) return;
+      dialog.removeEventListener('close', onClose);
+      resolve(dialog.returnValue === 'confirm');
+    };
+    dialog.addEventListener('close', onClose);
+    dialog.returnValue = '';
+    dialog.showModal();
+  });
+}
+
+function clearCompose() {
+  if (!composeInput.value) { composeInput.focus(); return; }
+  askConfirm('조합 입력창을 비울까요?', `입력창의 ${splitChars(composeInput.value).length.toLocaleString('ko-KR')}자가 지워집니다. 이 내용은 저장되지 않으므로 되돌릴 수 없습니다.`, '비우기').then(ok => {
+    if (!ok) return;
+    composeInput.value = '';
+    composeCaret = null;
+    updateComposeCount();
+    composeInput.focus();
+    showToast('조합 입력창을 비웠습니다');
   });
 }
 
@@ -815,23 +1038,34 @@ function addRecent(ch) {
 function renderRecent() {
   const container = document.getElementById('recentChars');
   container.innerHTML = '';
+  if (!recentChars.length) {
+    const empty = document.createElement('span');
+    empty.className = 'recent-label';
+    empty.textContent = '아직 없음';
+    container.appendChild(empty);
+    return;
+  }
   recentChars.forEach(ch => {
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = 'char-btn-small';
     btn.textContent = ch;
+    btn.title = `${ch}  (U+${ch.codePointAt(0).toString(16).toUpperCase().padStart(4, '0')})`;
+    btn.setAttribute('aria-label', `${ch} 다시 복사`);
     btn.onclick = () => copyChar(ch, btn);
-    btn.onmouseenter = () => {
-      document.getElementById('codeInfo').textContent = 'U+' + ch.codePointAt(0).toString(16).toUpperCase().padStart(4,'0');
-    };
     container.appendChild(btn);
   });
 }
 
 function clearRecent() {
-  recentChars = [];
-  try { localStorage.setItem('recentChars', JSON.stringify(recentChars)); } catch {}
-  renderRecent();
-  showToast('최근 사용 목록 삭제됨');
+  if (!recentChars.length) { showToast('지울 최근 사용 문자가 없습니다'); return; }
+  askConfirm('최근 사용 목록을 지울까요?', `이 브라우저에 저장된 최근 사용 문자 ${recentChars.length}개를 삭제합니다. 조합 입력창의 내용은 그대로 남습니다.`, '지우기').then(ok => {
+    if (!ok) return;
+    recentChars = [];
+    try { localStorage.removeItem('recentChars'); } catch {}
+    renderRecent();
+    showToast('최근 사용 목록을 지웠습니다');
+  });
 }
 
 const CHOSUNG_LIST = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
@@ -889,23 +1123,37 @@ for (const [kw, chars] of Object.entries(SEARCH_KEYWORDS)) {
   EXTENDED_KEYWORDS.push({ kw: kw, cho: getChosung(kw), eng: korToEngTypo(kw), chars: chars });
 }
 
+// 키워드 일치도: 완전 일치 > 앞부분 일치 > 부분 일치. 한 글자 키워드(달·원·도)는
+// 검색어와 완전히 같을 때만 쓰여 "달러", "원화", "도형" 같은 검색을 오염시키지 않는다.
+function keywordScore(field, q) {
+  if (!field) return 0;
+  if (field === q) return 3;
+  if (field.startsWith(q)) return 2;
+  if (q.length >= 2 && field.includes(q)) return 1;
+  if (field.length >= 2 && q.includes(field)) return 1;
+  return 0;
+}
+
 function getKeywordMatches(query) {
-  const q = query.toLowerCase();
+  const q = query.toLowerCase().replace(/\s+/g, '');
   const matched = new Set();
-  
-  const isEngQuery = /^[a-zA-Z]+$/.test(q);
+  if (!q) return matched;
+
+  const isEngQuery = /^[a-z]+$/.test(q);
   const isChoQuery = /^[ㄱ-ㅎ]+$/.test(q);
 
-  for (const item of EXTENDED_KEYWORDS) {
-    let match = false;
-    if (isEngQuery && item.eng.includes(q)) match = true;
-    else if (isChoQuery && item.cho.includes(q)) match = true;
-    else if (item.kw.includes(q) || q.includes(item.kw)) match = true;
-
-    if (match) {
-      splitChars(item.chars).forEach(c => matched.add(c));
+  const ranked = [];
+  EXTENDED_KEYWORDS.forEach((item, order) => {
+    let score = keywordScore(item.kw.toLowerCase(), q);
+    if (isChoQuery) score = Math.max(score, keywordScore(item.cho, q));
+    // 영문 자판으로 친 한글 키워드(예: gkxm → 하트)는 두 글자 이상일 때만 앞부분까지 비교한다.
+    if (isEngQuery && item.eng !== item.kw) {
+      score = Math.max(score, item.eng === q ? 3 : (q.length >= 2 && item.eng.startsWith(q) ? 2 : 0));
     }
-  }
+    if (score > 0) ranked.push({ item, score, order });
+  });
+  ranked.sort((a, b) => b.score - a.score || a.order - b.order);
+  ranked.forEach(({ item }) => splitChars(item.chars).forEach(c => matched.add(c)));
   return matched;
 }
 
@@ -972,10 +1220,8 @@ function filterChars() {
     // 결과가 없으면 안내
     if (grid.children.length === 0) {
       const noResult = document.createElement('div');
-      noResult.className = 'sub-header';
-      noResult.textContent = `"${q}"에 대한 검색 결과가 없습니다.`;
-      noResult.style.textAlign = 'center';
-      noResult.style.padding = '40px 0';
+      noResult.className = 'search-empty';
+      noResult.textContent = `"${q}"에 대한 검색 결과가 없습니다. "화살표", "통화", "heart"처럼 용도나 모양을 나타내는 단어로 찾아보세요.`;
       grid.appendChild(noResult);
     }
     applyGridRovingTabindex();
@@ -996,6 +1242,9 @@ function showToast(msg) {
 renderTabs();
 renderGrid();
 renderRecent();
+updateComposeCount();
+['input', 'keyup', 'click', 'select'].forEach(type => composeInput.addEventListener(type, rememberComposeCaret));
+composeInput.addEventListener('input', updateComposeCount);
 
 // 거슬림 없는 부드러운 드래그 스크롤 (마우스용)
 const recentSlider = document.getElementById('recentChars');
