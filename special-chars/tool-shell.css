@@ -348,6 +348,8 @@ html[data-tool-layout] .tool-header-actions--search .search-box input {
 }
 
 html[data-tool-layout] .tool-confirm-dialog {
+  /* Pages reset `* { margin: 0 }`, which removes the UA's modal centering. */
+  margin: auto;
   width: min(28rem, calc(100vw - 1.5rem));
   max-height: calc(100dvh - 1.5rem);
   padding: 0;
@@ -409,6 +411,7 @@ html[data-tool-layout] .tool-confirm-dialog__actions .tool-confirm-dialog__confi
 }
 
 html[data-tool-layout] .toast {
+  position: fixed;
   left: 50%;
   bottom: max(0.75rem, env(safe-area-inset-bottom));
   width: max-content;
@@ -435,6 +438,12 @@ html[data-tool-layout] .toast {
 html[data-tool-layout] .toast.show {
   opacity: 1;
   transform: translate(-50%, 0);
+}
+
+/* Tools flag rejected input with aria-invalid; make that state visible everywhere. */
+html[data-tool-layout] :where(input, textarea, select)[aria-invalid="true"] {
+  border-color: var(--status-red-text) !important;
+  box-shadow: 0 0 0 1px var(--status-red-text);
 }
 
 html[data-tool-layout] :where(.guide-content, .work-context, .report-box) {
