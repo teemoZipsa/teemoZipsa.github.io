@@ -11,9 +11,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>💵 시급 ↔ 월급/연봉 환산기 — 티모집사</title>
-<meta name="description" content="시급, 월급, 연봉을 자유롭게 환산! 4대보험·프리랜서 세금 공제, 연장·야간 수당, 목표 금액 계산까지.">
+<meta name="description" content="시급, 월급, 연봉을 월 209시간 기준으로 환산합니다. 2026·2027년 최저임금, 주휴수당 비례 계산, 주 40시간 초과 연장근로, 4대보험 근로자 부담분까지 확인하세요.">
 <meta property="og:title" content="💵 시급 ↔ 월급/연봉 환산기 — 티모집사">
-<meta property="og:description" content="시급, 월급, 연봉을 자유롭게 환산! 4대보험·프리랜서 세금 공제, 연장·야간 수당, 목표 금액 계산까지.">
+<meta property="og:description" content="시급·월급·연봉 환산, 2026·2027년 최저임금, 주휴수당 비례 계산과 4대보험 근로자 부담분을 확인합니다.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/wage-calc/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
@@ -34,44 +34,51 @@
   .field{flex:1;display:flex;flex-direction:column;gap:3px}
   .field label{font-size:10px;color:var(--calc-expr-text);font-weight:600}
   .field input,.field select{background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);padding:9px 10px;font-size:14px;font-family:inherit;outline:none;width:100%}
-  .field input:focus{border-color:var(--accent)}
+  .field input:focus,.field select:focus{border-color:var(--accent)}
   .field input::placeholder{color:var(--text-muted)}
   .field select{cursor:pointer}
+  .field-note{font-size:12px;color:var(--text-info);line-height:1.5;margin-top:6px}
+  .field-error{font-size:12px;color:var(--status-red-text);font-weight:600;line-height:1.5;margin-top:6px}
+  .field-error:empty{display:none}
 
   .result-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-  .r-card{background:var(--bg-input);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .15s}
-  .r-card:hover{border-color:#7c5eb8;transform:translateY(-2px)}
-  .r-label{font-size:10px;color:var(--calc-expr-text);margin-bottom:3px}
-  .r-value{font-size:15px;font-weight:800;color:var(--text-primary);word-break:break-all}
-  .r-sub{font-size:9px;color:var(--text-muted);margin-top:2px}
+  .r-card{background:var(--bg-input);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:border-color .15s,transform .15s;font:inherit;font-size:14px;color:inherit;width:100%;display:flex;flex-direction:column;align-items:center;gap:2px}
+  .r-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .r-card.copied{border-color:var(--text-success)}
+  .r-label{font-size:10px;color:var(--calc-expr-text)}
+  .r-value{font-size:15px;font-weight:800;color:var(--text-primary);word-break:break-all;font-variant-numeric:tabular-nums}
+  .r-sub{font-size:12px;color:var(--text-muted)}
 
-  /* 세후 결과 */
   .after-tax{display:none}
   .after-tax .result-grid{margin-top:8px}
   .at-label{font-size:14px;color:var(--text-success);font-weight:700;margin-bottom:4px}
   .r-card.after .r-value{color:var(--text-success)}
 
-  .min-wage{background:var(--bg-success, #1a2a1a);border:1px solid var(--border-success, #2a4a2a);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--text-success);display:flex;justify-content:space-between;align-items:center;gap:8px}
-  .min-wage>span{min-width:0}
-  .min-wage button{background:var(--status-green-bg);border:none;color:var(--text-on-accent);min-height:32px;padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;transition:filter .15s}
+  .min-wage{background:var(--bg-success);border:1px solid var(--border-success);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--text-success);display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .min-wage>span{min-width:0;line-height:1.5}
+  .min-wage button{background:var(--status-green-bg);border:none;color:var(--text-on-accent);min-height:36px;padding:6px 12px;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit;transition:filter .15s;flex-shrink:0}
   .min-wage button:hover{filter:brightness(.9)}
+  .notice{border-radius:10px;padding:10px 14px;font-size:13px;line-height:1.55;background:var(--bg-bar);border:1px solid var(--status-orange-text);color:var(--status-orange-text)}
+  .notice:empty{display:none}
 
-  /* 목표 위젯 */
+  .basis{background:var(--bg-bar);border:1px solid var(--border);border-radius:12px;padding:12px 14px}
+  .basis-list{list-style:none;display:flex;flex-direction:column;gap:6px;font-size:13px}
+  .basis-list li{display:flex;justify-content:space-between;gap:10px;line-height:1.45}
+  .basis-list span{color:var(--text-info)}
+  .basis-list strong{color:var(--text-primary);text-align:right;font-weight:700}
+  .formula{margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);font-size:13px;color:var(--text-secondary);line-height:1.55;word-break:keep-all;overflow-wrap:anywhere}
+
+  .deduct-list{list-style:none;margin-top:8px;display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--text-info)}
+  .deduct-list li{display:flex;justify-content:space-between;gap:10px;line-height:1.45}
+  .deduct-list strong{color:var(--text-primary);font-weight:700;font-variant-numeric:tabular-nums}
+  .deduct-note{font-size:12px;color:var(--text-info);line-height:1.5;margin-top:6px}
+
   .goal-section{background:var(--bg-bar);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
   .goal-input{display:flex;gap:8px;margin-top:8px}
-  .goal-input input{flex:1}
-  .goal-result{display:none;margin-top:10px;background:var(--bg-input);border-radius:10px;padding:12px;text-align:center;font-size:13px;line-height:1.6;color:var(--text-amount)}
-  .goal-result strong{color:var(--text-highlight)}
-  .goal-result .emoji{font-size:20px}
-
-  /* 리포트 박스 */
-  .report-box{background:var(--bg-guide);padding:20px;border-radius:12px;border:1px solid var(--border);line-height:1.6;font-size:14px;color:var(--text-primary);margin-top:16px;animation:fadeIn 0.5s ease-out;display:none;}
-  .report-box h2{font-size:15px;margin-bottom:12px;font-weight:700}
-  .report-box p{margin-bottom:10px;color:var(--text-info);word-break:keep-all}
-  .report-box .highlight{font-weight:700;color:var(--text-primary)}
-  .report-tip{background:var(--bg-body);border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0;border-radius:0 8px 8px 0;font-size:13.5px}
-  .report-notice{font-size:12px;color:var(--text-muted)!important;margin-top:16px;padding-top:12px;border-top:1px dashed var(--border)}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .goal-input input{flex:1;background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);padding:9px 10px;font-family:inherit;outline:none;width:100%}
+  .goal-input input:focus{border-color:var(--accent)}
+  .goal-result{display:none;margin-top:10px;background:var(--bg-input);border-radius:10px;padding:12px;text-align:center;font-size:13px;line-height:1.6;color:var(--text-secondary)}
+  .goal-result strong{color:var(--text-primary)}
 
   .related-tools{margin:0 12px 12px;padding:16px;background:var(--bg-guide);border-radius:8px;border:1px solid var(--border)}
   .related-tools h2{font-size:14px;margin-bottom:10px;font-weight:700;color:var(--text-primary)}
@@ -79,7 +86,7 @@
   .related-tools li a{font-size:13px;color:var(--accent-text);text-decoration:none;display:flex;align-items:center;gap:6px;transition:opacity .2s}
   .related-tools li a:hover{opacity:0.8;text-decoration:underline}
 
-  .hint{font-size:12px;color:var(--text-muted);text-align:center;margin-top:10px}
+  .hint{font-size:12px;color:var(--text-muted);text-align:center}
   .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text)}
   .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
   .footer a:hover{color:var(--text-guide)}
@@ -88,14 +95,22 @@
   .guide-section summary:hover{background:var(--bg-guide-hover)}
   .guide-section[open] summary{background:var(--bg-btn);border-bottom:1px solid var(--border)}
   .guide-content{padding:12px 14px;font-size:12px;color:var(--text-info);line-height:1.8}
-  .guide-content ol{padding-left:20px}.guide-content li{margin-bottom:4px}
+  .guide-content ol,.guide-content ul{padding-left:20px}.guide-content li{margin-bottom:4px}
+  .guide-content table{width:100%;border-collapse:collapse;margin:8px 0}
+  .guide-content th,.guide-content td{padding:5px;border:1px solid var(--border);text-align:center}
+  .guide-content th{background:var(--bg-input);color:var(--text-guide)}
+  .guide-content tr.current td{color:var(--text-amount);font-weight:700}
+  .guide-content .table-note{font-size:12px;color:var(--calc-expr-text)}
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);opacity:0;z-index:999}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
   @media(max-width:420px){
     .field-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
     .field-row>.field:only-child{grid-column:1/-1}
-    .body>.section:first-child>.field-row:first-of-type>.field:last-child:nth-child(3){grid-column:1/-1}
+    .field-row>.field:last-child:nth-child(3){grid-column:1/-1}
     .result-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
     .result-grid>.r-card:last-child{grid-column:1/-1}
     .section{padding-inline:14px}
+    .min-wage{flex-direction:column;align-items:stretch}
   }
 </style>
 <link rel="stylesheet" href="/special-chars/tool-shell.css">
@@ -108,21 +123,43 @@
     <h1>💵 시급 ↔ 월급/연봉 환산기</h1>
   </div>
   <div class="body">
+    <!-- 적용 기준 -->
+    <div class="section">
+      <div class="section-title">📅 적용 기준</div>
+      <div class="field-row">
+        <div class="field">
+          <label for="wageYear">기준 연도</label>
+          <select id="wageYear" onchange="onYearChange()">
+            <option value="2026">2026년</option>
+            <option value="2027">2027년</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="bizSize">사업장 규모</label>
+          <select id="bizSize" onchange="calc()">
+            <option value="5plus" selected>상시 5인 이상</option>
+            <option value="under5">5인 미만</option>
+          </select>
+        </div>
+      </div>
+      <p class="field-note" id="bizSizeNote">5인 이상 사업장은 연장·야간근로에 통상임금의 50%를 가산합니다.</p>
+    </div>
+
     <!-- 근무 조건 -->
     <div class="section">
       <div class="section-title">⏰ 근무 조건</div>
       <div class="field-row">
         <div class="field">
-          <label>일 근무시간</label>
-          <input aria-label="하루 근무 시간" type="number" id="hoursDay" value="8" min="1" max="24" oninput="calc()">
+          <label for="hoursDay">하루 근무시간</label>
+          <input type="number" id="hoursDay" value="8" min="0.5" max="24" step="0.5" inputmode="decimal" oninput="calc()">
         </div>
         <div class="field">
-          <label>주 근무일수</label>
-          <input aria-label="주당 근무일" type="number" id="daysWeek" value="5" min="1" max="7" oninput="calc()">
+          <label for="daysWeek">주 근무일수</label>
+          <input type="number" id="daysWeek" value="5" min="1" max="7" step="1" inputmode="numeric" oninput="calc()">
         </div>
         <div class="field">
-          <label>주휴수당</label>
-          <select aria-label="주휴수당 포함 여부" id="weeklyHol" onchange="calc()">
+          <label for="weeklyHol">주휴수당</label>
+          <select id="weeklyHol" onchange="calc()">
             <option value="yes" selected>포함 (주 15시간 이상 시)</option>
             <option value="no">미포함</option>
           </select>
@@ -130,26 +167,28 @@
       </div>
       <div class="field-row">
         <div class="field">
-          <label>⏱️ 연장근로 (하루, 8h 초과분)</label>
-          <input aria-label="주당 연장 근무 시간" type="number" id="overtime" value="0" min="0" max="16" step="0.5" oninput="calc()">
+          <label for="overtime">추가 연장근로 (주당 시간)</label>
+          <input type="number" id="overtime" value="0" min="0" max="100" step="0.5" inputmode="decimal" oninput="calc()">
         </div>
         <div class="field">
-          <label>🌙 야간근로 (22~06시)</label>
-          <input aria-label="주당 야간 근무 시간" type="number" id="nighttime" value="0" min="0" max="8" step="0.5" oninput="calc()">
+          <label for="nighttime">야간근로 22~06시 (주당 시간)</label>
+          <input type="number" id="nighttime" value="0" min="0" max="168" step="0.5" inputmode="decimal" oninput="calc()">
         </div>
       </div>
+      <p class="field-note">하루 8시간을 넘는 시간과 주 40시간을 넘는 시간은 연장근로로 자동 계산합니다. 추가 연장근로에는 그 밖의 주당 연장 시간만 입력하세요.</p>
+      <p class="field-error" id="conditionError" role="alert"></p>
     </div>
 
-    <!-- 세금 공제 -->
+    <!-- 공제 -->
     <div class="section">
-      <div class="section-title">🧾 세금 공제</div>
+      <div class="section-title">🧾 공제 방식</div>
       <div class="field-row">
         <div class="field">
-          <label>공제 유형</label>
-          <select aria-label="공제 유형" id="taxType" onchange="calc()">
-            <option value="none">세금 미공제 (세전)</option>
-            <option value="insurance" selected>4대 보험 (약 9.39%)</option>
-            <option value="freelance">프리랜서 (3.3%)</option>
+          <label for="taxType">공제 유형</label>
+          <select id="taxType" onchange="calc()">
+            <option value="none">공제 없음 (세전)</option>
+            <option value="insurance" selected>4대보험만 공제 (소득세 제외)</option>
+            <option value="freelance">프리랜서 3.3% 원천징수</option>
           </select>
         </div>
       </div>
@@ -160,105 +199,106 @@
       <div class="section-title">💰 금액 입력 (하나만 입력)</div>
       <div class="field-row">
         <div class="field">
-          <label>시급 (원)</label>
-          <input aria-label="시급" type="text" id="hourly" value="10,320" oninput="formatAndCalc(this,'hourly')">
+          <label for="hourly">시급 (원)</label>
+          <input type="text" id="hourly" value="10,320" inputmode="decimal" autocomplete="off" oninput="formatAndCalc(this,'hourly')">
         </div>
       </div>
       <div class="field-row">
         <div class="field">
-          <label>월급 (원)</label>
-          <input aria-label="월급" type="text" id="monthly" placeholder="" oninput="formatAndCalc(this,'monthly')">
+          <label for="monthly">월급 (원)</label>
+          <input type="text" id="monthly" inputmode="decimal" autocomplete="off" oninput="formatAndCalc(this,'monthly')">
         </div>
         <div class="field">
-          <label>연봉 (원)</label>
-          <input aria-label="연봉" type="text" id="yearly" placeholder="" oninput="formatAndCalc(this,'yearly')">
+          <label for="yearly">연봉 (원)</label>
+          <input type="text" id="yearly" inputmode="decimal" autocomplete="off" oninput="formatAndCalc(this,'yearly')">
         </div>
       </div>
+      <p class="field-error" id="amountError" role="alert"></p>
     </div>
 
     <div class="min-wage">
-      <span>2026 최저시급: <strong>10,320원</strong></span>
-      <button onclick="applyMinWage()">적용하기</button>
+      <span id="minWageText"><strong>2026년 최저시급 10,320원</strong> · 월 209시간 기준 2,156,880원</span>
+      <button type="button" onclick="applyMinWage()">최저시급 적용</button>
     </div>
+    <div class="notice" id="minWageWarn" role="status" aria-live="polite"></div>
 
     <!-- 세전 결과 -->
-    <div class="section-title" style="padding:0 4px;margin-top:4px">📊 세전 결과</div>
+    <div class="section-title" style="padding:0 4px;margin-top:4px;margin-bottom:0">📊 세전 결과</div>
     <div class="result-grid" role="status" aria-live="polite" aria-atomic="true">
-      <div class="r-card" onclick="copyVal(this)">
-        <div class="r-label">시급</div>
-        <div class="r-value" id="rHourly">-</div>
-      </div>
-      <div class="r-card" onclick="copyVal(this)">
-        <div class="r-label">월급 (세전)</div>
-        <div class="r-value" id="rMonthly">-</div>
-      </div>
-      <div class="r-card" onclick="copyVal(this)">
-        <div class="r-label">연봉 (세전)</div>
-        <div class="r-value" id="rYearly">-</div>
-      </div>
+      <button type="button" class="r-card" onclick="copyCard(this)" data-copy="">
+        <span class="r-label">시급</span>
+        <span class="r-value" id="rHourly">-</span>
+        <span class="r-sub">복사</span>
+      </button>
+      <button type="button" class="r-card" onclick="copyCard(this)" data-copy="">
+        <span class="r-label">월급 (세전)</span>
+        <span class="r-value" id="rMonthly">-</span>
+        <span class="r-sub">복사</span>
+      </button>
+      <button type="button" class="r-card" onclick="copyCard(this)" data-copy="">
+        <span class="r-label">연봉 (세전, 월급×12)</span>
+        <span class="r-value" id="rYearly">-</span>
+        <span class="r-sub">복사</span>
+      </button>
     </div>
 
-    <!-- 세후 결과 -->
+    <!-- 계산 근거 -->
+    <div class="basis">
+      <div class="section-title">🧮 계산 근거</div>
+      <ul class="basis-list">
+        <li><span>주 소정근로시간</span><strong id="r-sched">40시간</strong></li>
+        <li><span>주휴시간</span><strong id="r-hol">포함 · 주 8시간</strong></li>
+        <li><span>연장근로</span><strong id="r-ot">없음</strong></li>
+        <li><span>야간근로</span><strong id="r-night">없음</strong></li>
+        <li><span>월 환산 기본 유급시간</span><strong id="r-hours">209시간</strong></li>
+      </ul>
+      <p class="formula" id="r-formula">10,320원 × 209시간 = 2,156,880원</p>
+    </div>
+
+    <!-- 공제 결과 -->
     <div class="after-tax" id="afterTax">
-      <div class="at-label" id="atLabel">💚 세후 (4대보험 공제)</div>
+      <div class="at-label" id="atLabel">💚 4대보험 근로자 부담분만 공제 (소득세 미반영)</div>
       <div class="result-grid">
-        <div class="r-card after" onclick="copyVal(this)">
-          <div class="r-label">세후 시급</div>
-          <div class="r-value" id="rHourlyAt">-</div>
-        </div>
-        <div class="r-card after" onclick="copyVal(this)">
-          <div class="r-label">세후 월급</div>
-          <div class="r-value" id="rMonthlyAt">-</div>
-        </div>
-        <div class="r-card after" onclick="copyVal(this)">
-          <div class="r-label">세후 연봉</div>
-          <div class="r-value" id="rYearlyAt">-</div>
-        </div>
+        <button type="button" class="r-card after" onclick="copyCard(this)" data-copy="">
+          <span class="r-label">월 공제액</span>
+          <span class="r-value" id="rDeduct">-</span>
+          <span class="r-sub">복사</span>
+        </button>
+        <button type="button" class="r-card after" onclick="copyCard(this)" data-copy="">
+          <span class="r-label">공제 후 월급</span>
+          <span class="r-value" id="rMonthlyAt">-</span>
+          <span class="r-sub">복사</span>
+        </button>
+        <button type="button" class="r-card after" onclick="copyCard(this)" data-copy="">
+          <span class="r-label">공제 후 연간 (×12)</span>
+          <span class="r-value" id="rYearlyAt">-</span>
+          <span class="r-sub">복사</span>
+        </button>
       </div>
+      <ul class="deduct-list" id="deductList"></ul>
+      <p class="deduct-note" id="deductNote"></p>
     </div>
 
     <!-- 목표 위젯 -->
     <div class="goal-section">
-      <div class="section-title">🎯 이거 사려면 몇 시간 일해야 해?</div>
+      <div class="section-title">🎯 목표 금액까지 필요한 근무 기간</div>
       <div class="goal-input">
-        <input type="text" id="goalAmount" placeholder="목표 금액 입력 (예: 1,500,000)" oninput="formatGoal(this);calcGoal()">
+        <input type="text" id="goalAmount" aria-label="목표 금액 (원)" placeholder="목표 금액 (예: 1,500,000)" inputmode="decimal" autocomplete="off" oninput="formatNumberInput(this,{allowNegative:false});calcGoal()">
       </div>
-      <div class="goal-result" id="goalResult"></div>
+      <div class="goal-result" id="goalResult" role="status" aria-live="polite"></div>
     </div>
 
-    <!-- SEO 친화적 사전 렌더링된 상세 분석 리포트 -->
-    <div class="report-box" id="reportBox">
-      <h2>💼 맞춤형 급여 환산 및 분석 리포트</h2>
-      <p>
-        입력하신 근무 조건(하루 <strong><span class="highlight" id="r-hpd">8</span>시간</strong>, 주 <strong><span class="highlight" id="r-dpw">5</span>일</strong> 근무)과 <strong>주휴수당 <span class="highlight" id="r-hol">포함</span></strong> 여부를 기준으로 산출된 심층 급여 분석입니다.
-      </p>
-      <p id="r-ot-text" style="display:none;">
-        여기에 주당 평균 연장근로 <strong><span id="r-ot" class="highlight">0</span>시간</strong> 및 야간근로 <strong><span id="r-nt" class="highlight">0</span>시간</strong>의 수당 가산(1.5배) 효과가 추가로 반영되었습니다.
-      </p>
-      <p>
-        이에 따른 근로자의 예상 <strong>세전 월급은 약 <span id="r-monthly-text" class="highlight" style="color:var(--text-highlight);">2,156,880</span>원</strong> 수준이며, 이를 1년 단위인 <strong>세전 연봉으로 환산하면 약 <span id="r-yearly-text" class="highlight">25,882,560</span>원</strong>이 됩니다. 
-      </p>
-      <p id="r-tax-text" style="display:none;">
-        선택하신 <strong><span id="r-tax-type" class="highlight">4대 보험 (약 9.39%)</span></strong> 공제액을 차감할 경우, 대략적으로 은행 계좌로 지급받게 될 최종 <strong>실수령액(세후 월급)은 약 <span id="r-monthly-net" class="highlight" style="color:var(--text-success);">-</span>원</strong>입니다.
-      </p>
-      <div class="report-tip" style="border-color:var(--accent);">
-        <strong>💡 급여 협상 팁:</strong> <span id="r-tip">근로계약서 작성 시 제시된 월급이 '세전'인지 '세후'인지 반드시 확인하세요. 또한 1주간 정해진 근로일을 개근했다면 주휴수당을 받을 권리가 생깁니다.</span>
-      </div>
-      <p class="report-notice">
-        ※ 본 리포트의 환산 결과는 근로기준법상 월평균 근로시간 변환 공식을 사용한 추정치이며, 사업장의 소속 근로자 수(5인 미만 등), 포괄임금제 적용 여부, 개인 비과세 차감 세부 내역에 따라 실제 명세서 수령액과 약간의 차이가 존재할 수 있습니다.
-      </p>
-    </div>
-
-    <div class="hint">결과 카드를 클릭하면 해당하는 금액이 클립보드에 복사됩니다.</div>
+    <div class="hint">결과 카드를 누르면 쉼표 없는 숫자만 복사됩니다. 금액은 원 미만 반올림, 보험료는 항목별 10원 미만 절사입니다.</div>
   </div>
-  
+
   <details class="guide-section">
-    <summary>📖 시급 ↔ 월급 변환기 사용 안내</summary>
+    <summary>📖 시급 ↔ 월급 환산기 사용 안내</summary>
     <div class="guide-content">
       <ol>
-        <li><strong>조건 설정:</strong> 하루 근무시간과 주 몇 회 근무하는지 먼저 설정하세요.</li>
-        <li><strong>금액 입력:</strong> 시급, 월급, 연봉 중 현재 알고 있는 금액 <strong>하나만 입력</strong>하면 호환되어 나머지가 전부 자동 변환됩니다.</li>
-        <li><strong>세금 설정:</strong> 정규직, 계약직, 알바 등 본인의 고용 형태에 맞는 공제 유형(4대 보험, 3.3%)을 고르면 세후 실수령액까지 도출됩니다.</li>
+        <li><strong>적용 기준:</strong> 기준 연도와 사업장 규모를 고릅니다. 연도에 따라 최저임금과 보험료율이 바뀌고, 사업장 규모에 따라 연장·야간근로 가산 여부가 달라집니다.</li>
+        <li><strong>근무 조건:</strong> 하루 근무시간과 주 근무일수를 입력합니다. 하루 8시간 또는 주 40시간을 넘는 시간은 연장근로로 자동 분리됩니다.</li>
+        <li><strong>금액 입력:</strong> 시급, 월급, 연봉 중 알고 있는 금액 <strong>하나만</strong> 입력하면 나머지가 같은 근무 조건으로 환산됩니다. 쉼표와 소수점을 입력할 수 있습니다.</li>
+        <li><strong>공제 확인:</strong> 4대보험을 고르면 국민연금·건강보험·장기요양·고용보험 근로자 부담분을 항목별로 보여 줍니다. 소득세와 지방소득세는 간이세액표가 필요하므로 반영하지 않습니다.</li>
       </ol>
     </div>
   </details>
@@ -266,33 +306,50 @@
     <summary>💡 근로 수당 관련 자주 묻는 질문</summary>
     <div class="guide-content">
       <p><strong>Q. 주휴수당은 무엇이며, 어떻게 계산하나요?</strong></p>
-      <p>근로기준법상 1주일에 15시간 이상 근무하며 소정 근로일을 개근한 근로자에게 1일분의 <b>유급 원휴일(주휴일)</b>을 부여하고 지급하는 수당입니다. 계산법은 <code>1일 소정근로시간 × 시급</code>으로 산정합니다. 예를 들어 시급 10,320원, 하루 8시간 동안 주 5일 개근했다면 그 주에는 82,560원의 주휴수당을 추가로 배분받아 월급제 근로자의 경우 약 209시간을 바탕으로 고정 편성됩니다.</p>
+      <p>근로기준법 제55조에 따라 1주 소정근로시간이 15시간 이상이고 소정근로일을 개근한 근로자에게 주는 1일분의 <b>유급휴일(주휴일)</b> 임금입니다. 사업장 규모와 관계없이 적용됩니다. 주휴시간은 <code>주 소정근로시간 ÷ 40 × 8</code>으로 계산하며 최대 8시간입니다. 주 40시간이면 8시간, 주 20시간이면 4시간, 하루 6시간씩 주 3일(18시간)이면 3.6시간입니다. 시급 10,320원으로 주 40시간을 개근했다면 그 주 주휴수당은 10,320원 × 8시간 = 82,560원입니다.</p>
+      <br>
+      <p><strong>Q. 월 209시간은 어떻게 나온 숫자인가요?</strong></p>
+      <p>한 달 평균 주 수는 365일 ÷ 7일 ÷ 12개월 ≈ 4.345주입니다. 주 40시간에 주휴 8시간을 더한 48시간에 4.345를 곱하면 약 208.6시간이고, 고용노동부는 이를 반올림한 209시간으로 월 환산액을 고시합니다. 이 계산기는 모든 근무 형태에 같은 방식으로 <code>(주 소정근로시간 + 주휴시간) × 365 ÷ 7 ÷ 12</code>를 계산한 뒤 소수점 첫째 자리에서 반올림합니다. 연장·야간 시간은 반올림하지 않고 같은 비율로 월 환산합니다.</p>
       <br>
       <p><strong>Q. 연장근로와 야간근로 기준은 어떻게 되나요?</strong></p>
-      <p>- <b>연장근로:</b> 법정근로시간(1일 8시간, 주 40시간)을 초과한 근무<br>- <b>야간근로:</b> 밤 10시(22시)부터 아침 6시(06시) 사이의 근무<br>위 수당들은 상시 근로자 수 5인 이상 사업장이라면 통상임금의 <b>50% 이상을 추가로 가산(1.5배)</b>하여 지급받을 의무가 있습니다.</p>
+      <p>- <b>연장근로:</b> 법정근로시간(1일 8시간, 1주 40시간)을 넘는 근무입니다. 5인 이상 사업장에서는 1주 12시간까지 가능합니다.<br>- <b>야간근로:</b> 밤 10시부터 다음 날 오전 6시 사이의 근무입니다.<br>상시 근로자 5인 이상 사업장은 두 경우 모두 통상임금의 <b>50% 이상을 가산</b>해야 하며, 연장이면서 야간인 시간은 가산이 겹쳐 2배가 됩니다. 5인 미만 사업장은 가산 의무가 없어 일한 시간만큼만 지급하는 것으로 계산합니다.</p>
       <br>
       <p><strong>Q. 3.3% 프리랜서 공제 시 주휴수당을 못 받나요?</strong></p>
-      <p>원래 3.3% 사업소득세를 공제하는 구조는 실질적으로 '독립 사업자(프리랜서)'에게 적용되는 방식이기 때문에 근로기준법의 보호를 받지 않아 주휴수당 지급 대상이 아닙니다. 그러나 사용자의 지휘·감독을 받는 등 실질적으로 <b>근로자성</b>이 인정된다면, 3.3% 공제와 무관하게 모든 수당(퇴직금 포함) 적용 대상이 될 수 있습니다.</p>
+      <p>3.3%는 사업소득세 3%와 지방소득세 0.3%를 원천징수하는 방식으로, 원래 독립 사업자에게 적용됩니다. 다만 사용자의 지휘·감독을 받는 등 실질적으로 <b>근로자성</b>이 인정되면 3.3% 공제와 무관하게 주휴수당·퇴직금 등 근로기준법상 권리가 적용될 수 있습니다.</p>
       <br>
-      <strong>📊 최근 5개년 및 연도별 최저시급 총람</strong>
-      <table style="width:100%;border-collapse:collapse;margin:8px 0;font-size:12px">
-        <tr style="background:var(--bg-input);color:var(--text-guide)"><th style="padding:6px;border:1px solid var(--border)">연도</th><th style="padding:6px;border:1px solid var(--border)">최저시급</th><th style="padding:6px;border:1px solid var(--border)">인상률</th><th style="padding:6px;border:1px solid var(--border)">월급(209h)</th></tr>
-        <tr><td style="padding:5px;border:1px solid var(--border);text-align:center">2022</td><td style="padding:5px;border:1px solid var(--border);text-align:center">9,160원</td><td style="padding:5px;border:1px solid var(--border);text-align:center">5.1%</td><td style="padding:5px;border:1px solid var(--border);text-align:center">1,914,440원</td></tr>
-        <tr><td style="padding:5px;border:1px solid var(--border);text-align:center">2023</td><td style="padding:5px;border:1px solid var(--border);text-align:center">9,620원</td><td style="padding:5px;border:1px solid var(--border);text-align:center">5.0%</td><td style="padding:5px;border:1px solid var(--border);text-align:center">2,010,580원</td></tr>
-        <tr><td style="padding:5px;border:1px solid var(--border);text-align:center">2024</td><td style="padding:5px;border:1px solid var(--border);text-align:center">9,860원</td><td style="padding:5px;border:1px solid var(--border);text-align:center">2.5%</td><td style="padding:5px;border:1px solid var(--border);text-align:center">2,060,740원</td></tr>
-        <tr><td style="padding:5px;border:1px solid var(--border);text-align:center">2025</td><td style="padding:5px;border:1px solid var(--border);text-align:center">10,030원</td><td style="padding:5px;border:1px solid var(--border);text-align:center">1.7%</td><td style="padding:5px;border:1px solid var(--border);text-align:center">2,096,270원</td></tr>
-        <tr style="background:var(--bg-guide)"><td style="padding:5px;border:1px solid var(--border);text-align:center;color:var(--text-amount);font-weight:700">2026</td><td style="padding:5px;border:1px solid var(--border);text-align:center;color:var(--text-amount);font-weight:700">10,320원</td><td style="padding:5px;border:1px solid var(--border);text-align:center;color:#4ade80">2.9%</td><td style="padding:5px;border:1px solid var(--border);text-align:center;color:var(--text-amount);font-weight:700">2,156,880원</td></tr>
+      <strong>📊 4대보험 근로자 부담률 (공제 계산 기준)</strong>
+      <table>
+        <tr><th>항목</th><th>2026년</th><th>2027년</th></tr>
+        <tr><td>국민연금</td><td>4.75% (총 9.5%)</td><td>5.0% (총 10.0%)</td></tr>
+        <tr><td>건강보험</td><td>3.595% (총 7.19%)</td><td>3.595% (총 7.19%, 동결)</td></tr>
+        <tr><td>장기요양</td><td>건강보험료 × 13.14%</td><td>미확정, 2026년 기준</td></tr>
+        <tr><td>고용보험</td><td>0.9% (실업급여)</td><td>미확정, 2026년 기준</td></tr>
       </table>
-      <p style="font-size:12px;color:var(--calc-expr-text)">* 월환산액은 주 40시간 개근에 따른 유급주휴수당 포함하여 월 209시간으로 산정한 기준 금액입니다.</p>
+      <p class="table-note">* 국민연금은 연금개혁에 따라 2026년부터 매년 0.5%p씩 인상됩니다. 기준소득월액 상한 659만원·하한 41만원(2026.7~2027.6)을 적용하며, 2026년 1~6월 상한은 637만원입니다. 건강보험 2027년 요율은 2026년 9월 건강보험정책심의위원회 의결 내용입니다. 장기요양 13.14%는 장기요양보험료율 0.9448% ÷ 건강보험료율 7.19%입니다. 비과세 수당, 월 60시간 미만 근로 등 가입 제외 사유는 반영하지 않습니다.</p>
+      <br>
+      <strong>📊 연도별 최저시급</strong>
+      <table>
+        <tr><th>연도</th><th>최저시급</th><th>인상률</th><th>월급(209h)</th></tr>
+        <tr><td>2022</td><td>9,160원</td><td>5.1%</td><td>1,914,440원</td></tr>
+        <tr><td>2023</td><td>9,620원</td><td>5.0%</td><td>2,010,580원</td></tr>
+        <tr><td>2024</td><td>9,860원</td><td>2.5%</td><td>2,060,740원</td></tr>
+        <tr><td>2025</td><td>10,030원</td><td>1.7%</td><td>2,096,270원</td></tr>
+        <tr class="current"><td>2026</td><td>10,320원</td><td>2.9%</td><td>2,156,880원</td></tr>
+        <tr><td>2027</td><td>10,700원</td><td>3.7%</td><td>2,236,300원</td></tr>
+      </table>
+      <p class="table-note">* 월환산액은 주 40시간 개근에 따른 유급 주휴시간을 포함한 월 209시간 기준입니다. 2026년 최저임금은 2025년 8월 5일, 2027년 최저임금은 2026년 8월 5일 고용노동부가 고시했으며 각각 해당 연도 1월 1일부터 적용됩니다.</p>
+      <br>
+      <p><strong>계산 기준과 한계</strong></p>
+      <p>이 도구는 근로시간과 금액을 브라우저 안에서만 계산하며 서버로 보내거나 저장하지 않습니다. 결과는 근로계약서 검토와 급여 협상용 추정치입니다. 소득세·지방소득세, 비과세 식대, 포괄임금 약정, 휴일근로, 결근·지각 공제는 반영하지 않으므로 실제 급여명세서와 다를 수 있습니다. 최저임금 위반 여부는 산입범위에 드는 임금만으로 판단하므로 필요하면 고용노동부 상담센터(1350)에서 확인하세요.</p>
     </div>
   </details>
 
   <div class="related-tools">
-    <h2>🔗 추천 생활 금융 관련 도구</h2>
+    <h2>🔗 함께 쓰면 좋은 계산기</h2>
     <ul>
-      <li><a href="/special-chars/loan-calc/">🏢 대출 이자 및 원리금 상환액 계산기</a></li>
-      <li><a href="/special-chars/compound-interest/">📈 장기 투자 복리 누적 수익률 시뮬레이션</a></li>
-      <li><a href="/special-chars/percent-calc/">⚖️ 백분율 퍼센트 할인 가격 계산기</a></li>
+      <li><a href="/special-chars/loan-calc/">🏢 대출 이자·원리금 상환액 계산기</a></li>
+      <li><a href="/special-chars/compound-interest/">📈 성장률·복리 시나리오 계산기</a></li>
+      <li><a href="/special-chars/percent-calc/">🔢 퍼센트 계산기</a></li>
     </ul>
   </div>
 
@@ -300,195 +357,394 @@
 <footer class="footer"><span>정당한 노동의 가치를 확인하세요</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
 <nav class="site-policy-links" aria-label="사이트 정책"><a href="/about.html">사이트 소개</a><a href="/editorial-policy.html">편집정책</a><a href="/contact.html">문의</a><a href="/privacy.html">개인정보처리방침</a></nav>
 </div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
+/*
+ * 연도별 법정 기준. 출처와 적용일을 함께 관리한다.
+ * - 최저임금: 고용노동부 고시 (2026년분 2025.8.5 고시, 2027년분 2026.8.5 고시)
+ * - 국민연금: 국민연금법(2025년 개정) 2026년 9.5%, 2027년 10.0% / 기준소득월액 상·하한 보건복지부 고시(2026.7~2027.6: 659만원·41만원)
+ * - 건강보험: 2026년 7.19%, 2027년 7.19% 동결(2026.9.8 건강보험정책심의위원회)
+ * - 장기요양: 2026년 장기요양보험료율 0.9448% (건강보험료 대비 13.14%), 2027년 미확정
+ * - 고용보험: 실업급여 1.8%(근로자 0.9%), 2027년 변경 고시 없음
+ */
+const WAGE_DATA = {
+  2026: {
+    minWage: 10320,
+    minWageSource: '고용노동부 고시(2025.8.5), 2026.1.1 적용',
+    pensionRate: 0.0475, pensionCap: 6590000, pensionFloor: 410000,
+    healthRate: 0.03595,
+    ltcRatio: 0.9448 / 7.19,
+    employmentRate: 0.009,
+    pendingNote: ''
+  },
+  2027: {
+    minWage: 10700,
+    minWageSource: '고용노동부 고시(2026.8.5), 2027.1.1 적용',
+    pensionRate: 0.05, pensionCap: 6590000, pensionFloor: 410000,
+    healthRate: 0.03595,
+    ltcRatio: 0.9448 / 7.19,
+    employmentRate: 0.009,
+    pendingNote: '2027년 장기요양·고용보험 요율 미확정, 2026년 기준으로 계산합니다. 국민연금 상·하한은 2027년 6월까지 적용되는 값입니다.'
+  }
+};
+const MONTH_WEEKS = 365 / 7 / 12;
 let lastInput = '';
+let minWageApplied = false;
+let lastState = null;
 
-function formatMoney(el) {
-  let v = el.value.replace(/[^0-9]/g,'');
-  if(v) el.value = parseInt(v).toLocaleString('ko-KR');
-  else el.value = '';
+function defaultYear() {
+  const y = new Date().getFullYear();
+  if (WAGE_DATA[y]) return y;
+  return y < 2026 ? 2026 : 2027;
 }
-function formatGoal(el) { formatMoney(el); }
-function parseNum(id) {
-  return parseInt(document.getElementById(id).value.replace(/[^0-9]/g,'')) || 0;
+function yearData() {
+  return WAGE_DATA[document.getElementById('wageYear').value] || WAGE_DATA[2026];
 }
-function fmtWon(n) {
-  if(n>=1e8){const e=Math.floor(n/1e8),m=Math.floor((n%1e8)/1e4);return m>0?`${e}억 ${m.toLocaleString()}만`:`${e}억`}
-  if(n>=1e5)return Math.floor(n/1e4).toLocaleString()+'만';
-  return Math.round(n).toLocaleString();
+
+function parseNumber(value) {
+  const s = String(value ?? '').replace(/[,\s원]/g, '');
+  if (s === '') return null;
+  if (!/^-?(?:\d+\.?\d*|\.\d+)$/.test(s)) return NaN;
+  return Number(s);
 }
+function formatNumberInput(el, options = {}) {
+  const allowNegative = options.allowNegative !== false;
+  const raw = el.value;
+  const caret = el.selectionStart ?? raw.length;
+  const significantBefore = raw.slice(0, caret).replace(/[^0-9.\-]/g, '').length;
+  let cleaned = raw.replace(/[^0-9.\-]/g, '');
+  const negative = allowNegative && cleaned.startsWith('-');
+  cleaned = cleaned.replace(/-/g, '');
+  const dot = cleaned.indexOf('.');
+  let intPart = dot === -1 ? cleaned : cleaned.slice(0, dot);
+  const decPart = dot === -1 ? null : cleaned.slice(dot + 1).replace(/\./g, '');
+  intPart = intPart.replace(/^0+(?=\d)/, '');
+  const out = (negative ? '-' : '') + intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (decPart === null ? '' : '.' + decPart);
+  if (out === raw) return;
+  el.value = out;
+  if (document.activeElement !== el) return;
+  let pos = 0, seen = 0;
+  while (pos < out.length && seen < significantBefore) { if (/[0-9.\-]/.test(out[pos])) seen++; pos++; }
+  el.setSelectionRange(pos, pos);
+}
+function won(n) { return Math.round(n).toLocaleString('ko-KR') + '원'; }
+function num(n, digits = 2) { return Number(n.toFixed(digits)).toLocaleString('ko-KR', { maximumFractionDigits: digits }); }
+function floor10(n) { return Math.floor((n + 1e-7) / 10) * 10; }
+
+function setInvalid(el, invalid) {
+  if (invalid) el.setAttribute('aria-invalid', 'true');
+  else el.removeAttribute('aria-invalid');
+}
+
 function formatAndCalc(el, src) {
-  formatMoney(el);
+  formatNumberInput(el, { allowNegative: false });
   lastInput = src;
+  if (src === 'hourly') minWageApplied = false;
   calc();
 }
-function calc() {
-  const hpd = parseFloat(document.getElementById('hoursDay').value)||8;
-  const dpw = parseInt(document.getElementById('daysWeek').value)||5;
-  const inclHol = document.getElementById('weeklyHol').value === 'yes';
-  const ot = parseFloat(document.getElementById('overtime').value)||0;
-  const nt = parseFloat(document.getElementById('nighttime').value)||0;
-  const taxType = document.getElementById('taxType').value;
 
-  // 주당 기본 시간
-  const baseWeeklyHours = hpd * dpw;
-  // 주휴시간: 사용자가 포함을 선택해도 주 15시간 미만이면 적용하지 않는다.
-  const weeklyHolEligible = baseWeeklyHours >= 15;
-  const weeklyHolApplied = inclHol && weeklyHolEligible;
-  const weeklyHolHours = weeklyHolApplied ? hpd : 0;
-  // 연장/야간 주당 시간 (근무일 기준)
-  const otWeekly = ot * dpw;
-  const ntWeekly = nt * dpw;
+function readConditions() {
+  const ids = ['hoursDay', 'daysWeek', 'overtime', 'nighttime'];
+  const els = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
+  const hpd = Number(els.hoursDay.value);
+  const dpw = Number(els.daysWeek.value);
+  const extraOt = els.overtime.value === '' ? 0 : Number(els.overtime.value);
+  const night = els.nighttime.value === '' ? 0 : Number(els.nighttime.value);
+  ids.forEach(id => setInvalid(els[id], false));
+  let error = '';
+  if (!Number.isFinite(hpd) || hpd <= 0 || hpd > 24) { setInvalid(els.hoursDay, true); error = '하루 근무시간은 0보다 크고 24시간 이하로 입력하세요.'; }
+  else if (!Number.isInteger(dpw) || dpw < 1 || dpw > 7) { setInvalid(els.daysWeek, true); error = '주 근무일수는 1~7일 사이의 정수로 입력하세요.'; }
+  else if (!Number.isFinite(extraOt) || extraOt < 0 || extraOt > 100) { setInvalid(els.overtime, true); error = '추가 연장근로는 0~100시간 사이로 입력하세요.'; }
+  else if (!Number.isFinite(night) || night < 0 || night > hpd * dpw + extraOt) { setInvalid(els.nighttime, true); error = '야간근로 시간은 0 이상이고 주당 총 근무시간을 넘을 수 없습니다.'; }
+  document.getElementById('conditionError').textContent = error;
+  if (error) return null;
+  return {
+    hpd, dpw, extraOt, night,
+    inclHol: document.getElementById('weeklyHol').value === 'yes',
+    under5: document.getElementById('bizSize').value === 'under5'
+  };
+}
 
-  // 기본 급여 시간 (월)
-  const weeksPerMonth = 4.345;
-  const baseMonthlyHours = (baseWeeklyHours + weeklyHolHours) * weeksPerMonth;
-  // 연장수당 시간 (1.5배)
-  const otMonthlyValue = otWeekly * 1.5 * weeksPerMonth;
-  // 야간수당 시간 (0.5배 추가, 기본급 포함이므로 총 1.5배 효과)
-  const ntMonthlyValue = ntWeekly * 0.5 * weeksPerMonth;
-  // 총 유효 시간 (시급 × 이 시간 = 월급)
-  const effectiveMonthlyHours = baseMonthlyHours + otMonthlyValue + ntMonthlyValue;
+function computeHours(c) {
+  const regularDaily = Math.min(c.hpd, 8);
+  const scheduledRaw = regularDaily * c.dpw;
+  const scheduled = Math.min(scheduledRaw, 40);
+  const dailyOver = Math.max(0, c.hpd - 8) * c.dpw;
+  const weeklyOver = Math.max(0, scheduledRaw - 40);
+  const otWeekly = dailyOver + weeklyOver + c.extraOt;
+  const holEligible = scheduled >= 15;
+  const holApplied = c.inclHol && holEligible;
+  const holHours = holApplied ? scheduled / 40 * 8 : 0;
+  const baseMonthlyHours = Math.round((scheduled + holHours) * MONTH_WEEKS);
+  const otRate = c.under5 ? 1 : 1.5;
+  const nightRate = c.under5 ? 0 : 0.5;
+  const monthlyUnits = baseMonthlyHours + otWeekly * MONTH_WEEKS * otRate + c.night * MONTH_WEEKS * nightRate;
+  const weeklyUnits = scheduled + holHours + otWeekly * otRate + c.night * nightRate;
+  return { scheduled, dailyOver, weeklyOver, otWeekly, holEligible, holApplied, holHours, baseMonthlyHours, otRate, nightRate, monthlyUnits, weeklyUnits, workedWeekly: c.hpd * c.dpw + c.extraOt };
+}
 
-  let hourly=0, monthly=0, yearly=0;
+function insuranceDeductions(monthly, data) {
+  const pensionBase = Math.min(data.pensionCap, Math.max(data.pensionFloor, Math.floor(monthly / 1000) * 1000));
+  const pension = floor10(pensionBase * data.pensionRate);
+  const health = floor10(monthly * data.healthRate);
+  const ltc = floor10(health * data.ltcRatio);
+  const employment = floor10(monthly * data.employmentRate);
+  return {
+    total: pension + health + ltc + employment,
+    items: [
+      ['국민연금 (' + num(data.pensionRate * 100, 3) + '%)', pension],
+      ['건강보험 (' + num(data.healthRate * 100, 3) + '%)', health],
+      ['장기요양 (건강보험료 × ' + num(data.ltcRatio * 100, 2) + '%)', ltc],
+      ['고용보험 (' + num(data.employmentRate * 100, 2) + '%)', employment]
+    ],
+    pensionBase
+  };
+}
+function freelanceDeductions(monthly) {
+  const incomeTax = floor10(monthly * 0.03);
+  const localTax = floor10(incomeTax * 0.1);
+  return { total: incomeTax + localTax, items: [['사업소득세 (3%)', incomeTax], ['지방소득세 (소득세의 10%)', localTax]] };
+}
 
-  if(lastInput==='hourly'){
-    hourly = parseNum('hourly');
-    monthly = Math.round(hourly * effectiveMonthlyHours);
-    yearly = monthly * 12;
-  } else if(lastInput==='monthly'){
-    monthly = parseNum('monthly');
-    hourly = Math.round(monthly / effectiveMonthlyHours);
-    yearly = monthly * 12;
-  } else if(lastInput==='yearly'){
-    yearly = parseNum('yearly');
-    monthly = Math.round(yearly / 12);
-    hourly = Math.round(monthly / effectiveMonthlyHours);
-  } else return;
-
-  // 세전 결과
-  document.getElementById('rHourly').textContent = hourly ? fmtWon(hourly)+'원' : '-';
-  document.getElementById('rMonthly').textContent = monthly ? fmtWon(monthly)+'원' : '-';
-  document.getElementById('rYearly').textContent = yearly ? fmtWon(yearly)+'원' : '-';
-
-  // 다른 필드 자동 채움
-  if(lastInput!=='hourly' && hourly) document.getElementById('hourly').value = hourly.toLocaleString('ko-KR');
-  if(lastInput!=='monthly' && monthly) document.getElementById('monthly').value = monthly.toLocaleString('ko-KR');
-  if(lastInput!=='yearly' && yearly) document.getElementById('yearly').value = yearly.toLocaleString('ko-KR');
-
-  // 세후 계산
-  const afterTaxEl = document.getElementById('afterTax');
-  
-  // 리포트 바인딩 기본 설정
-  document.getElementById('r-hpd').textContent = hpd;
-  document.getElementById('r-dpw').textContent = dpw;
-  document.getElementById('r-hol').textContent = weeklyHolApplied
-    ? "포함"
-    : (inclHol && !weeklyHolEligible ? "대상 아님 (주 15시간 미만)" : "미포함");
-  
-  if (ot > 0 || nt > 0) {
-    document.getElementById('r-ot-text').style.display = 'block';
-    document.getElementById('r-ot').textContent = otWeekly;
-    document.getElementById('r-nt').textContent = ntWeekly;
-  } else {
-    document.getElementById('r-ot-text').style.display = 'none';
+function setCard(id, value) {
+  const el = document.getElementById(id);
+  const card = el.closest('.r-card');
+  if (value === null) {
+    el.textContent = '-';
+    card.dataset.copy = '';
+    card.setAttribute('aria-label', card.querySelector('.r-label').textContent + ' 결과 없음');
+    return;
   }
+  const rounded = Math.round(value);
+  el.textContent = won(rounded);
+  card.dataset.copy = String(rounded);
+  card.setAttribute('aria-label', card.querySelector('.r-label').textContent + ' ' + won(rounded) + ' 복사');
+}
 
-  document.getElementById('r-monthly-text').textContent = monthly ? fmtWon(monthly) : '0';
-  document.getElementById('r-yearly-text').textContent = yearly ? fmtWon(yearly) : '0';
-
-  let atMonthly = 0;
-  if(taxType === 'none') {
-    afterTaxEl.style.display = 'none';
-    document.getElementById('r-tax-text').style.display = 'none';
-  } else {
-    afterTaxEl.style.display = 'block';
-    let rate = taxType === 'insurance' ? 0.0939 : 0.033;
-    let label = taxType === 'insurance' ? '💚 세후 (4대보험 9.39% 공제)' : '💚 세후 (프리랜서 3.3% 공제)';
-    document.getElementById('atLabel').textContent = label;
-
-    const atHourly = Math.round(hourly * (1 - rate));
-    atMonthly = Math.round(monthly * (1 - rate));
-    const atYearly = Math.round(yearly * (1 - rate));
-
-    document.getElementById('rHourlyAt').textContent = atHourly ? fmtWon(atHourly)+'원' : '-';
-    document.getElementById('rMonthlyAt').textContent = atMonthly ? fmtWon(atMonthly)+'원' : '-';
-    document.getElementById('rYearlyAt').textContent = atYearly ? fmtWon(atYearly)+'원' : '-';
-
-    document.getElementById('r-tax-text').style.display = 'block';
-    document.getElementById('r-tax-type').textContent = taxType === 'insurance' ? "4대 보험 (약 9.39%)" : "프리랜서 (3.3%)";
-    document.getElementById('r-monthly-net').textContent = fmtWon(atMonthly);
-  }
-
-  const rTip = document.getElementById('r-tip');
-  if (inclHol && !weeklyHolEligible) {
-    rTip.textContent = "주 소정근로시간이 15시간 미만이므로 주휴수당 포함을 선택해도 계산에는 반영되지 않습니다.";
-  } else if (taxType === 'freelance') {
-    rTip.textContent = "프리랜서(3.3%) 계약 시 근로기준법상 퇴직금, 연차수당이 온전히 보장되지 않을 수 있으니 업무에서 실질적인 '근로자성'을 확인하는 것이 중요합니다.";
-  } else if (ot > 0 || nt > 0) {
-    rTip.textContent = "연장, 야간 근로 수당이 추가되었습니다. 근로자 수 5인 이상 사업장이라면 주 40시간 초과, 혹은 밤 10시 이후 근무 시 원래 통상임금의 50% 이상을 더 가산받아야 합니다.";
-  } else {
-    rTip.textContent = "근로계약서 작성 전 월급이 '세전' 기준인지 '세후' 기준인지 명확히 짚고 가세요. 주휴수당은 주 소정근로시간이 15시간 이상이고 정해진 근무일을 충족하는 등 법정 요건을 확인해야 합니다.";
-  }
-
-  const rBox = document.getElementById('reportBox');
-  rBox.style.display = 'block';
-  rBox.style.animation = 'none';
-  void rBox.offsetWidth;
-  rBox.style.animation = 'fadeIn 0.5s ease-out';
-
-  // 시급이 있으면 글로벌 저장 (목표 계산용)
-  window._currentHourly = hourly;
-  window._currentHpd = hpd;
+function clearResults() {
+  ['rHourly', 'rMonthly', 'rYearly', 'rDeduct', 'rMonthlyAt', 'rYearlyAt'].forEach(id => setCard(id, null));
+  document.getElementById('afterTax').style.display = 'none';
+  document.getElementById('minWageWarn').textContent = '';
+  document.getElementById('r-formula').textContent = '';
+  lastState = null;
   calcGoal();
 }
 
+function updateMinWageBanner() {
+  const data = yearData();
+  const year = document.getElementById('wageYear').value;
+  const box = document.getElementById('minWageText');
+  box.replaceChildren();
+  const strong = document.createElement('strong');
+  strong.textContent = `${year}년 최저시급 ${won(data.minWage)}`;
+  box.append(strong, ` · 월 209시간 기준 ${won(data.minWage * 209)} (${data.minWageSource})`);
+}
+
+function calc() {
+  const data = yearData();
+  const year = document.getElementById('wageYear').value;
+  const under5 = document.getElementById('bizSize').value === 'under5';
+  document.getElementById('bizSizeNote').textContent = under5
+    ? '5인 미만 사업장은 연장·야간근로 가산 의무가 없어 일한 시간만큼만 계산합니다. 주휴수당은 규모와 관계없이 적용됩니다.'
+    : '5인 이상 사업장은 연장·야간근로에 통상임금의 50%를 가산합니다.';
+
+  const c = readConditions();
+  if (!c) { clearResults(); return; }
+  const h = computeHours(c);
+
+  // 계산 근거
+  document.getElementById('r-sched').textContent = `${num(h.scheduled)}시간`;
+  document.getElementById('r-hol').textContent = h.holApplied
+    ? `포함 · 주 ${num(h.holHours)}시간 (${num(h.scheduled)} ÷ 40 × 8)`
+    : (c.inclHol && !h.holEligible ? '대상 아님 (주 소정근로시간 15시간 미만)' : '미포함');
+  const otParts = [];
+  if (h.dailyOver > 0) otParts.push(`하루 8시간 초과 ${num(h.dailyOver)}`);
+  if (h.weeklyOver > 0) otParts.push(`주 40시간 초과 ${num(h.weeklyOver)}`);
+  if (c.extraOt > 0) otParts.push(`추가 ${num(c.extraOt)}`);
+  document.getElementById('r-ot').textContent = h.otWeekly > 0
+    ? `주 ${num(h.otWeekly)}시간 × ${h.otRate}배 (${otParts.join(' + ')})`
+    : '없음';
+  document.getElementById('r-night').textContent = c.night > 0
+    ? (h.nightRate > 0 ? `주 ${num(c.night)}시간 × 가산 ${h.nightRate}배` : `주 ${num(c.night)}시간 (가산 없음)`)
+    : '없음';
+  document.getElementById('r-hours').textContent = `${h.baseMonthlyHours}시간`;
+
+  // 금액
+  const amountIds = { hourly: 'hourly', monthly: 'monthly', yearly: 'yearly' };
+  Object.values(amountIds).forEach(id => setInvalid(document.getElementById(id), false));
+  const amountError = document.getElementById('amountError');
+  amountError.textContent = '';
+  if (!lastInput) { clearResults(); return; }
+  const inputValue = parseNumber(document.getElementById(amountIds[lastInput]).value);
+  if (inputValue === null || inputValue === 0) { clearResults(); return; }
+  if (!Number.isFinite(inputValue) || inputValue < 0 || inputValue > 1e12) {
+    setInvalid(document.getElementById(amountIds[lastInput]), true);
+    amountError.textContent = '금액은 0보다 큰 숫자로 입력하세요. 쉼표와 소수점은 입력할 수 있습니다.';
+    clearResults();
+    return;
+  }
+
+  let hourly, monthly, yearly;
+  if (lastInput === 'hourly') {
+    hourly = inputValue;
+    monthly = hourly * h.monthlyUnits;
+    yearly = monthly * 12;
+  } else if (lastInput === 'monthly') {
+    monthly = inputValue;
+    hourly = monthly / h.monthlyUnits;
+    yearly = monthly * 12;
+  } else {
+    yearly = inputValue;
+    monthly = yearly / 12;
+    hourly = monthly / h.monthlyUnits;
+  }
+
+  setCard('rHourly', hourly);
+  setCard('rMonthly', monthly);
+  setCard('rYearly', yearly);
+  if (lastInput !== 'hourly') document.getElementById('hourly').value = Math.round(hourly).toLocaleString('ko-KR');
+  if (lastInput !== 'monthly') document.getElementById('monthly').value = Math.round(monthly).toLocaleString('ko-KR');
+  if (lastInput !== 'yearly') document.getElementById('yearly').value = Math.round(yearly).toLocaleString('ko-KR');
+
+  const extraUnits = h.monthlyUnits - h.baseMonthlyHours;
+  document.getElementById('r-formula').textContent = extraUnits > 0.0001
+    ? `${won(hourly)} × (${h.baseMonthlyHours}시간 + 연장·야간 가산 환산 ${num(extraUnits)}시간) = ${won(monthly)}`
+    : `${won(hourly)} × ${h.baseMonthlyHours}시간 = ${won(monthly)}`;
+
+  // 최저임금 · 연장 한도 안내
+  const warnings = [];
+  if (Math.round(hourly) < data.minWage) {
+    warnings.push(`환산 시급 ${won(hourly)}은 ${year}년 최저임금 ${won(data.minWage)}보다 낮습니다. 실제 위반 여부는 최저임금 산입범위에 드는 임금으로 판단합니다.`);
+  }
+  if (!c.under5 && h.otWeekly > 12) {
+    warnings.push(`연장근로가 주 ${num(h.otWeekly)}시간입니다. 5인 이상 사업장의 연장근로 한도는 주 12시간입니다.`);
+  }
+  document.getElementById('minWageWarn').textContent = warnings.join(' ');
+
+  // 공제
+  const afterTaxEl = document.getElementById('afterTax');
+  const taxType = document.getElementById('taxType').value;
+  let net = null;
+  if (taxType === 'none') {
+    afterTaxEl.style.display = 'none';
+  } else {
+    afterTaxEl.style.display = 'block';
+    const monthlyRounded = Math.round(monthly);
+    const d = taxType === 'insurance' ? insuranceDeductions(monthlyRounded, data) : freelanceDeductions(monthlyRounded);
+    net = monthlyRounded - d.total;
+    document.getElementById('atLabel').textContent = taxType === 'insurance'
+      ? '💚 4대보험 근로자 부담분만 공제 (소득세 미반영)'
+      : '💚 사업소득 3.3% 원천징수 후';
+    setCard('rDeduct', d.total);
+    setCard('rMonthlyAt', net);
+    setCard('rYearlyAt', net * 12);
+    const list = document.getElementById('deductList');
+    list.replaceChildren(...d.items.map(([label, value]) => {
+      const li = document.createElement('li');
+      const span = document.createElement('span');
+      span.textContent = label;
+      const strong = document.createElement('strong');
+      strong.textContent = won(value);
+      li.append(span, strong);
+      return li;
+    }));
+    const notes = [];
+    if (taxType === 'insurance') {
+      notes.push(`${year}년 기준, 항목별 10원 미만 절사. 국민연금은 기준소득월액 ${won(d.pensionBase)}에 적용했습니다.`);
+      if (data.pendingNote) notes.push(data.pendingNote);
+      notes.push('소득세·지방소득세, 비과세 수당은 반영하지 않았습니다.');
+    } else {
+      notes.push('세액은 각각 10원 미만 절사했습니다. 3.3%는 사업소득 원천징수이며 4대보험은 공제하지 않습니다.');
+    }
+    document.getElementById('deductNote').textContent = notes.join(' ');
+  }
+
+  lastState = { hourly, monthly, weekly: hourly * h.weeklyUnits, net, workedWeekly: h.workedWeekly, dpw: c.dpw };
+  calcGoal();
+}
+
+function onYearChange() {
+  updateMinWageBanner();
+  if (minWageApplied) applyMinWage();
+  else calc();
+}
+
 function applyMinWage() {
-  document.getElementById('hourly').value = '10,320';
+  document.getElementById('hourly').value = yearData().minWage.toLocaleString('ko-KR');
   lastInput = 'hourly';
+  minWageApplied = true;
   calc();
 }
 
 function calcGoal() {
-  const goalRaw = parseInt(document.getElementById('goalAmount').value.replace(/[^0-9]/g,''));
-  const hourly = window._currentHourly || 0;
-  const hpd = window._currentHpd || 8;
   const el = document.getElementById('goalResult');
-
-  if(!goalRaw || !hourly) { el.style.display = 'none'; return; }
-
-  const hours = goalRaw / hourly;
-  const days = hours / hpd;
-
-  let msg = '';
-  if(hours < 1) {
-    msg = `<span class="emoji">😎</span><br>약 <strong>${Math.round(hours*60)}분</strong>만 일하면 됩니다!<br>커피 한 잔 마시기도 전에 벌어요!`;
-  } else if(days < 1) {
-    msg = `<span class="emoji">💪</span><br>약 <strong>${hours.toFixed(1)}시간</strong> 일하면 됩니다!<br>하루 안에 가능해요!`;
-  } else if(days <= 30) {
-    msg = `<span class="emoji">🔥</span><br>약 <strong>${hours.toFixed(1)}시간</strong> (하루 ${hpd}시간 기준 <strong>${days.toFixed(1)}일</strong>)<br>숨만 쉬고 일해야 달성 가능합니다!`;
-  } else if(days <= 365) {
-    const months = (days / 30).toFixed(1);
-    msg = `<span class="emoji">😤</span><br>약 <strong>${Math.round(hours)}시간</strong> = <strong>${months}개월</strong> (하루 ${hpd}h 기준)<br>꽤 오래 걸리지만 불가능은 없습니다!`;
-  } else {
-    const years = (days / 365).toFixed(1);
-    msg = `<span class="emoji">🫠</span><br>약 <strong>${Math.round(hours).toLocaleString()}시간</strong> = <strong>${years}년</strong><br>복리의 힘을 빌리는 게 나을 수도...`;
+  const input = document.getElementById('goalAmount');
+  const goal = parseNumber(input.value);
+  setInvalid(input, Number.isNaN(goal) || (goal !== null && goal < 0));
+  if (!goal || goal < 0 || !lastState || !(lastState.monthly > 0)) { el.style.display = 'none'; el.textContent = ''; return; }
+  const months = goal / lastState.monthly;
+  const weeks = goal / lastState.weekly;
+  const workDays = Math.ceil(weeks * lastState.dpw - 1e-9);
+  const hours = weeks * lastState.workedWeekly;
+  el.replaceChildren();
+  const line1 = document.createElement('div');
+  const strongMonths = document.createElement('strong');
+  strongMonths.textContent = `약 ${num(months, 1)}개월`;
+  line1.append('세전 월급 기준 ', strongMonths);
+  const line2 = document.createElement('div');
+  line2.textContent = `주 ${lastState.dpw}일 근무로 약 ${num(weeks, 1)}주 · 근무일 ${workDays.toLocaleString('ko-KR')}일 · 실근무 약 ${num(hours, 1)}시간 (주휴수당 포함)`;
+  el.append(line1, line2);
+  if (lastState.net > 0) {
+    const line3 = document.createElement('div');
+    line3.textContent = `공제 후 월급 기준 약 ${num(goal / lastState.net, 1)}개월`;
+    el.append(line3);
   }
-  el.innerHTML = msg;
   el.style.display = 'block';
 }
 
-function copyVal(card) {
-  const val = card.querySelector('.r-value').textContent;
-  if(val==='-') return;
-  navigator.clipboard.writeText(val).then(()=>{
-    card.style.borderColor='#4ade80';
-    setTimeout(()=>card.style.borderColor='',600);
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    return navigator.clipboard.writeText(text).catch(() => legacyCopy(text));
+  }
+  return legacyCopy(text);
+}
+function legacyCopy(text) {
+  return new Promise((resolve, reject) => {
+    const helper = document.createElement('textarea');
+    helper.value = text;
+    helper.setAttribute('readonly', '');
+    helper.style.position = 'fixed';
+    helper.style.top = '0';
+    helper.style.opacity = '0';
+    document.body.appendChild(helper);
+    helper.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    helper.remove();
+    if (ok) resolve(); else reject(new Error('copy failed'));
   });
 }
-// 페이지 로드 시 기본값으로 자동 계산
-lastInput = 'hourly';
-calc();
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+function copyCard(card) {
+  const value = card.dataset.copy;
+  if (!value) { showToast('복사할 결과가 없습니다'); return; }
+  copyText(value).then(() => {
+    card.classList.add('copied');
+    setTimeout(() => card.classList.remove('copied'), 700);
+    showToast(`${card.querySelector('.r-label').textContent} ${Number(value).toLocaleString('ko-KR')} 복사했습니다`);
+  }, () => showToast('복사하지 못했습니다. 금액을 직접 선택해 복사하세요.'));
+}
+
+// 페이지 로드 시 오늘이 속한 연도의 최저시급으로 자동 계산
+document.getElementById('wageYear').value = String(defaultYear());
+updateMinWageBanner();
+applyMinWage();
 </script>
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 <script src="/special-chars/theme-toggle.js"></script>

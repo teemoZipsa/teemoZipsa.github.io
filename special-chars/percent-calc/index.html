@@ -11,9 +11,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>🔢 퍼센트 계산기 — 티모집사</title>
-<meta name="description" content="퍼센트 계산을 쉽고 빠르게! A의 B%는? A에서 B로 몇 % 변화? A는 B의 몇 %? 할인율, 증가율, 비율 계산을 한 번에.">
+<meta name="description" content="퍼센트 계산을 쉽고 빠르게! A의 B%는? A에서 B로 몇 % 변화? A는 B의 몇 %? 할인율, 증가율, %p, 원가 역산을 한 번에 계산합니다.">
 <meta property="og:title" content="🔢 퍼센트 계산기 — 티모집사">
-<meta property="og:description" content="퍼센트 계산을 쉽고 빠르게! 할인율, 증가율, 비율 계산을 한 번에.">
+<meta property="og:description" content="퍼센트 계산을 쉽고 빠르게! 할인율, 증가율, %p, 비율과 원가 역산을 한 번에.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/percent-calc/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
@@ -34,27 +34,38 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .tab.active{background:var(--accent);color:var(--text-on-accent);box-shadow:0 2px 8px rgba(83,52,131,.3)}
 .tab:hover:not(.active){background:var(--bg-btn)}
 
+.round-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--text-info)}
+.round-row label{font-weight:600;color:var(--text-secondary)}
+.round-row select{flex:1;min-width:160px;padding:8px 10px;background:var(--bg-app);border:1.5px solid var(--border);border-radius:8px;color:var(--text-primary);font-family:inherit}
+
 .calc-card{background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:14px}
 .calc-title{font-size:15px;font-weight:700;color:var(--text-primary);text-align:center}
 .calc-desc{font-size:12px;color:var(--text-info);text-align:center;margin-top:-8px}
 
 .input-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .input-row label{font-size:14px;color:var(--text-secondary);font-weight:600;white-space:nowrap}
-.input-row input{flex:1;min-width:80px;padding:10px 12px;background:var(--bg-app);border:1.5px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:16px;font-family:inherit;font-weight:600;text-align:right;outline:none;transition:border-color .2s}
+.input-row input{flex:1;min-width:80px;padding:10px 12px;background:var(--bg-app);border:1.5px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:16px;font-family:inherit;font-weight:600;text-align:right;outline:none;transition:border-color .2s;font-variant-numeric:tabular-nums}
 .input-row input:focus{border-color:var(--accent)}
 .input-row input::placeholder{color:var(--text-placeholder);font-weight:400}
 .input-row .unit{font-size:14px;color:var(--text-info);font-weight:600}
+.check-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-secondary);cursor:pointer;justify-content:center}
+.check-row input{width:18px;height:18px;accent-color:var(--accent)}
 
-.result-box{background:var(--accent-bg);border:2px solid var(--accent);border-radius:12px;padding:16px;text-align:center;min-height:70px;display:flex;flex-direction:column;justify-content:center;gap:4px;transition:all .3s}
-.result-box .result-value{font-size:28px;font-weight:800;color:var(--accent-text);letter-spacing:-0.5px}
-.result-copy{align-self:center;background:none;border:0;padding:2px 6px;font-family:inherit;cursor:pointer;border-radius:6px}
+.result-box{background:var(--accent-bg);border:2px solid var(--accent);border-radius:12px;padding:16px;text-align:center;min-height:70px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;transition:border-color .3s}
+.result-box .result-value{font-size:28px;font-weight:800;color:var(--accent-text);letter-spacing:-0.5px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .result-box .result-label{font-size:12px;color:var(--text-info);font-weight:500}
-.result-box .result-detail{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.result-box .result-detail{font-size:13px;color:var(--text-secondary);margin-top:2px;line-height:1.55;overflow-wrap:anywhere}
+.result-box .result-check{font-size:12px;color:var(--text-info);line-height:1.5}
 .result-box.empty .result-value{font-size:16px;color:var(--text-placeholder);font-weight:400}
+.result-box.error{border-color:var(--status-red-text)}
+.result-box.error .result-value{font-size:15px;color:var(--status-red-text);font-weight:700}
+.copy-btn{margin-top:6px;min-height:36px;padding:6px 16px;border:1px solid var(--accent);border-radius:18px;background:var(--bg-app);color:var(--accent-text);font-family:inherit;font-weight:700;cursor:pointer}
+.copy-btn:hover{background:var(--accent);color:var(--text-on-accent)}
 
 .quick-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
 .quick-btn{padding:6px 12px;background:var(--bg-btn);border:1px solid var(--border);border-radius:16px;color:var(--text-secondary);font-size:11px;cursor:pointer;transition:all .2s;font-family:inherit;font-weight:500}
-.quick-btn:hover{background:var(--accent);color:var(--text-on-accent);border-color:var(--accent)}
+.quick-btn:hover{background:var(--bg-btn-hover);border-color:var(--accent)}
+.quick-btn[aria-pressed="true"]{background:var(--accent);color:var(--text-on-accent);border-color:var(--accent);font-weight:700}
 
 .guide-section{margin:0 12px 12px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
 .guide-section summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-guide);list-style:none;display:flex;align-items:center;gap:6px;background:var(--bg-guide);transition:background .2s}
@@ -66,23 +77,14 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
 .footer a:hover{color:var(--text-secondary)}
 
-.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.4);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.4);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-.report-box {background:var(--bg-guide);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent);animation:fadeIn .5s ease-in-out;margin-top:2px}
-.report-box h2 {font-size:15px;font-weight:700;color:var(--accent-text);margin-bottom:4px}
-.report-box p {font-size:13px;color:var(--text-secondary);line-height:1.6}
-.report-box strong {color:var(--text-primary);font-weight:600}
 
 .related-tools {background:var(--bg-guide);border-radius:12px;padding:20px;margin:0 12px 12px}
 .related-tools h2 {font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .related-tools .tool-list {display:flex;flex-direction:column;gap:8px}
 .related-tools .tool-list a {display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-app);border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:var(--text-primary);border:1px solid var(--border);transition:all .2s}
 .related-tools .tool-list a:hover {background:var(--bg-btn);border-color:var(--accent);color:var(--accent-text);transform:translateX(4px)}
-
-@keyframes fadeIn {
-  from { opacity:0; transform:translateY(10px) }
-  to { opacity:1; transform:translateY(0) }
-}
 
 @media(max-width:640px){
 .input-row{flex-direction:column;align-items:stretch}
@@ -107,32 +109,40 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <button type="button" class="tab" aria-pressed="false" onclick="switchTab(3)">역산</button>
     </div>
 
+    <div class="round-row">
+      <label for="roundMode">금액 결과 처리</label>
+      <select id="roundMode" onchange="recalcAll()">
+        <option value="auto" selected>소수 넷째 자리까지 표시</option>
+        <option value="round">원 단위 반올림</option>
+        <option value="floor">원 단위 절사(버림)</option>
+      </select>
+    </div>
+
     <!-- 모드 0: A의 B%는? -->
     <div class="calc-card" id="mode0">
       <div class="calc-title">A의 B%는 얼마?</div>
       <div class="calc-desc">예: 50,000원의 15%는?</div>
       <div class="input-row">
         <label for="m0a">값 A</label>
-        <input type="number" id="m0a" placeholder="50000" oninput="calc0()">
+        <input type="text" inputmode="decimal" autocomplete="off" id="m0a" placeholder="50,000" oninput="onNum(this, calc0)">
       </div>
       <div class="input-row">
         <label for="m0b">퍼센트</label>
-        <input type="number" id="m0b" placeholder="15" oninput="calc0()">
+        <input type="text" inputmode="decimal" autocomplete="off" id="m0b" placeholder="15" oninput="onNum(this, calc0)">
         <span class="unit">%</span>
       </div>
       <div class="quick-btns">
-        <button class="quick-btn" onclick="setQuick(0,'m0b',5)">5%</button>
-        <button class="quick-btn" onclick="setQuick(0,'m0b',10)">10%</button>
-        <button class="quick-btn" onclick="setQuick(0,'m0b',15)">15%</button>
-        <button class="quick-btn" onclick="setQuick(0,'m0b',20)">20%</button>
-        <button class="quick-btn" onclick="setQuick(0,'m0b',25)">25%</button>
-        <button class="quick-btn" onclick="setQuick(0,'m0b',30)">30%</button>
-        <button class="quick-btn" onclick="setQuick(0,'m0b',50)">50%</button>
+        <button type="button" class="quick-btn" onclick="setQuick(0,'m0b',5)">5%</button>
+        <button type="button" class="quick-btn" onclick="setQuick(0,'m0b',10)">10%</button>
+        <button type="button" class="quick-btn" onclick="setQuick(0,'m0b',15)">15%</button>
+        <button type="button" class="quick-btn" onclick="setQuick(0,'m0b',20)">20%</button>
+        <button type="button" class="quick-btn" onclick="setQuick(0,'m0b',25)">25%</button>
+        <button type="button" class="quick-btn" onclick="setQuick(0,'m0b',30)">30%</button>
+        <button type="button" class="quick-btn" onclick="setQuick(0,'m0b',50)">50%</button>
       </div>
       <div class="result-box empty" id="r0" aria-live="polite" aria-atomic="true">
         <div class="result-value">숫자를 입력하세요</div>
       </div>
-      <div class="report-box" id="report0" style="display:none"></div>
     </div>
 
     <!-- 모드 1: 변화율 -->
@@ -141,16 +151,16 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <div class="calc-desc">예: 40,000원 → 52,000원이면 몇 % 올랐나?</div>
       <div class="input-row">
         <label for="m1a">이전 값</label>
-        <input type="number" id="m1a" placeholder="40000" oninput="calc1()">
+        <input type="text" inputmode="decimal" autocomplete="off" id="m1a" placeholder="40,000" oninput="onNum(this, calc1)">
       </div>
       <div class="input-row">
         <label for="m1b">이후 값</label>
-        <input type="number" id="m1b" placeholder="52000" oninput="calc1()">
+        <input type="text" inputmode="decimal" autocomplete="off" id="m1b" placeholder="52,000" oninput="onNum(this, calc1)">
       </div>
+      <label class="check-row"><input type="checkbox" id="m1pp" onchange="calc1()"> 두 값이 비율(%)입니다 — 차이를 %p로 표시</label>
       <div class="result-box empty" id="r1" aria-live="polite" aria-atomic="true">
         <div class="result-value">숫자를 입력하세요</div>
       </div>
-      <div class="report-box" id="report1" style="display:none"></div>
     </div>
 
     <!-- 모드 2: 비율 -->
@@ -159,39 +169,37 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <div class="calc-desc">예: 35명은 200명의 몇 %?</div>
       <div class="input-row">
         <label for="m2a">부분 (A)</label>
-        <input type="number" id="m2a" placeholder="35" oninput="calc2()">
+        <input type="text" inputmode="decimal" autocomplete="off" id="m2a" placeholder="35" oninput="onNum(this, calc2)">
       </div>
       <div class="input-row">
         <label for="m2b">전체 (B)</label>
-        <input type="number" id="m2b" placeholder="200" oninput="calc2()">
+        <input type="text" inputmode="decimal" autocomplete="off" id="m2b" placeholder="200" oninput="onNum(this, calc2)">
       </div>
       <div class="result-box empty" id="r2" aria-live="polite" aria-atomic="true">
         <div class="result-value">숫자를 입력하세요</div>
       </div>
-      <div class="report-box" id="report2" style="display:none"></div>
     </div>
 
     <!-- 모드 3: 역산 -->
     <div class="calc-card" id="mode3" style="display:none">
       <div class="calc-title">B%를 적용하면 A가 되는 원래 값은?</div>
       <div class="calc-desc">예: 20% 할인돼서 40,000원이면 원가는?</div>
-      <div class="input-row">
-        <label for="m3a">결과 값</label>
-        <input type="number" id="m3a" placeholder="40000" oninput="calc3()">
-      </div>
-      <div class="input-row">
-        <label for="m3b">적용된 %</label>
-        <input type="number" id="m3b" placeholder="20" oninput="calc3()">
-        <span class="unit">% 할인</span>
-      </div>
       <div class="quick-btns" role="group" aria-label="퍼센트 적용 방식">
         <button type="button" class="quick-btn" data-m3-type="discount" aria-pressed="true" onclick="setM3Type('discount')">할인 (−)</button>
         <button type="button" class="quick-btn" data-m3-type="markup" aria-pressed="false" onclick="setM3Type('markup')">인상 (+)</button>
       </div>
+      <div class="input-row">
+        <label for="m3a">결과 값</label>
+        <input type="text" inputmode="decimal" autocomplete="off" id="m3a" placeholder="40,000" oninput="onNum(this, calc3)">
+      </div>
+      <div class="input-row">
+        <label for="m3b">적용된 %</label>
+        <input type="text" inputmode="decimal" autocomplete="off" id="m3b" placeholder="20" oninput="onNum(this, calc3)">
+        <span class="unit" id="m3unit">% 할인</span>
+      </div>
       <div class="result-box empty" id="r3" aria-live="polite" aria-atomic="true">
         <div class="result-value">숫자를 입력하세요</div>
       </div>
-      <div class="report-box" id="report3" style="display:none"></div>
     </div>
   </div>
 
@@ -199,25 +207,28 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <summary>📖 퍼센트 계산기 활용 및 실생활 적용 가이드</summary>
     <div class="guide-content">
       <p><b>Q. 'A의 B%'는 언제 가장 많이 쓰이나요?</b><br>
-      쇼핑몰에서 <b>할인율을 계산</b>하거나, 식당에서 <b>팁(Tip)</b>을 계산할 때, 또는 예금/적금의 <b>이자 금액</b>을 예상할 때 가장 널리 쓰이는 기본 계산입니다. 예를 들어 50,000원의 15%는 7,500원이며, 이를 활용해 최종 결제 금액을 쉽게 파악할 수 있습니다.</p>
+      쇼핑몰에서 <b>할인 금액을 계산</b>하거나, 식당에서 <b>팁</b>을 계산할 때, 또는 예금·적금의 <b>이자 금액</b>을 예상할 때 가장 널리 쓰이는 기본 계산입니다. 공식은 <code>A × B ÷ 100</code>입니다. 예를 들어 50,000원의 15%는 7,500원이며, 결과 아래에 할인 적용 시 금액(42,500원)과 인상 적용 시 금액(57,500원)을 함께 보여 줍니다.</p>
       <br>
       <p><b>Q. 변화율과 비율의 차이점은 무엇인가요?</b><br>
-      <b>변화율(증감률)</b>은 "주식이 40,000원에서 52,000원으로 올랐을 때 몇 프로 수익인지(+30%)" 등 과거 대비 현재의 변동폭을 볼 때 사용합니다. 반면, <b>비율</b>은 "전체 직원 200명 중 영업부 35명이 차지하는 비중(17.5%)"처럼 전체에서 파이가 어느 정도인지 볼 때 사용합니다.</p>
+      <b>변화율(증감률)</b>은 "주가가 40,000원에서 52,000원으로 올랐을 때 몇 % 올랐는지(+30%)"처럼 이전 값 대비 현재 값의 변동폭을 볼 때 사용하며 <code>(이후 − 이전) ÷ |이전| × 100</code>으로 계산합니다. 반면 <b>비율</b>은 "전체 직원 200명 중 영업부 35명이 차지하는 비중(17.5%)"처럼 전체에서 부분이 차지하는 크기를 볼 때 사용하며 <code>부분 ÷ 전체 × 100</code>입니다. 이전 값이나 전체 값이 0이면 0으로 나눌 수 없으므로 결과를 계산하지 않습니다.</p>
+      <br>
+      <p><b>Q. %와 %p(퍼센트포인트)는 어떻게 다른가요?</b><br>
+      금리가 3%에서 5%로 올랐다면 차이는 <b>2%p</b>이고, 원래 금리 대비 상대 변화율은 (5 − 3) ÷ 3 × 100 ≈ <b>66.67%</b>입니다. 지지율, 금리, 점유율처럼 이미 비율인 값을 비교할 때는 변화율 탭에서 "두 값이 비율(%)입니다"를 선택하면 %p 차이와 상대 변화율을 함께 확인할 수 있습니다.</p>
       <br>
       <p><b>Q. 역산 기능이 중요한 이유는 무엇인가요?</b><br>
-      "20% 할인해서 구입한 옷이 40,000원인데 원래 정상가는 얼마지?" 라는 역추적이 필요할 때가 많습니다. 단순히 $40,000 \times 1.2$로 계산하는 흔한 오류를 범하기 쉬운데, <b>역산(40,000 / 0.8)</b>을 통해 정확한 원가(50,000원)를 알아낼 수 있습니다. 사업자의 <b>마진율 계산</b>이나 부가세 제외 금액을 계산할 때 핵심적인 기능입니다.</p>
+      "20% 할인해서 구입한 옷이 40,000원인데 원래 정상가는 얼마지?"처럼 거꾸로 계산해야 할 때가 많습니다. 흔히 40,000 × 1.2로 계산하는 실수를 하는데, 그러면 48,000원이 나와 실제 정상가와 다릅니다. 올바른 계산은 <b>40,000 ÷ 0.8 = 50,000원</b>입니다. 부가세 10%가 포함된 11,000원에서 공급가액을 구할 때도 인상(+)을 선택해 11,000 ÷ 1.1 = 10,000원으로 계산합니다.</p>
       <br>
       <p><b>계산 기준과 한계</b><br>
-      입력값을 일반 백분율 공식으로 계산하고 화면에는 읽기 쉬운 자릿수로 표시합니다. 급여·세금·금융 계약처럼 기관별 반올림이나 적용 순서가 정해진 업무는 해당 문서의 기준을 우선하고, 이 결과는 중간 검산값으로 사용하세요.</p>
+      모든 계산은 입력값 그대로 전체 정밀도로 처리하고, 화면에 보여 줄 때만 자릿수를 정리합니다. "금액 결과 처리"에서 원 단위 반올림 또는 절사를 고르면 A의 B% 결과와 역산 결과에 적용되며, 퍼센트 결과는 소수 둘째 자리까지 표시합니다. 결과 복사 버튼은 쉼표 없는 숫자만 복사합니다. 입력값은 브라우저 안에서만 계산하며 서버로 보내지 않습니다. 급여·세금·금융 계약처럼 기관별 반올림이나 적용 순서가 정해진 업무는 해당 문서의 기준을 우선하고, 이 결과는 검산용으로 사용하세요.</p>
     </div>
   </details>
 
   <div class="related-tools">
     <h2>🔗 연관 금융/생활 계산기</h2>
     <div class="tool-list">
-      <a href="/special-chars/discount-calc/"><span>🛍️ 할인율 계산기</span><span>바로가기 →</span></a>
-      <a href="/special-chars/compound-interest/"><span>📈 복리 이자 계산기</span><span>바로가기 →</span></a>
-      <a href="/special-chars/avg-price/"><span>⚖️ 주식 물타기(평단가) 계산기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/discount-calc/"><span>🛍️ 할인/세금 계산기</span><span>바로가기 →</span></a>
+      <a href="/special-chars/compound-interest/"><span>📈 성장률·복리 시나리오</span><span>바로가기 →</span></a>
+      <a href="/special-chars/avg-price/"><span>⚖️ 가중 평균 단가 계산기</span><span>바로가기 →</span></a>
     </div>
   </div>
     </main>
@@ -242,122 +253,214 @@ function switchTab(idx) {
   for(let i=0;i<4;i++) document.getElementById('mode'+i).style.display = i===idx ? '' : 'none';
 }
 
-function fmt(n) {
-  if (isNaN(n) || !isFinite(n)) return '계산 불가';
-  return n.toLocaleString('ko-KR', {maximumFractionDigits:4});
+/* ---------- 숫자 입력 ---------- */
+function parseNumber(value) {
+  const s = String(value ?? '').replace(/[,\s]/g, '');
+  if (s === '') return null;
+  if (!/^-?(?:\d+\.?\d*|\.\d+)$/.test(s)) return NaN;
+  return Number(s);
+}
+function formatNumberInput(el) {
+  const raw = el.value;
+  const caret = el.selectionStart ?? raw.length;
+  const significantBefore = raw.slice(0, caret).replace(/[^0-9.\-]/g, '').length;
+  let cleaned = raw.replace(/[^0-9.\-]/g, '');
+  const negative = cleaned.startsWith('-');
+  cleaned = cleaned.replace(/-/g, '');
+  const dot = cleaned.indexOf('.');
+  let intPart = dot === -1 ? cleaned : cleaned.slice(0, dot);
+  const decPart = dot === -1 ? null : cleaned.slice(dot + 1).replace(/\./g, '');
+  intPart = intPart.replace(/^0+(?=\d)/, '');
+  const out = (negative ? '-' : '') + intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (decPart === null ? '' : '.' + decPart);
+  if (out === raw) return;
+  el.value = out;
+  if (document.activeElement !== el) return;
+  let pos = 0, seen = 0;
+  while (pos < out.length && seen < significantBefore) { if (/[0-9.\-]/.test(out[pos])) seen++; pos++; }
+  el.setSelectionRange(pos, pos);
+}
+function onNum(el, fn) { formatNumberInput(el); fn(); }
+
+function readInputs(ids) {
+  const values = [];
+  let bad = null;
+  for (const id of ids) {
+    const el = document.getElementById(id);
+    const v = parseNumber(el.value);
+    const invalid = Number.isNaN(v) || (v !== null && !Number.isFinite(v));
+    if (invalid) el.setAttribute('aria-invalid', 'true'); else el.removeAttribute('aria-invalid');
+    if (invalid && !bad) bad = el;
+    values.push(v);
+  }
+  return { values, bad, empty: values.some(v => v === null) };
+}
+function markInvalid(id, invalid) {
+  const el = document.getElementById(id);
+  if (invalid) el.setAttribute('aria-invalid', 'true'); else el.removeAttribute('aria-invalid');
 }
 
-function setResult(boxId, value, label, detail) {
+/* ---------- 표시 ---------- */
+// 부동소수점 잡음(0.1 + 0.2 = 0.30000000000000004 등)만 걷어내고 유효 자릿수는 유지한다.
+function clean(n) {
+  n = Number(n);
+  if (!Number.isFinite(n) || n === 0) return n;
+  return Math.abs(n) >= 1e-4 ? Number(n.toFixed(10)) : Number(n.toPrecision(12));
+}
+function fmt(n, maxDigits = 4) {
+  if (!Number.isFinite(n)) return '계산 불가';
+  return clean(n).toLocaleString('ko-KR', { maximumFractionDigits: maxDigits });
+}
+function fmtPct(n) { return fmt(n, 2); }
+function signed(n, text) { return (n > 0 ? '+' : '') + text; }
+function roundMoney(n) {
+  const mode = document.getElementById('roundMode').value;
+  if (mode === 'round') return Math.round(clean(n));
+  if (mode === 'floor') return Math.floor(clean(n));
+  return clean(n);
+}
+function rawString(n, maxDigits = 4) {
+  return String(Number(clean(n).toFixed(maxDigits)));
+}
+
+function setResult(boxId, { value, copy, label, detail, check }) {
   const box = document.getElementById(boxId);
-  box.classList.remove('empty');
-  box.innerHTML = `
-    <button type="button" class="result-value result-copy" onclick="copyVal('${value}')" aria-label="결과 ${value} 복사">${value}</button>
-    ${label ? `<div class="result-label">${label}</div>` : ''}
-    ${detail ? `<div class="result-detail">${detail}</div>` : ''}
-  `;
+  box.classList.remove('empty', 'error');
+  const children = [];
+  const valueEl = document.createElement('div');
+  valueEl.className = 'result-value';
+  valueEl.textContent = value;
+  valueEl.dataset.raw = copy;
+  children.push(valueEl);
+  for (const [cls, text] of [['result-label', label], ['result-detail', detail], ['result-check', check]]) {
+    if (!text) continue;
+    const el = document.createElement('div');
+    el.className = cls;
+    el.textContent = text;
+    children.push(el);
+  }
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'copy-btn';
+  btn.textContent = '📋 결과 복사';
+  btn.setAttribute('aria-label', `결과 ${copy} 복사`);
+  btn.addEventListener('click', () => copyVal(copy));
+  children.push(btn);
+  box.replaceChildren(...children);
 }
-
 function setEmpty(boxId, message = '숫자를 입력하세요') {
   const box = document.getElementById(boxId);
   box.classList.add('empty');
-  box.innerHTML = `<div class="result-value">${message}</div>`;
+  box.classList.remove('error');
+  const el = document.createElement('div');
+  el.className = 'result-value';
+  el.textContent = message;
+  box.replaceChildren(el);
+}
+function setError(boxId, message) {
+  setEmpty(boxId, message);
+  const box = document.getElementById(boxId);
+  box.classList.remove('empty');
+  box.classList.add('error');
 }
 
+/* ---------- 계산 ---------- */
 function calc0() {
-  const a = parseFloat(document.getElementById('m0a').value);
-  const b = parseFloat(document.getElementById('m0b').value);
-  const report = document.getElementById('report0');
-  if (isNaN(a) || isNaN(b)) { setEmpty('r0'); report.style.display = 'none'; return; }
-  const result = a * b / 100;
-  const diff = a - result;
-  setResult('r0', fmt(result), `${fmt(a)}의 ${fmt(b)}%`, `${fmt(a)} − ${fmt(result)} = ${fmt(diff)} (할인 적용 시)`);
-  
-  report.style.display = 'flex';
-  report.innerHTML = `
-    <h2>💡 퍼센트 분석 리포트</h2>
-    <p>입력하신 기준 금액 <strong>${fmt(a)}</strong>의 <strong>${fmt(b)}%</strong>에 해당하는 값은 <strong>${fmt(result)}</strong>입니다.</p>
-    <p>만약 이 퍼센트가 <strong>할인율</strong>을 의미한다면, <strong>${fmt(a)}</strong>에서 <strong>${fmt(result)}</strong>을 뺀 <strong>${fmt(diff)}</strong>이(가) 최종 가격이 됩니다.</p>
-    <p>반대로 이 값이 <strong>세금이나 추가 비용</strong>을 의미한다면, 지불해야 할 총 금액은 <strong>${fmt(a + result)}</strong>입니다.</p>
-  `;
+  const { values: [a, b], bad, empty } = readInputs(['m0a', 'm0b']);
+  if (bad) { setError('r0', '숫자만 입력하세요 (쉼표·소수점·음수 가능)'); return; }
+  if (empty) { setEmpty('r0'); return; }
+  const result = roundMoney(a * b / 100);
+  const discounted = roundMoney(a - a * b / 100);
+  const increased = roundMoney(a + a * b / 100);
+  setResult('r0', {
+    value: fmt(result),
+    copy: rawString(result),
+    label: `${fmt(a)} × ${fmtPct(b)} ÷ 100`,
+    detail: `할인 적용 시 ${fmt(discounted)} · 인상(가산) 적용 시 ${fmt(increased)}`
+  });
 }
 
 function calc1() {
-  const a = parseFloat(document.getElementById('m1a').value);
-  const b = parseFloat(document.getElementById('m1b').value);
-  const report = document.getElementById('report1');
-  if (isNaN(a) || isNaN(b) || a === 0) { setEmpty('r1'); report.style.display = 'none'; return; }
-  const pct = ((b - a) / Math.abs(a)) * 100;
-  const diff = b - a;
-  const arrow = pct >= 0 ? '📈' : '📉';
-  const sign = pct >= 0 ? '+' : '';
-  setResult('r1', `${sign}${fmt(pct)}%`, `${arrow} ${fmt(Math.abs(diff))} ${pct >= 0 ? '증가' : '감소'}`, `${fmt(a)} → ${fmt(b)}`);
-
-  report.style.display = 'flex';
-  const status = pct > 0 ? "성장 및 증가" : (pct < 0 ? "하락 및 감소" : "변화 없음");
-  report.innerHTML = `
-    <h2>💡 증감률 분석 리포트</h2>
-    <p>이전 값 <strong>${fmt(a)}</strong>에서 <strong>${fmt(b)}</strong>(으)로 <strong>${fmt(Math.abs(diff))}</strong>만큼 변동했습니다.</p>
-    <p>이를 증감률로 평가하면 <strong>${sign}${fmt(pct)}%</strong> 수준의 <strong>${status}</strong>폭을 보여줍니다.</p>
-    <p>이 지표는 주식 수익률, 영업 이익률, 상품의 가격 변동 등 <strong>"과거 대비 얼마나 달라졌는가"</strong>를 객관적으로 평가할 때 핵심 역할을 합니다.</p>
-  `;
+  const { values: [a, b], bad, empty } = readInputs(['m1a', 'm1b']);
+  if (bad) { setError('r1', '숫자만 입력하세요 (쉼표·소수점·음수 가능)'); return; }
+  if (empty) { setEmpty('r1'); return; }
+  const asPercent = document.getElementById('m1pp').checked;
+  const diff = clean(b - a);
+  if (asPercent) {
+    const relative = a === 0 ? null : (b - a) / Math.abs(a) * 100;
+    markInvalid('m1a', false);
+    setResult('r1', {
+      value: signed(diff, `${fmtPct(diff)}%p`),
+      copy: rawString(diff, 2),
+      label: relative === null ? '상대 변화율: 이전 값이 0이라 계산할 수 없습니다' : `상대 변화율 ${signed(relative, fmtPct(relative))}%`,
+      detail: `${fmtPct(b)}% − ${fmtPct(a)}% = ${signed(diff, fmtPct(diff))}%p`
+    });
+    return;
+  }
+  if (a === 0) {
+    markInvalid('m1a', true);
+    setError('r1', '0으로 나눌 수 없습니다 — 이전 값이 0이면 변화율을 계산할 수 없습니다');
+    return;
+  }
+  const pct = (b - a) / Math.abs(a) * 100;
+  const word = diff > 0 ? '증가' : (diff < 0 ? '감소' : '변화 없음');
+  setResult('r1', {
+    value: `${signed(pct, fmtPct(pct))}%`,
+    copy: rawString(pct, 2),
+    label: diff === 0 ? '변화 없음' : `${diff > 0 ? '📈' : '📉'} ${fmt(Math.abs(diff))} ${word}`,
+    detail: `(${fmt(b)} − ${fmt(a)}) ÷ ${fmt(Math.abs(a))} × 100 = ${signed(pct, fmtPct(pct))}%`
+  });
 }
 
 function calc2() {
-  const a = parseFloat(document.getElementById('m2a').value);
-  const b = parseFloat(document.getElementById('m2b').value);
-  const report = document.getElementById('report2');
-  if (isNaN(a) || isNaN(b) || b === 0) { setEmpty('r2'); report.style.display = 'none'; return; }
-  const pct = (a / b) * 100;
-  setResult('r2', `${fmt(pct)}%`, `${fmt(a)} ÷ ${fmt(b)} × 100`, `${fmt(a)}은(는) ${fmt(b)}의 ${fmt(pct)}%`);
-
-  report.style.display = 'flex';
-  const remaining = 100 - pct;
-  report.innerHTML = `
-    <h2>💡 비율 점유율 리포트</h2>
-    <p>기준 데이터 분석 결과, 전체 <strong>${fmt(b)}</strong> 중 부분 <strong>${fmt(a)}</strong>이(가) 차지하는 비중은 <strong>${fmt(pct)}%</strong>입니다.</p>
-    <p>나머지 구간은 전체의 <strong>${fmt(remaining)}%</strong>를 구성하고 있습니다.</p>
-    <p>이 계산식은 구성원의 성비 분석, 목표 달성률, 투표 득표율 등 <strong>"전체 대비 파이의 크기"</strong>를 한눈에 파악하는 데 유용합니다.</p>
-  `;
+  const { values: [a, b], bad, empty } = readInputs(['m2a', 'm2b']);
+  if (bad) { setError('r2', '숫자만 입력하세요 (쉼표·소수점·음수 가능)'); return; }
+  if (empty) { setEmpty('r2'); return; }
+  if (b === 0) {
+    markInvalid('m2b', true);
+    setError('r2', '0으로 나눌 수 없습니다 — 전체 값이 0이면 비율을 계산할 수 없습니다');
+    return;
+  }
+  const pct = a / b * 100;
+  setResult('r2', {
+    value: `${fmtPct(pct)}%`,
+    copy: rawString(pct, 2),
+    label: `${fmt(a)} ÷ ${fmt(b)} × 100`,
+    detail: `나머지 ${fmtPct(100 - pct)}%`
+  });
 }
 
 function calc3() {
-  const a = parseFloat(document.getElementById('m3a').value);
-  const b = parseFloat(document.getElementById('m3b').value);
-  const report = document.getElementById('report3');
-  if (isNaN(a) || isNaN(b)) { setEmpty('r3'); report.style.display = 'none'; return; }
-  let original;
-  if (m3type === 'discount') {
-    if (b < 0 || b >= 100) {
-      setEmpty('r3', '할인율은 0% 이상 100% 미만이어야 합니다');
-      report.style.display = 'none';
-      return;
-    }
-    original = a / (1 - b/100);
-    setResult('r3', fmt(original), `원래 가격 (${b}% 할인 전)`, `${fmt(original)} × ${100-b}% = ${fmt(a)}`);
-    report.style.display = 'flex';
-    report.innerHTML = `
-      <h2>💡 할인 역산 분석 리포트</h2>
-      <p>결과 값 <strong>${fmt(a)}</strong>은(는) 이미 <strong>${fmt(b)}% 할인</strong>이 반영된 적용 금액입니다.</p>
-      <p>할인이 적용되기 전 순수 원가나 기준점을 수학적 역산으로 도출하면 <strong>${fmt(original)}</strong>이(가) 됩니다.</p>
-      <p>단순히 ${fmt(a)}에 ${fmt(b)}%를 더해버리는 오류를 막기 위해, 공식 <strong>[적용 금액 / (1 - 할인율)]</strong>을 적용하여 산출된 정확한 데이터입니다.</p>
-    `;
-  } else {
-    if (b <= -100) {
-      setEmpty('r3', '인상률은 -100%보다 커야 합니다');
-      report.style.display = 'none';
-      return;
-    }
-    original = a / (1 + b/100);
-    setResult('r3', fmt(original), `원래 가격 (${b}% 인상 전)`, `${fmt(original)} × ${100+b}% = ${fmt(a)}`);
-    report.style.display = 'flex';
-    report.innerHTML = `
-      <h2>💡 인상 및 마진 역산 리포트</h2>
-      <p>해당 결과 값 <strong>${fmt(a)}</strong>은(는) 원래 가격에 <strong>${fmt(b)}%의 인상률(또는 부가세, 마진)</strong>이 더해진 형태입니다.</p>
-      <p>인상 전의 퓨어한 원래 비용/단가를 도출하면 <strong>${fmt(original)}</strong>입니다.</p>
-      <p>가장 흔히 <strong>부가세 10% 제외 금액</strong>을 유추하거나 매출 단가에서 <strong>마진/수수료율이 포함되기 전의 금액</strong>을 역산해낼 때 이와 같은 수식이 핵심입니다.</p>
-    `;
+  const { values: [a, b], bad, empty } = readInputs(['m3a', 'm3b']);
+  if (bad) { setError('r3', '숫자만 입력하세요 (쉼표·소수점·음수 가능)'); return; }
+  if (empty) { setEmpty('r3'); return; }
+  const discount = m3type === 'discount';
+  if (discount && (b < 0 || b >= 100)) {
+    markInvalid('m3b', true);
+    setError('r3', '할인율은 0% 이상 100% 미만이어야 합니다');
+    return;
   }
+  if (!discount && b <= -100) {
+    markInvalid('m3b', true);
+    setError('r3', '인상률은 -100%보다 커야 합니다');
+    return;
+  }
+  const factor = clean(discount ? (100 - b) / 100 : (100 + b) / 100);
+  const exact = a / factor;
+  const shown = roundMoney(exact);
+  const back = clean(shown * factor);
+  const gap = clean(back - a);
+  setResult('r3', {
+    value: fmt(shown),
+    copy: rawString(shown),
+    label: `원래 값 (${fmtPct(b)}% ${discount ? '할인' : '인상'} 전)`,
+    detail: `${fmt(a)} ÷ ${fmt(factor, 6)} = ${fmt(exact)}`,
+    check: gap === 0
+      ? `검산: ${fmt(shown)} × ${fmt(factor, 6)} = ${fmt(back)}`
+      : `검산: ${fmt(shown)} × ${fmt(factor, 6)} = ${fmt(back)} (원 단위 처리로 ${fmt(Math.abs(gap))} 차이)`
+  });
 }
+
+function recalcAll() { calc0(); calc1(); calc2(); calc3(); }
 
 function setQuick(mode, inputId, val) {
   document.getElementById(inputId).value = val;
@@ -370,24 +473,47 @@ function setM3Type(type) {
   document.querySelectorAll('[data-m3-type]').forEach(btn => {
     btn.setAttribute('aria-pressed', String(btn.dataset.m3Type === type));
   });
-  const unitEl = document.querySelector('#mode3 .unit');
-  unitEl.textContent = type === 'discount' ? '% 할인' : '% 인상';
+  document.getElementById('m3unit').textContent = type === 'discount' ? '% 할인' : '% 인상';
   calc3();
 }
 
+/* ---------- 복사 ---------- */
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    return navigator.clipboard.writeText(text).catch(() => legacyCopy(text));
+  }
+  return legacyCopy(text);
+}
+function legacyCopy(text) {
+  return new Promise((resolve, reject) => {
+    const helper = document.createElement('textarea');
+    helper.value = text;
+    helper.setAttribute('readonly', '');
+    helper.style.position = 'fixed';
+    helper.style.top = '0';
+    helper.style.opacity = '0';
+    document.body.appendChild(helper);
+    helper.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    helper.remove();
+    if (ok) resolve(); else reject(new Error('copy failed'));
+  });
+}
 function copyVal(val) {
-  const clean = val.replace(/,/g, '');
-  navigator.clipboard.writeText(clean).then(() => showToast('결과가 복사되었습니다! 📋'));
+  copyText(val).then(
+    () => showToast(`${val} 복사했습니다 📋`),
+    () => showToast('복사하지 못했습니다. 결과를 직접 선택해 복사하세요.')
+  );
 }
 
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2000);
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2000);
 }
-
-
 </script>
 <script src="/special-chars/theme-toggle.js"></script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>

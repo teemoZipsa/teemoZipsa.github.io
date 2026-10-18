@@ -11,9 +11,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>📐 업무 단위 변환기 — 티모집사</title>
-<meta name="description" content="견적서·상품 등록·해외 자료 검토에 필요한 면적, 무게, 온도, 디지털 용량과 거리 단위를 양방향으로 변환합니다.">
+<meta name="description" content="견적서·상품 등록·해외 자료 검토에 필요한 면적, 길이, 무게, 부피, 온도, 속도, 디지털 용량(MB·MiB), 인쇄 크기와 신발 사이즈를 양방향으로 변환합니다.">
 <meta property="og:title" content="📐 업무 단위 변환기 — 티모집사">
-<meta property="og:description" content="견적·상품 자료의 면적, 무게, 온도, 용량과 거리 단위를 변환합니다.">
+<meta property="og:description" content="견적·상품 자료의 면적, 길이, 무게, 부피, 온도, 용량과 인쇄 단위를 변환합니다.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/unit-conv/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
@@ -22,41 +22,47 @@
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px}
-  .app{background:var(--bg-app);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
+  .app{background:var(--bg-app);border-radius:12px;box-shadow:var(--shadow-lg);width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column}
   .header{background:var(--bg-header);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
   .header h1{font-size:15px;font-weight:600;color:#fff}
   .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
   .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
-  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.6);transition:transform .3s ease,opacity .3s ease;opacity:0;pointer-events:none;z-index:999}
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:14px;font-weight:500;box-shadow:var(--shadow-lg);transition:transform .3s ease,opacity .3s ease;opacity:0;pointer-events:none;z-index:999}
   .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-  .bottom-bar{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
-  .bottom-bar .info{font-size:11px;color:var(--text-info)}
-  .action-btn{padding:8px 20px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
-  .btn-clear{background:var(--bg-btn);color:var(--btn-clear-text)}.btn-clear:hover{background:var(--bg-btn-hover)}
+  .bottom-bar{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;gap:8px;border-top:1px solid var(--border)}
+  .bottom-bar .info{font-size:12px;color:var(--text-info)}
+  .action-btn{padding:8px 20px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+  .btn-clear{background:var(--bg-btn);color:var(--text-primary)}.btn-clear:hover{background:var(--bg-btn-hover)}
   .btn-copy{background:var(--accent);color:var(--text-on-accent)}.btn-copy:hover{background:var(--accent-hover)}
 
-  .counter-body{padding:12px;flex:1;overflow-y:auto;max-height:480px}
+  .counter-body{padding:12px}
+  .search-row{margin-bottom:10px}
+  .search-row input{width:100%;background:var(--bg-btn);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);padding:10px 12px;font-family:inherit}
+  .search-row input:focus{border-color:var(--accent);outline:none}
+  .search-row input::placeholder{color:var(--text-placeholder)}
   .tab{display:inline-block;padding:6px 12px;background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-guide);font-size:12px;cursor:pointer;transition:background .15s;font-family:inherit}
   .tab:hover{background:var(--bg-btn-hover)}
-  .tab.active{background:var(--accent);color:var(--text-on-accent);border-color:#6b44a3}
+  .tab.active,.tab[aria-pressed="true"]{background:var(--accent);color:var(--text-on-accent);border-color:var(--accent)}
   .conv-cat-tabs{background:var(--bg-bar);padding:6px 10px;border-radius:8px;margin-bottom:12px}
   .conv-cat-tabs .tab-row{display:flex;flex-wrap:wrap;gap:4px}
   .conv-cat-tabs .tab{padding:6px 10px;font-size:11px}
-  .conv-row{margin-bottom:14px}
-  .conv-row-title{font-size:12px;color:var(--text-info);margin-bottom:6px;display:flex;align-items:center;gap:4px}
-  .conv-fields{display:flex;align-items:center;gap:6px}
-  .conv-field{flex:1}
+  .search-status{font-size:13px;color:var(--text-info);margin-bottom:8px}
+  .search-status:empty{display:none}
+  .conv-row{margin-bottom:14px;padding-bottom:12px;border-bottom:1px dashed var(--border)}
+  .conv-row:last-child{border-bottom:0}
+  .conv-row-title{font-size:13px;color:var(--text-secondary);font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:4px}
+  .conv-fields{display:flex;align-items:flex-end;gap:6px}
+  .conv-field{flex:1;min-width:0}
   .conv-field label{display:block;font-size:11px;color:var(--calc-expr-text);margin-bottom:2px;font-weight:600}
-  .conv-field input[type="number"]{width:100%;background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:8px 10px;font-size:14px;box-sizing:border-box;font-family:inherit}
+  .conv-field input{width:100%;background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:8px 10px;font-size:14px;box-sizing:border-box;font-family:inherit;font-variant-numeric:tabular-nums}
   .conv-field input:focus{border-color:var(--accent);outline:none}
-  .conv-arrow{color:#533483;font-size:16px;flex-shrink:0;margin-top:16px}
-  .conv-option{width:100%;background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-guide);padding:5px 8px;font-size:11px;margin-top:4px;font-family:inherit}
+  .conv-arrow{color:var(--accent-text);font-size:16px;flex-shrink:0;padding-bottom:10px}
+  .conv-option{width:100%;background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:5px 8px;font-size:11px;margin-top:6px;font-family:inherit}
   .conv-triple .conv-field{flex:1;min-width:0}
-  .conv-extra{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:11px;color:var(--text-info)}
-  .conv-extra input{width:60px;background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:4px 8px;font-size:12px;text-align:center;font-family:inherit}
-  .report-box {margin:14px 12px; padding:16px; background:rgba(83,52,131,0.05); border-left:4px solid var(--accent); border-radius:8px; font-size:13px; line-height:1.6; color:var(--text-primary); display:none;}
-  .report-box.show {display:block; animation:fadeIn 0.4s;}
-  @keyframes fadeIn {from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)}}
+  .conv-extra{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin-top:6px;font-size:13px;color:var(--text-info)}
+  .conv-extra input[type="text"]{width:80px;background:var(--bg-btn);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:4px 8px;text-align:center;font-family:inherit}
+  .conv-extra label{display:inline-flex;align-items:center;gap:4px}
+  .conv-formula{font-size:12px;color:var(--text-info);margin-top:6px;line-height:1.5}
   .guide-section{margin:12px; padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-app); margin-top:20px;}
   .guide-title{font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:12px;}
   .guide-item{margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:var(--bg-guide); overflow:hidden;}
@@ -67,7 +73,7 @@
   .guide-item .guide-content{padding:12px; font-size:13px; color:var(--text-info); line-height:1.6;}
   .related-tools{margin-top:16px; padding-top:16px; border-top:1px solid var(--border);}
   .tag-container{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
-  .tool-tag{padding:6px 12px; background:rgba(83,52,131,0.1); color:var(--accent-text); border-radius:16px; font-size:11px; font-weight:600; text-decoration:none; transition:all 0.2s;}
+  .tool-tag{padding:6px 12px; background:var(--accent-bg); color:var(--accent-text); border-radius:16px; font-size:11px; font-weight:600; text-decoration:none; transition:all 0.2s;}
   .tool-tag:hover{background:var(--accent); color:var(--text-on-accent);}
 .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
 .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
@@ -85,55 +91,67 @@
   </div>
 
   <div class="counter-body">
-    <div class="conv-cat-tabs"><div class="tab-row" id="unitCatTabs"></div></div>
+    <div class="search-row">
+      <input type="search" id="unitSearch" aria-label="단위 검색" placeholder="단위 검색 (예: 인치, 파운드, MiB, A4, 신발)" autocomplete="off" oninput="renderConverters()">
+    </div>
+    <div class="conv-cat-tabs"><div class="tab-row" id="unitCatTabs" role="group" aria-label="단위 분류"></div></div>
+    <p class="search-status" id="searchStatus" role="status" aria-live="polite"></p>
     <div id="unitConvArea"></div>
-    <div id="reportBox" class="report-box"></div>
   </div>
 
   <div class="bottom-bar">
-    <span class="info">💡 입력하면 변경된 값을 바로 확인할 수 있습니다.</span>
+    <span class="info">💡 어느 칸에 입력해도 반대쪽이 바로 바뀝니다. 쉼표를 넣어도 됩니다.</span>
     <div style="display:flex; gap:8px;">
-      <button class="action-btn btn-clear" onclick="clearUnitConv()">초기화</button>
-      <button class="action-btn btn-copy" onclick="copyUnitResult()">결과 복사</button>
+      <button type="button" class="action-btn btn-clear" onclick="clearUnitConv()">초기화</button>
+      <button type="button" class="action-btn btn-copy" onclick="copyUnitResult()">결과 복사</button>
     </div>
   </div>
 
   <div class="guide-section">
-    <div class="guide-title">🤔 실생활 단위 변환 관련 Q&A</div>
-    
+    <div class="guide-title">🤔 실생활 단위 변환 관련 Q&amp;A</div>
+
     <details class="guide-item">
       <summary>국민평형(국평)인 '34평'은 몇 제곱미터(㎡)인가요?</summary>
       <div class="guide-content">
         흔히 아파트 <strong>국민평형(국평)</strong>이라고 부르는 전용면적 84㎡는, 예전 평수 개념으로 공급면적 기준 약 33~34평에 해당합니다.<br/>
         법정 계량 단위인 제곱미터(㎡) 사용이 의무화되면서 84㎡(전용면적), 112㎡(공급면적) 등으로 표기하지만, 여전히 많은 사람들이 직관적인 '평' 단위를 함께 참고하고 있습니다.<br/>
-        (1평 = 약 3.3058㎡)
+        (1평 = 400/121㎡ ≈ 3.3058㎡, 1㎡ ≈ 0.3025평)
       </div>
     </details>
-    
+
     <details class="guide-item">
       <summary>고기 1근과 채소 1근은 왜 무게가 다른가요?</summary>
       <div class="guide-content">
-        한국에서 '근'은 척관법에서 유래한 질량의 단위로, 측정 대상에 따라 기준 중량이 다릅니다.<br/>
-        - <strong>육류(고기) 1근</strong> = 600g (일반적으로 3~4인분 정도의 양)<br/>
-        - <strong>채소/과일 1근</strong> = 일반적으로 400g (상추 등 잎채소류 등)<br/>
-        참고로 <strong>금 1돈</strong>은 3.75g이며, 약 1냥은 10돈(37.5g)입니다.
+        한국에서 '근'은 척관법에서 유래한 무게 단위로, 측정 대상에 따라 기준 중량이 다릅니다.<br/>
+        - <strong>고기·한약재 1근</strong> = 600g<br/>
+        - <strong>과일·채소 1근</strong> = 1관(3.75kg)의 10분의 1인 375g (가게에 따라 400g으로 파는 곳도 있습니다)<br/>
+        참고로 <strong>금 1돈</strong>은 3.75g이며, 1냥은 10돈(37.5g)입니다. 무게 분류에서 근·돈을 g으로 바꿀 수 있습니다.
       </div>
     </details>
-    
+
     <details class="guide-item">
-      <summary>해외직구 시 신발 사이즈와 무게(파운드)는 어떻게 변환하나요?</summary>
+      <summary>해외직구 시 신발 사이즈와 무게(파운드·온스)는 어떻게 변환하나요?</summary>
       <div class="guide-content">
         국가마다 표준 사이즈 표기법이 다릅니다.<br/>
-        - <strong>US (미국)</strong>: 남성 270mm의 경우 US 9, 여성 240mm의 경우 US 7을 주로 신습니다.<br/>
-        - <strong>EU (유럽)</strong>: 남성 270mm는 EU 42, 여성 240mm는 EU 37.5 수준입니다.<br/>
-        - <strong>파운드(lb) ↔ 킬로그램(kg)</strong>: 1파운드는 약 0.45kg입니다. 해외 배송비나 체중을 계산할 때 유용합니다.
+        - <strong>US (미국)</strong>: 남성은 발 길이(cm) − 18, 여성은 발 길이(cm) − 17이 일반적인 기준입니다. 남성 270mm는 US 9, 여성 240mm는 US 7입니다.<br/>
+        - <strong>EU (유럽)</strong>: 남성 270mm는 EU 42, 여성 240mm는 EU 37.5 수준이며 브랜드에 따라 반 치수 정도 차이가 납니다.<br/>
+        - <strong>파운드(lb) ↔ 킬로그램(kg)</strong>: 1파운드는 0.45359237kg입니다. 배송비나 체중을 계산할 때 사용합니다.<br/>
+        - <strong>온스(oz)</strong>: 무게 온스는 28.35g, 음료의 액량 온스(fl oz)는 29.57ml로 서로 다른 단위입니다. 배송 무게는 무게 분류, 음료·화장품 용량은 부피 분류에서 변환하세요.
+      </div>
+    </details>
+
+    <details class="guide-item">
+      <summary>1GB가 1,000MB인가요, 1,024MB인가요? 픽셀은 몇 mm인가요?</summary>
+      <div class="guide-content">
+        저장장치 제조사와 macOS는 <strong>10진 단위</strong>(1GB = 1,000MB)를, Windows는 2진 단위(1GiB = 1,024MiB)를 쓰면서 표기만 GB로 보여 줍니다. 그래서 1TB 외장하드가 Windows에서는 약 931GB로 보입니다. 디지털 분류의 기준 선택에서 두 방식을 고를 수 있습니다.<br/>
+        픽셀과 mm는 해상도(DPI)에 따라 달라집니다. 웹 CSS는 <strong>96dpi</strong>(1px ≈ 0.2646mm)를 기준으로 하므로 기본값을 96으로 두었고, 인쇄용 이미지는 보통 300dpi를 입력합니다.
       </div>
     </details>
 
     <div class="related-tools">
       <div class="guide-title" style="font-size:12px; margin-bottom:8px;">🛠 연관 도구 추천</div>
       <div class="tag-container">
-        <a href="/special-chars/calculator/" class="tool-tag">일반 계산기</a>
+        <a href="/special-chars/calculator/" class="tool-tag">업무용 빠른 계산기</a>
         <a href="/special-chars/percent-calc/" class="tool-tag">퍼센트 계산기</a>
         <a href="/special-chars/color-conv/" class="tool-tag">색상 변환기</a>
       </div>
@@ -142,8 +160,8 @@
     <section class="work-context" aria-labelledby="unitWorkTitle">
       <h2 id="unitWorkTitle">견적서와 상품 자료의 단위 통일하기</h2>
       <p><strong>업무 예시:</strong> 해외 공급사의 인치·파운드 값을 국내 문서의 센티미터·킬로그램으로 바꾸거나, 저장 용량과 면적을 같은 기준으로 맞춰 견적서와 상품 정보를 검토할 때 사용합니다. 원본 단위와 변환 결과를 문서에 함께 적으면 재검산이 쉽습니다.</p>
-      <p><strong>해석 기준:</strong> 무게와 길이처럼 고정 비율인 단위와 달리 신발 크기·요리 계량·평수 표현은 국가와 관행에 따라 오차가 생길 수 있습니다. 계약, 발주와 규격 승인에는 제조사 사양서와 공식 환산 기준을 우선하세요.</p>
-      <p><strong>데이터 처리:</strong> 숫자와 단위 선택은 서버에 전송하지 않고 브라우저에서 계산합니다. 표시 자릿수 때문에 반올림된 값은 대량 수량에 곱하기 전에 필요한 정밀도로 다시 확인하세요.</p>
+      <p><strong>해석 기준:</strong> 길이·무게·부피는 국제 정의값(1 inch = 2.54cm, 1 lb = 0.45359237kg 등)을 사용합니다. 신발 크기·요리 계량·평수 표현은 국가와 관행에 따라 오차가 생길 수 있으므로 계약, 발주와 규격 승인에는 제조사 사양서와 공식 환산 기준을 우선하세요.</p>
+      <p><strong>데이터 처리:</strong> 숫자와 단위 선택은 서버에 전송하지 않고 브라우저에서 계산합니다. 결과는 단위마다 정한 자릿수로 반올림해 표시하므로, 대량 수량에 곱하기 전에는 각 항목 아래의 환산식으로 필요한 정밀도를 다시 확인하세요.</p>
     </section>
     </main>
 <footer class="footer"><span>양방향 실시간 변환</span><a href="https://teemozipsa.com/">😺 더 많은 도구</a></footer>
@@ -155,192 +173,246 @@
 <script>
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),1500)}
 
+// factor: a 1단위 = b 단위 factor개
 const UNIT_DATA={
-  estate:{label:'🏡 부동산',items:[
-    {id:'pyeong',a:'평',b:'㎡',factor:3.305785,dec:2,tip:'1평 = 약 3.3㎡'},
-    {id:'inch',a:'inch',b:'cm',factor:2.54,dec:2}
+  area:{label:'🏡 면적',items:[
+    {id:'pyeong',a:'평',b:'㎡',factor:400/121,dec:2,formula:'1평 = 400/121㎡ ≈ 3.3058㎡',kw:'평 평수 제곱미터 면적 아파트 m2'},
+    {id:'sqft',a:'ft²',b:'㎡',factor:0.09290304,dec:3,formula:'1 ft² = 0.09290304㎡ (정의값)',kw:'제곱피트 평방피트 sqft 면적'}
   ]},
-  cooking:{label:'🛒 요리',items:[
-    {id:'geun',a:'근',b:'g',type:'options',dec:0,options:[{label:'고기 (1근=600g)',factor:600},{label:'채소 (1근=400g)',factor:400}]},
-    {id:'don',a:'돈',b:'g',factor:3.75,dec:2,tip:'금/은 계량'},
-    {id:'tbsp',a:'큰술(T)',b:'ml',factor:15,dec:1},
-    {id:'cup',a:'컵(200ml)',b:'ml',factor:200,dec:1},
-    {id:'floz',a:'oz',b:'ml',factor:29.5735,dec:1}
+  length:{label:'📏 길이',items:[
+    {id:'inch',a:'inch',b:'cm',factor:2.54,dec:2,formula:'1 inch = 2.54cm (정의값)',kw:'인치 센티미터 cm 길이 화면'},
+    {id:'ft',a:'ft',b:'m',factor:0.3048,dec:3,formula:'1 ft = 0.3048m (정의값)',kw:'피트 미터 길이 키'},
+    {id:'yard',a:'yd',b:'m',factor:0.9144,dec:3,formula:'1 yd = 0.9144m (정의값)',kw:'야드 미터 원단 골프'},
+    {id:'mile',a:'mi',b:'km',factor:1.609344,dec:3,formula:'1 mi(마일) = 1.609344km (정의값)',kw:'마일 킬로미터 거리'},
+    {id:'pt',a:'pt',b:'mm',factor:25.4/72,dec:3,formula:'1pt = 1/72 inch ≈ 0.3528mm (DTP 포인트)',kw:'포인트 폰트 글자 크기 인쇄 밀리미터'}
   ]},
-  shopping:{label:'📦 직구',items:[
-    {id:'shoe',type:'shoe'},
-    {id:'lb',a:'lb',b:'kg',factor:0.453592,dec:2},
-    {id:'temp',a:'℃',b:'℉',type:'formula',toB:v=>v*9/5+32,toA:v=>(v-32)*5/9,dec:1},
-    {id:'yard',a:'yd',b:'m',factor:0.9144,dec:2}
+  weight:{label:'⚖️ 무게',items:[
+    {id:'lb',a:'lb',b:'kg',factor:0.45359237,dec:3,formula:'1 lb(파운드) = 0.45359237kg (정의값)',kw:'파운드 킬로그램 배송 체중'},
+    {id:'ozw',a:'oz (무게)',b:'g',factor:28.349523125,dec:2,formula:'1 oz(무게 온스) = 28.349523125g — 액량 온스(fl oz)와 다른 단위',kw:'온스 그램 무게 배송'},
+    {id:'geun',a:'근',b:'g',type:'options',dec:0,options:[{label:'고기·한약재 (1근=600g)',factor:600},{label:'과일·채소 (1근=375g)',factor:375}],formula:'고기 1근 = 600g, 과일·채소 1근 = 1관의 1/10 = 375g',kw:'근 고기 채소 과일 그램'},
+    {id:'don',a:'돈',b:'g',factor:3.75,dec:2,formula:'금·은 1돈 = 3.75g, 1냥 = 10돈 = 37.5g',kw:'돈 금 은 귀금속 그램 냥'}
   ]},
-  digital:{label:'💻 디지털',items:[
-    {id:'data',type:'data'},
-    {id:'pxmm',a:'px',b:'mm',type:'dpi',dec:2,dpiDefault:72}
+  volume:{label:'🧪 부피·요리',items:[
+    {id:'tbsp',a:'큰술(T)',b:'ml',factor:15,dec:1,formula:'1큰술 = 15ml',kw:'큰술 테이블스푼 tbsp 요리 밀리리터'},
+    {id:'tsp',a:'작은술(t)',b:'ml',factor:5,dec:1,formula:'1작은술 = 5ml',kw:'작은술 티스푼 tsp 요리'},
+    {id:'cup',a:'컵(200ml)',b:'ml',factor:200,dec:1,formula:'한국 계량컵 1컵 = 200ml (미국 1컵은 약 236.6ml)',kw:'컵 계량컵 요리'},
+    {id:'floz',a:'fl oz (미국 액량)',b:'ml',factor:29.5735295625,dec:1,formula:'1 US fl oz = 29.5735ml — 무게 온스(oz)와 다른 단위',kw:'액량 온스 floz 음료 화장품 용량'},
+    {id:'gal',a:'gal (미국)',b:'L',factor:3.785411784,dec:3,formula:'1 US gal = 3.785411784L',kw:'갤런 리터 부피 연료'}
   ]},
-  travel:{label:'🚗 여행',items:[
-    {id:'mile',a:'mile',b:'km',factor:1.60934,dec:2},
-    {id:'fuel',a:'km/L',b:'mpg',factor:2.35215,dec:1},
-    {id:'psi',a:'psi',b:'bar',factor:0.0689476,dec:3}
+  physics:{label:'🌡️ 온도·속도·압력',items:[
+    {id:'temp',a:'℃',b:'℉',type:'formula',toB:v=>v*9/5+32,toA:v=>(v-32)*5/9,dec:1,formula:'℉ = ℃ × 9/5 + 32',kw:'섭씨 화씨 온도 날씨'},
+    {id:'mph',a:'mph',b:'km/h',factor:1.609344,dec:1,formula:'1 mph = 1.609344 km/h',kw:'마일 속도 시속 킬로미터'},
+    {id:'fuel',a:'km/L',b:'mpg (US)',factor:2.352145833,dec:1,formula:'1 km/L ≈ 2.3521 mpg(US)',kw:'연비 mpg 자동차'},
+    {id:'psi',a:'psi',b:'bar',factor:0.0689475729,dec:3,formula:'1 psi ≈ 0.068948 bar',kw:'타이어 공기압 압력 바'}
+  ]},
+  digital:{label:'💻 디지털·인쇄',items:[
+    {id:'data',type:'data',kw:'데이터 용량 메가바이트 기가바이트 테라바이트 mb gb tb mib gib tib 저장'},
+    {id:'pxmm',a:'px',b:'mm',type:'dpi',dec:2,dpiDefault:96,kw:'픽셀 px dpi 해상도 밀리미터 인쇄'},
+    {id:'paper',type:'paper',kw:'용지 종이 a4 a3 a5 b4 b5 레터 letter 인쇄 규격'}
+  ]},
+  shoe:{label:'👟 신발',items:[
+    {id:'shoe',type:'shoe',kw:'신발 사이즈 운동화 us eu 직구 mm'}
   ]}
 };
 
-const SHOE_TABLE={220:[3,5,35],225:[3.5,5.5,35.5],230:[4,6,36],235:[4.5,6.5,37],240:[5,7,37.5],245:[5.5,7.5,38],250:[6,8,39],255:[6.5,8.5,39.5],260:[7,9,40],265:[7.5,9.5,41],270:[8,10,42],275:[8.5,10.5,42.5],280:[9,11,43],285:[9.5,11.5,44],290:[10,12,44.5],295:[10.5,12.5,45],300:[11,13,46]};
+// KR(mm): [US 남성, US 여성, EU]
+const SHOE_TABLE={};
+for(let mm=220;mm<=300;mm+=5){const cm=mm/10;SHOE_TABLE[mm]=[cm-18,cm-17,null]}
+Object.entries({220:35,225:35.5,230:36,235:37,240:37.5,245:38,250:39,255:39.5,260:40,265:41,270:42,275:42.5,280:43,285:44,290:44.5,295:45,300:46}).forEach(([mm,eu])=>{SHOE_TABLE[mm][2]=eu});
 
-let currentUnitCat='estate';let _unitSyncing=false;let _shoeGender='male';
+const PAPER=[
+  ['A3',297,420],['A4',210,297],['A5',148,210],['A6',105,148],['B4 (JIS)',257,364],['B5 (JIS)',182,257],['Letter (미국)',215.9,279.4],['Legal (미국)',215.9,355.6]
+];
 
-function findItem(id){for(const cat of Object.values(UNIT_DATA)){const item=cat.items.find(i=>i.id===id);if(item)return item}return null}
+let currentUnitCat='area';let _unitSyncing=false;let _shoeGender='male';
+
+function allItems(){return Object.values(UNIT_DATA).flatMap(cat=>cat.items)}
+function findItem(id){return allItems().find(i=>i.id===id)||null}
 function roundDec(v,dec){const f=Math.pow(10,dec);return Math.round(v*f)/f}
-
+function parseVal(s){const t=String(s??'').replace(/[,\s]/g,'');if(t==='')return null;if(!/^-?(?:\d+\.?\d*|\.\d+)$/.test(t))return NaN;return Number(t)}
+function fmtOut(v,dec){
+  if(!Number.isFinite(v))return '';
+  let r=roundDec(v,dec);
+  if(r===0&&v!==0)r=Number(v.toPrecision(4));
+  if(Object.is(r,-0))r=0;
+  return r.toLocaleString('ko-KR',{maximumFractionDigits:12});
+}
+function readField(el){
+  const v=parseVal(el.value);
+  if(Number.isNaN(v))el.setAttribute('aria-invalid','true');else el.removeAttribute('aria-invalid');
+  return v;
+}
 function renderUnitCats(){
   const c=document.getElementById('unitCatTabs');c.innerHTML='';
+  const searching=document.getElementById('unitSearch').value.trim()!=='';
   for(const[catId,cat]of Object.entries(UNIT_DATA)){
-    const btn=document.createElement('button');btn.className='tab'+(catId===currentUnitCat?' active':'');
+    const btn=document.createElement('button');btn.type='button';btn.className='tab';
+    btn.setAttribute('aria-pressed',String(!searching&&catId===currentUnitCat));
     btn.textContent=cat.label;btn.onclick=()=>switchUnitCat(catId);c.appendChild(btn);
   }
 }
 function switchUnitCat(catId){
   currentUnitCat=catId;
-  renderUnitCats();
+  document.getElementById('unitSearch').value='';
   renderConverters();
-  document.getElementById('reportBox').classList.remove('show');
+}
+
+function visibleItems(){
+  const q=document.getElementById('unitSearch').value.trim().toLowerCase();
+  if(!q)return UNIT_DATA[currentUnitCat].items;
+  const terms=q.split(/\s+/);
+  return allItems().filter(item=>{
+    const hay=[item.a,item.b,item.kw,item.formula].filter(Boolean).join(' ').toLowerCase();
+    return terms.every(t=>hay.includes(t));
+  });
 }
 
 function renderConverters(){
-  const area=document.getElementById('unitConvArea');const cat=UNIT_DATA[currentUnitCat];let html='';
-  for(const item of cat.items){html+='<div class="conv-row">';
+  renderUnitCats();
+  const q=document.getElementById('unitSearch').value.trim();
+  const items=visibleItems();
+  document.getElementById('searchStatus').textContent=q?(items.length?`'${q}' 검색 결과 ${items.length}개`:`'${q}'에 해당하는 단위가 없습니다. 다른 이름(예: 인치, lb, 평)으로 검색하세요.`):'';
+  const area=document.getElementById('unitConvArea');let html='';
+  for(const item of items){html+='<div class="conv-row">';
     if(item.type==='shoe')html+=renderShoe();else if(item.type==='data')html+=renderData();
     else if(item.type==='dpi')html+=renderDpi(item);else if(item.type==='options')html+=renderOptions(item);
+    else if(item.type==='paper')html+=renderPaper();
     else html+=renderBasic(item);html+='</div>'}
   area.innerHTML=html;
+  if(items.some(i=>i.type==='paper'))syncPaper();
 }
 
+function inputHtml(id,label,placeholder){
+  return `<div class="conv-field"><label for="${id}">${label}</label><input type="text" inputmode="decimal" autocomplete="off" id="${id}" placeholder="${placeholder||'0'}"></div>`;
+}
 function renderBasic(item){
-  const tip=item.tip?`<span class="conv-row-title">${item.tip}</span>`:'';
-  return tip+`<div class="conv-fields"><div class="conv-field"><label>${item.a}</label><input type="number" id="conv-${item.id}-a" oninput="convSync('${item.id}','a')" placeholder="0"></div><span class="conv-arrow">↔</span><div class="conv-field"><label>${item.b}</label><input type="number" id="conv-${item.id}-b" oninput="convSync('${item.id}','b')" placeholder="0"></div></div>`;
+  return `<div class="conv-row-title">${item.a} ↔ ${item.b}</div><div class="conv-fields">${inputHtml(`conv-${item.id}-a`,item.a)}<span class="conv-arrow" aria-hidden="true">↔</span>${inputHtml(`conv-${item.id}-b`,item.b)}</div><p class="conv-formula">${item.formula}</p>`;
 }
-
 function renderOptions(item){
-  let optHtml=item.options.map((o,i)=>`<option value="${i}">${o.label}</option>`).join('');
-  return `<div class="conv-fields"><div class="conv-field"><label>${item.a}</label><input type="number" id="conv-${item.id}-a" oninput="convSync('${item.id}','a')" placeholder="0"><select aria-label="${item.a} 변환 기준" class="conv-option" id="conv-${item.id}-opt" onchange="convSync('${item.id}','a')">${optHtml}</select></div><span class="conv-arrow">↔</span><div class="conv-field"><label>${item.b}</label><input type="number" id="conv-${item.id}-b" oninput="convSync('${item.id}','b')" placeholder="0"></div></div>`;
+  const optHtml=item.options.map((o,i)=>`<option value="${i}">${o.label}</option>`).join('');
+  return `<div class="conv-row-title">${item.a} ↔ ${item.b}</div><div class="conv-fields">${inputHtml(`conv-${item.id}-a`,item.a)}<span class="conv-arrow" aria-hidden="true">↔</span>${inputHtml(`conv-${item.id}-b`,item.b)}</div><select aria-label="${item.a} 변환 기준" class="conv-option" id="conv-${item.id}-opt" data-sync="${item.id}" data-side="a">${optHtml}</select><p class="conv-formula">${item.formula}</p>`;
 }
-
 function renderShoe(){
-  return `<div class="conv-row-title">👟 신발 사이즈</div><div class="conv-extra" style="margin-bottom:6px"><label><input type="radio" name="shoeGender" value="male" checked onchange="_shoeGender='male';convSync('shoe','kr')"> 남성</label><label><input type="radio" name="shoeGender" value="female" onchange="_shoeGender='female';convSync('shoe','kr')"> 여성</label></div><div class="conv-fields conv-triple"><div class="conv-field"><label>KR (mm)</label><input type="number" id="conv-shoe-kr" oninput="convSync('shoe','kr')" placeholder="270"></div><div class="conv-field"><label>US</label><input type="number" id="conv-shoe-us" oninput="convSync('shoe','us')" placeholder="8" step="0.5"></div><div class="conv-field"><label>EU</label><input type="number" id="conv-shoe-eu" oninput="convSync('shoe','eu')" placeholder="42" step="0.5"></div></div>`;
+  return `<div class="conv-row-title">👟 신발 사이즈</div><div class="conv-extra" style="margin-bottom:6px"><label><input type="radio" name="shoeGender" value="male" ${_shoeGender==='male'?'checked':''}> 남성</label><label><input type="radio" name="shoeGender" value="female" ${_shoeGender==='female'?'checked':''}> 여성</label></div><div class="conv-fields conv-triple">${inputHtml('conv-shoe-kr','KR (mm)','270')}${inputHtml('conv-shoe-us','US','9')}${inputHtml('conv-shoe-eu','EU','42')}</div><p class="conv-formula" id="conv-shoe-note">US는 남성 = 발 길이(cm) − 18, 여성 = 발 길이(cm) − 17 기준입니다. EU는 브랜드별로 반 치수 정도 다를 수 있습니다.</p>`;
 }
-
+function dataUnits(){
+  const binary=document.getElementById('conv-data-base')?.value==='1024';
+  return binary?{base:1024,labels:['MiB','GiB','TiB']}:{base:1000,labels:['MB','GB','TB']};
+}
 function renderData(){
-  return `<div class="conv-row-title">💾 데이터 용량</div><div class="conv-fields conv-triple"><div class="conv-field"><label>MB</label><input type="number" id="conv-data-mb" oninput="convSync('data','mb')" placeholder="0"></div><div class="conv-field"><label>GB</label><input type="number" id="conv-data-gb" oninput="convSync('data','gb')" placeholder="0"></div><div class="conv-field"><label>TB</label><input type="number" id="conv-data-tb" oninput="convSync('data','tb')" placeholder="0"></div></div>`;
+  const binary=document.getElementById('conv-data-base')?.value==='1024';
+  const u=binary?['MiB','GiB','TiB']:['MB','GB','TB'];
+  return `<div class="conv-row-title">💾 데이터 용량</div><div class="conv-fields conv-triple">${inputHtml('conv-data-mb',u[0])}${inputHtml('conv-data-gb',u[1])}${inputHtml('conv-data-tb',u[2])}</div><select aria-label="데이터 용량 기준" class="conv-option" id="conv-data-base"><option value="1000" ${binary?'':'selected'}>10진 (1 GB = 1,000 MB · 제조사·macOS 표기)</option><option value="1024" ${binary?'selected':''}>2진 (1 GiB = 1,024 MiB · Windows 표기)</option></select><p class="conv-formula" id="conv-data-formula">${binary?'1 TiB = 1,024 GiB = 1,048,576 MiB':'1 TB = 1,000 GB = 1,000,000 MB'}</p>`;
 }
-
 function renderDpi(item){
-  return `<span class="conv-row-title">DPI 기반 변환</span><div class="conv-fields"><div class="conv-field"><label>${item.a}</label><input type="number" id="conv-${item.id}-a" oninput="convSync('${item.id}','a')" placeholder="0"></div><span class="conv-arrow">↔</span><div class="conv-field"><label>${item.b}</label><input type="number" id="conv-${item.id}-b" oninput="convSync('${item.id}','b')" placeholder="0"></div></div><div class="conv-extra"><label>DPI:</label><input aria-label="DPI" type="number" id="conv-${item.id}-dpi" value="${item.dpiDefault}" oninput="convSync('${item.id}','a')"></div>`;
+  return `<div class="conv-row-title">px ↔ mm (해상도 기준)</div><div class="conv-fields">${inputHtml(`conv-${item.id}-a`,item.a)}<span class="conv-arrow" aria-hidden="true">↔</span>${inputHtml(`conv-${item.id}-b`,item.b)}</div><div class="conv-extra"><label for="conv-${item.id}-dpi">DPI</label><input type="text" inputmode="decimal" id="conv-${item.id}-dpi" value="${item.dpiDefault}" data-sync="${item.id}" data-side="a"></div><p class="conv-formula">mm = px × 25.4 ÷ DPI. 웹 CSS는 96dpi(1px ≈ 0.2646mm), 인쇄용 이미지는 보통 300dpi입니다.</p>`;
+}
+function renderPaper(){
+  const opts=PAPER.map((p,i)=>`<option value="${i}" ${p[0]==='A4'?'selected':''}>${p[0]}</option>`).join('');
+  return `<div class="conv-row-title">📄 용지 규격</div><select aria-label="용지 규격" class="conv-option" id="conv-paper-opt" style="margin-top:0">${opts}</select><p class="conv-formula" id="conv-paper-out" aria-live="polite"></p>`;
+}
+function syncPaper(){
+  const sel=document.getElementById('conv-paper-opt');if(!sel)return;
+  const [name,w,h]=PAPER[Number(sel.value)];
+  const inch=v=>fmtOut(v/25.4,2);
+  const px=(v,dpi)=>Math.round(v/25.4*dpi).toLocaleString('ko-KR');
+  document.getElementById('conv-paper-out').textContent=`${name}: ${fmtOut(w,1)} × ${fmtOut(h,1)} mm = ${inch(w)} × ${inch(h)} inch · 96dpi ${px(w,96)} × ${px(h,96)} px · 300dpi ${px(w,300)} × ${px(h,300)} px`;
 }
 
 function convSync(id,side){
   if(_unitSyncing)return;_unitSyncing=true;
   try{
-    if(id==='shoe'){syncShoe(side)}else if(id==='data'){syncData(side)}
-    else{const item=findItem(id);if(!item){_unitSyncing=false;return}
+    if(id==='shoe'){syncShoe(side)}else if(id==='data'){syncData(side)}else if(id==='paper'){syncPaper()}
+    else{const item=findItem(id);if(!item)return;
       const elA=document.getElementById(`conv-${id}-a`);const elB=document.getElementById(`conv-${id}-b`);
       let factor=item.factor||1;
       if(item.type==='options'){const sel=document.getElementById(`conv-${id}-opt`);factor=item.options[parseInt(sel.value)].factor}
-      if(item.type==='dpi'){const dpiEl=document.getElementById(`conv-${id}-dpi`);const dpi=parseFloat(dpiEl.value)||item.dpiDefault;factor=25.4/dpi}
-      if(side==='a'){const v=parseFloat(elA.value);elB.value=isNaN(v)?'':roundDec(item.toB?item.toB(v):v*factor,item.dec)}
-      else{const v=parseFloat(elB.value);elA.value=isNaN(v)?'':roundDec(item.toA?item.toA(v):v/factor,item.dec)}
+      if(item.type==='dpi'){const dpiEl=document.getElementById(`conv-${id}-dpi`);const dpi=readField(dpiEl);if(!(dpi>0)){dpiEl.setAttribute('aria-invalid','true');elB.value='';return}factor=25.4/dpi}
+      if(side==='a'){const v=readField(elA);elB.value=v===null||Number.isNaN(v)?'':fmtOut(item.toB?item.toB(v):v*factor,item.dec)}
+      else{const v=readField(elB);elA.value=v===null||Number.isNaN(v)?'':fmtOut(item.toA?item.toA(v):v/factor,item.dec)}
     }
-    updateReportBox(id);
   }finally{_unitSyncing=false}
 }
 
+function nearestShoe(index,value){
+  const entries=Object.entries(SHOE_TABLE);
+  return entries.reduce((a,b)=>Math.abs((index===null?Number(b[0]):b[1][index])-value)<Math.abs((index===null?Number(a[0]):a[1][index])-value)?b:a);
+}
 function syncShoe(side){
   const krEl=document.getElementById('conv-shoe-kr');const usEl=document.getElementById('conv-shoe-us');const euEl=document.getElementById('conv-shoe-eu');
-  const gIdx=_shoeGender==='male'?0:1;const entries=Object.entries(SHOE_TABLE);
-  if(side==='kr'){const kr=parseFloat(krEl.value);if(isNaN(kr)){usEl.value='';euEl.value='';return}let best=entries.reduce((a,b)=>Math.abs(b[0]-kr)<Math.abs(a[0]-kr)?b:a);usEl.value=best[1][gIdx];euEl.value=best[1][2]}
-  else if(side==='us'){const us=parseFloat(usEl.value);if(isNaN(us)){krEl.value='';euEl.value='';return}let best=entries.reduce((a,b)=>Math.abs(b[1][gIdx]-us)<Math.abs(a[1][gIdx]-us)?b:a);krEl.value=best[0];euEl.value=best[1][2]}
-  else{const eu=parseFloat(euEl.value);if(isNaN(eu)){krEl.value='';usEl.value='';return}let best=entries.reduce((a,b)=>Math.abs(b[1][2]-eu)<Math.abs(a[1][2]-eu)?b:a);krEl.value=best[0];usEl.value=best[1][gIdx]}
+  const note=document.getElementById('conv-shoe-note');
+  const gIdx=_shoeGender==='male'?0:1;
+  const els={kr:krEl,us:usEl,eu:euEl};
+  const v=readField(els[side]);
+  if(v===null||Number.isNaN(v)){Object.entries(els).forEach(([k,el])=>{if(k!==side)el.value=''});return}
+  const best=side==='kr'?nearestShoe(null,v):side==='us'?nearestShoe(gIdx,v):nearestShoe(2,v);
+  if(side!=='kr')krEl.value=best[0];
+  if(side!=='us')usEl.value=best[1][gIdx];
+  if(side!=='eu')euEl.value=best[1][2];
+  const outOfRange=side==='kr'&&(v<217.5||v>302.5);
+  note.textContent=outOfRange
+    ?'표 범위(220~300mm) 밖이라 가장 가까운 사이즈를 표시했습니다. 브랜드 사이즈표를 확인하세요.'
+    :`${_shoeGender==='male'?'남성':'여성'} ${best[0]}mm = US ${best[1][gIdx]} = EU ${best[1][2]} · US는 ${_shoeGender==='male'?'cm − 18':'cm − 17'} 기준, EU는 브랜드별로 반 치수 정도 다를 수 있습니다.`;
 }
 
 function syncData(side){
-  const mbEl=document.getElementById('conv-data-mb');const gbEl=document.getElementById('conv-data-gb');const tbEl=document.getElementById('conv-data-tb');
-  if(side==='mb'){const v=parseFloat(mbEl.value);if(isNaN(v)){gbEl.value='';tbEl.value='';return}gbEl.value=roundDec(v/1024,4);tbEl.value=roundDec(v/1048576,6)}
-  else if(side==='gb'){const v=parseFloat(gbEl.value);if(isNaN(v)){mbEl.value='';tbEl.value='';return}mbEl.value=roundDec(v*1024,2);tbEl.value=roundDec(v/1024,6)}
-  else{const v=parseFloat(tbEl.value);if(isNaN(v)){mbEl.value='';gbEl.value='';return}mbEl.value=roundDec(v*1048576,2);gbEl.value=roundDec(v*1024,4)}
+  const {base}=dataUnits();
+  const els={mb:document.getElementById('conv-data-mb'),gb:document.getElementById('conv-data-gb'),tb:document.getElementById('conv-data-tb')};
+  const scale={mb:1,gb:base,tb:base*base};
+  const v=readField(els[side]);
+  if(v===null||Number.isNaN(v)){Object.entries(els).forEach(([k,el])=>{if(k!==side)el.value=''});return}
+  const mb=v*scale[side];
+  for(const k of Object.keys(els)){if(k!==side)els[k].value=fmtOut(mb/scale[k],k==='mb'?2:k==='gb'?4:6)}
 }
+
+document.getElementById('unitConvArea').addEventListener('input',e=>{
+  const t=e.target;if(!t.id)return;
+  if(t.dataset.sync){convSync(t.dataset.sync,t.dataset.side);return}
+  const m=t.id.match(/^conv-(.+)-(a|b|kr|us|eu|mb|gb|tb)$/);
+  if(m)convSync(m[1],m[2]);
+});
+document.getElementById('unitConvArea').addEventListener('change',e=>{
+  const t=e.target;
+  if(t.name==='shoeGender'){_shoeGender=t.value;convSync('shoe','kr');return}
+  if(t.id==='conv-data-base'){
+    const mbBefore=document.getElementById('conv-data-mb').value;
+    const row=t.closest('.conv-row');row.innerHTML=renderData();
+    document.getElementById('conv-data-mb').value=mbBefore;convSync('data','mb');return;
+  }
+  if(t.id==='conv-paper-opt'){syncPaper();return}
+  if(t.dataset.sync)convSync(t.dataset.sync,t.dataset.side);
+});
 
 function clearUnitConv(){
-  document.querySelectorAll('#unitConvArea input[type="number"]').forEach(el=>el.value='');
-  document.getElementById('reportBox').classList.remove('show');
+  document.querySelectorAll('#unitConvArea input[type="text"]').forEach(el=>{if(!el.id.endsWith('-dpi')){el.value='';el.removeAttribute('aria-invalid')}});
+  const note=document.getElementById('conv-shoe-note');if(note)note.textContent='US는 남성 = 발 길이(cm) − 18, 여성 = 발 길이(cm) − 17 기준입니다.';
 }
 
-function updateReportBox(id) {
-  const box = document.getElementById('reportBox');
-  let text = '';
-  
-  if (id === 'pyeong') {
-    const a = parseFloat(document.getElementById('conv-pyeong-a').value);
-    const b = parseFloat(document.getElementById('conv-pyeong-b').value);
-    if(isNaN(a) || isNaN(b)) { box.classList.remove('show'); return; }
-    text = `🏡 <b>${a}평</b>은 약 <b>${b}㎡</b> 입니다.<br/>주택 면적 계산 시 가장 대표적으로 사용되는 변환이며, 보통 전용 84㎡를(약 33~34평) '평민평형' 혹은 '국민평형'이라고 부릅니다.`;
-  } else if (id === 'geun') {
-    const a = parseFloat(document.getElementById('conv-geun-a').value);
-    const b = parseFloat(document.getElementById('conv-geun-b').value);
-    const sel = document.getElementById('conv-geun-opt');
-    if(!sel) return;
-    const isMeat = sel.value === "0";
-    if(isNaN(a) || isNaN(b)) { box.classList.remove('show'); return; }
-    text = `🛒 ${isMeat ? '고기류' : '채소류'} <b>${a}근</b>은 <b>${b}g</b>에 해당합니다.<br/>고기 1근(600g)은 성인 기준으로 보통 약 3인분 정도의 고기 양입니다.`;
-  } else if (id === 'shoe') {
-    const kr = parseFloat(document.getElementById('conv-shoe-kr').value);
-    const us = document.getElementById('conv-shoe-us').value;
-    const eu = document.getElementById('conv-shoe-eu').value;
-    if(isNaN(kr) || !us || !eu) { box.classList.remove('show'); return; }
-    const gText = _shoeGender === 'male' ? '남성' : '여성';
-    text = `👟 <b>${gText} 한국 사이즈 ${kr}mm</b>는 미국(US) <b>${us}</b>, 유럽(EU) <b>${eu}</b>와 유사한 크기입니다.<br/>(신발 제조사, 발볼 디자인에 따라 실제 착화감은 다를 수 있습니다.)`;
-  } else if (id === 'mile') {
-     const a = parseFloat(document.getElementById('conv-mile-a').value);
-     const b = parseFloat(document.getElementById('conv-mile-b').value);
-     if(isNaN(a) || isNaN(b)) { box.classList.remove('show'); return; }
-     text = `🚗 약 <b>${a} 마일(ml)</b> 주행거리는 <b>${b} 킬로미터(km)</b>로 변환됩니다.<br/>미국이나 영국의 렌터카 주행 및 속도제한 표지판은 대부분 마일 단위로 표시됩니다.`;
-  } else if (id === 'data') {
-     const mb = parseFloat(document.getElementById('conv-data-mb').value);
-     const gb = parseFloat(document.getElementById('conv-data-gb').value);
-     if(isNaN(mb) || isNaN(gb)) { box.classList.remove('show'); return; }
-     text = `💾 용량 <b>${mb} MB</b>는 약 <b>${gb} GB</b> 입니다.<br/>파일의 정확한 용량 계산 시 제조사 표기(1,000배수)와 운영체제 인식(1,024배수)에 미세한 차이가 발생할 수 있습니다.`;
-  } else if (id === 'temp') {
-     const a = parseFloat(document.getElementById('conv-temp-a').value);
-     const b = parseFloat(document.getElementById('conv-temp-b').value);
-     if(isNaN(a) || isNaN(b)) { box.classList.remove('show'); return; }
-     text = `🌡 섭씨 <b>${a}℃</b>는 화씨 <b>${b}℉</b>와 통용되는 온도입니다.<br/>보통 미국이나 바하마 등 해외직구/날씨 확인 시 화씨 데이터를 입력하여 섭씨로 확인할 수 있습니다.`;
-  } else if (id === 'lb') {
-     const a = parseFloat(document.getElementById('conv-lb-a').value);
-     const b = parseFloat(document.getElementById('conv-lb-b').value);
-     if(isNaN(a) || isNaN(b)) { box.classList.remove('show'); return; }
-     text = `📦 제품 중량 <b>${a} 파운드(lb)</b>는 약 <b>${b} kg</b> 이며, 해외 직구 시 배송대행지 무게 요금 산정의 핵심 기준이 됩니다.`;
-  } else {
-     box.classList.remove('show');
-     return;
-  }
-  
-  if (text) {
-    box.innerHTML = text;
-    box.classList.add('show');
-  } else {
-    box.classList.remove('show');
-  }
+function copyText(text){
+  if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(text).catch(()=>legacyCopy(text));
+  return legacyCopy(text);
 }
-
+function legacyCopy(text){
+  return new Promise((resolve,reject)=>{
+    const helper=document.createElement('textarea');helper.value=text;helper.setAttribute('readonly','');
+    helper.style.position='fixed';helper.style.top='0';helper.style.opacity='0';document.body.appendChild(helper);helper.select();
+    let ok=false;try{ok=document.execCommand('copy')}catch(e){ok=false}
+    helper.remove();ok?resolve():reject(new Error('copy failed'));
+  });
+}
 function copyUnitResult(){
-  const cat=UNIT_DATA[currentUnitCat];let lines=[];
-  for(const item of cat.items){
-    if(item.type==='shoe'){const kr=document.getElementById('conv-shoe-kr')?.value;const us=document.getElementById('conv-shoe-us')?.value;const eu=document.getElementById('conv-shoe-eu')?.value;if(kr||us||eu)lines.push(`신발: KR ${kr||'-'} = US ${us||'-'} = EU ${eu||'-'}`)}
-    else if(item.type==='data'){const mb=document.getElementById('conv-data-mb')?.value;const gb=document.getElementById('conv-data-gb')?.value;const tb=document.getElementById('conv-data-tb')?.value;if(mb||gb||tb)lines.push(`${mb||0} MB = ${gb||0} GB = ${tb||0} TB`)}
+  const lines=[];
+  for(const item of visibleItems()){
+    if(item.type==='shoe'){const kr=document.getElementById('conv-shoe-kr')?.value;const us=document.getElementById('conv-shoe-us')?.value;const eu=document.getElementById('conv-shoe-eu')?.value;if(kr&&us&&eu)lines.push(`신발(${_shoeGender==='male'?'남성':'여성'}): KR ${kr}mm = US ${us} = EU ${eu}`)}
+    else if(item.type==='data'){const u=dataUnits().labels;const mb=document.getElementById('conv-data-mb')?.value;const gb=document.getElementById('conv-data-gb')?.value;const tb=document.getElementById('conv-data-tb')?.value;if(mb&&gb&&tb)lines.push(`${mb} ${u[0]} = ${gb} ${u[1]} = ${tb} ${u[2]}`)}
+    else if(item.type==='paper'){const t=document.getElementById('conv-paper-out')?.textContent;if(t)lines.push(t)}
     else{const a=document.getElementById(`conv-${item.id}-a`)?.value;const b=document.getElementById(`conv-${item.id}-b`)?.value;if(a&&b)lines.push(`${a} ${item.a} = ${b} ${item.b}`)}
   }
   if(lines.length===0){showToast('변환할 값을 입력하세요');return}
-  navigator.clipboard.writeText(lines.join('\n')).then(()=>showToast('결과가 복사되었습니다'));
+  copyText(lines.join('\n')).then(()=>showToast('결과를 복사했습니다'),()=>showToast('복사하지 못했습니다. 값을 직접 선택해 복사하세요.'));
 }
 
-renderUnitCats();renderConverters();
+renderConverters();
 </script>
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 <script src="/special-chars/theme-toggle.js"></script>
