@@ -11,9 +11,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>✂️ 이미지 배경(누끼) 제거 도구 — 티모집사</title>
-<meta name="description" content="AI로 이미지 배경을 자동 제거(누끼). 선택한 이미지를 서버에 업로드하지 않고 브라우저에서 처리합니다. 이미지당 최대 10MB.">
+<meta name="description" content="AI로 사진 배경을 지우고 투명 PNG나 흰색·지정 색 배경의 JPG로 저장합니다. 선택한 이미지는 서버에 업로드하지 않고 브라우저에서 처리합니다. 이미지당 최대 10MB.">
 <meta property="og:title" content="✂️ 이미지 배경(누끼) 제거 도구 — 티모집사">
-<meta property="og:description" content="AI 이미지 배경(누끼) 제거. 선택한 이미지는 업로드하지 않고 브라우저에서 처리하며 이미지당 최대 10MB를 지원합니다.">
+<meta property="og:description" content="AI 이미지 배경(누끼) 제거. 투명 PNG, 흰색·지정 색 배경 JPG 저장과 클립보드 복사를 지원하며 이미지는 브라우저에서만 처리합니다.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/bg-remover/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
@@ -27,16 +27,20 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
 .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
 .body{padding:16px;display:flex;flex-direction:column;gap:14px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+[hidden]{display:none !important}
 
 /* 드롭존 */
-.dropzone{border:2.5px dashed var(--border);border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .3s;background:var(--bg-guide);position:relative}
+.dropzone{border:2.5px dashed var(--border);border-radius:12px;padding:36px 20px;text-align:center;cursor:pointer;transition:all .3s;background:var(--bg-guide);position:relative}
 .dropzone:hover,.dropzone.dragover{border-color:var(--accent);background:var(--accent-bg)}
-.dropzone:focus-within,.action-btn:focus-visible,.compare-tab:focus-visible{outline:3px solid #f7c948;outline-offset:3px}
+.dropzone:focus-within{outline:3px solid var(--focus-ring);outline-offset:3px}
 .dropzone-icon{font-size:48px;margin-bottom:10px;display:block}
 .dropzone-text{font-size:14px;color:var(--text-info);font-weight:500;line-height:1.6}
 .dropzone-text strong{color:var(--accent-text)}
-.dropzone-sub{font-size:11px;color:var(--text-muted);margin-top:6px}
+.dropzone-sub{font-size:12px;color:var(--text-muted);margin-top:6px}
 .dropzone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.file-msg{padding:11px 13px;border:1px solid var(--status-red-text);border-radius:10px;background:var(--bg-guide);color:var(--text-primary);font-size:13px;line-height:1.6}
+.file-msg[hidden]{display:none}
 
 /* 프로그레스 */
 .progress-wrap{display:none;text-align:center;padding:20px 0}
@@ -45,76 +49,91 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .progress-bar{height:100%;background:var(--accent);border-radius:4px;transition:width .3s;width:0}
 .progress-text{font-size:13px;color:var(--text-info);font-weight:600}
 .progress-spinner{display:inline-block;width:20px;height:20px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;vertical-align:middle;margin-right:8px}
+.progress-sub{font-size:12px;color:var(--text-muted);margin-top:4px;line-height:1.5}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* 결과 영역 */
-.result-area{display:none}
-.result-area.active{display:block}
+.result-area{display:none;flex-direction:column;gap:12px}
+.result-area.active{display:flex}
 
-/* 비교 뷰 */
-.compare-tabs{display:flex;gap:4px;background:var(--bg-bar);border-radius:10px;padding:4px;margin-bottom:10px}
-.compare-tab{flex:1;padding:9px 6px;border:none;border-radius:8px;background:transparent;color:var(--text-info);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;text-align:center}
-.compare-tab.active{background:var(--accent);color:var(--text-on-accent);box-shadow:0 2px 8px rgba(83,52,131,.3)}
-.compare-tab:hover:not(.active){background:var(--bg-btn)}
+/* 보기 전환 */
+.compare-tabs{display:flex;gap:4px;background:var(--bg-bar);border-radius:10px;padding:4px}
+.compare-tab{flex:1;min-height:44px;padding:9px 6px;border:none;border-radius:8px;background:transparent;color:var(--text-info);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;text-align:center}
+.compare-tab[aria-pressed="true"]{background:var(--accent);color:var(--text-on-accent);box-shadow:var(--shadow-accent)}
+.compare-tab:hover:not([aria-pressed="true"]){background:var(--bg-btn)}
 
 .preview-box{background:var(--bg-guide);border:1px solid var(--border);border-radius:10px;overflow:hidden;position:relative;min-height:200px;display:flex;align-items:center;justify-content:center}
-/* 체커보드 투명 배경 표시 */
-.preview-box.transparent{background-image:repeating-conic-gradient(var(--bg-btn) 0% 25%, transparent 0% 50%);background-size:20px 20px}
+/* 체커보드: 투명 영역 표시 */
+.checker{background-color:var(--bg-app);background-image:repeating-conic-gradient(var(--bg-btn) 0% 25%, transparent 0% 50%);background-size:20px 20px}
 .preview-box img{max-width:100%;max-height:450px;display:block;margin:0 auto}
 
-/* 슬라이더 비교 */
-.slider-wrap{position:relative;overflow:hidden;border-radius:10px;border:1px solid var(--border);touch-action:none}
-.slider-wrap img{display:block;width:100%;max-height:450px;object-fit:contain;pointer-events:none}
-.slider-overlay{position:absolute;top:0;left:0;bottom:0;overflow:hidden}
-.slider-overlay img{display:block;height:100%;max-height:450px;object-fit:contain;pointer-events:none}
-.slider-handle{position:absolute;top:0;bottom:0;width:4px;background:var(--accent);cursor:ew-resize;z-index:5}
-.slider-handle::after{content:'⟷';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--accent);color:var(--text-on-accent);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+/* 슬라이더 비교: 왼쪽 원본, 오른쪽 결과. 두 이미지는 같은 상자에 그리고 clip-path로만 잘라낸다. */
+.slider-wrap{--split:50%;position:relative;overflow:hidden;border-radius:10px;border:1px solid var(--border);touch-action:pan-y;cursor:ew-resize;user-select:none;-webkit-user-select:none}
+.slider-wrap:focus-within{outline:3px solid var(--focus-ring);outline-offset:3px}
+.slider-wrap img{display:block;width:100%;max-height:450px;object-fit:contain;pointer-events:none;-webkit-user-drag:none}
+.slider-wrap .slider-original{clip-path:inset(0 calc(100% - var(--split)) 0 0)}
+.slider-wrap .slider-result{position:absolute;inset:0;height:100%;max-height:none;clip-path:inset(0 0 0 var(--split))}
+.slider-handle{position:absolute;top:0;bottom:0;left:var(--split);width:4px;transform:translateX(-50%);background:var(--accent);z-index:2;pointer-events:none}
+.slider-handle::after{content:'⟷';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--accent);color:var(--text-on-accent);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:var(--shadow-md)}
+.slider-label{position:absolute;top:8px;z-index:3;padding:3px 8px;border-radius:6px;background:rgba(15,23,42,.72);color:#fff;font-size:12px;font-weight:600;pointer-events:none}
+.slider-label.left{left:8px}
+.slider-label.right{right:8px}
+
+/* 저장 옵션 */
+.option-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--bg-bar);border-radius:10px;padding:10px 12px}
+.option-label{font-size:14px;font-weight:700;color:var(--text-info);min-width:64px}
+.chip-group{display:flex;gap:6px;flex-wrap:wrap;flex:1}
+.chip{min-height:44px;padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg-app);color:var(--text-secondary);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--text-on-accent)}
+.color-input{width:44px;height:44px;border:1px solid var(--border);border-radius:8px;padding:2px;background:var(--bg-app);cursor:pointer}
+.option-note{font-size:13px;color:var(--text-info);line-height:1.6}
+.option-note:empty{display:none}
+.result-meta{font-size:13px;color:var(--text-info);line-height:1.6;padding:0 2px}
 
 /* 버튼 그룹 */
 .btn-group{display:flex;gap:8px}
-.action-btn{flex:1;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;text-align:center}
-.btn-download{background:var(--bg-header);color:var(--text-on-accent)}
-.btn-download:hover{opacity:.85}
+.action-btn{flex:1;min-height:44px;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;text-align:center}
+.action-btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-download{background:var(--accent);color:var(--text-on-accent)}
+.btn-download:hover{background:var(--accent-hover)}
+.btn-copy{background:var(--bg-btn);color:var(--text-primary);border:1px solid var(--border)}
 .btn-reset{background:var(--bg-btn);color:var(--text-secondary);border:1px solid var(--border)}
-.btn-reset:hover{background:var(--bg-btn-hover)}
+.btn-reset:hover,.btn-copy:hover:not(:disabled){background:var(--bg-btn-hover)}
 
 /* 정보 뱃지 */
-.info-badge{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--accent-bg);border:1px solid var(--accent);border-radius:10px;font-size:12px;color:var(--text-info)}
+.info-badge{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--accent-bg);border:1px solid var(--accent);border-radius:10px;font-size:13px;color:var(--text-info);line-height:1.55}
 .info-badge .badge-icon{font-size:16px;flex-shrink:0}
 .info-badge strong{color:var(--accent-text)}
+.info-badge.data-warning{border-color:var(--status-orange-text)}
+.info-badge.data-warning strong{color:var(--status-orange-text)}
 
-  /* 동적 리포트 & 가이드 표준 CSS */
-  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  .report-box { margin-top: 20px; padding: 20px; background: var(--bg-bar); border: 1px solid var(--border); border-radius: 12px; }
-  .report-box h3 { font-size: 15px; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .report-box p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 8px; }
-  .report-box .highlight { color:var(--accent-text); font-weight: 600; }
-  .guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
-  .guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
-  .guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .guide summary { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; line-height: 1.4; }
-  .guide summary::-webkit-details-marker { display: none; }
-  .guide summary::after { content: '▼'; font-size: 10px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
-  .guide[open] summary::after { transform: rotate(180deg); }
-  .guide-content { padding: 0 16px 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
-  .guide-content h3 { font-size: 14px; color: var(--text-primary); margin: 12px 0 8px; }
-  .guide-content p { margin-bottom: 12px; }
-  .guide-content ul, .guide-content ol { padding-left: 20px; margin-bottom: 12px; }
-  .guide-content li { margin-bottom: 4px; }
-  .related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
-  .related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; }
-  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
-  .tag { font-size: 12px; background: var(--bg-btn); color: var(--text-secondary); padding: 6px 12px; border-radius: 16px; text-decoration: none; border: 1px solid var(--border); transition: all 0.2s; }
-  .tag:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+/* 가이드 */
+.guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
+.guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
+.guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.guide summary { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; line-height: 1.4; }
+.guide summary::-webkit-details-marker { display: none; }
+.guide summary::after { content: '▼'; font-size: 10px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
+.guide[open] summary::after { transform: rotate(180deg); }
+.guide-content { padding: 0 16px 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.guide-content p { margin-bottom: 12px; }
+.guide-content ul, .guide-content ol { padding-left: 20px; margin-bottom: 12px; }
+.guide-content li { margin-bottom: 4px; }
+.related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+.related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag { font-size: 12px; background: var(--bg-btn); color: var(--text-secondary); padding: 6px 12px; border-radius: 16px; text-decoration: none; border: 1px solid var(--border); transition: all 0.2s; }
+.tag:hover { background: var(--accent); color: var(--text-on-accent); border-color: var(--accent); }
 
 .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--text-info)}
 .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
 .footer a:hover{color:var(--text-secondary)}
 
-.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(83,52,131,.4);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:var(--text-on-accent);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 @media(max-width:640px){
 .btn-group{flex-direction:column}
+.option-label{min-width:0;width:100%}
 }
 </style>
 <link rel="stylesheet" href="/special-chars/tool-shell.css">
@@ -135,34 +154,35 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 
     <!-- 업로드 영역 -->
     <div class="dropzone" id="dropzone">
-      <input aria-label="배경을 제거할 이미지 파일" type="file" id="fileInput" accept="image/jpeg,image/png,image/webp">
+      <input aria-label="배경을 제거할 이미지 파일" aria-describedby="dropzoneHelp" type="file" id="fileInput" accept="image/jpeg,image/png,image/webp">
       <span class="dropzone-icon">🖼️</span>
-      <div class="dropzone-text">이미지를 <strong>드래그하거나 클릭</strong>하여 업로드</div>
-      <div class="dropzone-sub">JPG, PNG, WebP 지원 · 최대 10MB</div>
+      <div class="dropzone-text">이미지를 <strong>드래그하거나 클릭</strong>해 선택하세요</div>
+      <div class="dropzone-sub" id="dropzoneHelp">JPG, PNG, WebP · 최대 10MB · 복사한 이미지는 Ctrl+V(⌘V)로 붙여넣기</div>
     </div>
-    <div class="info-badge" id="dataWarning" style="display:none;border-color:#e67e22;background:rgba(230,126,34,.08)">
+    <div class="file-msg" id="fileMsg" role="alert" hidden></div>
+    <div class="info-badge data-warning" id="dataWarning" hidden>
       <span class="badge-icon">📱</span>
-      <span>첫 사용 시 이 사이트에서 AI 모델과 실행 파일(합계 약 55MB)을 받습니다. <strong style="color:#e67e22">Wi-Fi 환경을 권장</strong>합니다.</span>
+      <span>첫 사용 시 이 사이트에서 AI 모델과 실행 파일(합계 약 55MB)을 받습니다. <strong>Wi-Fi 환경을 권장</strong>합니다.</span>
     </div>
 
     <!-- 프로그레스 -->
     <div class="progress-wrap" id="progressWrap" role="status" aria-live="polite">
-      <div class="progress-text" id="progressText"><span class="progress-spinner"></span>AI 모델 로딩 중...</div>
-      <div class="progress-bar-bg"><div class="progress-bar" id="progressBar"></div></div>
-      <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="progressSub">첫 실행 시 자체 호스팅 AI 파일(약 55MB)을 받는 데 시간이 걸릴 수 있습니다</div>
-      <button class="action-btn btn-reset" id="retryBtn" style="display:none;margin:12px auto 0" onclick="retryProcessing()">다시 시도</button>
+      <div class="progress-text" id="progressText"><span class="progress-spinner" aria-hidden="true"></span><span id="progressLabel">AI 모델 준비 중...</span></div>
+      <div class="progress-bar-bg" role="progressbar" id="progressMeter" aria-label="처리 진행률" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar" id="progressBar"></div></div>
+      <div class="progress-sub" id="progressSub">첫 실행 시 자체 호스팅 AI 파일(약 55MB)을 받는 데 시간이 걸릴 수 있습니다</div>
+      <button type="button" class="action-btn btn-reset" id="retryBtn" style="display:none;margin:12px auto 0" onclick="retryProcessing()">다시 시도</button>
     </div>
 
     <!-- 결과 영역 -->
     <div class="result-area" id="resultArea">
-      <div class="compare-tabs">
-        <button class="compare-tab active" onclick="setView('result')">✂️ 결과</button>
-        <button class="compare-tab" onclick="setView('original')">📷 원본</button>
-        <button class="compare-tab" onclick="setView('compare')">🔀 비교</button>
+      <div class="compare-tabs" role="group" aria-label="보기 전환">
+        <button type="button" class="compare-tab" data-view="result" aria-pressed="true" onclick="setView('result')">✂️ 결과</button>
+        <button type="button" class="compare-tab" data-view="original" aria-pressed="false" onclick="setView('original')">📷 원본</button>
+        <button type="button" class="compare-tab" data-view="compare" aria-pressed="false" onclick="setView('compare')">🔀 비교</button>
       </div>
 
       <!-- 결과 이미지 -->
-      <div class="preview-box transparent" id="resultView">
+      <div class="preview-box checker" id="resultView">
         <img id="resultImg" alt="배경 제거 결과">
       </div>
 
@@ -172,34 +192,51 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       </div>
 
       <!-- 슬라이더 비교 -->
-      <div class="slider-wrap" id="compareView" style="display:none">
-        <img id="compareAfter" alt="배경 제거 결과">
-        <div class="slider-overlay" id="sliderOverlay">
-          <img id="compareBefore" alt="원본">
-        </div>
-        <div class="slider-handle" id="sliderHandle"></div>
+      <div class="slider-wrap checker" id="compareView" style="display:none">
+        <img id="compareBefore" class="slider-original" alt="원본">
+        <img id="compareAfter" class="slider-result" alt="배경 제거 결과">
+        <div class="slider-handle" aria-hidden="true"></div>
+        <span class="slider-label left" aria-hidden="true">원본</span>
+        <span class="slider-label right" aria-hidden="true">결과</span>
+        <input type="range" class="sr-only" id="compareRange" min="0" max="100" step="1" value="50" aria-label="비교 경계 위치 (왼쪽 원본, 오른쪽 결과)">
       </div>
 
-      <div style="height:10px"></div>
+      <div class="option-row">
+        <span class="option-label" id="bgLabel">배경</span>
+        <div class="chip-group" role="group" aria-labelledby="bgLabel">
+          <button type="button" class="chip" data-bg="transparent" aria-pressed="true">투명</button>
+          <button type="button" class="chip" data-bg="#ffffff" aria-pressed="false">흰색</button>
+          <button type="button" class="chip" data-bg="custom" aria-pressed="false">직접 선택</button>
+          <input type="color" class="color-input" id="bgColor" value="#4f7ddb" aria-label="직접 선택할 배경 색상">
+        </div>
+      </div>
+      <div class="option-row">
+        <span class="option-label" id="formatLabel">저장 형식</span>
+        <div class="chip-group" role="group" aria-labelledby="formatLabel">
+          <button type="button" class="chip" data-format="image/png" aria-pressed="true">PNG</button>
+          <button type="button" class="chip" data-format="image/jpeg" aria-pressed="false">JPG</button>
+        </div>
+      </div>
+      <p class="option-note" id="optionNote" aria-live="polite"></p>
 
       <div class="btn-group">
-        <button class="action-btn btn-download" onclick="downloadResult()">💾 PNG 다운로드</button>
-        <button class="action-btn btn-reset" onclick="resetAll()">🔄 다른 이미지</button>
+        <button type="button" class="action-btn btn-download" id="downloadBtn" onclick="downloadResult()">💾 PNG 다운로드</button>
+        <button type="button" class="action-btn btn-copy" id="copyBtn" aria-describedby="copyNote" onclick="copyResult()">📋 이미지 복사</button>
+        <button type="button" class="action-btn btn-reset" onclick="resetAll()">🔄 다른 이미지</button>
       </div>
-
-      <!-- 동적 AI 누끼 분석 리포트 -->
-      <div id="reportContainer" class="report-box" role="status" aria-live="polite" style="display:none; animation: fadeIn 0.5s ease;"></div>
+      <p class="result-meta" id="copyNote"></p>
+      <p class="result-meta" id="resultMeta"></p>
     </div>
   </div>
 
   <section class="guide-section">
-    <h2>💡 무료 AI 이미지 배경 제거 가이드 (이미지당 최대 10MB)</h2>
-    
+    <h2>💡 이미지 배경 제거 사용 가이드 (이미지당 최대 10MB)</h2>
+
     <details class="guide" open>
-      <summary>이미지 배경 제거(누끼 따기) 란 정확히 무엇인가요?</summary>
+      <summary>배경 제거(누끼 따기)는 어떻게 이루어지나요?</summary>
       <div class="guide-content">
-        <p>전통적인 그래픽 디자인(Photoshop 등)에서는 전문가가 마우스 패스로 이미지의 외곽선을 한 땀 한 땀 따야 했습니다. 하지만 본 도구는 최첨단 <b>AI 딥러닝 비전 모델(.onnx 형태)</b>을 통해 사진에서 '주요 피사체(인물, 동물, 핵심 포커스 사물)'와 '불필요한 뒷배경(Background)'을 단 몇 초 만에 자동으로 분리해 내는 기술입니다.</p>
-        <p>제거된 배경은 '투명 픽셀(Alpha=0)' 처리되므로, 유튜브 썸네일, 쇼핑몰 상세 페이지 모델샷, 웹디자인 로고 소스 제작 시 필수적인 기능입니다.</p>
+        <p>예전에는 포토샵 같은 편집 프로그램에서 펜 도구로 피사체 외곽선을 직접 따야 했습니다. 이 도구는 이미지 분할용 AI 모델(ISNet 계열, 8비트 양자화 버전)을 브라우저에서 실행해 픽셀마다 '주요 피사체일 가능성'을 계산하고, 그 값을 투명도(알파) 마스크로 바꿔 배경을 지웁니다.</p>
+        <p>결과는 배경이 투명한 PNG로 저장하거나, 흰색·원하는 색 배경을 채워 PNG 또는 JPG로 저장할 수 있습니다. 쇼핑몰 상품 사진, 발표 자료와 문서에 넣을 인물·제품 이미지, 썸네일 소스를 만들 때 쓰기 좋습니다. '이미지 복사'를 누르면 PNG 이미지가 클립보드에 담겨 파워포인트나 메신저에 바로 붙여 넣을 수 있습니다(브라우저가 이미지 복사를 지원하는 경우).</p>
       </div>
     </details>
 
@@ -207,30 +244,47 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
       <summary>이미지는 어떻게 처리되나요?</summary>
       <div class="guide-content">
         <p>배경 추론은 WebAssembly 기반 AI 모델을 사용해 브라우저 안에서 실행되며, 애플리케이션은 선택한 이미지를 처리 서버로 업로드하지 않습니다.</p>
-        <p>첫 사용 시 이 사이트에서 고정 버전 AI 코드, 44.3MB 양자화 모델과 브라우저에 맞는 약 10MB WASM 실행 파일을 받습니다. 제3자 CDN 요청은 없고 선택한 이미지 데이터도 전송하지 않습니다. 브라우저가 파일을 캐시할 수 있지만 저장 공간 정리나 캐시 정책에 따라 다시 받을 수 있습니다. 브라우저 확장 프로그램이나 기기 자체까지 포함한 절대적인 보안을 보장하는 것은 아니므로 매우 민감한 이미지는 신뢰할 수 있는 환경에서 처리하세요.</p>
+        <p>첫 사용 시 이 사이트에서 고정 버전 AI 코드, 44.3MB 양자화 모델과 브라우저에 맞는 약 10MB WASM 실행 파일을 받습니다. 진행 표시줄에는 실제로 받은 용량이 표시됩니다. 제3자 CDN 요청은 없고 선택한 이미지 데이터도 전송하지 않습니다. 브라우저가 파일을 캐시할 수 있지만 저장 공간 정리나 캐시 정책에 따라 다시 받을 수 있습니다. 브라우저 확장 프로그램이나 기기 자체까지 포함한 절대적인 보안을 보장하는 것은 아니므로 매우 민감한 이미지는 신뢰할 수 있는 환경에서 처리하세요.</p>
         <p><small>@imgly/background-removal 1.5.5는 AGPL-3.0에 따라 무보증으로 제공됩니다. ONNX Runtime Web과 ISNET 모델은 MIT 라이선스입니다. <a href="/special-chars/vendor/README.md">버전·소스·라이선스 정보</a> · <a href="/special-chars/vendor/imgly-background-removal/1.5.5/LICENSE.md">AGPL-3.0 전문</a></small></p>
       </div>
     </details>
 
     <details class="guide">
-      <summary>오류가 나거나 품질이 잘 안 나오는 경우가 있나요?</summary>
+      <summary>고해상도 사진도 원본 선명도가 유지되나요?</summary>
       <div class="guide-content">
-        <p>아래와 같은 엣지 환경에선 AI가 혼동할 수 있습니다:</p>
+        <p>AI 모델은 내부적으로 1024×1024 크기에서 경계를 계산하므로, 긴 변이 2,048px를 넘는 사진은 추론용 사본을 2,048px로 줄여 마스크(투명도 정보)만 구합니다. 그다음 마스크를 원본 크기로 확대해 <b>원본 해상도의 픽셀</b>에 적용하므로 피사체 안쪽의 글자·질감은 원본만큼 선명하게 남습니다. 머리카락처럼 가는 경계의 정밀도는 마스크 해상도를 따릅니다.</p>
+        <p>스마트폰의 2,400만~4,800만 화소 사진(파일 10MB 이하)도 처리할 수 있습니다. 다만 일부 휴대기기 브라우저는 한 번에 만들 수 있는 캔버스 크기에 한도가 있어, 그 한도를 넘으면 결과를 약 1,670만 화소 이하로 줄여 저장하고 결과 아래에 실제 저장 크기를 표시합니다.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>결과가 어색하게 나오는 경우와 해결 방법은?</summary>
+      <div class="guide-content">
+        <p>아래와 같은 이미지에서는 AI가 피사체와 배경을 헷갈릴 수 있습니다.</p>
         <ul>
-          <li><b>피사체와 백그라운드 색상이 완전히 같은 경우:</b> (예: 완전히 흰옷을 입은 사람이 하얀 설원 눈밭에 서있는 경우)</li>
-          <li><b>극도로 흐릿하거나 화질이 뭉개진 저해상도:</b> AI 엣지 디텍션이 테두리를 파악하지 못할 수 있습니다.</li>
-          <li><b>해결팁:</b> 원본 화질이 좋고 대상과 배경 대비가 명확할수록 가장자리 품질이 좋아집니다. 결과를 확대해 확인하세요.</li>
+          <li><b>피사체와 배경 색이 비슷한 경우:</b> 흰 옷을 입은 사람이 흰 벽 앞에 서 있는 사진처럼 경계의 색 차이가 작으면 일부가 함께 지워질 수 있습니다.</li>
+          <li><b>흐리거나 해상도가 낮은 사진:</b> 초점이 맞지 않거나 작은 이미지는 경계가 뭉개져 가장자리가 거칠게 나옵니다.</li>
+          <li><b>반투명·가는 물체:</b> 유리컵, 연기, 잔머리, 레이스처럼 배경이 비치는 부분은 완벽히 분리되지 않을 수 있습니다.</li>
+          <li><b>주인공이 여럿이거나 불분명한 사진:</b> 모델이 주요 피사체로 판단한 대상만 남기므로 원하지 않는 물체가 남거나 사라질 수 있습니다.</li>
         </ul>
+        <p>대상과 배경의 대비가 뚜렷하고 초점이 맞은 원본일수록 가장자리가 깔끔합니다. '비교' 보기에서 경계선을 좌우로 움직여 원본과 결과를 확인하세요. 증명사진처럼 흰 배경이 필요하면 배경을 '흰색'으로 고른 뒤 JPG로 저장할 수 있지만, 여권·신분증 사진은 크기·자세·조명 규정이 따로 있으므로 제출처 기준을 반드시 확인해야 합니다.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>아이폰 HEIC 사진은 어떻게 사용하나요?</summary>
+      <div class="guide-content">
+        <p>HEIC(HEIF)는 아이폰의 기본 사진 형식이지만 대부분의 PC·안드로이드 브라우저가 읽지 못해 이 도구에서도 열 수 없습니다. 아이폰 Safari에서 이 페이지의 파일 선택으로 사진 보관함의 사진을 고르면 iOS가 보통 JPG로 바꿔 전달하므로 그대로 사용할 수 있습니다. 새로 찍는 사진을 JPG로 저장하려면 아이폰 <b>설정 &gt; 카메라 &gt; 포맷</b>에서 <b>'높은 호환성'</b>을 선택하세요. 이미 PC로 옮긴 HEIC 파일은 Mac의 미리보기 앱에서 파일 &gt; 내보내기로 JPEG를 선택해 변환할 수 있습니다.</p>
       </div>
     </details>
 
     <div class="related-tools">
-      <h3>🛠️ 함께 쓰면 좋은 디자인/사진 도구</h3>
+      <h3>🛠️ 함께 쓰면 좋은 이미지 도구</h3>
       <div class="tags">
-        <a href="/special-chars/image-compress/" class="tag">초고속 이미지 용량 압축기</a>
-        <a href="/special-chars/image-format-converter/" class="tag">무손실 이미지 확장자 변환</a>
-        <a href="/special-chars/color-conv/" class="tag">컬러 피커 & HEX 코드</a>
-        <a href="/#toolsGrid" class="tag">일상 생활 계산기 모음</a>
+        <a href="/special-chars/image-compress/" class="tag">이미지 용량 줄이기</a>
+        <a href="/special-chars/image-format-converter/" class="tag">이미지 포맷 변환기</a>
+        <a href="/special-chars/color-conv/" class="tag">실무 색상 코드 변환기</a>
+        <a href="/special-chars/pdf-tool/" class="tag">PDF 도구</a>
       </div>
     </div>
   </section>
@@ -251,39 +305,82 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
   </div>
 </dialog>
 
+<dialog class="tool-confirm-dialog" id="discardDialog" aria-labelledby="discardDialogTitle" aria-describedby="discardDialogDescription">
+  <div class="tool-confirm-dialog__body">
+    <h2 id="discardDialogTitle">저장하지 않은 결과가 있습니다</h2>
+    <p id="discardDialogDescription">현재 배경 제거 결과를 아직 저장하거나 복사하지 않았습니다. 계속하면 이 결과가 사라집니다.</p>
+    <div class="tool-confirm-dialog__actions">
+      <button type="button" data-discard-cancel autofocus>취소</button>
+      <button type="button" class="tool-confirm-dialog__confirm" data-discard-confirm>결과 버리고 계속</button>
+    </div>
+  </div>
+</dialog>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="scroll-top-btn" aria-label="맨 위로">↑</button>
 
 <script type="module">
-let originalURL = null;
-let resultURL = null;
-let resultBlob = null;
-let fileName = 'image';
-let lastFile = null;
 const MAX_INFERENCE_DIM = 2048;
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
-const MAX_IMAGE_EDGE = 8000;
-const MAX_IMAGE_PIXELS = 24000000;
+// 원본 한도: 4,800만~5,000만 화소 스마트폰 사진까지. 실제 메모리 보호는 10MB 파일 한도가 함께 맡는다.
+const MAX_SOURCE_EDGE = 12000;
+const MAX_SOURCE_PIXELS = 50000000;
+// iOS Safari 등 일부 브라우저의 캔버스 면적 한도(4096×4096). 원본 크기 출력이 실패하면 이 크기로 다시 시도한다.
+const SAFE_CANVAS_PIXELS = 16777216;
 const SUPPORTED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const EXTENSION_TYPES = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp' };
 const BACKGROUND_REMOVAL_MODULE_URL = '/special-chars/vendor/imgly-background-removal/1.5.5/background-removal.bundle.js';
 const BACKGROUND_REMOVAL_ASSET_PATH = new URL('/special-chars/vendor/imgly-background-removal/1.5.5/data/', window.location.origin).href;
+// progress 콜백은 라이브러리가 첫 호출 설정을 재사용(memoize)하므로 모듈 수준의 고정 함수로 둔다.
 const BACKGROUND_REMOVAL_CONFIG = Object.freeze({
   publicPath: BACKGROUND_REMOVAL_ASSET_PATH,
   model: 'isnet_quint8',
   device: 'cpu',
-  proxyToWorker: true
+  proxyToWorker: true,
+  progress: handleModelProgress
 });
-let backgroundRemovalPromise = null;
+const RESOURCE_LABELS = { models: 'AI 모델', 'onnxruntime-web': 'AI 실행 파일(WASM)' };
 
-function confirmMobileDownload() {
-  const dialog = document.getElementById('networkDialog');
-  if (!dialog || typeof dialog.showModal !== 'function') {
-    showToast('⚠️ Wi-Fi 환경에서 다시 시도해 주세요.');
-    return Promise.resolve(false);
+let backgroundRemovalPromise = null;
+let busy = false;
+let lastFile = null;
+let fileBase = 'image';
+let originalURL = null;
+let resultURL = null;
+let resultBlob = null;
+let resultSize = { width: 0, height: 0 };
+let resultSaved = true;
+let backgroundChoice = 'transparent';
+let outputFormat = 'image/png';
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const progressWrap = document.getElementById('progressWrap');
+const resultArea = document.getElementById('resultArea');
+const fileMsg = document.getElementById('fileMsg');
+const copySupported = Boolean(window.isSecureContext && navigator.clipboard && typeof navigator.clipboard.write === 'function' && typeof window.ClipboardItem === 'function');
+
+function ensureBackgroundRemoval() {
+  if (!backgroundRemovalPromise) {
+    backgroundRemovalPromise = import(BACKGROUND_REMOVAL_MODULE_URL)
+      .then(module => {
+        if (typeof module.removeBackground !== 'function') throw new Error('AI 모듈 형식이 올바르지 않습니다.');
+        return module.removeBackground;
+      })
+      .catch(error => {
+        backgroundRemovalPromise = null;
+        throw new Error('로컬 AI 모듈을 불러오지 못했습니다. 페이지를 새로고침한 뒤 다시 시도해 주세요.', { cause: error });
+      });
   }
+  return backgroundRemovalPromise;
+}
+
+function openConfirmDialog(dialogId, confirmSelector, cancelSelector) {
+  const dialog = document.getElementById(dialogId);
+  if (!dialog || typeof dialog.showModal !== 'function') return Promise.resolve(null);
   return new Promise(resolve => {
-    const confirmButton = dialog.querySelector('[data-network-confirm]');
-    const cancelButton = dialog.querySelector('[data-network-cancel]');
+    const confirmButton = dialog.querySelector(confirmSelector);
+    const cancelButton = dialog.querySelector(cancelSelector);
     const handleCancel = event => {
       event.preventDefault();
       dialog.close('cancel');
@@ -301,305 +398,459 @@ function confirmMobileDownload() {
   });
 }
 
-function ensureBackgroundRemoval() {
-  if (!backgroundRemovalPromise) {
-    backgroundRemovalPromise = import(BACKGROUND_REMOVAL_MODULE_URL)
-      .then(module => {
-        if (typeof module.removeBackground !== 'function') throw new Error('AI 모듈 형식이 올바르지 않습니다.');
-        return module.removeBackground;
-      })
-      .catch(error => {
-        backgroundRemovalPromise = null;
-        throw new Error('로컬 AI 모듈을 불러오지 못했습니다. 페이지를 새로고침한 뒤 다시 시도해 주세요.', { cause: error });
-      });
+async function confirmMobileDownload() {
+  const answer = await openConfirmDialog('networkDialog', '[data-network-confirm]', '[data-network-cancel]');
+  if (answer === null) {
+    showToast('⚠️ Wi-Fi 환경에서 다시 시도해 주세요.');
+    return false;
   }
-  return backgroundRemovalPromise;
+  return answer;
 }
 
-const dropzone = document.getElementById('dropzone');
-const fileInput = document.getElementById('fileInput');
-const progressWrap = document.getElementById('progressWrap');
-const resultArea = document.getElementById('resultArea');
+async function confirmDiscardResult() {
+  if (!resultBlob || resultSaved) return true;
+  const answer = await openConfirmDialog('discardDialog', '[data-discard-confirm]', '[data-discard-cancel]');
+  return answer !== false;
+}
 
-// 드래그 앤 드롭
-dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
-dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
-dropzone.addEventListener('drop', e => {
+// 모바일 데이터 감지
+function checkMobileData() {
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  return Boolean(conn && (conn.type === 'cellular' || conn.effectiveType === '3g' || conn.effectiveType === '2g'));
+}
+if (checkMobileData()) document.getElementById('dataWarning').hidden = false;
+
+function showFileMessage(text) {
+  fileMsg.textContent = text;
+  fileMsg.hidden = !text;
+}
+
+function isHeic(file) {
+  const type = (file.type || '').toLowerCase();
+  return type === 'image/heic' || type === 'image/heif' || /\.(heic|heif)$/i.test(file.name || '');
+}
+
+function resolveType(file) {
+  const type = (file.type || '').toLowerCase();
+  if (SUPPORTED_IMAGE_TYPES.has(type)) return type;
+  if (type === 'image/jpg') return 'image/jpeg';
+  const ext = (file.name || '').toLowerCase().match(/\.([a-z0-9]+)$/);
+  return !type && ext ? (EXTENSION_TYPES[ext[1]] || null) : null;
+}
+
+const HEIC_MESSAGE = 'HEIC(아이폰 기본 사진 형식)는 이 브라우저에서 열 수 없습니다. 아이폰 Safari에서 파일 선택으로 사진 보관함의 사진을 고르면 보통 JPG로 전달됩니다. 새 사진을 JPG로 저장하려면 설정 > 카메라 > 포맷 > "높은 호환성"을 선택하세요. Mac에서는 미리보기 앱의 파일 > 내보내기로 JPEG를 만들 수 있습니다.';
+
+function loadImage(url) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.decoding = 'async';
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('이미지가 손상되었거나 브라우저에서 읽을 수 없습니다.'));
+    img.src = url;
+  });
+}
+
+function canvasToBlob(canvas, type, quality) {
+  return new Promise(resolve => {
+    try {
+      canvas.toBlob(blob => resolve(blob && blob.size ? blob : null), type, quality);
+    } catch (_error) {
+      resolve(null);
+    }
+  });
+}
+
+function makeCanvas(width, height) {
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  if (!ctx || canvas.width !== width || canvas.height !== height) return null;
+  return { canvas, ctx };
+}
+
+function fitWithin(width, height, maxPixels) {
+  if (width * height <= maxPixels) return { width, height };
+  const scale = Math.sqrt(maxPixels / (width * height));
+  return { width: Math.max(1, Math.floor(width * scale)), height: Math.max(1, Math.floor(height * scale)) };
+}
+
+// 추론용 사본: EXIF 방향이 반영된 <img>에서 긴 변 2048px 이하 PNG로 만든다.
+async function makeInferenceInput(img) {
+  const width = img.naturalWidth;
+  const height = img.naturalHeight;
+  const scale = Math.min(1, MAX_INFERENCE_DIM / Math.max(width, height));
+  const target = { width: Math.max(1, Math.round(width * scale)), height: Math.max(1, Math.round(height * scale)) };
+  const surface = makeCanvas(target.width, target.height);
+  if (!surface) throw new Error('추론용 이미지 캔버스를 만들 수 없습니다.');
+  surface.ctx.imageSmoothingEnabled = true;
+  surface.ctx.imageSmoothingQuality = 'high';
+  surface.ctx.drawImage(img, 0, 0, target.width, target.height);
+  const blob = await canvasToBlob(surface.canvas, 'image/png');
+  surface.canvas.width = 0;
+  if (!blob) throw new Error('추론용 이미지를 만들 수 없습니다.');
+  return { blob, resized: scale < 1 };
+}
+
+// 추론 결과(작은 RGBA)의 알파만 원본 해상도로 확대해 원본 픽셀에 적용한다(destination-in 합성).
+async function applyMaskAtFullResolution(img, maskBlob) {
+  const maskURL = URL.createObjectURL(maskBlob);
+  try {
+    const mask = await loadImage(maskURL);
+    const attempts = [{ width: img.naturalWidth, height: img.naturalHeight }];
+    if (img.naturalWidth * img.naturalHeight > SAFE_CANVAS_PIXELS) attempts.push(fitWithin(img.naturalWidth, img.naturalHeight, SAFE_CANVAS_PIXELS));
+    for (const size of attempts) {
+      const surface = makeCanvas(size.width, size.height);
+      if (!surface) continue;
+      const { canvas, ctx } = surface;
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, size.width, size.height);
+      ctx.globalCompositeOperation = 'destination-in';
+      ctx.drawImage(mask, 0, 0, size.width, size.height);
+      ctx.globalCompositeOperation = 'source-over';
+      const blob = await canvasToBlob(canvas, 'image/png');
+      canvas.width = 0;
+      if (blob) return { blob, ...size };
+    }
+    throw new Error('이 기기에서 결과 이미지를 만들 캔버스를 확보하지 못했습니다. 더 작은 이미지로 다시 시도해 주세요.');
+  } finally {
+    URL.revokeObjectURL(maskURL);
+  }
+}
+
+function setProgress(pct, label, sub) {
+  const clamped = Math.max(0, Math.min(100, Math.round(pct)));
+  document.getElementById('progressBar').style.width = clamped + '%';
+  document.getElementById('progressMeter').setAttribute('aria-valuenow', String(clamped));
+  document.getElementById('progressLabel').textContent = label;
+  if (sub !== undefined) document.getElementById('progressSub').textContent = sub;
+}
+
+function formatMB(bytes) {
+  return (bytes / 1048576).toFixed(1) + 'MB';
+}
+
+function handleModelProgress(key, current, total) {
+  if (!busy) return;
+  if (key.startsWith('fetch:')) {
+    const group = key.slice('fetch:'.length).split('/').filter(Boolean)[0] || '';
+    const label = RESOURCE_LABELS[group] || 'AI 파일';
+    const pct = total > 0 ? (current / total) * 100 : 0;
+    setProgress(pct, `${label} 받는 중 ${Math.round(pct)}%`, `${formatMB(current)} / ${formatMB(total)} · 한 번 받은 파일은 브라우저 캐시에서 다시 쓸 수 있습니다`);
+  } else if (key === 'compute:decode') {
+    setProgress(10, '이미지 준비 중...', '모델 준비가 끝났습니다');
+  } else if (key === 'compute:inference') {
+    setProgress(35, '배경 영역 계산 중...', '기기 성능에 따라 수 초에서 수십 초 걸릴 수 있습니다');
+  } else if (key === 'compute:mask') {
+    setProgress(80, '투명도 마스크 적용 중...');
+  } else if (key === 'compute:encode') {
+    setProgress(80 + (current / Math.max(1, total)) * 10, '결과 이미지 만드는 중...');
+  }
+}
+
+function revokeURLs() {
+  if (originalURL) URL.revokeObjectURL(originalURL);
+  if (resultURL) URL.revokeObjectURL(resultURL);
+  originalURL = null;
+  resultURL = null;
+}
+
+async function handleFile(file) {
+  if (!file) return;
+  if (busy) {
+    showToast('⏳ 이전 이미지를 처리하는 중입니다');
+    return;
+  }
+  if (isHeic(file)) {
+    showFileMessage(HEIC_MESSAGE);
+    fileInput.value = '';
+    return;
+  }
+  const type = resolveType(file);
+  if (!type) {
+    showFileMessage('JPG, PNG 또는 WebP 이미지를 선택해 주세요.');
+    fileInput.value = '';
+    return;
+  }
+  if (!file.size || file.size > MAX_FILE_BYTES) {
+    showFileMessage(file.size ? `파일 크기가 10MB를 초과합니다 (${formatMB(file.size)}). 이미지 용량 줄이기 도구로 먼저 줄인 뒤 사용해 주세요.` : '비어 있는 파일은 처리할 수 없습니다.');
+    fileInput.value = '';
+    return;
+  }
+  if (!await confirmDiscardResult()) {
+    fileInput.value = '';
+    return;
+  }
+
+  const sourceURL = URL.createObjectURL(file);
+  let img;
+  try {
+    img = await loadImage(sourceURL);
+  } catch (error) {
+    URL.revokeObjectURL(sourceURL);
+    showFileMessage(error.message);
+    fileInput.value = '';
+    return;
+  }
+  const { naturalWidth: width, naturalHeight: height } = img;
+  if (!width || !height || width > MAX_SOURCE_EDGE || height > MAX_SOURCE_EDGE || width * height > MAX_SOURCE_PIXELS) {
+    URL.revokeObjectURL(sourceURL);
+    showFileMessage(`이미지 크기 ${width.toLocaleString('ko-KR')}×${height.toLocaleString('ko-KR')}px는 처리 한도(긴 변 12,000px, 5,000만 화소)를 넘습니다.`);
+    fileInput.value = '';
+    return;
+  }
+
+  if (checkMobileData() && !await confirmMobileDownload()) {
+    URL.revokeObjectURL(sourceURL);
+    fileInput.value = '';
+    return;
+  }
+
+  showFileMessage('');
+  busy = true;
+  lastFile = file;
+  fileBase = ((file.name || 'image').replace(/\.[^/.]+$/, '') || 'image').replace(/[\\/:*?"<>|\u0000-\u001f]/g, '_');
+  revokeURLs();
+  resultBlob = null;
+  resultSaved = true;
+  originalURL = sourceURL;
+
+  dropzone.style.display = 'none';
+  document.getElementById('dataWarning').hidden = true;
+  progressWrap.classList.add('active');
+  document.getElementById('retryBtn').style.display = 'none';
+  resultArea.classList.remove('active');
+  setProgress(0, 'AI 모델 준비 중...', '첫 실행 시 자체 호스팅 AI 파일(약 55MB)을 받는 데 시간이 걸릴 수 있습니다');
+
+  try {
+    const removeBackground = await ensureBackgroundRemoval();
+    const input = await makeInferenceInput(img);
+    const rawBlob = await removeBackground(input.blob, BACKGROUND_REMOVAL_CONFIG);
+    let output;
+    if (input.resized) {
+      setProgress(92, '원본 해상도에 마스크 적용 중...', `긴 변 ${MAX_INFERENCE_DIM}px로 계산한 마스크를 원본 ${width}×${height}px에 적용합니다`);
+      output = await applyMaskAtFullResolution(img, rawBlob);
+    } else {
+      output = { blob: rawBlob, width, height };
+    }
+
+    resultBlob = output.blob;
+    resultSize = { width: output.width, height: output.height };
+    resultSaved = false;
+    resultURL = URL.createObjectURL(output.blob);
+
+    document.getElementById('resultImg').src = resultURL;
+    document.getElementById('originalImg').src = originalURL;
+    document.getElementById('compareAfter').src = resultURL;
+    document.getElementById('compareBefore').src = originalURL;
+
+    const sizeNote = output.width === width && output.height === height
+      ? `원본과 같은 ${width.toLocaleString('ko-KR')}×${height.toLocaleString('ko-KR')}px로 저장됩니다.`
+      : `원본은 ${width.toLocaleString('ko-KR')}×${height.toLocaleString('ko-KR')}px지만 이 기기의 캔버스 한도 때문에 ${output.width.toLocaleString('ko-KR')}×${output.height.toLocaleString('ko-KR')}px로 저장됩니다.`;
+    document.getElementById('resultMeta').textContent = input.resized
+      ? `${sizeNote} 경계는 긴 변 ${MAX_INFERENCE_DIM}px 기준으로 계산했습니다.`
+      : sizeNote;
+
+    progressWrap.classList.remove('active');
+    resultArea.classList.add('active');
+    setView('result');
+    updateOptionUI();
+    showToast('✅ 배경 제거 완료!');
+  } catch (err) {
+    console.error('Background removal error:', err);
+    progressWrap.classList.add('active');
+    setProgress(0, '처리 실패');
+    document.getElementById('progressSub').textContent = err && err.message ? err.message : '네트워크 또는 브라우저 메모리 문제일 수 있습니다. 다시 시도해 주세요.';
+    dropzone.style.display = '';
+    document.getElementById('retryBtn').style.display = '';
+    showToast('❌ 처리 중 오류가 발생했습니다');
+  } finally {
+    busy = false;
+    fileInput.value = '';
+  }
+}
+
+fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+
+// 드래그 앤 드롭: 페이지 어디에 놓아도 브라우저가 파일을 열며 이동하지 않도록 막는다.
+function hasFiles(event) {
+  return Boolean(event.dataTransfer && [...(event.dataTransfer.types || [])].includes('Files'));
+}
+window.addEventListener('dragover', e => {
+  if (!hasFiles(e)) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'copy';
+  dropzone.classList.add('dragover');
+});
+window.addEventListener('dragleave', e => {
+  if (e.relatedTarget === null) dropzone.classList.remove('dragover');
+});
+window.addEventListener('drop', e => {
+  if (!hasFiles(e)) return;
   e.preventDefault();
   dropzone.classList.remove('dragover');
   const file = e.dataTransfer.files[0];
   if (file) handleFile(file);
 });
 
-fileInput.addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (file) handleFile(file);
+// 클립보드 붙여넣기(Ctrl+V / ⌘V)
+document.addEventListener('paste', e => {
+  const target = e.target;
+  const isTextField = target && /^(INPUT|TEXTAREA)$/.test(target.tagName) && !['file', 'range', 'color', 'button'].includes(target.type);
+  if (target && (target.isContentEditable || isTextField)) return;
+  const item = [...(e.clipboardData?.items || [])].find(entry => entry.kind === 'file' && entry.type.startsWith('image/'));
+  const file = item && item.getAsFile();
+  if (!file) return;
+  e.preventDefault();
+  const ext = (file.type.split('/')[1] || 'png').replace('jpeg', 'jpg');
+  const d = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  const stamp = `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
+  handleFile(new File([file], file.name && file.name !== 'image.png' ? file.name : `pasted-${stamp}.${ext}`, { type: file.type }));
 });
 
-// 모바일 데이터 감지 및 경고
-function checkMobileData() {
-  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  if (conn && (conn.type === 'cellular' || conn.effectiveType === '3g' || conn.effectiveType === '2g')) {
-    return true;
-  }
-  return false;
-}
-
-function loadImageFromBlob(blob) {
-  return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(blob);
-    const img = new Image();
-    img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('이미지를 읽을 수 없습니다')); };
-    img.src = url;
-  });
-}
-
-async function prepareInferenceImage(file) {
-  const img = await loadImageFromBlob(file);
-  const maxSide = Math.max(img.naturalWidth, img.naturalHeight);
-  const originalSize = { width: img.naturalWidth, height: img.naturalHeight };
-  const pixels = originalSize.width * originalSize.height;
-  if (!originalSize.width || !originalSize.height || originalSize.width > MAX_IMAGE_EDGE || originalSize.height > MAX_IMAGE_EDGE || pixels > MAX_IMAGE_PIXELS) {
-    throw new Error('이미지는 최대 8,000px/2,400만 픽셀까지 처리할 수 있습니다.');
-  }
-  if (maxSide <= MAX_INFERENCE_DIM) return { input: file, originalSize, resized: false };
-
-  const scale = MAX_INFERENCE_DIM / maxSide;
-  const canvas = document.createElement('canvas');
-  canvas.width = Math.round(img.naturalWidth * scale);
-  canvas.height = Math.round(img.naturalHeight * scale);
-  const ctx = canvas.getContext('2d');
-  if (!ctx) throw new Error('추론용 이미지 캔버스를 만들 수 없습니다.');
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = 'high';
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  const input = await new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('추론용 이미지를 만들 수 없습니다.')), 'image/png'));
-  return { input, originalSize, resized: true };
-}
-
-async function restoreOriginalSize(blob, originalSize, resized) {
-  if (!resized) return blob;
-  const img = await loadImageFromBlob(blob);
-  const canvas = document.createElement('canvas');
-  canvas.width = originalSize.width;
-  canvas.height = originalSize.height;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) throw new Error('출력 이미지 캔버스를 만들 수 없습니다.');
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = 'high';
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  return new Promise((resolve, reject) => canvas.toBlob(result => result ? resolve(result) : reject(new Error('출력 이미지를 만들 수 없습니다.')), 'image/png'));
-}
-
-// 첫 사용 시 모바일 데이터 경고 표시
-(function() {
-  if (checkMobileData()) {
-    const w = document.getElementById('dataWarning');
-    if (w) w.style.display = '';
-  }
-})();
-
-async function handleFile(file) {
-  if (!SUPPORTED_IMAGE_TYPES.has((file.type || '').toLowerCase())) {
-    showToast('⚠️ JPG, PNG 또는 WebP 이미지를 선택해 주세요.');
-    return;
-  }
-  if (!file.size || file.size > MAX_FILE_BYTES) {
-    showToast(file.size ? '⚠️ 파일 크기가 10MB를 초과합니다' : '⚠️ 비어 있는 파일은 처리할 수 없습니다.');
-    return;
-  }
-
-  let prepared;
-  try {
-    prepared = await prepareInferenceImage(file);
-  } catch (error) {
-    showToast('⚠️ ' + (error.message || '이미지를 읽을 수 없습니다.'));
-    return;
-  }
-
-  // 모바일 데이터 경고
-  if (checkMobileData()) {
-    if (!await confirmMobileDownload()) return;
-  }
-
-  lastFile = file;
-  fileName = file.name.replace(/\.[^/.]+$/, '');
-  
-  // 원본 URL 생성
-  if (originalURL) URL.revokeObjectURL(originalURL);
-  originalURL = URL.createObjectURL(file);
-
-  // UI 전환
-  dropzone.style.display = 'none';
-  document.getElementById('dataWarning').style.display = 'none';
-  progressWrap.classList.add('active');
-  document.getElementById('retryBtn').style.display = 'none';
-  resultArea.classList.remove('active');
-  updateProgress(0, 'AI 모델 로딩 중...');
-
-  try {
-    const removeBackground = await ensureBackgroundRemoval();
-    if (prepared.resized) {
-      document.getElementById('progressSub').textContent = `긴 변 ${MAX_INFERENCE_DIM}px로 추론 후 원본 해상도로 복원합니다`;
-    }
-    const rawBlob = await removeBackground(prepared.input, {
-      ...BACKGROUND_REMOVAL_CONFIG,
-      progress: (key, current, total) => {
-        if (key === 'compute:inference') {
-          const pct = Math.round((current / total) * 100);
-          updateProgress(pct, '배경 제거 처리 중...');
-        } else if (key.startsWith('fetch:')) {
-          updateProgress(0, '자체 호스팅 AI 파일 다운로드 중...');
-          document.getElementById('progressSub').textContent = '첫 실행 시 모델과 WASM 약 55MB (브라우저 캐시 재사용 가능)';
-        }
-      }
-    });
-    const blob = await restoreOriginalSize(rawBlob, prepared.originalSize, prepared.resized);
-
-    resultBlob = blob;
-    if (resultURL) URL.revokeObjectURL(resultURL);
-    resultURL = URL.createObjectURL(blob);
-
-    // 결과 표시
-    document.getElementById('resultImg').src = resultURL;
-    document.getElementById('originalImg').src = originalURL;
-    document.getElementById('compareAfter').src = resultURL;
-    document.getElementById('compareBefore').src = originalURL;
-
-    progressWrap.classList.remove('active');
-    resultArea.classList.add('active');
-    setView('result');
-    showToast('✅ 배경 제거 완료!');
-    
-    // SEO 리포트 생성
-    updateReport(file, blob);
-
-  } catch (err) {
-    console.error('Background removal error:', err);
-    progressWrap.classList.add('active');
-    updateProgress(0, '처리 실패');
-    document.getElementById('progressSub').textContent = err && err.message ? err.message : '네트워크 또는 브라우저 메모리 문제일 수 있습니다. 다시 시도해 주세요.';
-    dropzone.style.display = '';
-    document.getElementById('retryBtn').style.display = '';
-    showToast('❌ 처리 중 오류가 발생했습니다');
-  }
-}
-
-function updateProgress(pct, text) {
-  document.getElementById('progressBar').style.width = pct + '%';
-  document.getElementById('progressText').innerHTML = '<span class="progress-spinner"></span>' + text + (pct > 0 ? ' ' + pct + '%' : '');
-}
-
-// 뷰 전환
+// 보기 전환
 window.setView = function(view) {
-  document.querySelectorAll('.compare-tab').forEach((t, i) => {
-    const views = ['result', 'original', 'compare'];
-    t.classList.toggle('active', views[i] === view);
-  });
+  document.querySelectorAll('.compare-tab').forEach(tab => tab.setAttribute('aria-pressed', String(tab.dataset.view === view)));
   document.getElementById('resultView').style.display = view === 'result' ? '' : 'none';
   document.getElementById('originalView').style.display = view === 'original' ? '' : 'none';
   document.getElementById('compareView').style.display = view === 'compare' ? '' : 'none';
-  
-  if (view === 'compare') initSlider();
+  if (view === 'compare') setSplit(Number(document.getElementById('compareRange').value));
 };
 
-// 슬라이더 비교
-function initSlider() {
-  const wrap = document.getElementById('compareView');
-  const overlay = document.getElementById('sliderOverlay');
-  const handle = document.getElementById('sliderHandle');
-  let dragging = false;
+// 비교 슬라이더: 이벤트는 한 번만 등록한다. 포인터 드래그와 키보드(숨긴 range)를 모두 지원한다.
+const compareView = document.getElementById('compareView');
+const compareRange = document.getElementById('compareRange');
+let draggingSplit = false;
+function setSplit(pct) {
+  const value = Math.max(0, Math.min(100, pct));
+  compareView.style.setProperty('--split', value + '%');
+  compareRange.value = String(Math.round(value));
+}
+function splitFromPointer(clientX) {
+  const rect = compareView.getBoundingClientRect();
+  if (rect.width > 0) setSplit(((clientX - rect.left) / rect.width) * 100);
+}
+compareView.addEventListener('pointerdown', e => {
+  if (e.button !== 0) return;
+  draggingSplit = true;
+  try { compareView.setPointerCapture(e.pointerId); } catch (_error) {}
+  splitFromPointer(e.clientX);
+  compareRange.focus({ preventScroll: true });
+});
+compareView.addEventListener('pointermove', e => { if (draggingSplit) splitFromPointer(e.clientX); });
+['pointerup', 'pointercancel', 'lostpointercapture'].forEach(type => compareView.addEventListener(type, () => { draggingSplit = false; }));
+compareRange.addEventListener('input', () => setSplit(Number(compareRange.value)));
 
-  function setPos(x) {
-    const rect = wrap.getBoundingClientRect();
-    let pct = ((x - rect.left) / rect.width) * 100;
-    pct = Math.max(0, Math.min(100, pct));
-    overlay.style.width = pct + '%';
-    handle.style.left = pct + '%';
-  }
-
-  // 초기 50%
-  setTimeout(() => setPos(wrap.getBoundingClientRect().left + wrap.getBoundingClientRect().width / 2), 100);
-
-  handle.addEventListener('mousedown', () => dragging = true);
-  handle.addEventListener('touchstart', () => dragging = true, { passive: true });
-  document.addEventListener('mouseup', () => dragging = false);
-  document.addEventListener('touchend', () => dragging = false);
-  document.addEventListener('mousemove', e => { if (dragging) setPos(e.clientX); });
-  document.addEventListener('touchmove', e => { if (dragging) setPos(e.touches[0].clientX); }, { passive: true });
-  wrap.addEventListener('click', e => setPos(e.clientX));
+// 배경·형식 옵션
+function currentBackground() {
+  if (backgroundChoice === 'custom') return document.getElementById('bgColor').value;
+  return backgroundChoice;
 }
 
-// 다운로드
-window.downloadResult = function() {
+function updateOptionUI() {
+  document.querySelectorAll('button[data-bg]').forEach(chip => chip.setAttribute('aria-pressed', String(chip.dataset.bg === backgroundChoice)));
+  document.querySelectorAll('[data-format]').forEach(chip => chip.setAttribute('aria-pressed', String(chip.dataset.format === outputFormat)));
+  const bg = currentBackground();
+  const effectiveBg = bg === 'transparent' && outputFormat === 'image/jpeg' ? '#ffffff' : bg;
+  [document.getElementById('resultView'), compareView].forEach(box => {
+    box.classList.toggle('checker', effectiveBg === 'transparent');
+    box.style.backgroundColor = effectiveBg === 'transparent' ? '' : effectiveBg;
+  });
+  const ext = outputFormat === 'image/jpeg' ? 'JPG' : 'PNG';
+  document.getElementById('downloadBtn').textContent = `💾 ${ext} 다운로드`;
+  let note = '';
+  if (outputFormat === 'image/jpeg' && bg === 'transparent') note = 'JPG는 투명 배경을 지원하지 않아 흰색 배경으로 저장합니다.';
+  else if (bg !== 'transparent') note = `배경을 ${bg === '#ffffff' ? '흰색' : bg.toUpperCase()}으로 채워 ${ext}로 저장합니다.`;
+  else note = '투명 배경 PNG로 저장합니다.';
+  document.getElementById('optionNote').textContent = note;
+  const copyBtn = document.getElementById('copyBtn');
+  copyBtn.disabled = !copySupported;
+  document.getElementById('copyNote').textContent = copySupported
+    ? '복사는 항상 PNG 이미지로 담기며, 위에서 고른 배경이 적용됩니다.'
+    : '이 브라우저(또는 HTTP 접속)에서는 이미지 복사를 지원하지 않습니다. 파일로 저장해 사용해 주세요.';
+}
+
+document.querySelectorAll('button[data-bg]').forEach(chip => chip.addEventListener('click', () => {
+  backgroundChoice = chip.dataset.bg;
+  updateOptionUI();
+}));
+document.getElementById('bgColor').addEventListener('input', () => { backgroundChoice = 'custom'; updateOptionUI(); });
+document.querySelectorAll('button[data-format]').forEach(chip => chip.addEventListener('click', () => {
+  outputFormat = chip.dataset.format;
+  updateOptionUI();
+}));
+
+// 저장용 이미지: 투명 PNG는 그대로, 배경색이나 JPG는 캔버스에서 합성한다.
+async function renderOutput(type) {
+  if (!resultBlob) throw new Error('결과 이미지가 없습니다.');
+  const bg = currentBackground();
+  const fill = bg === 'transparent' ? (type === 'image/jpeg' ? '#ffffff' : null) : bg;
+  if (!fill && type === 'image/png') return resultBlob;
+  const img = await loadImage(resultURL);
+  const surface = makeCanvas(resultSize.width, resultSize.height);
+  if (!surface) throw new Error('저장용 캔버스를 만들 수 없습니다.');
+  surface.ctx.fillStyle = fill;
+  surface.ctx.fillRect(0, 0, resultSize.width, resultSize.height);
+  surface.ctx.drawImage(img, 0, 0, resultSize.width, resultSize.height);
+  const blob = await canvasToBlob(surface.canvas, type, type === 'image/jpeg' ? 0.92 : undefined);
+  surface.canvas.width = 0;
+  if (!blob) throw new Error('이미지를 저장 형식으로 만들 수 없습니다.');
+  return blob;
+}
+
+window.downloadResult = async function() {
   if (!resultBlob) return;
-  const a = document.createElement('a');
-  a.href = resultURL;
-  a.download = fileName + '_nobg.png';
-  a.click();
-  showToast('💾 다운로드 완료!');
+  try {
+    const blob = await renderOutput(outputFormat);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${fileBase}_nobg.${outputFormat === 'image/jpeg' ? 'jpg' : 'png'}`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    resultSaved = true;
+    showToast('💾 다운로드를 시작했습니다');
+  } catch (error) {
+    showToast('❌ ' + (error.message || '저장하지 못했습니다'));
+  }
+};
+
+window.copyResult = function() {
+  if (!resultBlob || !copySupported) return;
+  // Safari는 사용자 동작 안에서 바로 write를 호출해야 하므로 Promise를 그대로 넘긴다.
+  const pngPromise = renderOutput('image/png');
+  navigator.clipboard.write([new ClipboardItem({ 'image/png': pngPromise })])
+    .then(() => {
+      resultSaved = true;
+      showToast('📋 이미지를 복사했습니다. 문서에 붙여 넣으세요');
+    })
+    .catch(() => showToast('복사하지 못했습니다. 파일로 저장해 주세요'));
 };
 
 // 리셋
-window.resetAll = function() {
+window.resetAll = async function() {
+  if (busy) return;
+  if (!await confirmDiscardResult()) return;
   resultArea.classList.remove('active');
   progressWrap.classList.remove('active');
   dropzone.style.display = '';
   fileInput.value = '';
-  document.getElementById('progressSub').textContent = '첫 실행 시 자체 호스팅 AI 파일(약 55MB)을 받는 데 시간이 걸릴 수 있습니다';
-  if (document.getElementById('reportContainer')) {
-    document.getElementById('reportContainer').style.display = 'none';
-  }
+  ['resultImg', 'originalImg', 'compareAfter', 'compareBefore'].forEach(id => document.getElementById(id).removeAttribute('src'));
+  revokeURLs();
+  resultBlob = null;
+  resultSaved = true;
+  document.getElementById('resultMeta').textContent = '';
+  setProgress(0, 'AI 모델 준비 중...', '첫 실행 시 자체 호스팅 AI 파일(약 55MB)을 받는 데 시간이 걸릴 수 있습니다');
+  fileInput.focus();
 };
 
 window.retryProcessing = function() {
   if (lastFile) handleFile(lastFile);
 };
-
-function formatByte(bytes) {
-  if (bytes < 1024) return bytes + ' B';
-  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-  return (bytes / 1048576).toFixed(1) + ' MB';
-}
-
-function updateReport(origFile, resBlob) {
-  const container = document.getElementById('reportContainer');
-  if (!container) return;
-  
-  if (!origFile || !resBlob) {
-    container.style.display = 'none';
-    return;
-  }
-  
-  container.style.display = 'block';
-
-  let saved = origFile.size - resBlob.size;
-  let savedPercent = ((saved / origFile.size) * 100).toFixed(1);
-  let sizeFeedback = '';
-  
-  if (saved > 0) {
-    sizeFeedback = `결과 PNG의 파일 크기가 원본보다 <b><span class="highlight">${savedPercent}% 감소 (${formatByte(saved)})</span></b>했습니다. 실제 웹 성능 영향은 표시 크기와 페이지 구성에 따라 달라집니다.`;
-  } else {
-    sizeFeedback = `투명도(Alpha Channel)를 포함한 PNG로 저장되어 원본보다 파일 크기가 약 <span class="highlight">${Math.abs(savedPercent)}% 증가</span>했습니다. PNG는 래스터 이미지이며 배경 제거 과정에서 픽셀 값이 변경됩니다.`;
-  }
-
-  container.innerHTML = `
-    <h3>🔍 AI 배경 제거 처리 리포트</h3>
-    <p><b>입력 파일:</b> ${escapeHtml(origFile.name)}</p>
-    <p><b>처리 방식:</b> WASM/ONNX 기반 모델이 브라우저 메모리에서 전경 마스크를 추론하고, 배경 픽셀의 투명도를 조정했습니다. 복잡한 가장자리는 결과 이미지에서 직접 확인하세요.</p>
-    <p><b>데이터 용량 I/O:</b> ${sizeFeedback}</p>
-    <div style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);">
-      <p style="margin-bottom:0; color:var(--text-info);">💡 <b>출력 안내:</b> PNG는 투명 픽셀을 지원하지만 JPEG는 지원하지 않습니다. 긴 변이 ${MAX_INFERENCE_DIM}px를 넘는 입력은 AI 추론 전에 축소되며, 출력 픽셀 크기는 원본 크기로 복원됩니다. 확대 과정에서 원본의 세부 묘사가 완전히 복원되는 것은 아니므로 가장자리를 확인하세요.</p>
-    </div>
-  `;
-}
-
-function escapeHtml(value) {
-  const node = document.createElement('div');
-  node.textContent = String(value);
-  return node.innerHTML;
-}
 
 // 토스트
 function showToast(msg) {
@@ -607,11 +858,10 @@ function showToast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.classList.remove('show'), 2000);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2400);
 }
 
-// Scroll top
-
+updateOptionUI();
 </script>
 <script src="/special-chars/theme-toggle.js"></script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>

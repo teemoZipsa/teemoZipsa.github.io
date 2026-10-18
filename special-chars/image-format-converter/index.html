@@ -11,9 +11,9 @@
 <link rel="manifest" href="/special-chars/manifest.json">
 <link rel="apple-touch-icon" href="/special-chars/favicon.png">
 <title>🖼️ 이미지 포맷 변환기 — 티모집사</title>
-<meta name="description" content="JPG·PNG·WebP·GIF·BMP·SVG 이미지를 불러와 JPG·PNG·WebP로 변환하세요. GIF는 정지 프레임, SVG는 래스터 이미지로 출력되며 브라우저에서 로컬 처리됩니다.">
+<meta name="description" content="JPG·PNG·WebP·GIF·BMP·SVG(브라우저가 지원하면 AVIF) 이미지를 JPG·PNG·WebP로 변환하세요. SVG 배율 지정, 크기 조절, 여러 장 ZIP 저장을 지원하며 브라우저에서 로컬 처리됩니다.">
 <meta property="og:title" content="🖼️ 이미지 포맷 변환기 — 티모집사">
-<meta property="og:description" content="JPG·PNG·WebP·GIF·BMP·SVG 입력을 JPG·PNG·WebP로 변환하는 브라우저 로컬 도구.">
+<meta property="og:description" content="JPG·PNG·WebP·GIF·BMP·SVG 입력을 JPG·PNG·WebP로 변환하는 브라우저 로컬 도구. SVG 배율·크기 조절·여러 장 변환 지원.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://teemozipsa.com/special-chars/image-format-converter/">
 <meta property="og:image" content="https://teemozipsa.com/special-chars/favicon.png">
@@ -28,84 +28,101 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 .back-btn{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.9);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:6px;text-decoration:none;transition:background .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
 .back-btn:hover{background:rgba(255,255,255,.25);color:#fff}
 .content{padding:20px;display:flex;flex-direction:column;gap:14px}
+[hidden]{display:none !important}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
-.drop-zone{border:2px dashed var(--border);border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg-bar)}
+.drop-zone{border:2px dashed var(--border);border-radius:12px;padding:36px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg-bar)}
+.drop-zone.compact{padding:14px 16px}
+.drop-zone.compact .icon{display:none}
 .drop-zone:hover,.drop-zone.dragover{border-color:var(--accent);background:var(--bg-hover)}
-.drop-zone:focus-visible,.btn:focus-visible,.format-btn:focus-visible{outline:3px solid #f7c948;outline-offset:3px}
 .drop-zone .icon{font-size:36px;margin-bottom:8px}
-.drop-zone .text{font-size:13px;color:var(--calc-expr-text)}
-.drop-zone .sub{font-size:11px;color:var(--text-placeholder);margin-top:4px}
+.drop-zone .text{font-size:14px;color:var(--calc-expr-text)}
+.drop-zone .sub{font-size:12px;color:var(--text-placeholder);margin-top:4px}
 .drop-zone input{display:none}
-.support-info{padding:10px 12px;background:var(--bg-bar);border:1px solid var(--border);border-radius:10px;font-size:11px;color:var(--text-info);line-height:1.65}
+.support-info{padding:10px 12px;background:var(--bg-bar);border:1px solid var(--border);border-radius:10px;font-size:12px;color:var(--text-info);line-height:1.65}
 .support-info strong{color:var(--text-primary)}
-.format-warning{padding:11px 13px;border:1px solid var(--text-error,#f87171);border-radius:10px;background:var(--bg-guide);color:var(--text-primary);font-size:12px;line-height:1.55}
-.format-warning[hidden]{display:none}
+.file-msg,.format-warning{padding:11px 13px;border:1px solid var(--status-red-text);border-radius:10px;background:var(--bg-guide);color:var(--text-primary);font-size:13px;line-height:1.6}
+.format-warning{border-color:var(--status-orange-text)}
+.file-msg ul{padding-left:18px;margin-top:4px}
 
-.controls{display:none;gap:14px;flex-direction:column}
-.control-row{display:flex;align-items:center;gap:12px;background:var(--bg-bar);border-radius:10px;padding:12px 16px}
-.control-row label{font-size:12px;color:var(--text-info);font-weight:600;white-space:nowrap;min-width:60px}
-
-.format-options{display:flex;gap:6px;flex:1;flex-wrap:wrap}
-.format-btn{padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg-bar);color:var(--text-section);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
-.format-btn.active{background:var(--accent);border-color:var(--accent);color:var(--text-on-accent)}
-.format-btn:hover:not(.active){background:var(--bg-input);border-color:var(--border-hover)}
-
-.slider{flex:1;-webkit-appearance:none;appearance:none;height:6px;background:var(--bg-btn);border-radius:3px;outline:none}
-.slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--accent);border-radius:50%;cursor:pointer;border:2px solid var(--border-hover)}
-.slider::-moz-range-thumb{width:18px;height:18px;background:var(--accent);border-radius:50%;cursor:pointer;border:2px solid var(--border-hover)}
+.controls{display:flex;gap:10px;flex-direction:column}
+.control-row{display:flex;align-items:center;gap:10px 12px;flex-wrap:wrap;background:var(--bg-bar);border-radius:10px;padding:10px 14px}
+.control-row .row-label{font-size:14px;color:var(--text-info);font-weight:600;white-space:nowrap;min-width:64px}
+.control-help{flex-basis:100%;font-size:12px;color:var(--text-info);line-height:1.55}
+.control-help:empty{display:none}
+.field-msg{flex-basis:100%;font-size:12px;color:var(--status-red-text)}
+.field-msg:empty{display:none}
+.chip-group{display:flex;gap:6px;flex-wrap:wrap;flex:1}
+.chip{min-height:44px;padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg-app);color:var(--text-secondary);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--text-on-accent)}
+.chip:disabled{opacity:.5;cursor:not-allowed}
+.slider{flex:1;min-width:120px;-webkit-appearance:none;appearance:none;height:6px;background:var(--bg-btn);border-radius:3px;outline:none}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;background:var(--accent);border-radius:50%;cursor:pointer;border:2px solid var(--border-hover)}
+.slider::-moz-range-thumb{width:22px;height:22px;background:var(--accent);border-radius:50%;cursor:pointer;border:2px solid var(--border-hover)}
 .val{font-size:14px;color:var(--text-amount);font-weight:700;min-width:48px;text-align:right}
+.unit{font-size:13px;color:var(--calc-expr-text)}
+.control-row input[type=number]{background:var(--bg-input);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:6px 8px;width:120px;min-height:44px;outline:none;font-family:inherit}
 
-.preview{display:none;gap:12px}
+.preview{display:flex;gap:12px}
 .preview-card{flex:1;background:var(--bg-bar);border-radius:10px;padding:12px;text-align:center;min-width:0}
-.preview-card img{max-width:100%;max-height:140px;border-radius:6px;margin-bottom:8px;object-fit:contain}
-.preview-label{font-size:10px;color:var(--calc-expr-text);margin-bottom:2px}
+.preview-card img{max-width:100%;max-height:160px;border-radius:6px;margin-bottom:8px;object-fit:contain;background-color:var(--bg-app);background-image:repeating-conic-gradient(var(--bg-btn) 0% 25%, transparent 0% 50%);background-size:16px 16px}
+.preview-label{font-size:12px;color:var(--calc-expr-text);margin-bottom:2px}
 .preview-size{font-size:14px;font-weight:700;color:var(--text-amount)}
-.preview-dim{font-size:10px;color:var(--text-muted)}
-.preview-format{font-size:11px;color:var(--text-section);margin-top:2px;font-weight:600}
-.saved{font-size:14px;font-weight:700;color:var(--text-info);text-align:center;padding:4px}
+.preview-dim{font-size:12px;color:var(--text-muted)}
+.preview-format{font-size:12px;color:var(--text-section);margin-top:2px;font-weight:600}
+.saved{font-size:14px;font-weight:700;color:var(--text-info);text-align:center;padding:4px;line-height:1.5}
 .saved.success{color:var(--text-success)}
-.saved.warning{color:var(--text-error, #f87171)}
+.saved.warning{color:var(--status-orange-text)}
+.saved.error{color:var(--status-red-text)}
+.saved:empty{display:none}
 
-.btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .2s}
-.btn-dl{background:linear-gradient(135deg,#533483,#6b44a3);color:#fff}
-.btn-dl:hover{opacity:.9}
-.btn-reset{background:var(--bg-bar);border:1px solid var(--border);color:var(--text-info);margin-top:4px}
+.file-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.file-row{display:flex;align-items:center;gap:8px;background:var(--bg-bar);border:1px solid var(--border);border-radius:10px;padding:6px 8px}
+.file-row.selected{border-color:var(--accent)}
+.file-pick{flex:1;min-width:0;min-height:44px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;background:none;border:none;color:var(--text-primary);font-family:inherit;text-align:left;cursor:pointer;padding:2px 4px}
+.file-name{font-size:14px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-stat{font-size:12px;color:var(--text-info)}
+.file-row.failed .file-stat{color:var(--status-red-text)}
+.row-btn{min-height:44px;min-width:44px;padding:6px 10px;border:1px solid var(--border);border-radius:8px;background:var(--bg-app);color:var(--text-secondary);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap}
+.row-btn:disabled{opacity:.5;cursor:not-allowed}
+.list-summary{font-size:13px;color:var(--text-info);text-align:center;line-height:1.6}
+
+.actions{display:flex;flex-direction:column;gap:8px}
+.btn{width:100%;min-height:44px;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .2s}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-dl{background:var(--accent);color:var(--text-on-accent)}
+.btn-dl:hover:not(:disabled){background:var(--accent-hover)}
+.btn-reset{background:var(--bg-bar);border:1px solid var(--border);color:var(--text-info)}
 .btn-reset:hover{background:var(--bg-input)}
 
-.privacy{font-size:10px;color:var(--text-placeholder);text-align:center}
+.privacy{font-size:12px;color:var(--text-placeholder);text-align:center}
 
-  /* 동적 리포트 & 가이드 표준 CSS */
-  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  .report-box { margin-top: 16px; padding: 20px; background: var(--bg-bar); border: 1px solid var(--border); border-radius: 12px; }
-  .report-box h3 { font-size: 15px; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .report-box p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 8px; }
-  .report-box .highlight { color:var(--accent-text); font-weight: 600; }
-  .guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
-  .guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
-  .guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .guide summary { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; line-height: 1.4; }
-  .guide summary::-webkit-details-marker { display: none; }
-  .guide summary::after { content: '▼'; font-size: 10px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
-  .guide[open] summary::after { transform: rotate(180deg); }
-  .guide-content { padding: 0 16px 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
-  .guide-content h3 { font-size: 14px; color: var(--text-primary); margin: 12px 0 8px; }
-  .guide-content p { margin-bottom: 12px; }
-  .guide-content ul, .guide-content ol { padding-left: 20px; margin-bottom: 12px; }
-  .guide-content li { margin-bottom: 4px; }
-  .related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
-  .related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; }
-  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
-  .tag { font-size: 12px; background: var(--bg-btn); color: var(--text-secondary); padding: 6px 12px; border-radius: 16px; text-decoration: none; border: 1px solid var(--border); transition: all 0.2s; }
-  .tag:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.guide-section { margin: 24px 12px 12px; padding: 24px 20px; background: var(--bg-bar); border-radius: 12px; border: 1px solid var(--border); }
+.guide-section h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; line-height: 1.4; }
+.guide { margin-bottom: 12px; background: var(--bg-app); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.guide summary { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; line-height: 1.4; }
+.guide summary::-webkit-details-marker { display: none; }
+.guide summary::after { content: '▼'; font-size: 10px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
+.guide[open] summary::after { transform: rotate(180deg); }
+.guide-content { padding: 0 16px 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.guide-content p { margin-bottom: 12px; }
+.guide-content ul, .guide-content ol { padding-left: 20px; margin-bottom: 12px; }
+.guide-content li { margin-bottom: 4px; }
+.related-tools { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+.related-tools h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag { font-size: 12px; background: var(--bg-btn); color: var(--text-secondary); padding: 6px 12px; border-radius: 16px; text-decoration: none; border: 1px solid var(--border); transition: all 0.2s; }
+.tag:hover { background: var(--accent); color: var(--text-on-accent); border-color: var(--accent); }
 
 .footer{background:var(--bg-bar);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:11px;color:var(--calc-expr-text)}
 .footer a{color:var(--text-info);text-decoration:none;font-weight:600;transition:color .2s}
 .footer a:hover{color:var(--text-secondary)}
 
-.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-btn);color:var(--text-primary);padding:10px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:999}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 @media(max-width:640px){
 .preview{flex-direction:column}
+.control-row .row-label{min-width:0;width:100%}
 }
 </style>
 <link rel="stylesheet" href="/special-chars/tool-shell.css">
@@ -118,108 +135,148 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
     <h1>🖼️ 이미지 포맷 변환기</h1>
   </div>
   <div class="content">
-    <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-controls="fileInput" onclick="document.getElementById('fileInput').click()">
+    <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-controls="fileInput" aria-describedby="inputHelp outputHelp">
       <div class="icon">📁</div>
-      <div class="text">클릭하거나 이미지를 드래그하세요</div>
-      <div class="sub">입력: JPG · PNG · WebP · GIF · BMP · SVG (최대 20MB)</div>
-      <div class="sub">출력: JPG · PNG · WebP</div>
-      <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.svg,image/jpeg,image/png,image/webp,image/gif,image/bmp,image/svg+xml" onchange="handleFile(this.files[0])">
+      <div class="text" id="dropText">클릭하거나 이미지를 끌어다 놓으세요 (여러 장 가능)</div>
+      <div class="sub" id="inputHelp">입력: JPG · PNG · WebP · GIF · BMP · SVG (한 장당 20MB, 최대 30장)</div>
+      <div class="sub" id="outputHelp">출력: JPG · PNG · WebP · Ctrl+V(⌘V) 붙여넣기 가능</div>
+      <input type="file" id="fileInput" multiple accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.svg,.avif,image/jpeg,image/png,image/webp,image/gif,image/bmp,image/svg+xml,image/avif">
     </div>
+    <div class="file-msg" id="fileMsg" role="alert" hidden></div>
 
-    <div class="support-info"><strong>입력과 출력 범위가 다릅니다.</strong> GIF·BMP·SVG는 불러오기 전용입니다. 결과는 JPG·PNG·WebP 중 하나로 저장되며, 긴 변 기준 8,000px 또는 총 2,400만 픽셀을 넘는 이미지는 기기 보호를 위해 처리하지 않습니다.</div>
+    <div class="support-info"><strong>입력과 출력 범위가 다릅니다.</strong> GIF·BMP·SVG는 불러오기 전용이며 결과는 JPG·PNG·WebP 중 하나로 저장됩니다. 원본은 긴 변 12,000px·5,000만 화소까지, 결과는 5,000만 화소까지 만들 수 있습니다. 아이폰 HEIC 사진은 아래 안내에 따라 JPG로 바꾼 뒤 사용하세요.</div>
 
-    <div class="controls" id="controls">
+    <div class="controls" id="controls" hidden>
       <div class="control-row">
-        <label>출력 포맷</label>
-        <div class="format-options" id="formatOptions">
-          <button class="format-btn" data-format="image/jpeg" onclick="setFormat(this)">JPG</button>
-          <button class="format-btn active" data-format="image/png" onclick="setFormat(this)">PNG</button>
-          <button class="format-btn" data-format="image/webp" onclick="setFormat(this)">WebP</button>
+        <span class="row-label" id="formatLabel">출력 포맷</span>
+        <div class="chip-group" role="group" aria-labelledby="formatLabel">
+          <button type="button" class="chip" data-format="image/jpeg" aria-pressed="false">JPG</button>
+          <button type="button" class="chip" data-format="image/png" aria-pressed="true">PNG</button>
+          <button type="button" class="chip" data-format="image/webp" aria-pressed="false" id="webpChip">WebP</button>
         </div>
+        <p class="control-help" id="formatHelp"></p>
       </div>
-      <div class="control-row" id="qualityRow">
-        <label>품질</label>
-        <input type="range" class="slider" id="qualitySlider" min="10" max="100" value="90" oninput="onQualityChange()">
-        <div class="val" id="qualityVal">90%</div>
+      <div class="control-row" id="qualityRow" hidden>
+        <label class="row-label" for="qualitySlider">품질</label>
+        <input type="range" class="slider" id="qualitySlider" min="10" max="100" value="90">
+        <span class="val" id="qualityVal">90%</span>
+      </div>
+      <div class="control-row">
+        <span class="row-label" id="sizeLabel">크기</span>
+        <div class="chip-group" role="group" aria-labelledby="sizeLabel">
+          <button type="button" class="chip" data-size="1" aria-pressed="true">원본 크기</button>
+          <button type="button" class="chip" data-size="2" aria-pressed="false">2배</button>
+          <button type="button" class="chip" data-size="4" aria-pressed="false">4배</button>
+          <button type="button" class="chip" data-size="width" aria-pressed="false">가로 지정</button>
+        </div>
+        <div id="widthField" hidden style="display:flex;align-items:center;gap:8px;flex-basis:100%">
+          <label class="sr-only" for="targetWidth">출력 가로(px)</label>
+          <input type="number" id="targetWidth" value="1920" min="16" max="12000" step="1" inputmode="numeric" aria-describedby="widthMsg sizeHelp">
+          <span class="unit">px (세로는 비율 유지)</span>
+        </div>
+        <p class="field-msg" id="widthMsg"></p>
+        <p class="control-help" id="sizeHelp">SVG 로고·아이콘은 2배·4배로 키워도 선명합니다. 사진 같은 픽셀 이미지는 키우면 흐려지므로 원본 크기나 더 작은 가로를 권장합니다.</p>
       </div>
     </div>
 
-    <div class="format-warning" id="formatWarning" role="alert" hidden></div>
+    <div class="format-warning" id="formatWarning" role="status" hidden></div>
 
-    <div class="preview" id="preview">
+    <div class="preview" id="preview" hidden>
       <div class="preview-card">
         <div class="preview-label">원본</div>
-        <img id="origImg">
+        <img id="origImg" alt="선택한 원본 이미지">
         <div class="preview-format" id="origFormat"></div>
         <div class="preview-size" id="origSize"></div>
         <div class="preview-dim" id="origDim"></div>
       </div>
       <div class="preview-card">
         <div class="preview-label">변환 결과</div>
-        <img id="convImg">
+        <img id="convImg" alt="변환 결과 이미지">
         <div class="preview-format" id="convFormat"></div>
         <div class="preview-size" id="convSize"></div>
         <div class="preview-dim" id="convDim"></div>
       </div>
     </div>
 
-    <div class="saved" id="savedInfo" style="display:none"></div>
+    <div class="saved" id="savedInfo" role="status" aria-live="polite"></div>
 
-    <button class="btn btn-dl" id="dlBtn" style="display:none" onclick="download()">⬇️ 변환된 이미지 다운로드</button>
-    <button class="btn btn-reset" id="resetBtn" style="display:none" onclick="resetAll()">🗑️ 초기화</button>
+    <div id="listWrap" hidden>
+      <ul class="file-list" id="fileList" aria-label="추가한 이미지 목록"></ul>
+      <p class="list-summary" id="listSummary" aria-live="polite"></p>
+    </div>
 
-    <div class="privacy">⚠️ 100% 브라우저 로컬 처리 — 이미지는 서버로 전송되지 않습니다</div>
-    
-    <!-- 동적 이미지 변환 분석 리포트 -->
-    <div id="reportContainer" class="report-box" style="display:none; animation: fadeIn 0.5s ease;"></div>
+    <div class="actions">
+      <button type="button" class="btn btn-dl" id="dlBtn" hidden>⬇️ 변환된 이미지 다운로드</button>
+      <button type="button" class="btn btn-dl" id="zipBtn" hidden>🗂️ 전체 ZIP으로 저장</button>
+      <button type="button" class="btn btn-reset" id="resetBtn" hidden>🗑️ 초기화</button>
+    </div>
+
+    <div class="privacy">🔒 100% 브라우저 로컬 처리 — 이미지는 서버로 전송되지 않습니다</div>
   </div>
 
   <section class="guide-section">
-    <h2>💡 무료 이미지 확장자 포맷 변환 가이드</h2>
-    
+    <h2>💡 이미지 포맷 변환 가이드</h2>
+
     <details class="guide" open>
-      <summary>이미지 확장자별 변환은 어떤 차이가 있나요?</summary>
+      <summary>출력 포맷은 무엇을 고르면 되나요?</summary>
       <div class="guide-content">
-        <p><strong>입력은 JPG·PNG·WebP·GIF·BMP·SVG</strong>, <strong>출력은 JPG·PNG·WebP</strong>를 지원합니다. GIF·BMP·SVG는 출력 포맷으로 선택할 수 없습니다.</p>
+        <p><strong>입력은 JPG·PNG·WebP·GIF·BMP·SVG</strong>(브라우저가 읽을 수 있으면 AVIF도), <strong>출력은 JPG·PNG·WebP</strong>입니다. GIF·BMP·SVG는 출력 포맷으로 고를 수 없습니다.</p>
         <ul>
-          <li><b>JPG (JPEG):</b> 풍경 사진, 극사실주의 스틸컷 등 색감이 다양한 객체에 적합합니다. 용량이 가벼운 손실 압축 방식을 사용합니다.</li>
-          <li><b>PNG:</b> 로고, 글씨가 많은 스크린샷과 투명 배경이 필요한 이미지에 적합한 무손실 출력 포맷입니다. 다만 원본을 캔버스로 다시 그리는 과정에서 일부 메타데이터는 유지되지 않을 수 있습니다.</li>
-          <li><b>WebP:</b> 사진과 투명 이미지를 모두 지원하는 웹용 포맷입니다. 파일에 따라 JPG·PNG보다 작아질 수 있지만 항상 용량이 줄어드는 것은 아닙니다.</li>
+          <li><b>JPG (JPEG):</b> 풍경·인물 사진처럼 색이 다양한 이미지에 알맞은 손실 압축 형식입니다. 거의 모든 프로그램과 업로드 양식에서 열리며, 투명한 부분은 흰색으로 채워집니다.</li>
+          <li><b>PNG:</b> 로고, 글씨가 많은 스크린샷, 투명 배경이 필요한 이미지에 알맞은 무손실 형식입니다. 사진을 PNG로 바꾸면 화질은 그대로지만 용량이 크게 늘어나는 경우가 많습니다.</li>
+          <li><b>WebP:</b> 사진과 투명 이미지를 모두 지원하는 웹용 형식입니다. 같은 화질에서 JPG·PNG보다 작아지는 경우가 많지만 항상 그런 것은 아니며, 일부 오래된 프로그램은 WebP를 열지 못합니다. Safari처럼 WebP 저장을 지원하지 않는 브라우저에서는 버튼이 비활성화됩니다.</li>
         </ul>
       </div>
     </details>
 
     <details class="guide">
-      <summary>GIF 애니메이션과 SVG 벡터 정보도 유지되나요?</summary>
+      <summary>SVG 로고를 크게, 선명하게 저장하려면?</summary>
       <div class="guide-content">
-        <p>아닙니다. 이 도구는 브라우저 캔버스에 이미지를 그린 뒤 다시 인코딩합니다. <strong>애니메이션 GIF는 한 장의 정지 프레임으로 변환</strong>되고, <strong>SVG는 현재 표시 크기의 픽셀 이미지로 래스터화</strong>되어 벡터 확대 특성을 잃습니다. 해당 파일을 선택하면 변환 전에 경고가 표시됩니다.</p>
+        <p>SVG는 벡터 형식이라 크기를 키워도 깨지지 않지만, PNG·JPG로 바꾸는 순간 정해진 픽셀 수의 그림이 됩니다. 원본 SVG에 적힌 크기(width·height 또는 viewBox)가 작으면 결과도 작습니다. 예를 들어 120×40으로 지정된 로고는 '원본 크기'에서 120×40px PNG가 됩니다. 발표 자료나 인쇄용이라면 '2배'·'4배' 또는 '가로 지정'으로 원하는 크기를 정하세요. 이 도구는 SVG를 목표 크기로 다시 그리므로 확대해도 가장자리가 선명합니다.</p>
+        <p>SVG 안에서 외부 이미지나 웹 글꼴을 불러오는 경우 브라우저 보안 정책 때문에 그 부분이 빠질 수 있습니다. 결과 미리보기를 꼭 확인하세요.</p>
       </div>
     </details>
 
     <details class="guide">
-      <summary>품질 설정 등은 어떻게 진행하나요?</summary>
+      <summary>GIF 애니메이션도 그대로 유지되나요?</summary>
+      <div class="guide-content">
+        <p>아닙니다. 이 도구는 브라우저 캔버스에 이미지를 그린 뒤 다시 저장하므로 <strong>애니메이션 GIF는 첫 장면 한 장의 정지 이미지로</strong> 변환됩니다. SVG도 픽셀 이미지로 바뀌어 벡터 편집 정보는 사라집니다. 해당 파일을 추가하면 변환 전에 안내가 표시됩니다.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>품질·크기 설정은 어떻게 하나요?</summary>
       <div class="guide-content">
         <ul>
-          <li><b>JPG / WebP:</b> 품질 수치가 높을수록 압축 손실은 줄어드는 경향이 있지만 파일 크기 변화는 이미지마다 다릅니다. 여러 값을 비교하고 결과 패널의 실제 용량과 화면 품질을 함께 확인하세요.</li>
-          <li><b>PNG:</b> 출력 인코딩이 무손실이라 품질 슬라이더를 사용하지 않습니다. 다만 원본을 캔버스로 다시 그리므로 원본의 메타데이터·색상 프로필 등이 그대로 유지된다는 뜻은 아닙니다.</li>
+          <li><b>품질(JPG·WebP):</b> 값이 높을수록 손실이 줄지만 용량은 커집니다. 사진은 80~90%면 대부분 차이를 느끼기 어렵습니다. 결과 카드의 실제 용량과 화면을 함께 확인하세요.</li>
+          <li><b>PNG:</b> 무손실이라 품질 설정이 없습니다. 용량을 줄이려면 '가로 지정'으로 크기를 줄이거나 이미지 용량 줄이기 도구를 사용하세요.</li>
+          <li><b>크기:</b> '가로 지정'은 비율을 유지해 세로를 자동으로 맞춥니다. 사진을 원본보다 크게 만들면 흐려지므로 필요한 크기 이하로 설정하세요.</li>
         </ul>
+        <p>캔버스로 다시 저장하는 과정에서 EXIF 등 메타데이터와 일부 색상 프로필은 결과에 포함되지 않습니다.</p>
       </div>
     </details>
 
     <details class="guide">
-      <summary>업로드된 저의 개인 사진은 서버에 기록되나요?</summary>
+      <summary>아이폰 HEIC 사진도 변환할 수 있나요?</summary>
       <div class="guide-content">
-        <p>선택한 이미지의 읽기와 변환은 현재 브라우저 안에서 진행되며 변환을 위해 파일을 서버에 업로드하지 않습니다. 다만 공용 기기에서는 다운로드된 결과 파일과 브라우저 기록을 직접 관리해 주세요.</p>
+        <p>HEIC(HEIF)는 아이폰의 기본 사진 형식이지만 대부분의 PC·안드로이드 브라우저가 읽지 못해 이 도구에서도 열 수 없습니다. 아이폰 Safari에서 이 페이지의 파일 선택으로 사진 보관함의 사진을 고르면 iOS가 보통 JPG로 바꿔 전달하므로 그대로 사용할 수 있습니다. 새로 찍는 사진을 JPG로 저장하려면 <b>설정 &gt; 카메라 &gt; 포맷</b>에서 <b>'높은 호환성'</b>을 선택하세요. 이미 PC로 옮긴 HEIC 파일은 Mac의 미리보기 앱에서 파일 &gt; 내보내기로 JPEG를 선택해 변환할 수 있습니다.</p>
+      </div>
+    </details>
+
+    <details class="guide">
+      <summary>업로드한 개인 사진은 서버에 기록되나요?</summary>
+      <div class="guide-content">
+        <p>선택한 이미지의 읽기와 변환은 현재 브라우저 안에서 진행되며 변환을 위해 파일을 서버에 업로드하지 않습니다. 여러 장을 ZIP으로 저장할 때도 브라우저 안에서 파일을 묶습니다. 다만 공용 기기에서는 다운로드된 결과 파일과 브라우저 기록을 직접 관리해 주세요.</p>
       </div>
     </details>
 
     <div class="related-tools">
-      <h3>🛠️ 함께 쓰면 좋은 파일 관리 모음</h3>
+      <h3>🛠️ 함께 쓰면 좋은 이미지·파일 도구</h3>
       <div class="tags">
-        <a href="/special-chars/image-compress/" class="tag">이미지 용량 극압축기</a>
-        <a href="/special-chars/bg-remover/" class="tag">AI 배경 제거 누끼머신</a>
-        <a href="/special-chars/pdf-tool/" class="tag">PDF 추출 및 분할</a>
-        <a href="/#toolsGrid" class="tag">재무/생활 일반 계산기</a>
+        <a href="/special-chars/image-compress/" class="tag">이미지 용량 줄이기</a>
+        <a href="/special-chars/bg-remover/" class="tag">이미지 배경(누끼) 제거</a>
+        <a href="/special-chars/pdf-tool/" class="tag">PDF 도구</a>
+        <a href="/special-chars/base64-tool/" class="tag">Base64 인코더/디코더</a>
       </div>
     </div>
   </section>
@@ -228,370 +285,793 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg-body)
 <nav class="site-policy-links" aria-label="사이트 정책"><a href="/about.html">사이트 소개</a><a href="/editorial-policy.html">편집정책</a><a href="/contact.html">문의</a><a href="/privacy.html">개인정보처리방침</a></nav>
 </div>
 
+<dialog class="tool-confirm-dialog" id="discardDialog" aria-labelledby="discardDialogTitle" aria-describedby="discardDialogDescription">
+  <div class="tool-confirm-dialog__body">
+    <h2 id="discardDialogTitle">저장하지 않은 결과가 있습니다</h2>
+    <p id="discardDialogDescription">아직 내려받지 않은 변환 결과가 있습니다. 초기화하면 목록과 결과가 사라집니다.</p>
+    <div class="tool-confirm-dialog__actions">
+      <button type="button" data-discard-cancel autofocus>취소</button>
+      <button type="button" class="tool-confirm-dialog__confirm" data-discard-confirm>초기화</button>
+    </div>
+  </div>
+</dialog>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="scroll-top-btn" id="scrollTopBtn" aria-label="맨 위로">↑</button>
 
 <script>
-let originalFile=null;
-let originalDataUrl=null;
-let convertedBlob=null;
-let convertedUrl=null;
-let selectedFormat='image/png';
-let quality=0.9;
-let originalInputType=null;
-let loadSequence=0;
-let conversionSequence=0;
-let decodedImage=null;
-let reconvertTimer=null;
-
-const MAX_FILE_SIZE=20*1024*1024;
-const MAX_EDGE=8000;
-const MAX_PIXELS=24000000;
-const RECONVERT_DELAY_MS=200;
-const INPUT_MIME_INFO={
-  'image/jpeg':{mime:'image/jpeg',label:'JPG'},
-  'image/jpg':{mime:'image/jpeg',label:'JPG'},
-  'image/png':{mime:'image/png',label:'PNG'},
-  'image/x-png':{mime:'image/png',label:'PNG'},
-  'image/webp':{mime:'image/webp',label:'WebP'},
-  'image/gif':{mime:'image/gif',label:'GIF'},
-  'image/bmp':{mime:'image/bmp',label:'BMP'},
-  'image/x-ms-bmp':{mime:'image/bmp',label:'BMP'},
-  'image/svg+xml':{mime:'image/svg+xml',label:'SVG'}
+const MAX_FILE_SIZE = 20 * 1024 * 1024;
+const MAX_FILES = 30;
+const MAX_SOURCE_EDGE = 12000;
+const MAX_SOURCE_PIXELS = 50000000;
+const MAX_OUTPUT_EDGE = 16384;
+const MAX_OUTPUT_PIXELS = 50000000;
+const RECONVERT_DELAY_MS = 200;
+const INPUT_MIME_INFO = {
+  'image/jpeg': { mime: 'image/jpeg', label: 'JPG', ext: 'jpg' },
+  'image/jpg': { mime: 'image/jpeg', label: 'JPG', ext: 'jpg' },
+  'image/pjpeg': { mime: 'image/jpeg', label: 'JPG', ext: 'jpg' },
+  'image/png': { mime: 'image/png', label: 'PNG', ext: 'png' },
+  'image/x-png': { mime: 'image/png', label: 'PNG', ext: 'png' },
+  'image/webp': { mime: 'image/webp', label: 'WebP', ext: 'webp' },
+  'image/gif': { mime: 'image/gif', label: 'GIF', ext: 'gif' },
+  'image/bmp': { mime: 'image/bmp', label: 'BMP', ext: 'bmp' },
+  'image/x-ms-bmp': { mime: 'image/bmp', label: 'BMP', ext: 'bmp' },
+  'image/svg+xml': { mime: 'image/svg+xml', label: 'SVG', ext: 'svg' },
+  'image/avif': { mime: 'image/avif', label: 'AVIF', ext: 'avif' }
 };
-const INPUT_EXTENSION_INFO={
-  jpg:INPUT_MIME_INFO['image/jpeg'],jpeg:INPUT_MIME_INFO['image/jpeg'],
-  png:INPUT_MIME_INFO['image/png'],webp:INPUT_MIME_INFO['image/webp'],
-  gif:INPUT_MIME_INFO['image/gif'],bmp:INPUT_MIME_INFO['image/bmp'],svg:INPUT_MIME_INFO['image/svg+xml']
+const INPUT_EXTENSION_INFO = {
+  jpg: INPUT_MIME_INFO['image/jpeg'], jpeg: INPUT_MIME_INFO['image/jpeg'],
+  png: INPUT_MIME_INFO['image/png'], webp: INPUT_MIME_INFO['image/webp'],
+  gif: INPUT_MIME_INFO['image/gif'], bmp: INPUT_MIME_INFO['image/bmp'],
+  svg: INPUT_MIME_INFO['image/svg+xml'], avif: INPUT_MIME_INFO['image/avif']
 };
+const OUTPUT_EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
+const OUTPUT_LABEL = { 'image/jpeg': 'JPG', 'image/png': 'PNG', 'image/webp': 'WebP' };
+const HEIC_MESSAGE = 'HEIC(아이폰 기본 사진 형식)는 이 브라우저에서 열 수 없습니다. 아이폰 Safari에서 파일 선택으로 사진 보관함의 사진을 고르면 보통 JPG로 전달됩니다. 새 사진을 JPG로 저장하려면 설정 > 카메라 > 포맷 > "높은 호환성"을 선택하세요. Mac에서는 미리보기 앱의 파일 > 내보내기로 JPEG를 만들 수 있습니다.';
+const AVIF_PROBE = 'data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADybWV0YQAAAAAAAAAoaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAGxpYmF2aWYAAAAADnBpdG0AAAAAAAEAAAAeaWxvYwAAAABEAAABAAEAAAABAAABGgAAAB0AAAAoaWluZgAAAAAAAQAAABppbmZlAgAAAAABAABhdjAxQ29sb3IAAAAAamlwcnAAAABLaXBjbwAAABRpc3BlAAAAAAAAAAIAAAACAAAAEHBpeGkAAAAAAwgICAAAAAxhdjFDgQ0MAAAAABNjb2xybmNseAACAAIAAYAAAAAXaXBtYQAAAAAAAAABAAEEAQKDBAAAACVtZGF0EgAKCBgANogQEAwgMg8f8D///8WfhwB8+ErK42A=';
 
-const dropZone=document.getElementById('dropZone');
-dropZone.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();document.getElementById('fileInput').click();}});
-dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('dragover');});
-dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('dragover'));
-dropZone.addEventListener('drop',e=>{
-  e.preventDefault();dropZone.classList.remove('dragover');
-  if(e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
-});
-
-function handleFile(file){
-  if(!file)return;
-  const inputType=detectInputType(file);
-  if(!inputType){rejectFile('지원하지 않는 입력 형식입니다. JPG, PNG, WebP, GIF, BMP, SVG를 선택하세요.');return;}
-  if(file.size===0){rejectFile('비어 있는 파일은 변환할 수 없습니다.');return;}
-  if(file.size>MAX_FILE_SIZE){rejectFile('파일이 20MB를 초과해 처리할 수 없습니다.');return;}
-
-  clearLoadedState();
-  const currentLoad=++loadSequence;
-  originalFile=file;
-  originalInputType=inputType;
-
-  const reader=new FileReader();
-  reader.onload=function(e){
-    if(currentLoad!==loadSequence)return;
-    originalDataUrl=e.target.result;
-
-    const img=new Image();
-    img.onload=function(){
-      if(currentLoad!==loadSequence)return;
-      const width=img.naturalWidth||img.width;
-      const height=img.naturalHeight||img.height;
-      if(!isDimensionAllowed(width,height)){
-        rejectFile(`이미지 크기 ${width} × ${height}px는 처리 한도(긴 변 8,000px, 총 2,400만 픽셀)를 초과합니다.`);
-        return;
-      }
-      decodedImage=img;
-      document.getElementById('origImg').src=originalDataUrl;
-      document.getElementById('origFormat').textContent=inputType.label;
-      document.getElementById('origSize').textContent=formatSize(file.size);
-      document.getElementById('origDim').textContent=`${width} × ${height}px`;
-      document.getElementById('controls').style.display='flex';
-      document.getElementById('preview').style.display='flex';
-      document.getElementById('resetBtn').style.display='block';
-      showInputWarning(inputType.mime);
-
-      autoSelectFormat(inputType.mime);
-      convertImage(img);
-    };
-    img.onerror=function(){
-      if(currentLoad===loadSequence)rejectFile('브라우저가 이 이미지 데이터를 해석하지 못했습니다. 파일 손상 또는 미지원 인코딩을 확인하세요.');
-    };
-    img.src=originalDataUrl;
-  };
-  reader.onerror=function(){
-    if(currentLoad===loadSequence)rejectFile('파일을 읽지 못했습니다. 다시 선택해 주세요.');
-  };
-  reader.readAsDataURL(file);
-}
-
-function detectInputType(file){
-  const mime=(file.type||'').toLowerCase();
-  if(INPUT_MIME_INFO[mime])return INPUT_MIME_INFO[mime];
-  const match=(file.name||'').toLowerCase().match(/\.([a-z0-9]+)$/);
-  return match ? (INPUT_EXTENSION_INFO[match[1]]||null) : null;
-}
-
-function isDimensionAllowed(width,height){
-  return Number.isFinite(width)&&Number.isFinite(height)&&width>0&&height>0&&
-    width<=MAX_EDGE&&height<=MAX_EDGE&&width*height<=MAX_PIXELS;
-}
-
-function showInputWarning(mime){
-  const warning=document.getElementById('formatWarning');
-  if(mime==='image/gif'){
-    warning.textContent='⚠️ 애니메이션 GIF는 움직임이 유지되지 않으며, 브라우저가 표시한 한 장의 정지 프레임으로 변환됩니다.';
-    warning.hidden=false;
-  }else if(mime==='image/svg+xml'){
-    warning.textContent='⚠️ SVG는 현재 해상도의 픽셀 이미지로 래스터화됩니다. 변환 결과는 벡터 확대 특성과 편집 가능한 벡터 정보를 유지하지 않습니다.';
-    warning.hidden=false;
-  }else{
-    warning.textContent='';
-    warning.hidden=true;
+// Safari 등은 WebP 저장을 요청해도 PNG를 돌려준다. 시작할 때 확인해 버튼을 미리 막는다.
+const canEncodeWebP = (() => {
+  try {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1; canvas.height = 1;
+    return canvas.toDataURL('image/webp').startsWith('data:image/webp');
+  } catch (_error) {
+    return false;
   }
+})();
+let canDecodeAvif = false;
+
+const $ = id => document.getElementById(id);
+const dropZone = $('dropZone');
+const state = {
+  items: [],
+  selectedId: null,
+  format: 'image/png',
+  formatChosen: false,
+  quality: 0.9,
+  sizeMode: '1',
+  targetWidth: 1920,
+  generation: 0
+};
+let nextItemId = 1;
+let reconvertTimer = null;
+let pumpGeneration = -1;
+
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / 1048576).toFixed(1) + ' MB';
 }
 
-function rejectFile(message){
-  clearLoadedState();
-  document.getElementById('fileInput').value='';
-  showToast(message);
+function showToast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2400);
 }
 
-function clearLoadedState(){
-  if(reconvertTimer!==null){
-    clearTimeout(reconvertTimer);
-    reconvertTimer=null;
-  }
-  loadSequence++;
-  conversionSequence++;
-  originalFile=null;
-  originalDataUrl=null;
-  originalInputType=null;
-  decodedImage=null;
-  convertedBlob=null;
-  if(convertedUrl)URL.revokeObjectURL(convertedUrl);
-  convertedUrl=null;
-  ['controls','preview','dlBtn','resetBtn','savedInfo','reportContainer'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el)el.style.display='none';
+function safeFileName(name) {
+  return String(name || 'image').replace(/[\\/:*?"<>|\u0000-\u001f]/g, '_').replace(/^\.+/, '_').slice(0, 180) || 'image';
+}
+
+function localStamp(withTime) {
+  const d = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  const date = `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
+  return withTime ? `${date}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}` : date;
+}
+
+function isHeic(file) {
+  const type = (file.type || '').toLowerCase();
+  return type === 'image/heic' || type === 'image/heif' || /\.(heic|heif)$/i.test(file.name || '');
+}
+
+function detectInputType(file) {
+  const mime = (file.type || '').toLowerCase();
+  if (INPUT_MIME_INFO[mime]) return INPUT_MIME_INFO[mime];
+  const match = (file.name || '').toLowerCase().match(/\.([a-z0-9]+)$/);
+  return match ? (INPUT_EXTENSION_INFO[match[1]] || null) : null;
+}
+
+function loadImage(url) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.decoding = 'async';
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('decode'));
+    img.src = url;
   });
-  const warning=document.getElementById('formatWarning');
-  warning.textContent='';warning.hidden=true;
-  document.getElementById('origImg').removeAttribute('src');
-  document.getElementById('convImg').removeAttribute('src');
 }
 
-function autoSelectFormat(origType){
-  const formats=document.querySelectorAll('.format-btn');
-  const origMime=origType.toLowerCase();
-
-  const outputMimes=['image/jpeg','image/png','image/webp'];
-  const preferred=outputMimes.includes(origMime)
-    ? outputMimes.find(format=>format!==origMime)
-    : 'image/png';
-  formats.forEach(btn=>{
-    btn.classList.remove('active');
-    if(btn.dataset.format===preferred){
-      btn.classList.add('active');
-      selectedFormat=btn.dataset.format;
+function canvasToBlob(canvas, type, quality) {
+  return new Promise(resolve => {
+    try {
+      canvas.toBlob(blob => resolve(blob && blob.size ? blob : null), type, quality);
+    } catch (_error) {
+      resolve(null);
     }
   });
-  updateQualityVisibility();
 }
 
-function setFormat(btn){
-  document.querySelectorAll('.format-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  selectedFormat=btn.dataset.format;
-  updateQualityVisibility();
-  scheduleReconvert();
+// ---------- SVG: 고유 크기를 읽고, 목표 크기로 다시 그리도록 width/height를 바꾼다 ----------
+function parseSvgLength(value) {
+  const match = String(value || '').trim().match(/^([0-9]*\.?[0-9]+(?:e[-+]?\d+)?)\s*(px|pt|pc|mm|cm|in)?$/i);
+  if (!match) return null;
+  const factor = { '': 1, px: 1, pt: 4 / 3, pc: 16, mm: 96 / 25.4, cm: 96 / 2.54, in: 96 }[(match[2] || '').toLowerCase()];
+  const length = parseFloat(match[1]) * factor;
+  return length > 0 ? length : null;
 }
 
-function updateQualityVisibility(){
-  document.getElementById('qualityRow').style.display=
-    selectedFormat==='image/png'?'none':'flex';
-}
-
-function onQualityChange(){
-  quality=document.getElementById('qualitySlider').value/100;
-  document.getElementById('qualityVal').textContent=Math.round(quality*100)+'%';
-  scheduleReconvert();
-}
-
-function invalidateConvertedOutput(){
-  conversionSequence++;
-  convertedBlob=null;
-  if(convertedUrl)URL.revokeObjectURL(convertedUrl);
-  convertedUrl=null;
-  document.getElementById('convImg').removeAttribute('src');
-  document.getElementById('dlBtn').style.display='none';
-  document.getElementById('savedInfo').style.display='none';
-  document.getElementById('reportContainer').style.display='none';
-}
-
-function scheduleReconvert(){
-  if(!originalDataUrl||!decodedImage)return;
-  invalidateConvertedOutput();
-  if(reconvertTimer!==null)clearTimeout(reconvertTimer);
-  reconvertTimer=setTimeout(()=>{
-    reconvertTimer=null;
-    reconvert();
-  },RECONVERT_DELAY_MS);
-}
-
-function reconvert(){
-  if(!originalDataUrl||!decodedImage)return;
-  convertImage(decodedImage);
-}
-
-function convertImage(img){
-  const width=img.naturalWidth||img.width;
-  const height=img.naturalHeight||img.height;
-  if(!isDimensionAllowed(width,height)){
-    showConversionError('이미지 크기가 처리 한도를 초과합니다.');
-    return;
+async function readSvg(file) {
+  const text = await file.text();
+  const doc = new DOMParser().parseFromString(text, 'image/svg+xml');
+  const root = doc.documentElement;
+  if (!root || root.localName !== 'svg' || doc.getElementsByTagName('parsererror').length) throw new Error('svg');
+  const viewBox = (root.getAttribute('viewBox') || '').trim().split(/[\s,]+/).map(Number);
+  const hasViewBox = viewBox.length === 4 && viewBox.every(Number.isFinite) && viewBox[2] > 0 && viewBox[3] > 0;
+  let width = parseSvgLength(root.getAttribute('width'));
+  let height = parseSvgLength(root.getAttribute('height'));
+  if (!width && !height) {
+    width = hasViewBox ? viewBox[2] : 300;
+    height = hasViewBox ? viewBox[3] : 150;
+  } else if (!width) {
+    width = hasViewBox ? height * viewBox[2] / viewBox[3] : height;
+  } else if (!height) {
+    height = hasViewBox ? width * viewBox[3] / viewBox[2] : width;
   }
-  invalidateConvertedOutput();
-  const currentConversion=conversionSequence;
-  let canvas;
-  let ctx;
-  try{
-    canvas=document.createElement('canvas');
-    canvas.width=width;
-    canvas.height=height;
-    ctx=canvas.getContext('2d');
-    if(!ctx||canvas.width!==width||canvas.height!==height)throw new Error('canvas unavailable');
-    if(selectedFormat==='image/jpeg'){
-      ctx.fillStyle='#ffffff';
-      ctx.fillRect(0,0,canvas.width,canvas.height);
-    }
-    ctx.drawImage(img,0,0);
-  }catch(error){
-    showConversionError('브라우저가 이 크기의 이미지를 캔버스에 그리지 못했습니다.');
-    return;
-  }
-
-  try{
-    canvas.toBlob(function(blob){
-    if(currentConversion!==conversionSequence)return;
-    if(!blob){showConversionError('이미지 인코딩에 실패했습니다. 다른 출력 포맷을 선택해 보세요.');return;}
-    if((blob.type||'').toLowerCase()!==selectedFormat){
-      showConversionError('이 브라우저가 선택한 출력 포맷 인코딩을 지원하지 않습니다.');
-      return;
-    }
-    convertedBlob=blob;
-    if(convertedUrl) URL.revokeObjectURL(convertedUrl);
-    convertedUrl=URL.createObjectURL(blob);
-
-    document.getElementById('convImg').src=convertedUrl;
-    const ext=selectedFormat.split('/')[1];
-    document.getElementById('convFormat').textContent=(ext==='jpeg'?'JPG':ext.toUpperCase());
-    document.getElementById('convSize').textContent=formatSize(blob.size);
-    document.getElementById('convDim').textContent=`${width} × ${height}px`;
-    document.getElementById('dlBtn').style.display='block';
-
-    // 용량 비교
-    const diff=blob.size-originalFile.size;
-    const pct=((diff/originalFile.size)*100).toFixed(1);
-    const savedEl=document.getElementById('savedInfo');
-    if(diff<0){
-      savedEl.textContent=`📉 ${formatSize(Math.abs(diff))} 감소 (${Math.abs(pct)}% ↓)`;
-      savedEl.style.color='';
-      savedEl.className='saved success';
-    } else if(diff>0){
-      savedEl.textContent=`📈 ${formatSize(diff)} 증가 (${pct}% ↑)`;
-      savedEl.style.color='';
-      savedEl.className='saved warning';
-    } else {
-      savedEl.textContent='용량 동일';
-      savedEl.style.color='';
-      savedEl.className='saved';
-    }
-    savedEl.style.display='block';
-
-    updateReport(originalFile, blob, selectedFormat, width, height, pct, diff);
-  }, selectedFormat, selectedFormat==='image/png'?undefined:quality);
-  }catch(error){
-    showConversionError('이미지 변환 중 오류가 발생했습니다. 크기나 출력 포맷을 확인하세요.');
-  }
+  return { root, hasViewBox, rawWidth: width, rawHeight: height, width: Math.max(1, Math.round(width)), height: Math.max(1, Math.round(height)) };
 }
 
-function showConversionError(message){
-  conversionSequence++;
-  convertedBlob=null;
-  if(convertedUrl)URL.revokeObjectURL(convertedUrl);
-  convertedUrl=null;
-  document.getElementById('convImg').removeAttribute('src');
-  document.getElementById('dlBtn').style.display='none';
-  document.getElementById('savedInfo').style.display='none';
-  document.getElementById('reportContainer').style.display='none';
-  showToast(message);
+function svgUrlAt(svg, width, height) {
+  const root = svg.root.cloneNode(true);
+  if (!svg.hasViewBox) root.setAttribute('viewBox', `0 0 ${svg.rawWidth} ${svg.rawHeight}`);
+  root.setAttribute('width', String(width));
+  root.setAttribute('height', String(height));
+  const xml = new XMLSerializer().serializeToString(root);
+  return URL.createObjectURL(new Blob([xml], { type: 'image/svg+xml' }));
 }
 
-function updateReport(origFile, convBlob, format, w, h, pct, diff) {
-  const container = document.getElementById('reportContainer');
-  if (!container || !origFile || !convBlob) return;
-  container.style.display = 'block';
-  const outputLabel=format==='image/jpeg'?'JPG':format.split('/')[1].toUpperCase();
-  let resultMsg;
-  if (diff < 0) {
-    resultMsg = `원본보다 <span class="highlight">${formatSize(Math.abs(diff))} (${Math.abs(pct)}%) 작습니다.</span>`;
-  } else if (diff > 0) {
-    resultMsg = `원본보다 <span class="highlight">${formatSize(diff)} (${pct}%) 큽니다.</span> 포맷 변환이 항상 용량 감소를 보장하지는 않습니다.`;
+// ---------- 변환 ----------
+function outputSize(item) {
+  let width = item.width;
+  let height = item.height;
+  if (state.sizeMode === 'width') {
+    width = state.targetWidth;
+    height = Math.max(1, Math.round(item.height * state.targetWidth / item.width));
   } else {
-    resultMsg = '표시 단위 기준으로 원본과 용량이 같습니다.';
+    const scale = Number(state.sizeMode) || 1;
+    width = Math.round(item.width * scale);
+    height = Math.round(item.height * scale);
   }
-
-  let formatNote='PNG의 무손실 출력 인코딩을 사용했습니다.';
-  if(format==='image/jpeg')formatNote='JPG 손실 압축을 사용하며 투명 영역은 흰색으로 합쳐집니다.';
-  if(format==='image/webp')formatNote=`WebP 손실 압축을 품질 ${Math.round(quality*100)}%로 적용했습니다.`;
-
-  let sourceCaveat='캔버스 재인코딩 과정에서 EXIF 등 일부 메타데이터는 유지되지 않을 수 있습니다.';
-  if(originalInputType?.mime==='image/gif')sourceCaveat='<strong>GIF 애니메이션은 한 장의 정지 프레임으로 출력되었습니다.</strong>';
-  if(originalInputType?.mime==='image/svg+xml')sourceCaveat='<strong>SVG는 픽셀 이미지로 래스터화되어 벡터 정보를 유지하지 않습니다.</strong>';
-
-  container.innerHTML = `
-    <h3>📊 변환 결과 리포트</h3>
-    <p><b>파일:</b> ${escapeHtml(origFile.name)} (${originalInputType?.label||'이미지'}) → ${outputLabel}</p>
-    <p><b>크기:</b> ${w} × ${h}px 유지 · ${formatSize(origFile.size)} → ${formatSize(convBlob.size)}</p>
-    <p><b>용량 변화:</b> ${resultMsg}</p>
-    <p><b>출력 방식:</b> ${formatNote}</p>
-    <p><b>유의사항:</b> ${sourceCaveat}</p>
-  `;
+  return { width, height };
 }
 
-function escapeHtml(value){
-  return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+function outputName(item) {
+  const base = safeFileName(item.name.replace(/\.[^.]+$/, '') || 'image');
+  const ext = OUTPUT_EXT[item.outType];
+  let suffix = '';
+  if (state.sizeMode === 'width') suffix = `_${item.outWidth}w`;
+  else if (state.sizeMode !== '1') suffix = `@${state.sizeMode}x`;
+  else if (item.inputType.ext === ext || (item.inputType.ext === 'jpg' && ext === 'jpg')) suffix = '_converted';
+  return `${base}${suffix}.${ext}`;
 }
 
-function download(){
-  if(!convertedBlob){showToast('변환된 이미지가 없습니다');return;}
-  const ext=selectedFormat.split('/')[1];
-  const name=originalFile.name.replace(/\.[^.]+$/,'')+'.'+(ext==='jpeg'?'jpg':ext);
-  const a=document.createElement('a');
-  a.href=convertedUrl;
-  a.download=name;
+async function convertItem(item, generation) {
+  item.status = 'working';
+  renderItem(item);
+  const size = outputSize(item);
+  const type = state.format;
+  const fail = message => {
+    if (generation !== state.generation) return;
+    item.status = 'failed';
+    item.error = message;
+    renderItem(item);
+  };
+  if (size.width > MAX_OUTPUT_EDGE || size.height > MAX_OUTPUT_EDGE || size.width * size.height > MAX_OUTPUT_PIXELS) {
+    fail(`결과 ${size.width}×${size.height}px가 한도(한 변 16,384px, 5,000만 화소)를 넘습니다. 배율이나 가로를 줄여 주세요.`);
+    return;
+  }
+  let drawUrl = item.srcUrl;
+  let temporaryUrl = null;
+  if (item.svg) {
+    temporaryUrl = svgUrlAt(item.svg, size.width, size.height);
+    drawUrl = temporaryUrl;
+  }
+  let img;
+  try {
+    img = await loadImage(drawUrl);
+  } catch (_error) {
+    if (temporaryUrl) URL.revokeObjectURL(temporaryUrl);
+    fail('이미지를 다시 읽지 못했습니다.');
+    return;
+  }
+  if (generation !== state.generation) { if (temporaryUrl) URL.revokeObjectURL(temporaryUrl); return; }
+  const canvas = document.createElement('canvas');
+  canvas.width = size.width;
+  canvas.height = size.height;
+  const ctx = canvas.getContext('2d');
+  if (!ctx || canvas.width !== size.width || canvas.height !== size.height) {
+    if (temporaryUrl) URL.revokeObjectURL(temporaryUrl);
+    fail(`이 기기에서 ${size.width}×${size.height}px 캔버스를 만들 수 없습니다. 크기를 줄여 주세요.`);
+    return;
+  }
+  // JPG는 투명도를 지원하지 않으므로 투명 영역을 흰색으로 채운다.
+  if (type === 'image/jpeg') {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, size.width, size.height);
+  }
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  try {
+    ctx.drawImage(img, 0, 0, size.width, size.height);
+  } catch (_error) {
+    canvas.width = 0;
+    if (temporaryUrl) URL.revokeObjectURL(temporaryUrl);
+    fail('브라우저가 이 이미지를 캔버스에 그리지 못했습니다.');
+    return;
+  }
+  if (temporaryUrl) URL.revokeObjectURL(temporaryUrl);
+  const blob = await canvasToBlob(canvas, type, type === 'image/png' ? undefined : state.quality);
+  canvas.width = 0;
+  if (generation !== state.generation) return;
+  if (!blob || (blob.type || '').toLowerCase() !== type) {
+    fail(`이 브라우저는 ${OUTPUT_LABEL[type]} 저장을 지원하지 않습니다. 다른 포맷을 선택해 주세요.`);
+    return;
+  }
+  if (item.url) URL.revokeObjectURL(item.url);
+  item.blob = blob;
+  item.url = URL.createObjectURL(blob);
+  item.outType = type;
+  item.outWidth = size.width;
+  item.outHeight = size.height;
+  item.saved = false;
+  item.status = 'done';
+  item.error = '';
+  renderItem(item);
+}
+
+function scheduleReconvert(delay = RECONVERT_DELAY_MS) {
+  clearTimeout(reconvertTimer);
+  reconvertTimer = setTimeout(restartConversion, delay);
+}
+
+function restartConversion() {
+  clearTimeout(reconvertTimer);
+  state.generation += 1;
+  state.items.forEach(item => { item.status = 'pending'; });
+  renderAll();
+  pump();
+}
+
+async function pump() {
+  const generation = state.generation;
+  if (pumpGeneration === generation) return;
+  pumpGeneration = generation;
+  try {
+    while (generation === state.generation) {
+      const next = state.items.find(item => item.status === 'pending');
+      if (!next) break;
+      await convertItem(next, generation);
+    }
+  } finally {
+    if (pumpGeneration === generation) pumpGeneration = -1;
+  }
+  if (generation === state.generation) renderAll();
+}
+
+// ---------- 파일 추가 ----------
+function showFileProblems(problems, heic) {
+  const box = $('fileMsg');
+  box.textContent = '';
+  if (!problems.length) { box.hidden = true; return; }
+  const intro = document.createElement('p');
+  intro.textContent = problems.length === 1 ? '다음 파일은 추가하지 못했습니다.' : `다음 ${problems.length}개 파일은 추가하지 못했습니다.`;
+  const list = document.createElement('ul');
+  problems.forEach(problem => {
+    const li = document.createElement('li');
+    li.textContent = problem;
+    list.appendChild(li);
+  });
+  box.append(intro, list);
+  if (heic) {
+    const guide = document.createElement('p');
+    guide.textContent = HEIC_MESSAGE;
+    box.appendChild(guide);
+  }
+  box.hidden = false;
+}
+
+function autoSelectFormat(inputMime) {
+  if (state.formatChosen) return;
+  const outputs = ['image/jpeg', 'image/png', 'image/webp'];
+  state.format = outputs.includes(inputMime) ? (inputMime === 'image/jpeg' ? 'image/png' : 'image/jpeg') : 'image/png';
+  updateFormatUI();
+}
+
+async function addFiles(fileList) {
+  const files = [...(fileList || [])];
+  if (!files.length) return;
+  const problems = [];
+  let heic = false;
+  const added = [];
+  for (const file of files) {
+    const label = file.name || '이름 없는 이미지';
+    if (state.items.length + added.length >= MAX_FILES) { problems.push(`${label}: 한 번에 최대 ${MAX_FILES}장까지 추가할 수 있습니다.`); continue; }
+    if (isHeic(file)) { heic = true; problems.push(`${label}: HEIC 형식은 브라우저에서 열 수 없습니다.`); continue; }
+    const inputType = detectInputType(file);
+    if (!inputType) { problems.push(`${label}: 지원하지 않는 입력 형식입니다. JPG, PNG, WebP, GIF, BMP, SVG를 선택하세요.`); continue; }
+    if (inputType.mime === 'image/avif' && !canDecodeAvif) { problems.push(`${label}: 이 브라우저는 AVIF 이미지를 읽지 못합니다.`); continue; }
+    if (!file.size) { problems.push(`${label}: 비어 있는 파일입니다.`); continue; }
+    if (file.size > MAX_FILE_SIZE) { problems.push(`${label}: 20MB를 넘습니다 (${formatSize(file.size)}).`); continue; }
+    let svg = null;
+    if (inputType.mime === 'image/svg+xml') {
+      try {
+        svg = await readSvg(file);
+      } catch (_error) {
+        problems.push(`${label}: SVG 문서를 해석하지 못했습니다.`);
+        continue;
+      }
+    }
+    const srcUrl = URL.createObjectURL(file);
+    let width;
+    let height;
+    try {
+      const img = await loadImage(srcUrl);
+      width = svg ? svg.width : img.naturalWidth;
+      height = svg ? svg.height : img.naturalHeight;
+    } catch (_error) {
+      URL.revokeObjectURL(srcUrl);
+      problems.push(`${label}: 브라우저가 이 이미지 데이터를 해석하지 못했습니다. 파일 손상 또는 미지원 인코딩을 확인하세요.`);
+      continue;
+    }
+    if (!width || !height || width > MAX_SOURCE_EDGE || height > MAX_SOURCE_EDGE || width * height > MAX_SOURCE_PIXELS) {
+      URL.revokeObjectURL(srcUrl);
+      problems.push(`${label}: 이미지 크기 ${width} × ${height}px는 처리 한도(긴 변 12,000px, 5,000만 화소)를 초과합니다.`);
+      continue;
+    }
+    added.push({
+      id: nextItemId++, file, inputType, svg, srcUrl, width, height,
+      name: file.name || `image.${inputType.ext}`,
+      status: 'pending', blob: null, url: null, saved: true, error: ''
+    });
+  }
+  showFileProblems(problems, heic);
+  if (!added.length) return;
+  if (!state.items.length) {
+    autoSelectFormat(added[0].inputType.mime);
+    state.selectedId = added[0].id;
+  }
+  state.items.push(...added);
+  if (!state.items.some(item => item.id === state.selectedId)) state.selectedId = added[0].id;
+  renderAll();
+  pump();
+}
+
+// ---------- 화면 ----------
+function renderWarning() {
+  const kinds = new Set(state.items.map(item => item.inputType.mime));
+  const messages = [];
+  if (kinds.has('image/gif')) messages.push('⚠️ 애니메이션 GIF는 움직임이 유지되지 않으며, 첫 장면 한 장의 정지 이미지로 변환됩니다.');
+  if (kinds.has('image/svg+xml')) messages.push('⚠️ SVG는 선택한 크기의 픽셀 이미지로 바뀌어 벡터 확대 특성과 편집 정보를 유지하지 않습니다. 크게 필요하면 2배·4배나 가로 지정을 사용하세요.');
+  const warning = $('formatWarning');
+  warning.textContent = messages.join(' ');
+  warning.hidden = !messages.length;
+}
+
+function itemStatText(item) {
+  if (item.status === 'failed') return item.error || '변환하지 못했습니다.';
+  if (item.status !== 'done' || !item.blob) return item.status === 'working' ? '변환 중…' : '대기 중…';
+  return `${item.inputType.label} ${formatSize(item.file.size)} → ${OUTPUT_LABEL[item.outType]} ${formatSize(item.blob.size)} · ${item.outWidth}×${item.outHeight}`;
+}
+
+function renderItem(item) {
+  const row = document.querySelector(`[data-item-id="${item.id}"]`);
+  if (row) {
+    row.classList.toggle('selected', item.id === state.selectedId);
+    row.classList.toggle('failed', item.status === 'failed');
+    row.querySelector('.file-stat').textContent = itemStatText(item);
+    row.querySelector('.file-pick').setAttribute('aria-pressed', String(item.id === state.selectedId));
+    row.querySelector('.row-btn').disabled = !(item.status === 'done' && item.blob);
+  }
+  if (item.id === state.selectedId) renderSelected();
+  renderSummary();
+}
+
+function buildRow(item) {
+  const li = document.createElement('li');
+  li.className = 'file-row';
+  li.dataset.itemId = String(item.id);
+  const pick = document.createElement('button');
+  pick.type = 'button';
+  pick.className = 'file-pick';
+  const name = document.createElement('span');
+  name.className = 'file-name';
+  name.textContent = item.name;
+  const stat = document.createElement('span');
+  stat.className = 'file-stat';
+  pick.append(name, stat);
+  pick.addEventListener('click', () => {
+    state.selectedId = item.id;
+    state.items.forEach(renderItem);
+  });
+  const save = document.createElement('button');
+  save.type = 'button';
+  save.className = 'row-btn';
+  save.textContent = '저장';
+  save.setAttribute('aria-label', `${item.name} 변환 결과 저장`);
+  save.addEventListener('click', () => downloadItem(item));
+  li.append(pick, save);
+  return li;
+}
+
+function renderAll() {
+  const hasItems = state.items.length > 0;
+  const multi = state.items.length > 1;
+  $('controls').hidden = !hasItems;
+  $('preview').hidden = !hasItems;
+  $('resetBtn').hidden = !hasItems;
+  $('listWrap').hidden = !multi;
+  $('zipBtn').hidden = !multi;
+  dropZone.classList.toggle('compact', hasItems);
+  $('dropText').textContent = hasItems ? '➕ 이미지 추가 (클릭·끌어다 놓기·붙여넣기)' : '클릭하거나 이미지를 끌어다 놓으세요 (여러 장 가능)';
+  const list = $('fileList');
+  list.textContent = '';
+  if (multi) state.items.forEach(item => list.appendChild(buildRow(item)));
+  renderWarning();
+  state.items.forEach(renderItem);
+  if (!hasItems) renderSelected();
+  renderSummary();
+}
+
+function renderSelected() {
+  const item = state.items.find(entry => entry.id === state.selectedId);
+  const savedEl = $('savedInfo');
+  const dlBtn = $('dlBtn');
+  if (!item) {
+    savedEl.textContent = '';
+    savedEl.className = 'saved';
+    dlBtn.hidden = true;
+    $('origImg').removeAttribute('src');
+    $('convImg').removeAttribute('src');
+    return;
+  }
+  if ($('origImg').getAttribute('src') !== item.srcUrl) $('origImg').src = item.srcUrl;
+  $('origFormat').textContent = item.inputType.label;
+  $('origSize').textContent = formatSize(item.file.size);
+  $('origDim').textContent = `${item.width} × ${item.height}px`;
+  const done = item.status === 'done' && item.blob;
+  if (done && $('convImg').getAttribute('src') !== item.url) $('convImg').src = item.url;
+  if (!item.url) $('convImg').removeAttribute('src');
+  $('convFormat').textContent = item.blob ? OUTPUT_LABEL[item.outType] : '';
+  $('convSize').textContent = item.blob ? formatSize(item.blob.size) : '';
+  $('convDim').textContent = item.blob ? `${item.outWidth} × ${item.outHeight}px` : '';
+  dlBtn.hidden = !done;
+  dlBtn.textContent = state.items.length > 1 ? '⬇️ 선택한 이미지 다운로드' : '⬇️ 변환된 이미지 다운로드';
+  savedEl.className = 'saved';
+  if (item.status === 'failed') {
+    savedEl.textContent = `⚠️ ${item.error}`;
+    savedEl.classList.add('error');
+  } else if (!done) {
+    savedEl.textContent = item.status === 'working' ? '변환하는 중…' : '대기 중…';
+  } else {
+    const diff = item.blob.size - item.file.size;
+    const pct = Math.abs((diff / item.file.size) * 100).toFixed(1);
+    if (diff < 0) {
+      savedEl.textContent = `📉 ${formatSize(-diff)} 감소 (${pct}% ↓)`;
+      savedEl.classList.add('success');
+    } else if (diff > 0) {
+      savedEl.textContent = `📈 ${formatSize(diff)} 증가 (${pct}% ↑) — 포맷 변환이 항상 용량을 줄이지는 않습니다`;
+      savedEl.classList.add('warning');
+    } else {
+      savedEl.textContent = '용량 동일';
+    }
+  }
+}
+
+function renderSummary() {
+  const summary = $('listSummary');
+  if (state.items.length < 2) { summary.textContent = ''; return; }
+  const done = state.items.filter(item => item.status === 'done' && item.blob);
+  const failed = state.items.filter(item => item.status === 'failed').length;
+  let text = `${state.items.length}개 중 ${done.length}개 변환 완료`;
+  if (failed) text += ` · ${failed}개 실패`;
+  if (done.length) text += ` · 합계 ${formatSize(done.reduce((sum, item) => sum + item.blob.size, 0))}`;
+  summary.textContent = text;
+  $('zipBtn').disabled = !done.length || done.length + failed < state.items.length;
+  $('zipBtn').textContent = `🗂️ 전체 ${done.length}개 ZIP으로 저장`;
+}
+
+// ---------- 저장 ----------
+function triggerDownload(blob, name) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
   a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function downloadItem(item) {
+  if (!item || !(item.status === 'done' && item.blob)) { showToast('변환된 이미지가 없습니다'); return; }
+  triggerDownload(item.blob, outputName(item));
+  item.saved = true;
   showToast('다운로드 시작! ⬇️');
 }
 
-function resetAll(){
-  clearLoadedState();
-  document.getElementById('fileInput').value='';
+const CRC_TABLE = (() => {
+  const table = new Uint32Array(256);
+  for (let n = 0; n < 256; n += 1) {
+    let c = n;
+    for (let k = 0; k < 8; k += 1) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1;
+    table[n] = c >>> 0;
+  }
+  return table;
+})();
+
+function crc32(bytes) {
+  let crc = 0xFFFFFFFF;
+  for (let i = 0; i < bytes.length; i += 1) crc = CRC_TABLE[(crc ^ bytes[i]) & 0xFF] ^ (crc >>> 8);
+  return (crc ^ 0xFFFFFFFF) >>> 0;
 }
 
-function formatSize(bytes){
-  if(bytes<1024) return bytes+' B';
-  if(bytes<1048576) return (bytes/1024).toFixed(1)+' KB';
-  return (bytes/1048576).toFixed(1)+' MB';
+// 압축 없이 묶기만 하는(STORE) ZIP. 파일 이름은 UTF-8 플래그로 저장해 한글 이름도 유지한다.
+async function buildZip(entries) {
+  const encoder = new TextEncoder();
+  const now = new Date();
+  const dosTime = (now.getHours() << 11) | (now.getMinutes() << 5) | Math.floor(now.getSeconds() / 2);
+  const dosDate = ((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate();
+  const localParts = [];
+  const centralParts = [];
+  let offset = 0;
+  for (const entry of entries) {
+    const data = new Uint8Array(await entry.blob.arrayBuffer());
+    const nameBytes = encoder.encode(entry.name);
+    const crc = crc32(data);
+    const local = new DataView(new ArrayBuffer(30));
+    local.setUint32(0, 0x04034b50, true);
+    local.setUint16(4, 20, true);
+    local.setUint16(6, 0x0800, true);
+    local.setUint16(10, dosTime, true);
+    local.setUint16(12, dosDate, true);
+    local.setUint32(14, crc, true);
+    local.setUint32(18, data.length, true);
+    local.setUint32(22, data.length, true);
+    local.setUint16(26, nameBytes.length, true);
+    localParts.push(local.buffer, nameBytes, data);
+    const central = new DataView(new ArrayBuffer(46));
+    central.setUint32(0, 0x02014b50, true);
+    central.setUint16(4, 20, true);
+    central.setUint16(6, 20, true);
+    central.setUint16(8, 0x0800, true);
+    central.setUint16(12, dosTime, true);
+    central.setUint16(14, dosDate, true);
+    central.setUint32(16, crc, true);
+    central.setUint32(20, data.length, true);
+    central.setUint32(24, data.length, true);
+    central.setUint16(28, nameBytes.length, true);
+    central.setUint32(42, offset, true);
+    centralParts.push(central.buffer, nameBytes);
+    offset += 30 + nameBytes.length + data.length;
+  }
+  const centralSize = centralParts.reduce((sum, part) => sum + part.byteLength, 0);
+  const end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true);
+  end.setUint16(8, entries.length, true);
+  end.setUint16(10, entries.length, true);
+  end.setUint32(12, centralSize, true);
+  end.setUint32(16, offset, true);
+  return new Blob([...localParts, ...centralParts, end.buffer], { type: 'application/zip' });
 }
 
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2000);
+function uniqueName(name, used) {
+  if (!used.has(name)) { used.add(name); return name; }
+  const dot = name.lastIndexOf('.');
+  const stem = dot > 0 ? name.slice(0, dot) : name;
+  const ext = dot > 0 ? name.slice(dot) : '';
+  let n = 2;
+  while (used.has(`${stem} (${n})${ext}`)) n += 1;
+  const next = `${stem} (${n})${ext}`;
+  used.add(next);
+  return next;
 }
 
+async function downloadZip() {
+  const done = state.items.filter(item => item.status === 'done' && item.blob);
+  if (!done.length) return;
+  const used = new Set();
+  const entries = done.map(item => ({ name: uniqueName(outputName(item), used), blob: item.blob }));
+  $('zipBtn').disabled = true;
+  try {
+    const zip = await buildZip(entries);
+    triggerDownload(zip, `converted-images-${localStamp(false)}.zip`);
+    done.forEach(item => { item.saved = true; });
+    showToast('ZIP 저장을 시작했습니다');
+  } catch (_error) {
+    showToast('ZIP 파일을 만들지 못했습니다. 한 장씩 저장해 주세요');
+  } finally {
+    renderSummary();
+  }
+}
 
+function confirmDiscard() {
+  const unsaved = state.items.some(item => item.status === 'done' && item.blob && !item.saved);
+  const dialog = $('discardDialog');
+  if (!unsaved || !dialog || typeof dialog.showModal !== 'function') return Promise.resolve(true);
+  return new Promise(resolve => {
+    const confirmButton = dialog.querySelector('[data-discard-confirm]');
+    const cancelButton = dialog.querySelector('[data-discard-cancel]');
+    const handleCancel = event => { event.preventDefault(); dialog.close('cancel'); };
+    confirmButton.onclick = () => dialog.close('confirm');
+    cancelButton.onclick = () => dialog.close('cancel');
+    dialog.addEventListener('cancel', handleCancel);
+    dialog.addEventListener('close', () => {
+      dialog.removeEventListener('cancel', handleCancel);
+      resolve(dialog.returnValue === 'confirm');
+    }, { once: true });
+    dialog.returnValue = '';
+    dialog.showModal();
+  });
+}
+
+async function resetAll() {
+  if (!await confirmDiscard()) return;
+  state.generation += 1;
+  clearTimeout(reconvertTimer);
+  state.items.forEach(item => {
+    URL.revokeObjectURL(item.srcUrl);
+    if (item.url) URL.revokeObjectURL(item.url);
+  });
+  state.items = [];
+  state.selectedId = null;
+  state.formatChosen = false;
+  $('fileInput').value = '';
+  $('fileMsg').hidden = true;
+  renderAll();
+  dropZone.focus();
+}
+
+// ---------- 설정 ----------
+function updateFormatUI() {
+  document.querySelectorAll('[data-format]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.format === state.format)));
+  $('qualityRow').hidden = state.format === 'image/png';
+  const help = [];
+  if (!canEncodeWebP) help.push('이 브라우저는 WebP 저장을 지원하지 않아 WebP를 고를 수 없습니다(Safari 등).');
+  if (state.format === 'image/jpeg') help.push('JPG는 투명한 부분을 흰색으로 채웁니다.');
+  if (state.format === 'image/png') help.push('PNG는 무손실이라 품질 설정이 없습니다.');
+  $('formatHelp').textContent = help.join(' ');
+}
+
+function readTargetWidth() {
+  const input = $('targetWidth');
+  const value = Number(input.value);
+  const valid = input.value.trim() !== '' && Number.isInteger(value) && value >= 16 && value <= 12000;
+  input.setAttribute('aria-invalid', String(!valid));
+  $('widthMsg').textContent = valid ? '' : '가로는 16~12,000px 사이 정수로 입력하세요.';
+  if (valid) state.targetWidth = value;
+  return valid;
+}
+
+document.querySelectorAll('[data-format]').forEach(button => button.addEventListener('click', () => {
+  if (button.disabled) return;
+  state.format = button.dataset.format;
+  state.formatChosen = true;
+  updateFormatUI();
+  scheduleReconvert(0);
+}));
+
+document.querySelectorAll('[data-size]').forEach(button => button.addEventListener('click', () => {
+  state.sizeMode = button.dataset.size;
+  document.querySelectorAll('[data-size]').forEach(chip => chip.setAttribute('aria-pressed', String(chip.dataset.size === state.sizeMode)));
+  $('widthField').hidden = state.sizeMode !== 'width';
+  if (state.sizeMode === 'width') {
+    const selected = state.items.find(item => item.id === state.selectedId);
+    if (selected && !$('targetWidth').dataset.touched) $('targetWidth').value = String(Math.min(selected.width, 1920));
+    if (!readTargetWidth()) return;
+  }
+  scheduleReconvert(0);
+}));
+
+$('targetWidth').addEventListener('input', () => {
+  $('targetWidth').dataset.touched = '1';
+  if (readTargetWidth()) scheduleReconvert(400);
+});
+
+$('qualitySlider').addEventListener('input', () => {
+  state.quality = Number($('qualitySlider').value) / 100;
+  $('qualityVal').textContent = Math.round(state.quality * 100) + '%';
+  scheduleReconvert();
+});
+
+$('dlBtn').addEventListener('click', () => downloadItem(state.items.find(item => item.id === state.selectedId)));
+$('zipBtn').addEventListener('click', downloadZip);
+$('resetBtn').addEventListener('click', resetAll);
+
+if (!canEncodeWebP) {
+  $('webpChip').disabled = true;
+  $('webpChip').title = '이 브라우저는 WebP 저장을 지원하지 않습니다';
+}
+updateFormatUI();
+
+// AVIF는 브라우저가 해석할 수 있을 때만 입력 목록에 표시한다.
+loadImage(AVIF_PROBE).then(img => {
+  canDecodeAvif = img.naturalWidth > 0;
+  if (canDecodeAvif) $('inputHelp').textContent = '입력: JPG · PNG · WebP · GIF · BMP · SVG · AVIF (한 장당 20MB, 최대 30장)';
+}).catch(() => { canDecodeAvif = false; });
+
+// ---------- 입력: 클릭·키보드·드롭·붙여넣기 ----------
+dropZone.addEventListener('click', () => $('fileInput').click());
+dropZone.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('fileInput').click(); } });
+$('fileInput').addEventListener('change', event => {
+  addFiles(event.target.files).finally(() => { event.target.value = ''; });
+});
+
+function hasFiles(event) {
+  return Boolean(event.dataTransfer && [...(event.dataTransfer.types || [])].includes('Files'));
+}
+// 드롭 영역 밖에 놓아도 브라우저가 파일을 열며 페이지를 떠나지 않도록 페이지 전체에서 받는다.
+window.addEventListener('dragover', e => {
+  if (!hasFiles(e)) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'copy';
+  dropZone.classList.add('dragover');
+});
+window.addEventListener('dragleave', e => { if (e.relatedTarget === null) dropZone.classList.remove('dragover'); });
+window.addEventListener('drop', e => {
+  if (!hasFiles(e)) return;
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  addFiles(e.dataTransfer.files);
+});
+
+document.addEventListener('paste', e => {
+  const target = e.target;
+  const isTextField = target && /^(INPUT|TEXTAREA)$/.test(target.tagName) && !['file', 'range', 'checkbox', 'button'].includes(target.type);
+  if (target && (target.isContentEditable || isTextField)) return;
+  const files = [...(e.clipboardData?.items || [])]
+    .filter(entry => entry.kind === 'file' && entry.type.startsWith('image/'))
+    .map(entry => entry.getAsFile())
+    .filter(Boolean);
+  if (!files.length) return;
+  e.preventDefault();
+  const stamp = localStamp(true);
+  addFiles(files.map((file, index) => {
+    const ext = (file.type.split('/')[1] || 'png').replace('jpeg', 'jpg').replace('svg+xml', 'svg');
+    const generic = !file.name || /^image\.(png|jpe?g|gif|webp)$/i.test(file.name);
+    return generic ? new File([file], `pasted-${stamp}${files.length > 1 ? '-' + (index + 1) : ''}.${ext}`, { type: file.type }) : file;
+  }));
+});
+
+window.addEventListener('pagehide', () => {
+  state.items.forEach(item => {
+    URL.revokeObjectURL(item.srcUrl);
+    if (item.url) URL.revokeObjectURL(item.url);
+  });
+});
 </script>
 <script src="/special-chars/theme-toggle.js"></script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/special-chars/sw.js').catch(function(){})}</script>
