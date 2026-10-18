@@ -38,13 +38,8 @@
     var btn = document.querySelector('.theme-toggle-portal:not(.blog-toggle-portal), .theme-toggle-tool');
     if (!btn) return;
     btn.textContent = theme === DARK ? '☀️' : '🌙';
-    var english = window.location.pathname.indexOf('/en/') !== -1;
-    btn.setAttribute('aria-label', theme === DARK
-      ? (english ? 'Switch to light mode' : '라이트 모드로 전환')
-      : (english ? 'Switch to dark mode' : '다크 모드로 전환'));
-    btn.title = theme === DARK
-      ? (english ? 'Light mode' : '라이트 모드')
-      : (english ? 'Dark mode' : '다크 모드');
+    btn.setAttribute('aria-label', theme === DARK ? '라이트 모드로 전환' : '다크 모드로 전환');
+    btn.title = theme === DARK ? '라이트 모드' : '다크 모드';
   }
 
   function toggleTheme() {
@@ -65,10 +60,9 @@
     }
     if (btn.getAttribute('data-scroll-top-ready') === 'true') return;
 
-    var english = window.location.pathname.indexOf('/en/') !== -1;
     btn.type = 'button';
-    btn.setAttribute('aria-label', english ? 'Back to top' : '맨 위로');
-    btn.title = english ? 'Back to top' : '맨 위로';
+    btn.setAttribute('aria-label', '맨 위로');
+    btn.title = '맨 위로';
     btn.setAttribute('data-scroll-top-ready', 'true');
 
     function updateVisibility() {
@@ -88,9 +82,7 @@
   function isPortalPage() {
     var path = window.location.pathname;
     return path === '/' || path === '/index.html' || path === '/about.html' || path === '/privacy.html'
-      || path === '/en/' || path === '/en/index.html' || path === '/en/about.html' || path === '/en/privacy.html'
-      || path.endsWith('/teemoZipsa.github.io/') || path.endsWith('/teemoZipsa.github.io/index.html')
-      || path.endsWith('/teemoZipsa.github.io/en/') || path.endsWith('/teemoZipsa.github.io/en/index.html');
+      || path.endsWith('/teemoZipsa.github.io/') || path.endsWith('/teemoZipsa.github.io/index.html');
   }
 
   function createToggleButton() {
@@ -129,13 +121,8 @@
           }
           if (child.matches('a')) {
             var label = (child.textContent || '').trim();
-            var targetIsEnglish = child.getAttribute('href') && child.getAttribute('href').indexOf('/en/') !== -1;
-            var languageLink = /English|한국어/i.test(label);
             child.classList.add('tool-header-action');
-            if (languageLink) child.classList.add('tool-language-link');
-            child.setAttribute('data-tool-short', languageLink
-              ? (targetIsEnglish ? 'EN' : '한')
-              : (label.split(/\s+/)[0] || '↗'));
+            child.setAttribute('data-tool-short', label.split(/\s+/)[0] || '↗');
           }
           actions.appendChild(child);
         });

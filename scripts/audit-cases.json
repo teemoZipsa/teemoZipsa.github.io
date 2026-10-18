@@ -309,7 +309,7 @@
     "source": "Project input-validation contract; not a veterinary diagnostic standard.",
     "checkedAt": "2026-07-17",
     "effectiveFrom": "Tool validation model 2026-07-17",
-    "crossCheckedWith": "Korean and English page input bounds and stale-result clearing behavior."
+    "crossCheckedWith": "Korean page input bounds and stale-result clearing behavior."
   },
   {
     "tool": "taxi-calc",
@@ -429,7 +429,7 @@
     "source": "Project-documented example grade table; users must compare it with their institution's policy.",
     "checkedAt": "2026-07-17",
     "effectiveFrom": "Tool grade mapping version 2026-07-17",
-    "crossCheckedWith": "Independent weighted-average arithmetic against the Korean and English page tables."
+    "crossCheckedWith": "Independent weighted-average arithmetic against the Korean page tables."
   },
   {
     "tool": "gpa-calc",
@@ -441,7 +441,7 @@
     "source": "Project-documented P/F contract; institutional policies can differ.",
     "checkedAt": "2026-07-17",
     "effectiveFrom": "Tool P/F model version 2026-07-17",
-    "crossCheckedWith": "Independent P/F weighted-average arithmetic against the Korean and English page behavior."
+    "crossCheckedWith": "Independent P/F weighted-average arithmetic against the Korean page behavior."
   },
   {
     "tool": "fuel-calc",

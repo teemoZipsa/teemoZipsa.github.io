@@ -70,19 +70,8 @@ async function main() {
     }
   }
 
-  await scenario('English wage decimals and neutral rules', '/special-chars/en/wage-calc/', async page => {
-    assert(await page.locator('#weeklyHol').count() === 0, 'country-specific weekly allowance control still exists');
-    await page.fill('#hourly', '15.50');
-    const values = await page.evaluate(() => ({ hourly: rHourly.textContent, monthly: rMonthly.textContent, yearly: rYearly.textContent }));
-    assert(values.hourly === '$15.50' && values.monthly === '$2,686.67' && values.yearly === '$32,240.00', `decimal wage conversion is wrong: ${JSON.stringify(values)}`);
-    await page.evaluate(() => applyMinWage());
-    const minimum = await page.evaluate(() => ({ input: hourly.value, hourly: rHourly.textContent, monthly: rMonthly.textContent }));
-    assert(minimum.input === '7.25' && minimum.hourly === '$7.25' && minimum.monthly === '$1,256.67', `quick decimal rate is wrong: ${JSON.stringify(minimum)}`);
-  });
-
   for (const [name, routePath, input, expected] of [
     ['Korean zodiac date-only parsing', '/special-chars/zodiac-calc/', '2024-03-21', '양자리'],
-    ['English zodiac date-only parsing', '/special-chars/en/zodiac-calc/', '2024-03-21', 'Aries'],
     ['Lunar zodiac date-only parsing', '/special-chars/zodiac-animal/', '2024-02-10', '용띠']
   ]) {
     await scenario(name, routePath, async page => {
@@ -93,8 +82,7 @@ async function main() {
   }
 
   for (const [name, routePath, expectedMessage] of [
-    ['Korean date adjustment bounds', '/special-chars/date-calc/', '-100,000'],
-    ['English date adjustment bounds', '/special-chars/en/date-calc/', '-100,000']
+    ['Korean date adjustment bounds', '/special-chars/date-calc/', '-100,000']
   ]) {
     await scenario(name, routePath, async page => {
       const state = await page.evaluate(() => {
@@ -106,8 +94,7 @@ async function main() {
   }
 
   for (const [name, routePath] of [
-    ['Korean strict color parsing', '/special-chars/color-conv/'],
-    ['English strict color parsing', '/special-chars/en/color-conv/']
+    ['Korean strict color parsing', '/special-chars/color-conv/']
   ]) {
     await scenario(name, routePath, async page => {
       const state = await page.evaluate(() => ({
@@ -124,8 +111,7 @@ async function main() {
   }
 
   for (const [name, routePath] of [
-    ['Korean grapheme and EUC-KR handling', '/special-chars/char-counter/'],
-    ['English grapheme and EUC-KR handling', '/special-chars/en/char-counter/']
+    ['Korean grapheme and EUC-KR handling', '/special-chars/char-counter/']
   ]) {
     await scenario(name, routePath, async page => {
       await page.fill('#counterInput', '👨‍👩‍👧‍👦');
@@ -139,8 +125,7 @@ async function main() {
   }
 
   for (const [name, routePath] of [
-    ['Korean timer elapsed-time reconciliation', '/special-chars/timer/'],
-    ['English timer elapsed-time reconciliation', '/special-chars/en/timer/']
+    ['Korean timer elapsed-time reconciliation', '/special-chars/timer/']
   ]) {
     await scenario(name, routePath, async page => {
       const state = await page.evaluate(() => {
@@ -176,7 +161,7 @@ async function main() {
     externalRoute: firebaseMock
   });
 
-  await scenario('English homepage without localStorage', '/en/', async page => {
+  await scenario('homepage without localStorage', '/', async page => {
     await page.waitForFunction(() => globalVisitCount === 10);
     assert(await page.evaluate(() => Array.isArray(favorites) && Array.isArray(recentTools)), 'homepage state did not fall back to empty arrays');
   }, {

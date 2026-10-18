@@ -352,9 +352,7 @@ async function probePage(context, base, file, width) {
       let toastState = null;
       if (toast) {
         toast.style.transition = 'none';
-        toast.textContent = location.pathname.includes('/en/')
-          ? 'Saved. This deliberately long feedback message must wrap inside the screen without covering the page width.'
-          : '저장했습니다. 긴 피드백 문구도 화면 너비 안에서 자연스럽게 줄바꿈되어야 합니다.';
+        toast.textContent = '저장했습니다. 긴 피드백 문구도 화면 너비 안에서 자연스럽게 줄바꿈되어야 합니다.';
         toast.classList.add('show');
         const toastRect = toast.getBoundingClientRect();
         const toastStyle = getComputedStyle(toast);
@@ -378,7 +376,7 @@ async function probePage(context, base, file, width) {
         themeTooSmall: !theme || !visible(theme) || theme.getBoundingClientRect().width < 43.5 || theme.getBoundingClientRect().height < 43.5,
         scrollTopDisplay: scrollTop ? getComputedStyle(scrollTop).display : null,
         scrollTopLabel: scrollTop?.getAttribute('aria-label') || null,
-        expectedScrollTopLabel: location.pathname.includes('/en/') ? 'Back to top' : '맨 위로',
+        expectedScrollTopLabel: '맨 위로',
         headerOverlap: Boolean(title && (
           (leading && intersects(title.getBoundingClientRect(), leading.getBoundingClientRect())) ||
           (actions && intersects(title.getBoundingClientRect(), actions.getBoundingClientRect()))
@@ -526,7 +524,7 @@ async function probeDesktopScroll(context, base, file) {
         width: rect.width,
         height: rect.height,
         label: button.getAttribute('aria-label'),
-        expectedLabel: location.pathname.includes('/en/') ? 'Back to top' : '맨 위로',
+        expectedLabel: '맨 위로',
         behavior: call && typeof call === 'object' ? call.behavior : null,
         returnedToTop: window.scrollY === 0
       };
@@ -580,9 +578,7 @@ async function runMobileAudit(files) {
     });
     const desktopCases = new Set([
       'special-chars/bmi-calc/index.html',
-      'special-chars/en/bmi-calc/index.html',
-      'special-chars/lotto-gen/index.html',
-      'special-chars/en/lotto-gen/index.html'
+      'special-chars/lotto-gen/index.html'
     ]);
     for (const file of files.filter(candidate => desktopCases.has(relative(candidate)))) {
       await probeDesktopScroll(desktopContext, base, file);

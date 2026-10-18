@@ -31,10 +31,6 @@ function discoverPages() {
     const file = path.join(rootDir, name);
     if (fs.existsSync(file)) pages.push(file);
   }
-  for (const name of [path.join('en', 'about.html'), path.join('en', 'privacy.html')]) {
-    const file = path.join(rootDir, name);
-    if (fs.existsSync(file)) pages.push(file);
-  }
   return Array.from(new Set(pages)).sort();
 }
 

@@ -126,7 +126,7 @@ function localAudit() {
   const publicHtmlFiles = walk(rootDir).filter(file => {
     const r = rel(file);
     if (r.startsWith('scripts/')) return false;
-    if (r === 'special-chars/404.html') return false;
+    if (r === '404.html' || r === 'special-chars/404.html') return false;
     return true;
   });
 

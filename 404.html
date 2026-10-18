@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, follow">
+<title>페이지를 찾을 수 없습니다 — 티모집사</title>
+<link rel="icon" type="image/png" href="/special-chars/favicon.png">
+<link rel="stylesheet" href="/special-chars/theme.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    background: var(--bg-body);
+    color: var(--text-primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px 16px;
+    text-align: center;
+  }
+  main {
+    background: var(--bg-app);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px 28px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: var(--shadow-lg);
+  }
+  .error-code { font-size: 56px; font-weight: 800; color: var(--accent-text); line-height: 1; margin-bottom: 12px; }
+  h1 { font-size: 18px; margin-bottom: 8px; }
+  p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px; }
+  .links { display: flex; flex-direction: column; gap: 8px; }
+  .links a {
+    display: block;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    background: var(--bg-btn);
+    color: var(--text-primary);
+  }
+  .links a.primary { background: var(--accent); color: var(--text-on-accent); }
+  .links a:hover { opacity: 0.9; }
+</style>
+</head>
+<body>
+<main>
+  <div class="error-code" aria-hidden="true">404</div>
+  <h1>페이지를 찾을 수 없습니다</h1>
+  <p id="message">주소가 바뀌었거나 삭제된 페이지입니다.</p>
+  <div class="links">
+    <a href="/" class="primary" id="primaryLink">업무 도구 모음으로 가기</a>
+    <a href="/blog/">업무 가이드 보기</a>
+  </div>
+</main>
+<script>
+// 영어판(/en/, /special-chars/en/)은 2026-09에 종료했습니다. 같은 도구의 한국어판으로 안내합니다.
+(function () {
+  var path = window.location.pathname;
+  var koreanPath = null;
+  if (/^\/special-chars\/en\/[a-z0-9-]+\/?/.test(path)) koreanPath = path.replace(/^\/special-chars\/en\//, '/special-chars/');
+  else if (/^\/en(\/|$)/.test(path)) koreanPath = '/';
+  if (!koreanPath) return;
+  document.getElementById('message').textContent = koreanPath === '/'
+    ? '영어판 서비스는 종료되었습니다. 한국어 사이트를 이용해 주세요.'
+    : '영어판 서비스는 종료되었습니다. 같은 도구의 한국어판을 이용해 주세요.';
+  var link = document.getElementById('primaryLink');
+  link.href = koreanPath;
+  link.textContent = koreanPath === '/' ? '한국어 도구 모음으로 가기' : '한국어판 도구로 가기';
+})();
+</script>
+<script src="/special-chars/theme-toggle.js"></script>
+</body>
+</html>

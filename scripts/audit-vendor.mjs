@@ -77,10 +77,7 @@ try {
   failures.push(`IMG.LY bundle/source-map consistency check failed: ${error.message}`);
 }
 
-const pdfPages = [
-  'special-chars/pdf-tool/index.html',
-  'special-chars/en/pdf-tool/index.html',
-];
+const pdfPages = ['special-chars/pdf-tool/index.html'];
 for (const relativePath of pdfPages) {
   const source = await readFile(path.join(root, relativePath), 'utf8');
   if (!source.includes('/pdfjs-dist/4.2.67/pdf.min.mjs')) failures.push(`${relativePath}: PDF.js 4.2.67 module is not pinned`);
@@ -88,14 +85,14 @@ for (const relativePath of pdfPages) {
   if (source.includes('pdfjs-dist/3.11.174')) failures.push(`${relativePath}: vulnerable PDF.js 3.11.174 reference remains`);
 }
 
-const qrPages = ['special-chars/qr-code/index.html', 'special-chars/en/qr-code/index.html'];
+const qrPages = ['special-chars/qr-code/index.html'];
 for (const relativePath of qrPages) {
   const source = await readFile(path.join(root, relativePath), 'utf8');
   if (!source.includes('/vendor/qrcode-generator/1.4.4/qrcode.js')) failures.push(`${relativePath}: local QR library reference is missing`);
   if (/cdn\.jsdelivr\.net\/npm\/qrcode-generator/i.test(source)) failures.push(`${relativePath}: external QR CDN reference remains`);
 }
 
-const backgroundRemovalPages = ['special-chars/bg-remover/index.html', 'special-chars/en/bg-remover/index.html'];
+const backgroundRemovalPages = ['special-chars/bg-remover/index.html'];
 for (const relativePath of backgroundRemovalPages) {
   const source = await readFile(path.join(root, relativePath), 'utf8');
   const csp = source.match(/<meta\s+http-equiv="Content-Security-Policy"\s+content="([^"]*)"/i)?.[1] || '';

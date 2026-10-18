@@ -265,22 +265,6 @@ async function main() {
     assert(dst.ambiguous.result === '14:30' && dst.ambiguous.info.includes('두 번') && dst.ambiguous.info.includes('앞선'), `DST overlap was silent or wrong: ${JSON.stringify(dst)}`);
   }, { timezoneId: 'America/Los_Angeles' });
 
-  await scenario('English DST boundary handling', '/special-chars/en/timezone-conv/', async page => {
-    const state = await page.evaluate(() => {
-      document.querySelector('#fromTz').value = 'America/New_York';
-      document.querySelector('#toTz').value = 'Asia/Seoul';
-      document.querySelector('#fromDate').value = '2026-03-08';
-      document.querySelector('#fromTime').value = '02:30';
-      convert();
-      const gap = document.querySelector('#toResultInfo').textContent;
-      document.querySelector('#fromDate').value = '2026-11-01';
-      document.querySelector('#fromTime').value = '01:30';
-      convert();
-      return { gap, overlap: document.querySelector('#toResultInfo').textContent, result: document.querySelector('#toResult').textContent };
-    });
-    assert(state.gap.includes('does not exist') && state.overlap.includes('occurs twice') && state.result === '14:30', `English DST boundary handling failed: ${JSON.stringify(state)}`);
-  });
-
   await scenario('VAT-inclusive discount', '/special-chars/discount-calc/', async page => {
     const result = await page.evaluate(() => {
       document.querySelector('#price').value = '11000';
@@ -311,16 +295,6 @@ async function main() {
     });
     assert(result.injection.marker === 0 && result.injection.images === 0 && result.injection.invalid === 'true', `discount report injection was accepted: ${JSON.stringify(result)}`);
     assert(!/Infinity|∞|NaN/.test(result.output) && result.output.includes('—'), `discount overflow leaked: ${JSON.stringify(result)}`);
-  });
-
-  await scenario('English discount overflow bounds', '/special-chars/en/discount-calc/', async page => {
-    const result = await page.evaluate(() => {
-      document.querySelector('#price').value = '9'.repeat(400);
-      document.querySelector('#discountRate').value = '10';
-      calc();
-      return { output: document.querySelector('#resFinal').textContent, invalid: document.querySelector('#price').getAttribute('aria-invalid') };
-    });
-    assert(result.invalid === 'true' && !/Infinity|∞|NaN/.test(result.output) && result.output.includes('—'), `English discount overflow leaked: ${JSON.stringify(result)}`);
   });
 
   await scenario('weekly allowance eligibility', '/special-chars/wage-calc/', async page => {
@@ -403,7 +377,6 @@ async function main() {
 
   for (const [label, routePath] of [
     ['Korean timer', '/special-chars/timer/'],
-    ['English timer', '/special-chars/en/timer/'],
     ['daily quest timer', '/special-chars/daily-quest/']
   ]) {
     await scenario(`${label} keyboard shortcut isolation`, routePath, async page => {
@@ -661,8 +634,7 @@ async function main() {
   });
 
   for (const [name, routePath] of [
-    ['Korean metronome pending-start cancellation', '/special-chars/music-calc/'],
-    ['English metronome pending-start cancellation', '/special-chars/en/music-calc/']
+    ['Korean metronome pending-start cancellation', '/special-chars/music-calc/']
   ]) {
     await scenario(name, routePath, async page => {
       const state = await page.evaluate(async () => {
@@ -726,34 +698,6 @@ async function main() {
       assert(state.lifecycle.resumes === 1 && state.lifecycle.suspends >= 1, `lifecycle race was not exercised: ${JSON.stringify(state.lifecycle)}`);
     });
   }
-
-  await scenario('English metronome AudioWorklet parity', '/special-chars/en/music-calc/', async page => {
-    await page.evaluate(() => {
-      switchTab(1);
-      window.__metroFrames = [];
-      const dots = document.querySelector('#beatDots');
-      new MutationObserver(() => {
-        const frame = Number(dots.dataset.lastAudioFrame);
-        if (Number.isFinite(frame) && window.__metroFrames.at(-1) !== frame) window.__metroFrames.push(frame);
-      }).observe(dots, { attributes: true, attributeFilter: ['data-last-audio-frame'] });
-      setMetroBpm(181);
-    });
-    await page.locator('#metroPlayBtn').click();
-    await page.waitForFunction(() => ['audio-worklet', 'audio-clock-fallback'].includes(document.querySelector('#beatDots').dataset.engine));
-    const initializedEngine = await page.locator('#beatDots').getAttribute('data-engine');
-    assert(initializedEngine === 'audio-worklet', `English metronome fell back to ${initializedEngine}`);
-    await page.waitForFunction(() => window.__metroFrames.length >= 11, null, { timeout: 8000 });
-    const state = await page.evaluate(() => ({
-      engine: document.querySelector('#beatDots').dataset.engine,
-      frames: window.__metroFrames.slice(0, 11),
-      sampleRate: Number(document.querySelector('#beatDots').dataset.sampleRate)
-    }));
-    const expectedFrames = state.sampleRate * 60 / 181;
-    assert(state.engine === 'audio-worklet', `English metronome fell back to ${state.engine}`);
-    assert(Math.abs((state.frames.at(-1) - state.frames[0]) - expectedFrames * 10) <= 2, 'English metronome accumulated frame drift');
-    await page.locator('#metroPlayBtn').click();
-    await page.waitForFunction(() => metroCtx?.state === 'suspended');
-  });
 
   for (const [name, routePath, input, resultSelector] of [
     ['calorie stale result', '/special-chars/calorie-calc/', '#weight', '#res-cal'],
@@ -906,56 +850,6 @@ async function main() {
     assert(!undone.toastVisible && undone.favorites.length === 0 && undone.cardVisible, `favorite undo failed: ${JSON.stringify(undone)}`);
   });
 
-  await scenario('English home layout and locale storage', '/en/', async page => {
-    await page.evaluate(() => {
-      localStorage.clear();
-      localStorage.setItem('favorites', JSON.stringify(['https://legacy.example/special-chars/date-calc/']));
-      localStorage.setItem('recentTools', JSON.stringify(['https://legacy.example/special-chars/loan-calc/']));
-      localStorage.setItem('viewMode', 'category');
-      localStorage.setItem('toolsCollapsed', 'false');
-    });
-    await page.reload({ waitUntil: 'domcontentloaded' });
-    const isolated = await page.evaluate(() => ({
-      favoritesEn: JSON.parse(localStorage.getItem('favorites_en') || '[]'),
-      recentEn: JSON.parse(localStorage.getItem('recentTools_en') || '[]'),
-      sharedFavorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
-      favVisible: document.querySelector('#favLabel').classList.contains('visible'),
-      recentVisible: document.querySelector('#recentLabel').classList.contains('visible'),
-      inlineTheme: document.querySelectorAll('[data-theme-toggle-slot] .theme-toggle-inline').length,
-      fixedBlog: document.querySelectorAll('.blog-toggle-portal').length,
-      overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth
-    }));
-    assert(isolated.favoritesEn.length === 0 && isolated.recentEn.length === 0, `Korean saved state leaked into English: ${JSON.stringify(isolated)}`);
-    assert(isolated.sharedFavorites.length === 1 && !isolated.favVisible && !isolated.recentVisible, `English initialization damaged or exposed shared state: ${JSON.stringify(isolated)}`);
-    assert(isolated.inlineTheme === 1 && isolated.fixedBlog === 0 && !isolated.overflow, `English compact navigation is incomplete: ${JSON.stringify(isolated)}`);
-
-    await page.locator('#searchInput').fill('date');
-    const searched = await page.evaluate(() => ({
-      status: document.querySelector('#searchStatus').textContent.trim(),
-      visible: [...document.querySelectorAll('#toolsGrid .tool-card')].filter(card => getComputedStyle(card).display !== 'none').length,
-      categories: getComputedStyle(document.querySelector('#categoryView')).display,
-      controls: getComputedStyle(document.querySelector('.view-controls')).display,
-      dropdowns: document.querySelectorAll('.search-dropdown-item').length
-    }));
-    assert(searched.visible > 0 && searched.status.includes(`${searched.visible} tool`), `English search feedback mismatch: ${JSON.stringify(searched)}`);
-    assert(searched.categories === 'none' && searched.controls === 'none' && searched.dropdowns === 0, `English search duplicated or leaked views: ${JSON.stringify(searched)}`);
-    await page.locator('#searchClear').click();
-    assert(await page.locator('#searchInput').inputValue() === '', 'English search clear button did not clear the query');
-    assert(await page.locator('#categoryView').evaluate(element => getComputedStyle(element).display) === 'block', 'English category view was not restored');
-
-    await page.evaluate(() => {
-      localStorage.removeItem('favorites_en');
-      localStorage.setItem('favorites', JSON.stringify(['https://legacy.example/special-chars/en/date-calc/']));
-    });
-    await page.reload({ waitUntil: 'domcontentloaded' });
-    const migrated = await page.evaluate(() => ({
-      english: JSON.parse(localStorage.getItem('favorites_en') || '[]'),
-      shared: JSON.parse(localStorage.getItem('favorites') || '[]'),
-      rendered: document.querySelectorAll('#favGrid a[href$="/special-chars/en/date-calc/"]').length
-    }));
-    assert(migrated.english.length === 1 && migrated.shared.length === 1 && migrated.rendered === 1, `English legacy migration failed: ${JSON.stringify(migrated)}`);
-  }, { viewport: { width: 320, height: 800 } });
-
   await scenario('tool theme control', '/special-chars/calculator/', async page => {
     const button = page.locator('.theme-toggle-tool');
     await button.waitFor({ state: 'visible' });
@@ -974,13 +868,6 @@ async function main() {
     await button.click();
     assert(await button.getAttribute('aria-expanded') === 'true', 'date option help did not expose expanded state');
     assert(await page.locator('#includeHelpText').isVisible(), 'date option help did not become visible');
-  });
-
-  await scenario('English date option touch help', '/special-chars/en/date-calc/', async page => {
-    const button = page.locator('#includeHelpToggle');
-    await button.click();
-    assert(await button.getAttribute('aria-expanded') === 'true' && await page.locator('#includeHelpText').isVisible(), 'English date option help did not expand');
-    assert((await page.locator('.theme-toggle-tool').getAttribute('aria-label')).includes('mode'), 'English tool theme control label is not localized');
   });
 
   await scenario('quick-reply safe custom actions', '/special-chars/quick-reply/', async page => {
@@ -1005,10 +892,10 @@ async function main() {
     assert(result.includes('product=123') && result.endsWith('#details'), `query or hash was lost: ${result}`);
   });
 
-  await scenario('English zodiac image path', '/special-chars/en/zodiac-calc/', async page => {
+  await scenario('zodiac image path', '/special-chars/zodiac-calc/', async page => {
     await page.evaluate(() => { document.querySelector('#birthDate').value = '2000-04-01'; calcZodiac(); });
     await page.waitForFunction(() => document.querySelector('#resultImage').complete);
-    const image = await page.evaluate(() => ({ src: document.querySelector('#resultImage').getAttribute('src'), width: document.querySelector('#resultImage').naturalWidth }));
+    const image = await page.evaluate(() => ({ src: new URL(document.querySelector('#resultImage').src).pathname, width: document.querySelector('#resultImage').naturalWidth }));
     assert(image.src.startsWith('/special-chars/zodiac-calc/images/') && image.width > 0, `zodiac image failed: ${JSON.stringify(image)}`);
   });
 
@@ -1034,15 +921,6 @@ async function main() {
     });
     assert(result.balls === 6, `lottery generated ${result.balls} balls`);
     assert(result.report.includes('암호학적 난수') && !result.report.includes('120~180'), 'lottery report still overclaims historical patterns');
-  });
-
-  await scenario('English lottery cryptographic shuffle', '/special-chars/en/lotto-gen/', async page => {
-    const balls = await page.evaluate(() => {
-      Math.random = () => { throw new Error('Math.random must not be used'); };
-      generate();
-      return document.querySelectorAll('#ballsView .ball').length;
-    });
-    assert(balls === 6, `English lottery generated ${balls} balls`);
   });
 
   await scenario('subscription name DOM safety', '/special-chars/sub-calc/', async page => {
@@ -1078,14 +956,14 @@ async function main() {
     assert(result.monthly.includes('1,000') && result.flatFiveYears === '60,000원' && result.escalatedFiveYears === '66,308원', `SaaS budget scenario is wrong: ${JSON.stringify(result)}`);
   });
 
-  await scenario('English subscription overflow bounds', '/special-chars/en/sub-calc/', async page => {
+  await scenario('subscription overflow bounds', '/special-chars/sub-calc/', async page => {
     const result = await page.evaluate(() => {
       const price = document.querySelector('.sub-price');
       price.value = '9'.repeat(400);
       price.dispatchEvent(new Event('input', { bubbles: true }));
       return { invalid: price.getAttribute('aria-invalid'), total: document.querySelector('#monthlyTotal').textContent + document.querySelector('#inv5').textContent };
     });
-    assert(result.invalid === 'true' && !/Infinity|∞|NaN/.test(result.total), `English subscription overflow leaked: ${JSON.stringify(result)}`);
+    assert(result.invalid === 'true' && !/Infinity|∞|NaN/.test(result.total), `subscription overflow leaked: ${JSON.stringify(result)}`);
   });
 
   await scenario('document diff accuracy, ignored changes, and DOM safety', '/special-chars/text-diff/', async page => {
@@ -1171,7 +1049,7 @@ async function main() {
     assert(await page.locator('#previewImg').getAttribute('alt'), 'Base64 preview image has no alternative text');
   });
 
-  await scenario('English Base64 filename safety', '/special-chars/en/base64-tool/', async page => {
+  await scenario('Base64 filename safety', '/special-chars/base64-tool/', async page => {
     const transparent = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=', 'base64');
     await page.evaluate(() => { window.__base64Xss = 0; setMode('image'); });
     await page.locator('#fileInput').setInputFiles({
@@ -1185,7 +1063,7 @@ async function main() {
     assert(state.marker === 0 && state.images === 0, `Base64 filename injected markup: ${JSON.stringify(state)}`);
   });
 
-  for (const [locale, routePath] of [['ko', '/special-chars/qr-code/'], ['en', '/special-chars/en/qr-code/']]) {
+  for (const [locale, routePath] of [['ko', '/special-chars/qr-code/']]) {
     await scenario(`${locale} QR local-library generation`, routePath, async (page, _context, baseUrl) => {
       await auditQrGeneration(page, baseUrl, locale);
     });
@@ -1270,7 +1148,7 @@ async function main() {
     assert(reportState.marker === 0 && reportState.images === 0, `PDF report injected markup: ${JSON.stringify(reportState)}`);
   });
 
-  for (const [locale, routePath] of [['ko', '/special-chars/pdf-tool/'], ['en', '/special-chars/en/pdf-tool/']]) {
+  for (const [locale, routePath] of [['ko', '/special-chars/pdf-tool/']]) {
     await scenario(`${locale} PDF keyboard, rotate, reorder, and reset`, routePath, async page => {
       await auditPdfKeyboardResetAndReorder(page, locale);
     });
